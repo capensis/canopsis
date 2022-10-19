@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` with selected tag and dropdown 1`] = `
+exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` with selected tag and dropdown 1`] = `
 <div
   class="layout row wrap align-center"
 >
@@ -13,28 +13,24 @@ exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` with selected tag
     color="color1"
   />
   <div
-    class="v-menu v-menu--inline"
+    class="v-menu"
   >
-    <div
-      class="v-menu__activator"
+    <button
+      class="v-btn v-btn--icon v-btn--small theme--light grey"
+      type="button"
     >
-      <button
-        class="v-btn v-btn--icon v-btn--small theme--light grey"
-        type="button"
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
-            style="font-size: 16px;"
-          >
-            more_horiz
-          </i>
-        </div>
-      </button>
-    </div>
+          more_horiz
+        </i>
+      </div>
+    </button>
     <transition-stub
       name="v-menu-transition"
     />
@@ -42,7 +38,7 @@ exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` with selected tag
 </div>
 `;
 
-exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` with selected tag and dropdown 2`] = `
+exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` with selected tag and dropdown 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
@@ -62,7 +58,7 @@ exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` with selected tag
 </div>
 `;
 
-exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` without selected tag and dropdown 1`] = `
+exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` without selected tag and dropdown 1`] = `
 <div
   class="layout row wrap align-center"
 >
@@ -74,7 +70,7 @@ exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` without selected 
 </div>
 `;
 
-exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` without selected tag and with dropdown 1`] = `
+exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` without selected tag and with dropdown 1`] = `
 <div
   class="layout row wrap align-center"
 >
@@ -87,28 +83,24 @@ exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` without selected 
     color="color2"
   />
   <div
-    class="v-menu v-menu--inline"
+    class="v-menu"
   >
-    <div
-      class="v-menu__activator"
+    <button
+      class="v-btn v-btn--icon v-btn--small theme--light grey"
+      type="button"
     >
-      <button
-        class="v-btn v-btn--icon v-btn--small theme--light grey"
-        type="button"
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
-            style="font-size: 16px;"
-          >
-            more_horiz
-          </i>
-        </div>
-      </button>
-    </div>
+          more_horiz
+        </i>
+      </div>
+    </button>
     <transition-stub
       name="v-menu-transition"
     />
@@ -116,7 +108,7 @@ exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` without selected 
 </div>
 `;
 
-exports[`c-alarm-tags-chips Renders \`alarm-column-value-tag\` without selected tag and with dropdown 2`] = `
+exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` without selected tag and with dropdown 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
