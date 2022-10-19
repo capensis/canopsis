@@ -61,7 +61,7 @@ describe('c-alarm-tags-chips', () => {
     expect(wrapper).toEmit('select', tags[0].value);
   });
 
-  it('Renders `alarm-column-value-tag` without selected tag and dropdown', () => {
+  it('Renders `c-alarm-tags-chips` without selected tag and dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm,
@@ -72,7 +72,7 @@ describe('c-alarm-tags-chips', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-tag` without selected tag and with dropdown', () => {
+  it('Renders `c-alarm-tags-chips` without selected tag and with dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -88,7 +88,7 @@ describe('c-alarm-tags-chips', () => {
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-tag` with selected tag and dropdown', () => {
+  it('Renders `c-alarm-tags-chips` with selected tag and dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
