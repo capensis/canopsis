@@ -652,3 +652,131 @@ Feature: run an auto instruction
       }
     ]
     """
+
+  Scenario: given auto instructions should not add steps to resolved alarm and new alarm
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12",
+      "state": 1,
+      "output": "test-output-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I wait 500ms
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12",
+      "state": 2,
+      "output": "test-output-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I wait 5s
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-12&opened=false&with_steps=true
+    Then the response code should be 200
+    Then the response array key "data.0.v.steps" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc",
+        "val": 1
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name. Job test-job-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "cancel"
+      },
+      {
+        "_t": "statusinc",
+        "val": 4
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-12&opened=true&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
