@@ -32,7 +32,7 @@ export default {
     },
     types: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
   computed: {
