@@ -17,10 +17,10 @@ Canopsis Community RPM Package
 %setup -q
 echo "install golang"
 wget https://go.dev/dl/go1.18.6.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.18.6.linux-amd64.tar.gz
+tar -C ~ -xzf go1.18.6.linux-amd64.tar.gz
 
 %build
-export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:~/go/bin
 make -C community/go-engines-community VERSION=%{version}
 make -C community/sources/webcore/src/canopsis-next VERSION=%{version}
 
