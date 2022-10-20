@@ -482,3 +482,173 @@ Feature: run an auto instruction
       }
     ]
     """
+
+  Scenario: given new alarm should run auto instructions, auto instruction jobs should be stopped because of stopOnFail flag
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-9",
+      "connector_name": "test-connector-name-to-run-auto-instruction-9",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-9",
+      "resource": "test-resource-to-run-auto-instruction-9",
+      "state": 1,
+      "output": "test-output-to-run-auto-instruction-9"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-9&with_steps=true
+    Then the response code should be 200
+    Then the response array key "data.0.v.steps" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-9-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-9-name. Job test-job-to-run-auto-instruction-3-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-9-name. Job test-job-to-run-auto-instruction-3-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-9-name."
+      }
+    ]
+    """
+
+  Scenario: given new alarm should run auto instructions, first instruction jobs should be stopped because of stopOnFail flag, but next instruction execution shouldn't be stopped
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-10",
+      "connector_name": "test-connector-name-to-run-auto-instruction-10",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-10",
+      "resource": "test-resource-to-run-auto-instruction-10",
+      "state": 1,
+      "output": "test-output-to-run-auto-instruction-10"
+    }
+    """
+    When I wait the end of 4 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-10&with_steps=true
+    Then the response code should be 200
+    Then the response array key "data.0.v.steps" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-1-name. Job test-job-to-run-auto-instruction-3-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-1-name. Job test-job-to-run-auto-instruction-3-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-1-name."
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-2-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-2-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-2-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-10-2-name."
+      }
+    ]
+    """
+
+  Scenario: given new alarm should run auto instructions, auto instruction with failed jobs should be stopped because of stopOnFail flag
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-11",
+      "connector_name": "test-connector-name-to-run-auto-instruction-11",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-11",
+      "resource": "test-resource-to-run-auto-instruction-11",
+      "state": 1,
+      "output": "test-output-to-run-auto-instruction-11"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-11&with_steps=true
+    Then the response code should be 200
+    Then the response array key "data.0.v.steps" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name. Job test-job-to-instruction-edit-1-name."
+      },
+      {
+        "_t": "instructionjobfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name. Job test-job-to-instruction-edit-1-name."
+      },
+      {
+        "_t": "autoinstructionfail",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-11-name."
+      }
+    ]
+    """
