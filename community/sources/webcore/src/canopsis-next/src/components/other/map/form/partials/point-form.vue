@@ -7,6 +7,7 @@
       :clearable="isLinked",
       :entity-types="entityTypes",
       :item-disabled="isEntityExist",
+      :item-text="getItemText",
       return-object,
       @input="updateEntity"
     )
@@ -24,6 +25,8 @@
 
 <script>
 import { ENTITY_TYPES } from '@/constants';
+
+import { getMapEntityText } from '@/helpers/map';
 
 import { formMixin } from '@/mixins/form';
 
@@ -85,6 +88,10 @@ export default {
       } else {
         this.updateModel({ ...this.form, entity, is_entity_coordinates: false });
       }
+    },
+
+    getItemText(item) {
+      return getMapEntityText(item);
     },
 
     isEntityExist(entity) {
