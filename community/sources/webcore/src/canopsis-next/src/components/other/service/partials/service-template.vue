@@ -73,16 +73,12 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
-    applyAction(event) {
-      this.$emit('apply:action', event);
+    applyAction(action) {
+      this.$emit('apply:action', action);
     },
 
     updatePagination(pagination) {
       this.$emit('update:pagination', pagination);
-    },
-
-    removeUnavailable(entity) {
-      this.$emit('remove:unavailable', entity);
     },
 
     refreshEntities() {
