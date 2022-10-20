@@ -156,6 +156,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity._id),
+          afterSubmit: this.fetchList,
         },
       });
     },
