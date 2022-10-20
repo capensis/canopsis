@@ -372,3 +372,21 @@ export const createAuthModule = () => {
     currentUserPermissionsById,
   };
 };
+
+export const createPbehaviorTypesModule = () => {
+  const fetchPbehaviorTypesListWithoutStore = jest.fn().mockReturnValue({
+    data: [],
+  });
+
+  const pbehaviorTypesModule = {
+    name: 'pbehaviorTypes',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+    },
+  };
+
+  return {
+    pbehaviorTypesModule,
+    fetchPbehaviorTypesListWithoutStore,
+  };
+};
