@@ -2,6 +2,11 @@ package statistics_test
 
 import (
 	"context"
+	"reflect"
+	"strconv"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
@@ -12,10 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"reflect"
-	"strconv"
-	"testing"
-	"time"
 )
 
 func TestStatsListener_Listen(t *testing.T) {
@@ -50,7 +51,7 @@ func TestStatsListener_Listen(t *testing.T) {
 	mockCursor.EXPECT().Next(gomock.Any()).Return(true)
 	mockCursor.EXPECT().Decode(gomock.Any()).Return(nil)
 	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
-	mockCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
+	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 	mockCollection.EXPECT().BulkWrite(gomock.Any(), gomock.Any()).Do(func(_ context.Context, writeModels []mongodriver.WriteModel, _ ...options.BulkWriteOptions) {
 		if len(writeModels) != expectedModelsCount {
 			t.Errorf("expected %v write models but got %v", expectedModelsCount, writeModels)
