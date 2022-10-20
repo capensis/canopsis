@@ -181,7 +181,6 @@ import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pat
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CAlarmTagField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
-import CPatternPanel from '@/components/forms/fields/pattern/c-pattern-panel.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
 
@@ -202,6 +201,7 @@ import DensitySmallIcon from '@/components/icons/density_small.vue';
 import NotificationImportantStrokeIcon from '@/components/icons/notification_important-stroke.vue';
 import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
 import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
+import ManualInstruction from '@/components/icons/manual_instruction.vue';
 
 /**
  * Groups
@@ -259,6 +259,9 @@ Vue.use(Vuetify, {
     },
     playlist_build: {
       component: PlaylistBuildIcon,
+    },
+    manual_instruction: {
+      component: ManualInstruction,
     },
   },
 });
@@ -439,7 +442,6 @@ Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-patterns-field', CPatternsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
-Vue.component('c-pattern-panel', CPatternPanel);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
@@ -495,7 +497,6 @@ Vue.use(ModalsPlugin, {
     [MODALS.rate]: { maxWidth: 500 },
     [MODALS.createMetaAlarmRule]: { maxWidth: 1280, lazy: true },
     [MODALS.createEventFilter]: { maxWidth: 1280 },
-    [MODALS.createEventFilterAction]: { maxWidth: 920 },
     [MODALS.testSuite]: { maxWidth: 920 },
     [MODALS.createPattern]: { maxWidth: 1280 },
     [MODALS.remediationPatterns]: { maxWidth: 1280 },

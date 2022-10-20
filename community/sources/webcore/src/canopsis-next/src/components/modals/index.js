@@ -221,14 +221,6 @@ export const CreateEventFilter = () => ({
   component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
 });
-export const EventFilterActions = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/event-filter-actions.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEventFilterAction = () => ({
-  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter-action.vue'),
-  loading: LoaderOverlay,
-});
 export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
   loading: LoaderOverlay,
@@ -275,6 +267,10 @@ export const CreateRemediationJob = () => ({
 });
 export const ExecuteRemediationInstruction = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-instruction.vue'),
+  loading: LoaderOverlay,
+});
+export const ExecuteRemediationSimpleInstruction = () => ({
+  component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-simple-instruction.vue'),
   loading: LoaderOverlay,
 });
 export const RemediationPatterns = () => ({

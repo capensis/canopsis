@@ -17,6 +17,38 @@ describe('c-collapse-panel', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
+  it('Renders `c-collapse-panel` with custom title', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        title: 'Custom title',
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-collapse-panel` with errors', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        title: 'Custom title with errors',
+      },
+    });
+
+    const validator = wrapper.getValidator();
+
+    validator.attach({
+      name: 'name',
+      rules: 'required:true',
+      getter: () => false,
+      context: () => wrapper.vm,
+      vm: wrapper.vm,
+    });
+
+    await validator.validateAll();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
   it('Renders `c-collapse-panel` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
