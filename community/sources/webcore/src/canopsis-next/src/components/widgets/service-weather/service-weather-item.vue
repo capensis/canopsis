@@ -15,8 +15,8 @@
         v-icon.weather-item__background.white--text(size="5em") {{ icon }}
         v-icon.weather-item__secondary-icon.mb-1.mr-1(v-if="secondaryIcon", color="white") {{ secondaryIcon }}
       alarm-pbehavior-counters(
-        v-if="isPbehaviorCountersEnabled",
-        :counters="counters",
+        v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters",
+        :counters="pbehaviorCounters",
         :types="pbehaviorCountersTypes"
       )
       alarm-state-counters(
@@ -147,33 +147,15 @@ export default {
     },
 
     counters() {
-      return {
-        depends: 1,
-        all: 1,
-        active: 0,
-        state: {
-          ok: 1,
-          minor: 0,
-          major: 0,
-          critical: 0,
-        },
-        acked: 0,
-        unacked: 0,
-        unacked_under_pbh: 1,
-        under_pbh: 1,
-        pbh_types: [
-          {
-            count: 1,
-            type: {
-              _id: 'test-maintenance-type-to-engine',
-              description: 'Engine maintenance',
-              icon_name: 'build',
-              name: 'Engine maintenance',
-              type: 'maintenance',
-            },
-          },
-        ],
-      };
+      return this.service.counters ?? {};
+    },
+
+    pbehaviorCounters() {
+      return this.counters?.pbh_types ?? [];
+    },
+
+    hasPbehaviorCounters() {
+      return this.pbehaviorCounters.length;
     },
 
     isPbehaviorCountersEnabled() {

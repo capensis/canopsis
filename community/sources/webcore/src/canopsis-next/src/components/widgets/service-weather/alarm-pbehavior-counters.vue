@@ -33,17 +33,17 @@ export default {
   },
   props: {
     counters: {
-      type: Object,
-      default: () => ({}),
+      type: Array,
+      default: () => [],
     },
     types: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
   computed: {
     preparedCounters() {
-      return (this.counters?.pbh_types ?? []).reduce((acc, { count, type }) => {
+      return this.counters.reduce((acc, { count, type }) => {
         if (this.types.includes(type._id)) {
           acc.selected.push({
             key: type._id,
