@@ -14,7 +14,7 @@
               :widget-parameters="widgetParameters",
               :pagination.sync="pagination",
               :total-items="serviceEntitiesMeta.total_count",
-              @refresh="fetchList",
+              @refresh="refresh",
               @apply:action="applyAction"
             )
         v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.activePbehavior') }}
