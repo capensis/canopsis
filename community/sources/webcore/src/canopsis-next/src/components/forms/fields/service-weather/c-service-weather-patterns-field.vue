@@ -81,7 +81,7 @@ export default {
     entityAttributes() {
       return [
         {
-          text: this.$t('serviceWeather.grey'),
+          text: this.$t('serviceWeather.gray'),
           value: SERVICE_WEATHER_PATTERN_FIELDS.grey,
           options: this.greyOptions,
         },
