@@ -8,6 +8,7 @@ export const REMEDIATION_TABS = {
 export const REMEDIATION_INSTRUCTION_TYPES = {
   manual: 0,
   auto: 1,
+  simpleManual: 2,
 };
 
 export const REMEDIATION_INSTRUCTION_APPROVAL_TYPES = {
@@ -38,3 +39,21 @@ export const REMEDIATION_STATISTICS_CHART_DATA_TYPE = {
 };
 
 export const REMEDIATION_STATISTICS_BAR_PERCENTAGE = 0.5;
+
+export const INSTRUCTION_EXECUTION_ICONS = {
+  manualInProgress: 1,
+  autoInProgress: 2,
+  autoFailed: 3,
+  manualFailed: 4,
+  manualFailedWithInProgress: 5,
+  autoFailedWithInProgress: 6,
+  manualFailedWithManualAvailable: 7,
+  autoFailedWithManualAvailable: 8,
+  manualAvailable: 9,
+  autoSuccessful: 10,
+  manualSuccessful: 11,
+  autoSuccessfulWithInProgress: 12,
+  manualSuccessfulWithInProgress: 13,
+  autoSuccessfulWithManualAvailable: 14,
+  manualSuccessfulWithManualAvailable: 15,
+};

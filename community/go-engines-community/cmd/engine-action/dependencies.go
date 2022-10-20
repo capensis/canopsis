@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
@@ -177,6 +178,16 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		},
 		logger,
 	)
+
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+
+	engineAction.AddRoutine(func(ctx context.Context) error {
+		techMetricsSender.Run(ctx)
+		return nil
+	})
+
 	engineAction.AddConsumer(engine.NewDefaultConsumer(
 		canopsis.ActionConsumerName,
 		canopsis.ActionQueueName,
@@ -189,6 +200,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		"",
 		amqpConnection,
 		&messageProcessor{
+			TechMetricsSender:        techMetricsSender,
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			ActionService:            actionService,
 			Decoder:                  json.NewDecoder(),
@@ -219,8 +231,9 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	engineAction.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		timezoneConfigProvider,
 		logger,
+		timezoneConfigProvider,
+		techMetricsConfigProvider,
 	))
 
 	return engineAction

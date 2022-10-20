@@ -57,4 +57,6 @@ const (
 	PermCorporatePattern = "api_corporate_pattern"
 
 	PermExportConfigurations = "api_export_configurations"
+
+	PermTechMetrics = "api_techmetrics"
 )

@@ -145,3 +145,11 @@ export const MESSAGE_STATS_INTERVALS = {
 };
 
 export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
+
+export const TECH_METRICS_EXPORT_STATUSES = {
+  none: 0,
+  running: 1,
+  success: 2,
+  failed: 3,
+  disabled: 4,
+};

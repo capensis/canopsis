@@ -60,7 +60,7 @@
         )
       v-flex(v-if="hasAccessToExportAsCsv")
         c-action-btn(
-          :loading="!!alarmsExportPending",
+          :loading="downloading",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
           color="black",
@@ -120,6 +120,8 @@
 <script>
 import { omit, pick, isObject } from 'lodash';
 
+import { API_HOST, API_ROUTES } from '@/config';
+
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { isResolvedAlarm, mapIds } from '@/helpers/entities';
@@ -128,7 +130,7 @@ import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
@@ -181,10 +183,9 @@ export default {
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-    exportCsvMixinCreator({
+    exportMixinCreator({
       createExport: 'createAlarmsListExport',
       fetchExport: 'fetchAlarmsListExport',
-      fetchExportFile: 'fetchAlarmsListCsvFile',
     }),
   ],
   props: {
@@ -199,6 +200,7 @@ export default {
   },
   data() {
     return {
+      downloading: false,
       selected: [],
     };
   },
@@ -369,7 +371,7 @@ export default {
       }
     },
 
-    exportAlarmsList() {
+    getExportQuery() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -377,27 +379,38 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns?.length
-        ? widgetExportColumns
-        : widgetColumns;
+      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
-      this.exportAsCsv({
-        name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        widgetId: this.widget._id,
-        data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
+      return {
+        ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
-          fields: columns.map(({ label, value }) => ({ label, name: value })),
-          filters: query.filters,
-          separator: exportCsvSeparator,
-          /**
-           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
-           */
-          time_format: isObject(exportCsvDatetimeFormat)
-            ? exportCsvDatetimeFormat.value
-            : exportCsvDatetimeFormat,
-        },
-      });
+        fields: columns.map(({ label, value }) => ({ label, name: value })),
+        filters: query.filters,
+        separator: exportCsvSeparator,
+        /**
+         * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+         */
+        time_format: isObject(exportCsvDatetimeFormat)
+          ? exportCsvDatetimeFormat.value
+          : exportCsvDatetimeFormat,
+      };
+    },
+
+    async exportAlarmsList() {
+      this.downloading = true;
+
+      try {
+        const fileData = await this.generateFile({
+          data: this.getExportQuery(),
+          widgetId: this.widget._id,
+        });
+
+        this.downloadFile(`${API_HOST}${API_ROUTES.alarmListExport}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };
