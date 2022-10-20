@@ -216,8 +216,6 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
-
-        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
       },
     },
     counter: {
@@ -389,7 +387,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.moreInfos]: USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos,
     [WEATHER_ACTIONS_TYPES.alarmsList]: USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList,
     [WEATHER_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList,
-    [WEATHER_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp,
     [WEATHER_ACTIONS_TYPES.entityComment]: USERS_PERMISSIONS.business.serviceWeather.actions.entityComment,
   },
 

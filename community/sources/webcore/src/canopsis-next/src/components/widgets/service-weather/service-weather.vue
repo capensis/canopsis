@@ -3,25 +3,31 @@
     v-layout.mx-1(wrap)
       v-flex(v-if="hasAccessToCategory", xs3)
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-      v-flex(v-if="hasAccessToUserFilter", xs4)
+      v-flex(xs5)
         v-layout(row, align-center)
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="userPreference.filters",
-            :locked-filters="widget.filters",
-            :locked-value="lockedFilter",
-            :value="mainFilter",
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
-            @input="updateSelectedFilter"
-          )
-          filters-list-btn(
-            :widget-id="widget._id",
-            :addable="hasAccessToAddFilter",
-            :editable="hasAccessToEditFilter",
-            :entity-types="[$constants.ENTITY_TYPES.service]",
-            with-entity,
-            with-service-weather,
-            private
+          template(v-if="hasAccessToUserFilter")
+            filter-selector(
+              :label="$t('settings.selectAFilter')",
+              :filters="userPreference.filters",
+              :locked-filters="widget.filters",
+              :locked-value="lockedFilter",
+              :value="mainFilter",
+              :disabled="!hasAccessToListFilters",
+              @input="updateSelectedFilter"
+            )
+            filters-list-btn(
+              :widget-id="widget._id",
+              :addable="hasAccessToAddFilter",
+              :editable="hasAccessToEditFilter",
+              :entity-types="[$constants.ENTITY_TYPES.service]",
+              with-entity,
+              with-service-weather,
+              private
+            )
+          c-enabled-field.ml-3(
+            :value="query.gray",
+            :label="$t('serviceWeather.grey')",
+            @input="updateGray"
           )
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
@@ -30,16 +36,20 @@
         v-layout(align-center)
           div.mr-4 {{ $t('errors.default') }}
           v-tooltip(top)
-            v-icon(slot="activator") help
+            template(#activator="{ on }")
+              v-icon(v-on="on") help
             div(v-if="servicesError.name") {{ $t('common.name') }}: {{ servicesError.name }}
             div(v-if="servicesError.description") {{ $t('common.description') }}: {{ servicesError.description }}
       v-alert(v-else-if="hasNoData", :value="true", type="info") {{ $t('tables.noData') }}
       template(v-else)
-        v-flex(v-for="service in services", :key="service._id", :class="flexSize")
+        v-flex(
+          v-for="service in services",
+          :key="service._id",
+          :class="flexSize"
+        )
           service-weather-item.weather-item(
             :service="service",
-            :widget="widget",
-            :template="widget.parameters.blockTemplate"
+            :widget="widget"
           )
 </template>
 
@@ -93,6 +103,18 @@ export default {
     },
   },
   methods: {
+    updateGray(gray) {
+      this.updateContentInUserPreference({
+        gray,
+      });
+
+      this.query = {
+        ...this.query,
+
+        gray,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 
