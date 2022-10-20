@@ -101,10 +101,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.Status).UnmarshalJSON(data))
 				}
 			}
-		case "timestamp":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Timestamp).UnmarshalJSON(data))
-			}
 		case "state_type":
 			if in.IsNull() {
 				in.Skip()
@@ -151,6 +147,14 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Author = string(in.String())
 		case "user_id":
 			out.UserID = string(in.String())
+		case "timestamp":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Timestamp).UnmarshalJSON(data))
+			}
+		case "rt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.ReceivedTimestamp).UnmarshalJSON(data))
+			}
 		case "routing_key":
 			out.RK = string(in.String())
 		case "ack_resources":
@@ -446,11 +450,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
-		const prefix string = ",\"timestamp\":"
-		out.RawString(prefix)
-		out.Raw((in.Timestamp).MarshalJSON())
-	}
-	{
 		const prefix string = ",\"state_type\":"
 		out.RawString(prefix)
 		if in.StateType == nil {
@@ -506,6 +505,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"user_id\":"
 		out.RawString(prefix)
 		out.String(string(in.UserID))
+	}
+	{
+		const prefix string = ",\"timestamp\":"
+		out.RawString(prefix)
+		out.Raw((in.Timestamp).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"rt\":"
+		out.RawString(prefix)
+		out.Raw((in.ReceivedTimestamp).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"routing_key\":"

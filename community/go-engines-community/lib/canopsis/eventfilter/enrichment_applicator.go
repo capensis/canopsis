@@ -31,7 +31,7 @@ func (a *enrichmentApplicator) Apply(
 	}
 
 	for _, action := range rule.Config.Actions {
-		event, err = a.actionProcessor.Process(action, event, regexMatchWrapper, externalData)
+		event, err = a.actionProcessor.Process(ctx, action, event, regexMatchWrapper, externalData)
 		if err != nil {
 			return rule.Config.OnFailure, event, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}

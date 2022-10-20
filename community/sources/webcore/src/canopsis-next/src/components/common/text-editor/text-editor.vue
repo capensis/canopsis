@@ -237,7 +237,8 @@ export default {
         return;
       }
 
-      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
+      const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
 
       if (!variableGroup) {
         this.variablesMenuValue = undefined;
@@ -296,7 +297,10 @@ export default {
       const selection = this.$editor.selection.sel;
       const { anchorNode } = selection;
 
-      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selection);
+      const { anchorOffset, focusOffset } = selection;
+      const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
+
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
 
       if (variableGroup) {
         const [oldVariable] = variableGroup;

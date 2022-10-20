@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -159,6 +160,38 @@ func (t CpsTime) In(loc *time.Location) CpsTime {
 func (t CpsTime) EqualDay(u CpsTime) bool {
 	dateFormat := "2006-01-02"
 	return t.Time.In(time.UTC).Format(dateFormat) == u.Time.In(time.UTC).Format(dateFormat)
+}
+
+type MicroTime struct {
+	time.Time
+}
+
+func NewMicroTime() MicroTime {
+	return MicroTime{Time: time.Now()}
+}
+
+func (t MicroTime) MarshalJSON() ([]byte, error) {
+	unixMicro := t.Time.UnixMicro()
+	if unixMicro <= 0 {
+		return json.Marshal(nil)
+	}
+
+	return json.Marshal(unixMicro)
+}
+
+func (t *MicroTime) UnmarshalJSON(b []byte) error {
+	var unixMicro int64
+	err := json.Unmarshal(b, &unixMicro)
+	if err != nil {
+		return err
+	}
+	if unixMicro <= 0 {
+		*t = MicroTime{}
+		return nil
+	}
+
+	*t = MicroTime{Time: time.UnixMicro(unixMicro)}
+	return nil
 }
 
 // DurationWithUnit represent duration with user-preferred units

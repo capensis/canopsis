@@ -36,8 +36,8 @@ type Security interface {
 	RegisterCallbackRoutes(router gin.IRouter, client mongo.DbClient)
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
-	// GetFileAuthMiddleware returns auth middlewares for files.
-	GetFileAuthMiddleware() []gin.HandlerFunc
+	// GetFileAuthMiddleware returns auth middleware for files.
+	GetFileAuthMiddleware() gin.HandlerFunc
 	GetSessionStore() libsession.Store
 	GetConfig() libsecurity.Config
 	GetPasswordEncoder() password.Encoder
@@ -164,12 +164,10 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	}
 }
 
-func (s *security) GetFileAuthMiddleware() []gin.HandlerFunc {
-	return []gin.HandlerFunc{
-		middleware.Auth([]libsecurity.HttpProvider{
-			httpprovider.NewCookieProvider(s.GetTokenProviders(), s.cookieOptions.FileAccessName, s.logger),
-		}),
-	}
+func (s *security) GetFileAuthMiddleware() gin.HandlerFunc {
+	return middleware.Auth([]libsecurity.HttpProvider{
+		httpprovider.NewCookieProvider(s.GetTokenProviders(), s.cookieOptions.FileAccessName, s.logger),
+	})
 }
 
 func (s *security) GetSessionStore() libsession.Store {

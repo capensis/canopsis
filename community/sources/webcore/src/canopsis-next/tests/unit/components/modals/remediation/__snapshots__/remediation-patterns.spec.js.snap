@@ -28,19 +28,11 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         with-entity="with-entity"
       />
       <c-collapse-panel-stub
-        color="grey"
+        title="Pbehavior types"
       >
-        <div
-          class="v-card v-sheet theme--light"
-        >
-          <div
-            class="v-card__text"
-          >
-            <remediation-patterns-pbehavior-types-form-stub
-              form="[object Object]"
-            />
-          </div>
-        </div>
+        <remediation-patterns-pbehavior-types-form-stub
+          form="[object Object]"
+        />
       </c-collapse-panel-stub>
     </div>
      
@@ -100,19 +92,11 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         with-entity="with-entity"
       />
       <c-collapse-panel-stub
-        color="grey"
+        title="Pbehavior types"
       >
-        <div
-          class="v-card v-sheet theme--light"
-        >
-          <div
-            class="v-card__text"
-          >
-            <remediation-patterns-pbehavior-types-form-stub
-              form="[object Object]"
-            />
-          </div>
-        </div>
+        <remediation-patterns-pbehavior-types-form-stub
+          form="[object Object]"
+        />
       </c-collapse-panel-stub>
     </div>
      
@@ -172,19 +156,11 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         with-entity="with-entity"
       />
       <c-collapse-panel-stub
-        color="grey"
+        title="Pbehavior types"
       >
-        <div
-          class="v-card v-sheet theme--light"
-        >
-          <div
-            class="v-card__text"
-          >
-            <remediation-patterns-pbehavior-types-form-stub
-              form="[object Object]"
-            />
-          </div>
-        </div>
+        <remediation-patterns-pbehavior-types-form-stub
+          form="[object Object]"
+        />
       </c-collapse-panel-stub>
     </div>
      

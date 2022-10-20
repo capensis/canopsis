@@ -119,6 +119,30 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
+ * Check instruction type is auto
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionAuto = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.auto;
+
+/**
+ * Check instruction type is manual
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionManual = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.manual;
+
+/**
+ * Check instruction type is simple manual
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionSimpleManual = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
+
+/**
  * Convert a remediation instruction step operation to form
  *
  * @param {RemediationInstructionStepOperation} [operation]
@@ -294,11 +318,14 @@ export const formToRemediationInstruction = (form) => {
     steps, jobs, priority, ...instruction
   } = form;
 
-  if (form.type === REMEDIATION_INSTRUCTION_TYPES.manual) {
+  if (isInstructionManual(form)) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
-    instruction.priority = priority;
+
+    if (isInstructionAuto(form)) {
+      instruction.priority = priority;
+    }
   }
 
   return {

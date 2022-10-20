@@ -224,8 +224,8 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				getInOrder = append(getInOrder, get)
 
 				if info.Err == nil {
-					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any()).
-						Do(func(_ context.Context, alarm types.Alarm) {
+					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any()).
+						Do(func(_ context.Context, alarm types.Alarm, _ types.MicroTime) {
 							if alarm.ID != info.Alarm.ID {
 								t.Errorf("expected alarm %s but got %s", info.Alarm.ID, alarm.ID)
 							}

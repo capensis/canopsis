@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -25,17 +26,22 @@ type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	FeatureEventProcessing   bool
 	FeatureContextCreation   bool
-	AlarmConfigProvider      config.AlarmConfigProvider
-	EventFilterService       eventfilter.Service
-	EnrichmentCenter         libcontext.EnrichmentCenter
-	AmqpPublisher            libamqp.Publisher
-	AlarmAdapter             alarm.Adapter
-	Encoder                  encoding.Encoder
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
+
+	AlarmConfigProvider config.AlarmConfigProvider
+	TechMetricsSender   techmetrics.Sender
+	EventFilterService  eventfilter.Service
+	EnrichmentCenter    libcontext.EnrichmentCenter
+	AmqpPublisher       libamqp.Publisher
+	AlarmAdapter        alarm.Adapter
+	Encoder             encoding.Encoder
+	Decoder             encoding.Decoder
+	Logger              zerolog.Logger
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	eventMetric := techmetrics.CheEventMetric{}
+	eventMetric.Timestamp = time.Now()
+
 	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
 	defer task.End()
 
@@ -67,10 +73,26 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
+	updatedEntityServices := libcontext.UpdatedEntityServices{}
+
+	defer func() {
+		if event.Entity != nil {
+			eventMetric.EntityType = event.Entity.Type
+			eventMetric.IsNewEntity = event.Entity.IsNew
+		}
+
+		eventMetric.IsInfosUpdated = event.IsEntityUpdated
+		eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+
+		p.TechMetricsSender.SendCheEvent(eventMetric)
+	}()
+
+	eventMetric.EventType = event.EventType
+
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
 	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
-	updatedEntityServices := libcontext.UpdatedEntityServices{}
 
 	// Enrich the event with the entity and create the context.
 	if p.FeatureContextCreation && event.IsContextable() {
@@ -166,8 +188,6 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	if !p.FeatureEventProcessing {
 		return nil, nil
 	}
-
-	event.Format()
 
 	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
 	event.RemovedFromServices = append(event.RemovedFromServices, updatedEntityServices.RemovedFrom...)

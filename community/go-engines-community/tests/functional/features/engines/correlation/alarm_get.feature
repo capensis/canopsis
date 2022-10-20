@@ -1374,3 +1374,205 @@ Feature: Get alarms
       }
     ]
     """
+
+  Scenario: given alarms which are matched to metaalarm should return instruction statuses and icons
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-1",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-2",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-3",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-4",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-5",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      }
+    ]
+    """
+    When I wait the end of 12 events processing
+    When I do GET /api/v4/alarms?correlation=false&search=test-resource-to-alarm-correlation-get-7&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-4"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """
+    When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
+    When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
+    When I save response childAlarmID4={{ (index .lastResponse.data 3)._id }}
+    When I save response childAlarmID5={{ (index .lastResponse.data 4)._id }}
+    When I do GET /api/v4/alarms?correlation=true&search=test-resource-to-alarm-correlation-get-7&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc
+    Then the response code should be 200
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .childAlarmID4 }}",
+      "instruction": "test-instruction-to-alarm-correlation-get-7-4"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .childAlarmID5 }}",
+      "instruction": "test-instruction-to-alarm-correlation-get-7-5"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 4 events processing
+    When I wait 3s
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "with_instructions": true,
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-1"
+                },
+                "instruction_execution_icon": 9
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-2"
+                },
+                "instruction_execution_icon": 10,
+                "successful_auto_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-2-name"
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-3"
+                },
+                "instruction_execution_icon": 3,
+                "failed_auto_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-3-name"
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-4"
+                },
+                "instruction_execution_icon": 11,
+                "successful_manual_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-4-name"
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-5"
+                },
+                "instruction_execution_icon": 4,
+                "failed_manual_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-5-name"
+                ]
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      }
+    ]
+    """
