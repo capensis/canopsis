@@ -63,7 +63,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
 
     case WEATHER_ACTIONS_TYPES.entityValidate:
     case WEATHER_ACTIONS_TYPES.entityInvalidate:
-      return state.val === ENTITIES_STATES.major;
+      return state?.val === ENTITIES_STATES.major;
 
     case WEATHER_ACTIONS_TYPES.entityCancel:
       return alarmDisplayName && (!status || !statusIsCancelled);
