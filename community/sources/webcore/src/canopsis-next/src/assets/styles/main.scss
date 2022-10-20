@@ -256,3 +256,10 @@ $mobileBreakpoint: 450px;
   bottom: 10px;
   right: 10px;
 }
+
+.alarm-counters {
+  background-color: rgba(0, 0, 0, .2);
+  flex-basis: 60px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
