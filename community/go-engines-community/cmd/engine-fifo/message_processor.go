@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"runtime/trace"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -11,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"runtime/trace"
 )
 
 type messageProcessor struct {
@@ -52,7 +53,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	event.Format()
-	p.StatsSender.Add(event.Timestamp.Unix(), true)
+	p.StatsSender.Add(time.Now().Unix(), true)
 
 	err = event.InjectExtraInfos(msg)
 	if err != nil {
