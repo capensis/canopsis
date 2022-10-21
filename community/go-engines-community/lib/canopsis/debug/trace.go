@@ -151,6 +151,8 @@ func Start(logger zerolog.Logger) Trace {
 			t.memoryWriter = writer
 		}
 	} else if profilingWebEnabled() {
+		runtime.SetBlockProfileRate(1)
+		runtime.SetMutexProfileFraction(1)
 		logger.Info().Msg("Profiling web ENABLED")
 		go func() {
 			err := http.ListenAndServe("localhost:6060", nil)
