@@ -42,7 +42,7 @@
               template(v-if="isService")
                 v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
                 v-tab-item(lazy)
-                  service-entity-tree-of-dependencies-tab(
+                  service-entity-tree-of-dependencies-tab.pa-2(
                     :entity="entity",
                     :columns="serviceDependenciesColumns"
                   )
