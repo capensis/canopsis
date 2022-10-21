@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
-      v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected")
+      v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected", :disabled="!entitiesWithActions.length")
       template(v-if="selectedEntities.length")
         service-entity-actions(:actions="actions", @apply="applyActionForSelected")
     div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
@@ -12,7 +12,7 @@
         :entity-name-field="entityNameField",
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
-        @select="updateSelected(serviceEntity, $event)",
+        @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
         @apply:action="$listeners['apply:action']",
         @refresh="$listeners.refresh"
@@ -28,7 +28,11 @@
 </template>
 
 <script>
-import { getAvailableActionsByEntities, isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
+import {
+  getAvailableActionsByEntities,
+  getAvailableEntityActionsTypes,
+  isActionTypeAvailableForEntity,
+} from '@/helpers/entities/entity';
 import { filterById, mapIds } from '@/helpers/entities';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
@@ -74,14 +78,21 @@ export default {
     };
   },
   computed: {
+    entitiesWithActions() {
+      return this.serviceEntities.filter(entity => getAvailableEntityActionsTypes(entity).length);
+    },
+
     isAllSelected: {
       get() {
-        return this.serviceEntities.every(({ _id: id }) => this.selectedEntitiesIds.includes(id));
+        return this.entitiesWithActions.length > 0
+          && this.entitiesWithActions.every(({ _id: id }) => this.selectedEntitiesIds.includes(id));
       },
       set(checked) {
-        this.selectedEntities = checked
-          ? [...this.serviceEntities]
-          : [];
+        if (checked) {
+          this.selectedEntities = [...this.entitiesWithActions];
+        } else {
+          this.selectedEntities = [];
+        }
       },
     },
 

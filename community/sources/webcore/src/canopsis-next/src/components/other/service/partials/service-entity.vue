@@ -3,22 +3,24 @@
     v-expansion-panel(v-model="opened", dark)
       v-expansion-panel-content(:style="{ backgroundColor: color }")
         template(#header="")
-          entity-header(
+          service-entity-header(
             :selected="selected",
+            :selectable="!!availableActions.length",
             :entity="entity",
             :entity-name-field="entityNameField",
             :last-action-unavailable="lastActionUnavailable",
-            @select="$listeners.select",
+            @update:selected="$listeners['update:selected']",
             @remove:unavailable="$listeners['remove:unavailable']"
           )
         v-card(color="white black--text")
           v-card-text
-            entity-info-tab(
+            service-entity-info-tab(
               v-if="!isService && !hasAccessToPbehaviors",
               :entity="entity",
               :template="template",
-              @apply:action="$listeners['apply:action']",
-              @refresh="$listeners.refresh"
+              :actions="availableActions",
+              @apply="applyActionForEntity",
+              @execute="executeAlarmInstruction"
             )
             v-tabs(
               v-else,
@@ -30,16 +32,17 @@
             )
               v-tab {{ $t('modals.service.entity.tabs.info') }}
               v-tab-item
-                entity-info-tab(
+                service-entity-info-tab(
                   :entity="entity",
                   :template="template",
-                  @apply:action="$listeners['apply:action']",
-                  @refresh="$listeners.refresh"
+                  :actions="availableActions",
+                  @apply="applyActionForEntity",
+                  @execute="executeAlarmInstruction"
                 )
               template(v-if="isService")
                 v-tab {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
                 v-tab-item(lazy)
-                  entity-tree-of-dependencies-tab(
+                  service-entity-tree-of-dependencies-tab(
                     :entity="entity",
                     :columns="serviceDependenciesColumns"
                   )
@@ -52,27 +55,34 @@
 <script>
 import { isNull } from 'lodash';
 
-import { ENTITY_TYPES, USERS_PERMISSIONS } from '@/constants';
+import { ENTITY_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
+import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
+import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 import { authMixin } from '@/mixins/auth';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
+import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
 
-import EntityHeader from './service-entity-header.vue';
-import EntityInfoTab from './service-entity-info-tab.vue';
-import EntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-tab.vue';
+import ServiceEntityHeader from './service-entity-header.vue';
+import ServiceEntityInfoTab from './service-entity-info-tab.vue';
+import ServiceEntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-tab.vue';
 
 export default {
   components: {
     PbehaviorsSimpleList,
-    EntityHeader,
-    EntityInfoTab,
-    EntityTreeOfDependenciesTab,
+    ServiceEntityHeader,
+    ServiceEntityInfoTab,
+    ServiceEntityTreeOfDependenciesTab,
   },
-  mixins: [authMixin, vuetifyTabsMixin],
+  mixins: [
+    authMixin,
+    vuetifyTabsMixin,
+    widgetActionPanelServiceEntityMixin,
+  ],
   props: {
     entity: {
       type: Object,
@@ -130,12 +140,37 @@ export default {
       return this.hasPbehaviors
         && this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors);
     },
+
+    availableActions() {
+      return getAvailableActionsByEntity(this.entity).filter(this.actionsAccessFilterHandler);
+    },
   },
   watch: {
     opened(opened) {
       if (!isNull(opened) && this.$refs.tabs) {
         this.$nextTick(this.callTabsUpdateTabsMethod);
       }
+    },
+  },
+  methods: {
+    applyActionForEntity({ type }) {
+      this.applyEntityAction(type, [this.entity]);
+    },
+
+    executeAlarmInstruction(assignedInstruction) {
+      const refreshEntities = () => this.$emit('refresh');
+
+      this.$modals.show({
+        name: isInstructionManual(assignedInstruction)
+          ? MODALS.executeRemediationInstruction
+          : MODALS.executeRemediationSimpleInstruction,
+        config: {
+          assignedInstruction,
+          alarmId: this.entity.alarm_id,
+          onClose: refreshEntities,
+          onComplete: refreshEntities,
+        },
+      });
     },
   },
 };
