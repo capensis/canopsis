@@ -73,8 +73,8 @@ install: $(CURRENT_BUILD_OUTPUT_DIR)/www
 nginx_config:
 	@echo "==> installing Nginx default config"
 	install -d -m 755 -- "$(DESTDIR)/etc/nginx/conf.d"
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/config/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/"
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/config/nginx/resolvers.inc" "$(DESTDIR)/etc/nginx/"
+	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/go-engines-community/config/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/"
+	install -c -m 644 -p -- "$(MONOREPO_ROOT)/ommunity/go-engines-community/config/nginx/resolvers.inc" "$(DESTDIR)/etc/nginx/"
 
 #
 # DOCKER
