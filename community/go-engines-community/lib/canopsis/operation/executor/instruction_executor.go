@@ -32,7 +32,6 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			// Job
 			types.EventTypeInstructionJobStarted:   types.AlarmStepInstructionJobStart,
 			types.EventTypeInstructionJobCompleted: types.AlarmStepInstructionJobComplete,
-			types.EventTypeInstructionJobAborted:   types.AlarmStepInstructionJobAbort,
 			types.EventTypeInstructionJobFailed:    types.AlarmStepInstructionJobFail,
 		},
 		alarmChangeTypeMap: map[string]types.AlarmChangeType{
@@ -51,7 +50,6 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			// Job
 			types.EventTypeInstructionJobStarted:   types.AlarmChangeTypeInstructionJobStart,
 			types.EventTypeInstructionJobCompleted: types.AlarmChangeTypeInstructionJobComplete,
-			types.EventTypeInstructionJobAborted:   types.AlarmChangeTypeInstructionJobAbort,
 			types.EventTypeInstructionJobFailed:    types.AlarmChangeTypeInstructionJobFail,
 		},
 		metricsSender: metricsSender,

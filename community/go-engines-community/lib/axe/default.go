@@ -333,7 +333,6 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeAutoInstructionFailed, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionJobAborted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobFailed, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeJunitTestSuiteUpdated, executor.NewJunitExecutor())
 	container.Set(types.EventTypeJunitTestCaseUpdated, executor.NewJunitExecutor())

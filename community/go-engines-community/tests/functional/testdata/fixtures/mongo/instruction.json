@@ -2270,6 +2270,84 @@
     "created": 1596712203
   },
   {
+    "_id": "test-instruction-to-run-auto-instruction-12-1",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-12-1-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-12"
+      }
+    ],
+    "alarm_patterns": [
+      {
+        "v": {
+          "state": {
+            "val": 1
+          }
+        }
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-12-1-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      },
+      {
+        "job": "test-job-to-run-auto-instruction-5",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 1,
+      "unit": "s"
+    },
+    "priority": 114,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
+    "_id": "test-instruction-to-run-auto-instruction-12-2",
+    "type": 1,
+    "name": "test-instruction-to-run-auto-instruction-12-2-name",
+    "entity_patterns": [
+      {
+        "name": "test-resource-to-run-auto-instruction-12"
+      }
+    ],
+    "alarm_patterns": [
+      {
+        "v": {
+          "state": {
+            "val": 1
+          }
+        }
+      }
+    ],
+    "description": "test-instruction-to-run-auto-instruction-12-2-description",
+    "jobs": [
+      {
+        "job": "test-job-to-run-auto-instruction-1",
+        "stop_on_fail": false
+      },
+      {
+        "job": "test-job-to-run-auto-instruction-5",
+        "stop_on_fail": false
+      }
+    ],
+    "timeout_after_execution": {
+      "value": 1,
+      "unit": "s"
+    },
+    "priority": 115,
+    "author": "test-user-author-1-id",
+    "enabled": true,
+    "last_modified": 1596712203,
+    "created": 1596712203
+  },
+  {
     "_id": "test-instruction-to-run-auto-instruction-to-approve-update",
     "type": 1,
     "name": "est-instruction-to-run-auto-instruction-to-approve-update-name",
