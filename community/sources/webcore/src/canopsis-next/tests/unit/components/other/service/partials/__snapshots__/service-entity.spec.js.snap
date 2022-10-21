@@ -186,7 +186,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
               class="v-card__text"
             >
               <service-entity-info-tab-stub
-                actions="[object Object]"
+                actions="[object Object],[object Object]"
                 entity="[object Object]"
                 template=""
               />
