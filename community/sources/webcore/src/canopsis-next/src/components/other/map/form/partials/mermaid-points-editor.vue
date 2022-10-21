@@ -35,6 +35,7 @@
       :position-x="clientX",
       :position-y="clientY",
       :editing="!!editingPoint",
+      :exists-entities="existsEntities",
       @cancel="clearMenuData",
       @submit="submitPointForm",
       @remove="showRemovePointModal"
@@ -98,6 +99,10 @@ export default {
     };
   },
   computed: {
+    existsEntities() {
+      return this.points.map(({ entity }) => entity);
+    },
+
     isFormOpened() {
       return this.adding || this.editing;
     },
