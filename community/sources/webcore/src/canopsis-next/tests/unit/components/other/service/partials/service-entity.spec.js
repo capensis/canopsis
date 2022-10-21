@@ -3,7 +3,8 @@ import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import {
-  ENTITY_TYPES, MODALS,
+  ENTITY_TYPES,
+  MODALS,
   PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
   WEATHER_ACTIONS_TYPES,
