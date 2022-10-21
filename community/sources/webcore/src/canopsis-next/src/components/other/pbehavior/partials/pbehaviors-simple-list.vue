@@ -1,7 +1,16 @@
 <template lang="pug">
   v-layout.white(column)
     v-layout(row, justify-end)
-      c-action-fab-btn.ma-2(
+      c-action-fab-btn.ma-0(
+        v-if="addable",
+        :tooltip="$t('modals.createPbehavior.create.title')",
+        icon="add",
+        color="primary",
+        small,
+        left,
+        @click="showCreatePbehaviorModal"
+      )
+      c-action-fab-btn.ma-0(
         :tooltip="$t('modals.pbehaviorsCalendar.title')",
         icon="calendar_today",
         color="secondary",
@@ -9,7 +18,7 @@
         left,
         @click="showPbehaviorsCalendarModal"
       )
-    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending")
+    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending", :dense="dense", light)
       template(#items="{ item }")
         td {{ item.name }}
         td {{ item.author }}
@@ -23,10 +32,12 @@
           v-icon {{ item.rrule ? 'check' : 'clear' }}
         td
           v-icon(color="primary") {{ item.type.icon_name }}
+        td(v-if="withActiveStatus")
+          v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
         td
           v-layout(row)
-            c-action-btn(v-if="editable", type="edit", @click="showEditPbehaviorModal(item)")
-            c-action-btn(v-if="deletable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+            c-action-btn(v-if="updatable", type="edit", @click="showEditPbehaviorModal(item)")
+            c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
@@ -35,6 +46,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS } from '@/constants';
 
 import Observer from '@/services/observer';
+
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -52,11 +65,23 @@ export default {
       type: Object,
       required: true,
     },
-    deletable: {
+    removable: {
       type: Boolean,
       default: false,
     },
-    editable: {
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
+    withActiveStatus: {
       type: Boolean,
       default: false,
     },
@@ -69,7 +94,7 @@ export default {
   },
   computed: {
     headers() {
-      return [
+      const headers = [
         { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.author'), value: 'author' },
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
@@ -79,8 +104,17 @@ export default {
         { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
         { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
         { text: this.$t('common.icon'), value: 'type.icon_name' },
-        { text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false },
       ];
+
+      if (this.withActiveStatus) {
+        headers.push({ text: this.$t('common.status'), value: 'is_active_status', sortable: false });
+      }
+
+      if (this.updatable || this.removable) {
+        headers.push({ text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false });
+      }
+
+      return headers;
     },
   },
   mounted() {
@@ -94,6 +128,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
+      removePbehavior: 'removeWithoutStore',
     }),
 
     showEditPbehaviorModal(pbehavior) {
@@ -112,6 +147,16 @@ export default {
         config: {
           title: this.$t('modals.pbehaviorsCalendar.entity.title', { name: this.entity.name }),
           entityId: this.entity._id,
+        },
+      });
+    },
+
+    showCreatePbehaviorModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorPlanning,
+        config: {
+          entityPattern: createEntityIdPatternByValue(this.entity._id),
+          afterSubmit: this.fetchList,
         },
       });
     },

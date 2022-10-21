@@ -19,6 +19,7 @@ import {
   createCommentEventByEntity,
   createDeclareTicketEventByEntity,
   createInvalidateEventByEntity,
+  createRemoveAckEventByEntity,
   createValidateEventByEntity,
 } from '@/helpers/forms/event';
 
@@ -47,18 +48,25 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
   } = entity;
 
   const paused = hasPausedPbehavior(pbehaviors);
+  const stateIsOk = state?.val === ENTITIES_STATES.ok;
+  const statusIsCancelled = status?.val === ENTITIES_STATUSES.cancelled;
+
+  if (stateIsOk || statusIsCancelled) {
+    return false;
+  }
 
   switch (actionType) {
     case WEATHER_ACTIONS_TYPES.entityAck:
-      return state.val !== ENTITIES_STATES.ok && isNull(ack);
+      return !stateIsOk && isNull(ack);
+    case WEATHER_ACTIONS_TYPES.entityAckRemove:
+      return !stateIsOk && !isNull(ack);
 
     case WEATHER_ACTIONS_TYPES.entityValidate:
     case WEATHER_ACTIONS_TYPES.entityInvalidate:
       return state.val === ENTITIES_STATES.major;
 
     case WEATHER_ACTIONS_TYPES.entityCancel:
-      return alarmDisplayName
-        && (!status || status.val !== ENTITIES_STATUSES.cancelled);
+      return alarmDisplayName && (!status || !statusIsCancelled);
 
     case WEATHER_ACTIONS_TYPES.entityPlay:
       return paused;
@@ -89,6 +97,7 @@ export const getAvailableEntityActionsTypes = (
     WEATHER_ACTIONS_TYPES.entityComment,
     WEATHER_ACTIONS_TYPES.executeInstruction,
     WEATHER_ACTIONS_TYPES.entityAck,
+    WEATHER_ACTIONS_TYPES.entityAckRemove,
     WEATHER_ACTIONS_TYPES.entityAssocTicket,
     WEATHER_ACTIONS_TYPES.declareTicket,
     WEATHER_ACTIONS_TYPES.entityValidate,
@@ -136,6 +145,7 @@ export const getAvailableActionsByEntities = (
   actionTypes = [
     WEATHER_ACTIONS_TYPES.entityComment,
     WEATHER_ACTIONS_TYPES.entityAck,
+    WEATHER_ACTIONS_TYPES.entityAckRemove,
     WEATHER_ACTIONS_TYPES.entityAssocTicket,
     WEATHER_ACTIONS_TYPES.declareTicket,
     WEATHER_ACTIONS_TYPES.entityValidate,
@@ -166,6 +176,10 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
     case WEATHER_ACTIONS_TYPES.entityAck:
       return [
         createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
+      ];
+    case WEATHER_ACTIONS_TYPES.entityAckRemove:
+      return [
+        createRemoveAckEventByEntity({ entity, output: payload.output }),
       ];
     case WEATHER_ACTIONS_TYPES.entityComment:
       return [
@@ -198,32 +212,6 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
 
   return [];
 };
-
-/**
- * Convert entity actions to entity events
- *
- * @param {EntityAction[]} actions
- * @return {Event[]}
- */
-export const convertActionsToEvents = actions => actions.reduce((
-  acc,
-  {
-    actionType,
-
-    entities,
-    payload = {},
-  },
-) => {
-  entities.forEach((entity) => {
-    acc.push(...convertActionToEvents({
-      actionType,
-      entity,
-      payload,
-    }));
-  });
-
-  return acc;
-}, []);
 
 /**
  * Get icon by entity type

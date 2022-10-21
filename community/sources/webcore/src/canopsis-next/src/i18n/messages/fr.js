@@ -241,6 +241,7 @@ export default merge({
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    activePbehavior: 'Activer le comportement périodique | Activer les comportements périodiques',
     searchBy: 'Recherché par',
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',
@@ -1187,7 +1188,6 @@ export default merge({
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
@@ -2223,6 +2223,7 @@ export default merge({
     cannotBeApplied: 'Cette action ne peut pas être appliquée',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Annuler l\'accusé de acquitter',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
