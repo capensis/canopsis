@@ -1,7 +1,7 @@
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { ENTITIES_STATUSES, ENTITY_TYPES } from '@/constants';
 
-import ServiceEntity from '@/components/other/service/partials/service-entity-header.vue';
+import ServiceEntityHeader from '@/components/other/service/partials/service-entity-header.vue';
 
 const localVue = createVueInstance();
 
@@ -12,8 +12,8 @@ const stubs = {
 const selectAlert = wrapper => wrapper.find('v-alert-stub');
 
 describe('service-entity-header', () => {
-  const snapshotFactory = generateRenderer(ServiceEntity, { localVue, stubs });
-  const factory = generateShallowRenderer(ServiceEntity, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ServiceEntityHeader, { localVue, stubs });
+  const factory = generateShallowRenderer(ServiceEntityHeader, { localVue, stubs });
 
   test('Alert removed after trigger alert', () => {
     const wrapper = factory({
