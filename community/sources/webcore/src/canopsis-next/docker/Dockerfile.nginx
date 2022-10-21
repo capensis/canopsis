@@ -14,8 +14,8 @@ WORKDIR /app/community/sources/webcore/src/canopsis-next
 RUN make
 
 # Avoid rebuilding the frontend when only files in community/docker have changed
-COPY ./community/docker /app/community/docker
-COPY ./community/deploy-ansible /app/community/deploy-ansible
+#COPY ./community/docker /app/community/docker
+#COPY ./community/deploy-ansible /app/community/deploy-ansible
 RUN make install DESTDIR=/installroot
 
 #
@@ -31,7 +31,7 @@ VOLUME /etc/nginx/ssl
 
 COPY --from=build /installroot/ /
 
-COPY community/docker/files/entrypoint-nginx.sh /entrypoint.sh
+COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
 
 USER root
 RUN chmod +x /entrypoint.sh
@@ -50,7 +50,7 @@ RUN mkdir -p -m 0750 /etc/nginx/ssl
 
 COPY --from=build /installroot/ /
 
-COPY community/docker/files/entrypoint-nginx.sh /entrypoint.sh
+COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENV NGINX_OPENSHIFT=0

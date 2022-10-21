@@ -27,14 +27,18 @@ then
 	fi
 fi
 
+if [ "$NGINX_DISABLE_IPV6" = "true" ]
+then
+	sed -i -e '/listen \[\:\:\]\:.*/d' "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
+fi
+
 if [ "$ENABLE_RUNDECK" = "true" ]
 then
 	sed -i -e "s,#include ${NGINX_CONFIGURATION_DIRECTORY}/rundeck.inc;,include ${NGINX_CONFIGURATION_DIRECTORY}/rundeck.inc;,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
 fi
 
-sed -i -e "s,{{ CPS_API_URL }},$CPS_API_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
-sed -i -e "s,{{ CPS_OLD_API_URL }},$CPS_OLD_API_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
-sed -i -e "s,{{ CPS_SERVER_NAME }},$CPS_SERVER_NAME,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
+sed -i -e "s,http://127.0.0.1:8082,$CPS_API_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
+sed -i -e "s,\$canopsis_server_name localhost,\$canopsis_server_name $CPS_SERVER_NAME,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf
 sed -i -e "s,{{ RUNDECK_GRAILS_URL }},$RUNDECK_GRAILS_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/rundeck.inc
 sed -i -e "s,{{ NGINX_URL }},$NGINX_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/rundeck.inc
 echo "resolver $(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf) valid=20s;" > "${NGINX_CONFIGURATION_DIRECTORY}"/resolvers.inc
