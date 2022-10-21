@@ -28,7 +28,7 @@ make -C community/sources/webcore/src/canopsis-next VERSION=%{version}
 make -C community/go-engines-community DESTDIR=%{buildroot} install
 make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYSTEMD_UNITS="engine-action engine-axe engine-che engine-fifo engine-pbehavior engine-service" SERVICES="canopsis-api"
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} install
-make -C community/go-engines-community DESTDIR=%{buildroot} nginx_config
+make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} nginx_config
 
 %pre
 getent passwd canopsis >/dev/null || \
