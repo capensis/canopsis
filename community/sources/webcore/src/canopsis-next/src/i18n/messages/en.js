@@ -241,6 +241,7 @@ export default merge({
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    activePbehavior: 'Active pbehavior | Active pbehaviors',
     searchBy: 'Search by',
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
@@ -1187,7 +1188,6 @@ export default merge({
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -2223,6 +2223,7 @@ export default merge({
     cannotBeApplied: 'This action cannot be applied',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Cancel acknowledge',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',

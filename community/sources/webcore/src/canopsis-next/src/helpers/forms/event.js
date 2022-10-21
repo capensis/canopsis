@@ -189,6 +189,19 @@ export const createAckEventByEntity = ({ entity, output }) => prepareEventByEnti
 );
 
 /**
+ * Create remove acknowledge event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} output
+ * @return {Event}
+ */
+export const createRemoveAckEventByEntity = ({ entity, output }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.ackRemove,
+  { output },
+);
+
+/**
  * Create associate ticket event by entity data
  *
  * @param {Entity} entity

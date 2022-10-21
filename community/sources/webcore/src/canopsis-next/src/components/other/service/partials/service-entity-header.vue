@@ -3,9 +3,10 @@
     v-flex(@click.stop="")
       v-checkbox.ma-0.pa-0(
         :input-value="selected",
+        :disabled="!selectable",
         color="white",
         hide-details,
-        @change="$listeners.select"
+        @change="$emit('update:selected', $event)"
       )
     v-flex.pa-2
       v-icon(color="white", small) {{ icon }}
@@ -22,13 +23,14 @@
         )
           v-icon(small) {{ icon.icon }}
         c-no-events-icon(:value="entity.idle_since", color="white", top)
-        v-alert.entity-alert.ma-0.px-2.py-1(
-          v-if="alertIsVisible",
-          v-model="alertIsVisible",
-          color="black",
-          dismissible,
-          @click.stop=""
-        ) {{ $t('serviceWeather.cannotBeApplied') }}
+        div(@click.stop="")
+          v-alert.entity-alert.ma-0.px-2.py-1(
+            v-if="alertIsVisible",
+            :value="alertIsVisible",
+            color="black",
+            dismissible,
+            @input="hideAlert"
+          ) {{ $t('serviceWeather.cannotBeApplied') }}
 </template>
 
 <script>
@@ -48,6 +50,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    selectable: {
+      type: Boolean,
+      default: false,
+    },
     lastActionUnavailable: {
       type: Boolean,
       default: false,
@@ -58,13 +64,8 @@ export default {
     },
   },
   computed: {
-    alertIsVisible: {
-      get() {
-        return this.lastActionUnavailable;
-      },
-      set(value) {
-        this.$emit('remove-unavailable', value);
-      },
+    alertIsVisible() {
+      return this.lastActionUnavailable;
     },
 
     entityName() {
@@ -100,6 +101,11 @@ export default {
       }
 
       return extraIcons;
+    },
+  },
+  methods: {
+    hideAlert() {
+      this.$emit('remove:unavailable');
     },
   },
 };

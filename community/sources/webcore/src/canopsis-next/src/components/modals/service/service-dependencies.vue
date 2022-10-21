@@ -17,7 +17,7 @@ import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
-import ServiceDependenciesTable from '@/components/other/service/table/service-dependencies.vue';
+import ServiceDependenciesTable from '@/components/other/service/partials/service-dependencies.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

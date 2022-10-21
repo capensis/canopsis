@@ -30,7 +30,8 @@ export const widgetActionPanelServiceEntityMixin = {
      */
     actionsMethodsMap() {
       return {
-        [WEATHER_ACTIONS_TYPES.entityAck]: this.addAckActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityAck]: this.applyAckAction,
+        [WEATHER_ACTIONS_TYPES.entityAckRemove]: this.showAckRemoveModal,
         [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
         [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
         [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
@@ -47,7 +48,7 @@ export const widgetActionPanelServiceEntityMixin = {
       this.unavailableEntitiesAction[entity._id] = false;
     },
 
-    addActionToQueue(action) {
+    applyAction(action) {
       const {
         availableEntities,
         unavailableEntities,
@@ -70,13 +71,13 @@ export const widgetActionPanelServiceEntityMixin = {
         return acc;
       }, {});
 
-      this.$emit('add:action', {
+      this.$emit('apply:action', {
         ...action,
         entities: availableEntities,
       });
     },
 
-    addEntityAction(actionType, entities) {
+    applyEntityAction(actionType, entities) {
       const handler = this.actionsMethodsMap[actionType];
 
       if (handler) {
@@ -98,10 +99,31 @@ export const widgetActionPanelServiceEntityMixin = {
         : true;
     },
 
-    addAckActionToQueue(entities) {
-      this.addActionToQueue({
+    applyAckAction(entities) {
+      this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityAck,
+      });
+    },
+
+    showAckRemoveModal(entities) {
+      this.$modals.show({
+        name: MODALS.textFieldEditor,
+        config: {
+          title: this.$t('modals.createAckRemove.title'),
+          field: {
+            name: 'output',
+            label: this.$t('common.note'),
+            validationRules: 'required',
+          },
+          action: ({ output }) => {
+            this.applyAction({
+              entities,
+              payload: { output },
+              actionType: WEATHER_ACTIONS_TYPES.entityAckRemove,
+            });
+          },
+        },
       });
     },
 
@@ -116,7 +138,7 @@ export const widgetActionPanelServiceEntityMixin = {
             validationRules: 'required',
           },
           action: (ticket) => {
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
               payload: { ticket },
@@ -127,7 +149,7 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     showCreateDeclareTicketModal(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         actionType: WEATHER_ACTIONS_TYPES.declareTicket,
         entities,
       });
@@ -138,7 +160,7 @@ export const widgetActionPanelServiceEntityMixin = {
         name: MODALS.createCommentEvent,
         config: {
           action: ({ output }) => {
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityComment,
               payload: { output },
@@ -149,14 +171,14 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     addValidateActionToQueue(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         actionType: WEATHER_ACTIONS_TYPES.entityValidate,
         entities,
       });
     },
 
     addInvalidateActionToQueue(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityInvalidate,
         payload: {
@@ -174,7 +196,7 @@ export const widgetActionPanelServiceEntityMixin = {
 
             const pauseType = defaultPbehaviorTypes.find(({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause);
 
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityPause,
               payload: {
@@ -189,7 +211,7 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     addPlayActionToQueue(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityPlay,
       });
@@ -201,7 +223,7 @@ export const widgetActionPanelServiceEntityMixin = {
         config: {
           title: this.$t('common.note'),
           action: (output) => {
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityCancel,
               payload: { output },
