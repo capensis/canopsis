@@ -72,9 +72,6 @@ func (c *connection) Close() error {
 }
 
 func (c *connection) SetReadDeadline(t time.Time) error {
-	c.readMx.Lock()
-	defer c.readMx.Unlock()
-
 	return c.conn.SetReadDeadline(t)
 }
 
