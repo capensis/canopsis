@@ -1,37 +1,25 @@
 <template lang="pug">
   div
-    v-layout.pa-2(v-if="availableActions.length", align-center, wrap)
+    v-layout.pa-2(v-if="actions.length", align-center, wrap)
       div {{ $t('common.actionsLabel') }}:
       service-entity-actions(
-        :actions="availableActions",
+        :actions="actions",
         :assigned-instructions="entity.assigned_instructions",
-        @apply="applyActionForEntity",
-        @execute="executeAlarmInstruction"
+        @apply="$listeners.apply",
+        @execute="$listeners.execute"
       )
     service-entity-template(:entity="entity", :template="template")
 </template>
 
 <script>
-import { MODALS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
-
-import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
-
-import { authMixin } from '@/mixins/auth';
-import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
-
 import ServiceEntityTemplate from './service-entity-template.vue';
 import ServiceEntityActions from './service-entity-actions.vue';
-import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 export default {
   components: {
     ServiceEntityActions,
     ServiceEntityTemplate,
   },
-  mixins: [
-    authMixin,
-    widgetActionPanelServiceEntityMixin,
-  ],
   props: {
     entity: {
       type: Object,
@@ -41,36 +29,9 @@ export default {
       type: String,
       default: '',
     },
-  },
-  computed: {
-    paused() {
-      return this.entity.pbehavior_info?.canonical_type === PBEHAVIOR_TYPE_TYPES.pause;
-    },
-
-    availableActions() {
-      return getAvailableActionsByEntity(this.entity)
-        .filter(this.actionsAccessFilterHandler);
-    },
-  },
-  methods: {
-    applyActionForEntity({ type }) {
-      this.applyEntityAction(type, [this.entity]);
-    },
-
-    executeAlarmInstruction(assignedInstruction) {
-      const refreshEntities = () => this.$emit('refresh');
-
-      this.$modals.show({
-        name: isInstructionManual(assignedInstruction)
-          ? MODALS.executeRemediationInstruction
-          : MODALS.executeRemediationSimpleInstruction,
-        config: {
-          assignedInstruction,
-          alarmId: this.entity.alarm_id,
-          onClose: refreshEntities,
-          onComplete: refreshEntities,
-        },
-      });
+    actions: {
+      type: Array,
+      default: () => [],
     },
   },
 };
