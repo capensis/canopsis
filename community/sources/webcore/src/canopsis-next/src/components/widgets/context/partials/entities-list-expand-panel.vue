@@ -6,8 +6,8 @@
         v-card-text
           pbehaviors-simple-list(
             :entity="item",
-            :deletable="hasDeleteAnyPbehaviorAccess",
-            :editable="hasUpdateAnyPbehaviorAccess"
+            :removable="hasDeleteAnyPbehaviorAccess",
+            :updatable="hasUpdateAnyPbehaviorAccess"
           )
 
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
