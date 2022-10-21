@@ -3,9 +3,10 @@
     v-flex(@click.stop="")
       v-checkbox.ma-0.pa-0(
         :input-value="selected",
+        :disabled="!selectable",
         color="white",
         hide-details,
-        @change="$listeners.select"
+        @change="$emit('update:selected', $event)"
       )
     v-flex.pa-2
       v-icon(color="white", small) {{ icon }}
@@ -46,6 +47,10 @@ export default {
       required: true,
     },
     selected: {
+      type: Boolean,
+      default: false,
+    },
+    selectable: {
       type: Boolean,
       default: false,
     },
