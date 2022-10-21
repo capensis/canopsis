@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
 import VueAsyncComputed from 'vue-async-computed';
+import VueResizeText from 'vue-resize-text';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
 import { MqLayout } from '@unit/stubs/mq';
@@ -35,6 +36,7 @@ const mocks = {
 };
 
 Vue.use(VueAsyncComputed);
+Vue.use(VueResizeText);
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);

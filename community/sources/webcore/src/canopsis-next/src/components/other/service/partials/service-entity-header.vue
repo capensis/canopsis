@@ -25,8 +25,8 @@
         c-no-events-icon(:value="entity.idle_since", color="white", top)
         div(@click.stop="")
           v-alert.entity-alert.ma-0.px-2.py-1(
-            v-if="alertIsVisible",
-            :value="alertIsVisible",
+            v-if="lastActionUnavailable",
+            :value="lastActionUnavailable",
             color="black",
             dismissible,
             @input="hideAlert"
@@ -64,10 +64,6 @@ export default {
     },
   },
   computed: {
-    alertIsVisible() {
-      return this.lastActionUnavailable;
-    },
-
     entityName() {
       return get({ entity: this.entity }, this.entityNameField, this.entityNameField);
     },
@@ -93,7 +89,7 @@ export default {
         });
       }
 
-      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
+      if (this.entity.status?.val === ENTITIES_STATUSES.cancelled) {
         extraIcons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           color: 'grey darken-1',
