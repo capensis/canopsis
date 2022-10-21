@@ -1,23 +1,25 @@
 <template lang="pug">
-  v-layout.alarm-counters(column, justify-space-around)
+  v-layout.alarm-counters(column)
     v-tooltip(
-      v-for="counter in alarmCounters.selected",
+      v-for="counter in preparedCounters.selected",
       :key="counter.key",
       top
     )
-      alarm-counter(
-        :count="counter.count",
-        :icon="counter.icon",
-        slot="activator"
-      )
+      template(#activator="{ on }")
+        alarm-counter(
+          v-on="on",
+          :count="counter.count",
+          :icon="counter.icon"
+        )
       span {{ counter.name }}
-    v-tooltip(top, :disabled="!otherCountersValue")
-      alarm-counter(
-        :count="otherCountersValue",
-        icon="more_horiz",
-        slot="activator"
-      )
-      div(v-for="otherCounter in alarmCounters.other", :key="otherCounter.key")
+    v-tooltip(:disabled="!otherCountersValue", top)
+      template(#activator="{ on }")
+        alarm-counter(
+          v-on="on",
+          :count="otherCountersValue",
+          icon="more_horiz"
+        )
+      div(v-for="otherCounter in preparedCounters.other", :key="otherCounter.key")
         strong {{ otherCounter.name }}
         span : {{ otherCounter.count }}
 </template>
@@ -30,19 +32,19 @@ export default {
     AlarmCounter,
   },
   props: {
-    selectedTypes: {
-      type: Array,
-      required: true,
-    },
     counters: {
+      type: Array,
+      default: () => [],
+    },
+    types: {
       type: Array,
       default: () => [],
     },
   },
   computed: {
-    alarmCounters() {
+    preparedCounters() {
       return this.counters.reduce((acc, { count, type }) => {
-        if (this.selectedTypes.includes(type._id)) {
+        if (this.types.includes(type._id)) {
           acc.selected.push({
             key: type._id,
             name: type.name,
@@ -65,15 +67,8 @@ export default {
     },
 
     otherCountersValue() {
-      return this.alarmCounters.other.reduce((acc, { count }) => acc + count, 0);
+      return this.preparedCounters.other.reduce((acc, { count }) => acc + count, 0);
     },
   },
 };
 </script>
-
-<style lang="scss">
-  .alarm-counters {
-    position: relative;
-    background-color: rgba(0, 0, 0, .2);
-  }
-</style>

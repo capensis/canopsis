@@ -1,3 +1,5 @@
+import { COLORS } from '@/config';
+
 export const DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE = `<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
 <hr id="null">
 <p>{{ entity.output }}</p>
@@ -23,18 +25,40 @@ export const SERVICE_WEATHER_PATTERN_FIELDS = {
   state: 'state.val',
 };
 
-/* TODO: Should be fixed after backend integration */
 export const SERVICE_WEATHER_STATE_COUNTERS = {
-  alarms: 'alarms',
-  dependencies: 'depends',
-  ok: 'state.info',
-  underPbehavior: 'pbehavior_counters',
+  all: 'all',
+  active: 'active',
+  depends: 'depends',
+  ok: 'state.ok',
   minor: 'state.minor',
   major: 'state.major',
   critical: 'state.critical',
-  acknowledged: 'acknowledged',
-  notAcknowledged: 'not_acknowledged',
-  acknowledgedUnderPbehavior: 'acknowledged_under_pbehavior',
+  acked: 'acked',
+  unacked: 'unacked',
+  underPbehavior: 'under_pbh',
+  ackedUnderPbehavior: 'acked_under_pbh',
+};
+
+export const SERVICE_WEATHER_STATE_COUNTERS_ICONS = {
+  [SERVICE_WEATHER_STATE_COUNTERS.all]: 'notification_important',
+  [SERVICE_WEATHER_STATE_COUNTERS.active]: '$vuetify.icons.notification_important_stroke',
+  [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'mediation',
+  [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'check_circle',
+  [SERVICE_WEATHER_STATE_COUNTERS.minor]: '$vuetify.icons.warning_stroke',
+  [SERVICE_WEATHER_STATE_COUNTERS.major]: '$vuetify.icons.warning_stroke',
+  [SERVICE_WEATHER_STATE_COUNTERS.critical]: '$vuetify.icons.warning_stroke',
+  [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'playlist_add_check',
+  [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'playlist_play',
+  [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'build',
+  [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: '$vuetify.icons.playlist_build',
+};
+
+export const SERVICE_WEATHER_STATE_COUNTERS_COLORS = {
+  [SERVICE_WEATHER_STATE_COUNTERS.all]: COLORS.error,
+  [SERVICE_WEATHER_STATE_COUNTERS.active]: COLORS.error,
+  [SERVICE_WEATHER_STATE_COUNTERS.minor]: COLORS.state.minor,
+  [SERVICE_WEATHER_STATE_COUNTERS.major]: COLORS.state.major,
+  [SERVICE_WEATHER_STATE_COUNTERS.critical]: COLORS.state.critical,
 };
 
 export const SERVICE_WEATHER_MAX_STATE_COUNTERS = 5;

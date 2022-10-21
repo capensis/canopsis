@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout.mx-1(row, justify-space-around, align-center)
-    v-icon(color="white", size="16") {{ icon }}
+  v-layout(v-on="$listeners", row, justify-space-around, align-center)
+    v-icon(:color="color", size="18") {{ icon }}
     span {{ count }}
 </template>
 
@@ -13,7 +13,11 @@ export default {
     },
     count: {
       type: Number,
-      required: true,
+      default: 0,
+    },
+    color: {
+      type: String,
+      default: 'white',
     },
   },
 };

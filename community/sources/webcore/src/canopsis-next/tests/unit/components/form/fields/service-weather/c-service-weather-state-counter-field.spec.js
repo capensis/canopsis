@@ -31,9 +31,9 @@ describe('c-service-weather-state-counter-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', SERVICE_WEATHER_STATE_COUNTERS.alarms);
+    selectField.vm.$emit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
 
-    expect(wrapper).toEmit('input', SERVICE_WEATHER_STATE_COUNTERS.alarms);
+    expect(wrapper).toEmit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
   });
 
   it('Renders `c-service-weather-state-counter-field` with default props', () => {
@@ -46,7 +46,7 @@ describe('c-service-weather-state-counter-field', () => {
   it('Renders `c-service-weather-state-counter-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: [SERVICE_WEATHER_STATE_COUNTERS.acknowledged, SERVICE_WEATHER_STATE_COUNTERS.alarms],
+        value: [SERVICE_WEATHER_STATE_COUNTERS.acked, SERVICE_WEATHER_STATE_COUNTERS.all],
         name: 'customName',
         disabled: true,
         required: true,
