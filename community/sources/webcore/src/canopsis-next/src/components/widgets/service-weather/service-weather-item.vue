@@ -1,32 +1,29 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer.weather-item(
     :class="itemClasses",
-    :style="{ height: itemHeight + 'em', backgroundColor: color }",
+    :style="itemStyle",
     tile,
     @click.native="showAdditionalInfoModal"
   )
-    v-layout.fill-height(row)
+    v-layout.fill-height.weather-item__content(row, justify-space-between)
       v-flex.position-relative.fill-height
         v-layout(:class="{ 'blinking': isBlinking }", justify-start)
           v-runtime-template.weather-item__service-name.pa-3(:template="compiledTemplate")
         v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
-          c-no-events-icon.mr-1(:value="service.idle_since", color="white", top)
+          c-no-events-icon(:value="service.idle_since", color="white", top)
           impact-state-indicator.mr-1(v-if="isPriorityEnabled", :value="service.impact_state")
-          v-btn.ma-0(
-            v-if="hasVariablesHelpAccess",
-            icon,
-            small,
-            @click.stop="showVariablesHelpModal(service)"
-          )
-            v-icon(color="white") help
         v-icon.weather-item__background.white--text(size="5em") {{ icon }}
-        v-btn.weather-item__secondary-icon.ma-0.mr-1(v-if="secondaryIcon", icon, small)
-          v-icon(color="white") {{ secondaryIcon }}
-      v-flex(v-if="isCountersEnabled", xs2)
-        alarm-counters.fill-height(
-          :counters="counters",
-          :selected-types="selectedTypes"
-        )
+        v-icon.weather-item__secondary-icon.mb-1.mr-1(v-if="secondaryIcon", color="white") {{ secondaryIcon }}
+      alarm-pbehavior-counters(
+        v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters",
+        :counters="pbehaviorCounters",
+        :types="pbehaviorCountersTypes"
+      )
+      alarm-state-counters(
+        v-if="isStateCountersEnabled",
+        :counters="counters",
+        :types="stateCountersTypes"
+      )
     v-btn.see-alarms-btn(
       v-if="isBothModalType && hasAlarmsListAccess",
       flat,
@@ -52,28 +49,24 @@ import { getEntityColor } from '@/helpers/color';
 import { authMixin } from '@/mixins/auth';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 
-import { convertObjectToTreeview } from '@/helpers/treeview';
-
-import AlarmCounters from './alarm-counters.vue';
+import AlarmPbehaviorCounters from './alarm-pbehavior-counters.vue';
+import AlarmStateCounters from './alarm-state-counters.vue';
 import ImpactStateIndicator from './impact-state-indicator.vue';
 
 const { mapActions } = createNamespacedHelpers('service');
 
 export default {
   components: {
-    AlarmCounters,
-    ImpactStateIndicator,
     VRuntimeTemplate,
+    AlarmPbehaviorCounters,
+    AlarmStateCounters,
+    ImpactStateIndicator,
   },
   mixins: [authMixin, entitiesServiceEntityMixin],
   props: {
     service: {
       type: Object,
       required: true,
-    },
-    template: {
-      type: String,
-      default: '',
     },
     widget: {
       type: Object,
@@ -83,7 +76,7 @@ export default {
   asyncComputed: {
     compiledTemplate: {
       async get() {
-        const compiledTemplate = await compile(this.template, { entity: this.service });
+        const compiledTemplate = await compile(this.widget.parameters.blockTemplate ?? '', { entity: this.service });
 
         return `<div>${compiledTemplate}</div>`;
       },
@@ -97,10 +90,6 @@ export default {
 
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
-    },
-
-    hasVariablesHelpAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
     },
 
     color() {
@@ -134,6 +123,13 @@ export default {
       return 4 + this.widget.parameters.heightFactor;
     },
 
+    itemStyle() {
+      return {
+        height: `${this.itemHeight}em`,
+        backgroundColor: this.color,
+      };
+    },
+
     isBlinking() {
       return this.service.is_action_required;
     },
@@ -146,32 +142,36 @@ export default {
       return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
     },
 
-    counters() {
-      return this.service.alarm_counters || [];
-    },
-
-    hasCounters() {
-      return this.counters.length;
-    },
-
-    selectedTypes() {
-      const { counters } = this.widget.parameters;
-
-      return counters ? counters.types : [];
-    },
-
-    hasSelectedTypes() {
-      return this.selectedTypes.length;
-    },
-
-    isCountersEnabled() {
-      const { counters = {} } = this.widget.parameters;
-
-      return counters.enabled && this.hasCounters && this.hasSelectedTypes;
-    },
-
     isPriorityEnabled() {
       return this.widget.parameters.isPriorityEnabled ?? true;
+    },
+
+    counters() {
+      return this.service.counters ?? {};
+    },
+
+    pbehaviorCounters() {
+      return this.counters?.pbh_types ?? [];
+    },
+
+    hasPbehaviorCounters() {
+      return this.pbehaviorCounters.length;
+    },
+
+    isPbehaviorCountersEnabled() {
+      return this.widget.parameters.counters?.pbehavior_enabled;
+    },
+
+    pbehaviorCountersTypes() {
+      return this.widget.parameters.counters?.pbehavior_types ?? [];
+    },
+
+    isStateCountersEnabled() {
+      return this.widget.parameters.counters?.state_enabled;
+    },
+
+    stateCountersTypes() {
+      return this.widget.parameters.counters?.state_types ?? [];
     },
   },
   methods: {
@@ -218,18 +218,6 @@ export default {
         this.$popups.error({ text: this.$t('errors.default') });
       }
     },
-
-    showVariablesHelpModal() {
-      const entityFields = convertObjectToTreeview(this.service, 'entity');
-      const variables = [entityFields];
-
-      this.$modals.show({
-        name: MODALS.variablesHelp,
-        config: {
-          variables,
-        },
-      });
-    },
   },
 };
 </script>
@@ -246,11 +234,19 @@ export default {
   &__secondary-icon {
     position: absolute;
     right: 0;
-    bottom: 1em;
+    bottom: 0;
     cursor: inherit;
 
     &:hover, &:focus {
       position: absolute;
+    }
+  }
+
+  &__content > * {
+    margin-right: 2px;
+
+    &:first-child, &:last-child {
+      margin: 0;
     }
   }
 }
