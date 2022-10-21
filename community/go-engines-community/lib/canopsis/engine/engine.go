@@ -123,7 +123,15 @@ func (e *engine) runPeriodicalWorker(
 	for {
 		select {
 		case <-ticker.C:
+			start := time.Now()
 			err := worker.Work(ctx)
+			d := time.Since(start)
+			if d > worker.GetInterval() {
+				e.logger.Error().
+					Time("start", start).
+					Str("spent time", d.String()).
+					Msgf("periodical worker %T run too long", worker)
+			}
 			if err != nil {
 				return fmt.Errorf("periodical worker failed: %w", err)
 			}
