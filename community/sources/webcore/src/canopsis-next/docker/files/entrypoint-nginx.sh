@@ -1,8 +1,14 @@
 #!/bin/sh
 set -eu
+
 NGINX_CONFIGURATION_DIRECTORY="/etc/nginx"
 
-if [ "$NGINX_OPENSHIFT" = "1" ]
+NGINX_OPENSHIFT="${NGINX_OPENSHIFT:-}"
+CPS_ENABLE_HTTPS="${CPS_ENABLE_HTTPS:-}"
+NGINX_DISABLE_IPV6="${NGINX_DISABLE_IPV6:-}"
+ENABLE_RUNDECK="${ENABLE_RUNDECK:-}"
+
+if [ "$NGINX_OPENSHIFT" = "true" ]
 then
 	echo "NGINX runnning in OpenShift-compatible mode"
 	NGINX_CONFIGURATION_DIRECTORY="$(mktemp -d)"
