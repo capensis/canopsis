@@ -618,6 +618,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
                         style=""
                       >
                         <service-entity-tree-of-dependencies-tab-stub
+                          class="pa-2"
                           entity="[object Object]"
                         />
                       </div>
