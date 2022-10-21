@@ -111,7 +111,7 @@ func TestEngine_Run_GivenErrorOnPeriodicalProcess_ShouldStopEngine(t *testing.T)
 
 	mockPeriodicalWorker := mock_engine.NewMockPeriodicalWorker(ctrl)
 	expectedErr := &testErr{msg: "test error"}
-	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval)
+	mockPeriodicalWorker.EXPECT().GetInterval().Return(interval).AnyTimes()
 	mockPeriodicalWorker.EXPECT().Work(gomock.Any()).Return(expectedErr)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})
