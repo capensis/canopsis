@@ -320,7 +320,6 @@ export const WEATHER_ACTIONS_TYPES = {
   moreInfos: 'moreInfos',
   alarmsList: 'alarmsList',
   pbehaviorList: 'pbehaviorList',
-  variablesHelp: 'variablesHelp',
 
   executeInstruction: 'executeInstruction',
 };
