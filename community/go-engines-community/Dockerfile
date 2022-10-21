@@ -63,8 +63,8 @@ FROM debian:bullseye-20221004-slim AS canopsis-reconfigure
 USER root
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
-#RUN apt update && apt install gnupg2 wget musl -y 
-#RUN ln -sf /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
+RUN apt update && apt install gnupg2 wget musl -y 
+RUN ln -sf /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
 RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
 RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
 RUN apt update && apt install mongodb-org-shell -y
