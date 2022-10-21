@@ -11,9 +11,9 @@
         )
     v-layout(column)
       span(
-        v-for="counter in preparedCounters",
+        v-for="(counter, index) in preparedCounters",
         :key="counter.name"
-      ) {{ $t(`serviceWeather.stateCountersTooltips.${counter.type}`, { count: counter.count }) }}
+      ) {{ countersMessages[index] }}
 </template>
 
 <script>
@@ -41,9 +41,14 @@ export default {
         type,
         icon: SERVICE_WEATHER_STATE_COUNTERS_ICONS[type],
         color: SERVICE_WEATHER_STATE_COUNTERS_COLORS[type],
-        name: this.$t(`serviceWeather.stateCounters.${type}`),
         count: get(this.counters, type, 0),
       })).sort((a, b) => b.count - a.count);
+    },
+
+    countersMessages() {
+      const messages = this.$t('serviceWeather.stateCountersTooltips');
+
+      return this.preparedCounters.map(({ type, count }) => `${count} ${messages[type]}`);
     },
   },
 };
