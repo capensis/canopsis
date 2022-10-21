@@ -4,7 +4,6 @@ import { createVueInstance, generateRenderer, generateShallowRenderer } from '@u
 
 import { createAuthModule, createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
 import {
   ENTITIES_STATES,
   MODALS,
@@ -12,6 +11,8 @@ import {
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
+
+import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
 
 const localVue = createVueInstance();
 
@@ -102,11 +103,11 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('select', true);
+    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('update:selected', true);
 
     expect(wrapper.vm.selectedEntities).toEqual([serviceEntities[1]]);
 
-    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('select', false);
+    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('update:selected', false);
 
     expect(wrapper.vm.selectedEntities).toEqual([]);
   });
@@ -596,7 +597,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('select', true);
+    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('update:selected', true);
 
     expect(wrapper.vm.selectedEntities).toEqual([serviceEntities[1]]);
 
@@ -638,7 +639,7 @@ describe('service-entities-list', () => {
 
     const firstEntity = selectServiceEntityByIndex(wrapper, 0);
 
-    await firstEntity.vm.$emit('select', true);
+    await firstEntity.vm.$emit('update:selected', true);
 
     expect(wrapper.element).toMatchSnapshot();
   });
