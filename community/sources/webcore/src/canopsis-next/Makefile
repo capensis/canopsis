@@ -85,7 +85,6 @@ export BUILDKIT_PROGRESS:=plain
 # If set to 1, previous build caches will be ignored
 DOCKER_NO_CACHE =
 DOCKER_TAG = $(VERSION)
-DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 define DOCKER_BUILD_ARGS
