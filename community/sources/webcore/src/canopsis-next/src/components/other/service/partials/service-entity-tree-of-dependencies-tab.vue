@@ -1,5 +1,5 @@
 <template lang="pug">
-  service-dependencies.pa-2(
+  service-dependencies(
     :root="entity",
     :columns="columns",
     light,
