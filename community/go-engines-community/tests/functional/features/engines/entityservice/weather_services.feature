@@ -100,7 +100,7 @@ Feature: update service weather on event
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -245,7 +245,7 @@ Feature: update service weather on event
             },
             "acked": 0,
             "unacked": 3,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -360,7 +360,7 @@ Feature: update service weather on event
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -517,7 +517,7 @@ Feature: update service weather on event
             },
             "acked": 2,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -632,7 +632,7 @@ Feature: update service weather on event
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
