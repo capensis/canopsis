@@ -26,6 +26,7 @@ const (
 	WMessageSuccess
 	WMessageFail
 	WMessageCloseRoom
+	WMessageAuthSuccess
 )
 
 const (
@@ -600,6 +601,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 			} else {
 				h.setConnAuth(connId, userId, msg.Token)
+				closed = h.sendToConn(connId, WMessage{Type: WMessageAuthSuccess})
 				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			}
 		case RMessageJoin:
