@@ -392,7 +392,7 @@ export default {
         },
         {
           text: this.$t('common.activated'),
-          value: ALARM_PATTERN_FIELDS.activationDate,
+          value: ALARM_PATTERN_FIELDS.activated,
           options: this.activatedOptions,
         },
         {
