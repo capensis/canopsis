@@ -117,7 +117,7 @@ export default {
         this.$socket
           .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
-          .join(this.socketRoomName, true)
+          .join(this.socketRoomName)
           .addListener(this.setOperation);
       }
     },
