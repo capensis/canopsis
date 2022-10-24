@@ -2,26 +2,19 @@
   tr.alarm-list-row(v-on="listeners", :class="classes")
     td.pr-0(v-if="hasRowActions")
       v-layout(row, align-center, justify-space-between)
-        template(v-if="selectable")
-          v-checkbox-functional(
-            v-if="!isResolvedAlarm",
-            v-field="selected",
-            hide-details
-          )
-          v-checkbox-functional(
-            v-else,
-            disabled,
-            hide-details
-          )
-        v-layout(v-if="hasAlarmInstruction", align-center)
+        v-layout.alarm-list-row__checkbox
+          template(v-if="selectable")
+            v-checkbox-functional(v-if="!isResolvedAlarm", v-field="selected", hide-details)
+            v-checkbox-functional(v-else, disabled, hide-details)
+        v-layout(v-if="hasAlarmInstruction", align-center, justify-center)
           alarms-list-row-icon(:alarm="alarm")
-        v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          alarms-expand-panel-btn(
-            v-model="row.expanded",
-            :alarm="alarm",
-            :widget="widget",
-            :is-tour-enabled="isTourEnabled"
-          )
+        alarms-expand-panel-btn(
+          v-if="expandable",
+          v-model="row.expanded",
+          :alarm="alarm",
+          :widget="widget",
+          :is-tour-enabled="isTourEnabled"
+        )
     td(v-for="column in columns")
       alarm-column-value(
         :alarm="alarm",
@@ -43,7 +36,7 @@
 </template>
 
 <script>
-import { flow } from 'lodash';
+import { flow, isNumber } from 'lodash';
 
 import featuresService from '@/services/features';
 
@@ -138,12 +131,7 @@ export default {
 
     hasAlarmInstruction() {
       const { children_instructions: parentAlarmChildrenInstructions = false } = this.parentAlarm || {};
-      const {
-        assigned_instructions: assignedInstructions = [],
-        is_auto_instruction_running: isAutoInstructionRunning = false,
-        is_manual_instruction_waiting_result: isManualInstructionWaitingResult = false,
-        is_all_auto_instructions_completed: isAutoInstructionCompleted = false,
-      } = this.alarm;
+      const { assigned_instructions: assignedInstructions = [] } = this.alarm;
 
       const hasAssignedInstructions = !!assignedInstructions.length;
 
@@ -151,10 +139,7 @@ export default {
         return true;
       }
 
-      return hasAssignedInstructions
-          || isAutoInstructionRunning
-          || isAutoInstructionCompleted
-          || isManualInstructionWaitingResult;
+      return hasAssignedInstructions || isNumber(this.alarm.instruction_execution_icon);
     },
 
     isResolvedAlarm() {
@@ -183,7 +168,7 @@ export default {
     },
 
     classes() {
-      const classes = { 'not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
+      const classes = { 'alarm-list-row--not-filtered': this.isNotFiltered, 'grey lighten-3': this.active };
 
       if (featuresService.has('components.alarmListRow.computed.classes')) {
         return featuresService.call('components.alarmListRow.computed.classes', this, classes);
@@ -211,8 +196,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-  .not-filtered {
+<style lang="scss">
+.alarm-list-row {
+  &__checkbox {
+    width: 24px;
+    max-width: 24px;
+    height: 24px;
+  }
+
+  &--not-filtered {
     opacity: .4;
     transition: opacity .3s linear;
 
@@ -220,4 +212,5 @@ export default {
       opacity: 1;
     }
   }
+}
 </style>
