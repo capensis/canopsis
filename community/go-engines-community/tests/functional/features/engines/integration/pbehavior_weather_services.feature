@@ -1,7 +1,7 @@
 Feature: get service weather
   I need to be able to get service weather
 
-  Scenario: given one dependency with maintenance pbehavior should get maintenance icon and grey flag
+  Scenario: given one dependency with maintenance pbehavior should get maintenance secondary icon and grey flag
     Given I am admin
     When I send an event:
     """json
@@ -96,8 +96,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-1",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -736,7 +736,7 @@ Feature: get service weather
     """
 
   Scenario: given service with maintenance pbehavior and one dependency with maintenance pbehavior
-  should get maintenance icon and not get secondary icon
+  should get maintenance icon and secondary icon
     Given I am admin
     When I send an event:
     """json
@@ -857,7 +857,7 @@ Feature: get service weather
           "state": {"val": 0},
           "status": {"val": 0},
           "icon": "build",
-          "secondary_icon": "",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -1318,7 +1318,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given one dependency with maintenance pbehavior should get service by filter icon=maintenance
+  Scenario: given one dependency with maintenance pbehavior should get service by filter secondary_icon=maintenance
     Given I am admin
     When I send an event:
     """json
@@ -1429,7 +1429,7 @@ Feature: get service weather
       "weather_service_pattern": [
         [
           {
-            "field": "icon",
+            "field": "secondary_icon",
             "cond": {
               "type": "eq",
               "value": "build"
@@ -1481,7 +1481,7 @@ Feature: get service weather
       "weather_service_pattern": [
         [
           {
-            "field": "icon",
+            "field": "secondary_icon",
             "cond": {
               "type": "neq",
               "value": "build"
@@ -1738,7 +1738,7 @@ Feature: get service weather
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}&sort_by=name&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1746,13 +1746,16 @@ Feature: get service weather
       "data": [
         {
           "name": "test-pbehavior-weather-service-14-1"
+        },
+        {
+          "name": "test-pbehavior-weather-service-14-2"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -1792,19 +1795,15 @@ Feature: get service weather
     Then the response code should be 201
     When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "name": "test-pbehavior-weather-service-14-2"
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
@@ -2046,7 +2045,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given dependency with maintenance pbehavior without alarm should get maintenance icon
+  Scenario: given dependency with maintenance pbehavior without alarm should get maintenance secondary icon
     Given I am admin
     When I send an event:
     """json
@@ -2142,8 +2141,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-17",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -2183,7 +2182,7 @@ Feature: get service weather
     }
     """
 
-  Scenario: given dependencies with maintenance pbehavior should keep maintenance icon on alarm create and resolve
+  Scenario: given dependencies with maintenance pbehavior should keep maintenance secondary icon on alarm create and resolve
     Given I am admin
     When I do POST /api/v4/resolve-rules:
     """json
@@ -2332,8 +2331,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 2,
@@ -2396,8 +2395,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 2,
@@ -2460,8 +2459,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 2,
@@ -2524,8 +2523,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-18",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 2,
@@ -2663,8 +2662,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-19",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -2727,8 +2726,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-19",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -3871,8 +3870,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-23",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 2,
@@ -4466,8 +4465,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-25",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -4934,8 +4933,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -4997,8 +4996,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
@@ -5060,8 +5059,8 @@ Feature: get service weather
           "name": "test-pbehavior-weather-service-27",
           "state": {"val": 0},
           "status": {"val": 0},
-          "icon": "build",
-          "secondary_icon": "",
+          "icon": "wb_sunny",
+          "secondary_icon": "build",
           "is_grey": true,
           "counters": {
             "depends": 1,
