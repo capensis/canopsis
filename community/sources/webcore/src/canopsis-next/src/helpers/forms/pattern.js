@@ -178,6 +178,7 @@ export const patternRuleToForm = (rule = {}) => {
           [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.acked,
           [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.canceled,
           [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketAssociated,
+          [ALARM_PATTERN_FIELDS.activationDate]: PATTERN_OPERATORS.activated,
         }[rule.field];
       } else {
         form.operator = {
@@ -515,6 +516,7 @@ export const formRuleToPatternRule = (rule) => {
     case PATTERN_OPERATORS.canceled:
     case PATTERN_OPERATORS.snoozed:
     case PATTERN_OPERATORS.acked:
+    case PATTERN_OPERATORS.activated:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = true;
       break;
