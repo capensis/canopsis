@@ -3464,6 +3464,8 @@ definitions:
     properties:
       acked:
         type: integer
+      acked_under_pbh:
+        type: integer
       active:
         type: integer
       all:
@@ -3486,8 +3488,6 @@ definitions:
             type: integer
         type: object
       unacked:
-        type: integer
-      unacked_under_pbh:
         type: integer
       under_pbh:
         type: integer

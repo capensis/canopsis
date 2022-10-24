@@ -18,17 +18,17 @@ const maxRetries = 10
 // counterName* are the name of the keys used to store each field of an
 // AlarmCounter in redis.
 const (
-	cacheKeyTpl                        = "service:counters:%s:%s"
-	counterNameAll                     = "all"
-	counterNameActive                  = "active"
-	counterNameStateCritical           = "state:critical"
-	counterNameStateMajor              = "state:major"
-	counterNameStateMinor              = "state:minor"
-	counterNameStateOk                 = "state:ok"
-	counterNameAcknowledged            = "acknowledged"
-	counterNameNotAcknowledged         = "not_acknowledged"
-	counterNameNotAcknowledgedUnderPbh = "not_acknowledged_under_pbh"
-	counterNamePbehaviorCounters       = "pbehavior_counters"
+	cacheKeyTpl                     = "service:counters:%s:%s"
+	counterNameAll                  = "all"
+	counterNameActive               = "active"
+	counterNameStateCritical        = "state:critical"
+	counterNameStateMajor           = "state:major"
+	counterNameStateMinor           = "state:minor"
+	counterNameStateOk              = "state:ok"
+	counterNameAcknowledged         = "acknowledged"
+	counterNameNotAcknowledged      = "not_acknowledged"
+	counterNameAcknowledgedUnderPbh = "acknowledged_under_pbh"
+	counterNamePbehaviorCounters    = "pbehavior_counters"
 )
 
 // redisCounterKey returns the name of the key used to store a field of a
@@ -118,10 +118,10 @@ func (s *countersCache) incrementCounters(
 			ctx,
 			redisCounterKey(counterNameNotAcknowledged, serviceID),
 			incrementBy.NotAcknowledged),
-		NotAcknowledgedUnderPbh: pipe.IncrBy(
+		AcknowledgedUnderPbh: pipe.IncrBy(
 			ctx,
-			redisCounterKey(counterNameNotAcknowledgedUnderPbh, serviceID),
-			incrementBy.NotAcknowledgedUnderPbh),
+			redisCounterKey(counterNameAcknowledgedUnderPbh, serviceID),
+			incrementBy.AcknowledgedUnderPbh),
 		PbehaviorCounters: pbehaviorCountersCmd{
 			All:  pipe.HGetAll(ctx, redisCounterKey(counterNamePbehaviorCounters, serviceID)),
 			Incr: pbehaviorCounters,
@@ -144,7 +144,7 @@ func (s *countersCache) removeCounters(
 		redisCounterKey(counterNameStateOk, serviceID),
 		redisCounterKey(counterNameAcknowledged, serviceID),
 		redisCounterKey(counterNameNotAcknowledged, serviceID),
-		redisCounterKey(counterNameNotAcknowledgedUnderPbh, serviceID),
+		redisCounterKey(counterNameAcknowledgedUnderPbh, serviceID),
 		redisCounterKey(counterNamePbehaviorCounters, serviceID),
 	)
 }
@@ -163,9 +163,9 @@ func (s countersCache) getCounters(
 			Minor:    pipe.Get(ctx, redisCounterKey(counterNameStateMinor, serviceID)),
 			Ok:       pipe.Get(ctx, redisCounterKey(counterNameStateOk, serviceID)),
 		},
-		Acknowledged:            pipe.Get(ctx, redisCounterKey(counterNameAcknowledged, serviceID)),
-		NotAcknowledged:         pipe.Get(ctx, redisCounterKey(counterNameNotAcknowledged, serviceID)),
-		NotAcknowledgedUnderPbh: pipe.Get(ctx, redisCounterKey(counterNameNotAcknowledgedUnderPbh, serviceID)),
+		Acknowledged:         pipe.Get(ctx, redisCounterKey(counterNameAcknowledged, serviceID)),
+		NotAcknowledged:      pipe.Get(ctx, redisCounterKey(counterNameNotAcknowledged, serviceID)),
+		AcknowledgedUnderPbh: pipe.Get(ctx, redisCounterKey(counterNameAcknowledgedUnderPbh, serviceID)),
 		PbehaviorCounters: getPbehaviorCountersCmd{
 			All: pipe.HGetAll(ctx, redisCounterKey(counterNamePbehaviorCounters, serviceID)),
 		},
