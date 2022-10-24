@@ -273,7 +273,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
 		}
 
-		pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("pbehavior_info")
+		pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("")
 		if err != nil {
 			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
 		}

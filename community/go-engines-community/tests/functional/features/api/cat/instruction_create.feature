@@ -40,6 +40,16 @@ Feature: Create a instruction
             }
           },
           {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
             "field": "v.ack.t",
             "cond": {
               "type": "absolute_time",
@@ -131,6 +141,16 @@ Feature: Create a instruction
           },
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {
@@ -337,6 +357,16 @@ Feature: Create a instruction
           },
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {
@@ -1491,6 +1521,16 @@ Feature: Create a instruction
           },
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {
