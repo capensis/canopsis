@@ -367,6 +367,10 @@ export const createAuthModule = () => {
     },
   };
 
+  afterEach(() => {
+    currentUserPermissionsById.mockClear();
+  });
+
   return {
     authModule,
     currentUserPermissionsById,
@@ -388,5 +392,148 @@ export const createPbehaviorTypesModule = () => {
   return {
     pbehaviorTypesModule,
     fetchPbehaviorTypesListWithoutStore,
+  };
+};
+
+export const createUserPreferenceModule = () => {
+  const fetchUserPreference = jest.fn();
+  const getUserPreferenceByWidgetId = jest.fn()
+    .mockReturnValue({ content: {} });
+  const updateUserPreference = jest.fn();
+
+  const userPreferenceModule = {
+    name: 'userPreference',
+    actions: {
+      fetchItem: fetchUserPreference,
+      update: updateUserPreference,
+    },
+    getters: {
+      getItemByWidgetId: () => getUserPreferenceByWidgetId,
+    },
+  };
+
+  return {
+    fetchUserPreference,
+    updateUserPreference,
+    userPreferenceModule,
+    getUserPreferenceByWidgetId,
+  };
+};
+
+export const createWidgetModule = () => {
+  const createWidget = jest.fn();
+  const updateWidget = jest.fn();
+  const copyWidget = jest.fn();
+
+  const widgetModule = {
+    name: 'view/widget',
+    actions: {
+      create: createWidget,
+      update: updateWidget,
+      copy: copyWidget,
+    },
+  };
+
+  return {
+    createWidget,
+    updateWidget,
+    copyWidget,
+    widgetModule,
+  };
+};
+
+export const createServiceModule = () => {
+  const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
+    data: [],
+    meta: { total_count: 0 },
+  });
+  const fetchServiceAlarmsWithoutStore = jest.fn();
+  const fetchServicesList = jest.fn();
+  const getServicesPendingByWidgetId = jest.fn().mockReturnValue(false);
+  const getServicesListByWidgetId = jest.fn().mockReturnValue([]);
+  const getServicesErrorByWidgetId = jest.fn();
+
+  const serviceModule = {
+    name: 'service',
+    getters: {
+      getPendingByWidgetId: () => getServicesPendingByWidgetId,
+      getListByWidgetId: () => getServicesListByWidgetId,
+      getErrorByWidgetId: () => getServicesErrorByWidgetId,
+    },
+    actions: {
+      fetchInfosKeysWithoutStore: fetchEntityInfosKeysWithoutStore,
+      fetchAlarmsWithoutStore: fetchServiceAlarmsWithoutStore,
+      fetchList: fetchServicesList,
+    },
+  };
+
+  return {
+    getServicesPendingByWidgetId,
+    getServicesListByWidgetId,
+    getServicesErrorByWidgetId,
+    fetchEntityInfosKeysWithoutStore,
+    fetchServicesList,
+    fetchServiceAlarmsWithoutStore,
+    serviceModule,
+  };
+};
+
+export const createServiceEntityModule = () => {
+  const serviceEntityModule = {
+    name: 'service/entity',
+    getters: {
+    },
+    actions: {
+    },
+  };
+
+  return {
+    serviceEntityModule,
+  };
+};
+
+export const createQueryModule = () => {
+  const getQueryById = jest.fn().mockReturnValue(() => ({}));
+  const getQueryNonceById = jest.fn().mockReturnValue(() => 'nonce');
+  const updateQuery = jest.fn();
+
+  const queryModule = {
+    name: 'query',
+    getters: {
+      getQueryById,
+      getQueryNonceById,
+    },
+    actions: {
+      update: updateQuery,
+    },
+  };
+
+  return {
+    getQueryById,
+    getQueryNonceById,
+    updateQuery,
+    queryModule,
+  };
+};
+
+export const createActiveViewModule = () => {
+  const registerEditingOffHandler = jest.fn();
+  const unregisterEditingOffHandler = jest.fn();
+  const fetchActiveView = jest.fn();
+
+  const activeViewModule = {
+    name: 'activeView',
+    actions: {
+      registerEditingOffHandler,
+      unregisterEditingOffHandler,
+      fetch: fetchActiveView,
+    },
+  };
+
+  return {
+    registerEditingOffHandler,
+    unregisterEditingOffHandler,
+    fetchActiveView,
+    activeViewModule,
   };
 };
