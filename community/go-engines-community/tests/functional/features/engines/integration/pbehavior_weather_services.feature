@@ -111,7 +111,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -247,7 +247,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }
@@ -389,7 +389,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -542,7 +542,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -695,7 +695,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -871,7 +871,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -1074,7 +1074,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -2005,7 +2005,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           },
@@ -2156,7 +2156,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -2346,7 +2346,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -2410,7 +2410,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 2,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -2474,7 +2474,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -2538,7 +2538,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -2677,7 +2677,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -2741,7 +2741,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -2794,7 +2794,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }
@@ -2847,7 +2847,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }
@@ -3383,7 +3383,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -3450,7 +3450,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }
@@ -3505,7 +3505,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -3572,7 +3572,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }
@@ -3627,7 +3627,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -3818,7 +3818,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -3885,7 +3885,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -3952,7 +3952,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -4138,7 +4138,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 2,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -4202,7 +4202,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }
@@ -4254,7 +4254,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 1,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 2,
             "pbh_types": [
               {
@@ -4416,7 +4416,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -4480,7 +4480,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -4544,7 +4544,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -4705,7 +4705,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -4796,7 +4796,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 2,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -4948,7 +4948,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 1,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -5011,7 +5011,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 1,
+            "acked_under_pbh": 0,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -5074,7 +5074,7 @@ Feature: get service weather
             },
             "acked": 0,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 1,
             "under_pbh": 1,
             "pbh_types": [
               {
@@ -5127,7 +5127,7 @@ Feature: get service weather
             },
             "acked": 1,
             "unacked": 0,
-            "unacked_under_pbh": 0,
+            "acked_under_pbh": 0,
             "under_pbh": 0,
             "pbh_types": []
           }

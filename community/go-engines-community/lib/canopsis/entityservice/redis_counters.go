@@ -21,13 +21,13 @@ type stateCountersCmds struct {
 // AlarmCounters stored in redis in a transaction, and to read the result of
 // the commands after the transaction has been executed.
 type alarmCountersCmds struct {
-	All                     *redis.IntCmd
-	Active                  *redis.IntCmd
-	State                   stateCountersCmds
-	Acknowledged            *redis.IntCmd
-	NotAcknowledged         *redis.IntCmd
-	NotAcknowledgedUnderPbh *redis.IntCmd
-	PbehaviorCounters       pbehaviorCountersCmd
+	All                  *redis.IntCmd
+	Active               *redis.IntCmd
+	State                stateCountersCmds
+	Acknowledged         *redis.IntCmd
+	NotAcknowledged      *redis.IntCmd
+	AcknowledgedUnderPbh *redis.IntCmd
+	PbehaviorCounters    pbehaviorCountersCmd
 }
 
 type pbehaviorCountersCmd struct {
@@ -61,8 +61,8 @@ func (r alarmCountersCmds) Result() (AlarmCounters, error) {
 	if r.NotAcknowledged.Err() != nil {
 		return AlarmCounters{}, r.NotAcknowledged.Err()
 	}
-	if r.NotAcknowledgedUnderPbh.Err() != nil {
-		return AlarmCounters{}, r.NotAcknowledgedUnderPbh.Err()
+	if r.AcknowledgedUnderPbh.Err() != nil {
+		return AlarmCounters{}, r.AcknowledgedUnderPbh.Err()
 	}
 	if r.PbehaviorCounters.All.Err() != nil {
 		return AlarmCounters{}, r.PbehaviorCounters.All.Err()
@@ -93,10 +93,10 @@ func (r alarmCountersCmds) Result() (AlarmCounters, error) {
 			Minor:    r.State.Minor.Val(),
 			Ok:       r.State.Ok.Val(),
 		},
-		Acknowledged:            r.Acknowledged.Val(),
-		NotAcknowledged:         r.NotAcknowledged.Val(),
-		NotAcknowledgedUnderPbh: r.NotAcknowledgedUnderPbh.Val(),
-		PbehaviorCounters:       pbehaviorCounters,
+		Acknowledged:         r.Acknowledged.Val(),
+		NotAcknowledged:      r.NotAcknowledged.Val(),
+		AcknowledgedUnderPbh: r.AcknowledgedUnderPbh.Val(),
+		PbehaviorCounters:    pbehaviorCounters,
 	}, nil
 }
 
@@ -108,13 +108,13 @@ type getStateCountersCmds struct {
 }
 
 type getAlarmCountersCmds struct {
-	All                     *redis.StringCmd
-	Active                  *redis.StringCmd
-	State                   getStateCountersCmds
-	Acknowledged            *redis.StringCmd
-	NotAcknowledged         *redis.StringCmd
-	NotAcknowledgedUnderPbh *redis.StringCmd
-	PbehaviorCounters       getPbehaviorCountersCmd
+	All                  *redis.StringCmd
+	Active               *redis.StringCmd
+	State                getStateCountersCmds
+	Acknowledged         *redis.StringCmd
+	NotAcknowledged      *redis.StringCmd
+	AcknowledgedUnderPbh *redis.StringCmd
+	PbehaviorCounters    getPbehaviorCountersCmd
 }
 
 type getPbehaviorCountersCmd struct {
@@ -143,8 +143,8 @@ func (r getAlarmCountersCmds) Result() (AlarmCounters, error) {
 	if r.NotAcknowledged.Err() != nil {
 		return AlarmCounters{}, r.NotAcknowledged.Err()
 	}
-	if r.NotAcknowledgedUnderPbh.Err() != nil {
-		return AlarmCounters{}, r.NotAcknowledgedUnderPbh.Err()
+	if r.AcknowledgedUnderPbh.Err() != nil {
+		return AlarmCounters{}, r.AcknowledgedUnderPbh.Err()
 	}
 	if r.PbehaviorCounters.All.Err() != nil {
 		return AlarmCounters{}, r.PbehaviorCounters.All.Err()
@@ -175,7 +175,7 @@ func (r getAlarmCountersCmds) Result() (AlarmCounters, error) {
 	if err != nil {
 		return AlarmCounters{}, err
 	}
-	notAcknowledgedUnderPbh, err := strconv.Atoi(r.NotAcknowledgedUnderPbh.Val())
+	acknowledgedUnderPbh, err := strconv.Atoi(r.AcknowledgedUnderPbh.Val())
 	if err != nil {
 		return AlarmCounters{}, err
 	}
@@ -205,9 +205,9 @@ func (r getAlarmCountersCmds) Result() (AlarmCounters, error) {
 			Minor:    int64(minor),
 			Ok:       int64(ok),
 		},
-		Acknowledged:            int64(acknowledged),
-		NotAcknowledged:         int64(notAcknowledged),
-		NotAcknowledgedUnderPbh: int64(notAcknowledgedUnderPbh),
-		PbehaviorCounters:       pbehaviorCounters,
+		Acknowledged:         int64(acknowledged),
+		NotAcknowledged:      int64(notAcknowledged),
+		AcknowledgedUnderPbh: int64(acknowledgedUnderPbh),
+		PbehaviorCounters:    pbehaviorCounters,
 	}, nil
 }
