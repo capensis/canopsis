@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-weather Renders \`service-weather\` with default props 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <!---->
+    <div
+      class="flex xs5"
+    >
+      <div
+        class="layout row align-center"
+      >
+        <!---->
+        <c-enabled-field-stub
+          class="ml-3"
+          label="Gray"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <div
+    class="layout fill-height wrap"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        No data
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-weather Renders \`service-weather\` with full access 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <!---->
+    <div
+      class="flex xs5"
+    >
+      <div
+        class="layout row align-center"
+      >
+        <!---->
+        <c-enabled-field-stub
+          class="ml-3"
+          label="Gray"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <div
+    class="layout fill-height wrap"
+  >
+    <div
+      class="flex xs6"
+    >
+      <service-weather-item-stub
+        service="[object Object]"
+        widget="[object Object]"
+      />
+    </div>
+  </div>
+</div>
+`;
