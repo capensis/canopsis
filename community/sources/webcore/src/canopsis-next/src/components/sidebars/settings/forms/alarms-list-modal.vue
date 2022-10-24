@@ -15,7 +15,7 @@
     )
     v-divider
     field-text-editor(
-      v-model="form.moreInfoTemplate",
+      v-field="form.moreInfoTemplate",
       :title="$t('settings.moreInfosModal')"
     )
 </template>
