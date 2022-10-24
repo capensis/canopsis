@@ -196,10 +196,10 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
-   * @param {boolean} [authNeeded = false]
+   * @param {boolean} [authNeeded = true]
    * @returns {SocketRoom}
    */
-  join(room, authNeeded = false) {
+  join(room, authNeeded = true) {
     if (!this.rooms[room]) {
       this.rooms[room] = new SocketRoom(room, authNeeded);
     } else {

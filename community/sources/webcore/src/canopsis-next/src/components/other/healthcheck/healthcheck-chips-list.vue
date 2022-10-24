@@ -80,7 +80,7 @@ export default {
     this.fetchList();
 
     this.$socket
-      .join(SOCKET_ROOMS.healthcheckStatus, true)
+      .join(SOCKET_ROOMS.healthcheckStatus)
       .addListener(this.setHealthcheckStatus);
   },
   beforeDestroy() {
