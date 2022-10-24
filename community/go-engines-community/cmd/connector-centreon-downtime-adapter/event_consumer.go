@@ -183,7 +183,7 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 
 	entityID := ""
 	if resource == "" {
-		entityID = resource
+		entityID = component
 	} else {
 		entityID = fmt.Sprintf("%s/%s", resource, component)
 	}

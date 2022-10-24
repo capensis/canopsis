@@ -501,3 +501,172 @@ Feature: get service entities
       }
     }
     """
+
+  Scenario: given service and events, should return instruction statuses and icons in get weather service entities request
+    Given I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-service-weather-entity-7",
+        "connector_name" : "test-connector_name-service-weather-entity-7",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-7",
+        "resource" : "test-resource-service-weather-entity-7-1",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-7",
+        "connector_name" : "test-connector_name-service-weather-entity-7",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-7",
+        "resource" : "test-resource-service-weather-entity-7-2",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-7",
+        "connector_name" : "test-connector_name-service-weather-entity-7",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-7",
+        "resource" : "test-resource-service-weather-entity-7-3",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-7",
+        "connector_name" : "test-connector_name-service-weather-entity-7",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-7",
+        "resource" : "test-resource-service-weather-entity-7-4",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-7",
+        "connector_name" : "test-connector_name-service-weather-entity-7",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-7",
+        "resource" : "test-resource-service-weather-entity-7-5",
+        "state" : 1,
+        "output" : "noveo alarm"
+      }
+    ]
+    """
+    When I wait the end of 9 events processing
+    When I do GET /api/v4/alarms?search=test-resource-service-weather-entity-7&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-service-weather-entity-7-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-service-weather-entity-7-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-service-weather-entity-7-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-service-weather-entity-7-4"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-service-weather-entity-7-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """
+    When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response alarmID2={{ (index .lastResponse.data 1)._id }}
+    When I save response alarmID3={{ (index .lastResponse.data 2)._id }}
+    When I save response alarmID4={{ (index .lastResponse.data 3)._id }}
+    When I save response alarmID5={{ (index .lastResponse.data 4)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID4 }}",
+      "instruction": "test-instruction-service-weather-entity-7-4"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID5 }}",
+      "instruction": "test-instruction-service-weather-entity-7-5"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 4 events processing
+    When I wait 3s
+    When I do GET /api/v4/weather-services/test-service-weather-entity-7?with_instructions=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-resource-service-weather-entity-7-1",
+          "instruction_execution_icon": 9
+        },
+        {
+          "name": "test-resource-service-weather-entity-7-2",
+          "instruction_execution_icon": 10,
+          "successful_auto_instructions": [
+            "test-instruction-service-weather-entity-7-2-name"
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-7-3",
+          "instruction_execution_icon": 3,
+          "failed_auto_instructions": [
+            "test-instruction-service-weather-entity-7-3-name"
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-7-4",
+          "instruction_execution_icon": 11,
+          "successful_manual_instructions": [
+            "test-instruction-service-weather-entity-7-4-name"
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-7-5",
+          "instruction_execution_icon": 4,
+          "failed_manual_instructions": [
+            "test-instruction-service-weather-entity-7-5-name"
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """

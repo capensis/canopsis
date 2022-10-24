@@ -53,7 +53,6 @@ const (
 	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
-	AlarmChangeTypeInstructionJobAbort    AlarmChangeType = "instructionjobabort"
 	AlarmChangeTypeInstructionJobFail     AlarmChangeType = "instructionjobfail"
 
 	// Following change types are used for junit.

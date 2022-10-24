@@ -135,7 +135,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 			return nil, err
 		}
 
-		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds)
+		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds, assignedInstructionsMap)
 		if err != nil {
 			return nil, err
 		}
@@ -150,11 +150,13 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 				assignedInstructions = make([]alarmapi.AssignedInstruction, 0)
 			}
 			res.Data[idx].AssignedInstructions = &assignedInstructions
-			res.Data[idx].IsAutoInstructionRunning = statusesByAlarm[v.AlarmID].AutoRunning
-			res.Data[idx].IsAllAutoInstructionsCompleted = statusesByAlarm[v.AlarmID].AutoAllCompleted
-			res.Data[idx].IsAutoInstructionFailed = statusesByAlarm[v.AlarmID].AutoFailed
-			res.Data[idx].IsManualInstructionRunning = statusesByAlarm[v.AlarmID].ManualRunning
-			res.Data[idx].IsManualInstructionWaitingResult = statusesByAlarm[v.AlarmID].ManualWaitingResult
+			res.Data[idx].InstructionExecutionIcon = statusesByAlarm[v.AlarmID].Icon
+			res.Data[idx].RunningManualInstructions = statusesByAlarm[v.AlarmID].RunningManualInstructions
+			res.Data[idx].RunningAutoInstructions = statusesByAlarm[v.AlarmID].RunningAutoInstructions
+			res.Data[idx].FailedManualInstructions = statusesByAlarm[v.AlarmID].FailedManualInstructions
+			res.Data[idx].FailedAutoInstructions = statusesByAlarm[v.AlarmID].FailedAutoInstructions
+			res.Data[idx].SuccessfulManualInstructions = statusesByAlarm[v.AlarmID].SuccessfulManualInstructions
+			res.Data[idx].SuccessfulAutoInstructions = statusesByAlarm[v.AlarmID].SuccessfulAutoInstructions
 		}
 	}
 

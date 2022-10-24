@@ -22,7 +22,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -131,7 +131,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -212,7 +212,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -309,7 +309,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -378,7 +378,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -458,7 +458,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -535,7 +535,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -604,7 +604,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -689,7 +689,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -751,7 +751,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 10
         }
       ]
     }
@@ -865,7 +865,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -930,7 +930,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -1015,7 +1015,7 @@ Feature: run an auto instruction
     {
       "data": [
         {
-          "is_all_auto_instructions_completed": true
+          "instruction_execution_icon": 3
         }
       ]
     }
@@ -1055,6 +1055,160 @@ Feature: run an auto instruction
         "_t": "autoinstructionfail",
         "a": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-11-name."
+      }
+    ]
+    """
+
+  Scenario: given auto instructions should not add steps to resolved alarm and new alarm
+    When I am admin
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12",
+      "state": 1,
+      "output": "test-output-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-run-auto-instruction-12",
+      "connector_name": "test-connector-name-to-run-auto-instruction-12",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-run-auto-instruction-12",
+      "resource": "test-resource-to-run-auto-instruction-12",
+      "state": 2,
+      "output": "test-output-to-run-auto-instruction-12"
+    }
+    """
+    When I wait the end of event processing
+    When I wait 5s
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-12&opened=false
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": false,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc",
+        "val": 1
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-12-1-name. Job test-job-to-run-auto-instruction-5-name."
+      },
+      {
+        "_t": "cancel"
+      },
+      {
+        "_t": "statusinc",
+        "val": 4
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-12&opened=true
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
       }
     ]
     """

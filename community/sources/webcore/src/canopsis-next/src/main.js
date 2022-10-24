@@ -62,6 +62,7 @@ import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
  */
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 import CAlarmTagChip from '@/components/common/chips/c-alarm-tag-chip.vue';
+import CAlarmTagsChips from '@/components/common/chips/c-alarm-tags-chips.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
@@ -196,6 +197,7 @@ import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
+import ManualInstruction from '@/components/icons/manual_instruction.vue';
 
 /**
  * Groups
@@ -244,6 +246,9 @@ Vue.use(Vuetify, {
     },
     density_small: {
       component: DensitySmallIcon,
+    },
+    manual_instruction: {
+      component: ManualInstruction,
     },
   },
 });
@@ -314,6 +319,7 @@ Vue.component('alarms-list-table', AlarmsListTable);
 /* Global custom canopsis components */
 Vue.component('c-alarm-chip', CAlarmChip);
 Vue.component('c-alarm-tag-chip', CAlarmTagChip);
+Vue.component('c-alarm-tags-chips', CAlarmTagsChips);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
 Vue.component('c-engine-chip', CEngineChip);
