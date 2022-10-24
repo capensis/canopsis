@@ -7,6 +7,7 @@ import Filters from '@/components/sidebars/settings/fields/common/filters.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings-item': true,
   'filter-selector': true,
   'filters-list': true,
 };
@@ -21,16 +22,6 @@ const factory = (options = {}) => shallowMount(Filters, {
 const snapshotFactory = (options = {}) => mount(Filters, {
   localVue,
   stubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
 
   ...options,
 });

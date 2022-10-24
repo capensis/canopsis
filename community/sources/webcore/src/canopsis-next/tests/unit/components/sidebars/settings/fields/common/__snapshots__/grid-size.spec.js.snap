@@ -1,131 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`field-grid-size Renders \`field-grid-size\` with custom props 1`] = `
-<div
-  class="v-list__group"
->
-  <div
-    class="v-list__group__header"
-  >
-    <div
-      class="widget-settings-item-title"
-      role="listitem"
-    >
-      <div
-        class="v-list__tile theme--light"
-      >
-        <div
-          class="validation-header"
-        >
-          <div
-            class="layout align-center"
-          >
-            <span>
-              Custom title
-            </span>
-            <i
-              aria-hidden="true"
-              class="v-icon ml-2 material-icons theme--light"
-            >
-              phone_android
-            </i>
-          </div>
-        </div>
-        <!---->
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <c-column-size-field-stub
-          mobile="true"
-          tablet="true"
-          value="12"
-        />
-      </div>
-    </div>
-  </transition-stub>
-</div>
+<widget-settings-item-stub>
+  <c-column-size-field-stub
+    mobile="true"
+    tablet="true"
+    value="12"
+  />
+</widget-settings-item-stub>
 `;
 
 exports[`field-grid-size Renders \`field-grid-size\` with default props 1`] = `
-<div
-  class="v-list__group"
->
-  <div
-    class="v-list__group__header"
-  >
-    <div
-      class="widget-settings-item-title"
-      role="listitem"
-    >
-      <div
-        class="v-list__tile theme--light"
-      >
-        <div
-          class="validation-header"
-        >
-          <div
-            class="layout align-center"
-          >
-            <span>
-              Custom title
-            </span>
-            <i
-              aria-hidden="true"
-              class="v-icon ml-2 material-icons theme--light"
-            >
-              laptop
-            </i>
-          </div>
-        </div>
-        <!---->
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <c-column-size-field-stub />
-      </div>
-    </div>
-  </transition-stub>
-</div>
+<widget-settings-item-stub>
+  <c-column-size-field-stub />
+</widget-settings-item-stub>
 `;

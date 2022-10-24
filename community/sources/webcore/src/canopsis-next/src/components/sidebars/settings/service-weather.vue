@@ -31,8 +31,7 @@
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-sort-column(
         v-model="form.parameters.sort",
-        :columns="sortColumns",
-        :columns-label="$t('settings.orderBy')"
+        :columns="sortColumns"
       )
       v-divider
       field-default-elements-per-page(v-model="form.parameters.modalItemsPerPage", :sub-title="$t('settings.modal')")

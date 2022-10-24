@@ -7,6 +7,7 @@ import FieldGridSize from '@/components/sidebars/settings/fields/common/grid-siz
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings-item': true,
   'c-column-size-field': true,
 };
 
@@ -14,32 +15,12 @@ const factory = (options = {}) => shallowMount(FieldGridSize, {
   localVue,
   stubs,
 
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
   ...options,
 });
 
 const snapshotFactory = (options = {}) => mount(FieldGridSize, {
   localVue,
   stubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
 
   ...options,
 });
