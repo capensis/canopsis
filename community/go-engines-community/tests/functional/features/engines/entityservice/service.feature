@@ -7,7 +7,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-1-name",
-      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -89,7 +89,7 @@ Feature: update service on event
             "component": "{{ .serviceID }}",
             "connector": "service",
             "connector_name": "service",
-            "output": "Depends: 3; All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+            "output": "Depends: 3; All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
             "state": {
               "val": 3
             },
@@ -130,19 +130,19 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "Depends: 1; All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "Depends: 1; All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "Depends: 1; All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "Depends: 1; All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "Depends: 2; All: 2; Active: 2; Acknowledged: 0; NotAcknowledged: 2; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "Depends: 2; All: 2; Active: 2; Acknowledged: 0; NotAcknowledged: 2; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }
             ],
@@ -206,7 +206,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-2-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -281,13 +281,13 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -309,7 +309,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-3-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -452,25 +452,25 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
             ],
@@ -492,7 +492,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-4-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -544,7 +544,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-4-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -614,19 +614,19 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }
             ],
@@ -648,7 +648,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-5-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -700,7 +700,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-5-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -770,19 +770,19 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -804,7 +804,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-6-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -915,25 +915,25 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
             ],
@@ -995,7 +995,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-7-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1147,7 +1147,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-8-name",
-      "output_template": "Depends: {{ `{{ .Depends}}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends}}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1185,7 +1185,7 @@ Feature: update service on event
             "component": "{{ .serviceID }}",
             "connector": "service",
             "connector_name": "service",
-            "output": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; NotAcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
+            "output": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; AcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
             "state": {
               "val": 3
             },
@@ -1226,13 +1226,13 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; NotAcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; AcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; NotAcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; AcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -1254,7 +1254,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-9-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1366,19 +1366,19 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 1; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 1; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }
             ],
@@ -1400,7 +1400,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-10-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1525,19 +1525,19 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }
             ],
@@ -1559,7 +1559,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-14-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1668,13 +1668,13 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -1696,7 +1696,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-15-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1794,7 +1794,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-16-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1860,7 +1860,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-16-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": false,
       "entity_pattern": [
@@ -1912,7 +1912,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-17-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -1950,7 +1950,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-17-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": false,
       "entity_pattern": [
@@ -1988,7 +1988,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-17-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2075,13 +2075,13 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -2119,13 +2119,13 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -2147,7 +2147,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-18-name-1",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2171,7 +2171,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-18-name-2",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2287,25 +2287,25 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
             ],
@@ -2327,7 +2327,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-19-name-1",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2351,7 +2351,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-19-name-2",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2417,7 +2417,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-19-name-1",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": false,
       "entity_pattern": [
@@ -2487,25 +2487,25 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
             ],
@@ -2527,7 +2527,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-20-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2657,25 +2657,25 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
+                "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
             ],
@@ -2711,7 +2711,7 @@ Feature: update service on event
     """json
     {
       "name": "test-entityservice-service-21-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2748,7 +2748,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -2803,7 +2803,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 1; Active: 1; Acknowledged: 1; NotAcknowledged: 0; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 1; Active: 1; Acknowledged: 1; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -2865,7 +2865,7 @@ Feature: update service on event
     {
       "_id": "test-entityservice-service-22",
       "name": "test-entityservice-service-22-name",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -2905,7 +2905,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -2947,7 +2947,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -3017,7 +3017,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -3079,7 +3079,7 @@ Feature: update service on event
     {
       "_id": "test-entityservice-service-23-1",
       "name": "test-entityservice-service-23-name-1",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -3103,7 +3103,7 @@ Feature: update service on event
     {
       "_id": "test-entityservice-service-23-2",
       "name": "test-entityservice-service-23-name-2",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -3127,7 +3127,7 @@ Feature: update service on event
     {
       "_id": "test-entityservice-service-23-3",
       "name": "test-entityservice-service-23-name-3",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -3151,7 +3151,7 @@ Feature: update service on event
     {
       "_id": "test-entityservice-service-23-4",
       "name": "test-entityservice-service-23-name-4",
-      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; NotAcknowledgedUnderPbh: {{ `{{.NotAcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -3191,7 +3191,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -3233,7 +3233,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; NotAcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],
@@ -3275,7 +3275,7 @@ Feature: update service on event
             "status": {
               "val": 1
             },
-            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; NotAcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
+            "output": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;"
           }
         }
       ],

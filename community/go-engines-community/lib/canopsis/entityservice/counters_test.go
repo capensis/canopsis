@@ -160,10 +160,9 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given pbhenter event should return isChanged true": {
@@ -179,10 +178,9 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
 				All:             1,
@@ -236,10 +234,9 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 				State:           entityservice.StateCounters{Critical: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given pbhleave from active pbh event should return isChanged false": {
@@ -283,16 +280,14 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{pausePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{pausePbhInfo.TypeID: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given pbhleaveandenter event from maintenance to active pbh should return isChanged true": {
@@ -316,10 +311,9 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 				State:           entityservice.StateCounters{Critical: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given pbhleaveandenter event from active to maintenance pbh should return isChanged true": {
@@ -337,10 +331,9 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
 				All:             1,
@@ -458,16 +451,14 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:               1,
+				State:             entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given ack event under maintenance pbehavior should return isChanged true": {
@@ -484,15 +475,15 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
+				All:                  1,
+				AcknowledgedUnderPbh: 1,
+				State:                entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters:    map[string]int64{maintenancePbhInfo.TypeID: 1},
+			},
+			expectedOldCounters: &entityservice.AlarmCounters{
 				All:               1,
 				State:             entityservice.StateCounters{Ok: 1},
 				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
-			},
-			expectedOldCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given ackremove event under maintenance pbehavior should return isChanged true": {
@@ -508,15 +499,15 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:                     1,
-				NotAcknowledgedUnderPbh: 1,
-				State:                   entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters:       map[string]int64{maintenancePbhInfo.TypeID: 1},
-			},
-			expectedOldCounters: &entityservice.AlarmCounters{
 				All:               1,
 				State:             entityservice.StateCounters{Ok: 1},
 				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
+			},
+			expectedOldCounters: &entityservice.AlarmCounters{
+				All:                  1,
+				AcknowledgedUnderPbh: 1,
+				State:                entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters:    map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 		"given pbhenter event under ack should return isChanged true": {
@@ -533,9 +524,10 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 			},
 			expectedIsAlarmChanged: true,
 			expectedNewCounters: &entityservice.AlarmCounters{
-				All:               1,
-				State:             entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:                  1,
+				AcknowledgedUnderPbh: 1,
+				State:                entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters:    map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
 				All:          1,
@@ -565,9 +557,10 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 				State:        entityservice.StateCounters{Critical: 1},
 			},
 			expectedOldCounters: &entityservice.AlarmCounters{
-				All:               1,
-				State:             entityservice.StateCounters{Ok: 1},
-				PbehaviorCounters: map[string]int64{maintenancePbhInfo.TypeID: 1},
+				All:                  1,
+				AcknowledgedUnderPbh: 1,
+				State:                entityservice.StateCounters{Ok: 1},
+				PbehaviorCounters:    map[string]int64{maintenancePbhInfo.TypeID: 1},
 			},
 		},
 	}
