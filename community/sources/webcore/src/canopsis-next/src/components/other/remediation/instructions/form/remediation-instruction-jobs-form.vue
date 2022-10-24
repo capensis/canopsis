@@ -4,7 +4,13 @@
       v-flex(v-if="!jobs.length", xs12)
         v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyJobs') }}
     h3.subheading.font-weight-bold {{ $t('remediationInstructions.listJobs') }}
-    draggable(v-field="jobs", :options="draggableOptions")
+    c-draggable-list-field(
+      v-field="jobs",
+      :disabled="disabled",
+      :group="draggableGroup",
+      handle=".job-drag-handler",
+      ghost-class="white"
+    )
       v-card.my-2(v-for="(job, index) in jobs", :key="job.key")
         v-card-text
           remediation-instruction-job-field.py-1(
@@ -26,10 +32,7 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
 import { MAX_LIMIT } from '@/constants';
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { remediationInstructionJobToForm } from '@/helpers/forms/remediation-instruction';
 
@@ -41,7 +44,6 @@ import RemediationInstructionJobField from './fields/remediation-instruction-job
 export default {
   inject: ['$validator'],
   components: {
-    Draggable,
     RemediationInstructionJobField,
   },
   mixins: [formArrayMixin, entitiesRemediationJobMixin],
@@ -74,17 +76,11 @@ export default {
       return this.errors.has(this.name);
     },
 
-    draggableOptions() {
+    draggableGroup() {
       return {
-        disabled: this.disabled,
-        animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.job-drag-handler',
-        ghostClass: 'white',
-        group: {
-          name: 'remediation-instruction-jobs',
-          pull: false,
-          put: false,
-        },
+        name: 'remediation-instruction-jobs',
+        pull: false,
+        put: false,
       };
     },
   },

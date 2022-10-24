@@ -151,4 +151,5 @@ export const TECH_METRICS_EXPORT_STATUSES = {
   running: 1,
   success: 2,
   failed: 3,
+  disabled: 4,
 };

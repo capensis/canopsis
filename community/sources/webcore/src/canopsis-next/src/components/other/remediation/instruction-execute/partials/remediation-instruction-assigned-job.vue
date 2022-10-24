@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
+import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/forms/remediation-job';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
 
@@ -50,11 +50,11 @@ export default {
   },
   computed: {
     isRunningJob() {
-      return this.job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
+      return isJobExecutionRunning(this.job);
     },
 
     isCancelledJob() {
-      return this.job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
+      return isJobExecutionCancelled(this.job);
     },
 
     isStartedJob() {

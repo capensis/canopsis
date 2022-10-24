@@ -2,7 +2,7 @@ import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash'
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
@@ -78,6 +78,17 @@ export function durationHelper(seconds) {
  */
 export function alarmStateHelper(state) {
   return new Handlebars.SafeString(`<c-alarm-chip value="${state}"></c-alarm-chip>`);
+}
+
+/**
+ * Return tags chips (we can use it only on alarms list table)
+ *
+ * Example: {{tags}}
+ *
+ * @return {string}
+ */
+export function alarmTagsHelper() {
+  return new Handlebars.SafeString(`<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}"></c-alarm-tags-chips>`);
 }
 
 /**

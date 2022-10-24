@@ -12,8 +12,11 @@
           @click="exportTechMetrics"
         )
     template(#items="{ item }")
-      td.text-xs-center(v-if="!exporting && isMetricNotCreated(item)", colspan="2")
-        div {{ $t('techMetric.noDumps') }}
+      td.text-xs-center(
+        v-if="!exporting && (item.disabled || isMetricNotCreated(item))",
+        colspan="2"
+      )
+        div {{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}
       template(v-else)
         td {{ item.created | date }}
         td
@@ -21,7 +24,7 @@
           span(v-else) {{ item.duration | duration }}
       td
         c-action-btn(
-          :disabled="exporting",
+          :disabled="exporting || item.disabled",
           :tooltip="$t('techMetric.generateDump')",
           icon="play_circle_filled",
           color="secondary",
@@ -72,7 +75,12 @@ export default {
     },
 
     metrics() {
-      return this.metric ? [this.metric] : [];
+      const metrics = this.metric ? [this.metric] : [];
+
+      return metrics.map(metric => ({
+        ...metric,
+        disabled: this.isMetricDisabled(metric),
+      }));
     },
   },
   async mounted() {
@@ -103,6 +111,10 @@ export default {
 
     isMetricReadyToDownload(item) {
       return item.status === TECH_METRICS_EXPORT_STATUSES.success;
+    },
+
+    isMetricDisabled(item) {
+      return item.status === TECH_METRICS_EXPORT_STATUSES.disabled;
     },
 
     isMetricNotCreated(item) {
