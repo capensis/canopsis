@@ -369,7 +369,7 @@ Feature: get service entities
     }
     """
 
-  Scenario: given service with maintenance pbehavior should get gray flag
+  Scenario: given service with maintenance pbehavior should not get gray flag
     Given I am admin
     When I send an event:
     """json
@@ -445,7 +445,7 @@ Feature: get service entities
           "name": "test-resource-pbehavior-weather-service-entity-4",
           "state": {"val": 3},
           "status": {"val": 1},
-          "is_grey": true,
+          "is_grey": false,
           "icon": "wb_cloudy",
           "pbehavior_info": null,
           "pbehaviors": []
@@ -460,7 +460,7 @@ Feature: get service entities
     }
     """
 
-  Scenario: given service with maintenance pbehavior without alarm should get gray flag
+  Scenario: given service with maintenance pbehavior without alarm should not get gray flag
     Given I am admin
     When I send an event:
     """json
@@ -536,7 +536,7 @@ Feature: get service entities
           "name": "test-resource-pbehavior-weather-service-entity-5",
           "state": {"val": 0},
           "status": {"val": 0},
-          "is_grey": true,
+          "is_grey": false,
           "icon": "wb_sunny",
           "pbehavior_info": null,
           "pbehaviors": []
