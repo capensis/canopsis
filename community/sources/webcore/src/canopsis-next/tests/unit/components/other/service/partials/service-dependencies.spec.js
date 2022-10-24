@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { ENTITY_TYPES, MODALS } from '@/constants';
@@ -15,20 +15,6 @@ const stubs = {
   'c-no-events-icon': true,
   'color-indicator-wrapper': true,
 };
-
-const factory = (options = {}) => shallowMount(ServiceDependencies, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ServiceDependencies, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectTreeviewTable = wrapper => wrapper.find('.service-dependencies');
 const selectNodeExpandPanel = wrapper => wrapper.findAll('.v-treeview-node__label');
@@ -121,6 +107,9 @@ describe('service-dependencies', () => {
   const store = createMockedStoreModules([
     serviceModule,
   ]);
+
+  const snapshotFactory = generateRenderer(ServiceDependencies, { localVue, stubs });
+  const factory = generateShallowRenderer(ServiceDependencies, { localVue, stubs });
 
   it('Dependencies fetched after mount', async () => {
     factory({

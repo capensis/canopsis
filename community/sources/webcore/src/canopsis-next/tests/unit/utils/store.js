@@ -356,3 +356,37 @@ export const testsEntityModule = ({
     axiosMockAdapter,
   };
 };
+
+export const createAuthModule = () => {
+  const currentUserPermissionsById = jest.fn()
+    .mockReturnValue({});
+  const authModule = {
+    name: 'auth',
+    getters: {
+      currentUserPermissionsById,
+    },
+  };
+
+  return {
+    authModule,
+    currentUserPermissionsById,
+  };
+};
+
+export const createPbehaviorTypesModule = () => {
+  const fetchPbehaviorTypesListWithoutStore = jest.fn().mockReturnValue({
+    data: [],
+  });
+
+  const pbehaviorTypesModule = {
+    name: 'pbehaviorTypes',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+    },
+  };
+
+  return {
+    pbehaviorTypesModule,
+    fetchPbehaviorTypesListWithoutStore,
+  };
+};

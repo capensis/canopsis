@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-pause-event-form Renders \`service-pause-event-form\` with custom props 1`] = `
+<div>
+  <c-description-field-stub
+    label="Comment"
+    name="comment"
+    required="required"
+    value="comment"
+  />
+  <c-pbehavior-reason-field-stub
+    required="required"
+    return-object="return-object"
+    value="reason"
+  />
+</div>
+`;
+
+exports[`service-pause-event-form Renders \`service-pause-event-form\` with default props 1`] = `
+<div>
+  <c-description-field-stub
+    label="Comment"
+    name="comment"
+    required="required"
+  />
+  <c-pbehavior-reason-field-stub
+    required="required"
+    return-object="return-object"
+  />
+</div>
+`;

@@ -1,13 +1,14 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
+import { createAuthModule } from '@unit/utils/store';
+
 export const createSettingsMocks = () => {
   const createWidget = jest.fn();
   const updateWidget = jest.fn();
   const copyWidget = jest.fn();
   const fetchActiveView = jest.fn();
   const fetchUserPreference = jest.fn();
-  const currentUserPermissionsById = jest.fn().mockReturnValue({});
   const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
     data: [],
     meta: { total_count: 0 },
@@ -22,8 +23,10 @@ export const createSettingsMocks = () => {
     copyWidget,
     fetchActiveView,
     fetchUserPreference,
-    currentUserPermissionsById,
     fetchItem,
+
+    ...createAuthModule(),
+
     activeViewModule: {
       name: 'activeView',
       actions: {
@@ -37,13 +40,6 @@ export const createSettingsMocks = () => {
         create: createWidget,
         update: updateWidget,
         copy: copyWidget,
-      },
-    },
-
-    authModule: {
-      name: 'auth',
-      getters: {
-        currentUserPermissionsById,
       },
     },
 

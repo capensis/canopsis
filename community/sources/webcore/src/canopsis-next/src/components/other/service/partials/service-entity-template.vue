@@ -1,6 +1,5 @@
 <template lang="pug">
-  div
-    v-runtime-template(:template="compiledTemplate")
+  c-runtime-template(:template="compiledTemplate")
 </template>
 
 <script>
@@ -41,9 +40,7 @@ export default {
       const category = hash.category ? `'${hash.category}'` : null;
 
       return new Handlebars.SafeString(`
-        <div>
-          <service-entity-links :links="entity.linklist" :category="${category}" />
-        </div>
+        <service-entity-links :links="entity.linklist" :category="${category}" />
       `);
     });
   },
