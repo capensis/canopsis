@@ -69,12 +69,12 @@ type Counters struct {
 		Minor    int64 `bson:"minor" json:"minor"`
 		Ok       int64 `bson:"ok" json:"ok"`
 	} `bson:"state" json:"state"`
-	Acknowledged            int64            `bson:"acked" json:"acked"`
-	NotAcknowledged         int64            `bson:"unacked" json:"unacked"`
-	NotAcknowledgedUnderPbh int64            `bson:"unacked_under_pbh" json:"unacked_under_pbh"`
-	UnderPbehavior          int64            `bson:"under_pbh" json:"under_pbh"`
-	Depends                 int64            `bson:"depends" json:"depends"`
-	PbhTypeCounters         []PbhTypeCounter `bson:"pbh_types" json:"pbh_types"`
+	Acknowledged         int64            `bson:"acked" json:"acked"`
+	NotAcknowledged      int64            `bson:"unacked" json:"unacked"`
+	AcknowledgedUnderPbh int64            `bson:"acked_under_pbh" json:"acked_under_pbh"`
+	UnderPbehavior       int64            `bson:"under_pbh" json:"under_pbh"`
+	Depends              int64            `bson:"depends" json:"depends"`
+	PbhTypeCounters      []PbhTypeCounter `bson:"pbh_types" json:"pbh_types"`
 }
 
 type PbhTypeCounter struct {

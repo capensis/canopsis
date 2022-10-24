@@ -48,11 +48,11 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 		if event.Alarm.Value.PbehaviorInfo.IsActive() {
 			oldCounters.Acknowledged = 0
 			oldCounters.NotAcknowledged = 1
-			oldCounters.NotAcknowledgedUnderPbh = 0
+			oldCounters.AcknowledgedUnderPbh = 0
 		} else {
 			oldCounters.Acknowledged = 0
 			oldCounters.NotAcknowledged = 0
-			oldCounters.NotAcknowledgedUnderPbh = 1
+			oldCounters.AcknowledgedUnderPbh = 0
 		}
 	case types.AlarmChangeTypeAckremove:
 		currentCounters, oldCounters = &AlarmCounters{}, &AlarmCounters{}
@@ -61,11 +61,11 @@ func GetAlarmCountersFromEvent(event types.Event) (*AlarmCounters, *AlarmCounter
 		if event.Alarm.Value.PbehaviorInfo.IsActive() {
 			oldCounters.Acknowledged = 1
 			oldCounters.NotAcknowledged = 0
-			oldCounters.NotAcknowledgedUnderPbh = 0
+			oldCounters.AcknowledgedUnderPbh = 0
 		} else {
 			oldCounters.Acknowledged = 0
 			oldCounters.NotAcknowledged = 0
-			oldCounters.NotAcknowledgedUnderPbh = 0
+			oldCounters.AcknowledgedUnderPbh = 1
 		}
 	case types.AlarmChangeTypeCreate:
 		currentCounters = &AlarmCounters{}
@@ -137,8 +137,8 @@ func getAlarmCounters(
 		counters.PbehaviorCounters = map[string]int64{
 			pbhType: 1,
 		}
-		if !acked {
-			counters.NotAcknowledgedUnderPbh = 1
+		if acked {
+			counters.AcknowledgedUnderPbh = 1
 		}
 	}
 
@@ -257,8 +257,8 @@ type AlarmCounters struct {
 	Acknowledged int64 `bson:"acked" json:"acked"`
 	// NotAcknowledged is count of unresolved and unacked and active (by pbehavior)
 	NotAcknowledged int64 `bson:"unacked" json:"unacked"`
-	// NotAcknowledgedUnderPbh is count of unresolved and unacked and under pbehavior.
-	NotAcknowledgedUnderPbh int64 `bson:"unacked_under_pbh" json:"unacked_under_pbh"`
+	// AcknowledgedUnderPbh is count of unresolved and acked and under pbehavior.
+	AcknowledgedUnderPbh int64 `bson:"acked_under_pbh" json:"acked_under_pbh"`
 	// PbehaviorCounters contains counters for each pbehavior type.
 	PbehaviorCounters map[string]int64 `bson:"pbehavior" json:"pbehavior"`
 	UnderPbehavior    int64            `bson:"-" json:"under_pbh"`
@@ -274,13 +274,13 @@ func (c AlarmCounters) Negate() AlarmCounters {
 	}
 
 	return AlarmCounters{
-		All:                     -c.All,
-		Active:                  -c.Active,
-		State:                   c.State.Negate(),
-		Acknowledged:            -c.Acknowledged,
-		NotAcknowledged:         -c.NotAcknowledged,
-		NotAcknowledgedUnderPbh: -c.NotAcknowledgedUnderPbh,
-		PbehaviorCounters:       pbehaviorCounters,
+		All:                  -c.All,
+		Active:               -c.Active,
+		State:                c.State.Negate(),
+		Acknowledged:         -c.Acknowledged,
+		NotAcknowledged:      -c.NotAcknowledged,
+		AcknowledgedUnderPbh: -c.AcknowledgedUnderPbh,
+		PbehaviorCounters:    pbehaviorCounters,
 	}
 }
 
@@ -299,13 +299,13 @@ func (c AlarmCounters) Add(other AlarmCounters) AlarmCounters {
 	}
 
 	return AlarmCounters{
-		All:                     c.All + other.All,
-		Active:                  c.Active + other.Active,
-		State:                   c.State.Add(other.State),
-		Acknowledged:            c.Acknowledged + other.Acknowledged,
-		NotAcknowledged:         c.NotAcknowledged + other.NotAcknowledged,
-		NotAcknowledgedUnderPbh: c.NotAcknowledgedUnderPbh + other.NotAcknowledgedUnderPbh,
-		PbehaviorCounters:       pbehaviorCounters,
+		All:                  c.All + other.All,
+		Active:               c.Active + other.Active,
+		State:                c.State.Add(other.State),
+		Acknowledged:         c.Acknowledged + other.Acknowledged,
+		NotAcknowledged:      c.NotAcknowledged + other.NotAcknowledged,
+		AcknowledgedUnderPbh: c.AcknowledgedUnderPbh + other.AcknowledgedUnderPbh,
+		PbehaviorCounters:    pbehaviorCounters,
 	}
 }
 
@@ -323,6 +323,6 @@ func (c AlarmCounters) IsZero() bool {
 		c.State.IsZero() &&
 		c.Acknowledged == 0 &&
 		c.NotAcknowledged == 0 &&
-		c.NotAcknowledgedUnderPbh == 0 &&
+		c.AcknowledgedUnderPbh == 0 &&
 		ifPbhCountersZero
 }
