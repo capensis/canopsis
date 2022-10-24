@@ -487,7 +487,6 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"icon": bson.M{"$switch": bson.M{
 				"branches": append(
 					[]bson.M{
-						// If service is not active return pbehavior type icon.
 						{
 							"case": bson.M{"$and": []bson.M{
 								{"$ifNull": bson.A{"$pbehavior_info", false}},
@@ -495,22 +494,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 							}},
 							"then": "$pbehavior_info.icon_name",
 						},
-						// If all watched alarms are not active return most priority pbehavior type of watched alarms.
-						{
-							"case": bson.M{"$and": []bson.M{
-								{"$gt": bson.A{"$counters.under_pbh", 0}},
-								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
-							}},
-							"then": bson.M{"$arrayElemAt": bson.A{
-								bson.M{"$map": bson.M{
-									"input": "$counters.pbh_types",
-									"in":    "$$this.type.icon_name",
-								}},
-								0,
-							}},
-						},
 					},
-					// Else return state icon.
 					stateVals...,
 				),
 				"default": defaultVal,
@@ -537,11 +521,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"secondary_icon": bson.M{"$switch": bson.M{
 				"branches": []bson.M{
 					{
-						// If only some watched alarms are not active return most priority pbehavior type of watched alarms.
-						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$counters.under_pbh", 0}},
-							{"$lt": bson.A{"$counters.under_pbh", "$counters.depends"}},
-						}},
+						"case": bson.M{"$gt": bson.A{"$counters.under_pbh", 0}},
 						"then": bson.M{"$arrayElemAt": bson.A{
 							bson.M{"$map": bson.M{
 								"input": "$counters.pbh_types",
@@ -609,7 +589,6 @@ func getListDependenciesComputedFields() bson.M {
 		}},
 		"icon": bson.M{"$switch": bson.M{
 			"branches": append(
-				// If service is not active return pbehavior type icon.
 				[]bson.M{{
 					"case": bson.M{"$and": []bson.M{
 						{"$ifNull": bson.A{"$pbehavior_info", false}},
@@ -617,7 +596,6 @@ func getListDependenciesComputedFields() bson.M {
 					}},
 					"then": "$pbehavior_info.icon_name",
 				}},
-				// Else return state icon.
 				stateVals...,
 			),
 			"default": defaultVal,
