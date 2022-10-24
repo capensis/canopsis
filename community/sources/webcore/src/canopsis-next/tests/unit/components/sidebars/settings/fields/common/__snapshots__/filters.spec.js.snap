@@ -1,134 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`filters Renders \`filters\` with custom props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  title="Filters"
 >
   <div
-    class="v-list__group__header"
+    class="layout column"
   >
-    <div
-      class="widget-settings-item-title"
-      role="listitem"
-    >
-      <div
-        class="v-list__tile theme--light"
-      >
-        <div
-          class="validation-header"
-        >
-          Filters
-        </div>
-        <!---->
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
+    <filter-selector-stub
+      clearable="true"
+      filters="[object Object]"
+      hidemultiply="true"
+      itemtext="title"
+      itemvalue="_id"
+      label="Default filter"
+      lockedfilters=""
+      value="filter-id"
+    />
+    <filters-list-stub
+      filters="[object Object]"
+    />
   </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <div
-          class="layout column"
-        >
-          <filter-selector-stub
-            clearable="true"
-            filters="[object Object]"
-            hidemultiply="true"
-            itemtext="title"
-            itemvalue="_id"
-            label="Default filter"
-            lockedfilters=""
-            value="filter-id"
-          />
-          <filters-list-stub
-            filters="[object Object]"
-          />
-        </div>
-      </div>
-    </div>
-  </transition-stub>
-</div>
+</widget-settings-item-stub>
 `;
 
 exports[`filters Renders \`filters\` with default and required props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  title="Filters"
 >
   <div
-    class="v-list__group__header"
+    class="layout column"
   >
-    <div
-      class="widget-settings-item-title"
-      role="listitem"
-    >
-      <div
-        class="v-list__tile theme--light"
-      >
-        <div
-          class="validation-header"
-        >
-          Filters
-        </div>
-        <!---->
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
+    <filter-selector-stub
+      clearable="true"
+      filters=""
+      hidemultiply="true"
+      itemtext="title"
+      itemvalue="_id"
+      label="Default filter"
+      lockedfilters=""
+    />
+    <filters-list-stub
+      filters=""
+    />
   </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <div
-          class="layout column"
-        >
-          <filter-selector-stub
-            clearable="true"
-            filters=""
-            hidemultiply="true"
-            itemtext="title"
-            itemvalue="_id"
-            label="Default filter"
-            lockedfilters=""
-          />
-          <filters-list-stub
-            filters=""
-          />
-        </div>
-      </div>
-    </div>
-  </transition-stub>
-</div>
+</widget-settings-item-stub>
 `;
