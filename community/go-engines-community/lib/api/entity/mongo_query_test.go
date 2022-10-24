@@ -96,7 +96,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "canonical_type",
+						Field:     "pbehavior_info.canonical_type",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 					},
 				},
@@ -182,7 +182,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "canonical_type",
+						Field:     "pbehavior_info.canonical_type",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 					},
 				},
@@ -736,7 +736,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "canonical_type",
+						Field:     "pbehavior_info.canonical_type",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
 					},
 				},
@@ -769,7 +769,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "name",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-pbehavior"),
 					},
 				},
@@ -828,7 +828,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			{"type": bson.M{"$eq": "resource"}},
 		}}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
-			{"pbehavior_info.name": bson.M{"$eq": "test-pbehavior"}},
+			{"pbehavior_info.id": bson.M{"$eq": "test-pbehavior"}},
 		}}}}},
 	}
 	expected = append(expected, getAlarmLookup()...)
