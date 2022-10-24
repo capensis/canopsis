@@ -3,7 +3,7 @@
     :class="itemClasses",
     :style="itemStyle",
     tile,
-    @click="showAdditionalInfoModal"
+    @click.native="showAdditionalInfoModal"
   )
     v-layout.fill-height.weather-item__content(row, justify-space-between)
       v-flex.position-relative.fill-height
