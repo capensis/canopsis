@@ -186,6 +186,7 @@ export const patternRuleToForm = (rule = {}) => {
           [ALARM_PATTERN_FIELDS.ack]: PATTERN_OPERATORS.notAcked,
           [ALARM_PATTERN_FIELDS.canceled]: PATTERN_OPERATORS.notCanceled,
           [ALARM_PATTERN_FIELDS.ticket]: PATTERN_OPERATORS.ticketNotAssociated,
+          [ALARM_PATTERN_FIELDS.activationDate]: PATTERN_OPERATORS.inactive,
         }[rule.field];
       }
 
@@ -193,6 +194,10 @@ export const patternRuleToForm = (rule = {}) => {
         form.operator = rule.cond.value === true
           ? PATTERN_OPERATORS.exist
           : PATTERN_OPERATORS.notExist;
+      }
+
+      if (rule.field === ALARM_PATTERN_FIELDS.activationDate) {
+        form.attribute = ALARM_PATTERN_FIELDS.activated;
       }
       break;
 
@@ -391,7 +396,9 @@ export const formDateIntervalConditionToPatternRuleCondition = (range) => {
  */
 export const formRuleToPatternRule = (rule) => {
   const pattern = {
-    field: rule.attribute,
+    field: rule.attribute === ALARM_PATTERN_FIELDS.activated
+      ? ALARM_PATTERN_FIELDS.activationDate
+      : rule.attribute,
     cond: {
       value: rule.value,
       type: PATTERN_CONDITIONS.equal,
@@ -452,15 +459,6 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.value = `(?<!${rule.value})$`;
       break;
 
-    case PATTERN_OPERATORS.exist:
-      pattern.cond.type = PATTERN_CONDITIONS.exist;
-      pattern.cond.value = true;
-      break;
-    case PATTERN_OPERATORS.notExist:
-      pattern.cond.type = PATTERN_CONDITIONS.exist;
-      pattern.cond.value = false;
-      break;
-
     case PATTERN_OPERATORS.hasEvery:
       pattern.cond.type = PATTERN_CONDITIONS.hasEvery;
       break;
@@ -512,6 +510,7 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.value = false;
       break;
 
+    case PATTERN_OPERATORS.exist:
     case PATTERN_OPERATORS.ticketAssociated:
     case PATTERN_OPERATORS.canceled:
     case PATTERN_OPERATORS.snoozed:
@@ -520,10 +519,12 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = true;
       break;
+    case PATTERN_OPERATORS.notExist:
     case PATTERN_OPERATORS.ticketNotAssociated:
     case PATTERN_OPERATORS.notCanceled:
     case PATTERN_OPERATORS.notSnoozed:
     case PATTERN_OPERATORS.notAcked:
+    case PATTERN_OPERATORS.inactive:
       pattern.cond.type = PATTERN_CONDITIONS.exist;
       pattern.cond.value = false;
       break;
