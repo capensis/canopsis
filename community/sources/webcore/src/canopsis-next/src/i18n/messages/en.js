@@ -166,6 +166,8 @@ export default merge({
     expired: 'Expired date',
     accessed: 'Accessed at',
     lastEventDate: 'Last event date',
+    activationDate: 'Activation date',
+    activated: 'Activated',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
     periods: 'Periods',
@@ -402,6 +404,9 @@ export default merge({
 
       [PATTERN_OPERATORS.with]: 'With',
       [PATTERN_OPERATORS.without]: 'Without',
+
+      [PATTERN_OPERATORS.activated]: 'Activated',
+      [PATTERN_OPERATORS.inactive]: 'Inactive',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',

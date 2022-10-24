@@ -24,6 +24,7 @@ import {
   MAX_LIMIT,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
+  PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -264,6 +265,21 @@ export default {
       };
     },
 
+    lastCommentOptions() {
+      return {
+        operators: [...PATTERN_STRING_OPERATORS, PATTERN_OPERATORS.exist],
+      };
+    },
+
+    activatedOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.activated,
+          PATTERN_OPERATORS.inactive,
+        ],
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -367,11 +383,22 @@ export default {
         {
           text: this.$t('common.lastComment'),
           value: ALARM_PATTERN_FIELDS.lastComment,
+          options: this.lastCommentOptions,
         },
         {
           text: this.$tc('common.tag', 2),
           value: ALARM_PATTERN_FIELDS.tags,
           options: this.tagsOptions,
+        },
+        {
+          text: this.$t('common.activated'),
+          value: ALARM_PATTERN_FIELDS.activationDate,
+          options: this.activatedOptions,
+        },
+        {
+          text: this.$t('common.activationDate'),
+          value: ALARM_PATTERN_FIELDS.activationDate,
+          options: this.dateOptions,
         },
       ];
     },
