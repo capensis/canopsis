@@ -4,7 +4,8 @@ import Faker from 'faker';
 import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
-  createMockedStoreModules, createQueryModule,
+  createMockedStoreModules,
+  createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
 } from '@unit/utils/store';
@@ -55,6 +56,7 @@ describe('service-weather', () => {
   const {
     serviceModule,
     getServicesListByWidgetId,
+    getServicesErrorByWidgetId,
     fetchServicesList,
   } = createServiceModule();
   const { queryModule, updateQuery } = createQueryModule();
@@ -280,6 +282,7 @@ describe('service-weather', () => {
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   test('Renders `service-weather` with full access', async () => {
@@ -303,11 +306,47 @@ describe('service-weather', () => {
         },
         editing: false,
       },
-      store,
+      store: createMockedStoreModules([
+        authModule,
+        userPreferenceModule,
+        serviceModule,
+        queryModule,
+      ]),
     });
 
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
+  });
+
+  test('Renders `service-weather` with errors', async () => {
+    getServicesErrorByWidgetId.mockReturnValueOnce({
+      name: 'Service name error',
+      description: 'Service description error',
+    });
+    const wrapper = snapshotFactory({
+      propsData: {
+        tabId: 'tab-id',
+        widget: {
+          _id: 'service-weather-widget-id',
+          type: WIDGET_TYPES.serviceWeather,
+          title: 'Default service weather',
+          parameters: {},
+        },
+        editing: false,
+      },
+      store: createMockedStoreModules([
+        authModule,
+        userPreferenceModule,
+        serviceModule,
+        queryModule,
+      ]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });
