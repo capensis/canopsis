@@ -30,7 +30,7 @@ export default {
     this.fetchData();
 
     this.$socket
-      .join(SOCKET_ROOMS.loggedUserCount, true)
+      .join(SOCKET_ROOMS.loggedUserCount)
       .addListener(this.setCount);
   },
   beforeDestroy() {
