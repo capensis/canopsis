@@ -1,6 +1,6 @@
 <template lang="pug">
   widget-settings-item(:title="title", optional)
-    v-text-field(:value="value", type="number", @input="$emit('input', parseInt($event, 10))")
+    c-number-field(v-field="value")
 </template>
 
 <script>
