@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-runtime-template Renders \`c-runtime-template\` props 1`] = `
+<div>
+  
+          prop-one
+          prop-two:prop-three
+          override-mixin-computed-property
+          data-property
+          mixin-data-property
+          template-property-text
+          method-text
+          mixin-method-property
+          
+  <div
+    class="custom-component"
+  >
+    provide-property-text
+  </div>
+</div>
+`;
+
+exports[`c-runtime-template Renders \`c-runtime-template\` updated props 1`] = `
+<div>
+  
+          prop-one-updated
+          prop-two-updated:prop-three-updated
+          override-mixin-computed-property
+          data-property
+          mixin-data-property
+          template-property-text
+          method-text
+          mixin-method-property
+          
+  <div
+    class="custom-component"
+  >
+    provide-property-text
+  </div>
+</div>
+`;

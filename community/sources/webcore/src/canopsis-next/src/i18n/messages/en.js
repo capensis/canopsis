@@ -1144,8 +1144,6 @@ export default merge({
     },
     createPause: {
       title: 'Create Pause event',
-      comment: 'Comment',
-      reason: 'Reason',
     },
     createAckRemove: {
       title: 'Remove ack',
