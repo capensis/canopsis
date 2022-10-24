@@ -83,7 +83,7 @@ export default {
     this.fetchHealthcheck();
 
     this.$socket
-      .join(SOCKET_ROOMS.healthcheck, true)
+      .join(SOCKET_ROOMS.healthcheck)
       .addListener(this.setTimescaleIsAvailable);
   },
   beforeDestroy() {
