@@ -28,7 +28,7 @@ export default {
     },
 
     methodProps() {
-      return Object.entries(this.parentOptions.methods).reduce((acc, [key]) => {
+      return Object.entries(this.parentOptions.methods ?? {}).reduce((acc, [key]) => {
         acc[key] = this.parentNode[key];
 
         return acc;

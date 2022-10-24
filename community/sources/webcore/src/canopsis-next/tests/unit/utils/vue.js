@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
 import VueAsyncComputed from 'vue-async-computed';
+import VueResizeText from 'vue-resize-text';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
 import { MqLayout } from '@unit/stubs/mq';
@@ -35,6 +36,7 @@ const mocks = {
 };
 
 Vue.use(VueAsyncComputed);
+Vue.use(VueResizeText);
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
@@ -121,6 +123,33 @@ export const mount = (component, options = {}) => {
 };
 
 /**
+ * Generate render function
+ *
+ * @param {Object} component
+ * @param {Object} baseOptions
+ * @returns {Function}
+ */
+export const generateRenderer = (component, baseOptions) => {
+  let wrapper;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    wrapper?.destroy?.();
+  });
+
+  return (options = {}) => {
+    wrapper = testUtilsMount(
+      component,
+      merge({}, { mocks, stubs }, baseOptions, options, { i18n }),
+    );
+
+    enhanceWrapper(wrapper);
+
+    return wrapper;
+  };
+};
+
+/**
  * Function for shallow mount vue component with mocked i18n, constants and config.
  *
  * @param {Object} component
@@ -141,4 +170,31 @@ export const shallowMount = (component, options = {}) => {
   });
 
   return wrapper;
+};
+
+/**
+ * Generate render function
+ *
+ * @param {Object} component
+ * @param {Object} baseOptions
+ * @returns {Function}
+ */
+export const generateShallowRenderer = (component, baseOptions) => {
+  let wrapper;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    wrapper?.destroy?.();
+  });
+
+  return (options = {}) => {
+    wrapper = testUtilsShallowMount(
+      component,
+      merge({}, baseOptions, options, { mocks, i18n, stubs }),
+    );
+
+    enhanceWrapper(wrapper);
+
+    return wrapper;
+  };
 };
