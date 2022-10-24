@@ -166,6 +166,8 @@ export default merge({
     expired: 'Date d\'expiration',
     accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
+    activationDate: 'Date d\'activation',
+    activated: 'Activé',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
     periods: 'Périodes',
@@ -402,6 +404,9 @@ export default merge({
 
       [PATTERN_OPERATORS.with]: 'Avec',
       [PATTERN_OPERATORS.without]: 'Sans',
+
+      [PATTERN_OPERATORS.activated]: 'Activé',
+      [PATTERN_OPERATORS.inactive]: 'Inactif',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
