@@ -1,11 +1,10 @@
 <template lang="pug">
   widget-settings-item(:title="title")
     v-slider(
-      :value="value",
+      v-field="value",
       :max="max",
       :min="min",
       ticks="always",
-      @input="$emit('input', $event)",
       always-dirty,
       thumb-label
     )

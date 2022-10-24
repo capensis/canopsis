@@ -47,7 +47,6 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
   >
     <field-sort-column-stub
       columns="[object Object],[object Object]"
-      columnslabel="Order by"
       value="[object Object]"
     />
     <hr
@@ -195,7 +194,6 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   >
     <field-sort-column-stub
       columns="[object Object],[object Object]"
-      columnslabel="Order by"
       value="[object Object]"
     />
     <hr

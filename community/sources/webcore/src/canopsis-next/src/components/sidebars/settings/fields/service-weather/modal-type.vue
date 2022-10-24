@@ -1,6 +1,6 @@
 <template lang="pug">
   widget-settings-item(:title="$t('settings.serviceWeatherModalTypes.title')")
-    v-radio-group(:value="value", @change="$emit('input', $event)")
+    v-radio-group(v-field="value")
       v-radio(
         :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo",
         :label="$t('settings.serviceWeatherModalTypes.fields.moreInfo')",

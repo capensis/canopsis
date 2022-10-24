@@ -5,6 +5,7 @@ import Columns from '@/components/sidebars/settings/fields/common/columns.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings-item': true,
   'c-columns-field': true,
 };
 
@@ -18,16 +19,6 @@ const factory = (options = {}) => shallowMount(Columns, {
 const snapshotFactory = (options = {}) => mount(Columns, {
   localVue,
   stubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
 
   ...options,
 });
