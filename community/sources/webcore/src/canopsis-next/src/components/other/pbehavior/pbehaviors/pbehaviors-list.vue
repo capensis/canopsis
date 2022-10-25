@@ -13,7 +13,7 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected, clearSelected }")
-      mass-actions-panel.ml-3(
+      pbehaviors-mass-actions-panel.ml-3(
         :items="selected",
         :removable="removable",
         :enablable="enablable",
@@ -57,15 +57,14 @@
 </template>
 
 <script>
-import MassActionsPanel from './actions/mass-actions-panel.vue';
-
-import PbehaviorsListExpandItem from './pbehaviors-list-expand-item.vue';
+import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
+import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 
 export default {
   inject: ['$system'],
   components: {
     PbehaviorsListExpandItem,
-    MassActionsPanel,
+    PbehaviorsMassActionsPanel,
   },
   props: {
     pbehaviors: {
