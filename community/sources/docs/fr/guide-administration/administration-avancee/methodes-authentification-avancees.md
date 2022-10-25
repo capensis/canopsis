@@ -28,7 +28,7 @@ Voici la liste des paramètres :
 | `admin_dn`        | Bind DN : DN du compte utilisé pour lire l'annuaire | `uid=svccanopsis,ou=Special,dc=example,dc=com`                 |
 | `admin_passwd`    | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire  |                                          |
 | user_dn         | DN de base où rechercher les utilisateurs          | `ou=People,dc=example,dc=com`                                   |
-| ufilter         | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s` | `uid=%s`    |
+| `ufilter`         | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s` | `uid=%s`    |
 | username_attr   | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire  | `uid`                                       |
 | attrs           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | default_role    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
