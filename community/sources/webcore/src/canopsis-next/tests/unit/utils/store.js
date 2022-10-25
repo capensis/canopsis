@@ -537,3 +537,26 @@ export const createActiveViewModule = () => {
     activeViewModule,
   };
 };
+
+export const createPbehaviorEntitiesModule = () => {
+  const fetchPbehaviorEntitiesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: { total_count: 0 },
+  });
+
+  const pbehaviorEntitiesModule = {
+    name: 'pbehavior/entities',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorEntitiesListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchPbehaviorEntitiesListWithoutStore.mockClear();
+  });
+
+  return {
+    fetchPbehaviorEntitiesListWithoutStore,
+    pbehaviorEntitiesModule,
+  };
+};
