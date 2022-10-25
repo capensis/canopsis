@@ -230,7 +230,7 @@ Feature: get service entities
     """
 
   Scenario: given dependency with maintenance pbehavior
-    and another dependency without pbehavior should get multiple entities
+  and another dependency without pbehavior should get multiple entities
     Given I am admin
     When I send an event:
     """json
@@ -651,6 +651,244 @@ Feature: get service entities
                 "icon_name": "build",
                 "name": "Engine maintenance",
                 "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given dependency with origin pbehavior should get origin icon
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-entity-7",
+      "connector_name": "test-connector-name-pbehavior-weather-service-entity-7",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-entity-7",
+      "resource" : "test-resource-pbehavior-weather-service-entity-7",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-entity-7",
+      "name": "test-pbehavior-weather-service-entity-7",
+      "output_template": "test-pbehavior-weather-service-entity-7",
+      "category": "test-category-pbehavior-weather-service-entity",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-7"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/bulk/entity-pbehaviors:
+    """json
+    [
+      {
+        "entity": "test-resource-pbehavior-weather-service-entity-7/test-component-pbehavior-weather-service-entity-7",
+        "origin": "pbehavior-weather-service-entity-7",
+        "name": "test-pbehavior-weather-service-entity-7",
+        "tstart": {{ now }},
+        "tstop": {{ nowAdd "1h" }},
+        "color": "#FFFFFF",
+        "type": "test-maintenance-type-to-engine",
+        "reason": "test-reason-to-engine"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-7?pbh_origin=pbehavior-weather-service-entity-7
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-resource-pbehavior-weather-service-entity-7",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "is_grey": true,
+          "icon": "build",
+          "pbh_origin_icon": "build",
+          "pbehavior_info": {
+            "canonical_type": "maintenance",
+            "name": "test-pbehavior-weather-service-entity-7",
+            "icon_name": "build"
+          },
+          "pbehaviors": [
+            {
+              "name": "test-pbehavior-weather-service-entity-7",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-maintenance-type-to-engine",
+                "icon_name": "build",
+                "name": "Engine maintenance",
+                "type": "maintenance"
+              }
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given dependency with origin pause pbehavior and maintenance pbehavior should get origin icon
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "connector" : "test-connector-pbehavior-weather-service-entity-8",
+      "connector_name": "test-connector-name-pbehavior-weather-service-entity-8",
+      "source_type": "resource",
+      "event_type": "check",
+      "component" :  "test-component-pbehavior-weather-service-entity-8",
+      "resource" : "test-resource-pbehavior-weather-service-entity-8",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/entityservices:
+    """json
+    {
+      "_id": "test-pbehavior-weather-service-entity-8",
+      "name": "test-pbehavior-weather-service-entity-8",
+      "output_template": "test-pbehavior-weather-service-entity-8",
+      "category": "test-category-pbehavior-weather-service-entity",
+      "impact_level": 1,
+      "enabled": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-8"
+            }
+          }
+        ]
+      ],
+      "sli_avail_state": 0
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "name": "test-pbehavior-weather-service-entity-8-1",
+      "enabled": true,
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-pause-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-weather-service-entity-8"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 2 events processing
+    When I do POST /api/v4/bulk/entity-pbehaviors:
+    """json
+    [
+      {
+        "entity": "test-resource-pbehavior-weather-service-entity-8/test-component-pbehavior-weather-service-entity-8",
+        "origin": "pbehavior-weather-service-entity-8",
+        "name": "test-pbehavior-weather-service-entity-8-2",
+        "tstart": {{ now }},
+        "tstop": {{ nowAdd "1h" }},
+        "color": "#FFFFFF",
+        "type": "test-maintenance-type-to-engine",
+        "reason": "test-reason-to-engine"
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-8?pbh_origin=pbehavior-weather-service-entity-8
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-resource-pbehavior-weather-service-entity-8",
+          "state": {"val": 2},
+          "status": {"val": 1},
+          "is_grey": true,
+          "icon": "pause",
+          "pbh_origin_icon": "build",
+          "pbehavior_info": {
+            "canonical_type": "pause",
+            "name": "test-pbehavior-weather-service-entity-8-1",
+            "icon_name": "pause"
+          },
+          "pbehaviors": [
+            {
+              "name": "test-pbehavior-weather-service-entity-8-1",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "reason": {
+                "_id": "test-reason-to-engine",
+                "name": "Test Engine",
+                "description": "Test Engine"
+              },
+              "type": {
+                "_id": "test-pause-type-to-engine",
+                "icon_name": "pause",
+                "name": "Engine pause",
+                "type": "pause"
               }
             }
           ]

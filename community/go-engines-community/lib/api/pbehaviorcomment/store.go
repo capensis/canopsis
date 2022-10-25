@@ -2,12 +2,13 @@ package pbehaviorcomment
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 type Store interface {
@@ -21,7 +22,7 @@ type store struct {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbCollection: dbClient.Collection(pbehavior.PBehaviorCollectionName),
+		dbCollection: dbClient.Collection(mongo.PbehaviorMongoCollection),
 	}
 }
 

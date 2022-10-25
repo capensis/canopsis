@@ -16,7 +16,7 @@ type ModelTransformer interface {
 
 func NewModelTransformer(dbClient mongo.DbClient) ModelTransformer {
 	return &modelTransformer{
-		typeCollection: dbClient.Collection(pbehavior.TypeCollectionName),
+		typeCollection: dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
 	}
 }
 
