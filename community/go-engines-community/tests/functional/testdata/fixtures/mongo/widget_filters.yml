@@ -611,7 +611,9 @@ widget_filters:
       - - field: v.duration
           cond:
             type: gt
-            value: 1
+            value:
+              value: 1
+              unit: m
     entity_pattern:
       - - field: name
           cond:
@@ -649,7 +651,9 @@ widget_filters:
       - - field: v.duration
           cond:
             type: gt
-            value: 1
+            value:
+              value: 1
+              unit: m
     entity_pattern:
       - - field: name
           cond:
