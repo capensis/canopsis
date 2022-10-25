@@ -8,6 +8,7 @@
 
 <script>
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 /**
  * Component to set the title of a widget
  *
