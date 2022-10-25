@@ -8,7 +8,7 @@
     v-layout.fill-height.weather-item__content(row, justify-space-between)
       v-flex.position-relative.fill-height
         v-layout(:class="{ 'blinking': isBlinking }", justify-start)
-          v-runtime-template.weather-item__service-name.pa-3(:template="compiledTemplate")
+          c-runtime-template.weather-item__service-name.pa-3(:template="compiledTemplate")
         v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon(:value="service.idle_since", color="white", top)
           impact-state-indicator.mr-1(v-if="isPriorityEnabled", :value="service.impact_state")
@@ -33,7 +33,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
@@ -57,7 +56,6 @@ const { mapActions } = createNamespacedHelpers('service');
 
 export default {
   components: {
-    VRuntimeTemplate,
     AlarmPbehaviorCounters,
     AlarmStateCounters,
     ImpactStateIndicator,

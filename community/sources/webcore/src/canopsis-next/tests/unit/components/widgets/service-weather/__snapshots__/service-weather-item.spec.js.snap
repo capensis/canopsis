@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-weather-item Renders \`service-weather-item\` with custom props 1`] = `
+<div
+  class="white--text cursor-pointer weather-item v-card v-sheet v-sheet--tile theme--light mt-1 mr-3 mb-5 ml-7"
+  style="height: 16em; background-color: rgb(220, 231, 117);"
+>
+  <div
+    class="layout fill-height weather-item__content row justify-space-between"
+  >
+    <div
+      class="flex position-relative fill-height"
+    >
+      <div
+        class="layout justify-start blinking"
+      >
+        <div
+          class="weather-item__service-name pa-3"
+        >
+          <p>
+            <strong>
+              <span
+                style="font-size: 18px;"
+              >
+                Service
+              </span>
+            </strong>
+          </p>
+           
+          <hr
+            id="null"
+          />
+           
+          <p />
+           
+          <p>
+             Dernière mise à jour : 18/03/2005 2:58:31
+          </p>
+        </div>
+      </div>
+      <div
+        class="layout weather-item__toolbar pt-1 pr-1 row align-center"
+      >
+        <c-no-events-icon-stub
+          color="white"
+          top="top"
+        />
+        <impact-state-indicator-stub
+          class="mr-1"
+          value="3"
+        />
+      </div>
+      <i
+        aria-hidden="true"
+        class="v-icon weather-item__background white--text material-icons theme--light"
+        style="font-size: 5em;"
+      />
+      <!---->
+    </div>
+    <alarm-pbehavior-counters-stub
+      counters="[object Object]"
+      types="pbh-type"
+    />
+    <alarm-state-counters-stub
+      counters="[object Object]"
+      types="state-types"
+    />
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`service-weather-item Renders \`service-weather-item\` with full access 1`] = `
+<div
+  class="white--text cursor-pointer weather-item v-card v-sheet v-sheet--tile theme--light mt-1 mr-3 mb-5 ml-7 v-card__with-see-alarms-btn"
+  style="height: 16em;"
+>
+  <div
+    class="layout fill-height weather-item__content row justify-space-between"
+  >
+    <div
+      class="flex position-relative fill-height"
+    >
+      <div
+        class="layout justify-start"
+      >
+        <div
+          class="weather-item__service-name pa-3"
+        >
+          <p>
+            <strong>
+              <span
+                style="font-size: 18px;"
+              />
+            </strong>
+          </p>
+           
+          <hr
+            id="null"
+          />
+           
+          <p />
+           
+          <p>
+             Dernière mise à jour : 
+          </p>
+        </div>
+      </div>
+      <div
+        class="layout weather-item__toolbar pt-1 pr-1 row align-center"
+      >
+        <c-no-events-icon-stub
+          color="white"
+          top="top"
+        />
+        <impact-state-indicator-stub
+          class="mr-1"
+          value="0"
+        />
+      </div>
+      <i
+        aria-hidden="true"
+        class="v-icon weather-item__background white--text material-icons theme--light"
+        style="font-size: 5em;"
+      />
+      <!---->
+    </div>
+    <!---->
+    <alarm-state-counters-stub
+      counters="[object Object]"
+      types="state-types"
+    />
+  </div>
+  <button
+    class="see-alarms-btn v-btn v-btn--flat theme--light"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      See alarms
+    </div>
+  </button>
+</div>
+`;

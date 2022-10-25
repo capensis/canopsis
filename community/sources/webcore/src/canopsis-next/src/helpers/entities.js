@@ -139,6 +139,17 @@ export const generateDefaultContextWidget = () => ({
 });
 
 /**
+ * Generate service weather widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultServiceWeatherWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.serviceWeather })),
+
+  _id: uuid(),
+});
+
+/**
  * Generate alarm details id by widgetId
  *
  * @param {string} alarmId

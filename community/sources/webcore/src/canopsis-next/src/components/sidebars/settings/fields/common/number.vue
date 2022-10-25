@@ -5,6 +5,7 @@
 
 <script>
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 /**
  * Component to select a Number type setting
  *
