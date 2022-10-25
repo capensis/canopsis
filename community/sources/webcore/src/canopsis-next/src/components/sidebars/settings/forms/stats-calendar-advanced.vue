@@ -1,14 +1,15 @@
 <template lang="pug">
   widget-settings-group(:title="$t('settings.advancedSettings')")
     field-filters(
-      v-model="form.parameters.mainFilter",
-      :filters.sync="form.filters",
+      v-field="form.parameters.mainFilter",
+      :filters="form.filters",
       :widget-id="widget._id",
       addable,
       editable,
       with-alarm,
       with-entity,
-      with-pbehavior
+      with-pbehavior,
+      @update:filters="updateField('filters', $event)"
     )
     field-filters(
       :filters="value.filters",
@@ -34,7 +35,7 @@
 </template>
 
 <script>
-import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 
 import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
@@ -56,7 +57,7 @@ export default {
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formMixin],
   model: {
     prop: 'value',
     event: 'input',
