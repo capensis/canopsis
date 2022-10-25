@@ -32,7 +32,7 @@ Voici la liste des paramètres :
 | `username_attr`   | Attribut portant l'identifiant utilisateur dans l'objet de l'annuaire  | `uid`                                       |
 | `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | default_role    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
-| insecure_skip_verify | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
 
 
 Enfin, vous devez ensuite **obligatoirement** redémarrer le service API.
