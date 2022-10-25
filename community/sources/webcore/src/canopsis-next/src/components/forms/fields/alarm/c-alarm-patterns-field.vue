@@ -265,7 +265,7 @@ export default {
       };
     },
 
-    lastCommentOptions() {
+    stringWithExistOptions() {
       return {
         operators: [...PATTERN_STRING_OPERATORS, PATTERN_OPERATORS.exist],
       };
@@ -334,6 +334,7 @@ export default {
         {
           text: this.$t('common.output'),
           value: ALARM_PATTERN_FIELDS.output,
+          options: this.stringWithExistOptions,
         },
         {
           text: this.$t('common.lastEventDate'),
@@ -383,7 +384,7 @@ export default {
         {
           text: this.$t('common.lastComment'),
           value: ALARM_PATTERN_FIELDS.lastComment,
-          options: this.lastCommentOptions,
+          options: this.stringWithExistOptions,
         },
         {
           text: this.$tc('common.tag', 2),
