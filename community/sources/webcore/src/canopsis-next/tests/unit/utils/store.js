@@ -560,3 +560,23 @@ export const createPbehaviorEntitiesModule = () => {
     pbehaviorEntitiesModule,
   };
 };
+
+export const createPbehaviorTimespanModule = () => {
+  const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
+
+  const pbehaviorTimespanModule = {
+    name: 'pbehaviorTimespan',
+    actions: {
+      fetchListWithoutStore: fetchTimespansListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
+
+  return {
+    fetchTimespansListWithoutStore,
+    pbehaviorTimespanModule,
+  };
+};
