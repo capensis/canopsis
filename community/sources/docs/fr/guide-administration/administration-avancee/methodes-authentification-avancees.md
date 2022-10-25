@@ -71,7 +71,7 @@ Voici la liste des paramètres nécessaires à la configuration CAS :
 | `login_url`    | URL du serveur CAS sur laquelle le navigateur web va être redirigé pour s'authentifier        |   http://canopsis.info.local/  |
 | `default_role` | Rôle par défaut au moment de la première connexion           | Visualisation                  |
 | `title`        | Label sur le formulaire de connexion                         | Connexion                      |
-| `validate_url  | URL de validation du serveur CAS à laquelle l'API va accéder | https://cas.info.local/websso/ |
+| `validate_url`  | URL de validation du serveur CAS à laquelle l'API va accéder | https://cas.info.local/websso/ |
 
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
