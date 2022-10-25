@@ -10,7 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -32,12 +34,15 @@ type Store interface {
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteByName(ctx context.Context, name string) (string, error)
 	FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error)
+	EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error)
+	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
 }
 
 type store struct {
 	dbClient mongo.DbClient
 
-	dbCollection, entityCollection mongo.DbCollection
+	dbCollection       mongo.DbCollection
+	entityDbCollection mongo.DbCollection
 
 	entityMatcher          pbehavior.EntityMatcher
 	entityTypeResolver     pbehavior.EntityTypeResolver
@@ -59,7 +64,7 @@ func NewStore(
 	return &store{
 		dbClient:                      dbClient,
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
-		entityCollection:              dbClient.Collection(mongo.EntityMongoCollection),
+		entityDbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
 		entityMatcher:                 entityMatcher,
 		entityTypeResolver:            entityTypeResolver,
 		pbhTypeComputer:               pbhTypeComputer,
@@ -71,7 +76,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
-	now := libtypes.NewCpsTime(time.Now().Unix())
+	now := libtypes.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.ID = r.ID
 	if doc.ID == "" {
@@ -259,7 +264,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
 	}
-	cursor, err := s.entityCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.entityDbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
@@ -283,7 +288,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
-	now := libtypes.NewCpsTime(time.Now().Unix())
+	now := libtypes.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.Updated = &now
 
@@ -312,6 +317,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 		if err == nil {
 			return common.NewValidationError("name", errors.New("Name already exists."))
+		}
+
+		err = s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+		if err == nil {
+			return common.NewValidationError("_id", errors.New("Cannot update a pbehavior with origin."))
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -402,7 +415,15 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 			}
 		}
 
-		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+		if err == nil {
+			return common.NewValidationError("_id", errors.New("Cannot update a pbehavior with origin."))
+		}
+
+		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			return err
 		}
@@ -443,7 +464,7 @@ func (s *store) DeleteByName(ctx context.Context, name string) (string, error) {
 
 func (s *store) FindEntity(ctx context.Context, entityId string) (*libtypes.Entity, error) {
 	entity := libtypes.Entity{}
-	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityId}).Decode(&entity)
+	err := s.entityDbCollection.FindOne(ctx, bson.M{"_id": entityId}).Decode(&entity)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
@@ -452,6 +473,118 @@ func (s *store) FindEntity(ctx context.Context, entityId string) (*libtypes.Enti
 	}
 
 	return &entity, nil
+}
+
+func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error) {
+	now := libtypes.NewCpsTime()
+	doc := pbehavior.PBehavior{
+		ID:       utils.NewID(),
+		Author:   r.Author,
+		Comments: make([]*pbehavior.Comment, 0),
+		Enabled:  true,
+		Name:     r.Name,
+		Reason:   r.Reason,
+		Start:    r.Start,
+		Stop:     r.Stop,
+		RRule:    r.RRule,
+		Type:     r.Type,
+		Created:  &now,
+		Updated:  &now,
+		Color:    r.Color,
+		Origin:   r.Origin,
+		Entity:   r.Entity,
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field: "_id",
+						Condition: pattern.Condition{
+							Type:  pattern.ConditionEqual,
+							Value: r.Entity,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	if r.Comment != "" {
+		doc.Comments = append(doc.Comments, &pbehavior.Comment{
+			ID:        utils.NewID(),
+			Author:    r.Author,
+			Timestamp: &now,
+			Message:   r.Comment,
+		})
+	}
+
+	var pbh *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		pbh = nil
+
+		err := s.entityDbCollection.FindOne(ctx, bson.M{"_id": r.Entity}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return common.NewValidationError("entity", errors.New("Entity doesn't exist."))
+			}
+			return err
+		}
+
+		err = s.dbCollection.FindOne(ctx, bson.M{
+			"origin": r.Origin,
+			"entity": r.Entity,
+		}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+		if err == nil {
+			return common.NewValidationError("entity", errors.New("Pbehavior for origin already exists."))
+		}
+
+		err = s.dbCollection.FindOne(ctx, bson.M{"name": doc.Name}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+		if err == nil {
+			return common.NewValidationError("name", errors.New("Name already exists."))
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, doc)
+		if err != nil {
+			return err
+		}
+
+		pbh, err = s.GetOneBy(ctx, doc.ID)
+		return err
+	})
+
+	return pbh, err
+}
+
+func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error) {
+	id := ""
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		id = ""
+
+		var pbh pbehavior.PBehavior
+		err := s.dbCollection.
+			FindOne(ctx, bson.M{
+				"entity": r.Entity,
+				"origin": r.Origin,
+			}, options.FindOne().SetProjection(bson.M{"_id": 1})).
+			Decode(&pbh)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
+		}
+
+		id = pbh.ID
+		_, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		return err
+	})
+
+	return id, err
 }
 
 func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {
