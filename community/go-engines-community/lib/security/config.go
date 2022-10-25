@@ -48,7 +48,7 @@ type LdapConfig struct {
 	UsernameAttr       string            `yaml:"username_attr"`
 	Filter             string            `yaml:"ufilter"`
 	DefaultRole        string            `yaml:"default_role"`
-	InsecureSkipVerify bool              `yaml:"skip_verify"`
+	InsecureSkipVerify bool              `yaml:"insecure_skip_verify"`
 	MaxTLSVersion      string            `yaml:"max_tls_ver"`
 }
 
@@ -72,7 +72,7 @@ type SamlConfig struct {
 	IdpAttributesMap        map[string]string `yaml:"idp_attributes_map"`
 	CanopsisSamlUrl         string            `yaml:"canopsis_saml_url"`
 	DefaultRole             string            `yaml:"default_role"`
-	InsecureSkipVerify      bool              `yaml:"skip_verify"`
+	InsecureSkipVerify      bool              `yaml:"insecure_skip_verify"`
 	CanopsisSSOBinding      string            `yaml:"canopsis_sso_binding"`
 	CanopsisACSBinding      string            `yaml:"canopsis_acs_binding"`
 	SignAuthRequest         bool              `yaml:"sign_auth_request"`
