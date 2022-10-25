@@ -79,9 +79,9 @@ export default {
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehaviors.begins'), value: 'tstart' },
         { text: this.$t('pbehaviors.ends'), value: 'tstop' },
-        { text: this.$t('pbehaviors.type'), value: 'type.name' },
-        { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
-        { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.type'), value: 'type.name' },
+        { text: this.$t('common.reason'), value: 'reason.name' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
