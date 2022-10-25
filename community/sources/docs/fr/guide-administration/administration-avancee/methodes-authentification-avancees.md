@@ -23,7 +23,7 @@ Voici la liste des paramètres :
 
 | Attribut        | Description                                        | Exemple                                                         |
 |-----------------|----------------------------------------------------|-----------------------------------------------------------------|
-| url        | Chaîne de connexion LDAP                                | `ldaps://ldap.example.com`                                      |
+| `url`        | Chaîne de connexion LDAP                                | `ldaps://ldap.example.com`                                      |
 | max_tls_ver     | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 | admin_dn        | Bind DN : DN du compte utilisé pour lire l'annuaire | `uid=svccanopsis,ou=Special,dc=example,dc=com`                 |
 | admin_passwd    | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire  |                                          |
