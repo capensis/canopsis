@@ -277,7 +277,7 @@ func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
 		mongo.InstructionMongoCollection:
-		return []string{"v.creation_date", "v.ack.t"}
+		return []string{"v.creation_date", "v.ack.t", "v.activation_date"}
 	default:
 		return nil
 	}
