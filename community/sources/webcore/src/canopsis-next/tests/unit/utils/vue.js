@@ -15,7 +15,7 @@ import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
 import i18n from '@/i18n';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
 
 /**
@@ -48,6 +48,7 @@ Vue.use(ToursPlugin);
 
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);
+Vue.filter('timezone', convertDateToTimezoneDateString);
 
 const stubs = {
   'mq-layout': MqLayout,

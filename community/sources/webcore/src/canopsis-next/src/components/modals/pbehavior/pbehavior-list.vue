@@ -56,7 +56,7 @@ import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
-import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
+import PbehaviorsListExpandItem from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-expand-item.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
