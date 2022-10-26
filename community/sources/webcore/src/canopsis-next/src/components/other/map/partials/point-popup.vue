@@ -15,7 +15,7 @@
         span(v-if="point.map") {{ $tc('common.map') }}: {{ point.map.name }}
     v-layout.ma-0.grey.lighten-3(v-if="actions")
       v-btn.ma-0(
-        v-if="!hasAlarmsListAccess && point.entity",
+        v-if="hasAlarmsListAccess && point.entity",
         flat,
         block,
         @click.stop="$emit('show:alarms')"

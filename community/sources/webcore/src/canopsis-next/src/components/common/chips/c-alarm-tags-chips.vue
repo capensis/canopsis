@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row, align-center)
+  v-layout(row, wrap, align-center)
     c-alarm-tag-chip(
       v-for="tag in inlineTags",
       :key="tag",
@@ -12,7 +12,7 @@
       left
     )
       template(#activator="{ on }")
-        v-btn.ma-1(v-on="on", color="grey", icon, small)
+        v-btn(v-on="on", color="grey", icon, small)
           v-icon(color="white", small) more_horiz
       v-card
         v-card-text
@@ -39,7 +39,7 @@ export default {
       default: '',
     },
     inlineCount: {
-      type: Number,
+      type: [Number, String],
       default: 2,
     },
   },

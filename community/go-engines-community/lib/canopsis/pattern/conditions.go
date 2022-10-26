@@ -186,6 +186,12 @@ func (c *Condition) MatchString(value string) (bool, RegexMatches, error) {
 		regexMatches := utils.FindStringSubmatchMapWithRegexExpression(c.valueRegexp, value)
 
 		return regexMatches != nil, regexMatches, nil
+	case ConditionExist:
+		if c.valueBool == nil {
+			return false, nil, ErrWrongConditionValue
+		}
+
+		return *c.valueBool == (value != ""), nil, nil
 	}
 
 	return false, nil, ErrUnsupportedConditionType
@@ -321,32 +327,129 @@ func (c *Condition) MatchDuration(value int64) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c *Condition) ToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) StringToMongoQuery(f string) (bson.M, error) {
 	switch c.Type {
 	case ConditionEqual:
-		return bson.M{f: bson.M{"$eq": c.Value}}, nil
+		if c.valueStr == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$eq": *c.valueStr}}, nil
 	case ConditionNotEqual:
-		return bson.M{f: bson.M{"$ne": c.Value}}, nil
-	case ConditionGT:
-		if c.valueDuration != nil {
-			return bson.M{f: bson.M{"$gt": c.valueDuration}}, nil
+		if c.valueStr == nil {
+			return nil, ErrWrongConditionValue
 		}
 
-		return bson.M{f: bson.M{"$gt": c.Value}}, nil
-	case ConditionLT:
-		if c.valueDuration != nil {
-			return bson.M{f: bson.M{"$lt": c.valueDuration}}, nil
+		return bson.M{f: bson.M{"$ne": *c.valueStr}}, nil
+	case ConditionIsOneOf:
+		if len(c.valueStrArray) == 0 {
+			return nil, ErrWrongConditionValue
 		}
 
-		return bson.M{f: bson.M{"$lt": c.Value}}, nil
+		return bson.M{f: bson.M{"$in": c.valueStrArray}}, nil
+	case ConditionIsNotOneOf:
+		if len(c.valueStrArray) == 0 {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$nin": c.valueStrArray}}, nil
 	case ConditionRegexp:
-		return bson.M{f: bson.M{"$regex": c.Value}}, nil
-	case ConditionHasEvery:
-		return bson.M{f: bson.M{"$all": c.Value}}, nil
-	case ConditionHasOneOf:
-		return bson.M{f: bson.M{"$elemMatch": bson.M{"$in": c.Value}}}, nil
-	case ConditionHasNot:
-		return bson.M{f: bson.M{"$elemMatch": bson.M{"$nin": c.Value}}}, nil
+		if c.valueRegexp == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$regex": c.valueRegexp.String()}}, nil
+	case ConditionExist:
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			return bson.M{f: bson.M{
+				"$exists": true,
+				"$nin":    bson.A{nil, ""},
+			}}, nil
+		}
+
+		return bson.M{"$or": []bson.M{
+			{f: bson.M{"$exists": false}},
+			{f: bson.M{"$eq": nil}},
+			{f: bson.M{"$eq": ""}},
+		}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) IntToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueInt == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$eq": *c.valueInt}}, nil
+	case ConditionNotEqual:
+		if c.valueInt == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$ne": *c.valueInt}}, nil
+	case ConditionGT:
+		if c.valueInt == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$gt": *c.valueInt}}, nil
+	case ConditionLT:
+		if c.valueInt == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$lt": *c.valueInt}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) BoolToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$eq": *c.valueBool}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) RefToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
+	case ConditionExist:
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			return bson.M{f: bson.M{
+				"$exists": true,
+				"$ne":     nil,
+			}}, nil
+		}
+
+		return bson.M{"$or": []bson.M{
+			{f: bson.M{"$exists": false}},
+			{f: bson.M{"$eq": nil}},
+		}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) StringArrayToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
 	case ConditionIsEmpty:
 		if c.valueBool == nil {
 			return nil, ErrWrongConditionValue
@@ -357,16 +460,31 @@ func (c *Condition) ToMongoQuery(f string) (bson.M, error) {
 		}
 
 		return bson.M{f: bson.M{"$exists": true, "$type": "array", "$ne": bson.A{}}}, nil
-	case ConditionExist:
-		if c.valueBool == nil {
+	case ConditionHasEvery:
+		if len(c.valueStrArray) == 0 {
 			return nil, ErrWrongConditionValue
 		}
 
-		if *c.valueBool {
-			return bson.M{f: bson.M{"$exists": true, "$ne": nil}}, nil
+		return bson.M{f: bson.M{"$all": c.valueStrArray}}, nil
+	case ConditionHasOneOf:
+		if len(c.valueStrArray) == 0 {
+			return nil, ErrWrongConditionValue
 		}
 
-		return bson.M{"$or": []bson.M{{f: bson.M{"$exists": false}}, {f: bson.M{"$eq": nil}}}}, nil
+		return bson.M{f: bson.M{"$elemMatch": bson.M{"$in": c.valueStrArray}}}, nil
+	case ConditionHasNot:
+		if len(c.valueStrArray) == 0 {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$elemMatch": bson.M{"$nin": c.valueStrArray}}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
 	case ConditionTimeRelative:
 		if c.valueDuration == nil {
 			return nil, ErrWrongConditionValue
@@ -384,68 +502,50 @@ func (c *Condition) ToMongoQuery(f string) (bson.M, error) {
 		tt := types.NewCpsTime(*c.valueTimeIntervalTo)
 
 		return bson.M{f: bson.M{"$gt": ft, "$lt": tt}}, nil
-	case ConditionIsOneOf:
-		return bson.M{f: bson.M{"$in": c.Value}}, nil
-	case ConditionIsNotOneOf:
-		return bson.M{f: bson.M{"$nin": c.Value}}, nil
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
 }
 
-// ToSql doesn't support all conditions. Add on demand.
-func (c *Condition) ToSql(f string) (string, error) {
+func (c *Condition) DurationToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
+	case ConditionGT:
+		if c.valueDuration == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$gt": c.valueDuration}}, nil
+	case ConditionLT:
+		if c.valueDuration == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		return bson.M{f: bson.M{"$lt": c.valueDuration}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) StringToSql(f string) (string, error) {
 	switch c.Type {
 	case ConditionEqual:
-		if c.valueStr != nil {
-			return fmt.Sprintf("%s = %s", f, sqlQuoteString(*c.valueStr)), nil
-		}
-		if c.valueInt != nil {
-			return fmt.Sprintf("%s = %d", f, *c.valueInt), nil
-		}
-		if c.valueBool != nil {
-			return fmt.Sprintf("%s = %t", f, *c.valueBool), nil
+		if c.valueStr == nil {
+			return "", ErrWrongConditionValue
 		}
 
-		return "", ErrWrongConditionValue
+		return fmt.Sprintf("%s = %s", f, sqlQuoteString(*c.valueStr)), nil
 	case ConditionNotEqual:
+		if c.valueStr == nil {
+			return "", ErrWrongConditionValue
+		}
+
 		// "IS NULL" is mandatory
-		if c.valueStr != nil {
-			return fmt.Sprintf("(%[1]s IS NULL OR %[1]s != %s)", f, sqlQuoteString(*c.valueStr)), nil
-		}
-		if c.valueInt != nil {
-			return fmt.Sprintf("(%[1]s IS NULL OR %[1]s != %d)", f, *c.valueInt), nil
-		}
-
-		return "", ErrWrongConditionValue
-	case ConditionGT:
-		if c.valueDuration != nil {
-			return fmt.Sprintf("%s > %d", f, *c.valueDuration), nil
-		}
-		if c.valueInt != nil {
-			return fmt.Sprintf("%s > %d", f, *c.valueInt), nil
-		}
-
-		return "", ErrWrongConditionValue
-	case ConditionLT:
-		if c.valueDuration != nil {
-			return fmt.Sprintf("%s < %d", f, *c.valueDuration), nil
-		}
-		if c.valueInt != nil {
-			return fmt.Sprintf("%s < %d", f, *c.valueInt), nil
-		}
-
-		return "", ErrWrongConditionValue
-	case ConditionRegexp:
-		if c.valueRegexp != nil {
-			return fmt.Sprintf("%s ~ %s", f, sqlQuoteString(c.valueRegexp.String())), nil
-		}
-
-		return "", ErrWrongConditionValue
+		return fmt.Sprintf("(%[1]s IS NULL OR %[1]s != %s)", f, sqlQuoteString(*c.valueStr)), nil
 	case ConditionIsOneOf:
 		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
+
 		values := make([]string, len(c.valueStrArray))
 		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
@@ -456,6 +556,7 @@ func (c *Condition) ToSql(f string) (string, error) {
 		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
+
 		values := make([]string, len(c.valueStrArray))
 		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
@@ -463,134 +564,114 @@ func (c *Condition) ToSql(f string) (string, error) {
 
 		// "IS NULL" is mandatory
 		return fmt.Sprintf("(%[1]s IS NULL OR NOT (%[1]s = ANY (ARRAY [%s]))", f, strings.Join(values, ",")), nil
-	default:
-		return "", ErrUnsupportedConditionType
-	}
-}
-
-// ToSqlJson doesn't support all conditions. Add on demand.
-func (c *Condition) ToSqlJson(field, key, keyType string) (string, error) {
-	cast := ""
-	checkType := ""
-	operand := fmt.Sprintf("%s->%s", field, sqlQuoteString(key))
-	// "CASE" is mandatory to cast json value because Postgres "SELECT" with following condition returns an error
-	// if there is a row with field -> key of another (not numeric) type:
-	// jsonb_typeof(field -> key) = 'number' AND (field -> key)::numeric = 2
-	switch keyType {
-	case FieldTypeString:
-		checkType = fmt.Sprintf("jsonb_typeof(%s) = 'string'", operand)
-		operand = fmt.Sprintf("%s->>%s", field, sqlQuoteString(key))
-	case FieldTypeInt:
-		checkType = fmt.Sprintf("jsonb_typeof(%s) = 'number'", operand)
-		operand = fmt.Sprintf("(CASE WHEN %s THEN (%s)::numeric END)", checkType, operand)
-	case FieldTypeBool:
-		checkType = fmt.Sprintf("jsonb_typeof(%s) = 'boolean'", operand)
-		operand = fmt.Sprintf("(CASE WHEN %s THEN (%s)::bool END)", checkType, operand)
-	case FieldTypeStringArray:
-		checkType = fmt.Sprintf("jsonb_typeof(%s) = 'array'", operand)
-		operand = fmt.Sprintf("(CASE WHEN %s THEN %s END)", checkType, operand)
-	case "":
-		/*do nothing*/
-	default:
-		return "", ErrUnsupportedField
-	}
-
-	if checkType == "" {
-		cast = operand
-	} else {
-		cast = fmt.Sprintf("%s AND %s", checkType, operand)
-	}
-
-	switch c.Type {
-	case ConditionEqual:
-		if c.valueStr != nil {
-			return fmt.Sprintf("(%s = %s)", cast, sqlQuoteString(*c.valueStr)), nil
-		}
-		if c.valueInt != nil {
-			return fmt.Sprintf("(%s = %d)", cast, *c.valueInt), nil
-		}
-		if c.valueBool != nil {
-			return fmt.Sprintf("(%s = %t)", cast, *c.valueBool), nil
-		}
-
-		return "", ErrWrongConditionValue
-	case ConditionNotEqual:
-		if c.valueStr != nil {
-			return fmt.Sprintf("(%s != %s)", cast, sqlQuoteString(*c.valueStr)), nil
-		}
-		if c.valueInt != nil {
-			return fmt.Sprintf("(%s != %d)", cast, *c.valueInt), nil
-		}
-
-		return "", ErrWrongConditionValue
-	case ConditionGT:
-		if c.valueInt != nil {
-			return fmt.Sprintf("(%s > %d)", cast, *c.valueInt), nil
-		}
-
-		return "", ErrWrongConditionValue
-	case ConditionLT:
-		if c.valueInt != nil {
-			return fmt.Sprintf("(%s < %d)", cast, *c.valueInt), nil
-		}
-
-		return "", ErrWrongConditionValue
 	case ConditionRegexp:
-		if c.valueRegexp != nil {
-			return fmt.Sprintf("(%s ~ %s)", cast, sqlQuoteString(c.valueRegexp.String())), nil
-		}
-		return "", ErrWrongConditionValue
-	case ConditionHasEvery:
-		if len(c.valueStrArray) == 0 {
-			return "", ErrWrongConditionValue
-		}
-		values := make([]string, len(c.valueStrArray))
-		for i, s := range c.valueStrArray {
-			values[i] = sqlQuoteString(s)
-		}
-		return fmt.Sprintf("(%s ?& ARRAY [%s])", cast, strings.Join(values, ",")), nil
-	case ConditionHasOneOf:
-		if len(c.valueStrArray) == 0 {
-			return "", ErrWrongConditionValue
-		}
-		values := make([]string, len(c.valueStrArray))
-		for i, s := range c.valueStrArray {
-			values[i] = sqlQuoteString(s)
-		}
-		return fmt.Sprintf("(%s ?| ARRAY [%s])", cast, strings.Join(values, ",")), nil
-	case ConditionHasNot:
-		if len(c.valueStrArray) == 0 {
-			return "", ErrWrongConditionValue
-		}
-		values := make([]string, len(c.valueStrArray))
-		for i, s := range c.valueStrArray {
-			values[i] = sqlQuoteString(s)
-		}
-		return fmt.Sprintf("(%s AND NOT (%s ?| ARRAY [%s]))", checkType, operand, strings.Join(values, ",")), nil
-	case ConditionIsEmpty:
-		if c.valueBool == nil {
+		if c.valueRegexp == nil {
 			return "", ErrWrongConditionValue
 		}
 
-		if *c.valueBool {
-			return fmt.Sprintf("(%s AND jsonb_array_length(%s) = 0)", checkType, operand), nil
-		}
-
-		return fmt.Sprintf("(%s AND jsonb_array_length(%s) > 0)", checkType, operand), nil
+		return fmt.Sprintf("%s ~ %s", f, sqlQuoteString(c.valueRegexp.String())), nil
 	case ConditionExist:
 		if c.valueBool == nil {
 			return "", ErrWrongConditionValue
 		}
 
 		if *c.valueBool {
-			return fmt.Sprintf("%s ? %s", field, sqlQuoteString(key)), nil
+			return fmt.Sprintf("(%[1]s IS NOT NULL AND %[1]s != '')", f), nil
 		}
 
-		return fmt.Sprintf("NOT (%s ? %s)", field, sqlQuoteString(key)), nil
+		return fmt.Sprintf("(%[1]s IS NULL OR %[1]s = '')", f), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) IntToSql(f string) (string, error) {
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("%s = %d", f, *c.valueInt), nil
+	case ConditionNotEqual:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		// "IS NULL" is mandatory
+		return fmt.Sprintf("(%[1]s IS NULL OR %[1]s != %d)", f, *c.valueInt), nil
+	case ConditionGT:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("%s > %d", f, *c.valueInt), nil
+	case ConditionLT:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("%s < %d", f, *c.valueInt), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) BoolToSql(f string) (string, error) {
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueBool == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("%s = %t", f, *c.valueBool), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) DurationToSql(f string) (string, error) {
+	switch c.Type {
+	case ConditionGT:
+		if c.valueDuration == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("%s > %d", f, *c.valueDuration), nil
+	case ConditionLT:
+		if c.valueDuration != nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("%s < %d", f, *c.valueDuration), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) StringToSqlJson(field, key string) (string, error) {
+	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'string'", field, sqlQuoteString(key))
+	operand := fmt.Sprintf("%s->>%s", field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s", checkType, operand)
+
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueStr == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s = %s)", cast, sqlQuoteString(*c.valueStr)), nil
+	case ConditionNotEqual:
+		if c.valueStr == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s != %s)", cast, sqlQuoteString(*c.valueStr)), nil
 	case ConditionIsOneOf:
 		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
+
 		values := make([]string, len(c.valueStrArray))
 		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
@@ -601,12 +682,157 @@ func (c *Condition) ToSqlJson(field, key, keyType string) (string, error) {
 		if len(c.valueStrArray) == 0 {
 			return "", ErrWrongConditionValue
 		}
+
 		values := make([]string, len(c.valueStrArray))
 		for i, s := range c.valueStrArray {
 			values[i] = sqlQuoteString(s)
 		}
 
 		return fmt.Sprintf("(%s AND NOT (%s = ANY (ARRAY [%s])))", checkType, operand, strings.Join(values, ",")), nil
+	case ConditionRegexp:
+		if c.valueRegexp == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s ~ %s)", cast, sqlQuoteString(c.valueRegexp.String())), nil
+	case ConditionExist:
+		if c.valueBool == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			return fmt.Sprintf("(%s ? %s AND %s != '')", field, sqlQuoteString(key), cast), nil
+		}
+
+		return fmt.Sprintf("(NOT (%s ? %s) OR %s = '')", field, sqlQuoteString(key), cast), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) IntToSqlJson(field, key string) (string, error) {
+	// "CASE" is mandatory to cast json value because Postgres "SELECT" with following condition returns an error
+	// if there is a row with field -> key of another (not numeric) type:
+	// jsonb_typeof(field -> key) = 'number' AND (field -> key)::numeric = 2
+	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'number'", field, sqlQuoteString(key))
+	operand := fmt.Sprintf("(CASE WHEN %s THEN (%s->%s)::numeric END)", checkType, field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s", checkType, operand)
+
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s = %d)", cast, *c.valueInt), nil
+	case ConditionNotEqual:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s != %d)", cast, *c.valueInt), nil
+	case ConditionGT:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s > %d)", cast, *c.valueInt), nil
+	case ConditionLT:
+		if c.valueInt == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s < %d)", cast, *c.valueInt), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) BoolToSqlJson(field, key string) (string, error) {
+	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'boolean'", field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s->%s", checkType, field, sqlQuoteString(key))
+
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueBool != nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s = %t)", cast, *c.valueBool), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) RefToSqlJson(field, key string) (string, error) {
+	switch c.Type {
+	case ConditionExist:
+		if c.valueBool == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			return fmt.Sprintf("%s ? %s", field, sqlQuoteString(key)), nil
+		}
+
+		return fmt.Sprintf("NOT (%s ? %s)", field, sqlQuoteString(key)), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) StringArrayToSqlJson(field, key string) (string, error) {
+	// "CASE" is mandatory to cast json value because Postgres "SELECT" with following condition returns an error
+	// if there is a row with field -> key of another (not numeric) type:
+	// jsonb_typeof(field -> key) = 'number' AND (field -> key)::numeric = 2
+	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'array'", field, sqlQuoteString(key))
+	operand := fmt.Sprintf("(CASE WHEN %s THEN %s->%s END)", checkType, field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s->%s", checkType, field, sqlQuoteString(key))
+
+	switch c.Type {
+	case ConditionIsEmpty:
+		if c.valueBool == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			return fmt.Sprintf("(%s AND jsonb_array_length(%s) = 0)", checkType, operand), nil
+		}
+
+		return fmt.Sprintf("(%s AND jsonb_array_length(%s) > 0)", checkType, operand), nil
+	case ConditionHasEvery:
+		if len(c.valueStrArray) == 0 {
+			return "", ErrWrongConditionValue
+		}
+
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
+			values[i] = sqlQuoteString(s)
+		}
+
+		return fmt.Sprintf("(%s ?& ARRAY [%s])", cast, strings.Join(values, ",")), nil
+	case ConditionHasOneOf:
+		if len(c.valueStrArray) == 0 {
+			return "", ErrWrongConditionValue
+		}
+
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
+			values[i] = sqlQuoteString(s)
+		}
+
+		return fmt.Sprintf("(%s ?| ARRAY [%s])", cast, strings.Join(values, ",")), nil
+	case ConditionHasNot:
+		if len(c.valueStrArray) == 0 {
+			return "", ErrWrongConditionValue
+		}
+
+		values := make([]string, len(c.valueStrArray))
+		for i, s := range c.valueStrArray {
+			values[i] = sqlQuoteString(s)
+		}
+
+		return fmt.Sprintf("(%s AND NOT (%s ?| ARRAY [%s]))", checkType, operand, strings.Join(values, ",")), nil
 	default:
 		return "", ErrUnsupportedConditionType
 	}

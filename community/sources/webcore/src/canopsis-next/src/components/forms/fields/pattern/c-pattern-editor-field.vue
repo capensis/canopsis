@@ -24,7 +24,7 @@
         v-layout(v-if="patterns.old_mongo_query", justify-center, wrap)
           v-flex.pt-2(xs8)
             div.error--text.text-xs-center {{ $t('pattern.errors.oldPattern') }}
-          v-flex.pt-2(v-if="!readonly || !disabled", xs12)
+          v-flex.pt-2(v-if="!readonly && !disabled", xs12)
             v-layout(justify-center)
               v-btn(color="primary", @click="discardPattern") {{ $t('pattern.discard') }}
         c-pattern-groups-field.mt-2(

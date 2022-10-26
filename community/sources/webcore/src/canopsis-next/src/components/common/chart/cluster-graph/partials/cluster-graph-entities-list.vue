@@ -39,11 +39,10 @@
 </template>
 
 <script>
-
 import { ENTITY_TYPES, MAX_LIMIT } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getTreeOfDependenciesEntityText } from '@/helpers/map';
+import { getMapEntityText } from '@/helpers/map';
 
 import { formArrayMixin } from '@/mixins/form';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
@@ -99,7 +98,7 @@ export default {
   },
   methods: {
     getItemText(item) {
-      return getTreeOfDependenciesEntityText(item);
+      return getMapEntityText(item);
     },
 
     isItemDisabled(item) {
