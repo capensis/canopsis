@@ -2315,6 +2315,7 @@ export default merge({
 
   pbehavior: {
     periodsCalendar: 'Calendar with periods',
+    notEditable: 'Cannot be modified',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',

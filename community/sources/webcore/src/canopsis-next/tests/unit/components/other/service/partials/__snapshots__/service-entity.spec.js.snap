@@ -477,7 +477,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                           dense="true"
                           entity="[object Object]"
                           removable="true"
-                          updatable="true"
                           withactivestatus="true"
                         />
                       </div>

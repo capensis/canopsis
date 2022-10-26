@@ -39,10 +39,24 @@ export const SERVICE_WEATHER_STATE_COUNTERS = {
   ackedUnderPbehavior: 'acked_under_pbh',
 };
 
+export const SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS = {
+  [SERVICE_WEATHER_STATE_COUNTERS.all]: '.All',
+  [SERVICE_WEATHER_STATE_COUNTERS.active]: '.Active',
+  [SERVICE_WEATHER_STATE_COUNTERS.depends]: '.Depends',
+  [SERVICE_WEATHER_STATE_COUNTERS.ok]: '.State.Ok',
+  [SERVICE_WEATHER_STATE_COUNTERS.minor]: '.State.Minor',
+  [SERVICE_WEATHER_STATE_COUNTERS.major]: '.State.Major',
+  [SERVICE_WEATHER_STATE_COUNTERS.critical]: '.State.Critical',
+  [SERVICE_WEATHER_STATE_COUNTERS.acked]: '.Acknowledged',
+  [SERVICE_WEATHER_STATE_COUNTERS.unacked]: '.NotAcknowledged',
+  [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: '.UnderPbehavior',
+  [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: '.AcknowledgedUnderPbh',
+};
+
 export const SERVICE_WEATHER_STATE_COUNTERS_ICONS = {
   [SERVICE_WEATHER_STATE_COUNTERS.all]: 'notification_important',
   [SERVICE_WEATHER_STATE_COUNTERS.active]: '$vuetify.icons.notification_important_stroke',
-  [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'mediation',
+  [SERVICE_WEATHER_STATE_COUNTERS.depends]: '$vuetify.icons.mediation',
   [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'check_circle',
   [SERVICE_WEATHER_STATE_COUNTERS.minor]: '$vuetify.icons.warning_stroke',
   [SERVICE_WEATHER_STATE_COUNTERS.major]: '$vuetify.icons.warning_stroke',

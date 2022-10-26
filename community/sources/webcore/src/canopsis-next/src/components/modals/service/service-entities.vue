@@ -41,7 +41,7 @@ import { pick, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { MODALS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTIONS_TYPES } from '@/constants';
+import { MODALS, PBEHAVIOR_ORIGINS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -141,35 +141,31 @@ export default {
 
       const params = this.getQuery();
       params.with_instructions = true;
+      params.pbh_origin = PBEHAVIOR_ORIGINS.serviceWeather;
 
       await this.fetchServiceEntitiesList({ id: this.service._id, params });
 
       this.pending = false;
     },
 
-    getCreatedPbehaviorsByEntitites(entities, data) {
-      return entities.reduce((acc, entity) => {
-        acc.push(createDowntimePbehavior({
+    async createPauseEvent(entities, payload) {
+      const response = await this.createEntityPbehaviors({
+        data: entities.map(entity => createDowntimePbehavior({
           entity,
-          ...pick(data, ['comment', 'reason', 'type']),
-        }));
-
-        return acc;
-      }, []);
-    },
-
-    getPausedPbehaviorsByEntitites(entities) {
-      return entities.map(entity => ({ _id: entity.pbehavior_info.id }));
-    },
-
-    async createPbehaviorsWithPopups(pbehaviors) {
-      const response = await this.createPbehaviorsWithComments(pbehaviors);
+          ...pick(payload, ['comment', 'reason', 'type']),
+        }), []),
+      });
 
       this.showPbehaviorResponseErrorPopups(response);
     },
 
-    async removePbehaviorsWithPopups(pbehaviors) {
-      const response = await this.removePbehaviors(pbehaviors);
+    async createPlayEvent(entities) {
+      const response = await this.removeEntityPbehaviors({
+        data: entities.map(({ _id: id }) => ({
+          entity: id,
+          origin: PBEHAVIOR_ORIGINS.serviceWeather,
+        })),
+      });
 
       this.showPbehaviorResponseErrorPopups(response);
     },
@@ -186,13 +182,9 @@ export default {
 
     async applyAction({ entities, actionType, payload }) {
       if (actionType === WEATHER_ACTIONS_TYPES.entityPause) {
-        await this.createPbehaviorsWithPopups(
-          this.getCreatedPbehaviorsByEntitites(entities, payload),
-        );
+        await this.createPauseEvent(entities, payload);
       } else if (actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
-        await this.removePbehaviorsWithPopups(
-          this.getPausedPbehaviorsByEntitites(entities),
-        );
+        await this.createPlayEvent(entities);
       } else {
         const events = entities.reduce((acc, entity) => {
           acc.push(...convertActionToEvents({

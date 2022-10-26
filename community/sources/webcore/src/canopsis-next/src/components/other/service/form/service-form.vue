@@ -34,7 +34,11 @@
 <script>
 import { get } from 'lodash';
 
-import { ENTITY_PATTERN_FIELDS, SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
+import {
+  ENTITY_PATTERN_FIELDS,
+  SERVICE_WEATHER_STATE_COUNTERS,
+  SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
+} from '@/constants';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -61,7 +65,7 @@ export default {
 
       return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(field => ({
         text: messages[field],
-        value: field,
+        value: SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS[field],
       }));
     },
 

@@ -49,7 +49,7 @@
               template(v-if="hasAccessToPbehaviors")
                 v-tab {{ $tc('common.activePbehavior') }}
                 v-tab-item(lazy)
-                  pbehaviors-simple-list(:entity="entity", updatable, removable, dense, with-active-status)
+                  pbehaviors-simple-list(:entity="entity", removable, dense, with-active-status)
 </template>
 
 <script>
@@ -132,12 +132,8 @@ export default {
       return getEntityColor(this.entity, this.colorIndicator);
     },
 
-    hasPbehaviors() {
-      return !!this.entity.pbehaviors.length;
-    },
-
     hasAccessToPbehaviors() {
-      return this.hasPbehaviors
+      return this.entity.pbehaviors?.length
         && this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors);
     },
 

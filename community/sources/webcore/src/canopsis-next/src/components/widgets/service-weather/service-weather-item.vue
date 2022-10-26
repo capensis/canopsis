@@ -12,8 +12,11 @@
         v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon(:value="service.idle_since", color="white", top)
           impact-state-indicator.mr-1(v-if="isPriorityEnabled", :value="service.impact_state")
-        v-icon.weather-item__background.white--text(size="5em") {{ icon }}
-        v-icon.weather-item__secondary-icon.mb-1.mr-1(v-if="secondaryIcon", color="white") {{ secondaryIcon }}
+        v-icon.weather-item__background.white--text(size="5em") {{ service.icon }}
+        v-icon.weather-item__secondary-icon.mb-1.mr-1(
+          v-if="service.secondary_icon",
+          color="white"
+        ) {{ service.secondary_icon }}
       alarm-pbehavior-counters(
         v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters",
         :counters="pbehaviorCounters",
@@ -37,7 +40,6 @@ import { createNamespacedHelpers } from 'vuex';
 import {
   MODALS,
   USERS_PERMISSIONS,
-  WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
@@ -92,14 +94,6 @@ export default {
 
     color() {
       return getEntityColor(this.service, this.widget.parameters.colorIndicator);
-    },
-
-    icon() {
-      return WEATHER_ICONS[this.service.icon];
-    },
-
-    secondaryIcon() {
-      return WEATHER_ICONS[this.service.secondary_icon];
     },
 
     itemClasses() {

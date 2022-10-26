@@ -4,7 +4,8 @@
     :label="label",
     :items="availableIcons",
     :name="name",
-    :error-messages="errors.collect(name)"
+    :error-messages="errors.collect(name)",
+    item-value="icon"
   )
     template(#selection="{ item }")
       v-icon {{ item.icon }}
@@ -58,7 +59,6 @@ export default {
 
     availableIcons() {
       return this.types.map(type => ({
-        value: type,
         icon: WEATHER_ICONS[type],
         text: this.$t(`serviceWeather.iconTypes.${type}`),
       }));
