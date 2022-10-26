@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { PBEHAVIOR_TYPE_TYPES, WEATHER_ICONS } from '@/constants';
+import { WEATHER_ICONS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -40,14 +40,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    types: {
-      type: Array,
-      default: () => [
-        PBEHAVIOR_TYPE_TYPES.maintenance,
-        PBEHAVIOR_TYPE_TYPES.inactive,
-        PBEHAVIOR_TYPE_TYPES.pause,
-      ],
-    },
   },
   computed: {
     rules() {
@@ -57,10 +49,12 @@ export default {
     },
 
     availableIcons() {
-      return this.types.map(type => ({
-        value: type,
-        icon: WEATHER_ICONS[type],
-        text: this.$t(`serviceWeather.iconTypes.${type}`),
+      return Object.entries(WEATHER_ICONS).map(([value, icon]) => ({
+        icon,
+        value,
+        text: this.$te(`common.stateTypes.${value}`)
+          ? this.$t(`common.stateTypes.${value}`)
+          : this.$t(`serviceWeather.iconTypes.${value}`),
       }));
     },
   },
