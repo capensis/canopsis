@@ -32,7 +32,7 @@
 <script>
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
-import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 
 import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
 import InfosTab from './expand-panel-tabs/infos-tab.vue';

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(color="secondary lighten-1", dark, centered, slider-color="primary")
+  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
     v-tab {{ $tc('common.pattern', 2) }}
     v-tab-item
       v-layout.py-3(row)
@@ -8,24 +8,30 @@
             v-card-text
               pbehavior-patterns-form(:form="patterns", readonly)
 
-    v-tab {{ $t('pbehaviors.tabs.entities') }}
-    v-tab-item
+    v-tab {{ $tc('common.entity', 2) }}
+    v-tab-item(lazy)
       v-layout.py-3(row)
         v-flex(xs12, sm10, offset-sm1)
-          pbehavior-entities(:pbehavior="pbehavior")
+          v-card
+            v-card-text
+              pbehavior-entities(:pbehavior="pbehavior")
 
     v-tab {{ $tc('common.comment', 2) }}
-    v-tab-item
+    v-tab-item(lazy)
       v-layout.py-3(row)
         v-flex(xs12, sm10, offset-sm1)
-          pbehavior-comments(:comments="pbehavior.comments")
+          v-card
+            v-card-text.pa-0
+              pbehavior-comments(:comments="pbehavior.comments")
 
     template(v-if="pbehavior.rrule")
-      v-tab {{ $t('pbehaviors.rrule') }}
-      v-tab-item
+      v-tab {{ $t('common.recurrence') }}
+      v-tab-item(lazy)
         v-layout.py-3(row)
           v-flex(xs12, sm10, offset-sm1)
-            pbehavior-recurrence-rule(:pbehavior="pbehavior")
+            v-card
+              v-card-text
+                pbehavior-recurrence-rule(:pbehavior="pbehavior")
 </template>
 
 <script>
@@ -33,11 +39,11 @@ import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
-import PbehaviorComments from './partials/pbehavior-comments.vue';
-import PbehaviorRecurrenceRule from './partials/pbehavior-recurrence-rule.vue';
-import PbehaviorEntities from './partials/pbehavior-entities.vue';
+import PbehaviorPatternsForm from '@/components/other/pbehavior/calendar/partials/pbehavior-patterns-form.vue';
 
-import PbehaviorPatternsForm from '../calendar/partials/pbehavior-patterns-form.vue';
+import PbehaviorComments from './pbehavior-comments.vue';
+import PbehaviorRecurrenceRule from './pbehavior-recurrence-rule.vue';
+import PbehaviorEntities from './pbehavior-entities.vue';
 
 export default {
   components: {
