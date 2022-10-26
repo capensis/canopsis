@@ -27,7 +27,7 @@
 import { MODALS } from '@/constants';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
-import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
+import PbehaviorExceptionForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-exception-form.vue';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
