@@ -127,9 +127,13 @@ export const mount = (component, options = {}) => {
  *
  * @param {Object} component
  * @param {Object} baseOptions
+ * @param {Object} basePropsData
  * @returns {Function}
  */
-export const generateRenderer = (component, baseOptions) => {
+export const generateRenderer = (
+  component,
+  { propsData: basePropsData, ...baseOptions } = {},
+) => {
   let wrapper;
 
   afterEach(() => {
@@ -137,10 +141,22 @@ export const generateRenderer = (component, baseOptions) => {
     wrapper?.destroy?.();
   });
 
-  return (options = {}) => {
+  return ({ propsData, ...options } = {}) => {
     wrapper = testUtilsMount(
       component,
-      merge({}, { mocks, stubs }, baseOptions, options, { i18n }),
+      merge(
+        {},
+        { mocks, stubs },
+        baseOptions,
+        options,
+        { i18n },
+        {
+          propsData: {
+            ...basePropsData,
+            ...propsData,
+          },
+        },
+      ),
     );
 
     enhanceWrapper(wrapper);
@@ -177,9 +193,13 @@ export const shallowMount = (component, options = {}) => {
  *
  * @param {Object} component
  * @param {Object} baseOptions
+ * @param {Object} basePropsData
  * @returns {Function}
  */
-export const generateShallowRenderer = (component, baseOptions) => {
+export const generateShallowRenderer = (
+  component,
+  { propsData: basePropsData, ...baseOptions } = {},
+) => {
   let wrapper;
 
   afterEach(() => {
@@ -187,10 +207,21 @@ export const generateShallowRenderer = (component, baseOptions) => {
     wrapper?.destroy?.();
   });
 
-  return (options = {}) => {
+  return ({ propsData, ...options } = {}) => {
     wrapper = testUtilsShallowMount(
       component,
-      merge({}, baseOptions, options, { mocks, i18n, stubs }),
+      merge(
+        {},
+        baseOptions,
+        options,
+        { mocks, i18n, stubs },
+        {
+          propsData: {
+            ...basePropsData,
+            ...propsData,
+          },
+        },
+      ),
     );
 
     enhanceWrapper(wrapper);

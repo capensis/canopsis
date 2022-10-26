@@ -1,66 +1,21 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { createAuthModule } from '@unit/utils/store';
+import {
+  createActiveViewModule,
+  createAuthModule,
+  createServiceModule,
+  createUserPreferenceModule,
+  createWidgetModule,
+} from '@unit/utils/store';
 
-export const createSettingsMocks = () => {
-  const createWidget = jest.fn();
-  const updateWidget = jest.fn();
-  const copyWidget = jest.fn();
-  const fetchActiveView = jest.fn();
-  const fetchUserPreference = jest.fn();
-  const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
-    data: [],
-    meta: { total_count: 0 },
-  });
-  const fetchItem = jest.fn();
-  const getUserPreferenceByWidgetId = jest.fn()
-    .mockReturnValue({ content: {} });
-
-  return {
-    createWidget,
-    updateWidget,
-    copyWidget,
-    fetchActiveView,
-    fetchUserPreference,
-    fetchItem,
-
-    ...createAuthModule(),
-
-    activeViewModule: {
-      name: 'activeView',
-      actions: {
-        fetch: fetchActiveView,
-      },
-    },
-
-    widgetModule: {
-      name: 'view/widget',
-      actions: {
-        create: createWidget,
-        update: updateWidget,
-        copy: copyWidget,
-      },
-    },
-
-    userPreferenceModule: {
-      name: 'userPreference',
-      actions: {
-        fetchItem: fetchUserPreference,
-      },
-      getters: {
-        getItemByWidgetId: () => getUserPreferenceByWidgetId,
-      },
-    },
-
-    serviceModule: {
-      name: 'service',
-      actions: {
-        fetchInfosKeysWithoutStore: fetchEntityInfosKeysWithoutStore,
-      },
-    },
-  };
-};
+export const createSettingsMocks = () => ({
+  ...createAuthModule(),
+  ...createUserPreferenceModule(),
+  ...createWidgetModule(),
+  ...createServiceModule(),
+  ...createActiveViewModule(),
+});
 
 export const getWidgetRequestWithNewProperty = (widget, key, value) => ({
   ...omit(widget, ['_id']),
