@@ -10,12 +10,10 @@
 <script>
 import { CRUD_ACTIONS, MODALS } from '@/constants';
 
-import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 export default {
   mixins: [
-    entitiesPbehaviorMixin,
     permissionsTechnicalExploitationPbehaviorMixin,
   ],
   props: {

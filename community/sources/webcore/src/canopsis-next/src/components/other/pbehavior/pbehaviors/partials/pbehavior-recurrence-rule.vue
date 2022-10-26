@@ -1,10 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-text
-      v-layout(row)
-        v-flex(offset-xs3, xs6)
-          recurrence-rule-information(:rrule="pbehavior.rrule")
-          pbehavior-recurrence-rule-periods.mt-2(:pbehavior="pbehavior")
+  v-layout(row)
+    v-flex(offset-xs3, xs6)
+      recurrence-rule-information(:rrule="pbehavior.rrule")
+      pbehavior-recurrence-rule-periods.mt-2(:pbehavior="pbehavior")
 </template>
 
 <script>

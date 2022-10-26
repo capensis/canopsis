@@ -115,7 +115,7 @@ import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alar
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 
 import TimeLine from '../time-line/time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';

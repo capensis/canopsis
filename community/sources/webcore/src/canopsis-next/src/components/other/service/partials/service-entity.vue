@@ -65,7 +65,7 @@ import { authMixin } from '@/mixins/auth';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
-import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 
 import ServiceEntityHeader from './service-entity-header.vue';
 import ServiceEntityInfoTab from './service-entity-info-tab.vue';

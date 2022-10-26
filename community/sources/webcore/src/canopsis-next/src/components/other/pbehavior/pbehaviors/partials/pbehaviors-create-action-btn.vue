@@ -12,12 +12,10 @@ import { MODALS } from '@/constants';
 
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
-import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 export default {
   mixins: [
-    entitiesPbehaviorMixin,
     permissionsTechnicalExploitationPbehaviorMixin,
   ],
   props: {

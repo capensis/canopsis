@@ -537,3 +537,70 @@ export const createActiveViewModule = () => {
     activeViewModule,
   };
 };
+
+export const createPbehaviorEntitiesModule = () => {
+  const fetchPbehaviorEntitiesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: { total_count: 0 },
+  });
+
+  const pbehaviorEntitiesModule = {
+    name: 'pbehavior/entities',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorEntitiesListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchPbehaviorEntitiesListWithoutStore.mockClear();
+  });
+
+  return {
+    fetchPbehaviorEntitiesListWithoutStore,
+    pbehaviorEntitiesModule,
+  };
+};
+
+export const createPbehaviorModule = () => {
+  const fetchPbehaviorsByEntityIdWithoutStore = jest.fn().mockResolvedValue([]);
+  const removePbehavior = jest.fn();
+
+  const pbehaviorModule = {
+    name: 'pbehavior',
+    actions: {
+      fetchListByEntityIdWithoutStore: fetchPbehaviorsByEntityIdWithoutStore,
+      removeWithoutStore: removePbehavior,
+    },
+  };
+
+  afterEach(() => {
+    removePbehavior.mockClear();
+    fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+  });
+
+  return {
+    removePbehavior,
+    fetchPbehaviorsByEntityIdWithoutStore,
+    pbehaviorModule,
+  };
+};
+
+export const createPbehaviorTimespanModule = () => {
+  const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
+
+  const pbehaviorTimespanModule = {
+    name: 'pbehaviorTimespan',
+    actions: {
+      fetchListWithoutStore: fetchTimespansListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
+
+  return {
+    fetchTimespansListWithoutStore,
+    pbehaviorTimespanModule,
+  };
+};
