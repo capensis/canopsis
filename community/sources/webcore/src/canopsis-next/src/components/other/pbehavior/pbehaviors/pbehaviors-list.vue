@@ -13,7 +13,7 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected, clearSelected }")
-      mass-actions-panel.ml-3(
+      pbehaviors-mass-actions-panel.ml-3(
         :items="selected",
         :removable="removable",
         :enablable="enablable",
@@ -57,15 +57,14 @@
 </template>
 
 <script>
-import MassActionsPanel from './actions/mass-actions-panel.vue';
-
-import PbehaviorsListExpandItem from './pbehaviors-list-expand-item.vue';
+import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
+import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 
 export default {
   inject: ['$system'],
   components: {
     PbehaviorsListExpandItem,
-    MassActionsPanel,
+    PbehaviorsMassActionsPanel,
   },
   props: {
     pbehaviors: {
@@ -113,12 +112,12 @@ export default {
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehaviors.begins'), value: 'tstart' },
         { text: this.$t('pbehaviors.ends'), value: 'tstop' },
-        { text: this.$t('pbehaviors.type'), value: 'type.name' },
-        { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
-        { text: this.$t('pbehaviors.created'), value: 'created' },
-        { text: this.$t('pbehaviors.updated'), value: 'updated' },
+        { text: this.$t('common.type'), value: 'type.name' },
+        { text: this.$t('common.reason'), value: 'reason.name' },
+        { text: this.$t('common.created'), value: 'created' },
+        { text: this.$t('common.updated'), value: 'updated' },
         { text: this.$t('pbehaviors.lastAlarmDate'), value: 'last_alarm_date' },
-        { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.icon'), value: 'type.icon_name' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },

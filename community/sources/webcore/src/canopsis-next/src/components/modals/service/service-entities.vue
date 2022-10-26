@@ -57,7 +57,7 @@ import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

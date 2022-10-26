@@ -1,17 +1,13 @@
 <template lang="pug">
-  v-card
-    v-layout(row)
-      v-flex(xs4)
-        c-search-field(v-model="pagination.search", @submit="submitSearch", @clear="clearSearch")
-    v-card-text
-      c-advanced-data-table(
-        :headers="headers",
-        :items="entities",
-        :loading="pending",
-        :pagination.sync="pagination",
-        :total-items="meta.total_count",
-        item-key="_id"
-      )
+  c-advanced-data-table(
+    :headers="headers",
+    :items="entities",
+    :loading="pending",
+    :pagination.sync="pagination",
+    :total-items="meta.total_count",
+    item-key="_id",
+    search
+  )
 </template>
 
 <script>
@@ -70,17 +66,6 @@ export default {
       this.entities = entities;
 
       this.pending = false;
-    },
-
-    submitSearch(search = '') {
-      this.query = {
-        ...this.query,
-        search,
-      };
-    },
-
-    clearSearch() {
-      this.submitSearch();
     },
   },
 };
