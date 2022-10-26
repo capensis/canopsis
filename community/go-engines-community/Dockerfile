@@ -65,8 +65,8 @@ RUN addgroup --system canopsis && adduser --system --disabled-password --shell /
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
 RUN apt update && apt install gnupg2 wget musl -y 
 RUN ln -sf /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
-RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
+RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 RUN apt update && apt install mongodb-org-shell -y
 RUN apt clean 
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml /canopsis-community.toml
