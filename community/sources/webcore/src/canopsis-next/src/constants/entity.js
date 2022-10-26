@@ -129,14 +129,14 @@ export const COUNTER_STATES_ICONS = {
 };
 
 export const WEATHER_ICONS = {
-  [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
-  [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
-  [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
-
   [SERVICE_STATES.ok]: 'wb_sunny',
   [SERVICE_STATES.minor]: 'person',
   [SERVICE_STATES.major]: 'person',
   [SERVICE_STATES.critical]: 'wb_cloudy',
+
+  [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
+  [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
+  [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
 };
 
 export const ENTITY_STATUS_STYLES = {
