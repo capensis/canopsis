@@ -51,6 +51,9 @@ export const PATTERN_OPERATORS = {
 
   with: 'with',
   without: 'without',
+
+  activated: 'activated',
+  inactive: 'inactive',
 };
 
 export const PATTERN_CONDITIONS = {
@@ -120,6 +123,8 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.notCanceled,
   PATTERN_OPERATORS.isNotGrey,
   PATTERN_OPERATORS.isGrey,
+  PATTERN_OPERATORS.activated,
+  PATTERN_OPERATORS.inactive,
 ];
 
 export const PATTERN_RULE_TYPES = {

@@ -217,8 +217,10 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 					_, err = cond.MatchBool(false)
 				case FieldTypeStringArray:
 					_, err = cond.MatchStringArray([]string{})
-				default:
+				case "":
 					_, err = cond.MatchRef(nil)
+				default:
+					return false
 				}
 
 				if err != nil {
@@ -238,8 +240,10 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 					_, err = cond.MatchBool(false)
 				case FieldTypeStringArray:
 					_, err = cond.MatchStringArray([]string{})
-				default:
+				case "":
 					_, err = cond.MatchRef(nil)
+				default:
+					return false
 				}
 
 				if err != nil {
@@ -357,23 +361,36 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 		prefix += "."
 	}
 
+	emptyEntity := types.Entity{}
 	groupQueries := make([]bson.M, len(p))
 	var err error
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
 		for j, cond := range group {
-			f := cond.Field
+			if infoName := getEntityInfoName(cond.Field); infoName != "" {
+				mongoField := prefix + "infos." + infoName + ".value"
 
-			if infoName := getEntityInfoName(f); infoName != "" {
-				f = prefix + "infos." + infoName + ".value"
-
-				condQueries[j], err = cond.Condition.ToMongoQuery(f)
-				if err != nil {
-					return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				switch cond.FieldType {
+				case FieldTypeString:
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				case FieldTypeInt:
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+				case FieldTypeBool:
+					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
+				case FieldTypeStringArray:
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+				case "":
+					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
+				default:
+					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
 				}
 
-				conds := getTypeMongoQuery(f, cond.FieldType)
+				if err != nil {
+					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
+				}
+
+				conds := getTypeMongoQuery(mongoField, cond.FieldType)
 
 				if len(conds) > 0 {
 					conds = append(conds, condQueries[j])
@@ -383,15 +400,29 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 				continue
 			}
 
-			if infoName := getEntityComponentInfoName(f); infoName != "" {
-				f = prefix + "component_infos." + infoName + ".value"
+			if infoName := getEntityComponentInfoName(cond.Field); infoName != "" {
+				mongoField := prefix + "component_infos." + infoName + ".value"
 
-				condQueries[j], err = cond.Condition.ToMongoQuery(f)
-				if err != nil {
-					return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				switch cond.FieldType {
+				case FieldTypeString:
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				case FieldTypeInt:
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+				case FieldTypeBool:
+					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
+				case FieldTypeStringArray:
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+				case "":
+					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
+				default:
+					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
 				}
 
-				conds := getTypeMongoQuery(f, cond.FieldType)
+				if err != nil {
+					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
+				}
+
+				conds := getTypeMongoQuery(mongoField, cond.FieldType)
 
 				if len(conds) > 0 {
 					conds = append(conds, condQueries[j])
@@ -401,10 +432,18 @@ func (p Entity) getGroupMongoQueries(prefix string) ([]bson.M, error) {
 				continue
 			}
 
-			f = prefix + f
-			condQueries[j], err = cond.Condition.ToMongoQuery(f)
+			mongoField := prefix + cond.Field
+			if _, ok := getEntityStringField(emptyEntity, cond.Field); ok {
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+			} else if _, ok := getEntityIntField(emptyEntity, cond.Field); ok {
+				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+			} else if _, ok := getEntityTimeField(emptyEntity, cond.Field); ok {
+				condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField)
+			} else {
+				err = ErrUnsupportedField
+			}
 			if err != nil {
-				return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
 			}
 		}
 
@@ -423,6 +462,7 @@ func (p Entity) ToSql(prefix string) (string, error) {
 		prefix += "."
 	}
 
+	emptyEntity := types.Entity{}
 	groupQueries := make([]string, len(p))
 	var err error
 
@@ -431,13 +471,22 @@ func (p Entity) ToSql(prefix string) (string, error) {
 	for i, group := range p {
 		condQueries := make([]string, len(group))
 		for j, cond := range group {
-			f := cond.Field
-			if v, ok := fieldMap[f]; ok {
-				f = v
-			}
+			if infoName := getEntityInfoName(cond.Field); infoName != "" {
+				switch cond.FieldType {
+				case FieldTypeString:
+					condQueries[j], err = cond.Condition.StringToSqlJson("infos", infoName)
+				case FieldTypeInt:
+					condQueries[j], err = cond.Condition.IntToSqlJson("infos", infoName)
+				case FieldTypeBool:
+					condQueries[j], err = cond.Condition.BoolToSqlJson("infos", infoName)
+				case FieldTypeStringArray:
+					condQueries[j], err = cond.Condition.StringArrayToSqlJson("infos", infoName)
+				case "":
+					condQueries[j], err = cond.Condition.RefToSqlJson("infos", infoName)
+				default:
+					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+				}
 
-			if infoName := getEntityInfoName(f); infoName != "" {
-				condQueries[j], err = cond.Condition.ToSqlJson("infos", infoName, cond.FieldType)
 				if err != nil {
 					return "", err
 				}
@@ -445,8 +494,21 @@ func (p Entity) ToSql(prefix string) (string, error) {
 				continue
 			}
 
-			if infoName := getEntityComponentInfoName(f); infoName != "" {
-				condQueries[j], err = cond.Condition.ToSqlJson("component_infos", infoName, cond.FieldType)
+			if infoName := getEntityComponentInfoName(cond.Field); infoName != "" {
+				switch cond.FieldType {
+				case FieldTypeString:
+					condQueries[j], err = cond.Condition.StringToSqlJson("component_infos", infoName)
+				case FieldTypeInt:
+					condQueries[j], err = cond.Condition.IntToSqlJson("component_infos", infoName)
+				case FieldTypeBool:
+					condQueries[j], err = cond.Condition.BoolToSqlJson("component_infos", infoName)
+				case FieldTypeStringArray:
+					condQueries[j], err = cond.Condition.StringArrayToSqlJson("component_infos", infoName)
+				case "":
+					condQueries[j], err = cond.Condition.RefToSqlJson("component_infos", infoName)
+				default:
+					err = fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+				}
 				if err != nil {
 					return "", err
 				}
@@ -454,8 +516,18 @@ func (p Entity) ToSql(prefix string) (string, error) {
 				continue
 			}
 
-			f = prefix + f
-			condQueries[j], err = cond.Condition.ToSql(f)
+			sqlField := cond.Field
+			if v, ok := fieldMap[sqlField]; ok {
+				sqlField = v
+			}
+			sqlField = prefix + sqlField
+			if _, ok := getEntityStringField(emptyEntity, cond.Field); ok {
+				condQueries[j], err = cond.Condition.StringToSql(sqlField)
+			} else if _, ok := getEntityIntField(emptyEntity, cond.Field); ok {
+				condQueries[j], err = cond.Condition.IntToSql(sqlField)
+			} else {
+				err = ErrUnsupportedField
+			}
 			if err != nil {
 				return "", err
 			}
