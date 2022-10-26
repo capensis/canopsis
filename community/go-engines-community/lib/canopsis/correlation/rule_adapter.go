@@ -19,7 +19,7 @@ type mongoAdapter struct {
 func (a mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
 	cursor, err := a.dbCollection.Find(ctx, bson.M{
 		"type": bson.M{
-			"$ne": RuleManualGroup,
+			"$ne": RuleTypeManualGroup,
 		},
 	})
 	if err != nil {
@@ -49,7 +49,7 @@ func (a mongoAdapter) GetManualRule(ctx context.Context) (Rule, error) {
 
 	err := a.dbCollection.FindOne(ctx, bson.M{
 		"type": bson.M{
-			"$eq": RuleManualGroup,
+			"$eq": RuleTypeManualGroup,
 		},
 	}).Decode(&rule)
 
