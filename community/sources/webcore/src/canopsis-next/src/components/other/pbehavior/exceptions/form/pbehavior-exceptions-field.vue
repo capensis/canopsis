@@ -25,7 +25,7 @@ import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
+import PbehaviorExceptionField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exception-field.vue';
 
 export default {
   inject: ['$validator'],

@@ -171,11 +171,12 @@ export default {
       const { tstart, tstop } = this.form;
 
       if (tstart) {
-        this.updateField('tstart', convertDateToStartOfDayDateObject(tstart));
+        this.updateModel({
+          ...this.form,
 
-        if (!this.noEnding && tstop) {
-          this.updateField('tstop', convertDateToEndOfDayDateObject(tstop));
-        }
+          tstart: convertDateToStartOfDayDateObject(tstart),
+          tstop: !this.noEnding && tstop ? convertDateToEndOfDayDateObject(tstop) : tstop,
+        });
       }
     },
     hasPauseType(value) {

@@ -27,7 +27,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import PbehaviorPatternsForm from '@/components/other/pbehavior/calendar/partials/pbehavior-patterns-form.vue';
+import PbehaviorPatternsForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-patterns-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
