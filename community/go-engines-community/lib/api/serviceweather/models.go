@@ -24,6 +24,7 @@ type EntitiesListRequest struct {
 	WithInstructions bool   `form:"with_instructions"`
 	Sort             string `form:"sort"`
 	SortBy           string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+	PbhOrigin        string `form:"pbh_origin" json:"pbh_origin"`
 }
 
 type Service struct {
@@ -127,6 +128,7 @@ type Entity struct {
 	Icon           string                     `json:"icon" bson:"icon"`
 	Pbehaviors     []alarm.Pbehavior          `json:"pbehaviors" bson:"pbehaviors"`
 	PbehaviorInfo  *entity.PbehaviorInfo      `json:"pbehavior_info" bson:"pbehavior_info"`
+	PbhOriginIcon  string                     `json:"pbh_origin_icon" bson:"pbh_origin_icon,omitempty"`
 	IsGrey         bool                       `json:"is_grey" bson:"is_grey"`
 	ImpactLevel    int                        `json:"impact_level" bson:"impact_level"`
 	ImpactState    int                        `json:"impact_state" bson:"impact_state"`
