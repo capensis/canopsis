@@ -133,6 +133,7 @@ export const WEATHER_ICONS = {
   [SERVICE_STATES.minor]: 'person',
   [SERVICE_STATES.major]: 'person',
   [SERVICE_STATES.critical]: 'wb_cloudy',
+
   [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
   [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
   [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
