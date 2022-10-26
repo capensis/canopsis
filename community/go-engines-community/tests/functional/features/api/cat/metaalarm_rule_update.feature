@@ -1439,6 +1439,16 @@ Feature: Update a metaalarmrule
                 "unit": "m"
               }
             }
+          },
+          {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
           }
         ]
       ]
@@ -1660,6 +1670,16 @@ Feature: Update a metaalarmrule
         [
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {

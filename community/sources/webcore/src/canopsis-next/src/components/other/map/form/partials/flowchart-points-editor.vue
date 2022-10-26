@@ -38,6 +38,7 @@
         :position-y="clientY",
         :point="addingPoint || editingPoint",
         :editing="!!editingPoint",
+        :exists-entities="existsEntities",
         @cancel="cancelPointDialog",
         @submit="submitPointDialog",
         @remove="showRemovePointModal"
@@ -107,6 +108,10 @@ export default {
     };
   },
   computed: {
+    existsEntities() {
+      return this.points.map(({ entity }) => entity);
+    },
+
     isDialogOpened() {
       return this.shownPointDialog;
     },
