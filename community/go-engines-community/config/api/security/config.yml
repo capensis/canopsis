@@ -35,6 +35,13 @@ security:
 #      lastname: sn
 #    # default_role defines role of new users which are created on successful LDAP login.
 #    default_role: Visualisation
+#    # insecure_skip_verify controls whether a client verifies the server's
+#    #	certificate chain and host name. If true, crypto/tls
+#    #	accepts any certificate presented by the server and any host name in that
+#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+#    #	attacks unless custom verification is used.
+#    insecure_skip_verify: false
+#    max_tls_ver:
 #
 #  cas:
 #    inactivity_interval: 24h
@@ -64,7 +71,13 @@ security:
 #       firstname: uid
 #       lastname: uid
 #    canopsis_saml_url: http://canopsis/api/v4/saml
-#    default_role: "admin"
+#    # default_role defines role of new users which are created on successful SAML login.
+#    default_role: Visualisation
+#    # insecure_skip_verify controls whether a client verifies the server's
+#    #	certificate chain and host name. If true, crypto/tls
+#    #	accepts any certificate presented by the server and any host name in that
+#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+#    #	attacks unless custom verification is used.
 #    insecure_skip_verify: false
 #    canopsis_sso_binding: redirect
 #    canopsis_acs_binding: redirect

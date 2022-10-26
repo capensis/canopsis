@@ -23,9 +23,7 @@ func (p WeatherServicePattern) Validate() bool {
 			switch f {
 			case "is_grey":
 				_, err = cond.MatchBool(true)
-			case "icon":
-				_, _, err = cond.MatchString("")
-			case "secondary_icon":
+			case "icon", "secondary_icon":
 				_, _, err = cond.MatchString("")
 			case "state.val":
 				_, err = cond.MatchInt(0)
@@ -57,10 +55,20 @@ func (p WeatherServicePattern) ToMongoQuery(prefix string) (bson.M, error) {
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
 		for j, cond := range group {
-			f := prefix + cond.Field
-			condQueries[j], err = cond.Condition.ToMongoQuery(f)
+			mongoField := prefix + cond.Field
+			switch cond.Field {
+			case "is_grey":
+				condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
+			case "icon", "secondary_icon":
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+			case "state.val":
+				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+			default:
+				err = pattern.ErrUnsupportedField
+			}
+
 			if err != nil {
-				return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
 			}
 		}
 
