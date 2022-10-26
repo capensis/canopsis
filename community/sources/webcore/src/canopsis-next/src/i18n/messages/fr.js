@@ -40,6 +40,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
+  SERVICE_STATES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2237,6 +2238,11 @@ export default merge({
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+
+      [SERVICE_STATES.ok]: 'Ok',
+      [SERVICE_STATES.minor]: 'Mineur',
+      [SERVICE_STATES.major]: 'Majeur',
+      [SERVICE_STATES.critical]: 'Critique',
     },
   },
   contextGeneralTable: {
