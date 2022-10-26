@@ -4,12 +4,12 @@
       v-combobox(
         v-field="value.column",
         :items="columns",
-        :label="columnsLabel",
+        :label="$t('settings.orderBy')",
         :return-object="false",
         item-text="label",
         item-value="value"
       )
-        template(slot="no-data")
+        template(#no-data="")
           v-list-tile
             v-list-tile-content
               v-list-tile-title(v-html="$t('settings.sortColumnNoData')")
@@ -30,7 +30,6 @@ import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-s
  *
  * @prop {Object} [value] - Object containing the default sort column's name and the sort direction
  * @prop {Array} [columns] - List of columns suggestions to sort on
- * @prop {String} [columnsLabel] - Setting's title to display on settings panel
  *
  * @event value#input
  */
@@ -47,10 +46,6 @@ export default {
     columns: {
       type: Array,
       default: () => [],
-    },
-    columnsLabel: {
-      type: String,
-      default: null,
     },
   },
   computed: {

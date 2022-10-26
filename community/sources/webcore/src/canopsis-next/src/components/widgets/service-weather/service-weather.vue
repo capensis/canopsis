@@ -47,10 +47,7 @@
           :key="service._id",
           :class="flexSize"
         )
-          service-weather-item.weather-item(
-            :service="service",
-            :widget="widget"
-          )
+          service-weather-item(:service="service", :widget="widget")
 </template>
 
 <script>
@@ -138,9 +135,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .weather-item {
-    height: 100%;
-  }
-</style>

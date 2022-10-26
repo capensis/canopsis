@@ -1,103 +1,60 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`default-elements-per-page Renders \`default-sort-column\` with custom props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  title="Default number of elements/page"
 >
   <div
-    class="v-list__group__header"
+    class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    role="combobox"
   >
     <div
-      class="widget-settings-item-title"
-      role="listitem"
+      class="v-input__control"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-input__slot"
       >
         <div
-          class="validation-header"
-        >
-          Default number of elements/page
-        </div>
-        <!---->
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <div
-          class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-select__slot"
         >
           <div
-            class="v-input__control"
+            class="v-select__selections"
           >
             <div
-              class="v-input__slot"
+              class="v-select__selection v-select__selection--comma"
             >
-              <div
-                class="v-select__slot"
+              50
+            </div>
+            <input
+              aria-label="Elements per page"
+              aria-readonly="false"
+              autocomplete="on"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--append"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
               >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    50
-                  </div>
-                  <input
-                    aria-label="Elements per page"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
+                arrow_drop_down
+              </i>
             </div>
           </div>
         </div>
+        <div
+          class="v-menu"
+        />
       </div>
     </div>
-  </transition-stub>
-</div>
+  </div>
+</widget-settings-item-stub>
 `;
 
 exports[`default-elements-per-page Renders \`default-sort-column\` with custom props 2`] = `
@@ -204,103 +161,60 @@ exports[`default-elements-per-page Renders \`default-sort-column\` with custom p
 `;
 
 exports[`default-elements-per-page Renders \`default-sort-column\` with default props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  title="Default number of elements/page"
 >
   <div
-    class="v-list__group__header"
+    class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    role="combobox"
   >
     <div
-      class="widget-settings-item-title"
-      role="listitem"
+      class="v-input__control"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-input__slot"
       >
         <div
-          class="validation-header"
-        >
-          Default number of elements/page
-        </div>
-        <!---->
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <div
-          class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-select__slot"
         >
           <div
-            class="v-input__control"
+            class="v-select__selections"
           >
             <div
-              class="v-input__slot"
+              class="v-select__selection v-select__selection--comma"
             >
-              <div
-                class="v-select__slot"
+              10
+            </div>
+            <input
+              aria-label="Elements per page"
+              aria-readonly="false"
+              autocomplete="on"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--append"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
               >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    10
-                  </div>
-                  <input
-                    aria-label="Elements per page"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
+                arrow_drop_down
+              </i>
             </div>
           </div>
         </div>
+        <div
+          class="v-menu"
+        />
       </div>
     </div>
-  </transition-stub>
-</div>
+  </div>
+</widget-settings-item-stub>
 `;
 
 exports[`default-elements-per-page Renders \`default-sort-column\` with default props 2`] = `
