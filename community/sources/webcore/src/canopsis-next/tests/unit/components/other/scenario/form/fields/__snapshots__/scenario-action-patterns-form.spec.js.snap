@@ -2,7 +2,7 @@
 
 exports[`scenario-action-patterns-form Renders \`scenario-action-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   entity-attributes="[object Object]"
   form="[object Object]"
   name="customName"
@@ -15,7 +15,7 @@ exports[`scenario-action-patterns-form Renders \`scenario-action-patterns-form\`
 
 exports[`scenario-action-patterns-form Renders \`scenario-action-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
-  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object]"
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   entity-attributes="[object Object]"
   name="patterns"
   some-required="some-required"
