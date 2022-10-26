@@ -34,10 +34,14 @@ export default {
     },
   },
   computed: {
+    editableItems() {
+      return this.items.filter(({ editable }) => editable);
+    },
+
     actions() {
       const actions = [];
-      const someOneEnable = this.items.some(({ enabled }) => enabled);
-      const someOneDisable = this.items.some(({ enabled }) => !enabled);
+      const someOneEnable = this.editableItems.some(({ enabled }) => enabled);
+      const someOneDisable = this.editableItems.some(({ enabled }) => !enabled);
 
       if (this.removable) {
         actions.push({
@@ -86,7 +90,7 @@ export default {
         config: {
           action: async () => {
             await this.bulkUpdatePbehaviors({
-              data: this.items.map(item => ({ ...pbehaviorToRequest(item), enabled: true })),
+              data: this.editableItems.map(item => ({ ...pbehaviorToRequest(item), enabled: true })),
             });
 
             return this.afterSubmit();
@@ -101,7 +105,7 @@ export default {
         config: {
           action: async () => {
             await this.bulkUpdatePbehaviors({
-              data: this.items.map(item => ({ ...pbehaviorToRequest(item), enabled: false })),
+              data: this.editableItems.map(item => ({ ...pbehaviorToRequest(item), enabled: false })),
             });
 
             return this.afterSubmit();

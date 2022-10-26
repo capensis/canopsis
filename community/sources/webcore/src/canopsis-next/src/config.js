@@ -168,6 +168,7 @@ export const API_ROUTES = {
     entitiesCalendar: '/api/v4/entities/pbehavior-calendar',
     reasons: '/api/v4/pbehavior-reasons',
     calendar: '/api/v4/pbehavior-calendar',
+    bulkEntityPbehaviors: '/api/v4/bulk/entity-pbehaviors',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
