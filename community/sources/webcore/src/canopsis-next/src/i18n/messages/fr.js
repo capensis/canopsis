@@ -40,6 +40,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
+  SERVICE_STATES,
   SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
@@ -65,7 +66,7 @@ export default merge({
     submit: 'Soumettre',
     cancel: 'Annuler',
     continue: 'Continuer',
-    stop: 'Arrêter',
+    stop: 'Fin',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quitter le mode édition',
@@ -167,6 +168,8 @@ export default merge({
     expired: 'Date d\'expiration',
     accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
+    activationDate: 'Date d\'activation',
+    activated: 'Activé',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
     periods: 'Périodes',
@@ -177,7 +180,7 @@ export default merge({
     eventPatterns: 'Modèles des événements',
     alarmPatterns: 'Modèles des alarmes',
     entityPatterns: 'Modèles des entités',
-    pbehaviorPatterns: 'Modèles des comportements',
+    pbehaviorPatterns: 'Modèles des comportements périodiques',
     totalEntityPatterns: 'Modèles des entités (Total)',
     serviceWeatherPatterns: 'Modèles des météos de service',
     addFilter: 'Ajouter un filtre',
@@ -371,13 +374,13 @@ export default merge({
       [PATTERN_OPERATORS.notBeginWith]: 'Ne commence pas par',
       [PATTERN_OPERATORS.endsWith]: 'Se termine par',
       [PATTERN_OPERATORS.notEndWith]: 'Ne se termine pas par',
-      [PATTERN_OPERATORS.exist]: 'Exister',
+      [PATTERN_OPERATORS.exist]: 'Existe',
       [PATTERN_OPERATORS.notExist]: 'N\'existe pas',
 
-      [PATTERN_OPERATORS.hasEvery]: 'A chaque',
-      [PATTERN_OPERATORS.hasOneOf]: 'A l\'un des',
+      [PATTERN_OPERATORS.hasEvery]: 'Contient chaque',
+      [PATTERN_OPERATORS.hasOneOf]: 'Contient l\'un des',
       [PATTERN_OPERATORS.isOneOf]: 'Est l\'un de',
-      [PATTERN_OPERATORS.hasNot]: 'N\'a pas',
+      [PATTERN_OPERATORS.hasNot]: 'Ne contient pas',
       [PATTERN_OPERATORS.isNotOneOf]: 'N\'est pas l\'un des',
       [PATTERN_OPERATORS.isEmpty]: 'Est vide',
       [PATTERN_OPERATORS.isNotEmpty]: 'N\'est pas vide',
@@ -405,6 +408,9 @@ export default merge({
 
       [PATTERN_OPERATORS.with]: 'Avec',
       [PATTERN_OPERATORS.without]: 'Sans',
+
+      [PATTERN_OPERATORS.activated]: 'Activé',
+      [PATTERN_OPERATORS.inactive]: 'Inactif',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -412,11 +418,11 @@ export default merge({
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
       [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
-      [EVENT_ENTITY_TYPES.uncancel]: 'Uncancel',
-      [EVENT_ENTITY_TYPES.changeState]: 'Changer d\'état',
+      [EVENT_ENTITY_TYPES.uncancel]: 'Annuler l\'annulation',
+      [EVENT_ENTITY_TYPES.changeState]: 'Changer et vérrouiller la criticité',
       [EVENT_ENTITY_TYPES.check]: 'Vérifier',
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
-      [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
+      [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
     },
     scenarioTriggers: {
       [SCENARIO_TRIGGERS.create]: {
@@ -677,7 +683,7 @@ export default merge({
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
       alarmsChildren: 'Alarmes liées',
-      trackSource: 'Source de la piste',
+      trackSource: 'Cause racine',
       impactChain: 'Chaîne d\'impact',
       entityGantt: 'Diagramme de Gantt',
     },
@@ -686,7 +692,7 @@ export default merge({
     },
     infoPopup: 'Info popup',
     tooltips: {
-      priority: 'Le paramètre de priorité est dérivé de la gravité de l\'alarme multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
+      priority: 'La priorité est égale à la sévérité multipliée par le niveau d\'impact de l\'entité sur laquelle l\'alarme est déclenchée',
       runningManualInstructions: 'Consigne manuelle <strong>{title}</strong> en cours | Consignes manuelles <strong>{title}</strong> en cours',
       runningAutoInstructions: 'Consigne automatique <strong>{title}</strong> en cours | Consignes automatiques <strong>{title}</strong> en cours',
       successfulManualInstructions: 'Consigne manuelle <strong>{title}</strong> réussie | Consignes manuelles <strong>{title}</strong> réussies',
@@ -726,9 +732,9 @@ export default merge({
     begins: 'Débute',
     ends: 'Se termine',
     lastAlarmDate: 'Date de la dernière alarme',
-    massRemove: 'Supprimer les comportements',
-    massEnable: 'Activer les comportements',
-    massDisable: 'Désactiver les comportements',
+    massRemove: 'Supprimer les comportements périodiques',
+    massEnable: 'Activer les comportements périodiques',
+    massDisable: 'Désactiver les comportements périodiques',
     searchHelp: '<span>Aide sur la recherche avancée :</span>\n'
       + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
       + '<p>Le "-" avant la recherche est obligatoire</p>\n'
@@ -758,14 +764,14 @@ export default merge({
       [SIDE_BARS.contextSettings]: 'Paramètres de l\'explorateur de contexte',
       [SIDE_BARS.serviceWeatherSettings]: 'Paramètres de la météo des services',
       [SIDE_BARS.statsCalendarSettings]: 'Paramètres du calendrier',
-      [SIDE_BARS.textSettings]: 'Paramètres du widget de texte',
-      [SIDE_BARS.counterSettings]: 'Paramètres du widget de compteur',
+      [SIDE_BARS.textSettings]: 'Paramètres du widget texte',
+      [SIDE_BARS.counterSettings]: 'Paramètres du widget compteur',
       [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
-      [SIDE_BARS.mapSettings]: 'Paramètres du widget de mappage',
+      [SIDE_BARS.mapSettings]: 'Paramètres du widget de cartographie',
     },
     openedTypes: {
       [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
-      [ALARMS_OPENED_VALUES.resolved]: 'Toutes les alarmes résolues',
+      [ALARMS_OPENED_VALUES.resolved]: 'Alarmes résolues',
       [ALARMS_OPENED_VALUES.all]: 'Alarmes ouvertes et récemment résolues',
     },
     advancedSettings: 'Paramètres avancés',
@@ -1019,7 +1025,7 @@ export default merge({
       success: {
         create: 'Nouvelle vue créée !',
         edit: 'Vue éditée avec succès !',
-        duplicate: 'Afficher dupliqué avec succès !',
+        duplicate: 'Vue dupliquée avec succès !',
         delete: 'Vue supprimée avec succès !',
       },
       fail: {
@@ -1130,7 +1136,7 @@ export default merge({
         invalid: 'Invalide',
       },
       success: {
-        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
+        create: 'Comportement périodique créé avec succès !',
       },
       cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
     },
@@ -1434,7 +1440,7 @@ export default merge({
         title: 'Dupliquer une liste de lecture',
       },
       errors: {
-        emptyTabs: 'Merci de ajouter un onglet',
+        emptyTabs: 'Merci d\'ajouter un onglet',
       },
       fields: {
         interval: 'Période',
@@ -1504,15 +1510,15 @@ export default merge({
         },
       },
       edit: {
-        title: 'Éditer une consigne',
+        title: 'Éditer la consigne',
         popups: {
           success: '{instructionName} a été modifiée avec succès',
         },
       },
       duplicate: {
-        title: 'Double une consigne',
+        title: 'Dupliquer la consigne',
         popups: {
-          success: '{instructionName} a été dupliqué avec succès',
+          success: '{instructionName} a été dupliquée avec succès',
         },
       },
     },
@@ -1530,9 +1536,9 @@ export default merge({
         },
       },
       duplicate: {
-        title: 'Double la configuration',
+        title: 'Dupliquer la configuration',
         popups: {
-          success: '{configurationName} a été dupliqué avec succès',
+          success: '{configurationName} a été dupliquée avec succès',
         },
       },
       fields: {
@@ -1554,9 +1560,9 @@ export default merge({
         },
       },
       duplicate: {
-        title: 'Double une tâche',
+        title: 'Dupliquer une tâche',
         popups: {
-          success: '{jobName} a été dupliqué avec succès',
+          success: '{jobName} a été dupliquée avec succès',
         },
       },
     },
@@ -1638,24 +1644,24 @@ export default merge({
     },
     createAlarmIdleRule: {
       create: {
-        title: 'Créer une règle d\'alarme',
+        title: 'Créer une règle d\'inactivité d\'alarme',
       },
       edit: {
-        title: 'Modifier la règle d\'alarme',
+        title: 'Modifier la règle d\'inactivité d\'alarme',
       },
       duplicate: {
-        title: 'Règle d\'alarme en double',
+        title: 'Dupliquer une règle d\'inactivité d\'alarme',
       },
     },
     createEntityIdleRule: {
       create: {
-        title: 'Créer une règle d\'entité',
+        title: 'Créer une règle d\'inactivité d\'entité',
       },
       edit: {
-        title: 'Modifier la règle d\'entité',
+        title: 'Modifier la règle d\'inactivité d\'entité',
       },
       duplicate: {
-        title: 'Règle d\'entité en double',
+        title: 'Dupliquer une règle d\'inactivité d\'entité',
       },
     },
     createAlarmStatusRule: {
@@ -1737,10 +1743,10 @@ export default merge({
     },
     createCorporateAlarmPattern: {
       create: {
-        title: 'Créer un filtre d\'alarme partagé',
+        title: 'Créer un filtre partagé d\'alarme',
       },
       edit: {
-        title: 'Modifier le filtre d\'alarme partagé',
+        title: 'Modifier le filtre partagé d\'alarme',
       },
     },
     createEntityPattern: {
@@ -1753,10 +1759,10 @@ export default merge({
     },
     createCorporateEntityPattern: {
       create: {
-        title: 'Créer un filtre d\'entité partagée',
+        title: 'Créer un filtre partagé d\'entité',
       },
       edit: {
-        title: 'Modifier le filtre d\'entité partagée',
+        title: 'Modifier le filtre partagé d\'entité',
       },
     },
     createPbehaviorPattern: {
@@ -1769,10 +1775,10 @@ export default merge({
     },
     createCorporatePbehaviorPattern: {
       create: {
-        title: 'Créer un filtre de comportement partagé',
+        title: 'Créer un filtre partagé de comportement périodique',
       },
       edit: {
-        title: 'Modifier le filtre de comportement partagé',
+        title: 'Modifier le filtre partagé de comportement périodique',
       },
     },
     createMap: {
@@ -1992,7 +1998,7 @@ export default merge({
     value: 'Valeur',
     advancedEditor: 'Éditeur avancé',
     comparisonRules: 'Règles de comparaison',
-    editActions: 'Éditer les actions',
+    editActions: 'Actions',
     addAction: 'Ajouter une action',
     editAction: 'Éditer une action',
     actions: 'Actions',
@@ -2009,9 +2015,9 @@ export default merge({
     noExternalData: 'Aucune donnée externe n\'a encore été ajoutée',
     addExternalData: 'Ajouter des données externes',
     reference: 'Référence',
-    collection: 'Le recueil',
+    collection: 'Collection',
     externalDataTypes: {
-      [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'MongoDB collection',
+      [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'Collection MongoDB',
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',
     },
     externalDataConditionTypes: {
@@ -2228,6 +2234,11 @@ export default merge({
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+
+      [SERVICE_STATES.ok]: 'Ok',
+      [SERVICE_STATES.minor]: 'Mineur',
+      [SERVICE_STATES.major]: 'Majeur',
+      [SERVICE_STATES.critical]: 'Critique',
     },
     stateCounters: {
       [SERVICE_WEATHER_STATE_COUNTERS.all]: 'Nombre d\'alarmes',
@@ -2339,7 +2350,7 @@ export default merge({
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
     },
   },
 
@@ -2432,12 +2443,12 @@ export default merge({
 
       [HEALTHCHECK_ENGINES_NAMES.axe]: {
         name: 'AXE',
-        description: 'Crée des alarmes et effectue des actions avec elles',
+        description: 'Crée des alarmes et exécute des actions sur elles',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.che]: {
         name: 'CHE',
-        description: 'Applique les filtres d\'événements et les entités créées',
+        description: 'Applique les filtres d\'événements et crée des entités',
       },
 
       [HEALTHCHECK_ENGINES_NAMES.pbehavior]: {
@@ -2609,7 +2620,7 @@ export default merge({
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
     remediationDuration: 'Durée de la remédiation',
     actions: {
-      needRate: 'Notez-le!',
+      needRate: 'Evaluez-les!',
       rate: 'Évaluer',
     },
   },
@@ -2631,7 +2642,7 @@ export default merge({
     jobId: 'Identifiant de la tâche',
     query: 'Requête',
     multipleExecutions: 'Autoriser l\'exécution parallèle',
-    retryAmount: 'Montant de la nouvelle tentative',
+    retryAmount: 'Nombre de tentatives',
     retryInterval: 'Intervalle de relance',
     addPayload: 'Ajouter un payload',
     deletePayload: 'Supprimer le payload',
@@ -2755,7 +2766,7 @@ export default merge({
     auth: 'Type d\'auth.',
     navigationType: 'Type d\'affichage de la barre de vues',
     active: 'Séance active',
-    activeConnects: 'Connections count',
+    activeConnects: 'Nombre de connexions',
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
       [GROUPS_NAVIGATION_TYPES.topBar]: 'Barre d\'entête',
@@ -2875,7 +2886,7 @@ export default merge({
 
   notificationSettings: {
     instruction: {
-      header: 'Instructions',
+      header: 'Consignes',
       rate: 'Notifications "Évaluer les consignes"',
       rateFrequency: 'La fréquence',
       duration: 'Intervalle de temps',
@@ -2914,8 +2925,8 @@ export default merge({
     timeAwaiting: 'Temps d\'attente',
     timeRangeAwaiting: 'Plage de temps en attente',
     types: {
-      [IDLE_RULE_TYPES.alarm]: 'Règle d\'alarme',
-      [IDLE_RULE_TYPES.entity]: 'Règle d\'entité',
+      [IDLE_RULE_TYPES.alarm]: 'Règle d\'inactivité d\'alarme',
+      [IDLE_RULE_TYPES.entity]: 'Règle d\'inactivité d\'entité',
     },
     alarmConditions: {
       [IDLE_RULE_ALARM_CONDITIONS.lastEvent]: 'Aucun événement reçu',
@@ -3020,7 +3031,7 @@ export default merge({
       message: '', // TODO: add correct message
     },
     [USERS_PERMISSIONS.technical.map]: {
-      title: 'Plans',
+      title: 'Cartographie',
       message: '', // TODO: add correct message
     },
 
@@ -3155,7 +3166,7 @@ export default merge({
   },
 
   filter: {
-    oldPattern: 'Ancien format de motif',
+    oldPattern: 'Ancien format de filtre',
   },
 
   map: {
@@ -3170,7 +3181,7 @@ export default merge({
     usingMap: 'La carte est liée',
     showAll: 'Afficher tout ({count})',
     types: {
-      [MAP_TYPES.geo]: 'Géo',
+      [MAP_TYPES.geo]: 'Géographique',
       [MAP_TYPES.flowchart]: 'Flowchart',
       [MAP_TYPES.mermaid]: 'Mermaid',
       [MAP_TYPES.treeOfDependencies]: 'Arbre des dépendances',
@@ -3236,7 +3247,7 @@ export default merge({
       rhombus: 'Rhombus',
       circle: 'Circle',
       ellipse: 'Ellipse',
-      parallelogram: 'Parallelogram',
+      parallelogram: 'Parallélogramme',
       process: 'Process',
       document: 'Document',
       storage: 'Storage',
