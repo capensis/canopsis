@@ -33,7 +33,7 @@ func NewModelProvider(dbClient mongo.DbClient) ModelProvider {
 }
 
 func (p *modelProvider) GetTypes(ctx context.Context) (map[string]Type, error) {
-	cursor, err := p.dbClient.Collection(TypeCollectionName).Find(ctx, bson.M{})
+	cursor, err := p.dbClient.Collection(mongo.PbehaviorTypeMongoCollection).Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}

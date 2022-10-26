@@ -1012,6 +1012,35 @@ default_entities:
     name: test-resource-to-map-state-get-4
     enabled: false
 
+  entity_to_bulk_entity_pbehavior_create_1:
+    <<: *resource
+    _id: test-entity-to-bulk-entity-pbehavior-create-1/test-component-default
+    name: test-entity-to-bulk-entity-pbehavior-create-1
+  entity_to_bulk_entity_pbehavior_create_2:
+    <<: *resource
+    _id: test-entity-to-bulk-entity-pbehavior-create-2/test-component-default
+    name: test-entity-to-bulk-entity-pbehavior-create-2
+  entity_to_bulk_entity_pbehavior_delete_1:
+    <<: *resource
+    _id: test-entity-to-bulk-entity-pbehavior-delete-1/test-component-default
+    name: test-entity-to-bulk-entity-pbehavior-delete-1
+  entity_to_bulk_entity_pbehavior_delete_2:
+    <<: *resource
+    _id: test-entity-to-bulk-entity-pbehavior-delete-2/test-component-default
+    name: test-entity-to-bulk-entity-pbehavior-delete-2
+  entity_to_bulk_entity_pbehavior_delete_3:
+    <<: *resource
+    _id: test-entity-to-bulk-entity-pbehavior-delete-3/test-component-default
+    name: test-entity-to-bulk-entity-pbehavior-delete-3
+  entity_to_entity_pbehavior_update_1:
+    <<: *resource
+    _id: test-entity-to-entity-pbehavior-update-1/test-component-default
+    name: test-entity-to-entity-pbehavior-update-1
+  entity_to_entity_pbehavior_patch_1:
+    <<: *resource
+    _id: test-entity-to-entity-pbehavior-patch-1/test-component-default
+    name: test-entity-to-entity-pbehavior-patch-1
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component

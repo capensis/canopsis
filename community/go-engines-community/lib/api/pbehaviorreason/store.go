@@ -2,6 +2,8 @@ package pbehaviorreason
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -11,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 type Store interface {
@@ -163,7 +164,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 // IsLinked checks if there is pbehavior with linked reason.
 func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
 	res := s.dbClient.
-		Collection(pbehavior.PBehaviorCollectionName).
+		Collection(mongo.PbehaviorMongoCollection).
 		FindOne(ctx, bson.M{"reason": id})
 	if err := res.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -207,7 +208,7 @@ func transformModelToDoc(reason *Reason) *pbehavior.Reason {
 func getDeletablePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": pbehavior.PBehaviorCollectionName,
+			"from": mongo.PbehaviorMongoCollection,
 			"let":  bson.M{"id": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$$id", "$reason"}}}},

@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -186,7 +185,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 // isLinkedToPbehavior checks if there is pbehavior with linked type.
 func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
-	pbhCollection := s.db.Collection(pbehavior.PBehaviorCollectionName)
+	pbhCollection := s.db.Collection(mongo.PbehaviorMongoCollection)
 	res := pbhCollection.FindOne(ctx, bson.M{"$or": []bson.M{
 		{"type_": id},
 		{"exdates.type": id},
@@ -293,7 +292,7 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 func getEditableAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
+			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "_id",
 			"foreignField": "type",
 			"as":           "pbhs",

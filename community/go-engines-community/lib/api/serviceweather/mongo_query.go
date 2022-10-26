@@ -113,6 +113,10 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []stri
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
 
+	if r.PbhOrigin != "" {
+		q.lookups = append(q.lookups, lookupWithKey{key: "pbh_origin_icon", pipeline: getPbhOriginLookup(r.PbhOrigin)})
+	}
+
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
@@ -534,6 +538,34 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				"default": "",
 			}},
 		}},
+	}
+}
+
+func getPbhOriginLookup(origin string) []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from": mongo.PbehaviorMongoCollection,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$$id", "$entity"}}},
+					{"origin": origin},
+				}}},
+			},
+			"as": "pbh_origin",
+		}},
+		{"$unwind": bson.M{"path": "$pbh_origin", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"localField":   "pbh_origin.type_",
+			"foreignField": "_id",
+			"as":           "pbh_origin.type",
+		}},
+		{"$unwind": bson.M{"path": "$pbh_origin.type", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbh_origin_icon": "$pbh_origin.type.icon_name",
+		}},
+		{"$project": bson.M{"pbh_origin": 0}},
 	}
 }
 
