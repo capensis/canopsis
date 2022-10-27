@@ -33,7 +33,8 @@ import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import PbehaviorExceptionField from '../fields/pbehavior-exception-field.vue';
+import PbehaviorExceptionField from './pbehavior-exception-field.vue';
+
 import PbehaviorExceptionList from '../partials/pbehavior-exception-list.vue';
 
 export default {
