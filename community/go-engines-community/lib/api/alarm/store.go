@@ -256,7 +256,7 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 	}
 	pipeline = append(pipeline, getMetaAlarmRuleLookup()...)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"meta_alarm_rule.type": correlation.RuleManualGroup,
+		"meta_alarm_rule.type": correlation.RuleTypeManualGroup,
 	}})
 	if search != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
