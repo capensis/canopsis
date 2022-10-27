@@ -1,8 +1,8 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
-import flushPromises from 'flush-promises';
 import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
@@ -391,7 +391,6 @@ describe('pbehavior-general-form', () => {
 
     const newForm = {
       ...form,
-      tstop: null,
       type: {
         type: PBEHAVIOR_TYPE_TYPES.active,
       },
