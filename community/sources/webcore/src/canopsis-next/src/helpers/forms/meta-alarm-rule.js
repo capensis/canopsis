@@ -234,18 +234,21 @@ export const metaAlarmRuleToForm = (rule = {}) => {
  * @returns {MetaAlarmRule}
  */
 export const formToMetaAlarmRule = (form = {}) => {
-  const metaAlarmRule = omit(form, ['config', 'patterns']);
+  const patternsFields = [
+    PATTERNS_FIELDS.alarm,
+    PATTERNS_FIELDS.entity,
+  ];
+
+  if ([META_ALARMS_RULE_TYPES.complex, META_ALARMS_RULE_TYPES.valuegroup].includes(form.type)) {
+    patternsFields.push(PATTERNS_FIELDS.totalEntity);
+  }
+
+  const metaAlarmRule = {
+    ...omit(form, ['config', 'patterns']),
+    ...formFilterToPatterns(form.patterns, patternsFields),
+  };
 
   switch (form.type) {
-    case META_ALARMS_RULE_TYPES.attribute: {
-      return {
-        ...metaAlarmRule,
-        ...formFilterToPatterns(
-          form.patterns,
-          [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-        ),
-      };
-    }
     case META_ALARMS_RULE_TYPES.corel:
     case META_ALARMS_RULE_TYPES.complex:
     case META_ALARMS_RULE_TYPES.valuegroup: {
@@ -275,12 +278,8 @@ export const formToMetaAlarmRule = (form = {}) => {
 
       return {
         config,
+
         ...metaAlarmRule,
-        ...formFilterToPatterns(form.patterns, [
-          PATTERNS_FIELDS.alarm,
-          PATTERNS_FIELDS.entity,
-          PATTERNS_FIELDS.totalEntity,
-        ]),
       };
     }
     case META_ALARMS_RULE_TYPES.timebased:
