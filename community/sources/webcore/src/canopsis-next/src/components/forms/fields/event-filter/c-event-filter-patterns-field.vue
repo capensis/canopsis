@@ -122,15 +122,6 @@ export default {
     extraInfosOptions() {
       return {
         type: PATTERN_RULE_TYPES.extraInfos,
-        /*        valueField: {
-          is: 'c-entity-field',
-          props: {
-            required: true,
-            entityTypes: [BASIC_ENTITY_TYPES.resource],
-            itemText: 'name',
-            itemValue: 'name',
-          },
-        }, */
       };
     },
 
