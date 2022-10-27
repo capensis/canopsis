@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-field\` with custom props 1`] = `
+<div
+  class="flex"
+>
+  <button
+    class="ml-0 v-btn theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+       Edit recurrence rule
+    </div>
+  </button>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light grey--text text--darken-1"
+        >
+          info
+        </i>
+      </div>
+    </button>
+  </span>
+  <c-action-btn-stub
+    type="delete"
+  />
+</div>
+`;
+
+exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-field\` with required props 1`] = `
+<div
+  class="flex"
+>
+  <button
+    class="ml-0 v-btn theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+       Add recurrence rule
+    </div>
+  </button>
+  <!---->
+</div>
+`;

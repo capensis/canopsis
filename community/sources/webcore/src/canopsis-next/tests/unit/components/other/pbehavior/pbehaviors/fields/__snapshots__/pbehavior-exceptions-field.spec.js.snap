@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with custom props 1`] = `
+exports[`pbehavior-exceptions-field Renders \`pbehavior-exceptions-field\` with custom props 1`] = `
 <div>
   <h3
     class="my-3 grey--text"
@@ -38,7 +38,7 @@ exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with custom
 </div>
 `;
 
-exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with default props 1`] = `
+exports[`pbehavior-exceptions-field Renders \`pbehavior-exceptions-field\` with default props 1`] = `
 <div>
   <h3
     class="my-3 grey--text"
