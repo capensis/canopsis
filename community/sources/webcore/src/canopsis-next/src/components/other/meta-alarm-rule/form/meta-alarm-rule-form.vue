@@ -18,10 +18,9 @@
     meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
     meta-alarm-rule-value-paths-form.mb-2(v-if="isValuePathsFormShown", v-field="form.config")
     meta-alarm-rule-patterns-form(
-      v-if="isPatternsFormShown",
       v-field="form.patterns",
       :with-total-entity="withTotalEntityPattern",
-      :some-required="patternsRequired"
+      :some-required="isAttributeType"
     )
 </template>
 
@@ -94,13 +93,6 @@ export default {
         || this.isCorelFormShown;
     },
 
-    isPatternsFormShown() {
-      return this.isComplexType
-        || this.isValueGroupType
-        || this.isPatternsType
-        || this.isCorelFormShown;
-    },
-
     isCorelFormShown() {
       return this.isCorelType;
     },
@@ -112,7 +104,7 @@ export default {
     /**
      * Rule types
      */
-    isPatternsType() {
+    isAttributeType() {
       return isAttributeMetaAlarmRuleType(this.form.type);
     },
 
@@ -130,10 +122,6 @@ export default {
 
     isCorelType() {
       return isCorelMetaAlarmRuleType(this.form.type);
-    },
-
-    patternsRequired() {
-      return !this.isValueGroupType;
     },
   },
 };
