@@ -409,12 +409,8 @@ export const formRuleToPatternRule = (rule) => {
   const isExtraInfos = isExtraInfosPatternRuleField(rule.attribute);
   const isDate = isDatePatternRuleField(rule.attribute);
 
-  if (isInfos) {
+  if (isInfos || isExtraInfos) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
-  }
-
-  if (isExtraInfos) {
-    pattern.field = [rule.attribute, rule.field].join('.');
   }
 
   if (isDate) {
@@ -423,7 +419,7 @@ export const formRuleToPatternRule = (rule) => {
     return pattern;
   }
 
-  if ((isInfos && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) || isExtraInfos) {
+  if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
     pattern.field_type = getFieldType(rule.value);
   }
 
