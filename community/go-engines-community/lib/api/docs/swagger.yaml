@@ -6138,6 +6138,14 @@ paths:
       description: Get paginated list of behavior types
       operationId: pbehavior-types-find-all
       parameters:
+        - name: types[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'

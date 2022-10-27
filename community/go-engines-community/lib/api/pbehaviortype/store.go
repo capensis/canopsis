@@ -25,6 +25,7 @@ type Store interface {
 
 type store struct {
 	db                    mongo.DbClient
+	dbCollection          mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -33,13 +34,10 @@ type store struct {
 func NewStore(db mongo.DbClient) Store {
 	return &store{
 		db:                    db,
+		dbCollection:          db.Collection(mongo.PbehaviorTypeMongoCollection),
 		defaultSearchByFields: []string{"_id", "name", "description", "type"},
 		defaultSortBy:         "name",
 	}
-}
-
-func (s *store) getCollection() mongo.DbCollection {
-	return s.db.Collection(mongo.PbehaviorTypeMongoCollection)
 }
 
 // Find pbehavior types according to query.
@@ -48,11 +46,20 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 	if err != nil {
 		return nil, err
 	}
-	collection := s.getCollection()
+
+	match := bson.M{}
+
+	if r.OnlyDefault {
+		match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
+	}
+
+	if len(r.Types) > 0 {
+		match["type"] = bson.M{"$in": r.Types}
+	}
 
 	pipeline := make([]bson.M, 0)
-	if r.OnlyDefault {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"priority": bson.M{"$in": prioritiesOfDefaultTypes}}})
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": match})
 	}
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
@@ -69,7 +76,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 	if r.WithFlags {
 		project = getEditableAndDeletablePipeline(prioritiesOfDefaultTypes)
 	}
-	cursor, err := collection.Aggregate(
+	cursor, err := s.dbCollection.Aggregate(
 		ctx,
 		pagination.CreateAggregationPipeline(
 			r.Query,
@@ -96,9 +103,8 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 // GetOneBy pbehavior type by id.
 func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 	res := &Type{}
-	collection := s.getCollection()
 
-	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
+	if err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, nil
 		}
@@ -108,14 +114,14 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 	return res, nil
 }
 
-// Create new pbehavior type.
+// Insert creates new pbehavior type.
 func (s *store) Insert(ctx context.Context, pt *Type) error {
 
 	if pt.ID == "" {
 		pt.ID = utils.NewID()
 	}
 
-	_, err := s.getCollection().InsertOne(ctx, pt)
+	_, err := s.dbCollection.InsertOne(ctx, pt)
 	if err != nil {
 		if mongodriver.IsDuplicateKeyError(err) {
 			return ErrorDuplicatePriority
@@ -140,7 +146,7 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 	if pt.ID != id {
 		pt.ID = id
 	}
-	result, err := s.getCollection().ReplaceOne(ctx, bson.M{"_id": id}, pt)
+	result, err := s.dbCollection.ReplaceOne(ctx, bson.M{"_id": id}, pt)
 	if err != nil {
 		return false, err
 	}
@@ -178,7 +184,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrLinkedToActionType
 	}
 
-	r, err := s.getCollection().DeleteOne(ctx, bson.M{"_id": id})
+	r, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 
 	return r > 0, err
 }
@@ -238,7 +244,7 @@ func (s *store) IsDefault(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	res := s.getCollection().FindOne(ctx, bson.M{"_id": id})
+	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err == nil {
 		var pbhType Type
 		err = res.Decode(&pbhType)
@@ -259,8 +265,7 @@ func (s *store) IsDefault(ctx context.Context, id string) (bool, error) {
 }
 
 func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) {
-	collection := s.getCollection()
-	cursor, err := collection.Aggregate(ctx, []bson.M{
+	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$group": bson.M{
 			"_id":      "$type",
 			"priority": bson.M{"$min": "$priority"},
