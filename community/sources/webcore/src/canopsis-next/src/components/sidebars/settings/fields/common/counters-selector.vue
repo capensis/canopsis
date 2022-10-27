@@ -11,7 +11,7 @@
         :required="value.pbehavior_enabled",
         :disabled="!value.pbehavior_enabled",
         :max="$constants.PBEHAVIOR_COUNTERS_LIMIT",
-        with-icon,
+        :types="pbehaviorTypeTypes",
         chips,
         multiple
       )
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
@@ -36,6 +38,11 @@ export default {
     value: {
       type: Object,
       required: false,
+    },
+  },
+  computed: {
+    pbehaviorTypeTypes() {
+      return [PBEHAVIOR_TYPE_TYPES.inactive, PBEHAVIOR_TYPE_TYPES.maintenance, PBEHAVIOR_TYPE_TYPES.pause];
     },
   },
 };
