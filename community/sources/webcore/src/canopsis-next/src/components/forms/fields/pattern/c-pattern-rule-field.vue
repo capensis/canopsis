@@ -1,8 +1,8 @@
 <template lang="pug">
   v-layout(row)
-    v-flex(:xs5="isInfosRule || isExtraInfosRule", xs4)
+    v-flex(:xs5="isAnyInfosRule", xs4)
       v-layout(row)
-        v-flex(:xs4="isInfosRule")
+        v-flex(:xs4="isAnyInfosRule")
           c-pattern-attribute-field(
             v-field="rule.attribute",
             :items="attributes",
@@ -10,22 +10,16 @@
             :disabled="disabled",
             required
           )
-        v-flex.pl-3(v-if="isInfosRule", xs8)
+        v-flex.pl-3(v-if="isAnyInfosRule", xs8)
           c-pattern-infos-attribute-field(
             v-field="rule",
             :items="infos",
             :name="name",
-            :disabled="disabled"
-          )
-        v-flex.pl-3(v-else-if="isExtraInfosRule", xs8)
-          c-pattern-extra-infos-attribute-field(
-            v-field="rule",
-            :items="infos",
-            :name="name",
-            :disabled="disabled"
+            :disabled="disabled",
+            :combobox="isInfosRule"
           )
 
-    v-flex(v-if="rule.attribute", :xs8="!isInfosRule && !isExtraInfosRule", xs7)
+    v-flex(v-if="rule.attribute", :xs8="!isAnyInfosRule", xs7)
       v-layout(row)
         template(v-if="isDateRule")
           v-flex.pl-3(xs5)
@@ -43,7 +37,7 @@
             )
 
         template(v-else)
-          v-flex.pl-3(v-if="isInfosValueField || isExtraInfosRule", xs1)
+          v-flex.pl-3(v-if="isInfosValueField", xs1)
             c-input-type-field(
               :value="inputType",
               :label="$t('common.type')",
@@ -52,7 +46,7 @@
               :name="name",
               @input="updateType"
             )
-          v-flex.pl-3(v-if="shownOperatorField", :xs6="!isInfosRule && !isExtraInfosRule", xs4)
+          v-flex.pl-3(v-if="shownOperatorField", :xs6="!isAnyInfosRule", xs4)
             c-pattern-operator-field(
               v-field="rule.operator",
               :operators="operators",
@@ -61,7 +55,7 @@
               required
             )
 
-          v-flex.pl-3(v-if="rule.operator && operatorHasValue", :xs7="isInfosRule || isExtraInfosRule", xs6)
+          v-flex.pl-3(v-if="rule.operator && operatorHasValue", :xs7="isAnyInfosRule", xs6)
             component(
               v-bind="valueComponent.props",
               v-on="valueComponent.on",
@@ -171,6 +165,10 @@ export default {
       return isExtraInfosRuleType(this.type);
     },
 
+    isAnyInfosRule() {
+      return this.isInfosRule || this.isExtraInfosRule;
+    },
+
     isInfosValueField() {
       return this.rule.field === PATTERN_RULE_INFOS_FIELDS.value;
     },
@@ -238,7 +236,7 @@ export default {
     operatorHasValue() {
       const hasValue = isOperatorHasValue(this.rule.operator);
 
-      if (this.isInfosRule) {
+      if (this.isAnyInfosRule) {
         return this.isInfosValueField && hasValue;
       }
 
