@@ -2,10 +2,11 @@ package pattern_test
 
 import (
 	"errors"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
 )
 
 type eventDataSet struct {
@@ -317,6 +318,20 @@ func getEventMatchDataSets() map[string]eventDataSet {
 			},
 			event:       types.Event{},
 			matchResult: false,
+		},
+		"given int field condition should match": {
+			pattern: pattern.Event{
+				{
+					{
+						Field:     "state",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, types.AlarmStateCritical),
+					},
+				},
+			},
+			event: types.Event{
+				State: types.AlarmStateCritical,
+			},
+			matchResult: true,
 		},
 	}
 }
