@@ -55,6 +55,10 @@ export default {
       type: Object,
       required: true,
     },
+    query: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   asyncComputed: {
     compiledTemplate: {
@@ -138,7 +142,7 @@ export default {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
           fetchList: params => this.fetchAlarmsListWithoutStore({
-            params: { ...params, filter: this.counter.filter?._id },
+            params: { ...this.query, ...params, filters: [this.counter.filter?._id] },
           }),
         },
       });
