@@ -131,161 +131,6 @@ export const isStringArrayFieldType = type => type === PATTERN_FIELD_TYPES.strin
 export const isValidRuleFieldType = value => Object.values(PATTERN_FIELD_TYPES).includes(value);
 
 /**
- * Return field type by value
- *
- * @param {PatternValue} value
- * @return {string}
- */
-export const getFieldType = (value) => {
-  if (isBoolean(value)) {
-    return PATTERN_FIELD_TYPES.boolean;
-  }
-
-  if (isNumber(value)) {
-    return PATTERN_FIELD_TYPES.number;
-  }
-
-  if (isNull(value)) {
-    return PATTERN_FIELD_TYPES.null;
-  }
-
-  if (isArray(value)) {
-    return PATTERN_FIELD_TYPES.stringArray;
-  }
-
-  return PATTERN_FIELD_TYPES.string;
-};
-
-/**
- * Convert any value to type value
- *
- * @param {PatternFieldType} type
- * @param {PatternValue} [value]
- * @param [defaultValue]
- * @return {PatternValue | undefined}
- */
-export const convertValueByType = (value, type, defaultValue) => {
-  if (isEmpty(value) && !isUndefined(defaultValue)) {
-    return defaultValue;
-  }
-
-  const preparedValue = isArray(value) ? value[0] : value;
-
-  switch (type) {
-    case PATTERN_FIELD_TYPES.number:
-      return Number(preparedValue) || 0;
-    case PATTERN_FIELD_TYPES.boolean:
-      return Boolean(preparedValue);
-    case PATTERN_FIELD_TYPES.string:
-      return (isNan(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
-        ? ''
-        : String(preparedValue);
-    case PATTERN_FIELD_TYPES.null:
-      return null;
-    case PATTERN_FIELD_TYPES.stringArray:
-      return preparedValue ? [String(preparedValue)] : [];
-    default:
-      return undefined;
-  }
-};
-
-/**
- * Get operators by type of value
- *
- * @param {PatternFieldType} fieldType
- * @return {string[]}
- */
-export const getOperatorsByFieldType = (fieldType) => {
-  switch (fieldType) {
-    case PATTERN_FIELD_TYPES.number:
-      return PATTERN_NUMBER_OPERATORS;
-    case PATTERN_FIELD_TYPES.stringArray:
-      return [
-        PATTERN_OPERATORS.hasEvery,
-        PATTERN_OPERATORS.hasOneOf,
-        PATTERN_OPERATORS.hasNot,
-        PATTERN_OPERATORS.isEmpty,
-        PATTERN_OPERATORS.isNotEmpty,
-      ];
-    case PATTERN_FIELD_TYPES.boolean:
-      return [PATTERN_OPERATORS.equal];
-    default:
-      return PATTERN_STRING_OPERATORS;
-  }
-};
-
-/**
- * Get operators by rule type and rule values
- *
- * @param {PatternRuleForm} rule
- * @param {PatternRuleType} ruleType
- * @return {string[]}
- */
-export const getOperatorsByRule = (rule, ruleType) => {
-  if (isDurationRuleType(ruleType)) {
-    return PATTERN_DURATION_OPERATORS;
-  }
-
-  if (isInfosRuleType(ruleType) && rule.field === PATTERN_RULE_INFOS_FIELDS.name) {
-    return PATTERN_INFOS_NAME_OPERATORS;
-  }
-
-  const fieldType = getFieldType(rule.value);
-
-  return getOperatorsByFieldType(fieldType);
-};
-
-/**
- * Get value type by operator
- *
- * @param {string} operator
- * @return {PatternFieldType[]}
- */
-export const getValueTypesByOperator = (operator) => {
-  const operators = [];
-
-  if (isOperatorForArray(operator)) {
-    operators.push(PATTERN_FIELD_TYPES.stringArray);
-  }
-
-  if (isOperatorForString(operator)) {
-    operators.push(PATTERN_FIELD_TYPES.string);
-  }
-
-  if (isOperatorForNumber(operator)) {
-    operators.push(PATTERN_FIELD_TYPES.number);
-  }
-
-  if (isOperatorForBoolean(operator)) {
-    operators.push(PATTERN_FIELD_TYPES.boolean);
-  }
-
-  if (isOperatorForNull(operator)) {
-    operators.push(PATTERN_FIELD_TYPES.null);
-  }
-
-  return operators;
-};
-
-/**
- * Convert value to operator type
- *
- * @param {PatternValue} value
- * @param {string} operator
- * @return {PatternValue|undefined|*}
- */
-export const convertValueByOperator = (value, operator) => {
-  const valueType = getFieldType(value);
-  const operatorsValueType = getValueTypesByOperator(operator);
-
-  if (operatorsValueType.includes(valueType)) {
-    return value;
-  }
-
-  return convertValueByType(value, operatorsValueType[0]);
-};
-
-/**
  * Check condition is boolean
  *
  * @param {string} condition
@@ -361,8 +206,6 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.connectorName,
   ALARM_PATTERN_FIELDS.resource,
   ENTITY_PATTERN_FIELDS.id,
-  ENTITY_PATTERN_FIELDS.impact,
-  ENTITY_PATTERN_FIELDS.depends,
   EVENT_FILTER_PATTERN_FIELDS.component,
   EVENT_FILTER_PATTERN_FIELDS.connector,
   EVENT_FILTER_PATTERN_FIELDS.connectorName,
@@ -438,6 +281,32 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
 };
 
 /**
+ * Return field type by value
+ *
+ * @param {PatternValue} value
+ * @return {string}
+ */
+export const getFieldType = (value) => {
+  if (isBoolean(value)) {
+    return PATTERN_FIELD_TYPES.boolean;
+  }
+
+  if (isNumber(value)) {
+    return PATTERN_FIELD_TYPES.number;
+  }
+
+  if (isNull(value)) {
+    return PATTERN_FIELD_TYPES.null;
+  }
+
+  if (isArray(value)) {
+    return PATTERN_FIELD_TYPES.stringArray;
+  }
+
+  return PATTERN_FIELD_TYPES.string;
+};
+
+/**
  * Check rule value is valid with field type
  *
  * @param {PatternRule | *} rule
@@ -484,6 +353,138 @@ export const isValidPatternRule = rule => !!rule?.field
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
   && isValidPatternCondition(rule.cond.type)
   && isValidRuleValue(rule);
+
+/**
+ * Convert any value to type value
+ *
+ * @param {PatternFieldType} type
+ * @param {PatternValue} [value]
+ * @param [defaultValue]
+ * @return {PatternValue | undefined}
+ */
+export const convertValueByType = (value, type, defaultValue) => {
+  if (isEmpty(value) && !isUndefined(defaultValue)) {
+    return defaultValue;
+  }
+
+  const preparedValue = isArray(value) ? value[0] : value;
+
+  switch (type) {
+    case PATTERN_FIELD_TYPES.number:
+      return Number(preparedValue) || 0;
+    case PATTERN_FIELD_TYPES.boolean:
+      return Boolean(preparedValue);
+    case PATTERN_FIELD_TYPES.string:
+      return (isNan(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
+        ? ''
+        : String(preparedValue);
+    case PATTERN_FIELD_TYPES.null:
+      return null;
+    case PATTERN_FIELD_TYPES.stringArray:
+      return preparedValue ? [String(preparedValue)] : [];
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * Get operators by type of value
+ *
+ * @param {PatternFieldType} fieldType
+ * @return {string[]}
+ */
+export const getOperatorsByFieldType = (fieldType) => {
+  switch (fieldType) {
+    case PATTERN_FIELD_TYPES.number:
+      return PATTERN_NUMBER_OPERATORS;
+    case PATTERN_FIELD_TYPES.stringArray:
+      return [
+        PATTERN_OPERATORS.hasEvery,
+        PATTERN_OPERATORS.hasOneOf,
+        PATTERN_OPERATORS.hasNot,
+        PATTERN_OPERATORS.isEmpty,
+        PATTERN_OPERATORS.isNotEmpty,
+      ];
+    case PATTERN_FIELD_TYPES.boolean:
+      return [PATTERN_OPERATORS.equal];
+    default:
+      return PATTERN_STRING_OPERATORS;
+  }
+};
+
+/**
+ * Get operators by rule type and rule values
+ *
+ * @param {PatternRuleForm} rule
+ * @param {PatternRuleType} ruleType
+ * @return {string[]}
+ */
+export const getOperatorsByRule = (rule, ruleType) => {
+  if (isDurationRuleType(ruleType)) {
+    return PATTERN_DURATION_OPERATORS;
+  }
+
+  if (
+    (isInfosRuleType(ruleType) || isExtraInfosPatternRuleField(ruleType))
+    && rule.field === PATTERN_RULE_INFOS_FIELDS.name
+  ) {
+    return PATTERN_INFOS_NAME_OPERATORS;
+  }
+
+  const fieldType = getFieldType(rule.value);
+
+  return getOperatorsByFieldType(fieldType);
+};
+
+/**
+ * Get value type by operator
+ *
+ * @param {string} operator
+ * @return {PatternFieldType[]}
+ */
+export const getValueTypesByOperator = (operator) => {
+  const operators = [];
+
+  if (isOperatorForArray(operator)) {
+    operators.push(PATTERN_FIELD_TYPES.stringArray);
+  }
+
+  if (isOperatorForString(operator)) {
+    operators.push(PATTERN_FIELD_TYPES.string);
+  }
+
+  if (isOperatorForNumber(operator)) {
+    operators.push(PATTERN_FIELD_TYPES.number);
+  }
+
+  if (isOperatorForBoolean(operator)) {
+    operators.push(PATTERN_FIELD_TYPES.boolean);
+  }
+
+  if (isOperatorForNull(operator)) {
+    operators.push(PATTERN_FIELD_TYPES.null);
+  }
+
+  return operators;
+};
+
+/**
+ * Convert value to operator type
+ *
+ * @param {PatternValue} value
+ * @param {string} operator
+ * @return {PatternValue|undefined|*}
+ */
+export const convertValueByOperator = (value, operator) => {
+  const valueType = getFieldType(value);
+  const operatorsValueType = getValueTypesByOperator(operator);
+
+  if (operatorsValueType.includes(valueType)) {
+    return value;
+  }
+
+  return convertValueByType(value, operatorsValueType[0]);
+};
 
 /**
  * Create id pattern rule for entity patterns
