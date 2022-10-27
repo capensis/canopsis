@@ -14,7 +14,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with alarm pattern should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-1",
       "auto_resolve": true,
@@ -43,7 +43,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-1",
       "auto_resolve": true,
@@ -68,13 +68,13 @@ Feature: Create an metaalarmrule
             }
           }
         ]
-      ]      
+      ]
     }
     """
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-1",
       "auto_resolve": true,
@@ -99,14 +99,14 @@ Feature: Create an metaalarmrule
             }
           }
         ]
-      ]      
+      ]
     }
     """
 
   Scenario: given create request with entity pattern should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-2",
       "auto_resolve": true,
@@ -135,7 +135,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-2",
       "auto_resolve": true,
@@ -166,7 +166,7 @@ Feature: Create an metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-2",
       "auto_resolve": true,
@@ -198,7 +198,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with both patterns should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-3",
       "auto_resolve": true,
@@ -238,7 +238,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-3",
       "auto_resolve": true,
@@ -280,7 +280,7 @@ Feature: Create an metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-3",
       "auto_resolve": true,
@@ -323,7 +323,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with corporate alarm pattern should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-4",
       "auto_resolve": true,
@@ -353,7 +353,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-4",
       "auto_resolve": true,
@@ -397,7 +397,7 @@ Feature: Create an metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-4",
       "auto_resolve": true,
@@ -442,7 +442,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with both corporate patterns should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-5",
       "auto_resolve": true,
@@ -462,7 +462,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-5",
       "auto_resolve": true,
@@ -508,7 +508,7 @@ Feature: Create an metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-5",
       "auto_resolve": true,
@@ -555,7 +555,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with total entity pattern should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-6",
       "auto_resolve": true,
@@ -595,7 +595,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-6",
       "auto_resolve": true,
@@ -637,7 +637,7 @@ Feature: Create an metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-6",
       "auto_resolve": true,
@@ -680,7 +680,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with corporate total entity pattern should return ok
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-7",
       "auto_resolve": true,
@@ -710,7 +710,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 201
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-7",
       "auto_resolve": true,
@@ -754,7 +754,7 @@ Feature: Create an metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "complex-7",
       "auto_resolve": true,
@@ -799,7 +799,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with absent alarm corporate pattern should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-8",
       "auto_resolve": true,
@@ -818,7 +818,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "corporate_alarm_pattern": "CorporateAlarmPattern doesn't exist."
@@ -829,7 +829,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with absent entity corporate pattern should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-8",
       "auto_resolve": true,
@@ -848,7 +848,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
@@ -859,7 +859,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with absent corporate total entity pattern should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "complex-8",
       "auto_resolve": true,
@@ -889,7 +889,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "corporate_total_entity_pattern": "CorporateTotalEntityPattern doesn't exist."
@@ -900,14 +900,8 @@ Feature: Create an metaalarmrule
   Scenario: given create request with wrong alarm patterns should return bad request
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
-      "_id": "wrong-alarm-pattern-1",
-      "auto_resolve": false,
-      "name": "wrong-alarm-pattern-1",
-      "config": {},
-      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
-      "type": "complex",
       "alarm_pattern": [
         [
           {
@@ -922,8 +916,8 @@ Feature: Create an metaalarmrule
     }
     """
     Then the response code should be 400
-    Then the response body should be:
-    """
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "alarm_pattern": "AlarmPattern is invalid alarm pattern."
@@ -934,7 +928,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with wrong entity patterns should return bad request
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "auto_resolve": true,
       "name": "complex-test-1",
@@ -962,7 +956,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "entity_pattern": "EntityPattern is invalid entity pattern."
@@ -973,7 +967,7 @@ Feature: Create an metaalarmrule
   Scenario: given create request with wrong total entity patterns should return bad request
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "auto_resolve": true,
       "name": "complex-test-1",
@@ -1012,7 +1006,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
@@ -1023,30 +1017,29 @@ Feature: Create an metaalarmrule
   Scenario: given create request with wrong type should return bad request
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
-      "_id": "wrong-type-1",
-      "auto_resolve": false,
-      "name": "wrong-type-1",
-      "config": {},
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
-      "type": "attribute_path"
+      "type": "wrongtype"
     }
     """
     Then the response code should be 400
-    Then the response body should be:
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "type": "Type must be one of [relation timebased attribute complex valuegroup corel]."
+      }
+    }
     """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "manualgroup"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
     {
       "errors": {
         "type": "Type must be one of [relation timebased attribute complex valuegroup corel]."
@@ -1054,74 +1047,10 @@ Feature: Create an metaalarmrule
     }
     """
 
-  Scenario: given create request with wrong config type should return bad request
-    When I am admin
-    When I do POST /api/v4/cat/metaalarmrules:
-    """
-    {
-      "_id": "complex-wrong-config-1",
-      "auto_resolve": true,
-      "name": "complex-test-1",
-      "type": "complex",
-      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
-      "config": {
-        "time_interval": {
-          "value": 1,
-          "unit": "m"
-        },
-        "threshold_rate": 1,
-        "value_paths": ["resource.path"]
-      },
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.resource",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ]      
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """
-    {
-      "errors": {
-        "config": "value_paths config can not be in type complex."
-      }
-    }
-    """
-
-  Scenario: given create request with empty patterns should return error
-    When I am admin
-    When I do POST /api/v4/cat/metaalarmrules:
-    """
-    {
-      "auto_resolve": false,
-      "name": "test-attribute-type-1",
-      "config": {},
-      "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
-      "type": "attribute"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """
-    {
-      "errors": {
-        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
-        "entity_pattern": "EntityPattern or AlarmPattern is required."
-      }
-    }
-    """
-
   Scenario: given create request with already exists id should return error
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-get-1",
       "auto_resolve": false,
@@ -1144,7 +1073,7 @@ Feature: Create an metaalarmrule
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "_id": "ID already exists."
@@ -1600,5 +1529,527 @@ Feature: Create an metaalarmrule
       ],
       "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
       "corporate_total_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title"
+    }
+    """
+
+  Scenario: given create relation request should return validation error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "relation",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ],
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "s"
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config": "time_interval config can not be in type relation."
+      }
+    }
+    """
+
+  Scenario: given create timebased request should return validation error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "timebased"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.time_interval": "TimeInterval is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "timebased",
+      "config": {
+        "time_interval": {}
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.time_interval.unit": "Unit is missing.",
+        "config.time_interval.value": "Value is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "timebased",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "time_interval": {
+          "value": 1,
+          "unit": "s"
+        },
+        "threshold_count": 10
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "total_entity_pattern": "TotalEntityPattern is not empty.",
+        "config": "threshold_count config can not be in type timebased."
+      }
+    }
+    """
+
+  Scenario: given create attribute request should return validation error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "attribute"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "alarm_pattern": "AlarmPattern or EntityPattern is required.",
+        "entity_pattern": "EntityPattern or AlarmPattern is required."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "attribute",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "threshold_count": 10
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "total_entity_pattern": "TotalEntityPattern is not empty.",
+        "config": "threshold_count config can not be in type attribute."
+      }
+    }
+    """
+
+  Scenario: given create complex request should return validation error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "complex"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.threshold_count": "ThresholdCount or ThresholdRate is required.",
+        "config.threshold_rate": "ThresholdRate or ThresholdCount is required."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "complex",
+      "config": {
+        "threshold_count": -1
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.threshold_count": "ThresholdCount or ThresholdRate is required.",
+        "config.threshold_rate": "ThresholdRate or ThresholdCount is required."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "complex",
+      "config": {
+        "threshold_rate": -1
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.threshold_count": "ThresholdCount or ThresholdRate is required.",
+        "config.threshold_rate": "ThresholdRate or ThresholdCount is required."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "complex",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "threshold_count": 10,
+        "value_paths": ["test"]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config": "value_paths config can not be in type complex."
+      }
+    }
+    """
+
+  Scenario: given create valuegroup request should return validation error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "valuegroup"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.threshold_count": "ThresholdCount or ThresholdRate is required.",
+        "config.threshold_rate": "ThresholdRate or ThresholdCount is required.",
+        "config.value_paths": "ValuePaths is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "valuegroup",
+      "config": {
+        "threshold_count": -1
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "config.threshold_count": "ThresholdCount or ThresholdRate is required.",
+        "config.threshold_rate": "ThresholdRate or ThresholdCount is required."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "valuegroup",
+      "config": {
+        "threshold_rate": -1
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "config.threshold_count": "ThresholdCount or ThresholdRate is required.",
+        "config.threshold_rate": "ThresholdRate or ThresholdCount is required."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "valuegroup",
+      "config": {
+        "time_interval": {},
+        "value_paths": [""],
+        "threshold_rate": 1
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.time_interval.unit": "Unit is missing.",
+        "config.time_interval.value": "Value is missing.",
+        "config.value_paths.0": "ValuePaths is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "valuegroup",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
+        "threshold_count": 10,
+        "value_paths": ["test"],
+        "corel_id": "test"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config": "corel_id config can not be in type valuegroup."
+      }
+    }
+    """
+
+  Scenario: given create corel request should return validation error
+    When I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "corel"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "config.corel_child": "CorelChild is missing.",
+        "config.corel_id": "CorelID is missing.",
+        "config.corel_parent": "CorelParent is missing.",
+        "config.corel_status": "CorelStatus is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "type": "corel",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.state.val",
+            "cond": {
+              "type": "eq",
+              "value": 1
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "total_entity_pattern": [
+        [
+          {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "threshold_rate": 10,
+        "corel_child": "test",
+        "corel_id": "test",
+        "corel_parent": "test",
+        "corel_status": "test"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "total_entity_pattern": "TotalEntityPattern is not empty.",
+        "config": "threshold_rate config can not be in type corel."
+      }
     }
     """
