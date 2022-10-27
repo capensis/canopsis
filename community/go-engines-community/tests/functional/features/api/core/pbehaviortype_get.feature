@@ -130,3 +130,30 @@ Feature: Get a pbehavior type
       ]
     }
     """
+
+  Scenario: given get by types request should return types
+    When I am admin
+    When I do GET /api/v4/pbehavior-types?types[]=maintenance&types[]=pause&types[]=inactive&default=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-default-inactive-type"
+        },
+        {
+          "_id": "test-default-maintenance-type"
+        },
+        {
+          "_id": "test-default-pause-type"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
