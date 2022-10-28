@@ -24,6 +24,11 @@
             with-color-indicator
           )
           v-divider
+          field-columns(
+            v-model="form.parameters.alarmsColumns",
+            :label="$t('settings.alarmsColumns')"
+          )
+          v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
               v-model="form.parameters.mainFilter",

@@ -43,6 +43,7 @@
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
+            :hide-actions="hideActions",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -159,6 +160,10 @@ export default {
       type: String,
       default: '',
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const data = featuresService.has('components.alarmListTable.data')
@@ -188,7 +193,11 @@ export default {
     },
 
     headers() {
-      const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+      const headers = [...this.columns];
+
+      if (!this.hideActions) {
+        headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
+      }
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
         // We need it for the expand panel open button
