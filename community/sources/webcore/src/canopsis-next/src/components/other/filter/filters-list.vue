@@ -4,7 +4,11 @@
       :value="!pending && !filters.length",
       type="info"
     ) {{ $t('modals.createFilter.emptyFilters') }}
-    c-draggable-list-field(v-field="filters", handle=".action-drag-handler")
+    c-draggable-list-field(
+      v-field="filters",
+      :disabled="!editable",
+      handle=".action-drag-handler"
+    )
       filter-tile(
         v-for="filter in filters",
         :filter="filter",
