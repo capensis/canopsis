@@ -3,7 +3,7 @@
     v-layout(row, align-center)
       v-flex(xs12)
         v-layout(row, align-center)
-          v-icon.draggable.ml-0.mr-3.action-drag-handler(small) drag_indicator
+          v-icon.draggable.ml-0.mr-3.action-drag-handler(v-if="editable", small) drag_indicator
           v-list-tile-content {{ filter.title }}
       v-list-tile-action(v-if="editable")
         v-layout(row, align-center)
