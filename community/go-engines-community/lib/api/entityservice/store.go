@@ -38,8 +38,6 @@ type store struct {
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
 
-	queryBuilder *entity.MongoQueryBuilder
-
 	linksFetcher common.LinksFetcher
 
 	logger zerolog.Logger
@@ -51,8 +49,6 @@ func NewStore(db mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolo
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
-
-		queryBuilder: entity.NewMongoQueryBuilder(db),
 
 		linksFetcher: linksFetcher,
 
@@ -101,7 +97,7 @@ func (s *store) GetDependencies(ctx context.Context, apiKey string, r ContextGra
 	}
 	now := types.NewCpsTime()
 	match := bson.M{"_id": bson.M{"$in": service.Depends}}
-	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -143,7 +139,7 @@ func (s *store) GetImpacts(ctx context.Context, apiKey string, r ContextGraphReq
 		"type": types.EntityTypeService,
 	}
 	now := types.NewCpsTime()
-	pipeline := s.queryBuilder.CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -358,6 +354,10 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, response *ContextG
 	}
 
 	return nil
+}
+
+func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
+	return entity.NewMongoQueryBuilder(s.dbClient)
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {
