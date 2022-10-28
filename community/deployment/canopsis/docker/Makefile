@@ -16,7 +16,7 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 # Either community or pro
 CANOPSIS_EDITION = community
 
-VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
+VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
 
 TARBALL_FILE = $(CURRENT_BUILD_OUTPUT_DIR)/canopsis-$(CANOPSIS_EDITION)-docker-compose-$(VERSION).tar
 
@@ -29,7 +29,7 @@ tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 	echo $(CANOPSIS_EDITION)
 	sed -i 's/^CPS_EDITION=.*//g' "$(CURRENT_ROOT_DIR)/.env"
 	sed -i '1iCPS_EDITION=$(CANOPSIS_EDITION)' "$(CURRENT_ROOT_DIR)/.env"
-	tar -C $(dir $(CURRENT_ROOT_DIR)) \
+	tar -z -C $(dir $(CURRENT_ROOT_DIR)) \
 		--create \
 		--verbose \
 		--file $(TARBALL_FILE)\
