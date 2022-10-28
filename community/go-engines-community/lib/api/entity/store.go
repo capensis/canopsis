@@ -28,7 +28,6 @@ type store struct {
 	mainCollection     mongo.DbCollection
 	archivedCollection mongo.DbCollection
 
-	queryBuilder           *MongoQueryBuilder
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
@@ -37,7 +36,6 @@ func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigPro
 		db:                     db,
 		mainCollection:         db.Collection(mongo.EntityMongoCollection),
 		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
-		queryBuilder:           NewMongoQueryBuilder(db),
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
@@ -46,7 +44,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	location := s.timezoneConfigProvider.Get().Location
 	now := types.CpsTime{Time: time.Now().In(location)}
 
-	pipeline, err := s.queryBuilder.CreateListAggregationPipeline(ctx, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -278,4 +276,8 @@ func (s *store) fillConnectorType(result *AggregationResult) {
 	for i := range result.Data {
 		result.Data[i].fillConnectorType()
 	}
+}
+
+func (s *store) getQueryBuilder() *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.db)
 }
