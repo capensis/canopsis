@@ -245,6 +245,11 @@ viewtabs:
     _id: test-tab-to-filter-check-access
     view: test-view-to-filter-check-access
 
+  tab_to_filter_update_position:
+    <<: *tab
+    _id: test-tab-to-filter-update-position
+    view: test-view-to-filter-update-position
+
   tab_to_alarm_get:
     <<: *tab
     _id: test-tab-to-alarm-get

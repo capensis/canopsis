@@ -287,6 +287,10 @@ views:
     <<: *view
     _id: test-view-to-filter-check-access
 
+  view_to_filter_update_position:
+    <<: *view
+    _id: test-view-to-filter-update-position
+
   view_to_alarm_get:
     <<: *view
     _id: test-view-to-alarm-get
