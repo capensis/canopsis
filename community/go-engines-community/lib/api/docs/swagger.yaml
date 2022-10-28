@@ -10095,6 +10095,45 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-filter-positions:
+    put:
+      tags:
+        - widgetfilters
+      summary: Update widget filters positions
+      description: Update widget filters positions
+      operationId: widgetfilters-update-positions
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            examples:
+              update:
+                summary: Update positions
+                description: Update filters' positions
+                value: [
+                  "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "6ccfd7ea-9f04-4c0f-8809-25545cbb579e"
+                ]
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /widget-grid-positions:
     put:
       tags:

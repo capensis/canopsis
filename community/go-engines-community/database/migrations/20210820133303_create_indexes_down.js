@@ -69,8 +69,6 @@ db.viewtabs.dropIndex("view_1");
 
 db.widgets.dropIndex("tab_1");
 
-db.widget_filters.dropIndex("widget_1");
-
 db.pbehavior_reason.drop();
 db.pbehavior_exception.drop();
 db.meta_alarm_rules.drop();

@@ -889,6 +889,12 @@ func RegisterRoutes(
 			)
 		}
 
+		protected.PUT(
+			"/widget-filter-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			widgetFilterAPI.UpdatePositions,
+		)
+
 		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(dbClient), actionLogger)
 		viewGroupRouter := protected.Group("/view-groups")
 		{
