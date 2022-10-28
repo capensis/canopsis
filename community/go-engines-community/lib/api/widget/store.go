@@ -103,7 +103,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.title": 1}},
+		{"$sort": bson.M{"filters.position": 1}},
 		{"$group": bson.M{
 			"_id":     nil,
 			"data":    bson.M{"$first": "$$ROOT"},
@@ -149,6 +149,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		doc.ID = utils.NewID()
 		doc.Widget = widget.ID
 		doc.Author = widget.Author
+		doc.Position = int64(i)
 		doc.Created = now
 		doc.Updated = now
 		if widget.Parameters.MainFilter == filter.ID {
@@ -192,10 +193,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	widget.Updated = now
 
 	filters := make(map[string]view.WidgetFilter, len(r.Filters))
-	for _, filter := range r.Filters {
+	for i, filter := range r.Filters {
 		doc := transformFilterRequestToModel(filter)
 		doc.Widget = widget.ID
 		doc.Author = widget.Author
+		doc.Position = int64(i)
 		doc.Updated = now
 
 		filters[filter.ID] = doc
