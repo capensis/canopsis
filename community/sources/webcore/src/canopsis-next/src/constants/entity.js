@@ -438,6 +438,21 @@ export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
   },
 ];
 
+export const DEFAULT_CONTEXT_ALARMS_COLUMNS = [
+  {
+    labelKey: 'common.alarmId',
+    value: 'v.display_name',
+  },
+  {
+    labelKey: 'common.created',
+    value: 'v.creation_date',
+  },
+  {
+    labelKey: 'common.updated',
+    value: 'v.last_update_date',
+  },
+];
+
 export const AVAILABLE_COUNTERS = {
   total: 'total',
   total_active: 'total_active',
