@@ -141,7 +141,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		count, err := s.collection.CountDocuments(ctx, bson.M{})
+		position, err := s.getNextPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -154,7 +154,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			Title:           r.Title,
 			Description:     r.Description,
 			Group:           r.Group,
-			Position:        count,
+			Position:        position,
 			Tags:            r.Tags,
 			PeriodicRefresh: r.PeriodicRefresh,
 			Author:          r.Author,
@@ -363,7 +363,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"filters.updated":                           0,
 			"filters.created":                           0,
 		}},
-		{"$sort": bson.M{"filters.title": 1}},
+		{"$sort": bson.M{"filters.position": 1}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id":    "$_id",
@@ -544,11 +544,11 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 
 func (s *store) Import(ctx context.Context, r ImportRequest, userId string) error {
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		maxViewPosition, err := s.collection.CountDocuments(ctx, bson.M{})
+		maxViewPosition, err := s.getNextPosition(ctx)
 		if err != nil {
 			return err
 		}
-		maxGroupPosition, err := s.groupCollection.CountDocuments(ctx, bson.M{})
+		maxGroupPosition, err := s.getNextGroupPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -730,9 +730,10 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 											PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
 												PbehaviorPattern: filter.PbehaviorPattern,
 											},
-											Author:  userId,
-											Created: now,
-											Updated: now,
+											Author:   userId,
+											Position: int64(fi),
+											Created:  now,
+											Updated:  now,
 										})
 
 										if widget.Parameters.MainFilter != "" && filter.ID == widget.Parameters.MainFilter {
@@ -1056,6 +1057,52 @@ func (s *store) deleteTabs(ctx context.Context, id string) error {
 	return nil
 }
 
+func (s *store) getNextPosition(ctx context.Context) (int64, error) {
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$group": bson.M{
+			"_id":      nil,
+			"position": bson.M{"$max": "$position"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		data := struct {
+			Position int64 `bson:"position"`
+		}{}
+		err = cursor.Decode(&data)
+		return data.Position + 1, err
+	}
+
+	return 0, nil
+}
+
+func (s *store) getNextGroupPosition(ctx context.Context) (int64, error) {
+	cursor, err := s.groupCollection.Aggregate(ctx, []bson.M{
+		{"$group": bson.M{
+			"_id":      nil,
+			"position": bson.M{"$max": "$position"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		data := struct {
+			Position int64 `bson:"position"`
+		}{}
+		err = cursor.Decode(&data)
+		return data.Position + 1, err
+	}
+
+	return 0, nil
+}
+
 func getNestedObjectsPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -1079,7 +1126,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.title": 1}},
+		{"$sort": bson.M{"filters.position": 1}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id":    "$_id",
