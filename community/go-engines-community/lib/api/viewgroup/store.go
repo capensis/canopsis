@@ -2,6 +2,8 @@ package viewgroup
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -10,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type Store interface {
@@ -111,7 +112,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 						"as":           "filters",
 					}},
 					bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-					bson.M{"$sort": bson.M{"filters.title": 1}},
+					bson.M{"$sort": bson.M{"filters.position": 1}},
 					bson.M{"$group": bson.M{
 						"_id": bson.M{
 							"_id":    "$_id",
@@ -256,7 +257,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	var response *ViewGroup
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		count, err := s.dbCollection.CountDocuments(ctx, bson.M{})
+		position, err := s.getNextPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -274,7 +275,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 			ID:       group.ID,
 			Title:    group.Title,
 			Author:   group.Author,
-			Position: count,
+			Position: position,
 			Created:  *group.Created,
 			Updated:  *group.Updated,
 		})
@@ -342,4 +343,27 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	})
 
 	return res, err
+}
+
+func (s *store) getNextPosition(ctx context.Context) (int64, error) {
+	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+		{"$group": bson.M{
+			"_id":      nil,
+			"position": bson.M{"$max": "$position"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		data := struct {
+			Position int64 `bson:"position"`
+		}{}
+		err = cursor.Decode(&data)
+		return data.Position + 1, err
+	}
+
+	return 0, nil
 }
