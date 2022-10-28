@@ -14,6 +14,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type API interface {
+	common.CrudAPI
+	UpdatePositions(c *gin.Context)
+}
+
 type api struct {
 	store        Store
 	enforcer     security.Enforcer
@@ -26,7 +31,7 @@ func NewApi(
 	enforcer security.Enforcer,
 	transformer PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+) API {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
@@ -47,7 +52,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccessByWidget(c.Request.Context(), r.Widget, userId, model.PermissionRead)
+	ok, err := a.checkAccessByWidget(c, r.Widget, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +62,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c.Request.Context(), r, userId)
+	users, err := a.store.Find(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +81,7 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
-	ok, err := a.checkAccess(c.Request.Context(), id, userId, model.PermissionRead)
+	ok, err := a.checkAccess(c, []string{id}, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -86,7 +91,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	filter, err := a.store.GetOneBy(c.Request.Context(), id, userId)
+	filter, err := a.store.GetOneBy(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +115,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request)
+	err := a.transformEditRequest(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -120,7 +125,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.checkAccessByWidget(c.Request.Context(), request.Widget, userId, model.PermissionUpdate)
+	ok, err := a.checkAccessByWidget(c, request.Widget, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -130,7 +135,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	filter, err := a.store.Insert(c.Request.Context(), request)
+	filter, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -161,7 +166,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request)
+	err := a.transformEditRequest(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -171,7 +176,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.checkAccess(c.Request.Context(), request.ID, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, []string{request.ID}, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -181,7 +186,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	filter, err := a.store.GetOneBy(c.Request.Context(), request.ID, request.Author)
+	filter, err := a.store.GetOneBy(c, request.ID, request.Author)
 	if err != nil {
 		panic(err)
 	}
@@ -200,7 +205,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	filter, err = a.store.Update(c.Request.Context(), request)
+	filter, err = a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -226,7 +231,7 @@ func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	ok, err := a.checkAccess(c.Request.Context(), id, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, []string{id}, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -236,7 +241,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err = a.store.Delete(c.Request.Context(), id, userId)
+	ok, err = a.store.Delete(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -258,13 +263,57 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) checkAccess(ctx context.Context, id string, userId, perm string) (bool, error) {
-	viewId, err := a.store.FindViewId(ctx, id)
-	if err != nil || viewId == "" {
+func (a *api) UpdatePositions(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	request := EditPositionRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	ok, err := a.checkAccess(c, request.Items, userId, model.PermissionUpdate)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	ok, err = a.store.UpdatePositions(c, request.Items, userId)
+	if err != nil {
+		valErr := ValidationErr{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
+			return
+		}
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) checkAccess(ctx context.Context, ids []string, userId, perm string) (bool, error) {
+	viewIds, err := a.store.FindViewIds(ctx, ids)
+	if err != nil || len(viewIds) != len(ids) {
 		return false, err
 	}
 
-	return a.enforcer.Enforce(userId, viewId, perm)
+	for _, viewId := range viewIds {
+		ok, err := a.enforcer.Enforce(userId, viewId, perm)
+		if err != nil || !ok {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
 
 func (a *api) checkAccessByWidget(ctx context.Context, id string, userId, perm string) (bool, error) {
