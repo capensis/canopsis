@@ -82,10 +82,6 @@ export default {
     };
   },
   computed: {
-    types() {
-      return this.withIcon ? this.pbehaviorTypes.filter(type => type.icon_name) : this.pbehaviorTypes;
-    },
-
     rules() {
       return {
         required: this.required,
