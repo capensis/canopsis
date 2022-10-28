@@ -3,11 +3,13 @@
     template(#title="")
       span {{ $t('common.filters') }}
     template(#text="")
+      c-progress-overlay(:pending="pending")
       filters-list-component(
         :filters="filters",
         :pending="pending",
         :addable="config.hasAccessToAddFilter",
         :editable="config.hasAccessToEditFilter",
+        @input="updateFiltersPositions",
         @add="showCreateFilterModal",
         @edit="showEditFilterModal",
         @delete="showDeleteFilterModal"
@@ -18,6 +20,8 @@
 import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
+
+import { mapIds } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
@@ -40,7 +44,8 @@ export default {
   ],
   data() {
     return {
-      pending: false,
+      pending: true,
+      filters: [],
     };
   },
   computed: {
@@ -52,10 +57,6 @@ export default {
       return this.getUserPreferenceByWidgetId(this.widgetId);
     },
 
-    filters() {
-      return this.userPreference?.filters ?? [];
-    },
-
     modalConfig() {
       return {
         ...pick(this.config, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
@@ -64,12 +65,25 @@ export default {
       };
     },
   },
+  watch: {
+    'userPreference.filters': function handler(filters) {
+      this.setFilters(filters);
+    },
+  },
   mounted() {
     this.refreshFilters();
   },
   methods: {
-    refreshFilters() {
-      return this.fetchUserPreference({ id: this.config.widgetId });
+    setFilters(filters = []) {
+      this.filters = filters;
+    },
+
+    async refreshFilters() {
+      this.pending = true;
+
+      await this.fetchUserPreference({ id: this.config.widgetId });
+
+      this.pending = false;
     },
 
     showCreateFilterModal() {
@@ -134,6 +148,22 @@ export default {
           },
         },
       });
+    },
+
+    async updateFiltersPositions(filters) {
+      const oldFilters = this.filters;
+
+      try {
+        this.setFilters(filters);
+
+        await this.updateWidgetFiltersPositions({
+          data: mapIds(filters),
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+
+        this.setFilters(oldFilters);
+      }
     },
   },
 };
