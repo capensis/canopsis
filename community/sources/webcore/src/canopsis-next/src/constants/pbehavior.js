@@ -32,3 +32,7 @@ export const PBEHAVIOR_PATTERN_FIELDS = {
   type: 'pbehavior_info.type',
   canonicalType: 'pbehavior_info.canonical_type',
 };
+
+export const PBEHAVIOR_ORIGINS = {
+  serviceWeather: 'ServiceWeather',
+};

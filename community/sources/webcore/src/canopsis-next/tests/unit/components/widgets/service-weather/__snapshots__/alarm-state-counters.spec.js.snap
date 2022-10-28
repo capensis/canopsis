@@ -158,7 +158,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
         class="v-icon material-icons theme--light white--text"
         style="font-size: 18px;"
       >
-        mediation
+        $vuetify.icons.mediation
       </i>
       <span>
         1

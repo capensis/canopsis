@@ -62,16 +62,16 @@ export default {
       type: Boolean,
       default: false,
     },
-    withIcon: {
-      type: Boolean,
-      default: false,
-    },
     required: {
       type: Boolean,
       default: false,
     },
     max: {
       type: Number,
+      required: false,
+    },
+    types: {
+      type: Array,
       required: false,
     },
   },
@@ -82,10 +82,6 @@ export default {
     };
   },
   computed: {
-    types() {
-      return this.withIcon ? this.pbehaviorTypes.filter(type => type.icon_name) : this.pbehaviorTypes;
-    },
-
     rules() {
       return {
         required: this.required,
@@ -100,7 +96,10 @@ export default {
       this.pending = true;
 
       const { data: reasons } = await this.fetchPbehaviorTypesListWithoutStore({
-        params: { limit: MAX_LIMIT },
+        params: {
+          types: this.types,
+          limit: MAX_LIMIT,
+        },
       });
 
       this.items = reasons;

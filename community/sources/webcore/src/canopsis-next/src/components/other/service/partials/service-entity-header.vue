@@ -9,11 +9,11 @@
         @change="$emit('update:selected', $event)"
       )
     v-flex.pa-2
-      v-icon(color="white", small) {{ icon }}
+      v-icon(color="white", small) {{ entity.icon }}
     v-flex.pl-1.white--text.subheading(xs12)
       v-layout(align-center)
         div.mr-1.entity-name(v-resize-text="{ maxFontSize: '16px' }") {{ entityName }}
-        v-btn.mx-1.white(
+        v-btn.mx-1(
           v-for="icon in extraIcons",
           :key="icon.icon",
           :color="icon.color",
@@ -36,7 +36,9 @@
 <script>
 import { get } from 'lodash';
 
-import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES, WEATHER_ICONS } from '@/constants';
+import { COLORS } from '@/config';
+
+import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { getEntityEventIcon } from '@/helpers/icon';
 
@@ -68,10 +70,6 @@ export default {
       return get({ entity: this.entity }, this.entityNameField, this.entityNameField);
     },
 
-    icon() {
-      return WEATHER_ICONS[this.entity.icon];
-    },
-
     extraIcons() {
       const extraIcons = [];
 
@@ -93,6 +91,13 @@ export default {
         extraIcons.push({
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           color: 'grey darken-1',
+        });
+      }
+
+      if (this.entity.pbh_origin_icon) {
+        extraIcons.push({
+          icon: this.entity.pbh_origin_icon,
+          color: COLORS.secondary,
         });
       }
 

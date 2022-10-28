@@ -11,7 +11,6 @@ import {
 
 import { getEntityEventIcon } from '@/helpers/icon';
 import { getEntityEventColor } from '@/helpers/color';
-import { hasPausedPbehavior } from '@/helpers/entities/pbehavior';
 import {
   createAckEventByEntity,
   createAssociateTicketEventByEntity,
@@ -42,12 +41,12 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     state,
     ack,
     status,
-    pbehaviors,
     alarm_display_name: alarmDisplayName,
     assigned_instructions: assignedInstructions,
+    pbh_origin_icon: pbhOriginIcon,
   } = entity;
 
-  const paused = hasPausedPbehavior(pbehaviors);
+  const paused = pbhOriginIcon !== '';
   const stateIsOk = state?.val === ENTITIES_STATES.ok;
   const statusIsCancelled = status?.val === ENTITIES_STATUSES.cancelled;
 

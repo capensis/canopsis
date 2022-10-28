@@ -201,6 +201,7 @@ import PublishedWithChangesIcon from '@/components/icons/published_with_changes.
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
 import NotificationImportantStrokeIcon from '@/components/icons/notification_important-stroke.vue';
+import MediationIcon from '@/components/icons/mediation.vue';
 import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
 import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
@@ -255,6 +256,9 @@ Vue.use(Vuetify, {
     },
     notification_important_stroke: {
       component: NotificationImportantStrokeIcon,
+    },
+    mediation: {
+      component: MediationIcon,
     },
     warning_stroke: {
       component: WarningStrokeIcon,

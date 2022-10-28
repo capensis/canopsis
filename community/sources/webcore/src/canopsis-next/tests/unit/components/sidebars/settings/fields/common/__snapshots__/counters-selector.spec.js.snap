@@ -17,8 +17,8 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with custom
       max="3"
       multiple="multiple"
       required="true"
+      types="inactive,maintenance,pause"
       value="pbh-type"
-      with-icon="with-icon"
     />
     <c-enabled-field-stub
       hide-details="hide-details"
@@ -49,8 +49,8 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with disabl
       disabled="true"
       max="3"
       multiple="multiple"
+      types="inactive,maintenance,pause"
       value=""
-      with-icon="with-icon"
     />
     <c-enabled-field-stub
       hide-details="hide-details"

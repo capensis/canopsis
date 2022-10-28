@@ -12,7 +12,7 @@
           :icon="counter.icon"
         )
       span {{ counter.name }}
-    v-tooltip(:disabled="!otherCountersValue", top)
+    v-tooltip(v-if="otherCountersValue", top)
       template(#activator="{ on }")
         alarm-counter(
           v-on="on",

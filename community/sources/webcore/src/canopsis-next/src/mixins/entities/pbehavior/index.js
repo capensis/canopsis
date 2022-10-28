@@ -22,6 +22,8 @@ export const entitiesPbehaviorMixin = {
       fetchPbehaviorEIDSListWithoutStore: 'fetchEIDSWithoutStore',
       createPbehavior: 'create',
       bulkCreatePbehaviors: 'bulkCreate',
+      createEntityPbehaviors: 'bulkCreateEntityPbehaviors',
+      removeEntityPbehaviors: 'bulkRemoveEntityPbehaviors',
       updatePbehavior: 'update',
       bulkUpdatePbehaviors: 'bulkUpdate',
       removePbehavior: 'remove',
