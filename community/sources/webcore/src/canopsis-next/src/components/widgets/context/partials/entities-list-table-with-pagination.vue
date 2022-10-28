@@ -36,7 +36,8 @@
         entities-list-expand-panel(
           :item="item",
           :columns-filters="columnsFilters",
-          :service-dependencies-columns="widget.parameters.serviceDependenciesColumns"
+          :service-dependencies-columns="widget.parameters.serviceDependenciesColumns",
+          :alarms-columns="widget.parameters.alarmsColumns"
         )
       template(#mass-actions="{ selected, clearSelected }")
         mass-actions-panel.ml-3(
