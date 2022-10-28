@@ -3,6 +3,7 @@ template:
     _id: <UUID()>,
     title: <UniqueName()>,
     is_private: false,
+    position: 0,
     author: root,
     created: <NowUnix()>,
     updated: <Current().created>,
@@ -146,6 +147,7 @@ widget_filters:
     _id: test-widgetfilter-to-get-1
     title: test-widgetfilter-to-get-1-title
     widget: test-widget-to-filter-get
+    position: 0
     is_private: false
     created: 1605263992
     updated: <Current().created>
@@ -171,6 +173,7 @@ widget_filters:
     _id: test-widgetfilter-to-get-2
     title: test-widgetfilter-to-get-2-title
     widget: test-widget-to-filter-get
+    position: 0
     is_private: true
     created: 1605263992
     updated: <Current().created>
@@ -206,6 +209,7 @@ widget_filters:
     <<: *filter
     _id: test-widgetfilter-to-get-4
     widget: test-widget-to-filter-get
+    position: 1
     is_private: true
     author: nopermsuser
 
@@ -214,6 +218,7 @@ widget_filters:
     _id: test-widgetfilter-to-get-5
     title: test-widgetfilter-to-get-5-title
     widget: test-widget-to-filter-get
+    position: 1
     is_private: false
     created: 1605263992
     updated: <Current().created>
@@ -231,6 +236,7 @@ widget_filters:
     _id: test-widgetfilter-to-widget-get-1
     title: test-widgetfilter-to-widget-get-1-title
     widget: test-widget-to-get
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -248,6 +254,7 @@ widget_filters:
     _id: test-widgetfilter-to-widget-get-2
     title: test-widgetfilter-to-widget-get-2-title
     widget: test-widget-to-get
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -263,6 +270,7 @@ widget_filters:
   filter_to_widget_get_3:
     <<: *filter
     widget: test-widget-to-get
+    position: 0
     is_private: true
 
   filter_to_widget_copy_1:
@@ -270,6 +278,7 @@ widget_filters:
     _id: test-widgetfilter-to-widget-copy-1
     title: test-widgetfilter-to-widget-copy-1-title
     widget: test-widget-to-copy-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -289,6 +298,7 @@ widget_filters:
     _id: test-widgetfilter-to-widget-copy-2
     title: test-widgetfilter-to-widget-copy-2-title
     widget: test-widget-to-copy-1
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -304,6 +314,7 @@ widget_filters:
   filter_to_widget_copy_3:
     <<: *filter
     widget: test-widget-to-copy-1
+    position: 0
     is_private: true
 
   filter_to_tab_get_1:
@@ -311,6 +322,7 @@ widget_filters:
     _id: test-widgetfilter-to-tab-get-1
     title: test-widgetfilter-to-tab-get-1-title
     widget: test-widget-to-tab-get-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -328,6 +340,7 @@ widget_filters:
     _id: test-widgetfilter-to-tab-get-2
     title: test-widgetfilter-to-tab-get-2-title
     widget: test-widget-to-tab-get-2
+    position: 0
     is_private: false
     author: root
     created: 1611229670
@@ -343,6 +356,7 @@ widget_filters:
   filter_to_tab_get_3:
     <<: *filter
     widget: test-widget-to-tab-get-1
+    position: 0
     is_private: true
 
   filter_to_tab_copy_1:
@@ -350,6 +364,7 @@ widget_filters:
     _id: test-widgetfilter-to-tab-copy-1
     title: test-widgetfilter-to-tab-copy-1-title
     widget: test-widget-to-tab-copy-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -367,6 +382,7 @@ widget_filters:
     _id: test-widgetfilter-to-tab-copy-2
     title: test-widgetfilter-to-tab-copy-2-title
     widget: test-widget-to-tab-copy-1
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -382,6 +398,7 @@ widget_filters:
   filter_to_tab_copy_3:
     <<: *filter
     widget: test-widget-to-tab-copy-1
+    position: 0
     is_private: true
 
   filter_to_viewgroup_get_1:
@@ -389,6 +406,7 @@ widget_filters:
     _id: test-widgetfilter-to-viewgroup-get-1
     title: test-widgetfilter-to-viewgroup-get-1-title
     widget: test-widget-to-viewgroup-get-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -406,6 +424,7 @@ widget_filters:
     _id: test-widgetfilter-to-viewgroup-get-2
     title: test-widgetfilter-to-viewgroup-get-2-title
     widget: test-widget-to-viewgroup-get-1
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -421,6 +440,7 @@ widget_filters:
   filter_to_viewgroup_get_3:
     <<: *filter
     widget: test-widget-to-viewgroup-get-1
+    position: 0
     is_private: true
 
   filter_to_view_get_1:
@@ -428,6 +448,7 @@ widget_filters:
     _id: test-widgetfilter-to-view-get-1
     title: test-widgetfilter-to-view-get-1-title
     widget: test-widget-to-view-get-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -445,6 +466,7 @@ widget_filters:
     _id: test-widgetfilter-to-view-get-2
     title: test-widgetfilter-to-view-get-2-title
     widget: test-widget-to-view-get-1
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -460,6 +482,7 @@ widget_filters:
   filter_to_view_get_3:
     <<: *filter
     widget: test-widget-to-view-get-1
+    position: 0
     is_private: true
 
   filter_to_export_1:
@@ -467,6 +490,7 @@ widget_filters:
     _id: test-widgetfilter-to-export-1
     title: test-widgetfilter-to-export-1-title
     widget: test-widget-to-export-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -484,6 +508,7 @@ widget_filters:
     _id: test-widgetfilter-to-export-2
     title: test-widgetfilter-to-export-2-title
     widget: test-widget-to-export-1
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -513,6 +538,7 @@ widget_filters:
   filter_to_export_3:
     <<: *filter
     widget: test-widget-to-export-1
+    position: 0
     is_private: true
 
   filter_to_view_copy_1:
@@ -520,6 +546,7 @@ widget_filters:
     _id: test-widgetfilter-to-view-copy-1
     title: test-widgetfilter-to-view-copy-1-title
     widget: test-widget-to-view-copy-1
+    position: 0
     is_private: false
     author: nopermsuser
     created: 1611229670
@@ -537,6 +564,7 @@ widget_filters:
     _id: test-widgetfilter-to-view-copy-2
     title: test-widgetfilter-to-view-copy-2-title
     widget: test-widget-to-view-copy-1
+    position: 1
     is_private: false
     author: root
     created: 1611229670
@@ -552,6 +580,7 @@ widget_filters:
   filter_to_view_copy_3:
     <<: *filter
     widget: test-widget-to-view-copy-1
+    position: 0
     is_private: true
 
   filter_to_user_preferences_get_1:
@@ -559,6 +588,7 @@ widget_filters:
     _id: test-widgetfilter-to-user-preferences-get-1
     title: test-widgetfilter-to-user-preferences-get-1-title
     widget: test-widget-to-user-preferences-get-1
+    position: 0
     is_private: true
     author: test-user-to-user-preferences-edit
     created: 1611229670
@@ -576,6 +606,7 @@ widget_filters:
     _id: test-widgetfilter-to-user-preferences-get-2
     title: test-widgetfilter-to-user-preferences-get-2-title
     widget: test-widget-to-user-preferences-get-1
+    position: 1
     is_private: true
     author: test-user-to-user-preferences-edit
     created: 1611229670
@@ -591,6 +622,7 @@ widget_filters:
   filter_to_user_preferences_get_3:
     <<: *filter
     widget: test-widget-to-user-preferences-get-1
+    position: 0
     is_private: false
     author: test-user-to-user-preferences-edit
 
@@ -758,11 +790,13 @@ widget_filters:
     <<: *filter
     _id: test-widgetfilter-to-widget-update-1-1
     widget: test-widget-to-update
+    position: 0
 
   filter_to_widget_update_1_2:
     <<: *filter
     _id: test-widgetfilter-to-widget-update-1-2
     widget: test-widget-to-update
+    position: 1
     created: 1611229670
     alarm_pattern:
     entity_pattern:
@@ -776,6 +810,7 @@ widget_filters:
     <<: *filter
     _id: test-widgetfilter-to-widget-update-1-4
     widget: test-widget-to-update
+    position: 2
     created: 1611229670
     alarm_pattern:
     entity_pattern:
@@ -790,6 +825,7 @@ widget_filters:
     _id: test-widgetfilter-to-widget-update-1-5
     title: test-widgetfilter-to-widget-update-1-5-title
     widget: test-widget-to-update
+    position: 0
     is_private: true
     created: 1611229670
     updated: 1611229670
@@ -800,6 +836,55 @@ widget_filters:
             value: test-widgetfilter-to-widget-update-1-5-pattern
     entity_pattern:
     pbehavior_pattern:
+
+  filter_to_update_position_3_1:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-3-1
+    widget: test-widget-to-filter-update-position-3
+    is_private: false
+    position: 0
+
+  filter_to_update_position_3_2:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-3-2
+    widget: test-widget-to-filter-update-position-3
+    author: root
+    is_private: true
+
+  filter_to_update_position_3_3:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-3-3
+    widget: test-widget-to-filter-update-position-3
+    author: test-user-to-filter-update-position
+    is_private: true
+    position: 0
+
+  filter_to_update_position_3_4:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-3-4
+    widget: test-widget-to-filter-update-position-3
+    is_private: false
+    position: 1
+
+  filter_to_update_position_3_5:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-3-5
+    widget: test-widget-to-filter-update-position-3
+    author: test-user-to-filter-update-position
+    is_private: true
+    position: 1
+
+  filter_to_update_position_4_1:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-4-1
+    widget: test-widget-to-filter-update-position-4
+    is_private: false
+
+  filter_to_update_position_5:
+    <<: *filter
+    _id: test-widgetfilter-to-update-position-5
+    widget: test-widget-to-filter-check-access
+    is_private: false
 
   filter_to_map_state_get_1:
     <<: *filter
