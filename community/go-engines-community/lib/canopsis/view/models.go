@@ -147,6 +147,7 @@ type WidgetFilter struct {
 	Widget    string        `bson:"widget"`
 	IsPrivate bool          `bson:"is_private"`
 	Author    string        `bson:"author"`
+	Position  int64         `bson:"position"`
 	Created   types.CpsTime `bson:"created,omitempty"`
 	Updated   types.CpsTime `bson:"updated,omitempty"`
 

@@ -112,8 +112,6 @@ db.viewtabs.createIndex({view: 1}, {name: "view_1"});
 
 db.widgets.createIndex({tab: 1}, {name: "tab_1"});
 
-db.widget_filters.createIndex({widget: 1}, {name: "widget_1"});
-
 // Can be removed if index is added
 db.createCollection("pbehavior_reason");
 db.createCollection("pbehavior_exception");
