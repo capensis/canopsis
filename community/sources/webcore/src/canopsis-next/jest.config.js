@@ -1,3 +1,13 @@
+const path = require('path');
+
+const loadEnv = require('./tools/load-env');
+
+const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
+const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
+
+loadEnv(localEnvPath);
+loadEnv(baseEnvPath);
+
 module.exports = {
   moduleFileExtensions: [
     'js',
@@ -30,5 +40,5 @@ module.exports = {
   setupFiles: ['jest-localstorage-mock'],
   setupFilesAfterEnv: ['<rootDir>/tests/unit/jest.setup-test-framework'],
   globalSetup: '<rootDir>/tests/unit/jest.global-setup',
-  maxWorkers: '50%',
+  maxWorkers: process.env.JEST_MAX_WORKERS ?? '50%',
 };
