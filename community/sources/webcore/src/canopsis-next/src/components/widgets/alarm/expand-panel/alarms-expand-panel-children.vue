@@ -63,16 +63,15 @@ export default {
     },
 
     columns() {
-      if (this.widget.parameters.widgetGroupColumns) {
-        return this.widget.parameters.widgetGroupColumns.map(({ value, label, ...column }) => ({
-          ...column,
-          value,
-          text: label,
-          sortable: value !== ALARM_ENTITY_FIELDS.extraDetails,
-        }));
-      }
+      const columns = this.widget.parameters.widgetGroupColumns
+        || defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
 
-      return defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+      return columns.map(({ value, label, ...column }) => ({
+        ...column,
+        value,
+        text: label,
+        sortable: value !== ALARM_ENTITY_FIELDS.extraDetails,
+      }));
     },
   },
 };
