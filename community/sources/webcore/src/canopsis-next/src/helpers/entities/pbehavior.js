@@ -1,10 +1,10 @@
 import { COLORS } from '@/config';
 
-import { PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
+import { PBEHAVIOR_ORIGINS, PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { getNowTimestamp } from '@/helpers/date/date';
 
 /**
  * Check if pbehavior is paused
@@ -46,12 +46,10 @@ export const hasPausedPbehavior = pbehaviors => pbehaviors.some(isPausedPbehavio
 export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pbehaviorToRequest(formToPbehavior({
   reason,
   type,
+  origin: PBEHAVIOR_ORIGINS.serviceWeather,
   color: COLORS.secondary,
   name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uid()}`,
-  tstart: new Date(),
-  tstop: null,
-  comments: [{
-    message: comment,
-  }],
-  entity_pattern: createEntityIdPatternByValue(entity._id),
+  tstart: getNowTimestamp(),
+  comment,
+  entity: entity._id,
 }));

@@ -66,6 +66,7 @@ import { getNowTimestamp } from '@/helpers/date/date';
  * @property {string} resource
  * @property {string} origin
  * @property {string} source_type
+ * @property {string} pbh_origin_icon
  * @property {string} connector_name
  * @property {string} component
  * @property {EventType} event_type
