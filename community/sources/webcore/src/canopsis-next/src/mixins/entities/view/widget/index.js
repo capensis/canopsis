@@ -22,6 +22,7 @@ export const entitiesWidgetMixin = {
       createWidgetFilter: 'createWidgetFilter',
       updateWidgetFilter: 'updateWidgetFilter',
       removeWidgetFilter: 'removeWidgetFilter',
+      updateWidgetFiltersPositions: 'updateWidgetFiltersPositions',
     }),
   },
 };
