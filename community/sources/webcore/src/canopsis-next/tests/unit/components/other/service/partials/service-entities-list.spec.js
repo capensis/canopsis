@@ -298,9 +298,7 @@ describe('service-entities-list', () => {
   test('Pause action applied after trigger mass pause action', async () => {
     const entity = {
       _id: Faker.datatype.string(),
-      pbehaviors: [{
-        type: {},
-      }],
+      pbh_origin_icon: '',
     };
     const wrapper = factory({
       propsData: {

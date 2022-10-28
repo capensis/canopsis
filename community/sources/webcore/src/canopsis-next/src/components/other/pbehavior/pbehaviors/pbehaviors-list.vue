@@ -39,6 +39,8 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :disabled="!item.editable",
+          :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
           type="edit",
           @click="$emit('edit', item)"
         )
