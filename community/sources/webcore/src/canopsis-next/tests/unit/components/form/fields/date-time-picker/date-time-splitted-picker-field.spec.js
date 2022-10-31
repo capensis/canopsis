@@ -11,11 +11,6 @@ const stubs = {
   'c-date-picker-field': true,
 };
 
-const snapshotStubs = {
-  'time-picker-field': true,
-  'c-date-picker-field': true,
-};
-
 const selectTimePickerField = wrapper => wrapper.find('time-picker-field-stub');
 const selectDatePickerField = wrapper => wrapper.find('c-date-picker-field-stub');
 
@@ -29,12 +24,11 @@ describe('date-time-splitted-picker-field', () => {
         validator: 'new',
       },
     },
-
   });
 
   const snapshotFactory = generateRenderer(DateTimeSplittedPickerField, {
     localVue,
-    stubs: snapshotStubs,
+    stubs,
 
     parentComponent: {
       $_veeValidate: {
@@ -89,6 +83,7 @@ describe('date-time-splitted-picker-field', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
   test('Renders `date-time-splitted-picker-field` with errors', async () => {
     const name = 'validate_name';
     const wrapper = snapshotFactory({

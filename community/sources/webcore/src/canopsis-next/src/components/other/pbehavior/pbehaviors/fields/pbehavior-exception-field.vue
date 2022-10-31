@@ -4,12 +4,12 @@
       date-time-splitted-range-picker-field(
         :start="value.begin",
         :end="value.end",
-        :startLabel="$t('common.begin')",
-        :endLabel="$t('common.end')",
-        :startRules="beginRules",
-        :endRules="endRules",
+        :start-label="$t('common.begin')",
+        :end-label="$t('common.end')",
+        :start-rules="beginRules",
+        :end-rules="endRules",
         :name="datesName",
-        :fullDay="fullDay",
+        :full-day="fullDay",
         :disabled="disabled",
         @update:start="updateField('begin', $event)",
         @update:end="updateField('end', $event)"

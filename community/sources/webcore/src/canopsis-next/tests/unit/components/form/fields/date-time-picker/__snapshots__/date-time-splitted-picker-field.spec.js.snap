@@ -1,12 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-field\` with custom props 1`] = `
-<div>
+<div
+  class="layout date-time-splitted-field column"
+>
   <div
     class="layout row reverse"
   >
     <div
-      class="flex"
+      class="flex date-time-splitted-field__date"
     >
       <c-date-picker-field-stub
         disabled="true"
@@ -36,27 +38,26 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
 `;
 
 exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-field\` with default props 1`] = `
-<div>
+<div
+  class="layout date-time-splitted-field column"
+>
   <div
     class="layout row"
   >
     <div
-      class="flex pr-1"
+      class="flex date-time-splitted-field__date pr-1"
     >
       <c-date-picker-field-stub
         hide-details="hide-details"
         label=""
       />
     </div>
-    <div
-      class="flex"
-    >
-      <time-picker-field-stub
-        hide-details="hide-details"
-        label=""
-        stepsinhours="4"
-      />
-    </div>
+    <time-picker-field-stub
+      class="date-time-splitted-field__time"
+      hide-details="hide-details"
+      label=""
+      stepsinhours="4"
+    />
   </div>
   <div
     class="v-text-field__details mt-2"
@@ -75,12 +76,14 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
 `;
 
 exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-field\` with errors 1`] = `
-<div>
+<div
+  class="layout date-time-splitted-field column"
+>
   <div
     class="layout row"
   >
     <div
-      class="flex pr-1"
+      class="flex date-time-splitted-field__date pr-1"
     >
       <c-date-picker-field-stub
         error="true"
@@ -88,16 +91,13 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
         label=""
       />
     </div>
-    <div
-      class="flex"
-    >
-      <time-picker-field-stub
-        error="true"
-        hide-details="hide-details"
-        label=""
-        stepsinhours="4"
-      />
-    </div>
+    <time-picker-field-stub
+      class="date-time-splitted-field__time"
+      error="true"
+      hide-details="hide-details"
+      label=""
+      stepsinhours="4"
+    />
   </div>
   <div
     class="v-text-field__details mt-2"

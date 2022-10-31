@@ -1,7 +1,7 @@
 <template lang="pug">
-  div
+  v-layout.date-time-splitted-field(column)
     v-layout(row, :reverse="reverse")
-      v-flex(:class="datePickerFlexClass")
+      v-flex.date-time-splitted-field__date(:class="datePickerClass")
         c-date-picker-field(
           :value="value | date('vuetifyDatePicker', null)",
           :label="!reverse || fullDay ? label : ''",
@@ -12,15 +12,15 @@
           hide-details,
           @input="updateDate"
         )
-      v-flex(v-if="!fullDay")
-        time-picker-field(
-          :value="value | date('timePicker', null)",
-          :label="reverse ? label : ''",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          hide-details,
-          @input="updateTime"
-        )
+      time-picker-field.date-time-splitted-field__time(
+        v-if="!fullDay",
+        :value="value | date('timePicker', null)",
+        :label="reverse ? label : ''",
+        :error="errors.has(name)",
+        :disabled="disabled",
+        hide-details,
+        @input="updateTime"
+      )
     div.v-text-field__details.mt-2
       v-messages(:value="errors.collect(name)", color="error")
 </template>
@@ -87,7 +87,7 @@ export default {
     },
   },
   computed: {
-    datePickerFlexClass() {
+    datePickerClass() {
       if (!this.fullDay) {
         return this.reverse ? 'pl-1' : 'pr-1';
       }
@@ -106,3 +106,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.date-time-splitted-field {
+  &__date {
+    flex: 1;
+  }
+
+  &__time {
+    width: 56px;
+    max-width: 56px;
+  }
+}
+</style>
