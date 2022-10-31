@@ -518,7 +518,6 @@ export default merge({
     noEventsFilter: 'No events filter',
     impactChain: 'Impact chain',
     resolvedAlarms: 'Resolved alarms',
-    activeAlarm: 'Active alarm',
     impactDepends: 'Impact/Depends',
     treeOfDependencies: 'Tree of dependencies',
     infosSearchLabel: 'Search infos',
@@ -823,6 +822,7 @@ export default merge({
     isPriorityEnabled: 'Show priority',
     clearFilterDisabled: 'Disable possibility to clear selected filter',
     alarmsColumns: 'Alarm list columns',
+    resolvedAlarmsColumns: 'Column names for resolved alarms',
     entitiesColumns: 'Context explorer columns',
     entityInfoPopup: 'Entity info popup',
     exportCsv: {

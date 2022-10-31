@@ -37,7 +37,7 @@
           :item="item",
           :columns-filters="columnsFilters",
           :service-dependencies-columns="widget.parameters.serviceDependenciesColumns",
-          :alarms-columns="widget.parameters.alarmsColumns"
+          :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns"
         )
       template(#mass-actions="{ selected, clearSelected }")
         mass-actions-panel.ml-3(
