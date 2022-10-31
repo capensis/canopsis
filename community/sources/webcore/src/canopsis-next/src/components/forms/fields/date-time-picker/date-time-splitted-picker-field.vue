@@ -1,15 +1,6 @@
 <template lang="pug">
   div
-    v-layout(row)
-      v-flex.pr-1(v-if="reverse && !fullDay", xs4)
-        time-picker-field(
-          :value="value | date('timePicker', null)",
-          :label="label",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          hide-details,
-          @input="updateTime"
-        )
+    v-layout(row, :reverse="reverse")
       v-flex(:class="datePickerFlexClass")
         c-date-picker-field(
           :value="value | date('vuetifyDatePicker', null)",
@@ -21,21 +12,17 @@
           hide-details,
           @input="updateDate"
         )
-      v-flex.pr-1(v-if="!reverse && !fullDay", xs4)
+      v-flex(v-if="!fullDay")
         time-picker-field(
           :value="value | date('timePicker', null)",
+          :label="reverse ? label : ''",
           :error="errors.has(name)",
           :disabled="disabled",
           hide-details,
           @input="updateTime"
         )
     div.v-text-field__details.mt-2
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(
-            v-for="error in errors.collect(name)",
-            :key="error"
-          ) {{ error }}
+      v-messages(:value="errors.collect(name)", color="error")
 </template>
 
 <script>
@@ -101,11 +88,11 @@ export default {
   },
   computed: {
     datePickerFlexClass() {
-      return {
-        'pr-1': !this.reverse,
-        xs8: !this.fullDay,
-        xs12: this.fullDay,
-      };
+      if (!this.fullDay) {
+        return this.reverse ? 'pl-1' : 'pr-1';
+      }
+
+      return '';
     },
   },
   methods: {
