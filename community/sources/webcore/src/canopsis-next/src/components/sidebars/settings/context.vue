@@ -25,8 +25,8 @@
           )
           v-divider
           field-columns(
-            v-model="form.parameters.alarmsColumns",
-            :label="$t('settings.alarmsColumns')"
+            v-model="form.parameters.resolvedAlarmsColumns",
+            :label="$t('settings.resolvedAlarmsColumns')"
           )
           v-divider
           template(v-if="hasAccessToListFilters")
