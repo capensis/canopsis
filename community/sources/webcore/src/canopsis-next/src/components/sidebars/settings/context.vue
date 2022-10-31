@@ -25,6 +25,11 @@
           )
           v-divider
           field-columns(
+            v-model="form.parameters.activeAlarmsColumns",
+            :label="$t('settings.activeAlarmsColumns')"
+          )
+          v-divider
+          field-columns(
             v-model="form.parameters.resolvedAlarmsColumns",
             :label="$t('settings.resolvedAlarmsColumns')"
           )

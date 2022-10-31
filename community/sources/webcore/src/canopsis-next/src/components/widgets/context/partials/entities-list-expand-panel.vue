@@ -28,11 +28,17 @@
     v-tab-item(lazy)
       impact-chain-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
 
+    v-tab {{ $t('context.activeAlarm') }}
+    v-tab-item(lazy)
+      v-card.secondary.lighten-2(flat)
+        v-card-text
+          entity-alarms-list-table.pa-4(:entity="item", :columns="activeAlarmsColumns")
+
     v-tab {{ $t('context.resolvedAlarms') }}
     v-tab-item(lazy)
       v-card.secondary.lighten-2(flat)
         v-card-text
-          entity-alarms-list-table.pa-4(:entity="item", :columns="resolvedAlarmsColumns")
+          entity-alarms-list-table.pa-4(:entity="item", :columns="resolvedAlarmsColumns", resolved)
 </template>
 
 <script>
@@ -70,6 +76,10 @@ export default {
       default: () => [],
     },
     resolvedAlarmsColumns: {
+      type: Array,
+      required: false,
+    },
+    activeAlarmsColumns: {
       type: Array,
       required: false,
     },
