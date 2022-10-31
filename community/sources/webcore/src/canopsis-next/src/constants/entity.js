@@ -438,7 +438,7 @@ export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
   },
 ];
 
-export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
+export const DEFAULT_CONTEXT_ALARMS_COLUMNS = [
   {
     labelKey: 'common.alarmId',
     value: 'v.display_name',
