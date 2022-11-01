@@ -15,6 +15,7 @@ type ListRequest struct {
 	pagination.Query
 	Filters  []string `form:"filters[]" json:"filters"`
 	Category string   `form:"category" json:"category"`
+	HideGrey bool     `form:"hide_grey" json:"hide_grey"`
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
 	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
 }
