@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(v-on="$listeners", row, justify-space-around, align-center)
     v-icon(:color="color", size="18") {{ icon }}
-    span {{ count }}
+    span.caption {{ count }}
 </template>
 
 <script>
