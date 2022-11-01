@@ -25,9 +25,9 @@
               private
             )
           c-enabled-field.ml-3(
-            :value="query.is_grey",
-            :label="$t('serviceWeather.grey')",
-            @input="updateGray"
+            :value="query.hide_grey",
+            :label="$t('serviceWeather.hideGrey')",
+            @input="updateHideGray"
           )
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
@@ -100,15 +100,15 @@ export default {
     },
   },
   methods: {
-    updateGray(isGrey) {
+    updateHideGray(hideGrey) {
       this.updateContentInUserPreference({
-        is_grey: isGrey,
+        hide_grey: hideGrey,
       });
 
       this.query = {
         ...this.query,
 
-        is_grey: isGrey,
+        hide_grey: hideGrey,
       };
     },
 

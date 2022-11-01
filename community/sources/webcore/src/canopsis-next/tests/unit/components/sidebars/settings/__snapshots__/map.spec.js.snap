@@ -44,7 +44,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     <field-text-editor-stub
       title="Entity info popup"
       value=<div>TEMPLATE</div>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -118,7 +118,7 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       value=<ul>
   <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"

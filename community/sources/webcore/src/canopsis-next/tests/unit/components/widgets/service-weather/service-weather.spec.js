@@ -39,7 +39,7 @@ describe('service-weather', () => {
     sortDir: null,
     sortKey: null,
     limit: DEFAULT_WEATHER_LIMIT,
-    is_grey: false,
+    hide_grey: false,
   };
 
   const widget = {
@@ -241,7 +241,7 @@ describe('service-weather', () => {
       {
         data: {
           content: {
-            is_grey: true,
+            hide_grey: true,
           },
         },
       },
@@ -252,7 +252,7 @@ describe('service-weather', () => {
       {
         id: widget._id,
         query: {
-          is_grey: true,
+          hide_grey: true,
         },
       },
       undefined,
