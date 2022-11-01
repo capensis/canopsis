@@ -10,23 +10,14 @@ import (
 type contextKey int
 
 const (
-	contextKeyScenario contextKey = iota
-	contextKeyResponseStatusCode
+	contextKeyResponseStatusCode contextKey = iota
 	contextKeyResponseBody
 	contextKeyResponseBodyOutput
 	contextKeyHeaders
 	contextKeyCookies
 	contextKeyVars
+	contextConsumer
 )
-
-func GetScenario(ctx context.Context) (string, bool) {
-	v, ok := ctx.Value(contextKeyScenario).(string)
-	return v, ok
-}
-
-func SetScenario(ctx context.Context, v string) context.Context {
-	return context.WithValue(ctx, contextKeyScenario, v)
-}
 
 func getResponseStatusCode(ctx context.Context) (int, bool) {
 	v, ok := ctx.Value(contextKeyResponseStatusCode).(int)
@@ -114,4 +105,17 @@ func setVar(ctx context.Context, k, v string) context.Context {
 
 	ctx = context.WithValue(ctx, contextKeyVars, vars)
 	return ctx
+}
+
+func getConsumer(ctx context.Context) (int, bool) {
+	v, ok := ctx.Value(contextConsumer).(int)
+	return v, ok
+}
+
+func setConsumer(ctx context.Context, v int) context.Context {
+	return context.WithValue(ctx, contextConsumer, v)
+}
+
+func deleteConsumer(ctx context.Context) context.Context {
+	return context.WithValue(ctx, contextConsumer, nil)
 }
