@@ -36,7 +36,13 @@
           v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
         td
           v-layout(row)
-            c-action-btn(v-if="updatable", type="edit", @click="showEditPbehaviorModal(item)")
+            c-action-btn(
+              v-if="updatable",
+              :disabled="!item.editable",
+              :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
+              type="edit",
+              @click="showEditPbehaviorModal(item)"
+            )
             c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
@@ -178,7 +184,12 @@ export default {
       try {
         this.pending = true;
 
-        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({ id: this.entity._id });
+        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({
+          id: this.entity._id,
+          params: {
+            with_flags: true,
+          },
+        });
       } catch (err) {
         console.warn(err);
       } finally {

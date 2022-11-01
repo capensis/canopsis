@@ -429,7 +429,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                         <a
                           class="v-tabs__item v-tabs__item--active"
                         >
-                          Active pbehavior
+                          Pbehaviors
                         </a>
                       </div>
                     </div>
@@ -477,6 +477,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                           dense="true"
                           entity="[object Object]"
                           removable="true"
+                          updatable="true"
                           withactivestatus="true"
                         />
                       </div>
