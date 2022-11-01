@@ -34,6 +34,7 @@ describe('pbehaviors-simple-list', () => {
     name: `name-${index}`,
     author: `author-${index}`,
     enabled: !!(index % 2),
+    editable: !!(index % 2),
     tstart: 1614861000 + index,
     tstop: 1614861200 + index,
     type: {

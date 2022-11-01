@@ -266,6 +266,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 class="layout row"
               >
                 <c-action-btn-stub
+                  disabled="true"
+                  tooltip="Cannot be modified"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -325,6 +327,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 class="layout row"
               >
                 <c-action-btn-stub
+                  tooltip="Edit"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -382,6 +385,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 class="layout row"
               >
                 <c-action-btn-stub
+                  disabled="true"
+                  tooltip="Cannot be modified"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -441,6 +446,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 class="layout row"
               >
                 <c-action-btn-stub
+                  tooltip="Edit"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -498,6 +504,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 class="layout row"
               >
                 <c-action-btn-stub
+                  disabled="true"
+                  tooltip="Cannot be modified"
                   type="edit"
                 />
                 <c-action-btn-stub
