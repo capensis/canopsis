@@ -127,6 +127,7 @@ export const API_ROUTES = {
     copy: '/api/v4/widget-copy',
     gridPositions: '/api/v4/widget-grid-positions',
     filters: '/api/v4/widget-filters',
+    filterPositions: '/api/v4/widget-filter-positions',
   },
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
