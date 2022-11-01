@@ -14,6 +14,7 @@ db.resolved_alarms.dropIndex("v.meta_1_v.creation_date_1");
 db.resolved_alarms.dropIndex("v.creation_date_1");
 db.resolved_alarms.dropIndex("v.last_event_date_1");
 db.resolved_alarms.dropIndex("v.last_update_date_1");
+db.resolved_alarms.dropIndex("v.parents_1");
 
 db.pbehavior.dropIndex("name_1");
 
@@ -67,8 +68,6 @@ db.views.dropIndex("group_id_1");
 db.viewtabs.dropIndex("view_1");
 
 db.widgets.dropIndex("tab_1");
-
-db.widget_filters.dropIndex("widget_1");
 
 db.pbehavior_reason.drop();
 db.pbehavior_exception.drop();

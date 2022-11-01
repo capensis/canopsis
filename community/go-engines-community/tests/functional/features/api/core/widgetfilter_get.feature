@@ -52,6 +52,17 @@ Feature: Get a widget filter
           ]
         },
         {
+          "_id": "test-widgetfilter-to-get-5",
+          "title": "test-widgetfilter-to-get-5-title",
+          "is_private": false,
+          "author": "root",
+          "created": 1605263992,
+          "updated": 1605263992,
+          "old_mongo_query": {
+            "name": "test-widgetfilter-to-get-5-pattern"
+          }
+        },
+        {
           "_id": "test-widgetfilter-to-get-2",
           "title": "test-widgetfilter-to-get-2-title",
           "is_private": true,
@@ -97,17 +108,6 @@ Feature: Get a widget filter
               }
             ]
           ]
-        },
-        {
-          "_id": "test-widgetfilter-to-get-5",
-          "title": "test-widgetfilter-to-get-5-title",
-          "is_private": false,
-          "author": "root",
-          "created": 1605263992,
-          "updated": 1605263992,
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-get-5-pattern"
-          }
         }
       ],
       "meta": {

@@ -200,7 +200,12 @@ export default {
 
     stateOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.higher,
+          PATTERN_OPERATORS.lower,
+        ],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
           is: 'c-entity-state-field',

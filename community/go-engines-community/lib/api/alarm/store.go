@@ -59,8 +59,6 @@ type store struct {
 	dbInstructionExecutionCollection mongo.DbCollection
 	dbEntityCollection               mongo.DbCollection
 
-	queryBuilder *MongoQueryBuilder
-
 	linksFetcher common.LinksFetcher
 
 	logger zerolog.Logger
@@ -75,8 +73,6 @@ func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger 
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 
-		queryBuilder: NewMongoQueryBuilder(dbClient),
-
 		linksFetcher: linksFetcher,
 
 		logger: logger,
@@ -90,7 +86,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 	}
 
 	now := types.NewCpsTime()
-	pipeline, err := s.queryBuilder.CreateListAggregationPipeline(ctx, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +133,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 }
 
 func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) {
-	pipeline, err := s.queryBuilder.CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +200,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 		return nil, false, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateGetAggregationPipeline(bson.M{
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
 		"d":          entityID,
 		"v.resolved": nil,
 	}, types.NewCpsTime())
@@ -256,7 +252,7 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 	}
 	pipeline = append(pipeline, getMetaAlarmRuleLookup()...)
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"meta_alarm_rule.type": correlation.RuleManualGroup,
+		"meta_alarm_rule.type": correlation.RuleTypeManualGroup,
 	}})
 	if search != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
@@ -311,7 +307,7 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		ids = append(ids, id)
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(ctx, bson.M{
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, bson.M{
 		"d":          bson.M{"$in": ids},
 		"v.resolved": nil,
 	}, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
@@ -368,7 +364,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(ctx, bson.M{
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, bson.M{
 		"d":          bson.M{"$in": component.Depends},
 		"v.resolved": nil,
 	}, r.Query, r.SortRequest, FilterRequest{}, now)
@@ -423,7 +419,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 
 	match := bson.M{"d": r.ID}
 	opened := false
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(ctx, match, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, match, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
 		StartFrom: r.StartFrom,
 		StartTo:   r.StartTo,
 		Opened:    &opened,
@@ -512,7 +508,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.queryBuilder.CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.EntityID, now)
+			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.EntityID, now)
 			if err != nil {
 				return nil, err
 			}
@@ -565,7 +561,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 		collection = s.resolvedDbCollection
 	}
 
-	pipeline, err := s.queryBuilder.CreateCountAggregationPipeline(ctx, r, types.NewCpsTime())
+	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -1276,4 +1272,8 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 	}
 
 	return nil
+}
+
+func (s *store) getQueryBuilder() *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.dbClient)
 }
