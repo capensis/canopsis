@@ -38,13 +38,13 @@
       v-divider
       field-template(
         v-model="form.parameters.blockTemplate",
-        :variables="variables",
+        :variables="blockTemplateVariables",
         :title="$t('settings.weatherTemplate')"
       )
       v-divider
       field-template(
         v-model="form.parameters.modalTemplate",
-        :variables="variables",
+        :variables="modalTemplateVariables",
         :title="$t('settings.modalTemplate')"
       )
       v-divider
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
@@ -138,6 +138,20 @@ export default {
         { label: this.$t('common.name'), value: 'name' },
         { label: this.$t('common.state'), value: 'state' },
       ];
+    },
+    blockTemplateVariables() {
+      const excludeFields = [
+        ENTITY_TEMPLATE_FIELDS.ticket,
+        ENTITY_TEMPLATE_FIELDS.statsKo,
+        ENTITY_TEMPLATE_FIELDS.statsOk,
+        ENTITY_TEMPLATE_FIELDS.alarmDisplayName,
+      ];
+
+      return this.variables.filter(({ value }) => !excludeFields.includes(value));
+    },
+
+    modalTemplateVariables() {
+      return this.blockTemplateVariables;
     },
   },
 };

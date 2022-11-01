@@ -40,7 +40,6 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
-  SERVICE_STATES,
   SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
@@ -2234,14 +2233,9 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
     },
     iconTypes: {
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-
-      [SERVICE_STATES.ok]: 'Ok',
-      [SERVICE_STATES.minor]: 'Minor',
-      [SERVICE_STATES.major]: 'Major',
-      [SERVICE_STATES.critical]: 'Critical',
+      ok: 'Ok',
+      minorOrMajor: 'Minor or Major',
+      critical: 'Critical',
     },
     stateCounters: {
       [SERVICE_WEATHER_STATE_COUNTERS.all]: 'Number of alarms',
