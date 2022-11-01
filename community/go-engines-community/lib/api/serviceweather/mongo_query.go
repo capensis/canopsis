@@ -185,6 +185,15 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	if len(entityMatch) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
+
+	additionalMatch := make([]bson.M, 0)
+	q.addHideGreyFilter(r, &additionalMatch)
+	if len(additionalMatch) > 0 {
+		q.lookupsForAdditionalMatch["alarm"] = true
+		q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
+		q.lookupsForAdditionalMatch["counters"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": additionalMatch}})
+	}
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest) error {
@@ -255,6 +264,12 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 func (q *MongoQueryBuilder) addCategoryFilter(r ListRequest, match *[]bson.M) {
 	if r.Category != "" {
 		*match = append(*match, bson.M{"category": bson.M{"$eq": r.Category}})
+	}
+}
+
+func (q *MongoQueryBuilder) addHideGreyFilter(r ListRequest, match *[]bson.M) {
+	if r.HideGrey {
+		*match = append(*match, bson.M{"is_grey": false})
 	}
 }
 

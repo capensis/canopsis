@@ -82,7 +82,8 @@ type PatchRequest struct {
 }
 
 type FindByEntityIDRequest struct {
-	ID string `form:"_id" binding:"required"`
+	ID        string `form:"_id" binding:"required"`
+	WithFlags bool   `form:"with_flags"`
 }
 
 type Response struct {

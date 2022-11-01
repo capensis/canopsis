@@ -98,7 +98,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.FindByEntityID(c.Request.Context(), *entity)
+	res, err := a.store.FindByEntityID(c.Request.Context(), *entity, r)
 	if err != nil {
 		panic(err)
 	}

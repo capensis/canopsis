@@ -2737,6 +2737,7 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/withFlags'
       responses:
         200:
           description: OK
@@ -9773,6 +9774,10 @@ paths:
           description: category
           schema:
             type: string
+        - name: hide_grey
+          in: query
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
