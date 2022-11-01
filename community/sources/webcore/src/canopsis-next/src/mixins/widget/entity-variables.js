@@ -57,6 +57,70 @@ export const entityVariablesMixin = {
       ];
     },
 
+    ticketVariables() {
+      return [
+        {
+          text: this.$t('common.value'),
+          value: 'val',
+        },
+      ];
+    },
+
+    snoozeVariables() {
+      return [
+        {
+          text: this.$t('common.timestamp'),
+          value: 't',
+        },
+        {
+          text: this.$t('common.value'),
+          value: 'val',
+        },
+        {
+          text: this.$t('common.message'),
+          value: 'm',
+        },
+      ];
+    },
+
+    ackVariables() {
+      return [
+        {
+          text: this.$t('common.timestamp'),
+          value: 't',
+        },
+        {
+          text: this.$t('common.value'),
+          value: 'val',
+        },
+        {
+          text: this.$t('common.message'),
+          value: 'm',
+        },
+        {
+          text: this.$t('common.author'),
+          value: 'a',
+        },
+      ];
+    },
+
+    pbehaviorInfoVariables() {
+      return [
+        {
+          text: this.$t('pbehavior.pbehaviorType'),
+          value: 'type_name',
+        },
+        {
+          text: this.$tc('pbehavior.pbehaviorReason'),
+          value: 'reason',
+        },
+        {
+          text: this.$t('pbehavior.pbehaviorName'),
+          value: 'name',
+        },
+      ];
+    },
+
     variables() {
       return [
         {
@@ -101,10 +165,12 @@ export const entityVariablesMixin = {
         {
           text: this.$t('common.snooze'),
           value: 'entity.snooze',
+          variables: this.snoozeVariables,
         },
         {
           text: this.$t('common.ack'),
           value: 'entity.ack',
+          variables: this.ackVariables,
         },
         {
           text: this.$t('common.updated'),
@@ -121,6 +187,36 @@ export const entityVariablesMixin = {
         {
           text: this.$t('common.category'),
           value: 'entity.category.name',
+        },
+        {
+          text: this.$t('alarmList.alarmDisplayName'),
+          value: 'entity.alarm_display_name',
+        },
+        {
+          text: this.$tc('common.pbehavior'),
+          value: 'entity.pbehavior',
+        },
+        {
+          text: this.$t('pbehavior.pbehaviorInfo'),
+          value: 'entity.pbehavior_info',
+          variables: this.pbehaviorInfoVariables,
+        },
+        {
+          text: this.$t('alarmList.alarmCreationDate'),
+          value: 'entity.alarm_creation_date',
+        },
+        {
+          text: this.$t('common.ticket'),
+          value: 'entity.ticket',
+          variables: this.ticketVariables,
+        },
+        {
+          text: this.$t('entity.okEvents'),
+          value: 'entity.stats.ok',
+        },
+        {
+          text: this.$t('entity.koEvents'),
+          value: 'entity.stats.ko',
         },
         {
           text: this.$tc('common.link', 2),

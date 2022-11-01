@@ -234,9 +234,9 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertWeatherUserPreferenceToQuery({ content }) {
-  const { category, mainFilter, is_grey: isGrey = false } = content;
+  const { category, mainFilter, hide_grey: hideGrey = false } = content;
 
-  return { category, filter: mainFilter, is_grey: isGrey };
+  return { category, filter: mainFilter, hide_grey: hideGrey };
 }
 
 /**
