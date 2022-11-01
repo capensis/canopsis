@@ -17,7 +17,7 @@
               @refresh="refresh",
               @apply:action="applyAction"
             )
-        v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.activePbehavior') }}
+        v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.pbehavior', 2) }}
         v-tab-item(lazy)
           pbehaviors-simple-list(
             :entity="service",

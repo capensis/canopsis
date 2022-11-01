@@ -47,9 +47,15 @@
                     :columns="serviceDependenciesColumns"
                   )
               template(v-if="hasAccessToPbehaviors")
-                v-tab {{ $tc('common.activePbehavior') }}
+                v-tab {{ $tc('common.pbehavior', 2) }}
                 v-tab-item(lazy)
-                  pbehaviors-simple-list(:entity="entity", removable, dense, with-active-status)
+                  pbehaviors-simple-list(
+                    :entity="entity",
+                    removable,
+                    updatable,
+                    dense,
+                    with-active-status
+                  )
 </template>
 
 <script>
