@@ -8,7 +8,8 @@
         v-flex(v-for="counter in countersWithFilters", :key="counter.filter.title", :class="flexSize")
           counter-item.weatherItem(
             :counter="counter",
-            :widget="widget"
+            :widget="widget",
+            :query="queryWithoutFilters"
           )
 </template>
 
@@ -57,17 +58,17 @@ export default {
 
       return this.counters.map((counter, index) => ({ ...counter, filter: filters[index] }));
     },
-  },
-  methods: {
-    getQuery() {
+
+    queryWithoutFilters() {
       return omit(this.query, ['filters']);
     },
-
+  },
+  methods: {
     fetchList() {
       this.fetchCountersList({
         widgetId: this.widget._id,
         filters: this.query.filters,
-        params: this.getQuery(),
+        params: this.queryWithoutFilters,
       });
     },
   },

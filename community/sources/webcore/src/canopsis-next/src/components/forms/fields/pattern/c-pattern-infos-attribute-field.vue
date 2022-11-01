@@ -2,6 +2,7 @@
   v-layout
     v-flex(xs6)
       v-combobox(
+        v-if="combobox",
         v-field="value.dictionary",
         v-validate="'required'",
         :items="items",
@@ -12,6 +13,16 @@
         :error-messages="errors.collect(dictionaryName)",
         item-text="value",
         item-value="value",
+        hide-details
+      )
+      v-text-field(
+        v-else,
+        v-field="value.dictionary",
+        v-validate="'required'",
+        :disabled="disabled",
+        :label="label || $t('common.dictionary')",
+        :error-messages="errors.collect(dictionaryName)",
+        :name="dictionaryName",
         hide-details
       )
     v-flex.pl-3(xs6)
@@ -58,6 +69,10 @@ export default {
       default: '.',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    combobox: {
       type: Boolean,
       default: false,
     },

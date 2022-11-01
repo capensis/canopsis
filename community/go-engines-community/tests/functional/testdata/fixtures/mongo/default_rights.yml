@@ -887,6 +887,29 @@ default_rights:
     crecord_name: <Current()._id>
     role: "@role_to_tab_update_position"
 
+  permission_view_to_filter_update_position:
+    <<: *permission_rw
+    _id: test-view-to-filter-update-position
+    crecord_name: <Current()._id>
+
+  role_to_filter_update_position:
+    <<: *role
+    _id: test-role-to-filter-update-position
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_view":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_filter_update_position":
+        checksum: 6
+        crecord_type: right
+
+  user_to_filter_update_position:
+    <<: *user
+    _id: test-user-to-filter-update-position
+    crecord_name: <Current()._id>
+    role: "@role_to_filter_update_position"
+
   permission_view_to_widget_update_grid_position_1:
     <<: *permission_rw
     _id: test-view-to-widget-update-grid-position-1
