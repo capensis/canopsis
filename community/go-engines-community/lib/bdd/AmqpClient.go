@@ -33,9 +33,9 @@ type AmqpClient struct {
 	exchange, key  string
 	templater      *Templater
 
-	mainStreamAckMsgsMx   sync.Mutex
-	mainStreamAckChannels map[string]libamqp.Channel
-	mainStreamAckMsgs     map[string]<-chan amqp.Delivery
+	ackConsumersMx   sync.Mutex
+	ackConsumers     []<-chan amqp.Delivery
+	freeAckConsumers []int
 }
 
 // NewAmqpClient creates new AMQP client.
@@ -58,12 +58,21 @@ func NewAmqpClient(
 		key:            key,
 		templater:      templater,
 
-		mainStreamAckChannels: make(map[string]libamqp.Channel),
-		mainStreamAckMsgs:     make(map[string]<-chan amqp.Delivery),
+		ackConsumers:     make([]<-chan amqp.Delivery, 0),
+		freeAckConsumers: make([]int, 0),
 	}
 }
 
-func (c *AmqpClient) BeforeScenario(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+	c.ackConsumersMx.Lock()
+	defer c.ackConsumersMx.Unlock()
+
+	if len(c.freeAckConsumers) > 0 {
+		ctx = setConsumer(ctx, c.freeAckConsumers[0])
+		c.freeAckConsumers = c.freeAckConsumers[1:]
+		return ctx, nil
+	}
+
 	ch, err := c.amqpConnection.Channel()
 	if err != nil {
 		return ctx, err
@@ -106,25 +115,19 @@ func (c *AmqpClient) BeforeScenario(ctx context.Context, sc *godog.Scenario) (co
 		return ctx, fmt.Errorf("cannot consume queue: %v", err)
 	}
 
-	c.mainStreamAckMsgsMx.Lock()
-	defer c.mainStreamAckMsgsMx.Unlock()
-	c.mainStreamAckChannels[sc.Id] = ch
-	c.mainStreamAckMsgs[sc.Id] = msgs
+	c.ackConsumers = append(c.ackConsumers, msgs)
+	ctx = setConsumer(ctx, len(c.ackConsumers)-1)
 
 	return ctx, nil
 }
 
-func (c *AmqpClient) AfterScenario(ctx context.Context, sc *godog.Scenario, _ error) (context.Context, error) {
-	c.mainStreamAckMsgsMx.Lock()
-	defer c.mainStreamAckMsgsMx.Unlock()
+func (c *AmqpClient) AfterScenario(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	c.ackConsumersMx.Lock()
+	defer c.ackConsumersMx.Unlock()
 
-	if ch, ok := c.mainStreamAckChannels[sc.Id]; ok {
-		err := ch.Close()
-		if err != nil {
-			return ctx, err
-		}
-		delete(c.mainStreamAckChannels, sc.Id)
-		delete(c.mainStreamAckMsgs, sc.Id)
+	if i, ok := getConsumer(ctx); ok {
+		ctx = deleteConsumer(ctx)
+		c.freeAckConsumers = append(c.freeAckConsumers, i)
 	}
 
 	return ctx, nil
@@ -141,7 +144,7 @@ func (c *AmqpClient) IWaitTheEndOfEventProcessing(ctx context.Context) error {
 // Step example:
 //	When I wait the end of 2 events processing
 func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expectedCount int) error {
-	msgs, err := c.getMainStreamAckMsgs(ctx)
+	msgs, err := c.getMainStreamAckConsumer(ctx)
 	if err != nil {
 		return err
 	}
@@ -261,7 +264,7 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 	timer := time.NewTimer(stepTimeout)
 	defer timer.Stop()
 
-	msgs, err := c.getMainStreamAckMsgs(ctx)
+	msgs, err := c.getMainStreamAckConsumer(ctx)
 	if err != nil {
 		return err
 	}
@@ -347,7 +350,7 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 	timer := time.NewTimer(stepTimeout)
 	defer timer.Stop()
 
-	msgs, err := c.getMainStreamAckMsgs(ctx)
+	msgs, err := c.getMainStreamAckConsumer(ctx)
 	if err != nil {
 		return err
 	}
@@ -616,7 +619,7 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 	timer := time.NewTimer(stepTimeout)
 	defer timer.Stop()
 
-	msgs, err := c.getMainStreamAckMsgs(ctx)
+	msgs, err := c.getMainStreamAckConsumer(ctx)
 	if err != nil {
 		return err
 	}
@@ -669,16 +672,15 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 	}
 }
 
-func (c *AmqpClient) getMainStreamAckMsgs(ctx context.Context) (<-chan amqp.Delivery, error) {
-	scId, ok := GetScenario(ctx)
-	if !ok {
-		return nil, fmt.Errorf("scneario isn't started")
+func (c *AmqpClient) getMainStreamAckConsumer(ctx context.Context) (<-chan amqp.Delivery, error) {
+	c.ackConsumersMx.Lock()
+	defer c.ackConsumersMx.Unlock()
+
+	if i, ok := getConsumer(ctx); ok {
+		return c.ackConsumers[i], nil
 	}
 
-	c.mainStreamAckMsgsMx.Lock()
-	defer c.mainStreamAckMsgsMx.Unlock()
-
-	return c.mainStreamAckMsgs[scId], nil
+	return nil, fmt.Errorf("scneario isn't started")
 }
 
 func (c *AmqpClient) decodeEvent(msg []byte) (types.Event, map[string]interface{}, error) {
