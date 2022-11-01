@@ -231,3 +231,10 @@ export const ALARM_PATTERN_FIELDS = {
   tags: 'tags',
   activated: 'activated',
 };
+
+export const ALARM_STEP_FIELDS = {
+  timestamp: 't',
+  value: 'val',
+  message: 'm',
+  author: 'a',
+};

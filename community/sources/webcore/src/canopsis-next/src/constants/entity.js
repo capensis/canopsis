@@ -531,3 +531,28 @@ export const ENTITY_PATTERN_FIELDS = {
   impactLevel: 'impact_level',
   lastEventDate: 'last_event_date',
 };
+
+export const ENTITY_TEMPLATE_FIELDS = {
+  id: 'entity._id',
+  name: 'entity.name',
+  infos: 'entity.infos',
+  connector: 'entity.connector',
+  connectorName: 'entity.connector_name',
+  component: 'entity.component',
+  resource: 'entity.resource',
+  state: 'entity.state',
+  status: 'entity.status',
+  snooze: 'entity.snooze',
+  ack: 'entity.ack',
+  lastUpdateDate: 'entity.last_update_date',
+  impactLevel: 'entity.impact_level',
+  impactState: 'entity.impact_state',
+  categoryName: 'entity.category.name',
+  alarmDisplayName: 'entity.alarm_display_name',
+  pbehaviorInfo: 'entity.pbehavior_info',
+  alarmCreationDate: 'entity.alarm_creation_date',
+  ticket: 'entity.ticket',
+  statsOk: 'entity.stats.ok',
+  statsKo: 'entity.stats.ko',
+  links: 'entity.linklist',
+};

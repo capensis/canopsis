@@ -62,7 +62,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <field-template-stub
       title="Template - Weather item"
       value=<div>block-template</div>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -70,7 +70,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <field-template-stub
       title="Template - Modal"
       value=<div>modal-template</div>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -78,7 +78,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <field-template-stub
       title="Template - Entities"
       value=<div>entity-template</div>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -212,7 +212,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
 <hr id="null">
 <p>{{ entity.output }}</p>
 <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -220,7 +220,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <field-template-stub
       title="Template - Modal"
       value="{{ entities name=\\"entity._id\\" }}"
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -230,7 +230,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       value=<ul>
   <li><strong>Libellé</strong> : {{entity.name}}</li>
 </ul>
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
       class="v-divider theme--light"

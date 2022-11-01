@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT } from '@/constants';
+import { ALARM_STEP_FIELDS, ENTITY_TEMPLATE_FIELDS, MAX_LIMIT, PBEHAVIOR_INFO_FIELDS } from '@/constants';
 
 const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
@@ -35,72 +35,59 @@ export const entityVariablesMixin = {
       }));
     },
 
+    alarmStepValueVariable() {
+      return {
+        text: this.$t('common.value'),
+        value: ALARM_STEP_FIELDS.value,
+      };
+    },
+
+    alarmStepTimestampVariable() {
+      return {
+        text: this.$t('common.timestamp'),
+        value: ALARM_STEP_FIELDS.timestamp,
+      };
+    },
+
+    alarmStepMessageVariable() {
+      return {
+        text: this.$t('common.message'),
+        value: ALARM_STEP_FIELDS.message,
+      };
+    },
+
+    alarmStepAuthorVariable() {
+      return {
+        text: this.$t('common.author'),
+        value: ALARM_STEP_FIELDS.author,
+      };
+    },
+
     stateVariables() {
-      return [
-        {
-          text: this.$t('common.timestamp'),
-          value: 't',
-        },
-        {
-          text: this.$t('common.value'),
-          value: 'val',
-        },
-      ];
+      return [this.alarmStepTimestampVariable, this.alarmStepValueVariable];
     },
 
     statusVariables() {
-      return [
-        {
-          text: this.$t('common.value'),
-          value: 'val',
-        },
-      ];
+      return [this.alarmStepValueVariable];
     },
 
     ticketVariables() {
-      return [
-        {
-          text: this.$t('common.value'),
-          value: 'val',
-        },
-      ];
+      return [this.alarmStepValueVariable];
     },
 
     snoozeVariables() {
       return [
-        {
-          text: this.$t('common.timestamp'),
-          value: 't',
-        },
-        {
-          text: this.$t('common.value'),
-          value: 'val',
-        },
-        {
-          text: this.$t('common.message'),
-          value: 'm',
-        },
+        this.alarmStepTimestampVariable,
+        this.alarmStepAuthorVariable,
+        this.alarmStepMessageVariable,
       ];
     },
 
     ackVariables() {
       return [
-        {
-          text: this.$t('common.timestamp'),
-          value: 't',
-        },
-        {
-          text: this.$t('common.value'),
-          value: 'val',
-        },
-        {
-          text: this.$t('common.message'),
-          value: 'm',
-        },
-        {
-          text: this.$t('common.author'),
-          value: 'a',
-        },
+        this.alarmStepTimestampVariable,
+        this.alarmStepAuthorVariable,
+        this.alarmStepMessageVariable,
       ];
     },
 
@@ -108,15 +95,15 @@ export const entityVariablesMixin = {
       return [
         {
           text: this.$t('pbehavior.pbehaviorType'),
-          value: 'type_name',
+          value: PBEHAVIOR_INFO_FIELDS.typeName,
         },
         {
           text: this.$tc('pbehavior.pbehaviorReason'),
-          value: 'reason',
+          value: PBEHAVIOR_INFO_FIELDS.reason,
         },
         {
           text: this.$t('pbehavior.pbehaviorName'),
-          value: 'name',
+          value: PBEHAVIOR_INFO_FIELDS.name,
         },
       ];
     },
@@ -125,102 +112,98 @@ export const entityVariablesMixin = {
       return [
         {
           text: this.$t('common.id'),
-          value: 'entity._id',
+          value: ENTITY_TEMPLATE_FIELDS.id,
         },
         {
           text: this.$t('common.name'),
-          value: 'entity.name',
+          value: ENTITY_TEMPLATE_FIELDS.name,
         },
         {
           text: this.$t('common.infos'),
-          value: 'entity.infos',
+          value: ENTITY_TEMPLATE_FIELDS.infos,
           variables: this.infosVariables,
         },
         {
           text: this.$t('common.connector'),
-          value: 'entity.connector',
+          value: ENTITY_TEMPLATE_FIELDS.connector,
         },
         {
           text: this.$t('common.connectorName'),
-          value: 'entity.connector_name',
+          value: ENTITY_TEMPLATE_FIELDS.connectorName,
         },
         {
           text: this.$t('common.component'),
-          value: 'entity.component',
+          value: ENTITY_TEMPLATE_FIELDS.component,
         },
         {
           text: this.$t('common.resource'),
-          value: 'entity.resource',
+          value: ENTITY_TEMPLATE_FIELDS.resource,
         },
         {
           text: this.$t('common.state'),
-          value: 'entity.state',
+          value: ENTITY_TEMPLATE_FIELDS.state,
           variables: this.stateVariables,
         },
         {
           text: this.$t('common.status'),
-          value: 'entity.status',
+          value: ENTITY_TEMPLATE_FIELDS.status,
           variables: this.statusVariables,
         },
         {
           text: this.$t('common.snooze'),
-          value: 'entity.snooze',
+          value: ENTITY_TEMPLATE_FIELDS.snooze,
           variables: this.snoozeVariables,
         },
         {
           text: this.$t('common.ack'),
-          value: 'entity.ack',
+          value: ENTITY_TEMPLATE_FIELDS.ack,
           variables: this.ackVariables,
         },
         {
           text: this.$t('common.updated'),
-          value: 'entity.last_update_date',
+          value: ENTITY_TEMPLATE_FIELDS.lastUpdateDate,
         },
         {
           text: this.$t('common.impactLevel'),
-          value: 'entity.impact_level',
+          value: ENTITY_TEMPLATE_FIELDS.impactLevel,
         },
         {
           text: this.$t('common.impactState'),
-          value: 'entity.impact_state',
+          value: ENTITY_TEMPLATE_FIELDS.impactState,
         },
         {
           text: this.$t('common.category'),
-          value: 'entity.category.name',
-        },
-        {
-          text: this.$t('alarmList.alarmDisplayName'),
-          value: 'entity.alarm_display_name',
-        },
-        {
-          text: this.$tc('common.pbehavior'),
-          value: 'entity.pbehavior',
+          value: ENTITY_TEMPLATE_FIELDS.categoryName,
         },
         {
           text: this.$t('pbehavior.pbehaviorInfo'),
-          value: 'entity.pbehavior_info',
+          value: ENTITY_TEMPLATE_FIELDS.pbehaviorInfo,
           variables: this.pbehaviorInfoVariables,
         },
         {
           text: this.$t('alarmList.alarmCreationDate'),
-          value: 'entity.alarm_creation_date',
+          value: ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
         },
         {
           text: this.$t('common.ticket'),
-          value: 'entity.ticket',
+          value: ENTITY_TEMPLATE_FIELDS.ticket,
           variables: this.ticketVariables,
         },
         {
           text: this.$t('entity.okEvents'),
-          value: 'entity.stats.ok',
+          value: ENTITY_TEMPLATE_FIELDS.statsOk,
         },
         {
           text: this.$t('entity.koEvents'),
-          value: 'entity.stats.ko',
+          value: ENTITY_TEMPLATE_FIELDS.statsKo,
+        },
+        {
+          text: this.$t('alarmList.alarmDisplayName'),
+          value: ENTITY_TEMPLATE_FIELDS.alarmDisplayName,
         },
         {
           text: this.$tc('common.link', 2),
-          value: 'entity.links',
+          value: ENTITY_TEMPLATE_FIELDS.links,
         },
       ];
     },

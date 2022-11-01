@@ -19,7 +19,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT, PBEHAVIOR_TYPE_TYPES, WEATHER_ICONS } from '@/constants';
+import { MAX_LIMIT, PBEHAVIOR_TYPE_TYPES, SERVICE_STATES, WEATHER_ICONS } from '@/constants';
 
 const { mapActions: mapPbehaviorTypesActions } = createNamespacedHelpers('pbehaviorTypes');
 
@@ -67,15 +67,25 @@ export default {
       }));
     },
 
+    serviceWeatherIcons() {
+      return [
+        {
+          icon: WEATHER_ICONS[SERVICE_STATES.ok],
+          text: this.$t('serviceWeather.iconTypes.ok'),
+        },
+        {
+          icon: WEATHER_ICONS[SERVICE_STATES.minor],
+          text: this.$t('serviceWeather.iconTypes.minorOrMajor'),
+        },
+        {
+          icon: WEATHER_ICONS[SERVICE_STATES.critical],
+          text: this.$t('serviceWeather.iconTypes.critical'),
+        },
+      ];
+    },
+
     availableIcons() {
-      return Object.entries(WEATHER_ICONS)
-        .map(([value, icon]) => ({
-          icon,
-          text: this.$te(`common.stateTypes.${value}`)
-            ? this.$t(`common.stateTypes.${value}`)
-            : this.$t(`serviceWeather.iconTypes.${value}`),
-        }))
-        .concat(this.pbehaviorTypeIcons);
+      return [...this.serviceWeatherIcons, ...this.pbehaviorTypeIcons];
     },
   },
   mounted() {
