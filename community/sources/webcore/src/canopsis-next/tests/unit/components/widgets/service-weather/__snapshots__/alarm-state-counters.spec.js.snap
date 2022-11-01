@@ -20,7 +20,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         build
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         11
       </span>
     </div>
@@ -34,7 +36,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         $vuetify.icons.playlist_build
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         10
       </span>
     </div>
@@ -48,7 +52,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         playlist_play
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         9
       </span>
     </div>
@@ -62,7 +68,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         playlist_add_check
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         8
       </span>
     </div>
@@ -76,7 +84,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         $vuetify.icons.warning_stroke
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         7
       </span>
     </div>
@@ -90,7 +100,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         $vuetify.icons.warning_stroke
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         6
       </span>
     </div>
@@ -104,7 +116,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         $vuetify.icons.warning_stroke
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         5
       </span>
     </div>
@@ -118,7 +132,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         check_circle
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         4
       </span>
     </div>
@@ -132,7 +148,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         $vuetify.icons.notification_important_stroke
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         3
       </span>
     </div>
@@ -146,7 +164,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         notification_important
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         2
       </span>
     </div>
@@ -160,7 +180,9 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       >
         $vuetify.icons.mediation
       </i>
-      <span>
+      <span
+        class="caption"
+      >
         1
       </span>
     </div>
