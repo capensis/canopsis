@@ -599,6 +599,8 @@ export default merge({
     },
   },
   alarmList: {
+    alarmCreationDate: 'Date de création de l\'alarme',
+    alarmDisplayName: 'Nom d\'affichage de l\'alarme',
     actions: {
       titles: {
         ack: 'Acquitter',
@@ -2213,6 +2215,7 @@ export default merge({
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
     grey: 'Gris',
+    hideGrey: 'Cacher le gris',
     primaryIcon: 'Icône principale',
     secondaryIcon: 'Icône secondaire',
     massActions: 'Actions de masse',
@@ -2327,6 +2330,10 @@ export default merge({
   pbehavior: {
     periodsCalendar: 'Calendrier avec périodes',
     notEditable: 'Ne peut pas être modifié',
+    pbehaviorInfo: 'PBehavior infos',
+    pbehaviorType: 'Type PBehavior',
+    pbehaviorReason: 'Raison PBehavior',
+    pbehaviorName: 'Nom PBehavior',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2741,6 +2748,8 @@ export default merge({
     addInformation: 'Ajouter une information',
     emptyInfos: 'Aucune information',
     availabilityState: 'État de disponibilité',
+    okEvents: 'OK événements',
+    koEvents: 'KO événements',
     types: {
       [ENTITY_TYPES.component]: 'Composant',
       [ENTITY_TYPES.connector]: 'Connecteur',
