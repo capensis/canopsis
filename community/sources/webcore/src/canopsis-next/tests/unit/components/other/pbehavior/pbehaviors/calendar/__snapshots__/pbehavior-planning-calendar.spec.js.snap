@@ -122,7 +122,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     </div>
     <pbehavior-planning-calendar-legend-stub
       colorstotypes="[object Object]"
-      exceptiontypes=""
+      exceptiontypes="[object Object],[object Object],[object Object]"
     />
   </div>
   <div

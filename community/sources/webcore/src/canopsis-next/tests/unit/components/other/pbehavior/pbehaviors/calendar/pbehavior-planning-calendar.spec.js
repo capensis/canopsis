@@ -3,19 +3,22 @@ import flushPromises from 'flush-promises';
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 import { pbehaviorToForm } from '@/helpers/forms/planning-pbehavior';
+import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
 const localVue = createVueInstance();
 
-const snapshotStubs = {
+localVue.use(DaySpanVuetifyPlugin);
+
+const stubs = {
   'c-progress-overlay': true,
   'pbehavior-create-event': true,
   'pbehavior-planning-calendar-legend': true,
 };
 
 describe('pbehavior-planning-calendar', () => {
-  const { pbehaviorTimespanModule } = createPbehaviorTimespanModule();
+  const { pbehaviorTimespanModule, fetchTimespansListWithoutStore } = createPbehaviorTimespanModule();
   const { pbehaviorTypesModule } = createPbehaviorTypesModule();
   const store = createMockedStoreModules([pbehaviorTimespanModule, pbehaviorTypesModule]);
 
@@ -43,10 +46,15 @@ describe('pbehavior-planning-calendar', () => {
       type: { _id: 'changed-pbehavior-type-id' },
     }),
   };
+  const timespans = [
+    { from: 1612825000, to: 1612911400, type: { _id: 'type-id-1' } },
+    { from: 1612825100, to: 1612911500, type: { _id: 'type-id-2' } },
+    { from: 1612825200, to: 1612911600, type: { _id: 'type-id-3' } },
+  ];
 
   const snapshotFactory = generateRenderer(PbehaviorPlanningCalendar, {
     localVue,
-    stubs: snapshotStubs,
+    stubs,
     parentComponent: {
       provide: {
         $system: {},
@@ -71,6 +79,7 @@ describe('pbehavior-planning-calendar', () => {
   });
 
   test('Renders `pbehavior-planning-calendar` with custom props', async () => {
+    fetchTimespansListWithoutStore.mockResolvedValue(timespans);
     const wrapper = snapshotFactory({
       store,
       propsData: {

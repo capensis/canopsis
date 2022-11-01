@@ -138,6 +138,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       class="v-divider theme--light"
     />
     <field-modal-type-stub
+      name="modalType"
       value="both"
     />
   </widget-settings-group-stub>
@@ -290,6 +291,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       class="v-divider theme--light"
     />
     <field-modal-type-stub
+      name="modalType"
       value="both"
     />
   </widget-settings-group-stub>
