@@ -25,7 +25,7 @@
               private
             )
           c-enabled-field.ml-3(
-            :value="query.gray",
+            :value="query.is_grey",
             :label="$t('serviceWeather.grey')",
             @input="updateGray"
           )
@@ -100,15 +100,15 @@ export default {
     },
   },
   methods: {
-    updateGray(gray) {
+    updateGray(isGrey) {
       this.updateContentInUserPreference({
-        gray,
+        is_grey: isGrey,
       });
 
       this.query = {
         ...this.query,
 
-        gray,
+        is_grey: isGrey,
       };
     },
 

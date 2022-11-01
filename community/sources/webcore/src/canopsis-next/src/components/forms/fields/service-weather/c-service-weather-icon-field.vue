@@ -3,6 +3,7 @@
     v-field="value",
     :label="label",
     :items="availableIcons",
+    :loading="pending",
     :name="name",
     :error-messages="errors.collect(name)",
     item-value="icon"
@@ -16,7 +17,11 @@
 </template>
 
 <script>
-import { WEATHER_ICONS } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MAX_LIMIT, PBEHAVIOR_TYPE_TYPES, WEATHER_ICONS } from '@/constants';
+
+const { mapActions: mapPbehaviorTypesActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
   inject: ['$validator'],
@@ -42,6 +47,12 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      pbehaviorTypes: [],
+      pending: false,
+    };
+  },
   computed: {
     rules() {
       return {
@@ -49,13 +60,44 @@ export default {
       };
     },
 
-    availableIcons() {
-      return Object.entries(WEATHER_ICONS).map(([value, icon]) => ({
-        icon,
-        text: this.$te(`common.stateTypes.${value}`)
-          ? this.$t(`common.stateTypes.${value}`)
-          : this.$t(`serviceWeather.iconTypes.${value}`),
+    pbehaviorTypeIcons() {
+      return this.pbehaviorTypes.map(pbehaviorType => ({
+        icon: pbehaviorType.icon_name,
+        text: pbehaviorType.name,
       }));
+    },
+
+    availableIcons() {
+      return Object.entries(WEATHER_ICONS)
+        .map(([value, icon]) => ({
+          icon,
+          text: this.$te(`common.stateTypes.${value}`)
+            ? this.$t(`common.stateTypes.${value}`)
+            : this.$t(`serviceWeather.iconTypes.${value}`),
+        }))
+        .concat(this.pbehaviorTypeIcons);
+    },
+  },
+  mounted() {
+    this.fetchTypesList();
+  },
+  methods: {
+    ...mapPbehaviorTypesActions({
+      fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
+    }),
+
+    async fetchTypesList() {
+      this.pending = true;
+
+      const { data: types } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: {
+          types: [PBEHAVIOR_TYPE_TYPES.inactive, PBEHAVIOR_TYPE_TYPES.maintenance, PBEHAVIOR_TYPE_TYPES.pause],
+          limit: MAX_LIMIT,
+        },
+      });
+
+      this.pbehaviorTypes = types;
+      this.pending = false;
     },
   },
 };
