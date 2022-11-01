@@ -25,7 +25,7 @@ import (
 type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	FindByEntityID(ctx context.Context, entity libtypes.Entity) ([]Response, error)
+	FindByEntityID(ctx context.Context, entity libtypes.Entity, r FindByEntityIDRequest) ([]Response, error)
 	CalendarByEntityID(ctx context.Context, entity libtypes.Entity, r CalendarByEntityIDRequest) ([]CalendarResponse, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	FindEntities(ctx context.Context, pbhID string, request EntitiesListRequest) (*AggregationEntitiesResult, error)
@@ -142,7 +142,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &result, nil
 }
 
-func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity) ([]Response, error) {
+func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity, r FindByEntityIDRequest) ([]Response, error) {
 	pbhIDs, err := s.getMatchedPbhIDs(ctx, entity)
 	if err != nil {
 		return nil, err
@@ -151,6 +151,15 @@ func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity) ([]R
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": pbhIDs}}}}
 	pipeline = append(pipeline, GetNestedObjectsPipeline()...)
 	pipeline = append(pipeline, common.GetSortQuery("created", common.SortAsc))
+	if r.WithFlags {
+		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+			"editable": bson.M{"$cond": bson.M{
+				"if":   "$origin",
+				"then": false,
+				"else": true,
+			}},
+		}})
+	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
