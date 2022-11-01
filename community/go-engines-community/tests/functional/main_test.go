@@ -102,12 +102,14 @@ func TestMain(m *testing.M) {
 		return
 	}
 
-	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
-	scenarioInitializer, err := InitializeScenario(flags, dbClient, amqpConnection, apiUrl, eventLogger)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("")
-	}
+	templater := bdd.NewTemplater(map[string]interface{}{"apiURL": apiUrl})
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, templater)
+	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
+		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
+	mongoClient := bdd.NewMongoClient(dbClient)
 
+	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
+	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, eventLogger)
 	status := godog.TestSuite{
 		Name:                 "canopsis",
 		TestSuiteInitializer: testSuiteInitializer,
@@ -148,23 +150,9 @@ func InitializeTestSuite(
 	}
 }
 
-func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amqp.Connection, apiUrl string,
-	eventLogger zerolog.Logger) (func(*godog.ScenarioContext), error) {
-	templater := bdd.NewTemplater(map[string]interface{}{"apiURL": apiUrl})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, templater)
-	mongoClient, err := bdd.NewMongoClient(dbClient)
-	if err != nil {
-		return nil, err
-	}
-
-	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
-		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
-
+func InitializeScenario(flags Flags, apiClient *bdd.ApiClient, amqpClient *bdd.AmqpClient, mongoClient *bdd.MongoClient,
+	eventLogger zerolog.Logger) func(*godog.ScenarioContext) {
 	return func(scenarioCtx *godog.ScenarioContext) {
-		scenarioCtx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-			ctx = bdd.SetScenario(ctx, sc.Id)
-			return ctx, nil
-		})
 		scenarioCtx.Before(amqpClient.BeforeScenario)
 		scenarioCtx.After(amqpClient.AfterScenario)
 		scenarioCtx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
@@ -239,7 +227,7 @@ func InitializeScenario(flags Flags, dbClient mongo.DbClient, amqpConnection amq
 		})
 		scenarioCtx.Step(`^I call RPC to engine-axe with alarm ([^:]+):$`, amqpClient.ICallRPCAxeRequest)
 		scenarioCtx.Step(`^I call RPC to engine-webhook with alarm ([^:]+):$`, amqpClient.ICallRPCWebhookRequest)
-	}, nil
+	}
 }
 
 func clearStores(
