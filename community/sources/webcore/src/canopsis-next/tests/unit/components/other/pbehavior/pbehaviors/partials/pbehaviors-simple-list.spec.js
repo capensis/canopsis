@@ -91,7 +91,7 @@ describe('pbehaviors-simple-list', () => {
 
     expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalledWith(
       expect.any(Object),
-      { id: entityId },
+      { id: entityId, params: { with_flags: true } },
       undefined,
     );
   });
@@ -128,7 +128,7 @@ describe('pbehaviors-simple-list', () => {
     await config.afterSubmit();
     expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalledWith(
       expect.any(Object),
-      { id: entityId },
+      { id: entityId, params: { with_flags: true } },
       undefined,
     );
   });
