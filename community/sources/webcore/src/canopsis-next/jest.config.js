@@ -13,7 +13,7 @@ module.exports = {
     '^.+\\.svg$': '<rootDir>/tests/unit/jest.svg',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor)/.*)',
+    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor|dayspan-vuetify/src)/.*)',
   ],
   moduleNameMapper: {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
