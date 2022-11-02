@@ -153,8 +153,6 @@ func InitializeTestSuite(
 func InitializeScenario(flags Flags, apiClient *bdd.ApiClient, amqpClient *bdd.AmqpClient, mongoClient *bdd.MongoClient,
 	eventLogger zerolog.Logger) func(*godog.ScenarioContext) {
 	return func(scenarioCtx *godog.ScenarioContext) {
-		scenarioCtx.Before(amqpClient.BeforeScenario)
-		scenarioCtx.After(amqpClient.AfterScenario)
 		scenarioCtx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 			eventLogger.Info().Str("file", sc.Uri).Msgf("%s", sc.Name)
 			return ctx, nil
@@ -172,6 +170,9 @@ func InitializeScenario(flags Flags, apiClient *bdd.ApiClient, amqpClient *bdd.A
 				return ctx, scErr
 			})
 		}
+
+		scenarioCtx.Before(amqpClient.BeforeScenario)
+		scenarioCtx.After(amqpClient.AfterScenario)
 
 		scenarioCtx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		scenarioCtx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
