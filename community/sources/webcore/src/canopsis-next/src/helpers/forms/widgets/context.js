@@ -4,11 +4,12 @@ import { PAGINATION_LIMIT } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_CONTEXT_WIDGET_COLUMNS,
-  DEFAULT_CONTEXT_ALARMS_COLUMNS,
+  DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
+  DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS,
 } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
@@ -45,10 +46,10 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
     : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   resolvedAlarmsColumns: parameters.resolvedAlarmsColumns
     ? cloneDeep(parameters.resolvedAlarmsColumns)
-    : defaultColumnsToColumns(DEFAULT_CONTEXT_ALARMS_COLUMNS),
+    : defaultColumnsToColumns(DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS),
   activeAlarmsColumns: parameters.resolvedAlarmsColumns
     ? cloneDeep(parameters.activeAlarmsColumns)
-    : defaultColumnsToColumns(DEFAULT_CONTEXT_ALARMS_COLUMNS),
+    : defaultColumnsToColumns(DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS),
   selectedTypes: parameters.selectedTypes
     ? cloneDeep(parameters.selectedTypes)
     : [],
