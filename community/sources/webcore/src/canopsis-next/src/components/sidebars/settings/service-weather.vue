@@ -139,12 +139,14 @@ export default {
         { label: this.$t('common.state'), value: 'state' },
       ];
     },
+
     blockTemplateVariables() {
       const excludeFields = [
         ENTITY_TEMPLATE_FIELDS.ticket,
         ENTITY_TEMPLATE_FIELDS.statsKo,
         ENTITY_TEMPLATE_FIELDS.statsOk,
         ENTITY_TEMPLATE_FIELDS.alarmDisplayName,
+        ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
       ];
 
       return this.variables.filter(({ value }) => !excludeFields.includes(value));
