@@ -109,7 +109,7 @@ func TestMain(m *testing.M) {
 	mongoClient := bdd.NewMongoClient(dbClient)
 
 	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
-	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, eventLogger)
+	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient)
 	status := godog.TestSuite{
 		Name:                 "canopsis",
 		TestSuiteInitializer: testSuiteInitializer,
@@ -150,14 +150,13 @@ func InitializeTestSuite(
 	}
 }
 
-func InitializeScenario(flags Flags, apiClient *bdd.ApiClient, amqpClient *bdd.AmqpClient, mongoClient *bdd.MongoClient,
-	eventLogger zerolog.Logger) func(*godog.ScenarioContext) {
+func InitializeScenario(
+	flags Flags,
+	apiClient *bdd.ApiClient,
+	amqpClient *bdd.AmqpClient,
+	mongoClient *bdd.MongoClient,
+) func(*godog.ScenarioContext) {
 	return func(scenarioCtx *godog.ScenarioContext) {
-		scenarioCtx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-			eventLogger.Info().Str("file", sc.Uri).Msgf("%s", sc.Name)
-			return ctx, nil
-		})
-
 		if flags.checkUncaughtEvents {
 			scenarioCtx.After(func(ctx context.Context, sc *godog.Scenario, scErr error) (context.Context, error) {
 				if scErr == nil {
