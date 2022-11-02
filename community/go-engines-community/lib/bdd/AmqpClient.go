@@ -23,6 +23,11 @@ import (
 // stepTimeout is used to limit waiting time for wait steps.
 const stepTimeout = 10 * time.Second
 
+const (
+	consumePrefetchCount = 1000
+	consumePrefetchSize  = 0
+)
+
 // AmqpClient represents utility struct which implements AMQP steps to feature context.
 type AmqpClient struct {
 	amqpConnection libamqp.Connection
@@ -63,14 +68,25 @@ func NewAmqpClient(
 	}
 }
 
-func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+func (c *AmqpClient) BeforeScenario(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+	ctx = setScenarioName(ctx, sc.Name)
+	ctx = setScenarioUri(ctx, sc.Uri)
+
 	c.ackConsumersMx.Lock()
 	defer c.ackConsumersMx.Unlock()
 
 	if len(c.freeAckConsumers) > 0 {
-		ctx = setConsumer(ctx, c.freeAckConsumers[0])
+		consumer := c.freeAckConsumers[0]
+		ctx = setConsumer(ctx, consumer)
 		c.freeAckConsumers = c.freeAckConsumers[1:]
-		return ctx, nil
+
+		for {
+			select {
+			case <-c.ackConsumers[consumer]:
+			default:
+				return ctx, nil
+			}
+		}
 	}
 
 	ch, err := c.amqpConnection.Channel()
@@ -100,6 +116,11 @@ func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (con
 	)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot bind queue: %v", err)
+	}
+
+	err = ch.Qos(consumePrefetchCount, consumePrefetchSize, false)
+	if err != nil {
+		return ctx, fmt.Errorf("cannot qos: %v", err)
 	}
 
 	msgs, err := ch.Consume(
@@ -152,6 +173,9 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expected
 	defer timer.Stop()
 	caughtCount := 0
 
+	scName, _ := getScenarioName(ctx)
+	scUri, _ := getScenarioUri(ctx)
+
 	for {
 		select {
 		case d, ok := <-msgs:
@@ -166,6 +190,8 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expected
 			c.eventLogger.Info().Err(err).
 				Str("event_type", event.EventType).
 				Str("entity", event.GetEID()).
+				Str("file", scUri).
+				Str("scenario", scName).
 				RawJSON("body", d.Body).Msg("received event")
 
 			if expectedCount == caughtCount {
@@ -269,6 +295,9 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 		return err
 	}
 
+	scName, _ := getScenarioName(ctx)
+	scUri, _ := getScenarioUri(ctx)
+
 	for {
 		select {
 		case d, ok := <-msgs:
@@ -278,7 +307,11 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 
 			event, eventMap, err := c.decodeEvent(d.Body)
 			if err != nil {
-				c.eventLogger.Err(err).RawJSON("body", d.Body).Msg("received invalid event")
+				c.eventLogger.Err(err).
+					RawJSON("body", d.Body).
+					Str("file", scUri).
+					Str("scenario", scName).
+					Msg("received invalid event")
 				continue
 			}
 
@@ -288,7 +321,10 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 				Str("event_type", event.EventType).
 				Str("entity", event.GetEID()).
 				Bool("matched", foundIndex >= 0).
-				RawJSON("body", d.Body).Msg("received event")
+				RawJSON("body", d.Body).
+				Str("file", scUri).
+				Str("scenario", scName).
+				Msg("received event")
 
 			if foundIndex >= 0 {
 				return nil
@@ -355,6 +391,9 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 		return err
 	}
 
+	scName, _ := getScenarioName(ctx)
+	scUri, _ := getScenarioUri(ctx)
+
 	for {
 		select {
 		case d, ok := <-msgs:
@@ -364,7 +403,11 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 
 			event, eventMap, err := c.decodeEvent(d.Body)
 			if err != nil {
-				c.eventLogger.Err(err).RawJSON("body", d.Body).Msg("received invalid event")
+				c.eventLogger.Err(err).
+					RawJSON("body", d.Body).
+					Str("file", scUri).
+					Str("scenario", scName).
+					Msg("received invalid event")
 				continue
 			}
 
@@ -386,6 +429,8 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 				Str("event_type", event.EventType).
 				Str("entity", event.GetEID()).
 				Bool("matched", foundIndex >= 0).
+				Str("file", scUri).
+				Str("scenario", scName).
 				RawJSON("body", d.Body).Msg("received event")
 
 			if len(matched) == len(sentEvents) {
@@ -624,6 +669,9 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 		return err
 	}
 
+	scName, _ := getScenarioName(ctx)
+	scUri, _ := getScenarioUri(ctx)
+
 	for {
 		select {
 		case d, ok := <-msgs:
@@ -633,7 +681,12 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 
 			event, eventMap, err := c.decodeEvent(d.Body)
 			if err != nil {
-				c.eventLogger.Err(err).RawJSON("body", d.Body).Msg("received invalid event")
+				c.eventLogger.
+					Err(err).
+					RawJSON("body", d.Body).
+					Str("file", scUri).
+					Str("scenario", scName).
+					Msg("received invalid event")
 				continue
 			}
 
@@ -660,6 +713,8 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 				Str("event_type", event.EventType).
 				Str("entity", event.GetEID()).
 				Bool("matched", foundIndex >= 0).
+				Str("file", scUri).
+				Str("scenario", scName).
 				RawJSON("body", d.Body).Msg("received event")
 
 			if len(matched) == len(expectedEvents) {

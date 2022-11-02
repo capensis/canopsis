@@ -10,7 +10,9 @@ import (
 type contextKey int
 
 const (
-	contextKeyResponseStatusCode contextKey = iota
+	contextKeyScenarioName contextKey = iota
+	contextKeyScenarioUri
+	contextKeyResponseStatusCode
 	contextKeyResponseBody
 	contextKeyResponseBodyOutput
 	contextKeyHeaders
@@ -18,6 +20,24 @@ const (
 	contextKeyVars
 	contextConsumer
 )
+
+func getScenarioName(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(contextKeyScenarioName).(string)
+	return v, ok
+}
+
+func setScenarioName(ctx context.Context, v string) context.Context {
+	return context.WithValue(ctx, contextKeyScenarioName, v)
+}
+
+func getScenarioUri(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(contextKeyScenarioUri).(string)
+	return v, ok
+}
+
+func setScenarioUri(ctx context.Context, v string) context.Context {
+	return context.WithValue(ctx, contextKeyScenarioUri, v)
+}
 
 func getResponseStatusCode(ctx context.Context) (int, bool) {
 	v, ok := ctx.Value(contextKeyResponseStatusCode).(int)

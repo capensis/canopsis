@@ -734,17 +734,31 @@ Step example:
 */
 func (a *ApiClient) ISendAnEvent(ctx context.Context, doc string) (context.Context, error) {
 	uri := fmt.Sprintf("%s/api/v4/event", a.url)
-	body, err := a.templater.Execute(ctx, doc)
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
 		return ctx, err
 	}
 
-	responseStr := strings.TrimSpace(body.String())
-	if responseStr == "" || responseStr[0] != '[' {
-		responseStr = "[" + responseStr + "]"
+	events := make([]map[string]interface{}, 0)
+	err = json.Unmarshal(b.Bytes(), &events)
+	if err != nil {
+		event := make(map[string]interface{})
+		err = json.Unmarshal(b.Bytes(), &event)
+		if err != nil {
+			return ctx, err
+		}
+		events = append(events, event)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, uri, body)
+	for i := range events {
+		events[i]["debug"] = true
+	}
+
+	body, err := json.Marshal(events)
+	if err != nil {
+		return ctx, err
+	}
+	req, err := http.NewRequest(http.MethodPost, uri, bytes.NewBuffer(body))
 	if err != nil {
 		return ctx, fmt.Errorf("cannot create event request: %w", err)
 	}
@@ -760,7 +774,7 @@ func (a *ApiClient) ISendAnEvent(ctx context.Context, doc string) (context.Conte
 		return ctx, err
 	}
 
-	err = a.TheResponseBodyShouldContain(ctx, fmt.Sprintf("{\"sent_events\":%s}", responseStr))
+	err = a.TheResponseBodyShouldContain(ctx, fmt.Sprintf("{\"sent_events\":%s}", body))
 	return ctx, err
 }
 
