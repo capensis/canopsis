@@ -2007,7 +2007,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-24"
     }
     """
-    When I wait the next periodical process
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=che-event-filters-24
     Then the response code should be 200
     Then the response body should contain:
