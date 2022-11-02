@@ -38,7 +38,7 @@ Feature: Get alarms
       }
     ]
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
