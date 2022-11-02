@@ -51,7 +51,8 @@ configuration:
       flushinterval: 1s
       sliinterval: 1h
     tech_metrics:
-      enabled: true
+      enabled: false
+      dumpkeepinterval: 1h
     timezone:
       timezone: Europe/Paris
 
