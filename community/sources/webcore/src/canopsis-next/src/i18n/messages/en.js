@@ -287,6 +287,7 @@ export default merge({
     enginesMetrics: 'Engines` metrics',
     failed: 'Failed',
     close: 'Close',
+    alarmId: 'Alarm ID',
     timestamp: 'Timestamp',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -518,6 +519,8 @@ export default merge({
     dependencies: 'Dependencies',
     noEventsFilter: 'No events filter',
     impactChain: 'Impact chain',
+    resolvedAlarms: 'Resolved alarms',
+    activeAlarm: 'Active alarm',
     impactDepends: 'Impact/Depends',
     treeOfDependencies: 'Tree of dependencies',
     infosSearchLabel: 'Search infos',
@@ -816,6 +819,8 @@ export default merge({
     isPriorityEnabled: 'Show priority',
     clearFilterDisabled: 'Disable possibility to clear selected filter',
     alarmsColumns: 'Alarm list columns',
+    resolvedAlarmsColumns: 'Column names for resolved alarms',
+    activeAlarmsColumns: 'Column names for active alarms',
     entitiesColumns: 'Context explorer columns',
     entityInfoPopup: 'Entity info popup',
     modal: '(Modal)',
@@ -2606,7 +2611,6 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
-    alarmId: 'Alarm ID',
     executedAt: 'Executed at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',

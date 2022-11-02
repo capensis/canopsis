@@ -287,6 +287,7 @@ export default merge({
     enginesMetrics: 'Métriques des moteurs',
     failed: 'Échoué',
     close: 'Fermer',
+    alarmId: 'Identifiant de l\'alarme',
     timestamp: 'Horodatage',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -518,6 +519,8 @@ export default merge({
     dependencies: 'Dépendances',
     noEventsFilter: 'Aucun filtre d\'événements',
     impactChain: 'Chaîne d\'impact',
+    resolvedAlarms: 'Alarmes résolues',
+    activeAlarm: 'Alarme active',
     impactDepends: 'Impacts/Dépendances',
     treeOfDependencies: 'Arbre de dépendances',
     infosSearchLabel: 'Rechercher une info',
@@ -816,6 +819,8 @@ export default merge({
     isPriorityEnabled: 'Afficher la priorité',
     clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
     alarmsColumns: 'Colonnes de la liste des alarmes',
+    resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
+    activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',
     entitiesColumns: 'Colonnes de l\'explorateur de contexte',
     entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
     modal: '(Modal)',
@@ -2606,7 +2611,6 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
-    alarmId: 'Identifiant de l\'alarme',
     executedAt: 'Exécuté à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
