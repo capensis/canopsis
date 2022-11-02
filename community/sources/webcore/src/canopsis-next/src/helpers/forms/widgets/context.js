@@ -4,6 +4,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_CONTEXT_WIDGET_COLUMNS,
+  DEFAULT_CONTEXT_ALARMS_COLUMNS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
@@ -19,6 +20,8 @@ import { defaultColumnsToColumns } from '@/helpers/entities';
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {WidgetColumn[]} widgetExportColumns
+ * @property {WidgetColumn[]} resolvedAlarmsColumns
+ * @property {WidgetColumn[]} activeAlarmsColumns
  * @property {string[]} selectedTypes
  * @property {WidgetSort} sort
  * @property {WidgetCsvSeparator} exportCsvSeparator
@@ -40,6 +43,12 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   serviceDependenciesColumns: parameters.serviceDependenciesColumns
     ? cloneDeep(parameters.serviceDependenciesColumns)
     : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  resolvedAlarmsColumns: parameters.resolvedAlarmsColumns
+    ? cloneDeep(parameters.resolvedAlarmsColumns)
+    : defaultColumnsToColumns(DEFAULT_CONTEXT_ALARMS_COLUMNS),
+  activeAlarmsColumns: parameters.resolvedAlarmsColumns
+    ? cloneDeep(parameters.activeAlarmsColumns)
+    : defaultColumnsToColumns(DEFAULT_CONTEXT_ALARMS_COLUMNS),
   selectedTypes: parameters.selectedTypes
     ? cloneDeep(parameters.selectedTypes)
     : [],

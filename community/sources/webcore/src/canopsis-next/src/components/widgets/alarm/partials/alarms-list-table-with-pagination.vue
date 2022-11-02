@@ -13,9 +13,11 @@
     :sticky-header="stickyHeader",
     :refresh-alarms-list="refreshAlarmsList",
     :selectable="selectable",
-    :expandable="expandable"
+    :expandable="expandable",
+    :hide-actions="hideActions"
   )
     c-table-pagination(
+      v-if="!hidePagination",
       :total-items="meta.total_count",
       :rows-per-page="query.limit",
       :page="query.page",
@@ -86,6 +88,14 @@ export default {
       default: false,
     },
     hideChildren: {
+      type: Boolean,
+      default: false,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
+    hidePagination: {
       type: Boolean,
       default: false,
     },
