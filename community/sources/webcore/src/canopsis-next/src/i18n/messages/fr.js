@@ -229,7 +229,7 @@ export default merge({
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
-    rating: 'Notation | Notations',
+    rating: 'Evaluation | Evaluations',
     sampling: 'Échantillonnage',
     parametersToDisplay: '{count} paramètres à afficher',
     uptime: 'Uptime',
@@ -2746,7 +2746,7 @@ export default merge({
     language: 'Langue par défaut',
     auth: 'Type d\'auth.',
     navigationType: 'Type d\'affichage de la barre de vues',
-    active: 'Séance active',
+    active: 'Session active',
     activeConnects: 'Nombre de connexions',
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
@@ -3130,7 +3130,7 @@ export default merge({
     simpleEditor: 'Éditeur simple',
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
-    discard: 'Jeter le motif',
+    discard: 'Effacer le motif',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
