@@ -2,24 +2,27 @@ package widgetfilter
 
 import (
 	"context"
+	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
-	FindViewId(ctx context.Context, id string) (string, error)
+	FindViewIds(ctx context.Context, ids []string) ([]string, error)
 	FindViewIdByWidget(ctx context.Context, widgetId string) (string, error)
 	GetOneBy(ctx context.Context, id, userId string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id, userId string) (bool, error)
+	UpdatePositions(ctx context.Context, filters []string, userId string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
@@ -38,9 +41,9 @@ type store struct {
 	userPrefCollection mongo.DbCollection
 }
 
-func (s *store) FindViewId(ctx context.Context, id string) (string, error) {
+func (s *store) FindViewIds(ctx context.Context, ids []string) ([]string, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": id}},
+		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
 		{"$lookup": bson.M{
 			"from":         mongo.WidgetMongoCollection,
 			"localField":   "widget",
@@ -60,23 +63,24 @@ func (s *store) FindViewId(ctx context.Context, id string) (string, error) {
 		}},
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer cursor.Close(ctx)
-	if cursor.Next(ctx) {
+	views := make([]string, 0)
+	for cursor.Next(ctx) {
 		doc := struct {
 			View string `bson:"view"`
 		}{}
 		err = cursor.Decode(&doc)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
-		return doc.View, nil
+		views = append(views, doc.View)
 	}
 
-	return "", nil
+	return views, nil
 }
 
 func (s *store) FindViewIdByWidget(ctx context.Context, widgetId string) (string, error) {
@@ -132,10 +136,24 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 		{"$match": match},
 	}
 
+	var sort bson.M
+	if r.Private == nil {
+		sort = bson.M{"$sort": bson.D{
+			{Key: "is_private", Value: 1},
+			{Key: "position", Value: 1},
+			{Key: "_id", Value: 1},
+		}}
+	} else {
+		sort = bson.M{"$sort": bson.D{
+			{Key: "position", Value: 1},
+			{Key: "_id", Value: 1},
+		}}
+	}
+
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery("title", common.SortAsc),
+		sort,
 	))
 
 	if err != nil {
@@ -196,7 +214,14 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.InsertOne(ctx, filter)
+
+		position, err := s.getNextPosition(ctx, r.Widget, *r.IsPrivate, r.Author)
+		if err != nil {
+			return err
+		}
+		filter.Position = position
+
+		_, err = s.collection.InsertOne(ctx, filter)
 		if err != nil {
 			return err
 		}
@@ -225,7 +250,21 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.UpdateOne(ctx,
+
+		oldFilter := view.WidgetFilter{}
+		err := s.collection.
+			FindOne(ctx, bson.M{"_id": filter.ID}, options.FindOne().SetProjection(bson.M{"position": 1})).
+			Decode(&oldFilter)
+
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
+		}
+		filter.Position = oldFilter.Position
+
+		_, err = s.collection.UpdateOne(ctx,
 			bson.M{"_id": filter.ID},
 			update,
 		)
@@ -273,6 +312,96 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	return res, err
 }
 
+func (s *store) UpdatePositions(ctx context.Context, ids []string, userId string) (bool, error) {
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+
+		cursor, err := s.collection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+			{"$group": bson.M{
+				"_id": bson.M{
+					"widget":     "$widget",
+					"is_private": "$is_private",
+				},
+				"users": bson.M{"$addToSet": "$author"},
+				"count": bson.M{"$sum": 1},
+			}},
+			{"$project": bson.M{
+				"widget":     "$_id.widget",
+				"is_private": "$_id.is_private",
+				"users":      1,
+				"count":      1,
+			}},
+		})
+		if err != nil {
+			return err
+		}
+		defer cursor.Close(ctx)
+
+		doc := struct {
+			Widget    string   `bson:"widget"`
+			IsPrivate bool     `bson:"is_private"`
+			Users     []string `bson:"users"`
+			Count     int      `bson:"count"`
+		}{}
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&doc)
+			if err != nil {
+				return err
+			}
+
+			if cursor.Next(ctx) {
+				return ValidationErr{error: errors.New("filters are related to different widgets")}
+			}
+
+			if doc.IsPrivate {
+				if len(doc.Users) != 1 {
+					return ValidationErr{error: errors.New("filters are related to different users")}
+				}
+				if doc.Users[0] != userId {
+					return nil
+				}
+			}
+
+			if doc.Count != len(ids) {
+				return nil
+			}
+		} else {
+			return nil
+		}
+
+		match := bson.M{"widget": doc.Widget, "is_private": doc.IsPrivate}
+		if doc.IsPrivate {
+			match["author"] = userId
+		}
+		count, err := s.collection.CountDocuments(ctx, match)
+		if err != nil {
+			return err
+		}
+		if count != int64(len(ids)) {
+			return ValidationErr{error: errors.New("filters are missing")}
+		}
+
+		writeModels := make([]mongodriver.WriteModel, len(ids))
+		for i, id := range ids {
+			writeModels[i] = mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": id}).
+				SetUpdate(bson.M{"$set": bson.M{"position": i}})
+		}
+
+		writeRes, err := s.collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+
+		res = writeRes.MatchedCount > 0
+		return nil
+	})
+
+	return res, err
+}
+
 func (s *store) updateWidgets(ctx context.Context, filterId string) error {
 	_, err := s.widgetCollection.UpdateMany(ctx, bson.M{
 		"parameters.mainFilter": filterId,
@@ -291,6 +420,34 @@ func (s *store) updateUserPreferences(ctx context.Context, filterId string) erro
 	})
 
 	return err
+}
+
+func (s *store) getNextPosition(ctx context.Context, widget string, isPrivate bool, user string) (int64, error) {
+	match := bson.M{"widget": widget, "is_private": isPrivate}
+	if isPrivate {
+		match["author"] = user
+	}
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": match},
+		{"$group": bson.M{
+			"_id":      nil,
+			"position": bson.M{"$max": "$position"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		data := struct {
+			Position int64 `bson:"position"`
+		}{}
+		err = cursor.Decode(&data)
+		return data.Position + 1, err
+	}
+
+	return 0, nil
 }
 
 func transformEditRequestToModel(request EditRequest) view.WidgetFilter {

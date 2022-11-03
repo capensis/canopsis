@@ -23,6 +23,7 @@ exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with custom pro
     positiony="0"
   />
   <point-form-dialog-menu-stub
+    existsentities=","
     positionx="0"
     positiony="0"
   />
@@ -38,6 +39,7 @@ exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with required p
     positiony="0"
   />
   <point-form-dialog-menu-stub
+    existsentities=""
     positionx="0"
     positiony="0"
   />

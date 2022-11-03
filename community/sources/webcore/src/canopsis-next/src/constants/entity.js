@@ -133,6 +133,7 @@ export const WEATHER_ICONS = {
   [SERVICE_STATES.minor]: 'person',
   [SERVICE_STATES.major]: 'person',
   [SERVICE_STATES.critical]: 'wb_cloudy',
+
   [PBEHAVIOR_TYPE_TYPES.maintenance]: 'build',
   [PBEHAVIOR_TYPE_TYPES.inactive]: 'brightness_3',
   [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
@@ -434,6 +435,40 @@ export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
   {
     labelKey: 'common.type',
     value: 'entity.type',
+  },
+];
+
+export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
+  {
+    labelKey: 'common.alarmId',
+    value: '_id',
+  },
+  {
+    labelKey: 'common.created',
+    value: 'v.creation_date',
+  },
+  {
+    labelKey: 'common.updated',
+    value: 'v.last_update_date',
+  },
+];
+
+export const DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS = [
+  {
+    labelKey: 'common.displayName',
+    value: 'v.display_name',
+  },
+  {
+    labelKey: 'common.output',
+    value: 'v.output',
+  },
+  {
+    labelKey: 'common.state',
+    value: 'v.state.val',
+  },
+  {
+    labelKey: 'common.status',
+    value: 'v.status.val',
   },
 ];
 
