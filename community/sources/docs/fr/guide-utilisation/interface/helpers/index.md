@@ -464,3 +464,13 @@ Changer l'ordre des mots dans une chaine de caractères :
 ```
 
 Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`
+
+### Helper `tags`
+
+```handlebars
+{{tags}}
+```
+
+Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'attend pas de paramètre.  
+
+

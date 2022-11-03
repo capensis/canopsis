@@ -64,7 +64,7 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmId'),
+          text: this.$t('common.alarmId'),
           value: 'alarm.v.display_name',
           sortable: false,
         },

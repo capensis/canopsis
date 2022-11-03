@@ -62,7 +62,7 @@ func (a *api) GetExport(c *gin.Context) {
 
 	if task.ID == 0 {
 		c.JSON(http.StatusOK, ExportResponse{
-			Status: TaskStatusNone,
+			Status: task.Status,
 		})
 		return
 	}
