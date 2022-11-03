@@ -692,4 +692,86 @@ describe('pattern form converters', () => {
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
+
+  it('should be converted to form and back to pattern with activated', () => {
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: { type: PATTERN_CONDITIONS.exist, value: true },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.activated,
+      operator: PATTERN_OPERATORS.activated,
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with inactive', () => {
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: { type: PATTERN_CONDITIONS.exist, value: false },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.activated,
+      operator: PATTERN_OPERATORS.inactive,
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `relative time` condition for activation date', () => {
+    const lastHour = 3600;
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          value: lastHour,
+          unit: TIME_UNITS.second,
+        },
+      },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.activationDate,
+      range: {
+        type: QUICK_RANGES.last1Hour.value,
+        from: 0,
+        to: 0,
+      },
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `absolute time` condition for activation date', () => {
+    const value = {
+      from: Faker.datatype.number(),
+      to: Faker.datatype.number(),
+    };
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: { type: PATTERN_CONDITIONS.absoluteTime, value },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.activationDate,
+      range: {
+        type: QUICK_RANGES.custom.value,
+        ...value,
+      },
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
 });

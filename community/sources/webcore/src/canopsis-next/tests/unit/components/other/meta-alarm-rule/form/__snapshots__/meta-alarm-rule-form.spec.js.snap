@@ -207,7 +207,6 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` 
   <!---->
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
-    somerequired="true"
     withtotalentity="true"
   />
 </div>
@@ -316,7 +315,6 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` ty
   <!---->
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
-    somerequired="true"
   />
 </div>
 `;
@@ -413,7 +411,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`manualgrou
   <!---->
   <!---->
   <!---->
-  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
 </div>
 `;
 
@@ -514,7 +514,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`relation\`
   <!---->
   <!---->
   <!---->
-  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
 </div>
 `;
 
@@ -617,7 +619,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`timebased\
     timebased="[object Object]"
   />
   <!---->
-  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
 </div>
 `;
 
@@ -835,7 +839,6 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
   <!---->
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
-    somerequired="true"
     withtotalentity="true"
   />
 </div>
@@ -928,6 +931,8 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
   <!---->
   <!---->
   <!---->
-  <!---->
+  <meta-alarm-rule-patterns-form-stub
+    form="[object Object]"
+  />
 </div>
 `;

@@ -7,7 +7,7 @@
   )
     v-layout.fill-height(row)
       v-flex.position-relative.fill-height
-        v-layout(:class="{ 'weather-item--blinking': isBlinking }", justify-start)
+        v-layout(:class="{ 'blinking': isBlinking }", justify-start)
           v-runtime-template.weather-item__service-name.pa-3(:template="compiledTemplate")
         v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon.mr-1(:value="service.idle_since", color="white", top)
@@ -235,11 +235,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@keyframes blink {
-  0% { opacity: 1 }
-  50% { opacity: 0.3 }
-}
-
 .weather-item {
   &__toolbar {
     position: absolute;
@@ -257,10 +252,6 @@ export default {
     &:hover, &:focus {
       position: absolute;
     }
-  }
-
-  &--blinking {
-    animation: blink 2s linear infinite;
   }
 }
 </style>

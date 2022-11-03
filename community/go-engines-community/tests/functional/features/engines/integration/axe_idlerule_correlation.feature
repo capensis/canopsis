@@ -18,7 +18,7 @@ Feature: update meta alarm on idle rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-correlation-1&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/idle-rules:
@@ -305,7 +305,7 @@ Feature: update meta alarm on idle rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-correlation-2&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/idle-rules:

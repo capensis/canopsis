@@ -17,6 +17,25 @@ const (
 	OnlyResolved
 )
 
+const (
+	NoIcon = iota
+	IconManualInProgress
+	IconAutoInProgress
+	IconAutoFailed
+	IconManualFailed
+	IconManualFailedOtherInProgress
+	IconAutoFailedOtherInProgress
+	IconManualFailedManualAvailable
+	IconAutoFailedManualAvailable
+	IconManualAvailable
+	IconAutoSuccessful
+	IconManualSuccessful
+	IconAutoSuccessfulOtherInProgress
+	IconManualSuccessfulOtherInProgress
+	IconAutoSuccessfulManualAvailable
+	IconManualSuccessfulManualAvailable
+)
+
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -189,12 +208,14 @@ type Alarm struct {
 	Parents        *int64          `bson:"parents" json:"parents,omitempty"`
 	MetaAlarmRules []MetaAlarmRule `bson:"meta_alarm_rules" json:"meta_alarm_rules,omitempty"`
 
-	AssignedInstructions             *[]AssignedInstruction `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
-	IsAutoInstructionRunning         *bool                  `bson:"-" json:"is_auto_instruction_running,omitempty"`
-	IsAllAutoInstructionsCompleted   *bool                  `bson:"-" json:"is_all_auto_instructions_completed,omitempty"`
-	IsAutoInstructionFailed          *bool                  `bson:"-" json:"is_auto_instruction_failed,omitempty"`
-	IsManualInstructionRunning       *bool                  `bson:"-" json:"is_manual_instruction_running,omitempty"`
-	IsManualInstructionWaitingResult *bool                  `bson:"-" json:"is_manual_instruction_waiting_result,omitempty"`
+	AssignedInstructions         *[]AssignedInstruction `bson:"assigned_instructions,omitempty" json:"assigned_instructions,omitempty"`
+	InstructionExecutionIcon     int                    `bson:"-" json:"instruction_execution_icon,omitempty"`
+	RunningManualInstructions    []string               `bson:"-" json:"running_manual_instructions,omitempty"`
+	RunningAutoInstructions      []string               `bson:"-" json:"running_auto_instructions,omitempty"`
+	FailedManualInstructions     []string               `bson:"-" json:"failed_manual_instructions,omitempty"`
+	FailedAutoInstructions       []string               `bson:"-" json:"failed_auto_instructions,omitempty"`
+	SuccessfulManualInstructions []string               `bson:"-" json:"successful_manual_instructions,omitempty"`
+	SuccessfulAutoInstructions   []string               `bson:"-" json:"successful_auto_instructions,omitempty"`
 
 	Links       map[string]interface{} `bson:"-" json:"links,omitempty"`
 	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
@@ -315,12 +336,16 @@ func (i InstructionWithExecutions) GetExecution(alarmId string) *Execution {
 }
 
 type ExecutionStatus struct {
-	ID                  string `bson:"_id"`
-	AutoRunning         *bool  `bson:"auto_running"`
-	ManualRunning       *bool  `bson:"manual_running"`
-	ManualWaitingResult *bool  `bson:"manual_waiting_result"`
-	AutoFailed          *bool  `bson:"auto_failed"`
-	AutoAllCompleted    *bool  `bson:"auto_all_completed"`
+	ID                           string   `bson:"_id"`
+	Icon                         int      `bson:"-"`
+	RunningManualInstructions    []string `bson:"running_manual_instructions"`
+	RunningAutoInstructions      []string `bson:"running_auto_instructions"`
+	FailedManualInstructions     []string `bson:"failed_manual_instructions"`
+	FailedAutoInstructions       []string `bson:"failed_auto_instructions"`
+	SuccessfulManualInstructions []string `bson:"successful_manual_instructions"`
+	SuccessfulAutoInstructions   []string `bson:"successful_auto_instructions"`
+	LastFailed                   *int     `bson:"last_failed"`
+	LastSuccessful               *int     `bson:"last_successful"`
 }
 
 type Execution struct {

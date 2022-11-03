@@ -24,7 +24,7 @@ import {
 } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
-import { getTreeOfDependenciesEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
+import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
@@ -223,7 +223,7 @@ export default {
         const nodeLabelEl = document.createElement('div');
         nodeLabelEl.classList.add('position-absolute');
         nodeLabelEl.style.top = `${nodeSize}px`;
-        nodeLabelEl.textContent = getTreeOfDependenciesEntityText(entity);
+        nodeLabelEl.textContent = getMapEntityText(entity);
 
         const nodeEl = document.createElement('div');
         nodeEl.appendChild(getIconEl(entity));

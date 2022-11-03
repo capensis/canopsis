@@ -271,6 +271,14 @@ func benchmarkAlarmUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCo
 }
 
 func getAlarmMatchDataSets() map[string]alarmDataSet {
+	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, types.DurationWithUnit{
+		Value: 1,
+		Unit:  types.DurationUnitMinute,
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	return map[string]alarmDataSet{
 		"given empty pattern should match": {
 			pattern: pattern.Alarm{},
@@ -527,6 +535,50 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given not exist v.output condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.output",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: true,
+		},
+		"given not exist v.activation_date condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.activation_date",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: true,
+		},
+		"given time v.activation_date condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.activation_date",
+						Condition: timeRelativeCond,
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					ActivationDate: &types.CpsTime{Time: time.Now().Add(-30 * time.Second)},
+				},
+			},
+			matchResult: true,
+		},
 	}
 }
 
@@ -538,6 +590,8 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 	if err != nil {
 		panic(err)
 	}
+	from := time.Now().Add(-time.Hour).Unix()
+	to := time.Now().Add(time.Hour).Unix()
 
 	return map[string]alarmDataSet{
 		"given one condition": {
@@ -599,12 +653,23 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				}},
 			}},
 		},
-		"given invalid condition": {
+		"given invalid condition type": {
 			pattern: pattern.Alarm{
 				{
 					{
 						Field:     "v.state.val",
-						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test name"),
+						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+					},
+				},
+			},
+			mongoQueryErr: pattern.ErrUnsupportedConditionType,
+		},
+		"given invalid condition value": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.state.val",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},
 			},
@@ -660,7 +725,7 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				}},
 			}},
 		},
-		"given ref condition": {
+		"given exist ref condition": {
 			pattern: pattern.Alarm{
 				{
 					{
@@ -672,6 +737,97 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
 					{"alarm.v.ack": bson.M{"$exists": true, "$ne": nil}},
+				}},
+			}},
+		},
+		"given not exist ref condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ack",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{
+						{"alarm.v.ack": bson.M{"$exists": false}},
+						{"alarm.v.ack": bson.M{"$eq": nil}},
+					}},
+				}},
+			}},
+		},
+		"given exist v.output condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.output",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.output": bson.M{
+						"$exists": true,
+						"$nin":    bson.A{nil, ""},
+					}},
+				}},
+			}},
+		},
+		"given not exist v.output condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.output",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{
+						{"alarm.v.output": bson.M{"$exists": false}},
+						{"alarm.v.output": bson.M{"$eq": nil}},
+						{"alarm.v.output": bson.M{"$eq": ""}},
+					}},
+				}},
+			}},
+		},
+		"given not exist v.activation_date condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.activation_date",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{
+						{"alarm.v.activation_date": bson.M{"$exists": false}},
+						{"alarm.v.activation_date": bson.M{"$eq": nil}},
+					}},
+				}},
+			}},
+		},
+		"given time v.activation_date condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.activation_date",
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, from, to),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.activation_date": bson.M{
+						"$gt": types.NewCpsTime(from),
+						"$lt": types.NewCpsTime(to),
+					}},
 				}},
 			}},
 		},

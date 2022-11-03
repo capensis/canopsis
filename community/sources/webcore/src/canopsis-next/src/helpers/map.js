@@ -28,12 +28,12 @@ export const getGeomapMarkerIconOptions = (point, size) => {
 };
 
 /**
- * Get text for displaying in tree of dependencies components for entity
+ * Get text for displaying in map components for entity
  *
  * @param {Entity} entity
  * @returns {string}
  */
-export const getTreeOfDependenciesEntityText = entity => (
+export const getMapEntityText = entity => (
   entity.type === ENTITY_TYPES.resource
     ? entity._id
     : entity.name

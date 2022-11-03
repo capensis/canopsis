@@ -72,7 +72,7 @@ Feature: Update a widget
     }
     """
     Then the response code should be 200
-    When I save response mainFilterID={{ (index .lastResponse.filters 1)._id }}
+    When I save response mainFilterID={{ (index .lastResponse.filters 0)._id }}
     Then the response key "parameters.mainFilter" should not be "test-widgetfilter-to-widget-update-1-3"
     Then the response body should contain:
     """json
@@ -94,26 +94,6 @@ Feature: Update a widget
       "author": "root",
       "created": 1611229670,
       "filters": [
-        {
-          "_id": "test-widgetfilter-to-widget-update-1-2",
-          "title": "test-widgetfilter-to-widget-update-1-2-title",
-          "is_private": false,
-          "author": "root",
-          "created": 1611229670,
-          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
-          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-pattern-to-widget-edit-1-pattern"
-                }
-              }
-            ]
-          ]
-        },
         {
           "title": "test-widgetfilter-to-widget-update-1-3-title",
           "is_private": false,
@@ -147,6 +127,26 @@ Feature: Update a widget
                 "cond": {
                   "type": "eq",
                   "value": "test-widgetfilter-to-widget-update-1-3-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "_id": "test-widgetfilter-to-widget-update-1-2",
+          "title": "test-widgetfilter-to-widget-update-1-2-title",
+          "is_private": false,
+          "author": "root",
+          "created": 1611229670,
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-widget-edit-1-pattern"
                 }
               }
             ]
@@ -172,26 +172,6 @@ Feature: Update a widget
     {
       "data": [
         {
-          "_id": "test-widgetfilter-to-widget-update-1-2",
-          "title": "test-widgetfilter-to-widget-update-1-2-title",
-          "is_private": false,
-          "author": "root",
-          "created": 1611229670,
-          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
-          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-pattern-to-widget-edit-1-pattern"
-                }
-              }
-            ]
-          ]
-        },
-        {
           "title": "test-widgetfilter-to-widget-update-1-3-title",
           "is_private": false,
           "author": "root",
@@ -224,6 +204,26 @@ Feature: Update a widget
                 "cond": {
                   "type": "eq",
                   "value": "test-widgetfilter-to-widget-update-1-3-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "_id": "test-widgetfilter-to-widget-update-1-2",
+          "title": "test-widgetfilter-to-widget-update-1-2-title",
+          "is_private": false,
+          "author": "root",
+          "created": 1611229670,
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-widget-edit-1-pattern"
                 }
               }
             ]

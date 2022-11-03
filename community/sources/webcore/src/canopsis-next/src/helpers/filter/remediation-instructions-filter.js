@@ -52,7 +52,10 @@ export function prepareRemediationInstructionsFiltersToQuery(filters = []) {
       }
 
       if (filter.manual) {
-        instructionQuery[typesKey].push(REMEDIATION_INSTRUCTION_TYPES.manual);
+        instructionQuery[typesKey].push(
+          REMEDIATION_INSTRUCTION_TYPES.manual,
+          REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+        );
       }
     }
 

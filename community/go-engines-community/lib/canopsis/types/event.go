@@ -87,7 +87,6 @@ const (
 	// the same for manual and auto instructions.
 	EventTypeInstructionJobStarted   = "instructionjobstarted"
 	EventTypeInstructionJobCompleted = "instructionjobcompleted"
-	EventTypeInstructionJobAborted   = "instructionjobaborted"
 	EventTypeInstructionJobFailed    = "instructionjobfailed"
 
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
@@ -639,7 +638,6 @@ func isValidEventType(t string) bool {
 		EventTypeAutoInstructionFailed,
 		EventTypeInstructionJobStarted,
 		EventTypeInstructionJobCompleted,
-		EventTypeInstructionJobAborted,
 		EventTypeInstructionJobFailed,
 		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,

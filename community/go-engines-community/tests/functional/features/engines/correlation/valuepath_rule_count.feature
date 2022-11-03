@@ -90,17 +90,28 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-1-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-1-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-1-resource-2"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 2
       }
     }
     """
@@ -156,7 +167,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-1-resource&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -444,17 +455,38 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-2-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-2-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-2-resource-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-2-resource-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-2-resource-4"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 4
       }
     }
     """
@@ -533,7 +565,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-2-resource&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     """json
     {
@@ -1143,7 +1175,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-3-resource&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     """json
     {
@@ -1367,7 +1399,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-4-resource&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1378,13 +1410,18 @@ Feature: correlation feature - valuegroup rule with threshold count
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-4"
           }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-4-resource-1"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -1565,7 +1602,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-5-resource&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1576,13 +1613,18 @@ Feature: correlation feature - valuegroup rule with threshold count
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-5"
           }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-5-resource-1"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -1733,17 +1775,28 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-6-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-6-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-6-resource-2"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 2
       }
     }
     """
@@ -1781,17 +1834,38 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-6-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-6-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-6-resource-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-6-resource-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-valuegroup-correlation-6-resource-4"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 4
       }
     }
     """
@@ -1908,7 +1982,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    When I do GET /api/v4/alarms?search=test-valuegroup-correlation-7-resource&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json

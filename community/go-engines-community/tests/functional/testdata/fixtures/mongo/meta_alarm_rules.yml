@@ -140,6 +140,22 @@ meta_alarm_rules:
             type: eq
             value: test-resource-to-alarm-correlation-get-3-1
 
+  metaalarm_rule_alarm_correlation_get_7:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarm-rule-alarm-correlation-get-7
+    name: test-metaalarm-rule-alarm-correlation-get-7-name
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.resource
+          cond:
+            type: is_one_of
+            value:
+              - test-resource-to-alarm-correlation-get-7-1
+              - test-resource-to-alarm-correlation-get-7-2
+              - test-resource-to-alarm-correlation-get-7-3
+              - test-resource-to-alarm-correlation-get-7-4
+              - test-resource-to-alarm-correlation-get-7-5
+
   metaalarm_rule_alarm_action_correlation_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-action-correlation-1

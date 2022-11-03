@@ -29,6 +29,7 @@ export const EVENT_FILTER_PATTERN_FIELDS = {
   resource: 'resource',
   output: 'output',
   extraInfos: 'extra',
+  state: 'state',
 };
 
 export const EVENT_FILTER_SOURCE_TYPES = {
@@ -59,7 +60,7 @@ export const EVENT_FILTER_EXTERNAL_DATA_CONDITION_VALUES = {
   },
   [EVENT_FILTER_PATTERN_FIELDS.connectorName]: {
     text: EVENT_FILTER_PATTERN_FIELDS.connectorName,
-    value: '{{.Event.Connector_name}}',
+    value: '{{.Event.ConnectorName}}',
   },
   [EVENT_FILTER_PATTERN_FIELDS.resource]: {
     text: EVENT_FILTER_PATTERN_FIELDS.resource,
@@ -71,6 +72,6 @@ export const EVENT_FILTER_EXTERNAL_DATA_CONDITION_VALUES = {
   },
   [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: {
     text: EVENT_FILTER_PATTERN_FIELDS.extraInfos,
-    value: '{{.Event.Extra}}',
+    value: '{{.Event.ExtraInfos}}',
   },
 };

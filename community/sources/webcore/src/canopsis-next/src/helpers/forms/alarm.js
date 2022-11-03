@@ -100,11 +100,13 @@
  * @property {Entity} entity
  * @property {boolean} is_meta_alarm
  * @property {AlarmAssignedInstruction[]} [assigned_instructions]
- * @property {boolean} [is_auto_instruction_failed]
- * @property {boolean} [is_auto_instruction_running]
- * @property {boolean} [is_manual_instruction_running]
- * @property {boolean} [is_manual_instruction_waiting_result]
- * @property {boolean} [is_all_auto_instructions_completed]
+ * @property {number} [instruction_execution_icon]
+ * @property {string[]} running_manual_instructions
+ * @property {string[]} running_auto_instructions
+ * @property {string[]} failed_manual_instructions
+ * @property {string[]} failed_auto_instructions
+ * @property {string[]} successful_manual_instructions
+ * @property {string[]} successful_auto_instructions
  * @property {boolean} [children_instructions]
  * @property {InfosObject} infos
  * @property {AlarmRule} rule

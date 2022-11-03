@@ -1,5 +1,7 @@
 import { isNumber } from 'lodash';
 
+import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
+
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { durationToForm } from '@/helpers/date/duration';
 
@@ -36,6 +38,50 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {RemediationJob} RemediationJobForm
  * @property {TextPairObject[]} query
  */
+
+/**
+ * Check job status is running
+ *
+ * @param {RemediationJobExecution} job
+ * @returns {boolean}
+ */
+export const isJobExecutionRunning = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
+
+/**
+ * Check job status is succeeded
+ *
+ * @param {RemediationJobExecution} job
+ * @returns {boolean}
+ */
+export const isJobExecutionSucceeded = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.succeeded;
+
+/**
+ * Check job status is failed
+ *
+ * @param {RemediationJobExecution} job
+ * @returns {boolean}
+ */
+export const isJobExecutionFailed = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.failed;
+
+/**
+ * Check job status is canceled
+ *
+ * @param {RemediationJobExecution} job
+ * @returns {boolean}
+ */
+export const isJobExecutionCancelled = job => job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
+
+/**
+ * Check job is finished
+ *
+ * @param {RemediationJobExecution} job
+ * @returns {boolean}
+ */
+export const isJobFinished = job => [
+  REMEDIATION_JOB_EXECUTION_STATUSES.canceled,
+  REMEDIATION_JOB_EXECUTION_STATUSES.failed,
+  REMEDIATION_JOB_EXECUTION_STATUSES.succeeded,
+].includes(job.status);
 
 /**
  * Convert remediation job entity to form object

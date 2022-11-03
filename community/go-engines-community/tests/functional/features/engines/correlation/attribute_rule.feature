@@ -39,7 +39,7 @@ Feature: correlation feature - attribute rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -243,7 +243,7 @@ Feature: correlation feature - attribute rule
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-2&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -399,7 +399,7 @@ Feature: correlation feature - attribute rule
     ]
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&opened=false&correlation=true
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-3&opened=false&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json

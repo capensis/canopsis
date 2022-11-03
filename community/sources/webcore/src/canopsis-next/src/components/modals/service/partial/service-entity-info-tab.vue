@@ -28,6 +28,7 @@ import {
 
 import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
 import { mapIds } from '@/helpers/entities';
+import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
@@ -108,7 +109,9 @@ export default {
       const refreshEntities = () => this.$emit('refresh');
 
       this.$modals.show({
-        name: MODALS.executeRemediationInstruction,
+        name: isInstructionManual(assignedInstruction)
+          ? MODALS.executeRemediationInstruction
+          : MODALS.executeRemediationSimpleInstruction,
         config: {
           assignedInstruction,
           alarmId: this.entity.alarm_id,

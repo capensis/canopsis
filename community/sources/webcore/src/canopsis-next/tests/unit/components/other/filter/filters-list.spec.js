@@ -33,6 +33,7 @@ const snapshotFactory = (options = {}) => mount(FiltersList, {
 
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
 const selectFilterTiles = wrapper => wrapper.findAll('filter-tile-stub');
+const selectDraggableField = wrapper => wrapper.find('c-draggable-list-field-stub');
 
 describe('filters-list', () => {
   const $modals = mockModals();
@@ -107,6 +108,24 @@ describe('filters-list', () => {
 
     expect(deleteEvents).toHaveLength(1);
     expect(deleteEvents[0]).toEqual([filters[deleteIndex]]);
+  });
+
+  it('Should send updated filters array on dragging', () => {
+    const wrapper = factory({
+      propsData: {
+        filters,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const updatedFilters = [...filters].reverse();
+    const draggableField = selectDraggableField(wrapper);
+
+    draggableField.vm.$emit('input', updatedFilters);
+
+    expect(wrapper).toEmit('input', updatedFilters);
   });
 
   it('Renders `filters-list` with default props', () => {

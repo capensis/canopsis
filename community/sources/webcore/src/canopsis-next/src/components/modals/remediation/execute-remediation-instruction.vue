@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(:close="close", minimize)
-      template(slot="title")
+      template(#title="")
         span {{ config.assignedInstruction.name }}
-      template(slot="text")
+      template(#text="")
         v-fade-transition
           remediation-instruction-execute(
             v-if="instructionExecution",
@@ -311,8 +311,8 @@ export default {
           });
         }
 
-        if (this.config.onOpen) {
-          await this.config.onOpen();
+        if (this.config.onExecute) {
+          await this.config.onExecute();
         }
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
