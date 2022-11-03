@@ -70,7 +70,7 @@ export const filterPatternsToForm = (
 
   acc[field] = patternToForm({
     [field]: pattern,
-    old_mongo_query: oldMongoQuery,
+    old_mongo_query: !pattern?.length ? oldMongoQuery : undefined,
     is_corporate: !!id && id !== PATTERN_CUSTOM_ITEM_VALUE,
     id,
   });
