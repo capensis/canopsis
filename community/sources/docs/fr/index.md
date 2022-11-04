@@ -37,6 +37,8 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 
 ??? note "Anciennes versions"
+
+    La documentation des anciennes versions est disponible sur [https://old-doc.canopsis.net/](https://old-doc.canopsis.net/)    
     
     | | | | | | |
     |-:|-|-|-|-|-|
