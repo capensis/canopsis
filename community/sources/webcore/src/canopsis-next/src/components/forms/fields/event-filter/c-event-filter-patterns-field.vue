@@ -54,6 +54,7 @@ export default {
         PATTERN_OPERATORS.notEqual,
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
+        PATTERN_OPERATORS.contains,
       ];
     },
 
@@ -145,12 +146,13 @@ export default {
 
     eventTypeOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual, PATTERN_OPERATORS.contains],
         valueField: {
-          is: 'c-select-field',
+          is: 'v-combobox',
           props: {
             items: this.eventTypes,
-            ellipsis: true,
+            returnObject: false,
+            combobox: true,
           },
         },
       };
@@ -171,7 +173,7 @@ export default {
 
     sourceTypeOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual, PATTERN_OPERATORS.contains],
         valueField: {
           is: 'c-select-field',
           props: {
@@ -241,6 +243,10 @@ export default {
           text: this.$tc('common.extraInfo'),
           value: EVENT_FILTER_PATTERN_FIELDS.extraInfos,
           options: this.extraInfosOptions,
+        },
+        {
+          text: this.$t('common.longOutput'),
+          value: EVENT_FILTER_PATTERN_FIELDS.longOutput,
         },
       ];
     },
