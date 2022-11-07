@@ -30,6 +30,7 @@ export const EVENT_FILTER_PATTERN_FIELDS = {
   output: 'output',
   extraInfos: 'extra',
   state: 'state',
+  longOutput: 'long_output',
 };
 
 export const EVENT_FILTER_SOURCE_TYPES = {
