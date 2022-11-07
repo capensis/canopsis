@@ -8,13 +8,12 @@ Les versions indiquées ici se réfèrent à la dernière version publiée de Ca
 
 Solution       | Version    |
 ---------------|------------|
-Ansible        | = 2.8.7    |
 Architecture   | x86-64     |
-Docker CE      | ≥ 20.10    |
-Docker-compose | ≥ 1.24     |
-Noyau Linux    | ≥ 4.4 (Docker uniquement) |
-OS             | = RHEL 8 ou compatible (paquets uniquement) |
-Python         | 2.7 et 3   |
+Docker CE      | ≥ 20.10.17 |
+Docker Compose | ≥ 2.12     |
+Noyau Linux    | ≥ 4.4 (uniquement pour l'installation via Docker Compose)             |
+OS             | = CentOS 7 ou RHEL 8 (uniquement pour l'installation via paquets RPM) |
+Python         | 3          |
 
 Pour rappel, SELinux n'est pas supporté. 
 
@@ -23,11 +22,11 @@ Pour rappel, SELinux n'est pas supporté.
 Composant   | Version          |
 ------------|------------------|
 MongoDB     | 4.4              |
-Nginx       | stable           |
+Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
 PostgreSQL  | 13               |
 TimescaleDB | 2.7.2            |
 RabbitMQ    | 3.10             |
-Redis       | ≥ 6.2            |
+Redis       | ≥ 6.0            |
 
 ## Prérequis composants externes
 
