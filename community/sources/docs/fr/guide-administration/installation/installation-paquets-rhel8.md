@@ -1,0 +1,298 @@
+# Installation de paquets Canopsis sur Red Hat Enterprise Linux 8
+
+Cette procédure décrit l'installation de Canopsis en mono-instance à l'aide de paquets RHEL 8. Les binaires sont compilés pour l'architecture x86-64.
+
+L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur `root`.
+
+## Prérequis
+
+Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](../administration-avancee/configuration-parefeu-et-selinux.md), notamment concernant la désactivation de SELinux.
+
+L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances. Plus de détails dans la [matrice des flux réseau](../matrice-des-flux-reseau/index.md).
+
+!!! information
+    Notez que que les versions de MongoDB, RabbitMQ, Redis et TimescaleDB dont l'installation est décrite ici sont les seules validées pour fonctionner avec Canopsis.
+
+    Plus de détails sur les [prérequis des versions](prerequis-des-versions.md).
+
+## Dépendances
+
+### Mise à jour système
+
+Assurez-vous que le système est à jour :
+
+```sh
+dnf update
+```
+
+### Configuration système
+
+Vous pouvez vérifier les limites de ressources systèmes avec la commande suivante :
+
+```sh
+ulimit -a
+```
+
+Pour appliquer la configuration recommandée par le projet MongoDB, créer le fichier `/etc/security/limits.d/mongo.conf` :
+
+```
+#<domain>      <type>  <item>         <value>
+mongo           soft    fsize           unlimited
+mongo           soft    cpu             unlimited
+mongo           soft    as              unlimited
+mongo           soft    memlock         unlimited
+mongo           hard    nofile          64000
+mongo           hald    nproc           64000
+```
+
+### Ajout des dépôts tiers
+
+Ajouter le dépôt de PostgreSQL :
+
+```sh
+dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+```
+
+Déclarer le dépôt de MongoDB en créant le fichier `/etc/yum.repos.d/mongodb-org-4.4.repo` :
+
+```
+[mongodb-org-4.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
+```
+
+Déclarer le dépôt de RabbitMQ en créant le fichier `/etc/yum.repos.d/rabbitmq.repo` :
+
+```
+##
+## Zero dependency Erlang
+##
+
+[rabbitmq_erlang]
+name=rabbitmq_erlang
+baseurl=https://packagecloud.io/rabbitmq/erlang/el/8/$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+# PackageCloud's repository key and RabbitMQ package signing key
+gpgkey=https://packagecloud.io/rabbitmq/erlang/gpgkey
+       https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+
+##
+## RabbitMQ server
+##
+
+[rabbitmq_server]
+name=rabbitmq_server
+baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/8/$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+# PackageCloud's repository key and RabbitMQ package signing key
+gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+       https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+```
+
+Déclarer le dépôt de TimescaleDB en créant le fichier `/etc/yum.repos.d/timescale_timescaledb.repo` :
+```
+[timescale_timescaledb]
+name=timescale_timescaledb
+baseurl=https://packagecloud.io/timescale/timescaledb/el/8/$basearch
+repo_gpgcheck=1
+# TimescaleDB doesn't sign all its packages
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+```
+
+### Configuration des dépôts
+
+Exécuter la commande suivante et vérifier dans la sortie que les dépôts ajoutés sont bien contactés (accepter les cléfs des différents dépôts lorsque demandé) :
+
+```sh
+dnf -q makecache -y --disablerepo='*' --enablerepo='rabbitmq_erlang' --enablerepo='rabbitmq_server'
+```
+
+Désactiver le module PostgreSQL ([action nécessaire pour RHEL 8](https://docs.timescale.com/install/latest/self-hosted/installation-redhat/)) :
+
+```sh
+dnf module disable postgresql
+```
+
+Activer le module Redis 6.0.* :
+
+```sh
+dnf module enable redis:6
+```
+
+### Installation
+
+```sh
+dnf install logrotate socat mongodb-org-4.4.17 redis timescaledb-2-postgresql-13-2.7.2 timescaledb-2-loader-postgresql-13-2.7.2
+dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.10.10
+```
+
+Pour éviter un upgrade automatique des dépendances, vous pouvez épingler les paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
+
+```
+exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-13,timescaledb-2-loader-postgresql-13
+```
+
+### Ouverture des ports
+
+Pratiquer les ouvertures de port nécessaires à l'accès au service.
+
+Les commandes données couvrent le cas standard où le pare-feu système `firewalld` est utilisé et servent surtout à rappeler les ports ou services à ouvrir. (cf. [matrice des flux réseau](../matrice-des-flux-reseau/index.md))
+
+```sh
+firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
+firewall-cmd --add-port=27017/tcp --permanent
+firewall-cmd --add-service=postgresql --permanent
+firewall-cmd --add-service=redis --permanent
+firewall-cmd --reload
+```
+
+### Démarrage de MongoDB
+
+Activer et démarrer le service :
+
+```sh
+systemctl enable --now mongod.service
+```
+
+### Configuration de TimescaleDB
+
+Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentation de l'outil de règlage](https://docs.timescale.com/timescaledb/latest/how-to-guides/configuration/timescaledb-tune/) de TimescaleDB) :
+
+```sh
+postgresql-13-setup initdb
+timescaledb-tune --pg-config=/usr/pgsql-13/bin/pg_config
+echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
+```
+
+Activer et démarrer le service :
+
+```sh
+systemctl enable --now postgresql-13.service
+```
+
+Se connecter à l'instance PostgreSQL avec l'identité du superuser `postgres` :
+
+```sh
+sudo -u postgres psql
+```
+
+Définir le mot de passe du superuser `postgres` :
+
+```
+postgres=#\password postgres
+```
+
+Créer la base de données `canopsis` et l'utilisateur associé dans l'instance PostgreSQL :
+
+```
+postgres=# CREATE database canopsis;
+postgres=# \c canopsis
+canopsis=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+canopsis=# SET password_encryption = 'scram-sha-256';
+canopsis=# CREATE USER cpspostgres WITH PASSWORD 'canopsis';
+canopsis=# exit
+```
+
+### Configuration de RabbitMQ
+
+Activer et démarrer le service :
+
+```sh
+systemctl enable --now rabbitmq-server.service
+```
+
+Activer le plugin qui apporte l'interface de management RabbitMQ, puis redémarrer le service :
+
+```sh
+rabbitmq-plugins enable rabbitmq_management
+systemctl restart rabbitmq-server.service
+```
+
+Créer les objets RabbitMQ (vhost, utilisateur avec les bons droits) utiles à l'application Canopsis :
+
+```sh
+rabbitmqctl add_vhost canopsis
+rabbitmqctl add_user cpsrabbit canopsis
+rabbitmqctl set_user_tags cpsrabbit administrator
+rabbitmqctl set_permissions --vhost canopsis cpsrabbit '.*' '.*' '.*'
+```
+
+### Démarrage de Redis
+
+Activer et démarrer le service :
+
+```sh
+systemctl enable --now redis
+```
+
+## Installation de Canopsis Community ou Pro
+
+Canopsis est disponible dans une édition « Community », open-source et gratuitement accessible à tous, et une édition « Pro », souscription commerciale ajoutant des fonctionnalités supplémentaires. Voyez [le site officiel de Canopsis](https://www.capensis.fr/canopsis/) pour en savoir plus.
+
+Notez que l'édition Pro de Canopsis était auparavant connue sous le nom de « CAT » et que certains éléments peuvent encore la désigner sous ce nom.
+
+Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonction de l'édition choisie.
+
+=== "Canopsis Community (édition open-source)"
+
+    Ajout du dépôt de paquets Canopsis pour RHEL 8 :
+    ```sh
+    echo "[canopsis]
+    name = canopsis
+    baseurl=https://nexus.canopsis.net/repository/canopsis/el8/community/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis.repo
+    ```
+
+    Installation de l'édition open-source de Canopsis :
+    ```sh
+    dnf makecache
+    dnf install canopsis
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    !!! attention
+        L'édition Pro nécessite une souscription commerciale.
+
+    Ajout des dépôts de paquets Canopsis pour RHEL 8 :
+    ```sh
+    echo "[canopsis]
+    name = canopsis
+    baseurl=https://nexus.canopsis.net/repository/canopsis/el8/community/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis.repo
+
+    echo "[canopsis-pro]
+    name = canopsis-pro
+    baseurl=https://nexus.canopsis.net/repository/canopsis-pro/el8/pro/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis-pro.repo
+    ```
+
+    Installation de Canopsis Pro :
+    ```sh
+    dnf makecache
+    dnf install canopsis-pro
+    ```
+
+## Initialisation de Canopsis
+
