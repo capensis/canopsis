@@ -63,6 +63,13 @@ Feature: Count matches
       "entity_pattern": [
         [
           {
+            "field": "type",
+            "cond": {
+              "type": "eq",
+              "value": "resource"
+            }
+          },
+          {
             "field": "component",
             "cond": {
               "type": "eq",
