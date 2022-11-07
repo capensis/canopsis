@@ -431,6 +431,12 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		return alarm.Value.DisplayName, true
 	case "v.output":
 		return alarm.Value.Output, true
+	case "v.long_output":
+		return alarm.Value.LongOutput, true
+	case "v.initial_output":
+		return alarm.Value.InitialOutput, true
+	case "v.initial_long_output":
+		return alarm.Value.InitialLongOutput, true
 	case "v.connector":
 		return alarm.Value.Connector, true
 	case "v.connector_name":
