@@ -8,5 +8,6 @@ db.job_history.updateMany({}, {
         host: "",
         auth_username: "",
         auth_token: "",
+        first: ""
     }
 });
