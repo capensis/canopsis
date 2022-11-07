@@ -228,6 +228,9 @@ export const ALARM_PATTERN_FIELDS = {
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   lastComment: 'v.last_comment.m',
+  longOutput: 'v.long_output',
+  initialOutput: 'v.initial_output',
+  longInitialOutput: 'v.long_initial_output',
   tags: 'tags',
   activated: 'activated',
 };
