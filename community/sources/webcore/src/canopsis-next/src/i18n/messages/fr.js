@@ -287,6 +287,9 @@ export default merge({
     failed: 'Échoué',
     close: 'Fermer',
     alarmId: 'Identifiant de l\'alarme',
+    longOutput: 'Sortie longue',
+    initialOutput: 'Sortie initiale',
+    longInitialOutput: 'Sortie initiale longue',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -409,6 +412,8 @@ export default merge({
 
       [PATTERN_OPERATORS.activated]: 'Activé',
       [PATTERN_OPERATORS.inactive]: 'Inactif',
+
+      [PATTERN_OPERATORS.regexp]: 'Expression régulière',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
