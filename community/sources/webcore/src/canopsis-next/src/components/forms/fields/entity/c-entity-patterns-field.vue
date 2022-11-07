@@ -87,6 +87,8 @@ export default {
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
@@ -116,6 +118,8 @@ export default {
           PATTERN_OPERATORS.equal,
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
         valueField: {
@@ -136,6 +140,8 @@ export default {
           PATTERN_OPERATORS.equal,
           PATTERN_OPERATORS.notEqual,
           PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
         valueField: {

@@ -12,7 +12,7 @@
   )
     template(v-if="$scopedSlots.selection || ellipsis", #selection="props")
       slot(name="selection", v-bind="props")
-        span.ellipsis {{ props.item[itemText] }}
+        span.ellipsis {{ getItemText(props.item) }}
     template(v-if="$scopedSlots.item", #item="props")
       slot(name="item", v-bind="props")
     template(v-if="$scopedSlots['append-item']", #append-item="")
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { isArray } from 'lodash';
+import { isArray, isFunction, isObject } from 'lodash';
 
 export default {
   inject: ['$validator'],
@@ -80,6 +80,15 @@ export default {
       return {
         required: this.required,
       };
+    },
+  },
+  methods: {
+    getItemText(item) {
+      if (isFunction(this.itemText)) {
+        return this.itemText(item);
+      }
+
+      return isObject(item) ? item[this.itemText] : item;
     },
   },
 };
