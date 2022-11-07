@@ -406,6 +406,18 @@ export default {
           value: ALARM_PATTERN_FIELDS.activationDate,
           options: this.dateOptions,
         },
+        {
+          text: this.$t('common.longOutput'),
+          value: ALARM_PATTERN_FIELDS.longOutput,
+        },
+        {
+          text: this.$t('common.initialOutput'),
+          value: ALARM_PATTERN_FIELDS.initialOutput,
+        },
+        {
+          text: this.$t('common.longInitialOutput'),
+          value: ALARM_PATTERN_FIELDS.longInitialOutput,
+        },
       ];
     },
 
