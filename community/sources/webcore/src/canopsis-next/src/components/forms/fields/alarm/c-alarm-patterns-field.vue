@@ -84,6 +84,8 @@ export default {
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
