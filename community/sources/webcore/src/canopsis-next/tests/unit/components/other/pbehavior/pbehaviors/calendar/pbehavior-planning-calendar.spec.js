@@ -29,24 +29,28 @@ describe('pbehavior-planning-calendar', () => {
     pbehavior: pbehaviorToForm({
       _id: 'pbehavior',
       type: { _id: 'pbehavior-type-id' },
+      tstart: 1612825000,
     }),
   };
   const addedPbehaviorsById = {
     'added-pbehavior': pbehaviorToForm({
       _id: 'added-pbehavior',
       type: { _id: 'added-pbehavior-type-id' },
+      tstart: 1612825200,
     }),
   };
   const removedPbehaviorsById = {
     'removed-pbehavior': pbehaviorToForm({
       _id: 'removed-pbehavior',
       type: { _id: 'removed-pbehavior-type-id' },
+      tstart: 1612825200,
     }),
   };
   const changedPbehaviorsById = {
     'changed-pbehavior': pbehaviorToForm({
       _id: 'changed-pbehavior',
       type: { _id: 'changed-pbehavior-type-id' },
+      tstart: 1612825100,
     }),
   };
   const timespans = [

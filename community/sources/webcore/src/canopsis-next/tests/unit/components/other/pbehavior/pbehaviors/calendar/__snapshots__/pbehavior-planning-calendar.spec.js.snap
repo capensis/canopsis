@@ -62,7 +62,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
       <span
         class="subheading"
       >
-        January 1970
+        December 2013
       </span>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
@@ -222,86 +222,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                   class="ds-week"
                 >
                   <div
-                    class="ds-day ds-out-calendar"
-                  >
-                    <div
-                      class="ds-out-calendar"
-                    >
-                      <a
-                        class="ds-dom"
-                        href=""
-                      >
-                        
-      28
-    
-                      </a>
-                       
-                      <!---->
-                    </div>
-                      
-                    <!---->
-                  </div>
-                  <div
-                    class="ds-day ds-out-calendar"
-                  >
-                    <div
-                      class="ds-out-calendar"
-                    >
-                      <a
-                        class="ds-dom"
-                        href=""
-                      >
-                        
-      29
-    
-                      </a>
-                       
-                      <!---->
-                    </div>
-                      
-                    <!---->
-                  </div>
-                  <div
-                    class="ds-day ds-out-calendar"
-                  >
-                    <div
-                      class="ds-out-calendar"
-                    >
-                      <a
-                        class="ds-dom"
-                        href=""
-                      >
-                        
-      30
-    
-                      </a>
-                       
-                      <!---->
-                    </div>
-                      
-                    <!---->
-                  </div>
-                  <div
-                    class="ds-day ds-out-calendar"
-                  >
-                    <div
-                      class="ds-out-calendar"
-                    >
-                      <a
-                        class="ds-dom"
-                        href=""
-                      >
-                        
-      31
-    
-                      </a>
-                       
-                      <!---->
-                    </div>
-                      
-                    <!---->
-                  </div>
-                  <div
                     class="ds-day ds-first-day-day"
                   >
                     <div
@@ -320,7 +240,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                         class="ds-first-day"
                       >
                         
-      Jan
+      Dec
     
                       </span>
                     </div>
@@ -367,10 +287,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
-                </div>
-                <div
-                  class="ds-week"
-                >
                   <div
                     class="ds-day"
                   >
@@ -432,13 +348,13 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                     <!---->
                   </div>
                   <div
-                    class="ds-day"
+                    class="ds-day ds-today"
                   >
                     <div
                       class=""
                     >
                       <a
-                        class="ds-dom"
+                        class="ds-dom ds-today-dom"
                         href=""
                       >
                         
@@ -451,6 +367,10 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
+                </div>
+                <div
+                  class="ds-week"
+                >
                   <div
                     class="ds-day"
                   >
@@ -511,10 +431,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
-                </div>
-                <div
-                  class="ds-week"
-                >
                   <div
                     class="ds-day"
                   >
@@ -595,6 +511,10 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
+                </div>
+                <div
+                  class="ds-week"
+                >
                   <div
                     class="ds-day"
                   >
@@ -655,10 +575,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
-                </div>
-                <div
-                  class="ds-week"
-                >
                   <div
                     class="ds-day"
                   >
@@ -739,6 +655,10 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
+                </div>
+                <div
+                  class="ds-week"
+                >
                   <div
                     class="ds-day"
                   >
@@ -799,10 +719,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
-                </div>
-                <div
-                  class="ds-week"
-                >
                   <div
                     class="ds-day"
                   >
@@ -883,6 +799,10 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       
                     <!---->
                   </div>
+                </div>
+                <div
+                  class="ds-week"
+                >
                   <div
                     class="ds-day"
                   >
@@ -935,6 +855,92 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
                       >
                         
       31
+    
+                      </a>
+                       
+                      <!---->
+                    </div>
+                      
+                    <!---->
+                  </div>
+                  <div
+                    class="ds-day ds-first-day-day ds-out-calendar"
+                  >
+                    <div
+                      class="ds-out-calendar"
+                    >
+                      <a
+                        class="ds-dom"
+                        href=""
+                      >
+                        
+      1
+    
+                      </a>
+                       
+                      <span
+                        class="ds-first-day"
+                      >
+                        
+      Jan
+    
+                      </span>
+                    </div>
+                      
+                    <!---->
+                  </div>
+                  <div
+                    class="ds-day ds-out-calendar"
+                  >
+                    <div
+                      class="ds-out-calendar"
+                    >
+                      <a
+                        class="ds-dom"
+                        href=""
+                      >
+                        
+      2
+    
+                      </a>
+                       
+                      <!---->
+                    </div>
+                      
+                    <!---->
+                  </div>
+                  <div
+                    class="ds-day ds-out-calendar"
+                  >
+                    <div
+                      class="ds-out-calendar"
+                    >
+                      <a
+                        class="ds-dom"
+                        href=""
+                      >
+                        
+      3
+    
+                      </a>
+                       
+                      <!---->
+                    </div>
+                      
+                    <!---->
+                  </div>
+                  <div
+                    class="ds-day ds-out-calendar"
+                  >
+                    <div
+                      class="ds-out-calendar"
+                    >
+                      <a
+                        class="ds-dom"
+                        href=""
+                      >
+                        
+      4
     
                       </a>
                        
