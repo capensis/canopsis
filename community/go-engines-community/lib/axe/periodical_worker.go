@@ -37,9 +37,6 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	ctx, task := trace.NewTask(parentCtx, "axe.PeriodicalProcess")
 	defer task.End()
 
-	idleCtx, cancel := context.WithTimeout(ctx, w.GetInterval())
-	defer cancel()
-
 	alarmConfig := w.AlarmConfigProvider.Get()
 	if alarmConfig.TimeToKeepResolvedAlarms > 0 {
 		err := w.AlarmAdapter.DeleteResolvedAlarms(ctx, alarmConfig.TimeToKeepResolvedAlarms)
@@ -173,7 +170,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		}
 	}
 
-	events, err := w.IdleAlarmService.Process(idleCtx)
+	events, err := w.IdleAlarmService.Process(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot process idle rules")
 	}
