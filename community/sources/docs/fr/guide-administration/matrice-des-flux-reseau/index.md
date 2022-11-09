@@ -22,7 +22,7 @@ Certains flux de cette liste sont nécessaires pour l'installation ou la mise à
 
 Source | Destination | Port | Description |
 -------|-------------|------|-------------|
-Canopsis | `git.canopsis.net`, `repositories.canopsis.net`, `docker.canopsis.net` | TCP/443 | Récupération des paquets d'installation (Utilisation possible à travers un proxy) |
+Canopsis | `git.canopsis.net`, `nexus.canopsis.net`, `docker.canopsis.net` | TCP/443 | Récupération des paquets d'installation (Utilisation possible à travers un proxy) |
 Utilisateurs | Canopsis | TCP/80,443 ou TCP/8080,8443 | Accès à l'interface web et API de Canopsis |
 Administrateurs | Canopsis, MongoDB, PostgreSQL, RabbitMQ, Redis | TCP/22 | Accès aux systèmes via SSH |
 Administrateurs | Canopsis | TCP/15672 | Accès à l'interface web du bus AMQP. Permet de suivre l'activité des files d'attente |
