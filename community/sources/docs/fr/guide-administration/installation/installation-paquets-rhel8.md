@@ -164,12 +164,28 @@ firewall-cmd --add-service=redis --permanent
 firewall-cmd --reload
 ```
 
-### Démarrage de MongoDB
+### Configuration de MongoDB
 
 Activer et démarrer le service :
 
 ```sh
 systemctl enable --now mongod.service
+```
+
+Se connecter à MongoDB pour créer l'utilisateur `canopsis` :
+```
+mongo
+
+> conn = new Mongo();
+> db = conn.getDB('canopsis');
+> db.createUser(
+  {
+    user: "cpsmongo",
+    pwd:  "canopsis",
+    roles: [ { role: "dbOwner", db: "canopsis" },
+             { role: "clusterMonitor", db: "admin" } ]
+  }
+)
 ```
 
 ### Configuration de TimescaleDB
@@ -275,12 +291,6 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     Ajout des dépôts de paquets Canopsis pour RHEL 8 :
     ```sh
-    echo "[canopsis]
-    name = canopsis
-    baseurl=https://nexus.canopsis.net/repository/canopsis/el8/community/
-    gpgcheck=0
-    enabled=1" > /etc/yum.repos.d/canopsis.repo
-
     echo "[canopsis-pro]
     name = canopsis-pro
     baseurl=https://nexus.canopsis.net/repository/canopsis-pro/el8/pro/
@@ -296,3 +306,39 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
 ## Initialisation de Canopsis
 
+Le fichier de configuration est `/opt/canopsis/etc/go-engines-vars.conf`, qui est déjà dans l'état attendu :
+```sh
+CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost:27017/canopsis"
+CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost:5672/canopsis"
+CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"
+CPS_REDIS_URL="redis://localhost:6379/0"
+CPS_API_URL="http://localhost:8082"
+CPS_OLD_API_URL="http://localhost:8081"
+CPS_POSTGRES_TECH_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis_tech_metrics"
+```
+
+Provisionner Canopsis :
+```sh
+set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf; /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -edition pro
+```
+
+Activer et démarrer les services :
+```
+systemctl enable --now canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-correlation.service canopsis-engine-go@engine-dynamic-infos.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service canopsis-engine-go@engine-remediation canopsis-engine-go@engine-webhook
+```
+
+Tester un envoi d'alarme :
+```sh
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+  "event_type": "check",
+  "connector": "connector_test_creation_alarmes",
+  "connector_name": "test",
+  "component": "component_test_creation_alarmes",
+  "resource": "resource_test_creation_alarmes",
+  "source_type": "resource",
+  "author": "QA_canopsis",
+  "state": 2,
+  "debug": true,
+  "output": "Test création alarmes Canopsis"
+}' 'http://localhost:8082/api/v4/event'
+```
