@@ -1,5 +1,8 @@
 # Installation de paquets Canopsis sur Red Hat Enterprise Linux 8
 
+!!! information
+    Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [guide de mise à jour](../mise-a-jour/index.md).
+
 Cette procédure décrit l'installation de Canopsis en mono-instance à l'aide de paquets RHEL 8. Les binaires sont compilés pour l'architecture x86-64.
 
 L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur `root`.
@@ -131,6 +134,13 @@ Désactiver le module PostgreSQL ([action nécessaire pour RHEL 8](https://docs.
 dnf module disable postgresql
 ```
 
+Activer le module Nginx 1.20.* :
+
+```sh
+dnf module enable php:8.0
+dnf module enable nginx:1.20
+```
+
 Activer le module Redis 6.0.* :
 
 ```sh
@@ -158,6 +168,7 @@ Les commandes données couvrent le cas standard où le pare-feu système `firewa
 
 ```sh
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
+firewall-cmd --add-port=8080/tcp --permanent
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --add-service=postgresql --permanent
 firewall-cmd --add-service=redis --permanent
@@ -291,6 +302,12 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     Ajout des dépôts de paquets Canopsis pour RHEL 8 :
     ```sh
+    echo "[canopsis]
+    name = canopsis
+    baseurl=https://nexus.canopsis.net/repository/canopsis/el8/community/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis.repo
+
     echo "[canopsis-pro]
     name = canopsis-pro
     baseurl=https://nexus.canopsis.net/repository/canopsis-pro/el8/pro/
@@ -353,4 +370,14 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 }' 'http://localhost:8082/api/v4/event'
 ```
 
-Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
+## Lancement de la Web UI de Canopsis
+
+Installer le paquet :
+```sh
+dnf install canopsis-webui
+```
+
+Activer et démarrer Nginx :
+```sh
+systemctl enable --now nginx.service
+```
