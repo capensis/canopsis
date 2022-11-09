@@ -317,10 +317,20 @@ CPS_OLD_API_URL="http://localhost:8081"
 CPS_POSTGRES_TECH_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis_tech_metrics"
 ```
 
-Provisionner Canopsis :
-```sh
-set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf; /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -edition pro
-```
+Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonction de l'édition choisie.
+
+=== "Canopsis Community (édition open-source)"
+    Provisionner Canopsis :
+    ```sh
+    set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf; /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -edition community
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    Provisionner Canopsis :
+    ```sh
+    set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf; /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -edition pro
+    ```
 
 Activer et démarrer les services :
 ```
@@ -342,3 +352,5 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
   "output": "Test création alarmes Canopsis"
 }' 'http://localhost:8082/api/v4/event'
 ```
+
+Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
