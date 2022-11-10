@@ -1523,6 +1523,10 @@ definitions:
         additionalProperties:
           type: string
         type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
       type:
         type: string
     type: object
