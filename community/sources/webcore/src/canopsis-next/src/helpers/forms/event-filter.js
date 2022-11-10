@@ -82,6 +82,8 @@ import { formToRequest, formToRetry, requestToForm, retryToForm } from './shared
  * @property {string} reference
  * @property {EventFilterEnrichmentExternalDataType} type
  * @property {string} collection
+ * @property {string} sort_by
+ * @property {string} sort
  * @property {EventFilterEnrichmentExternalDataConditionForm[]} conditions
  */
 
@@ -210,6 +212,8 @@ export const eventFilterExternalDataItemToForm = (
       retry: retryToForm(item),
     } : {
       collection: item.collection ?? '',
+      sort_by: item.sort_by,
+      sort: item.sort,
       conditions: eventFilterExternalDataConditionsToForm(
         Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES),
         item,
@@ -260,14 +264,16 @@ export const formToEventFilterEnrichmentExternalDataConditions = (form = []) => 
  * @returns {EventFilterEnrichmentExternalData}
  */
 export const formToEventFilterEnrichmentExternalData = (form = []) => (
-  form.reduce((acc, { type, reference, collection, conditions, request, retry }) => {
+  form.reduce((acc, externalData) => {
+    const { type, reference } = externalData;
+
     const additionalFields = type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
       ? {
-        request: formToRequest(request),
-        ...formToRetry(retry),
+        request: formToRequest(externalData.request),
+        ...formToRetry(externalData.retry),
       } : {
-        collection,
-        ...formToEventFilterEnrichmentExternalDataConditions(conditions),
+        ...pick(externalData, ['sort', 'sort_by', 'collection']),
+        ...formToEventFilterEnrichmentExternalDataConditions(externalData.conditions),
       };
 
     acc[reference] = {
