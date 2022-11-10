@@ -32,56 +32,6 @@ instruction_execution:
             started_at: 1597905434
         step: test-instruction-execution-running-step-1
 
-  instruction_execution_to_cancel_running:
-    <<: *manual_execution_running
-    _id: test-instruction-cancel-execution-running-1
-    instruction: test-instruction-cancel-execution-running-1
-    instruction_modified_on: 1596712203
-    step_history:
-      - operation_history:
-          - operation: test-instruction-cancel-execution-running-1-step-1-operation-1
-            started_at: 1597905434
-        step: test-instruction-cancel-execution-running-1-step-1
-    user: root
-
-  instruction_execution_to_instruction_update:
-    <<: *manual_execution_running
-    _id: test-instruction-to-update-w-approval-should-cancel-execution-running-1
-    instruction: test-instruction-to-update-w-approval-should-cancel-execution
-    step_history:
-      - operation_history:
-          - operation: test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1-operation-1
-            started_at: 1597905434
-        step: test-instruction-to-update-w-approval-should-cancel-execution-running-1-step-1
-    user: root
-
-  instruction_execution_to_instruction_delete:
-    <<: *manual_execution_running
-    _id: test-instruction-delete-execution-running
-    instruction: test-instruction-delete-execution-running
-    instruction_modified_on: 1596712203
-    step_history:
-      - operation_history:
-          - operation: test-instruction-delete-execution-running-step-1-operation-1
-            started_at: 1597905434
-        step: test-instruction-delete-execution-running-step-1
-
-  instruction_execution_resume_1:
-    <<: *manual_execution_paused
-    _id: test-instruction-execution-resume-1
-    instruction: test-instruction-execution-resume-1
-    instruction_modified_on: 1596712203
-    step_history:
-      - operation_history:
-          - completed_at: 1597905437
-            description: test-instruction-execution-resume-1-step-1-operation-1-description
-            operation: test-instruction-execution-resume-1-step-1-operation-1
-            started_at: 1597905434
-          - description: test-instruction-execution-resume-1-step-1-operation-2-description
-            operation: test-instruction-execution-resume-1-step-1-operation-2
-            started_at: 1597905437
-        step: test-instruction-execution-resume-1-step-1
-
   instruction_execution_to_get_stats_1:
     <<: *manual_execution_completed
     _id: test-instruction-execution-to-get-stats-1
@@ -376,3 +326,23 @@ instruction_execution:
     complete_time: 400
     alarm_state: 3
     result_alarm_state: 3
+
+  instruction_execution_to_job_delete:
+    <<: *manual_execution_running
+    _id: test-instruction-execution-to-job-delete
+    step_history:
+      - step: <UUID()>
+        status: 0
+        name: <LoremIpsumWord()>
+        stop_on_fail: true
+        endpoint: <LoremIpsumWord()>
+        operation_history:
+          - operation: 368c3975-c008-40f2-bad6-6f2165533004
+            name: <LoremIpsumWord()>
+            jobs:
+              - test-job-to-check-linked-to-manual-instruction-execution
+            time_to_complete:
+              value: 1
+              unit: s
+            description: <LoremIpsumWord()>
+            started_at: <NowUnix()>
