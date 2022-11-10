@@ -44,8 +44,7 @@ Feature: Create a user
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
-      "ui_language": "fr",
-      "ui_tours": null
+      "ui_language": "fr"
     }
     """
 
@@ -92,8 +91,7 @@ Feature: Create a user
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
-      "ui_language": "fr",
-      "ui_tours": null
+      "ui_language": "fr"
     }
     """
 
@@ -227,6 +225,24 @@ Feature: Create a user
     {
       "errors": {
           "name": "Name already exists."
+      }
+    }
+    """
+
+  Scenario: given create request with invalid password should return error
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "password": "1"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "password": "Password should be 8 or more."
       }
     }
     """
