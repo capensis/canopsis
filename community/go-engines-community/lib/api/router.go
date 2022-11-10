@@ -190,7 +190,13 @@ func RegisterRoutes(
 
 		protected.Group("/ws").GET("", websocket.NewApi(websocketHub).Handler)
 
-		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
+		accountRouter := protected.Group("/account/me")
+		{
+			accountRouter.Use(middleware.OnlyAuth())
+			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
+			accountRouter.GET("", accountAPI.Me)
+			accountRouter.PUT("", accountAPI.Update)
+		}
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/file-access", authApi.GetFileAccess)
 
