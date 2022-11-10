@@ -8,7 +8,8 @@
     :extra-buttons="extraButtons",
     :error-messages="errorMessages",
     :max-file-size="maxFileSize",
-    :variables="variables"
+    :variables="variables",
+    :dark="$system.darkMode"
   )
 </template>
 
@@ -27,7 +28,7 @@ export default {
       return this.name;
     },
   },
-  inject: ['$validator'],
+  inject: ['$validator', '$system'],
   components: {
     TextEditor,
   },

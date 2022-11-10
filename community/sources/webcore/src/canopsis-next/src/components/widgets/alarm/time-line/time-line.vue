@@ -64,7 +64,7 @@ export default {
         .timeline-item:last-child {
           border-image: linear-gradient(
                   to bottom,
-                  $border-line 60%,
+                  $border_line 60%,
                   $background) 1 100%;
         }
       }
@@ -79,7 +79,6 @@ export default {
   .timeline-item {
     padding: 3em 2em 0;
     position: relative;
-    border-left: 2px solid $border_line;
 
     .time {
       position: absolute;
@@ -88,15 +87,28 @@ export default {
       display: block;
       font-size: 11px;
     }
+
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      left: -2px;
+      width: 2px;
+      background-color: $border_line;
+    }
+
+    &:after {
+      top: 34px;
+      bottom: 0;
+    }
   }
 
   .flag, .date {
     top: 0;
     position: absolute;
-    background: $background;
   }
 
   .flag {
+    height: 30px;
     top: 4px;
     left: -13px;
   }
