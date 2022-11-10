@@ -10,6 +10,8 @@ Feature: modify event on event filter
       "external_data": {
         "component": {
           "type": "mongo",
+          "sort_by": "status",
+          "sort": "asc",
           "select": {
             "customer": "{{ `{{.Event.Component}}` }}"
           },
@@ -314,6 +316,8 @@ Feature: modify event on event filter
       "external_data": {
         "component": {
           "type": "mongo",
+          "sort_by": "status",
+          "sort": "asc",
           "select": {
             "customer": "{{ `{{.Event.Component}}` }}"
           },
