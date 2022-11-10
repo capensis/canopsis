@@ -319,7 +319,7 @@ func (a *ApiClient) TheDifferenceBetweenValues(var1, var2 string, left, right fl
 func (a *ApiClient) getFloatVar(name string) (float64, error) {
 	val, ok := a.vars[name]
 	if !ok {
-		return 0, fmt.Errorf("doesn't exist")
+		return 0, fmt.Errorf("%q doesn't exist", name)
 	}
 	return strconv.ParseFloat(val, 64)
 }
