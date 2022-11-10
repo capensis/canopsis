@@ -10,6 +10,7 @@
           :label="config.label",
           :error-messages="errors.collect('text')",
           :variables="variables",
+          :dark="$system.darkMode",
           name="text"
         )
       template(#actions="")
@@ -41,6 +42,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { TextEditorField, ModalWrapper },
   mixins: [
     modalInnerMixin,

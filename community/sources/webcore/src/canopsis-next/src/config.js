@@ -447,6 +447,30 @@ export const COLORS = {
   },
 };
 
+export const THEMES = {
+  canopsis: {
+    dark: false,
+    colors: {
+      primary: COLORS.primary,
+      secondary: COLORS.secondary,
+    },
+  },
+  darkCanopsis: {
+    dark: true,
+    colors: {
+      primary: COLORS.primary,
+      secondary: COLORS.secondary,
+    },
+  },
+  custom: {
+    dark: false,
+    colors: {
+      primary: COLORS.secondary,
+      secondary: COLORS.primary,
+    },
+  },
+};
+
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';

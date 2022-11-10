@@ -6,10 +6,9 @@
       template(#header="")
         slot(name="header")
           span.white--text {{ title }}
-      div.white
-        v-card
-          v-card-text
-            slot
+      v-card
+        v-card-text
+          slot
 </template>
 
 <script>

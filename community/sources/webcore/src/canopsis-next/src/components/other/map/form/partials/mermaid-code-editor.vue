@@ -8,6 +8,7 @@ import { validateMermaidDiagram } from '@/helpers/mermaid';
 import CodeEditor from '@/components/common/code-editor/code-editor.vue';
 
 export default {
+  inject: ['$system'],
   components: { CodeEditor },
   model: {
     prop: 'value',
@@ -28,7 +29,7 @@ export default {
     editorOptions() {
       return {
         overviewRulerLanes: 0,
-        theme: 'mermaid',
+        theme: this.$system.darkMode ? 'mermaid-dark' : 'mermaid',
         automaticLayout: true,
         minimap: {
           enabled: false,

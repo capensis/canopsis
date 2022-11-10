@@ -1,6 +1,6 @@
 <template lang="pug">
   div.instruction-list
-    c-advanced-data-table.white(
+    c-advanced-data-table(
       :headers="headers",
       :items="remediationInstructions",
       :loading="pending",

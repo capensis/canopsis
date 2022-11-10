@@ -136,13 +136,18 @@ export default {
   border-width: 1px;
   border-color: transparent;
   border-style: solid;
-  color: black;
 
-  &--completed.theme--light.v-icon {
+  .theme--dark &, .theme--light & {
+    color: grey;
+  }
+
+  &--completed.theme--light.v-icon,
+  &--completed.theme--dark.v-icon {
     color: #2fab63;
   }
 
-  &--failed.theme--light.v-icon {
+  &--failed.theme--light.v-icon,
+  &--failed.theme--dark.v-icon {
     color: #ff5252;
   }
 

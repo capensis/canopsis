@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout.white(row, wrap, justify-space-between, align-center)
+    v-layout(row, wrap, justify-space-between, align-center)
       v-flex
         c-advanced-search-field(
           :query.sync="query",
@@ -54,7 +54,7 @@
         ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
           :tooltip="$t('liveReporting.button')",
-          :color="activeRange ? 'primary' : 'black'",
+          :color="activeRange ? 'primary' : ''",
           icon="schedule",
           @click="showEditLiveReportModal"
         )
@@ -63,10 +63,9 @@
           :loading="downloading",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
-          color="black",
           @click="exportAlarmsList"
         )
-    v-layout.alarms-list__top-pagination.white.px-4.position-relative(row, align-center)
+    v-layout.alarms-list__top-pagination.px-4.position-relative(row, align-center)
       v-flex.alarms-list__top-pagination--left(xs6)
         v-layout(row, align-center, justify-start)
           c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")

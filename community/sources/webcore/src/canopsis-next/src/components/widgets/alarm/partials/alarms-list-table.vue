@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-flex.white(v-resize="changeHeaderPositionOnResize")
+  v-flex(v-resize="changeHeaderPositionOnResize")
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
@@ -449,7 +449,6 @@ export default {
       }
 
       tr {
-        background: white;
       }
     }
 
