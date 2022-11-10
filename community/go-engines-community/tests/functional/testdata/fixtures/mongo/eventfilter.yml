@@ -291,6 +291,10 @@ eventfilter_mongo_data:
     _id: test-eventfilter-mongo-data-2
     customer: test-eventfilter-mongo-data-2-customer
     status: test-eventfilter-mongo-data-2-status
+  data_3:
+    _id: test-eventfilter-mongo-data-3
+    customer: test-eventfilter-mongo-data-1-customer
+    status: test-eventfilter-mongo-data-3-status
 
 eventfilter_mongo_data_regexp:
   data_1:
@@ -303,3 +307,8 @@ eventfilter_mongo_data_regexp:
     customer: test-eventfilter-mongo-data-regexp-1-customer
     message: test-eventfilter-mongo-data-regexp-2-.*
     status: test-eventfilter-mongo-data-regexp-2-status
+  data_3:
+    _id: test-eventfilter-mongo-data-regexp-3
+    customer: test-eventfilter-mongo-data-regexp-1-customer
+    message: test-eventfilter-mongo-data-regexp-1-.*
+    status: test-eventfilter-mongo-data-regexp-3-status
