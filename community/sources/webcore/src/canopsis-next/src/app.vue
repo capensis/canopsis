@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app#app
+  v-app#app(:dark="system.darkMode")
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content

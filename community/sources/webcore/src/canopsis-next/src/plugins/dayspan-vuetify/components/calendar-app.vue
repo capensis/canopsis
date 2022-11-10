@@ -1,6 +1,6 @@
 <template lang="pug">
   div.ds-expand.ds-calendar-app
-    v-layout.pa-3.white
+    v-layout.pa-3
       slot(
         name="today",
         v-bind="{ setToday, todayDate, calendar }"
@@ -379,6 +379,10 @@ export default {
     position: relative !important;
     overflow: hidden;
     max-height: 75vh;
+
+    .ds-week-header .ds-day {
+      border-top: #e0e0e0 1px solid;
+    }
   }
 
   .ds-day {
@@ -387,6 +391,28 @@ export default {
 
     .ds-month & {
       padding-bottom: 22px;
+    }
+  }
+
+  .ds-day:first-child, .ds-week-header-day:first-child {
+    border-left: #e0e0e0 1px solid;
+  }
+
+  .ds-week-header-day {
+    border-top: #e0e0e0 1px solid;
+  }
+
+  .theme--dark {
+    .ds-month {
+      background: var(--v-secondary) !important;
+    }
+
+    .ds-week-header-day,
+    .ds-dom,
+    .ds-week-date,
+    .ds-week-weekday,
+    .ds-hour-text {
+      color: white !important;
     }
   }
 </style>
