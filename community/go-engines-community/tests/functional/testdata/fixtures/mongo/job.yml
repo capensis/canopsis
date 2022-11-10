@@ -100,6 +100,12 @@ job:
   job_to_check_linked_to_auto_instruction:
     <<: *job
     _id: test-job-to-check-linked-to-auto-instruction
+    name: test-job-to-check-linked-to-auto-instruction
+
+  job_to_check_linked_to_manual_instruction_execution:
+    <<: *job
+    _id: test-job-to-check-linked-to-manual-instruction-execution
+    name: test-job-to-check-linked-to-manual-instruction-execution
 
   job_to_instruction_edit_1:
     <<: *job
