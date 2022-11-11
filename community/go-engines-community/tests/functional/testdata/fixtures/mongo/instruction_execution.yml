@@ -4,11 +4,6 @@ template:
     type: 0,
     status: 0
   }
-  - &manual_execution_paused {
-    _id: <UUID()>,
-    type: 0,
-    status: 1
-  }
   - &manual_execution_completed {
     _id: <UUID()>,
     type: 0,
