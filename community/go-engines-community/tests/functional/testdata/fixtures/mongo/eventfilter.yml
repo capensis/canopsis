@@ -302,13 +302,16 @@ eventfilter_mongo_data_regexp:
     customer: test-eventfilter-mongo-data-regexp-1-customer
     message: test-eventfilter-mongo-data-regexp-1-.*
     status: test-eventfilter-mongo-data-regexp-1-status
+    state: 1
   data_2:
     _id: test-eventfilter-mongo-data-regexp-2
     customer: test-eventfilter-mongo-data-regexp-1-customer
     message: test-eventfilter-mongo-data-regexp-2-.*
     status: test-eventfilter-mongo-data-regexp-2-status
+    state: 1
   data_3:
     _id: test-eventfilter-mongo-data-regexp-3
     customer: test-eventfilter-mongo-data-regexp-1-customer
     message: test-eventfilter-mongo-data-regexp-1-.*
     status: test-eventfilter-mongo-data-regexp-3-status
+    state: 1
