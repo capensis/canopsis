@@ -330,10 +330,10 @@ Feature: modify event on event filter
       "event_pattern": [
         [
           {
-            "field": "component",
+            "field": "connector",
             "cond": {
               "type": "eq",
-              "value": "test-eventfilter-mongo-data-regexp-1-customer"
+              "value": "test-connector-che-event-filters-mongo-4"
             }
           }
         ]
@@ -443,10 +443,10 @@ Feature: modify event on event filter
       "event_pattern": [
         [
           {
-            "field": "component",
+            "field": "connector",
             "cond": {
               "type": "eq",
-              "value": "test-eventfilter-mongo-data-regexp-1-customer"
+              "value": "test-connector-che-event-filters-mongo-5"
             }
           }
         ]
