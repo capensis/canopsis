@@ -88,6 +88,21 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
+	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
+	var remediationRpcClient libengine.RPCClient
+	if options.WithRemediation {
+		remediationRpcClient = libengine.NewRPCClient(
+			canopsis.AxeRPCConsumerName,
+			canopsis.RemediationRPCQueueServerName,
+			"",
+			cfg.Global.PrefetchCount,
+			cfg.Global.PrefetchSize,
+			nil,
+			amqpChannel,
+			logger,
+		)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
+	}
 
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
@@ -101,6 +116,7 @@ func NewEngine(
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
+			RemediationRpc:           remediationRpcClient,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			EntityAdapter:            entity.NewAdapter(dbClient),
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
@@ -121,6 +137,7 @@ func NewEngine(
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			ServiceRpc:               serviceRpcClient,
+			RemediationRpc:           remediationRpcClient,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			EntityAdapter:            entity.NewAdapter(dbClient),
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
@@ -131,22 +148,6 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
-
-	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
-	var remediationRpcClient libengine.RPCClient
-	if options.WithRemediation {
-		remediationRpcClient = libengine.NewRPCClient(
-			canopsis.AxeRPCConsumerName,
-			canopsis.RemediationRPCQueueServerName,
-			"",
-			cfg.Global.PrefetchCount,
-			cfg.Global.PrefetchSize,
-			nil,
-			amqpChannel,
-			logger,
-		)
-		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
-	}
 
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
