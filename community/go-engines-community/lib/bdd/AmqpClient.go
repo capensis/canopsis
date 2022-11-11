@@ -147,7 +147,6 @@ func (c *AmqpClient) AfterScenario(ctx context.Context, _ *godog.Scenario, _ err
 	defer c.ackConsumersMx.Unlock()
 
 	if i, ok := getConsumer(ctx); ok {
-		ctx = deleteConsumer(ctx)
 		c.freeAckConsumers = append(c.freeAckConsumers, i)
 	}
 
@@ -735,7 +734,7 @@ func (c *AmqpClient) getMainStreamAckConsumer(ctx context.Context) (<-chan amqp.
 		return c.ackConsumers[i], nil
 	}
 
-	return nil, fmt.Errorf("scneario isn't started")
+	return nil, fmt.Errorf("scenario isn't started")
 }
 
 func (c *AmqpClient) decodeEvent(msg []byte) (types.Event, map[string]interface{}, error) {
