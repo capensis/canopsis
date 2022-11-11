@@ -282,6 +282,7 @@ Feature: Instruction update
       "description": "test-instruction-to-update-2-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -339,6 +340,7 @@ Feature: Instruction update
       },
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -436,6 +438,7 @@ Feature: Instruction update
       "description": "test-instruction-to-update-3-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -462,6 +465,7 @@ Feature: Instruction update
       },
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -511,6 +515,7 @@ Feature: Instruction update
       "description": "test-instruction-to-update-3-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -548,6 +553,7 @@ Feature: Instruction update
       },
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -604,6 +610,7 @@ Feature: Instruction update
       "description": "test-instruction-to-update-3-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -652,6 +659,7 @@ Feature: Instruction update
       },
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"

@@ -58,6 +58,7 @@ template:
     _id: <UUID()>,
     type: 1,
     name: <UniqueName()>,
+    triggers: ["create"],
     enabled: true,
     description: <LoremIpsumSentence(3)>,
     author: root,
