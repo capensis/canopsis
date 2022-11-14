@@ -1,10 +1,12 @@
 import flushPromises from 'flush-promises';
+import { Day } from 'dayspan';
 
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { pbehaviorToForm } from '@/helpers/forms/planning-pbehavior';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
+import { convertDateToMoment } from '@/helpers/date/date';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
@@ -20,6 +22,14 @@ const stubs = {
 
 describe('pbehavior-planning-calendar', () => {
   mockDateNow(1386435500000);
+
+  const now = new Day(convertDateToMoment(1386435500000));
+  const today = now.start();
+  const tomorrow = now.next();
+
+  localVue.$dayspan.now = now;
+  localVue.$dayspan.today = today;
+  localVue.$dayspan.tomorrow = tomorrow;
 
   const { pbehaviorTimespanModule, fetchTimespansListWithoutStore } = createPbehaviorTimespanModule();
   const { pbehaviorTypesModule } = createPbehaviorTypesModule();
