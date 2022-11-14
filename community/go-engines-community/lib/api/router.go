@@ -873,7 +873,7 @@ func RegisterRoutes(
 			)
 			widgetFilterRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer), // keep PermissionRead for private filters
 				middleware.SetAuthor(),
 				widgetFilterAPI.Create,
 			)
@@ -884,7 +884,7 @@ func RegisterRoutes(
 			)
 			widgetFilterRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer), // keep PermissionRead for private filters
 				middleware.SetAuthor(),
 				widgetFilterAPI.Update,
 			)
