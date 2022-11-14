@@ -2,16 +2,15 @@ package user
 
 import (
 	"context"
+	"strconv"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"strconv"
 )
-
-const minPasswordLength = 8
-const maxPasswordLength = 255
 
 type Validator interface {
 	ValidateRequest(ctx context.Context, sl validator.StructLevel)
@@ -73,11 +72,11 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 			sl.ReportError(r.Password, "Password", "Password", "required", "")
 		}
 	} else {
-		if len(r.Password) < minPasswordLength {
-			sl.ReportError(r.Password, "Password", "Password", "min", strconv.Itoa(minPasswordLength))
+		if len(r.Password) < password.MinLength {
+			sl.ReportError(r.Password, "Password", "Password", "min", strconv.Itoa(password.MinLength))
 		}
-		if len(r.Password) > maxPasswordLength {
-			sl.ReportError(r.Password, "Password", "Password", "max", strconv.Itoa(maxPasswordLength))
+		if len(r.Password) > password.MaxLength {
+			sl.ReportError(r.Password, "Password", "Password", "max", strconv.Itoa(password.MaxLength))
 		}
 	}
 	// Validate default view
