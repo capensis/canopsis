@@ -2,7 +2,7 @@
 
 ## SELinux
 
-Ceci concerne majoritairement les environnements CentOS et assimilés.
+Ceci concerne majoritairement les environnements RHEL et assimilés.
 
 SELinux n'est pas pris en charge par Canopsis.
 
