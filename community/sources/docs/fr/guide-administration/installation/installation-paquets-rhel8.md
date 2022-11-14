@@ -11,6 +11,12 @@ L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur 
 
 Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](../administration-avancee/configuration-parefeu-et-selinux.md), notamment concernant la désactivation de SELinux.
 
+Pour vérifier l'état de SELinux :
+
+```sh
+sestatus
+```
+
 L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances. Plus de détails dans la [matrice des flux réseau](../matrice-des-flux-reseau/index.md).
 
 !!! information
@@ -56,7 +62,7 @@ Ajouter du dépôt pour PostgreSQL :
 dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 ```
 
-Ajout du dépôt pour MongoDB `` :
+Ajout du dépôt pour MongoDB :
 
 ```sh
 echo '[mongodb-org-4.4]
@@ -68,7 +74,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
 ' > /etc/yum.repos.d/mongodb-org-4.4.repo
 ```
 
-Ajout du dépôt pour RabbitMQ en créant le fichier `` :
+Ajout du dépôt pour RabbitMQ :
 
 ```sh
 echo '##
@@ -107,7 +113,7 @@ metadata_expire=300
 ' > /etc/yum.repos.d/rabbitmq.repo
 ```
 
-Ajout du dépôt pour TimescaleDB en créant le fichier `` :
+Ajout du dépôt pour TimescaleDB :
 
 ```sh
 echo '[timescale_timescaledb]
@@ -174,7 +180,6 @@ Les commandes données couvrent le cas standard où le pare-feu système `firewa
 ```sh
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
 firewall-cmd --add-port=8080/tcp --permanent
-firewall-cmd --add-port=8082/tcp --permanent
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --add-service=postgresql --permanent
 firewall-cmd --add-service=redis --permanent
