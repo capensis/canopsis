@@ -33,8 +33,9 @@ import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
-import PbehaviorExceptionList from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-list.vue';
+import PbehaviorExceptionField from './pbehavior-exception-field.vue';
+
+import PbehaviorExceptionList from '../partials/pbehavior-exception-list.vue';
 
 export default {
   components: { PbehaviorExceptionList, PbehaviorExceptionField },

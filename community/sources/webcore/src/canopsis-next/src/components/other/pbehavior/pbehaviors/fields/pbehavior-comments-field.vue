@@ -18,7 +18,7 @@ import uid from '@/helpers/uid';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import PbehaviorCommentField from '../fields/pbehavior-comment-field.vue';
+import PbehaviorCommentField from './pbehavior-comment-field.vue';
 
 export default {
   inject: ['$validator'],
