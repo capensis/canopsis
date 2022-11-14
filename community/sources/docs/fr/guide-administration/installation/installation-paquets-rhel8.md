@@ -402,3 +402,7 @@ Activer et démarrer Nginx :
 ```sh
 systemctl enable --now nginx.service
 ```
+
+Une fois cette commande terminée, vous pouvez alors réaliser votre [première connexion à l'interface Canopsis](premiere-connexion.md). 
+
+Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
