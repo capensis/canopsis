@@ -395,6 +395,29 @@ export const createPbehaviorTypesModule = () => {
   };
 };
 
+export const createPbehaviorReasonModule = () => {
+  const fetchPbehaviorReasonsListWithoutStore = jest.fn().mockReturnValue({
+    meta: {},
+    data: [],
+  });
+
+  const pbehaviorReasonModule = {
+    name: 'pbehaviorReasons',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorReasonsListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchPbehaviorReasonsListWithoutStore.mockClear();
+  });
+
+  return {
+    pbehaviorReasonModule,
+    fetchPbehaviorReasonsListWithoutStore,
+  };
+};
+
 export const createUserPreferenceModule = () => {
   const fetchUserPreference = jest.fn();
   const getUserPreferenceByWidgetId = jest.fn()
@@ -605,6 +628,10 @@ export const createPbehaviorModule = () => {
 
 export const createPbehaviorTimespanModule = () => {
   const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
 
   const pbehaviorTimespanModule = {
     name: 'pbehaviorTimespan',
