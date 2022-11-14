@@ -2031,6 +2031,8 @@ export default merge({
     addExternalData: 'Ajouter des données externes',
     reference: 'Référence',
     collection: 'Collection',
+    sort: 'Sens du tri',
+    sortBy: 'Colonne de tri',
     externalDataTypes: {
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'Collection MongoDB',
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',

@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -125,14 +126,33 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.checkAccessByWidget(c, request.Widget, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
+	if request.IsPrivate != nil {
+		if !*request.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
 
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
+			if !ok {
+				c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *request.IsPrivate {
+			granted, err = a.checkAccessByWidget(c, request.Widget, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccessByWidget(c, request.Widget, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
 	}
 
 	filter, err := a.store.Insert(c, request)
@@ -176,14 +196,33 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.checkAccess(c, []string{request.ID}, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
-	}
+	if request.IsPrivate != nil {
+		if !*request.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
 
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
+			if !ok {
+				c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *request.IsPrivate {
+			granted, err = a.checkAccess(c, []string{request.ID}, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccess(c, []string{request.ID}, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
 	}
 
 	filter, err := a.store.GetOneBy(c, request.ID, request.Author)
