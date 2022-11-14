@@ -1295,3 +1295,21 @@ default_rights:
       name: John Doe
     mail: admin@canopsis.net
     role: "@role_admin"
+
+  role_to_widget_filter_edit:
+    <<: *role
+    _id: test-role-to-widget-filter-edit
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_view":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_filter_edit":
+        checksum: 4
+        crecord_type: right
+
+  user_to_widget_filter_edit:
+    <<: *user
+    _id: test-user-to-widget-filter-edit
+    crecord_name: <Current()._id>
+    role: "@role_to_widget_filter_edit"
