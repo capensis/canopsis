@@ -15,10 +15,7 @@ Feature: Update a user
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
-      "defaultview": "test-view-to-edit-user",
-      "ui_tours": {
-        "test-tour-to-update-user-1": true
-      }
+      "defaultview": "test-view-to-edit-user"
     }
     """
     Then the response code should be 200
@@ -47,10 +44,7 @@ Feature: Update a user
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
-      "ui_language": "fr",
-      "ui_tours": {
-        "test-tour-to-update-user-1": true
-      }
+      "ui_language": "fr"
     }
     """
 
@@ -68,10 +62,7 @@ Feature: Update a user
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
-      "defaultview": "test-view-to-edit-user",
-      "ui_tours": {
-        "test-tour-to-update-user-2": true
-      }
+      "defaultview": "test-view-to-edit-user"
     }
     """
     When I am authenticated with username "test-user-to-update-2" and password "test-password-updated"
