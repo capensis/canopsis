@@ -172,7 +172,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     
                   </div>
                   <div
-                    class="ds-week-header-day ds-week-header-today"
+                    class="ds-week-header-day"
                   >
                     
 
@@ -208,7 +208,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     
                   </div>
                   <div
-                    class="ds-week-header-day"
+                    class="ds-week-header-day ds-week-header-today"
                   >
                     
 
@@ -1133,7 +1133,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     
                   </div>
                   <div
-                    class="ds-week-header-day ds-week-header-today"
+                    class="ds-week-header-day"
                   >
                     
 
@@ -1169,7 +1169,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     
                   </div>
                   <div
-                    class="ds-week-header-day"
+                    class="ds-week-header-day ds-week-header-today"
                   >
                     
 
