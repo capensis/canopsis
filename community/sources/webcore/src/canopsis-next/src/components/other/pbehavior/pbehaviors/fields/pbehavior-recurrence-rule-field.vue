@@ -6,8 +6,9 @@
     )  {{ hasRecurrenceRule ? $t('pbehavior.buttons.editRrule') : $t('pbehavior.buttons.addRRule') }}
     template(v-if="hasRecurrenceRule")
       v-tooltip(fixed, top)
-        v-btn(slot="activator", icon)
-          v-icon(color="grey darken-1") info
+        template(#activator="{ on }")
+          v-btn(v-on="on", icon)
+            v-icon(color="grey darken-1") info
         span {{ form.rrule }}
       c-action-btn(type="delete", @click="showConfirmRemoveRecurrenceRuleModal")
 </template>

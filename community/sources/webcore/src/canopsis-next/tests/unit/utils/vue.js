@@ -17,6 +17,7 @@ import * as config from '@/config';
 import i18n from '@/i18n';
 import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
+import { stringifyJsonFilter } from '@/helpers/json';
 
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
@@ -49,6 +50,7 @@ Vue.use(ToursPlugin);
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);
 Vue.filter('timezone', convertDateToTimezoneDateString);
+Vue.filter('json', stringifyJsonFilter);
 
 const stubs = {
   'mq-layout': MqLayout,

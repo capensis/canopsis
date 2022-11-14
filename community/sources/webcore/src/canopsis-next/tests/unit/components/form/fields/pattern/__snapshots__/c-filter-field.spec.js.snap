@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-filter-field Renders \`c-filter-field\` with default custom props 1`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
 >
@@ -64,7 +64,7 @@ exports[`c-filter-field Renders \`c-filter-field\` with default custom props 1`]
 </div>
 `;
 
-exports[`c-filter-field Renders \`c-filter-field\` with default custom props 2`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"

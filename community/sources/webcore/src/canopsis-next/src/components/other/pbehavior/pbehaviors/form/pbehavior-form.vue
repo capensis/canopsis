@@ -5,7 +5,7 @@
       :no-enabled="noEnabled",
       :with-start-on-trigger="withStartOnTrigger"
     )
-    pbehavior-comments-form(v-if="!noComments", v-field="form.comments")
+    pbehavior-comments-field(v-if="!noComments", v-field="form.comments")
     pbehavior-filter-field(v-if="!noPattern", v-field="form.patterns")
     pbehavior-recurrence-rule-field(v-field="form", with-exdate-type)
 </template>
@@ -13,10 +13,11 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
+import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
+import PbehaviorFilterField from '../fields/pbehavior-filter-field.vue';
+import PbehaviorRecurrenceRuleField from '../fields/pbehavior-recurrence-rule-field.vue';
+
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
-import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
-import PbehaviorFilterField from './pbehavior-filter-field.vue';
-import PbehaviorRecurrenceRuleField from './pbehavior-recurrence-rule-field.vue';
 
 export default {
   inject: ['$validator'],
@@ -24,7 +25,7 @@ export default {
     PbehaviorRecurrenceRuleField,
     PbehaviorFilterField,
     PbehaviorGeneralForm,
-    PbehaviorCommentsForm,
+    PbehaviorCommentsField,
   },
   mixins: [formMixin],
   model: {
