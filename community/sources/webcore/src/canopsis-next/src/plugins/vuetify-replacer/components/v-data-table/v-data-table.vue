@@ -271,8 +271,17 @@ table.v-datatable {
     min-height: 18px;
     height: 18px;
     width: 18px;
-    background-color: rgba(0, 0, 0, .12);
-    color: rgba(0, 0, 0, .87);
+    margin-left: 4px;
+
+    .theme--light & {
+      background-color: rgba(black, .12);
+      color: rgba(black, .87);
+    }
+
+    .theme--dark & {
+      background-color: rgba(white, .12);
+      color: rgba(white, .87);
+    }
   }
 
   &--dense.v-datatable {
