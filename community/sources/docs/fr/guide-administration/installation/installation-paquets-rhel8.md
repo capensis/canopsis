@@ -50,27 +50,28 @@ mongo           hald    nproc           64000
 
 ### Ajout des dépôts tiers
 
-Ajouter le dépôt de PostgreSQL :
+Ajouter du dépôt pour PostgreSQL :
 
 ```sh
 dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 ```
 
-Déclarer le dépôt de MongoDB en créant le fichier `/etc/yum.repos.d/mongodb-org-4.4.repo` :
+Ajout du dépôt pour MongoDB `` :
 
-```
-[mongodb-org-4.4]
+```sh
+echo '[mongodb-org-4.4]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.4/x86_64/
 gpgcheck=1
 enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
+' > /etc/yum.repos.d/mongodb-org-4.4.repo
 ```
 
-Déclarer le dépôt de RabbitMQ en créant le fichier `/etc/yum.repos.d/rabbitmq.repo` :
+Ajout du dépôt pour RabbitMQ en créant le fichier `` :
 
-```
-##
+```sh
+echo '##
 ## Zero dependency Erlang
 ##
 
@@ -80,7 +81,7 @@ baseurl=https://packagecloud.io/rabbitmq/erlang/el/8/$basearch
 repo_gpgcheck=1
 gpgcheck=0
 enabled=1
-# PackageCloud's repository key and RabbitMQ package signing key
+# PackageCloud’s repository key and RabbitMQ package signing key
 gpgkey=https://packagecloud.io/rabbitmq/erlang/gpgkey
        https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
 sslverify=1
@@ -97,27 +98,30 @@ baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/8/$basearch
 repo_gpgcheck=1
 gpgcheck=0
 enabled=1
-# PackageCloud's repository key and RabbitMQ package signing key
+# PackageCloud’s repository key and RabbitMQ package signing key
 gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
        https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
+' > /etc/yum.repos.d/rabbitmq.repo
 ```
 
-Déclarer le dépôt de TimescaleDB en créant le fichier `/etc/yum.repos.d/timescale_timescaledb.repo` :
-```
-[timescale_timescaledb]
+Ajout du dépôt pour TimescaleDB en créant le fichier `` :
+
+```sh
+echo '[timescale_timescaledb]
 name=timescale_timescaledb
 baseurl=https://packagecloud.io/timescale/timescaledb/el/8/$basearch
 repo_gpgcheck=1
-# TimescaleDB doesn't sign all its packages
+# TimescaleDB doesn’t sign all its packages
 gpgcheck=0
 enabled=1
 gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
+' > /etc/yum.repos.d/timescale_timescaledb.repo
 ```
 
 ### Configuration des dépôts
@@ -125,6 +129,7 @@ metadata_expire=300
 Exécuter la commande suivante et vérifier dans la sortie que les dépôts ajoutés sont bien contactés (accepter les cléfs des différents dépôts lorsque demandé) :
 
 ```sh
+dnf makecache
 dnf -q makecache -y --disablerepo='*' --enablerepo='rabbitmq_erlang' --enablerepo='rabbitmq_server'
 ```
 
@@ -150,14 +155,14 @@ dnf module enable redis:6
 ### Installation
 
 ```sh
-dnf install logrotate socat mongodb-org-4.4.17 redis timescaledb-2-postgresql-13-2.7.2 timescaledb-2-loader-postgresql-13-2.7.2
-dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.10.10
+dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.7.2 timescaledb-2-loader-postgresql-13-2.7.2
+dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.10.11
 ```
 
 Pour éviter un upgrade automatique des dépendances, vous pouvez épingler les paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
 
 ```
-exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-13,timescaledb-2-loader-postgresql-13
+exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,nginx,nginx-filesystem,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-13,timescaledb-2-loader-postgresql-13
 ```
 
 ### Ouverture des ports
@@ -169,6 +174,7 @@ Les commandes données couvrent le cas standard où le pare-feu système `firewa
 ```sh
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
 firewall-cmd --add-port=8080/tcp --permanent
+firewall-cmd --add-port=8082/tcp --permanent
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --add-service=postgresql --permanent
 firewall-cmd --add-service=redis --permanent
@@ -184,7 +190,7 @@ systemctl enable --now mongod.service
 ```
 
 Se connecter à MongoDB pour créer l'utilisateur `canopsis` :
-```
+```sh
 mongo
 
 > conn = new Mongo();
@@ -197,6 +203,7 @@ mongo
              { role: "clusterMonitor", db: "admin" } ]
   }
 )
+> exit
 ```
 
 ### Configuration de TimescaleDB
@@ -241,7 +248,7 @@ canopsis=# exit
 ### Configuration de RabbitMQ
 
 Activer et démarrer le service :
-
+systemctl enable --now canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
 ```sh
 systemctl enable --now rabbitmq-server.service
 ```
@@ -338,21 +345,30 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
 === "Canopsis Community (édition open-source)"
     Provisionner Canopsis :
+
     ```sh
     set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf; /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -edition community
+    ```
+
+    Activer et démarrer les services :
+
+    ```sh
+    systemctl enable --now canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     Provisionner Canopsis :
+
     ```sh
     set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf; /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -edition pro
     ```
 
-Activer et démarrer les services :
-```
-systemctl enable --now canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-correlation.service canopsis-engine-go@engine-dynamic-infos.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service canopsis-engine-go@engine-remediation canopsis-engine-go@engine-webhook
-```
+    Activer et démarrer les services :
+
+    ```sh
+    systemctl enable --now canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-correlation.service canopsis-engine-go@engine-dynamic-infos.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service canopsis-engine-go@engine-remediation canopsis-engine-go@engine-webhook
+    ```
 
 Tester un envoi d'alarme :
 ```sh
