@@ -59,7 +59,7 @@
     )
     v-select(
       v-field="form.ui_theme",
-      :label="$t('common.theme')",
+      :label="$tc('common.theme')",
       :items="themes",
       @input="setTheme"
     )

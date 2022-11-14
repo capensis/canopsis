@@ -2,9 +2,9 @@
   div.timeline
     ul(v-for="(steps, day) in groupedSteps", :key="day")
       li(v-for="(step, index) in steps", :key="index")
-        div.timeline-item(v-show="index === 0")
+        div.timeline-date(v-show="index === 0")
           div.date {{ day }}
-        div.timeline-item
+        div.timeline-card
           div.time {{ step.t | date('time') }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
@@ -52,31 +52,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $border_line: #DDDDE0;
-  $background: white;
+$borderLine: #DDDDE0;
+
+.timeline {
+  margin: 0 auto;
+  width: 90%;
 
   ul {
     list-style: none;
     color: #858585;
+  }
 
-    &:last-child {
-      li:last-child {
-        .timeline-item:last-child {
-          border-image: linear-gradient(
-                  to bottom,
-                  $border_line 60%,
-                  $background) 1 100%;
-        }
-      }
+  &-date {
+    padding: 3em 2em 0;
+    position: relative;
+
+    .date {
+      top: 4px;
+      left: -11px;
+      position: absolute;
+    }
+
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      left: -2px;
+      width: 2px;
+      background-color: $borderLine;
+    }
+
+    &:before {
+      top: 0;
+      height: 4px;
+    }
+
+    &:after {
+      top: 24px;
+      bottom: 0;
     }
   }
 
-  .timeline {
-    margin: 0 auto;
-    width: 90%
-  }
-
-  .timeline-item {
+  &-card {
     padding: 3em 2em 0;
     position: relative;
 
@@ -88,33 +104,34 @@ export default {
       font-size: 11px;
     }
 
+    .flag {
+      height: 30px;
+      top: 0;
+      left: -13px;
+      position: absolute;
+    }
+
     &:before, &:after {
       content: '';
       position: absolute;
       left: -2px;
       width: 2px;
-      background-color: $border_line;
+      background-color: $borderLine;
     }
 
     &:after {
-      top: 34px;
+      top: 30px;
       bottom: 0;
     }
   }
 
-  .flag, .date {
-    top: 0;
-    position: absolute;
+  ul:last-of-type li:last-child &-card:after {
+    background-color: unset;
+    background-image: linear-gradient(
+        to bottom,
+        $borderLine 60%,
+        transparent
+    );
   }
-
-  .flag {
-    height: 30px;
-    top: 4px;
-    left: -13px;
-  }
-
-  .date {
-    top: 4px;
-    left: -11px;
-  }
+}
 </style>

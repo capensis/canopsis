@@ -4,8 +4,6 @@
     :headers="headers",
     :loading="hasActivePending",
     :load-children="loadChildren",
-    :dark="dark",
-    :light="light",
     item-key="key"
   )
     template(#expand="{ item }")
@@ -86,14 +84,6 @@ export default {
     columns: {
       type: Array,
       required: false,
-    },
-    dark: {
-      type: Boolean,
-      default: false,
-    },
-    light: {
-      type: Boolean,
-      default: false,
     },
     impact: {
       type: Boolean,

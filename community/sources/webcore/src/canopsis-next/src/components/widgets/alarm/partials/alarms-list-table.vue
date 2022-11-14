@@ -449,6 +449,11 @@ export default {
       }
 
       tr {
+        background: white;
+
+        .theme--dark & {
+          background: #424242;
+        }
       }
     }
 
