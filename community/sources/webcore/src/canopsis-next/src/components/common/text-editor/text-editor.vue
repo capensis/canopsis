@@ -603,6 +603,10 @@ export default {
       height: 100%;
       color: black;
       font-size: 15px;
+
+      .jodit_dark_theme & {
+        color: silver;
+      }
     }
   }
 }

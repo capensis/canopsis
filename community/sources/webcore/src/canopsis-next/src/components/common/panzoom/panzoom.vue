@@ -10,7 +10,7 @@
     v-layout.panzoom__bottom-right-actions(v-if="helpText", column)
       v-tooltip(top)
         template(#activator="{ on }")
-          v-icon.cursor-pointer(v-on="on", color="secondary", size="32") help
+          v-icon.panzoom__help-icon(v-on="on", color="secondary", size="32") help
         div.pre-wrap(v-html="helpText")
 </template>
 
@@ -127,6 +127,15 @@ export default {
     position: absolute;
     bottom: 10px;
     right: 10px;
+  }
+
+  &__help-icon {
+    cursor: pointer;
+    color: var(--v-secondary-base) !important;
+
+    .theme--dark & {
+      color: var(--v-secondary-lighten4) !important;
+    }
   }
 }
 </style>

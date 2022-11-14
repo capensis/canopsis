@@ -29,7 +29,7 @@ export default {
     editorOptions() {
       return {
         overviewRulerLanes: 0,
-        theme: this.$system.darkMode ? 'mermaid-dark' : 'mermaid',
+        theme: 'mermaid',
         automaticLayout: true,
         minimap: {
           enabled: false,

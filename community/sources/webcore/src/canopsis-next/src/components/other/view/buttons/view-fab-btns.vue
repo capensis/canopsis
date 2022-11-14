@@ -118,7 +118,6 @@ export default {
 
       this.$fullscreen.toggle(element, {
         fullscreenClass: 'full-screen',
-        background: 'white',
         callback: (value) => {
           if (value) {
             viewElement.classList.add('view-fullscreen');
@@ -197,5 +196,9 @@ export default {
   z-index: 7;
 
   background: white;
+
+  .theme--dark & {
+    background: #424242;
+  }
 }
 </style>

@@ -447,26 +447,40 @@ export const COLORS = {
   },
 };
 
+export const THEMES_NAMES = {
+  canopsis: 'canopsis',
+  canopsisDark: 'canopsisDark',
+  colorBlind: 'colorBlind',
+  colorBlindDark: 'colorBlindDark',
+};
+
 export const THEMES = {
-  canopsis: {
+  [THEMES_NAMES.canopsis]: {
     dark: false,
     colors: {
       primary: COLORS.primary,
       secondary: COLORS.secondary,
     },
   },
-  darkCanopsis: {
+  [THEMES_NAMES.canopsisDark]: {
     dark: true,
     colors: {
       primary: COLORS.primary,
       secondary: COLORS.secondary,
     },
   },
-  custom: {
+  [THEMES_NAMES.colorBlind]: {
     dark: false,
     colors: {
-      primary: COLORS.secondary,
-      secondary: COLORS.primary,
+      primary: '#2196F3',
+      secondary: COLORS.secondary,
+    },
+  },
+  [THEMES_NAMES.colorBlindDark]: {
+    dark: true,
+    colors: {
+      primary: '#2196F3',
+      secondary: COLORS.secondary,
     },
   },
 };
