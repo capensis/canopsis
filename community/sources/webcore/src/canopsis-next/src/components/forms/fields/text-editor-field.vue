@@ -9,7 +9,7 @@
     :error-messages="errorMessages",
     :max-file-size="maxFileSize",
     :variables="variables",
-    :dark="$system.darkMode"
+    :dark="$system.dark"
   )
 </template>
 

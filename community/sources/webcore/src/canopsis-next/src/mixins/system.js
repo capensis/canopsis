@@ -1,7 +1,7 @@
 import Vue from 'vue';
-
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
-import { THEMES } from '@/config';
+
+import { THEMES, THEMES_NAMES } from '@/config';
 
 import { DEFAULT_TIMEZONE } from '@/constants';
 
@@ -13,14 +13,21 @@ export const systemMixin = {
   },
   data() {
     return {
-      system: {
+      properties: {
         timezone: this.timezone || DEFAULT_TIMEZONE,
-        darkMode: false,
-        themes: Object.keys(THEMES),
-        setTheme: this.setTheme,
-        setDarkMode: this.setDarkMode,
+        dark: false,
       },
     };
+  },
+  computed: {
+    system() {
+      return {
+        ...this.properties,
+        themes: Object.values(THEMES_NAMES),
+        setTheme: this.setTheme,
+        setDarkMode: this.setDarkMode,
+      };
+    },
   },
   methods: {
     /**
@@ -30,17 +37,17 @@ export const systemMixin = {
     setSystemData(options) {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined) {
-          Vue.set(this.system, key, value);
+          Vue.set(this.properties, key, value);
         }
       });
     },
 
-    setTheme(name) {
+    setTheme(name = THEMES_NAMES.canopsis) {
       const { dark, colors } = THEMES[name];
 
       this.$vuetify.theme = theme(colors);
 
-      this.system.darkMode = dark;
+      this.properties.dark = dark;
     },
   },
 };

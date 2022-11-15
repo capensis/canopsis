@@ -4,7 +4,7 @@
     :options="alarmsChartOptions",
     :width="width",
     :height="height",
-    :dark="$system.darkMode"
+    :dark="$system.dark"
   )
     template(#actions="{ chart }")
       kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
