@@ -1,5 +1,5 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :labels="labels", :options="ratingChartOptions", :dark="$system.darkMode")
+  bar-chart(:datasets="datasets", :labels="labels", :options="ratingChartOptions", :dark="$system.dark")
     template(#actions="{ chart }")
       kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>

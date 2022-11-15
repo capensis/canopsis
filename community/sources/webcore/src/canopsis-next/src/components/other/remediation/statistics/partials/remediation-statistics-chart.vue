@@ -1,5 +1,5 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :options="chartOptions", :dark="$system.darkMode")
+  bar-chart(:datasets="datasets", :options="chartOptions", :dark="$system.dark")
 </template>
 
 <script>

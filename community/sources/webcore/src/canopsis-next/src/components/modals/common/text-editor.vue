@@ -10,7 +10,7 @@
           :label="config.label",
           :error-messages="errors.collect('text')",
           :variables="variables",
-          :dark="$system.darkMode",
+          :dark="$system.dark",
           name="text"
         )
       template(#actions="")
