@@ -650,6 +650,24 @@ instruction:
       unit: s
       value: 2
 
+  instruction_to_run_auto_instruction_1_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-1-3
+    description: test-instruction-to-run-auto-instruction-1-3-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-1
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-1-3-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
   instruction_to_run_auto_instruction_2_1:
     <<: *instruction_auto
     _id: test-instruction-to-run-auto-instruction-2-1
