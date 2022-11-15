@@ -106,7 +106,7 @@ Feature: Get a role
 
   Scenario: given search request should return roles with permission
     When I am admin
-    When I do GET /api/v4/roles?permission=api_instruction_approve&search=ap
+    When I do GET /api/v4/roles?permission=api_instruction_approve&search=approve
     Then the response code should be 200
     Then the response body should contain:
     """json
