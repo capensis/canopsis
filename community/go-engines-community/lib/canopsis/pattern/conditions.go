@@ -25,6 +25,12 @@ const (
 	ConditionGT           = "gt"
 	ConditionLT           = "lt"
 	ConditionRegexp       = "regexp"
+	ConditionContain      = "contain"
+	ConditionNotContain   = "not_contain"
+	ConditionBeginWith    = "begin_with"
+	ConditionNotBeginWith = "not_begin_with"
+	ConditionEndWith      = "end_with"
+	ConditionNotEndWith   = "not_end_with"
 	ConditionHasEvery     = "has_every"
 	ConditionHasOneOf     = "has_one_of"
 	ConditionHasNot       = "has_not"
@@ -178,7 +184,13 @@ func (c *Condition) MatchString(value string) (bool, RegexMatches, error) {
 		}
 
 		return true, nil, nil
-	case ConditionRegexp:
+	case ConditionRegexp,
+		ConditionContain,
+		ConditionNotContain,
+		ConditionBeginWith,
+		ConditionNotBeginWith,
+		ConditionEndWith,
+		ConditionNotEndWith:
 		if c.valueRegexp == nil {
 			return false, nil, ErrWrongConditionValue
 		}
@@ -353,7 +365,13 @@ func (c *Condition) StringToMongoQuery(f string) (bson.M, error) {
 		}
 
 		return bson.M{f: bson.M{"$nin": c.valueStrArray}}, nil
-	case ConditionRegexp:
+	case ConditionRegexp,
+		ConditionContain,
+		ConditionNotContain,
+		ConditionBeginWith,
+		ConditionNotBeginWith,
+		ConditionEndWith,
+		ConditionNotEndWith:
 		if c.valueRegexp == nil {
 			return nil, ErrWrongConditionValue
 		}
@@ -564,7 +582,13 @@ func (c *Condition) StringToSql(f string) (string, error) {
 
 		// "IS NULL" is mandatory
 		return fmt.Sprintf("(%[1]s IS NULL OR NOT (%[1]s = ANY (ARRAY [%s]))", f, strings.Join(values, ",")), nil
-	case ConditionRegexp:
+	case ConditionRegexp,
+		ConditionContain,
+		ConditionNotContain,
+		ConditionBeginWith,
+		ConditionNotBeginWith,
+		ConditionEndWith,
+		ConditionNotEndWith:
 		if c.valueRegexp == nil {
 			return "", ErrWrongConditionValue
 		}
@@ -689,7 +713,13 @@ func (c *Condition) StringToSqlJson(field, key string) (string, error) {
 		}
 
 		return fmt.Sprintf("(%s AND NOT (%s = ANY (ARRAY [%s])))", checkType, operand, strings.Join(values, ",")), nil
-	case ConditionRegexp:
+	case ConditionRegexp,
+		ConditionContain,
+		ConditionNotContain,
+		ConditionBeginWith,
+		ConditionNotBeginWith,
+		ConditionEndWith,
+		ConditionNotEndWith:
 		if c.valueRegexp == nil {
 			return "", ErrWrongConditionValue
 		}
@@ -868,8 +898,25 @@ func (c *Condition) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 
 func (c *Condition) parseValue() {
 	if s, err := getStringValue(c.Value); err == nil {
-		if c.Type == ConditionRegexp {
-			if r, err := utils.NewRegexExpression(s); err == nil {
+		regexpStr := ""
+		switch c.Type {
+		case ConditionRegexp:
+			regexpStr = s
+		case ConditionContain:
+			regexpStr = utils.EscapeRegex(s)
+		case ConditionNotContain:
+			regexpStr = "^((?!" + utils.EscapeRegex(s) + ").)*$"
+		case ConditionBeginWith:
+			regexpStr = "^" + utils.EscapeRegex(s)
+		case ConditionNotBeginWith:
+			regexpStr = "^(?!" + utils.EscapeRegex(s) + ")"
+		case ConditionEndWith:
+			regexpStr = utils.EscapeRegex(s) + "$"
+		case ConditionNotEndWith:
+			regexpStr = "(?<!" + utils.EscapeRegex(s) + ")$"
+		}
+		if regexpStr != "" {
+			if r, err := utils.NewRegexExpression(regexpStr); err == nil {
 				c.valueRegexp = r
 			}
 
