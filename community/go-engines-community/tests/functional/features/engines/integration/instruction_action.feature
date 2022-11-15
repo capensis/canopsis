@@ -9,8 +9,8 @@ Feature: run an auto instruction
     {
       "type": 1,
       "triggers": ["changestate"],
-      "name": "test-instruction-instruction-action-pbehavior-1-name",
-      "description": "test-instruction-instruction-action-pbehavior-1-description",
+      "name": "test-instruction-instruction-action-1-name",
+      "description": "test-instruction-instruction-action-1-description",
       "enabled": true,
       "entity_pattern": [
         [
@@ -18,7 +18,7 @@ Feature: run an auto instruction
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-instruction-action-pbehavior-1"
+              "value": "test-resource-instruction-action-1"
             }
           }
         ]
@@ -39,7 +39,7 @@ Feature: run an auto instruction
     When I do POST /api/v4/scenarios:
     """json
     {
-      "name": "test-scenario-instruction-action-pbehavior-1-name",
+      "name": "test-scenario-instruction-action-1-name",
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -50,7 +50,7 @@ Feature: run an auto instruction
                 "field": "name",
                 "cond": {
                   "type": "eq",
-                  "value": "test-resource-instruction-action-pbehavior-1"
+                  "value": "test-resource-instruction-action-1"
                 }
               }
             ]
@@ -70,38 +70,38 @@ Feature: run an auto instruction
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-instruction-action-pbehavior-1",
-      "connector_name": "test-connector-name-instruction-action-pbehavior-1",
+      "connector": "test-connector-instruction-action-1",
+      "connector_name": "test-connector-name-instruction-action-1",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-instruction-action-pbehavior-1",
-      "resource": "test-resource-instruction-action-pbehavior-1",
+      "component": "test-component-instruction-action-1",
+      "resource": "test-resource-instruction-action-1",
       "state": 1,
-      "output": "test-output-instruction-action-pbehavior-1"
+      "output": "test-output-instruction-action-1"
     }
     """
     Then I wait the end of events processing which contain:
     """json
     [
       {
-        "connector": "test-connector-instruction-action-pbehavior-1",
-        "connector_name": "test-connector-name-instruction-action-pbehavior-1",
+        "connector": "test-connector-instruction-action-1",
+        "connector_name": "test-connector-name-instruction-action-1",
         "source_type": "resource",
         "event_type": "trigger",
-        "component": "test-component-instruction-action-pbehavior-1",
-        "resource": "test-resource-instruction-action-pbehavior-1"
+        "component": "test-component-instruction-action-1",
+        "resource": "test-resource-instruction-action-1"
       },
       {
-        "connector": "test-connector-instruction-action-pbehavior-1",
-        "connector_name": "test-connector-name-instruction-action-pbehavior-1",
+        "connector": "test-connector-instruction-action-1",
+        "connector_name": "test-connector-name-instruction-action-1",
         "source_type": "resource",
         "event_type": "trigger",
-        "component": "test-component-instruction-action-pbehavior-1",
-        "resource": "test-resource-instruction-action-pbehavior-1"
+        "component": "test-component-instruction-action-1",
+        "resource": "test-resource-instruction-action-1"
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-instruction-action-pbehavior-1&with_instructions=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-instruction-action-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -143,22 +143,22 @@ Feature: run an auto instruction
       {
         "_t": "autoinstructionstart",
         "a": "system",
-        "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
+        "m": "Instruction test-instruction-instruction-action-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
-        "m": "Instruction test-instruction-instruction-action-pbehavior-1-name. Job test-job-to-run-auto-instruction-1-name."
+        "m": "Instruction test-instruction-instruction-action-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
-        "m": "Instruction test-instruction-instruction-action-pbehavior-1-name. Job test-job-to-run-auto-instruction-1-name."
+        "m": "Instruction test-instruction-instruction-action-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
-        "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
+        "m": "Instruction test-instruction-instruction-action-1-name."
       }
     ]
     """
@@ -181,12 +181,12 @@ Feature: run an auto instruction
       {
         "_t": "autoinstructionstart",
         "a": "system",
-        "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
+        "m": "Instruction test-instruction-instruction-action-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
-        "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
+        "m": "Instruction test-instruction-instruction-action-1-name."
       }
     ]
     """
