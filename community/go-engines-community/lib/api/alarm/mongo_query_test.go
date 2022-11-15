@@ -1550,7 +1550,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			PbehaviorPattern: pattern.PbehaviorInfo{
 				{
 					{
-						Field:     "pbehavior_info.name",
+						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-pbehavior"),
 					},
 				},
@@ -1613,7 +1613,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			{"v.component": bson.M{"$eq": "test-component"}},
 		}}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
-			{"v.pbehavior_info.name": bson.M{"$eq": "test-pbehavior"}},
+			{"v.pbehavior_info.id": bson.M{"$eq": "test-pbehavior"}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}

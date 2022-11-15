@@ -25,7 +25,7 @@
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
       )
-    td
+    td(v-if="!hideActions")
       actions-panel(
         :item="alarm",
         :widget="widget",
@@ -105,6 +105,10 @@ export default {
       default: () => {},
     },
     selecting: {
+      type: Boolean,
+      default: false,
+    },
+    hideActions: {
       type: Boolean,
       default: false,
     },

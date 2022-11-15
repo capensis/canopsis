@@ -2,14 +2,14 @@ Feature: Create a widget filter
   I need to be able to create a widget filter
   Only admin should be able to create a widget filter
 
-  Scenario: given create request should return ok
+  Scenario: given create public request should return ok
     When I am admin
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-to-create-1-title",
       "widget": "test-widget-to-filter-edit",
-      "is_private": true,
+      "is_private": false,
       "alarm_pattern": [
         [
           {
@@ -51,7 +51,7 @@ Feature: Create a widget filter
     {
       "author": "root",
       "title": "test-widgetfilter-to-create-1-title",
-      "is_private": true,
+      "is_private": false,
       "alarm_pattern": [
         [
           {
@@ -94,7 +94,7 @@ Feature: Create a widget filter
     {
       "author": "root",
       "title": "test-widgetfilter-to-create-1-title",
-      "is_private": true,
+      "is_private": false,
       "alarm_pattern": [
         [
           {
@@ -124,6 +124,135 @@ Feature: Create a widget filter
             "cond": {
               "type": "eq",
               "value": "test-widgetfilter-to-create-1-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+
+  Scenario: given create private request should return ok
+    When I am test-role-to-widget-filter-edit
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-to-create-4-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": "test-user-to-widget-filter-edit",
+      "title": "test-widgetfilter-to-create-4-title",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    When I do GET /api/v4/widget-filters/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": "test-user-to-widget-filter-edit",
+      "title": "test-widgetfilter-to-create-4-title",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-4-pattern"
             }
           }
         ]
@@ -313,8 +442,31 @@ Feature: Create a widget filter
     When I do POST /api/v4/widget-filters
     Then the response code should be 403
 
-  Scenario: given create request and auth user without view permission should not allow access
+  Scenario: given create public request and auth user without view permission should not allow access
     When I am admin
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "widget": "test-widget-to-filter-check-access",
+      "title": "test-widgetfilter-to-create-3-title",
+      "is_private": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-create-5-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 403
+
+  Scenario: given create private request and auth user without view permission should not allow access
+    When I am test-role-to-widget-filter-edit
     When I do POST /api/v4/widget-filters:
     """json
     {

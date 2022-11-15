@@ -24,6 +24,7 @@ import {
   MAX_LIMIT,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
+  PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -83,6 +84,8 @@ export default {
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
@@ -199,7 +202,12 @@ export default {
 
     stateOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.higher,
+          PATTERN_OPERATORS.lower,
+        ],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
           is: 'c-entity-state-field',
@@ -264,6 +272,21 @@ export default {
       };
     },
 
+    stringWithExistOptions() {
+      return {
+        operators: [...PATTERN_STRING_OPERATORS, PATTERN_OPERATORS.exist],
+      };
+    },
+
+    activatedOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.activated,
+          PATTERN_OPERATORS.inactive,
+        ],
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -318,6 +341,7 @@ export default {
         {
           text: this.$t('common.output'),
           value: ALARM_PATTERN_FIELDS.output,
+          options: this.stringWithExistOptions,
         },
         {
           text: this.$t('common.lastEventDate'),
@@ -367,11 +391,34 @@ export default {
         {
           text: this.$t('common.lastComment'),
           value: ALARM_PATTERN_FIELDS.lastComment,
+          options: this.stringWithExistOptions,
         },
         {
           text: this.$tc('common.tag', 2),
           value: ALARM_PATTERN_FIELDS.tags,
           options: this.tagsOptions,
+        },
+        {
+          text: this.$t('common.activated'),
+          value: ALARM_PATTERN_FIELDS.activated,
+          options: this.activatedOptions,
+        },
+        {
+          text: this.$t('common.activationDate'),
+          value: ALARM_PATTERN_FIELDS.activationDate,
+          options: this.dateOptions,
+        },
+        {
+          text: this.$t('common.longOutput'),
+          value: ALARM_PATTERN_FIELDS.longOutput,
+        },
+        {
+          text: this.$t('common.initialOutput'),
+          value: ALARM_PATTERN_FIELDS.initialOutput,
+        },
+        {
+          text: this.$t('common.longInitialOutput'),
+          value: ALARM_PATTERN_FIELDS.longInitialOutput,
         },
       ];
     },

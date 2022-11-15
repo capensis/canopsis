@@ -1,4 +1,19 @@
 definitions:
+  account.EditRequest:
+    properties:
+      defaultview:
+        type: string
+      password:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
   account.User:
     properties:
       _id:
@@ -1523,6 +1538,10 @@ definitions:
         additionalProperties:
           type: string
         type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
       type:
         type: string
     type: object
@@ -3973,10 +3992,6 @@ definitions:
         type: string
       ui_language:
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
     required:
     - _id
     - email
@@ -4009,10 +4024,6 @@ definitions:
         type: string
       ui_language:
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
     required:
     - email
     - enable
@@ -4044,10 +4055,6 @@ definitions:
         type: string
       ui_language:
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
     required:
     - email
     - enable
@@ -4093,10 +4100,6 @@ definitions:
         type: string
       ui_language:
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
     type: object
   user.View:
     properties:
