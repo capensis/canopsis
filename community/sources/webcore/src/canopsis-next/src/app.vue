@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app#app(:dark="system.darkMode")
+  v-app#app(:dark="system.dark")
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
@@ -99,9 +99,8 @@ export default {
             this.filesAccess(),
           ]);
 
-          this.setSystemData({
-            timezone: this.timezone,
-          });
+          this.setSystemData({ timezone: this.timezone });
+          this.setTheme(currentUser.ui_theme);
 
           this.setTitle();
           this.showPausedExecutionsPopup();
