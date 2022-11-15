@@ -152,11 +152,10 @@ export const patternRuleToForm = (rule = {}) => {
       }
       break;
     }
-    case PATTERN_CONDITIONS.notEqual: {
+    case PATTERN_CONDITIONS.notEqual:
       form.operator = PATTERN_OPERATORS.notEqual;
       form.value = rule.cond.value;
       break;
-    }
 
     case PATTERN_CONDITIONS.greater:
       form.operator = isDuration
@@ -232,51 +231,35 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = [];
       break;
 
-    case PATTERN_CONDITIONS.regexp: {
-      const notContainsMatch = rule.cond.value.match(/^\^\(\(\?!(?<value>.+)\)\.\)\*\$$/);
-
-      if (notContainsMatch?.groups?.value) {
-        form.operator = PATTERN_OPERATORS.notContains;
-        form.value = notContainsMatch.groups.value;
-        break;
-      }
-
-      const notEndWithMatch = rule.cond.value.match(/^\(\?<!(?<value>.+)\)\$$/);
-
-      if (notEndWithMatch?.groups?.value) {
-        form.operator = PATTERN_OPERATORS.notEndWith;
-        form.value = notEndWithMatch.groups.value;
-        break;
-      }
-
-      const notBeginWithMatch = rule.cond.value.match(/^\^\(\?!(?<value>.+)\)$/);
-
-      if (notBeginWithMatch?.groups?.value) {
-        form.operator = PATTERN_OPERATORS.notBeginWith;
-        form.value = notBeginWithMatch.groups.value;
-        break;
-      }
-
-      const endsWithMatch = rule.cond.value.match(/(?<value>.+)\$$/);
-
-      if (endsWithMatch?.groups?.value) {
-        form.operator = PATTERN_OPERATORS.endsWith;
-        form.value = endsWithMatch.groups.value;
-        break;
-      }
-
-      const beginsWithMatch = rule.cond.value.match(/^\^(?<value>.+)/);
-
-      if (beginsWithMatch?.groups?.value) {
-        form.operator = PATTERN_OPERATORS.beginsWith;
-        form.value = beginsWithMatch.groups.value;
-        break;
-      }
-
+    case PATTERN_CONDITIONS.contains:
       form.operator = PATTERN_OPERATORS.contains;
       form.value = rule.cond.value;
       break;
-    }
+    case PATTERN_CONDITIONS.notContains:
+      form.operator = PATTERN_OPERATORS.notContains;
+      form.value = rule.cond.value;
+      break;
+    case PATTERN_CONDITIONS.beginsWith:
+      form.operator = PATTERN_OPERATORS.beginsWith;
+      form.value = rule.cond.value;
+      break;
+    case PATTERN_CONDITIONS.notBeginWith:
+      form.operator = PATTERN_OPERATORS.notBeginWith;
+      form.value = rule.cond.value;
+      break;
+    case PATTERN_CONDITIONS.endsWith:
+      form.operator = PATTERN_OPERATORS.endsWith;
+      form.value = rule.cond.value;
+      break;
+    case PATTERN_CONDITIONS.notEndWith:
+      form.operator = PATTERN_OPERATORS.notEndWith;
+      form.value = rule.cond.value;
+      break;
+    case PATTERN_CONDITIONS.regexp:
+      form.operator = PATTERN_OPERATORS.regexp;
+      form.value = rule.cond.value;
+      break;
+
     case PATTERN_CONDITIONS.relativeTime: {
       const { value, unit } = rule.cond.value;
 
@@ -295,19 +278,23 @@ export const patternRuleToForm = (rule = {}) => {
 
   if (isDuration) {
     form.duration = durationToForm(rule.cond.value);
-  } else if (isExtraInfos) {
-    form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
-    form.field = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
-  } else if (isInfos) {
-    if (isAlarmInfos) {
-      form.attribute = ALARM_PATTERN_FIELDS.infos;
-    } else if (isEntityInfos) {
-      form.attribute = ENTITY_PATTERN_FIELDS.infos;
-    } else {
-      form.attribute = ENTITY_PATTERN_FIELDS.componentInfos;
-    }
+  }
 
-    form.dictionary = rule.field.slice(form.attribute.length + 1);
+  if (isExtraInfos || isInfos) {
+    if (isExtraInfos) {
+      form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
+      form.dictionary = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
+    } else if (isInfos) {
+      if (isAlarmInfos) {
+        form.attribute = ALARM_PATTERN_FIELDS.infos;
+      } else if (isEntityInfos) {
+        form.attribute = ENTITY_PATTERN_FIELDS.infos;
+      } else {
+        form.attribute = ENTITY_PATTERN_FIELDS.componentInfos;
+      }
+
+      form.dictionary = rule.field.slice(form.attribute.length + 1);
+    }
 
     form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
@@ -431,28 +418,26 @@ export const formRuleToPatternRule = (rule) => {
       pattern.cond.type = PATTERN_CONDITIONS.notEqual;
       break;
     case PATTERN_OPERATORS.contains:
-      pattern.cond.type = PATTERN_CONDITIONS.regexp;
+      pattern.cond.type = PATTERN_CONDITIONS.contains;
       break;
     case PATTERN_OPERATORS.notContains:
-      pattern.cond.type = PATTERN_CONDITIONS.regexp;
-      pattern.cond.value = `^((?!${rule.value}).)*$`;
+      pattern.cond.type = PATTERN_CONDITIONS.notContains;
       break;
 
     case PATTERN_OPERATORS.beginsWith:
-      pattern.cond.type = PATTERN_CONDITIONS.regexp;
-      pattern.cond.value = `^${rule.value}`;
+      pattern.cond.type = PATTERN_CONDITIONS.beginsWith;
       break;
     case PATTERN_OPERATORS.notBeginWith:
-      pattern.cond.type = PATTERN_CONDITIONS.regexp;
-      pattern.cond.value = `^(?!${rule.value})`;
+      pattern.cond.type = PATTERN_CONDITIONS.notBeginWith;
       break;
     case PATTERN_OPERATORS.endsWith:
-      pattern.cond.type = PATTERN_CONDITIONS.regexp;
-      pattern.cond.value = `${rule.value}$`;
+      pattern.cond.type = PATTERN_CONDITIONS.endsWith;
       break;
     case PATTERN_OPERATORS.notEndWith:
+      pattern.cond.type = PATTERN_CONDITIONS.notEndWith;
+      break;
+    case PATTERN_OPERATORS.regexp:
       pattern.cond.type = PATTERN_CONDITIONS.regexp;
-      pattern.cond.value = `(?<!${rule.value})$`;
       break;
 
     case PATTERN_OPERATORS.hasEvery:

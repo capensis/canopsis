@@ -705,6 +705,7 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 				if m {
 					matched[i] = true
 					foundIndex = i
+					break
 				}
 			}
 
