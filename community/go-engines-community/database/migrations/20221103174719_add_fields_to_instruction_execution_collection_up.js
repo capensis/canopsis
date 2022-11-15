@@ -17,7 +17,7 @@ db.instruction_execution.aggregate([
         created_at: doc.started_at,
         priority: doc.instruction.priority,
     };
-    if (doc.instruction.type === 0 && doc.step_history && doc.instruction.steps) {
+    if (doc.instruction.type == 0 && doc.instruction_modified_on >= doc.instruction.last_modified && doc.step_history && doc.instruction.steps) {
         var updated = true
         doc.step_history.forEach(function (step, stepIndex) {
             var instructionStep = doc.instruction.steps[stepIndex];
