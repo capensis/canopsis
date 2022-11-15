@@ -68,5 +68,9 @@ export default {
     fetchWidgetFilter(context, { id, data } = {}) {
       return request.get(`${API_ROUTES.widget.filters}/${id}`, data);
     },
+
+    updateWidgetFiltersPositions(context, { data } = {}) {
+      return request.put(API_ROUTES.widget.filterPositions, data);
+    },
   },
 };

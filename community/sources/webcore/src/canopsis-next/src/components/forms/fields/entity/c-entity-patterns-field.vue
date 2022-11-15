@@ -86,16 +86,9 @@ export default {
         PATTERN_OPERATORS.notEqual,
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
-      ];
-    },
-
-    dependenciesOperators() {
-      return [
-        PATTERN_OPERATORS.hasEvery,
-        PATTERN_OPERATORS.hasOneOf,
-        PATTERN_OPERATORS.hasNot,
-        PATTERN_OPERATORS.isEmpty,
-        PATTERN_OPERATORS.isNotEmpty,
+        PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
@@ -124,6 +117,9 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
           PATTERN_OPERATORS.equal,
           PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
         valueField: {
@@ -143,6 +139,9 @@ export default {
           PATTERN_OPERATORS.isNotOneOf,
           PATTERN_OPERATORS.equal,
           PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
         ],
         defaultValue: [],
         valueField: {

@@ -3,6 +3,8 @@ package viewtab
 import (
 	"context"
 	"errors"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -10,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type Store interface {
@@ -93,7 +94,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.title": 1}},
+		{"$sort": bson.M{"filters.position": 1}},
 		{"$group": bson.M{
 			"_id": bson.M{
 				"_id":    "_id",
@@ -147,7 +148,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+		position, err := s.getNextPosition(ctx, r.View)
 		if err != nil {
 			return err
 		}
@@ -157,7 +158,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			Title:    r.Title,
 			View:     r.View,
 			Author:   r.Author,
-			Position: count,
+			Position: position,
 			Created:  now,
 			Updated:  now,
 		}
@@ -270,7 +271,7 @@ func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author strin
 }
 
 func (s *store) copy(ctx context.Context, tab Response, r EditRequest) (*Response, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+	position, err := s.getNextPosition(ctx, r.View)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +281,7 @@ func (s *store) copy(ctx context.Context, tab Response, r EditRequest) (*Respons
 		Title:    r.Title,
 		View:     r.View,
 		Author:   r.Author,
-		Position: count,
+		Position: position,
 		Created:  now,
 		Updated:  now,
 	}
@@ -382,4 +383,28 @@ func (s *store) deleteWidgets(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *store) getNextPosition(ctx context.Context, view string) (int64, error) {
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"view": view}},
+		{"$group": bson.M{
+			"_id":      nil,
+			"position": bson.M{"$max": "$position"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		data := struct {
+			Position int64 `bson:"position"`
+		}{}
+		err = cursor.Decode(&data)
+		return data.Position + 1, err
+	}
+
+	return 0, nil
 }

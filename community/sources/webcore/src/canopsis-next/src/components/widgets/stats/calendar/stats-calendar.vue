@@ -185,8 +185,8 @@ export default {
               tstop: convertDateToTimestamp(meta.tstop),
             };
 
-            if (meta.filter) {
-              newParams.filter = meta.filter._id;
+            if (meta.filter?._id) {
+              newParams.filters = [meta.filter._id];
             }
 
             return this.fetchAlarmsListWithoutStore({
@@ -229,7 +229,7 @@ export default {
             params: {
               ...query,
 
-              filter: id,
+              filters: [id],
             },
           })));
 

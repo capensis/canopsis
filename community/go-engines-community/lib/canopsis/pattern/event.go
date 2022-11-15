@@ -15,6 +15,7 @@ type EventRegexMatches struct {
 	Component     RegexMatches
 	Resource      RegexMatches
 	Output        RegexMatches
+	LongOutput    RegexMatches
 	EventType     RegexMatches
 	SourceType    RegexMatches
 	ExtraInfos    map[string]RegexMatches
@@ -36,6 +37,8 @@ func (m *EventRegexMatches) SetRegexMatches(fieldName string, matches RegexMatch
 		m.Resource = matches
 	case "output":
 		m.Output = matches
+	case "long_output":
+		m.LongOutput = matches
 	case "event_type":
 		m.EventType = matches
 	case "source_type":
@@ -115,6 +118,8 @@ func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
 				if matched {
 					eventRegexMatches.SetRegexMatches(f, regexMatches)
 				}
+			} else if i, ok := getEventIntField(event, f); ok {
+				matched, err = cond.MatchInt(i)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -172,6 +177,8 @@ func (p Event) Validate() bool {
 
 			if str, ok := getEventStringField(emptyEvent, f); ok {
 				_, _, err = cond.MatchString(str)
+			} else if i, ok := getEventIntField(emptyEvent, f); ok {
+				_, err = cond.MatchInt(i)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -221,12 +228,23 @@ func getEventStringField(event types.Event, f string) (string, bool) {
 		return event.Resource, true
 	case "output":
 		return event.Output, true
+	case "long_output":
+		return event.LongOutput, true
 	case "event_type":
 		return event.EventType, true
 	case "source_type":
 		return event.SourceType, true
 	default:
 		return "", false
+	}
+}
+
+func getEventIntField(event types.Event, f string) (int64, bool) {
+	switch f {
+	case "state":
+		return int64(event.State), true
+	default:
+		return 0, false
 	}
 }
 

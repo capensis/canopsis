@@ -27,9 +27,25 @@
     v-tab {{ $t('context.impactChain') }}
     v-tab-item(lazy)
       impact-chain-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
+
+    v-tab {{ $t('context.activeAlarm') }}
+    v-tab-item(lazy)
+      v-card.secondary.lighten-2(flat)
+        v-card-text
+          entity-alarms-list-table.pa-4(:entity="item", :columns="activeAlarmsColumns")
+
+    v-tab {{ $t('context.resolvedAlarms') }}
+    v-tab-item(lazy)
+      v-card.secondary.lighten-2(flat)
+        v-card-text
+          entity-alarms-list-table.pa-4(:entity="item", :columns="resolvedAlarmsColumns", resolved)
 </template>
 
 <script>
+import { DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS, DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS } from '@/constants';
+
+import { defaultColumnsToColumns } from '@/helpers/entities';
+
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
@@ -38,6 +54,7 @@ import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
 import InfosTab from './expand-panel-tabs/infos-tab.vue';
 import TreeOfDependenciesTab from './expand-panel-tabs/tree-of-dependencies-tab.vue';
 import ImpactChainDependenciesTab from './expand-panel-tabs/impact-chain-dependencies-tab.vue';
+import EntityAlarmsListTable from './expand-panel-tabs/entity-alarms-list-table.vue';
 
 export default {
   components: {
@@ -46,6 +63,7 @@ export default {
     ImpactDependsTab,
     InfosTab,
     TreeOfDependenciesTab,
+    EntityAlarmsListTable,
   },
   mixins: [permissionsTechnicalExploitationPbehaviorMixin],
   props: {
@@ -60,6 +78,14 @@ export default {
     serviceDependenciesColumns: {
       type: Array,
       default: () => [],
+    },
+    resolvedAlarmsColumns: {
+      type: Array,
+      default: () => defaultColumnsToColumns(DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS),
+    },
+    activeAlarmsColumns: {
+      type: Array,
+      default: () => defaultColumnsToColumns(DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS),
     },
   },
 };

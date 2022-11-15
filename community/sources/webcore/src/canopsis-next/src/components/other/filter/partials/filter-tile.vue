@@ -2,7 +2,9 @@
   v-list-tile.pa-0
     v-layout(row, align-center)
       v-flex(xs12)
-        v-list-tile-content {{ filter.title }}
+        v-layout(row, align-center)
+          v-icon.draggable.ml-0.mr-3.action-drag-handler(v-if="editable", small) drag_indicator
+          v-list-tile-content {{ filter.title }}
       v-list-tile-action(v-if="editable")
         v-layout(row, align-center)
           v-tooltip(v-if="filter.old_mongo_query", top)

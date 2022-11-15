@@ -167,12 +167,23 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 				}},
 			}},
 		},
-		"given invalid condition": {
+		"given invalid condition type": {
 			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
 						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test id"),
+					},
+				},
+			},
+			mongoQueryErr: pattern.ErrUnsupportedConditionType,
+		},
+		"given invalid condition value": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.id",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 2),
 					},
 				},
 			},

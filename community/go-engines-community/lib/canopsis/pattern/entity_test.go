@@ -749,12 +749,23 @@ func getEntityToMongoQueryDataSets() map[string]entityDataSet {
 				}},
 			}},
 		},
-		"given invalid condition": {
+		"given invalid condition type": {
 			pattern: pattern.Entity{
 				{
 					{
 						Field:     "name",
-						Condition: pattern.NewStringCondition(pattern.ConditionIsEmpty, "test name"),
+						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+					},
+				},
+			},
+			mongoQueryErr: pattern.ErrUnsupportedConditionType,
+		},
+		"given invalid condition value": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "name",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 2),
 					},
 				},
 			},

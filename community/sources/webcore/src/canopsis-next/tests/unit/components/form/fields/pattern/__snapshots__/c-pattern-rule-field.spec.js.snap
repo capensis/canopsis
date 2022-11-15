@@ -25,6 +25,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props
         class="flex pl-3 xs8"
       >
         <c-pattern-infos-attribute-field-stub
+          combobox="true"
           disabled="true"
           items="Infos 1,Infos 2"
           name="customName"
@@ -249,7 +250,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
       class="layout row"
     >
       <div
-        class="flex"
+        class="flex xs4"
       >
         <c-pattern-attribute-field-stub
           items=""
@@ -261,7 +262,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
       <div
         class="flex pl-3 xs8"
       >
-        <c-pattern-extra-infos-attribute-field-stub
+        <c-pattern-infos-attribute-field-stub
           items=""
           name="rule"
           value="[object Object]"
@@ -275,16 +276,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
     <div
       class="layout row"
     >
-      <div
-        class="flex pl-3 xs1"
-      >
-        <c-input-type-field-stub
-          label="Type"
-          name="rule"
-          types="[object Object],[object Object],[object Object],[object Object]"
-          value="int"
-        />
-      </div>
+      <!---->
       <div
         class="flex pl-3 xs4"
       >
@@ -295,18 +287,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
           value="equal"
         />
       </div>
-      <div
-        class="flex pl-3 xs7 xs6"
-      >
-        <c-mixed-input-field-stub
-          inputtype="int"
-          label="Value"
-          name="rule.value"
-          required="true"
-          types="[object Object],[object Object],[object Object],[object Object]"
-          value="22"
-        />
-      </div>
+      <!---->
     </div>
   </div>
 </div>
@@ -336,6 +317,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with infos type a
         class="flex pl-3 xs8"
       >
         <c-pattern-infos-attribute-field-stub
+          combobox="true"
           items=""
           name="rule"
           value="[object Object]"

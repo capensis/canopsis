@@ -219,6 +219,7 @@ export const ALARM_PATTERN_FIELDS = {
   output: 'v.output',
   lastEventDate: 'v.last_event_date',
   lastUpdateDate: 'v.last_update_date',
+  activationDate: 'v.activation_date',
   ack: 'v.ack',
   ackAt: 'v.ack.t',
   ackBy: 'v.ack.a',
@@ -227,5 +228,9 @@ export const ALARM_PATTERN_FIELDS = {
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   lastComment: 'v.last_comment.m',
+  longOutput: 'v.long_output',
+  initialOutput: 'v.initial_output',
+  longInitialOutput: 'v.long_initial_output',
   tags: 'tags',
+  activated: 'activated',
 };

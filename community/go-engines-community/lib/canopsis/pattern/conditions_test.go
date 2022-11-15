@@ -15,269 +15,443 @@ func TestCondition_MatchString(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected err %v", err)
 	}
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          string
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test equal is matched",
-			conf:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
 			value:          "test",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test equal is not matched",
-			conf:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
 			value:          "test2",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test not equal is matched",
-			conf:           pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
 			value:          "test2",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test not equal is not matched",
-			conf:           pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
 			value:          "test",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test is one of is matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{"test2", "test"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{"test2", "test"}),
 			value:          "test",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test is one of is not matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{"test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{"test2", "test3"}),
 			value:          "test",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test regexp is matched",
-			conf:           regexpCond,
+			cond:           regexpCond,
 			value:          "test",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test regexp is not matched",
-			conf:           regexpCond,
+			cond:           regexpCond,
 			value:          "tesst",
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test bad regexp err",
-			conf:           pattern.NewStringCondition(pattern.ConditionRegexp, "["),
+			cond:           pattern.NewStringCondition(pattern.ConditionRegexp, "["),
 			value:          "test",
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond value is not a string",
-			conf:           pattern.NewIntCondition(pattern.ConditionEqual, 123),
+			cond:           pattern.NewIntCondition(pattern.ConditionEqual, 123),
 			value:          "test",
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond type is not supported",
-			conf:           pattern.NewStringCondition("some", "test"),
+			cond:           pattern.NewStringCondition("some", "test"),
 			value:          "test",
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
+		},
+		{
+			testName:       "test exist is matched",
+			cond:           pattern.NewBoolCondition(pattern.ConditionExist, true),
+			value:          "test",
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test not exist is matched",
+			cond:           pattern.NewBoolCondition(pattern.ConditionExist, false),
+			value:          "",
+			expectedErr:    nil,
+			expectedResult: true,
 		},
 	}
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, _, err := dataset.conf.MatchString(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, _, err := data.cond.MatchString(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchString(t *testing.T) {
-	dataSets := []pattern.Condition{
-		{
-			Type:  pattern.ConditionEqual,
-			Value: "test",
+	dataSet := map[string]struct {
+		cond           pattern.Condition
+		value          string
+		expectedResult bool
+	}{
+		"given equal cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEqual,
+				Value: "test",
+			},
+			value:          "test",
+			expectedResult: true,
 		},
-		{
-			Type:  pattern.ConditionNotEqual,
-			Value: "test",
+		"given equal cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEqual,
+				Value: "test",
+			},
+			value:          "test1",
+			expectedResult: false,
 		},
-		{
-			Type:  pattern.ConditionIsOneOf,
-			Value: []string{"test"},
+		"given not equal cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEqual,
+				Value: "test",
+			},
+			value:          "test1",
+			expectedResult: true,
 		},
-		{
-			Type:  pattern.ConditionIsNotOneOf,
-			Value: []string{"test"},
+		"given not equal cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEqual,
+				Value: "test",
+			},
+			value:          "test",
+			expectedResult: false,
 		},
-		{
-			Type:  pattern.ConditionRegexp,
-			Value: "^test.+$",
+		"given is one of cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test",
+			expectedResult: true,
+		},
+		"given is one of cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test1",
+			expectedResult: false,
+		},
+		"given is not one of cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsNotOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test1",
+			expectedResult: true,
+		},
+		"given is not one of cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsNotOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test",
+			expectedResult: false,
+		},
+		"given regexp cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionRegexp,
+				Value: "^test.+$",
+			},
+			value:          "test1",
+			expectedResult: true,
+		},
+		"given regexp cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionRegexp,
+				Value: "^test.+$",
+			},
+			value:          "1test",
+			expectedResult: false,
+		},
+		"given contain cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$test",
+			expectedResult: true,
+		},
+		"given contain cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$test",
+			expectedResult: false,
+		},
+		"given not contain cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$test",
+			expectedResult: true,
+		},
+		"given not contain cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$test",
+			expectedResult: false,
+		},
+		"given begin with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test.+$test",
+			expectedResult: true,
+		},
+		"given begin with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test+$test",
+			expectedResult: false,
+		},
+		"given not begin with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test+$test",
+			expectedResult: true,
+		},
+		"given not begin with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test.+$test",
+			expectedResult: false,
+		},
+		"given end with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$",
+			expectedResult: true,
+		},
+		"given end with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$",
+			expectedResult: false,
+		},
+		"given not end with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$",
+			expectedResult: true,
+		},
+		"given not end with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$",
+			expectedResult: false,
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+	for name, data := range dataSet {
+		t.Run(name, func(t *testing.T) {
+			b, err := json.Marshal(condWrapper{Cond: data.cond})
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		w := condWrapper{}
-		err = json.Unmarshal(b, &w)
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			w := condWrapper{}
+			err = json.Unmarshal(b, &w)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		_, _, err = w.Cond.MatchString("test")
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			result, _, err := w.Cond.MatchString(data.value)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			b, err = bson.Marshal(condWrapper{Cond: data.cond})
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		w = condWrapper{}
-		err = bson.Unmarshal(b, &w)
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			w = condWrapper{}
+			err = bson.Unmarshal(b, &w)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		_, _, err = w.Cond.MatchString("test")
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			result, _, err = w.Cond.MatchString(data.value)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
+		})
 	}
 }
 
 func TestCondition_MatchInt(t *testing.T) {
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          int64
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test equal is matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionEqual, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionEqual, 10),
 			value:          10,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test equal is not matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionEqual, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionEqual, 10),
 			value:          9,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test not equal is matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionNotEqual, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionNotEqual, 10),
 			value:          9,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test not equal is not matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionNotEqual, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionNotEqual, 10),
 			value:          10,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test gt is matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionGT, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionGT, 10),
 			value:          11,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test gt is not matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionGT, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionGT, 10),
 			value:          9,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test lt is matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionLT, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionLT, 10),
 			value:          9,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test lt is not matched",
-			conf:           pattern.NewIntCondition(pattern.ConditionLT, 10),
+			cond:           pattern.NewIntCondition(pattern.ConditionLT, 10),
 			value:          11,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond value is not an int",
-			conf:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
 			value:          10,
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond type is not supported",
-			conf:           pattern.NewIntCondition("some", 10),
+			cond:           pattern.NewIntCondition("some", 10),
 			value:          10,
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
 		},
 	}
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := dataset.conf.MatchInt(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err := data.cond.MatchInt(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchInt(t *testing.T) {
-	dataSets := []pattern.Condition{
+	dataSet := []pattern.Condition{
 		{
 			Type:  pattern.ConditionEqual,
 			Value: int32(20),
@@ -296,8 +470,8 @@ func TestCondition_UnmarshalAndMatchInt(t *testing.T) {
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -313,7 +487,7 @@ func TestCondition_UnmarshalAndMatchInt(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
+		b, err = bson.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -332,63 +506,59 @@ func TestCondition_UnmarshalAndMatchInt(t *testing.T) {
 }
 
 func TestCondition_MatchBool(t *testing.T) {
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          bool
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test equal is matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionEqual, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionEqual, true),
 			value:          true,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test equal is not matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionEqual, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionEqual, true),
 			value:          false,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond value is not a bool",
-			conf:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
 			value:          false,
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond type is not supported",
-			conf:           pattern.NewBoolCondition("some", true),
+			cond:           pattern.NewBoolCondition("some", true),
 			value:          false,
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
 		},
 	}
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := dataset.conf.MatchBool(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err := data.cond.MatchBool(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchBool(t *testing.T) {
-	dataSets := []pattern.Condition{
+	dataSet := []pattern.Condition{
 		{
 			Type:  pattern.ConditionEqual,
 			Value: true,
@@ -399,8 +569,8 @@ func TestCondition_UnmarshalAndMatchBool(t *testing.T) {
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -416,7 +586,7 @@ func TestCondition_UnmarshalAndMatchBool(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
+		b, err = bson.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -435,102 +605,102 @@ func TestCondition_UnmarshalAndMatchBool(t *testing.T) {
 }
 
 func TestCondition_MatchStringArray(t *testing.T) {
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          []string
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test is empty is matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
 			value:          []string{},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test is empty is not matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
 			value:          []string{"test"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test is not empty is matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
 			value:          []string{"test"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test is not empty is not matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
 			value:          []string{},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test has_is not matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test1", "test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test1", "test2", "test3"}),
 			value:          []string{"test4"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test has_not is not matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test1", "test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test1", "test2", "test3"}),
 			value:          []string{"test3", "test4"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test has_one_of is matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"test1", "test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"test1", "test2", "test3"}),
 			value:          []string{"test3", "test4"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test has_one_of is not matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"test1", "test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"test1", "test2", "test3"}),
 			value:          []string{"test4"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test has_every is matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"test1", "test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"test1", "test2", "test3"}),
 			value:          []string{"test1", "test2", "test3", "test4"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test has_every is not matched",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"test1", "test2", "test3"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"test1", "test2", "test3"}),
 			value:          []string{"test1", "test2"},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond value is not a bool",
-			conf:           pattern.NewStringArrayCondition(pattern.ConditionIsEmpty, []string{"test"}),
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionIsEmpty, []string{"test"}),
 			value:          []string{"test"},
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond value is not a slice of strings",
-			conf:           pattern.NewBoolCondition(pattern.ConditionHasEvery, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionHasEvery, true),
 			value:          []string{"test"},
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond type is not supported",
-			conf:           pattern.NewStringArrayCondition("some", []string{"test"}),
+			cond:           pattern.NewStringArrayCondition("some", []string{"test"}),
 			value:          []string{"test"},
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
 		},
 	}
@@ -538,26 +708,22 @@ func TestCondition_MatchStringArray(t *testing.T) {
 	var result bool
 	var err error
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, err = dataset.conf.MatchStringArray(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err = data.cond.MatchStringArray(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchStringArray(t *testing.T) {
-	dataSets := []pattern.Condition{
+	dataSet := []pattern.Condition{
 		{
 			Type:  pattern.ConditionIsEmpty,
 			Value: false,
@@ -580,8 +746,8 @@ func TestCondition_UnmarshalAndMatchStringArray(t *testing.T) {
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -597,7 +763,7 @@ func TestCondition_UnmarshalAndMatchStringArray(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
+		b, err = bson.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -616,77 +782,73 @@ func TestCondition_UnmarshalAndMatchStringArray(t *testing.T) {
 }
 
 func TestCondition_MatchRef(t *testing.T) {
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          interface{}
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test is empty is matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionExist, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionExist, true),
 			value:          nil,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test is empty is not matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionExist, true),
+			cond:           pattern.NewBoolCondition(pattern.ConditionExist, true),
 			value:          &struct{}{},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test is not empty is matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionExist, false),
+			cond:           pattern.NewBoolCondition(pattern.ConditionExist, false),
 			value:          nil,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test is not empty is not matched",
-			conf:           pattern.NewBoolCondition(pattern.ConditionExist, false),
+			cond:           pattern.NewBoolCondition(pattern.ConditionExist, false),
 			value:          &struct{}{},
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond value is not a bool",
-			conf:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionEqual, "test"),
 			value:          &struct{}{},
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test cond type is not supported",
-			conf:           pattern.NewBoolCondition("some", true),
+			cond:           pattern.NewBoolCondition("some", true),
 			value:          &struct{}{},
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
 		},
 	}
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := dataset.conf.MatchRef(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err := data.cond.MatchRef(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchRef(t *testing.T) {
-	dataSets := []pattern.Condition{
+	dataSet := []pattern.Condition{
 		{
 			Type:  pattern.ConditionExist,
 			Value: false,
@@ -697,8 +859,8 @@ func TestCondition_UnmarshalAndMatchRef(t *testing.T) {
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -714,7 +876,7 @@ func TestCondition_UnmarshalAndMatchRef(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
+		b, err = bson.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -740,107 +902,103 @@ func TestCondition_MatchTime(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          time.Time
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test relative is matched",
-			conf:           timeRelativeCond,
+			cond:           timeRelativeCond,
 			value:          time.Now().Add(-50 * time.Second),
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test relative is not matched",
-			conf:           timeRelativeCond,
+			cond:           timeRelativeCond,
 			value:          time.Now().Add(-150 * time.Second),
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName: "test absolute is matched",
-			conf: pattern.NewTimeIntervalCondition(
+			cond: pattern.NewTimeIntervalCondition(
 				pattern.ConditionTimeAbsolute,
 				time.Now().Add(-1000*time.Second).Unix(),
 				time.Now().Add(1000*time.Second).Unix(),
 			),
 			value:          time.Now(),
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName: "test absolute is not matched left",
-			conf: pattern.NewTimeIntervalCondition(
+			cond: pattern.NewTimeIntervalCondition(
 				pattern.ConditionTimeAbsolute,
 				time.Now().Add(-1000*time.Second).Unix(),
 				time.Now().Add(1000*time.Second).Unix(),
 			),
 			value:          time.Now().Add(-2000 * time.Second),
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName: "test absolute is not matched right",
-			conf: pattern.NewTimeIntervalCondition(
+			cond: pattern.NewTimeIntervalCondition(
 				pattern.ConditionTimeAbsolute,
 				time.Now().Add(-1000*time.Second).Unix(),
 				time.Now().Add(1000*time.Second).Unix(),
 			),
 			value:          time.Now().Add(2000 * time.Second),
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test relative wrong condition value type",
-			conf:           pattern.NewStringCondition(pattern.ConditionTimeRelative, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionTimeRelative, "test"),
 			value:          time.Now().Add(-50 * time.Second),
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName:       "test absolute condition value is wrong type",
-			conf:           pattern.NewStringCondition(pattern.ConditionTimeAbsolute, "test"),
+			cond:           pattern.NewStringCondition(pattern.ConditionTimeAbsolute, "test"),
 			value:          time.Now(),
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 		{
 			testName: "test unexpected type",
-			conf: pattern.NewTimeIntervalCondition(
+			cond: pattern.NewTimeIntervalCondition(
 				"some",
 				time.Now().Add(-1000*time.Second).Unix(),
 				time.Now().Add(1000*time.Second).Unix(),
 			),
 			value:          time.Now(),
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
 		},
 	}
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := dataset.conf.MatchTime(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err := data.cond.MatchTime(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
-	dataSets := []pattern.Condition{
+	dataSet := []pattern.Condition{
 		{
 			Type: pattern.ConditionTimeRelative,
 			Value: types.DurationWithUnit{
@@ -857,8 +1015,8 @@ func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -874,7 +1032,7 @@ func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
+		b, err = bson.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -905,77 +1063,73 @@ func TestCondition_MatchDuration(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
 	}
-	datasets := []struct {
+	dataSet := []struct {
 		testName       string
-		conf           pattern.Condition
+		cond           pattern.Condition
 		value          int64
-		expectedErr    bool
+		expectedErr    error
 		expectedResult bool
 	}{
 		{
 			testName:       "test gt is matched",
-			conf:           durationGtCond,
+			cond:           durationGtCond,
 			value:          350,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test gt is not matched",
-			conf:           durationGtCond,
+			cond:           durationGtCond,
 			value:          250,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test lt is matched",
-			conf:           durationLtCond,
+			cond:           durationLtCond,
 			value:          250,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: true,
 		},
 		{
 			testName:       "test lt is not matched",
-			conf:           durationLtCond,
+			cond:           durationLtCond,
 			value:          350,
-			expectedErr:    false,
+			expectedErr:    nil,
 			expectedResult: false,
 		},
 		{
 			testName:       "test unexpected type",
-			conf:           durationSomeCond,
+			cond:           durationSomeCond,
 			value:          250,
-			expectedErr:    true,
+			expectedErr:    pattern.ErrUnsupportedConditionType,
 			expectedResult: false,
 		},
 		{
 			testName:       "test value is not a map",
-			conf:           pattern.NewStringCondition("some", "test"),
+			cond:           pattern.NewStringCondition("some", "test"),
 			value:          250,
-			expectedErr:    true,
+			expectedErr:    pattern.ErrWrongConditionValue,
 			expectedResult: false,
 		},
 	}
 
-	for _, dataset := range datasets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			result, err := dataset.conf.MatchDuration(dataset.value)
-			if result != dataset.expectedResult {
-				t.Errorf("expected %t got %t", dataset.expectedResult, result)
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err := data.cond.MatchDuration(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if dataset.expectedErr && err == nil {
-				t.Error("an error is expected")
-			}
-
-			if !dataset.expectedErr && err != nil {
-				t.Errorf("an error is not expected, but got %s", err.Error())
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
 	}
 }
 
 func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
-	dataSets := []pattern.Condition{
+	dataSet := []pattern.Condition{
 		{
 			Type: pattern.ConditionGT,
 			Value: map[string]interface{}{
@@ -992,8 +1146,8 @@ func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
 		},
 	}
 
-	for _, dataSet := range dataSets {
-		b, err := json.Marshal(condWrapper{Cond: dataSet})
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -1009,7 +1163,7 @@ func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: dataSet})
+		b, err = bson.Marshal(condWrapper{Cond: data})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
