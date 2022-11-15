@@ -39,8 +39,8 @@ db.job_history.aggregate([
     },
     {
         $lookup: {
-            from: "execution",
-            localField: "execution",
+            from: "instruction_execution",
+            localField: "_id",
             foreignField: "_id",
             as: "execution"
         }
@@ -63,7 +63,7 @@ db.job_history.aggregate([
         }
     },
 ]).forEach(function (doc) {
-    if (doc.instruction_type === 0) {
+    if (doc.instruction_type == 0) {
         doc.jobs.forEach(function (job) {
             var set = {
                 name: job.name,
