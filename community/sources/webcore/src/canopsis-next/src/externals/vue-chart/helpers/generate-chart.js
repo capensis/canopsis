@@ -1,5 +1,16 @@
 import Chart from 'chart.js/auto';
+import { cloneDeep, merge } from 'lodash';
+
 import 'chartjs-adapter-moment';
+
+const LIGHT_COLORS = {
+  color: '#666',
+  borderColor: 'rgba(0,0,0,0.1)',
+};
+const DARK_COLORS = {
+  color: 'white',
+  borderColor: 'rgba(255,255,255,0.1)',
+};
 
 /**
  * @param {string} chartId
@@ -48,6 +59,10 @@ export const generateChart = (chartId, chartType) => ({
       type: Array,
       default: () => [],
     },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -57,11 +72,41 @@ export const generateChart = (chartId, chartType) => ({
     };
   },
 
+  watch: {
+    dark: {
+      immediate: true,
+      handler() {
+        if (this.chart) {
+          const { data } = this.chart.config;
+
+          this.updateChart(data, this.previousOptions);
+        }
+      },
+    },
+  },
+
   created() {
     this.chart = null;
   },
 
   methods: {
+    getOptions({ scales, ...options }) {
+      const color = this.dark ? DARK_COLORS.color : LIGHT_COLORS.color;
+      const borderColor = this.dark ? DARK_COLORS.borderColor : LIGHT_COLORS.borderColor;
+
+      return {
+        scales: Object.entries(scales).reduce((acc, [key, scale]) => {
+          acc[key] = merge({
+            grid: { color: borderColor, borderColor, tickColor: borderColor },
+            ticks: { color },
+          }, scale);
+
+          return acc;
+        }, {}),
+        ...options,
+      };
+    },
+
     addPlugin(plugin) {
       this.chartPlugins.push(plugin);
     },
@@ -76,6 +121,7 @@ export const generateChart = (chartId, chartType) => ({
 
     renderChart(data, options) {
       if (this.chart) {
+        this.chartRendered = false;
         this.chart.destroy();
       }
 
@@ -83,10 +129,11 @@ export const generateChart = (chartId, chartType) => ({
         return;
       }
 
+      this.previousOptions = cloneDeep(options);
       this.chart = new Chart(this.$refs.canvas.getContext('2d'), {
         type: chartType,
         data,
-        options,
+        options: this.getOptions(options),
         plugins: this.chartPlugins,
       });
 
@@ -94,7 +141,8 @@ export const generateChart = (chartId, chartType) => ({
     },
 
     updateChart(data, options) {
-      this.chart.options = options;
+      this.previousOptions = cloneDeep(options);
+      this.chart.options = this.getOptions(options);
       this.chart.data = data;
       this.chart.stop();
       this.chart.update('none');
