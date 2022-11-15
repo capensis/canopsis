@@ -27,10 +27,7 @@ Feature: Bulk update users
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "password": "test-password-updated",
-        "defaultview": "test-view-to-edit-user",
-        "ui_tours": {
-          "test-tour-to-bulk-update-user-1": true
-        }
+        "defaultview": "test-view-to-edit-user"
       },
       {
         "_id": "test-user-to-bulk-update-1",
@@ -43,10 +40,7 @@ Feature: Bulk update users
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "password": "test-password-updated",
-        "defaultview": "test-view-to-edit-user",
-        "ui_tours": {
-          "test-tour-to-bulk-update-user-1": true
-        }
+        "defaultview": "test-view-to-edit-user"
       },
       {
         "role": "not-exist",
@@ -70,10 +64,7 @@ Feature: Bulk update users
         "ui_groups_navigation_type": "top-bar",
         "password": "test-password-updated",
         "enable": true,
-        "defaultview": "test-view-to-edit-user",
-        "ui_tours": {
-          "test-tour-to-bulk-update-user-2": true
-        }
+        "defaultview": "test-view-to-edit-user"
       }
     ]
     """
@@ -95,10 +86,7 @@ Feature: Bulk update users
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "password": "test-password-updated",
-          "defaultview": "test-view-to-edit-user",
-          "ui_tours": {
-            "test-tour-to-bulk-update-user-1": true
-          }
+          "defaultview": "test-view-to-edit-user"
         }
       },
       {
@@ -115,10 +103,7 @@ Feature: Bulk update users
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "password": "test-password-updated",
-          "defaultview": "test-view-to-edit-user",
-          "ui_tours": {
-            "test-tour-to-bulk-update-user-1": true
-          }
+          "defaultview": "test-view-to-edit-user"
         }
       },
       {
@@ -176,10 +161,7 @@ Feature: Bulk update users
           "ui_groups_navigation_type": "top-bar",
           "password": "test-password-updated",
           "enable": true,
-          "defaultview": "test-view-to-edit-user",
-          "ui_tours": {
-            "test-tour-to-bulk-update-user-2": true
-          }
+          "defaultview": "test-view-to-edit-user"
         }
       }
     ]
@@ -213,10 +195,7 @@ Feature: Bulk update users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr",
-          "ui_tours": {
-            "test-tour-to-bulk-update-user-1": true
-          }
+          "ui_language": "fr"
         },
         {
           "_id": "test-user-to-bulk-update-2",
@@ -241,10 +220,7 @@ Feature: Bulk update users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr",
-          "ui_tours": {
-            "test-tour-to-bulk-update-user-2": true
-          }
+          "ui_language": "fr"
         }
       ],
       "meta": {
