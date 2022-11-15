@@ -1,5 +1,11 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :options="alarmsChartOptions", :width="width", :height="height")
+  bar-chart(
+    :datasets="datasets",
+    :options="alarmsChartOptions",
+    :width="width",
+    :height="height",
+    :dark="$system.darkMode"
+  )
     template(#actions="{ chart }")
       kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
@@ -33,6 +39,7 @@ const Y_AXES_IDS = {
 };
 
 export default {
+  inject: ['$system'],
   components: { KpiChartExportActions, BarChart },
   props: {
     metrics: {
@@ -165,9 +172,6 @@ export default {
           mode: 'x',
         },
         plugins: {
-          background: {
-            color: 'white',
-          },
           legend: {
             position: 'right',
             align: 'start',

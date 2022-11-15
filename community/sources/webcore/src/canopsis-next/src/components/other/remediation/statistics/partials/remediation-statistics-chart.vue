@@ -1,5 +1,5 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :options="chartOptions")
+  bar-chart(:datasets="datasets", :options="chartOptions", :dark="$system.darkMode")
 </template>
 
 <script>
@@ -17,6 +17,7 @@ import { getDateLabelBySampling } from '@/helpers/metrics';
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
 export default {
+  inject: ['$system'],
   components: { BarChart },
   props: {
     metrics: {
@@ -150,9 +151,6 @@ export default {
           mode: 'index',
         },
         plugins: {
-          background: {
-            color: 'white',
-          },
           legend: {
             position: 'top',
             align: 'end',
