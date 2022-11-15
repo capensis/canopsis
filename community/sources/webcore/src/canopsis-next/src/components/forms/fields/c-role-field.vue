@@ -1,12 +1,14 @@
 <template lang="pug">
-  v-autocomplete(
+  component(
     v-field="value",
     v-validate="rules",
-    :items="items",
-    :label="label",
+    :is="component",
+    :items="availableRoles",
+    :label="label || $tc('common.role')"
     :loading="pending",
     :name="name",
     :error-messages="errors.collect(name)",
+    :disabled="disabled",
     item-text="name",
     item-value="_id",
     return-object
@@ -15,6 +17,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { isObject } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -39,6 +42,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    autocomplete: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -47,14 +58,35 @@ export default {
     };
   },
   computed: {
+    component() {
+      if (this.autocomplete) {
+        return 'v-autocomplete';
+      }
+
+      return 'v-select';
+    },
+
+    availableRoles() {
+      return !this.items.length && isObject(this.value) ? [this.value] : this.items;
+    },
+
     rules() {
       return {
         required: this.required,
       };
     },
   },
+  watch: {
+    disabled(value) {
+      if (!value && !this.items.length) {
+        this.fetchList();
+      }
+    },
+  },
   mounted() {
-    this.fetchList();
+    if (!this.disabled) {
+      this.fetchList();
+    }
   },
   methods: {
     ...mapActions({
