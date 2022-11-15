@@ -84,6 +84,8 @@ export default {
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
@@ -405,6 +407,18 @@ export default {
           text: this.$t('common.activationDate'),
           value: ALARM_PATTERN_FIELDS.activationDate,
           options: this.dateOptions,
+        },
+        {
+          text: this.$t('common.longOutput'),
+          value: ALARM_PATTERN_FIELDS.longOutput,
+        },
+        {
+          text: this.$t('common.initialOutput'),
+          value: ALARM_PATTERN_FIELDS.initialOutput,
+        },
+        {
+          text: this.$t('common.longInitialOutput'),
+          value: ALARM_PATTERN_FIELDS.longInitialOutput,
         },
       ];
     },

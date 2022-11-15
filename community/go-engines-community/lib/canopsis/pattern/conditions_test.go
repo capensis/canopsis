@@ -130,61 +130,229 @@ func TestCondition_MatchString(t *testing.T) {
 }
 
 func TestCondition_UnmarshalAndMatchString(t *testing.T) {
-	dataSet := []pattern.Condition{
-		{
-			Type:  pattern.ConditionEqual,
-			Value: "test",
+	dataSet := map[string]struct {
+		cond           pattern.Condition
+		value          string
+		expectedResult bool
+	}{
+		"given equal cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEqual,
+				Value: "test",
+			},
+			value:          "test",
+			expectedResult: true,
 		},
-		{
-			Type:  pattern.ConditionNotEqual,
-			Value: "test",
+		"given equal cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEqual,
+				Value: "test",
+			},
+			value:          "test1",
+			expectedResult: false,
 		},
-		{
-			Type:  pattern.ConditionIsOneOf,
-			Value: []string{"test"},
+		"given not equal cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEqual,
+				Value: "test",
+			},
+			value:          "test1",
+			expectedResult: true,
 		},
-		{
-			Type:  pattern.ConditionIsNotOneOf,
-			Value: []string{"test"},
+		"given not equal cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEqual,
+				Value: "test",
+			},
+			value:          "test",
+			expectedResult: false,
 		},
-		{
-			Type:  pattern.ConditionRegexp,
-			Value: "^test.+$",
+		"given is one of cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test",
+			expectedResult: true,
+		},
+		"given is one of cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test1",
+			expectedResult: false,
+		},
+		"given is not one of cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsNotOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test1",
+			expectedResult: true,
+		},
+		"given is not one of cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionIsNotOneOf,
+				Value: []string{"test"},
+			},
+			value:          "test",
+			expectedResult: false,
+		},
+		"given regexp cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionRegexp,
+				Value: "^test.+$",
+			},
+			value:          "test1",
+			expectedResult: true,
+		},
+		"given regexp cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionRegexp,
+				Value: "^test.+$",
+			},
+			value:          "1test",
+			expectedResult: false,
+		},
+		"given contain cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$test",
+			expectedResult: true,
+		},
+		"given contain cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$test",
+			expectedResult: false,
+		},
+		"given not contain cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$test",
+			expectedResult: true,
+		},
+		"given not contain cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotContain,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$test",
+			expectedResult: false,
+		},
+		"given begin with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test.+$test",
+			expectedResult: true,
+		},
+		"given begin with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test+$test",
+			expectedResult: false,
+		},
+		"given not begin with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test+$test",
+			expectedResult: true,
+		},
+		"given not begin with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotBeginWith,
+				Value: "^test.+$",
+			},
+			value:          "^test.+$test",
+			expectedResult: false,
+		},
+		"given end with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$",
+			expectedResult: true,
+		},
+		"given end with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$",
+			expectedResult: false,
+		},
+		"given not end with cond should match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test+$",
+			expectedResult: true,
+		},
+		"given not end with cond should not match": {
+			cond: pattern.Condition{
+				Type:  pattern.ConditionNotEndWith,
+				Value: "^test.+$",
+			},
+			value:          "test^test.+$",
+			expectedResult: false,
 		},
 	}
 
-	for _, data := range dataSet {
-		b, err := json.Marshal(condWrapper{Cond: data})
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+	for name, data := range dataSet {
+		t.Run(name, func(t *testing.T) {
+			b, err := json.Marshal(condWrapper{Cond: data.cond})
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		w := condWrapper{}
-		err = json.Unmarshal(b, &w)
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			w := condWrapper{}
+			err = json.Unmarshal(b, &w)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		_, _, err = w.Cond.MatchString("test")
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			result, _, err := w.Cond.MatchString(data.value)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
 
-		b, err = bson.Marshal(condWrapper{Cond: data})
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			b, err = bson.Marshal(condWrapper{Cond: data.cond})
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		w = condWrapper{}
-		err = bson.Unmarshal(b, &w)
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			w = condWrapper{}
+			err = bson.Unmarshal(b, &w)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
 
-		_, _, err = w.Cond.MatchString("test")
-		if err != nil {
-			t.Errorf("expected no error but got %v", err)
-		}
+			result, _, err = w.Cond.MatchString(data.value)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
+		})
 	}
 }
 
