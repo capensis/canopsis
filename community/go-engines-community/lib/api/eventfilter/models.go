@@ -18,7 +18,7 @@ type EditRequest struct {
 	Priority     int                                           `bson:"priority" json:"priority"`
 	Enabled      bool                                          `bson:"enabled" json:"enabled"`
 	Config       eventfilter.RuleConfig                        `bson:"config" json:"config" binding:"dive"`
-	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
+	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty" binding:"dive"`
 	Created      *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
