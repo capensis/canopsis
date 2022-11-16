@@ -113,6 +113,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      removePbehavior: 'remove',
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
     }),
 
