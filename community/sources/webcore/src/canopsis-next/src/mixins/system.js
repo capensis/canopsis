@@ -13,21 +13,12 @@ export const systemMixin = {
   },
   data() {
     return {
-      properties: {
+      system: {
         timezone: this.timezone || DEFAULT_TIMEZONE,
         dark: false,
+        setTheme: this.setTheme,
       },
     };
-  },
-  computed: {
-    system() {
-      return {
-        ...this.properties,
-        themes: Object.values(THEMES_NAMES),
-        setTheme: this.setTheme,
-        setDarkMode: this.setDarkMode,
-      };
-    },
   },
   methods: {
     /**
@@ -37,7 +28,7 @@ export const systemMixin = {
     setSystemData(options) {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined) {
-          Vue.set(this.properties, key, value);
+          Vue.set(this.system, key, value);
         }
       });
     },
@@ -47,7 +38,7 @@ export const systemMixin = {
 
       this.$vuetify.theme = theme(colors);
 
-      this.properties.dark = dark;
+      this.system.dark = dark;
     },
   },
 };
