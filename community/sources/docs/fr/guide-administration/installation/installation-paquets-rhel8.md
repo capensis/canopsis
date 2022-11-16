@@ -42,7 +42,7 @@ Vous pouvez vérifier les limites de ressources systèmes avec la commande suiva
 ulimit -a
 ```
 
-Pour appliquer la configuration recommandée par le projet MongoDB, créer le fichier `/etc/security/limits.d/mongo.conf` :
+Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v4.4/reference/ulimit/), créer le fichier `/etc/security/limits.d/mongo.conf` :
 
 ```
 #<domain>      <type>  <item>         <value>
@@ -56,7 +56,7 @@ mongo           hald    nproc           64000
 
 ### Ajout des dépôts tiers
 
-Ajouter du dépôt pour PostgreSQL :
+Ajout du dépôt pour PostgreSQL :
 
 ```sh
 dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
@@ -132,14 +132,14 @@ metadata_expire=300
 
 ### Configuration des dépôts
 
-Exécuter la commande suivante et vérifier dans la sortie que les dépôts ajoutés sont bien contactés (accepter les cléfs des différents dépôts lorsque demandé) :
+Exécuter les commandes suivantes et vérifier dans les sorties que les dépôts ajoutés sont bien contactés (accepter les cléfs des différents dépôts lorsque demandé) :
 
 ```sh
 dnf makecache
 dnf -q makecache -y --disablerepo='*' --enablerepo='rabbitmq_erlang' --enablerepo='rabbitmq_server'
 ```
 
-Désactiver le module PostgreSQL ([action nécessaire pour RHEL 8](https://docs.timescale.com/install/latest/self-hosted/installation-redhat/)) :
+Désactiver le module PostgreSQL ([requis pour l'installation de TimescaleDB sur RHEL 8](https://docs.timescale.com/install/latest/self-hosted/installation-redhat/)) :
 
 ```sh
 dnf module disable postgresql
@@ -148,8 +148,8 @@ dnf module disable postgresql
 Activer le module Nginx 1.20.* :
 
 ```sh
-dnf module enable php:8.0
 dnf module enable nginx:1.20
+dnf module enable php:8.0
 ```
 
 Activer le module Redis 6.0.* :
@@ -165,7 +165,7 @@ dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-
 dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.10.11
 ```
 
-Pour éviter un upgrade automatique des dépendances, vous pouvez épingler les paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
+Pour éviter un upgrade automatique des dépendances de Canopsis, vous pouvez épingler leurs paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
 
 ```
 exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mongodb-org-tools,nginx,nginx-filesystem,erlang,rabbitmq-server,redis,timescaledb-2-postgresql-13,timescaledb-2-loader-postgresql-13
@@ -173,9 +173,9 @@ exclude=mongodb-org,mongodb-org-server,mongodb-org-shell,mongodb-org-mongos,mong
 
 ### Ouverture des ports
 
-Pratiquer les ouvertures de port nécessaires à l'accès au service.
+Pratiquer les ouvertures de ports nécessaires à l'accès au service.
 
-Les commandes données couvrent le cas standard où le pare-feu système `firewalld` est utilisé et servent surtout à rappeler les ports ou services à ouvrir. (cf. [matrice des flux réseau](../matrice-des-flux-reseau/index.md))
+Les commandes données couvrent le cas standard où le pare-feu système `firewalld` est utilisé, et servent surtout à rappeler les ports ou services à ouvrir. (cf. [matrice des flux réseau](../matrice-des-flux-reseau/index.md))
 
 ```sh
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
@@ -217,6 +217,7 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
 
 ```sh
 postgresql-13-setup initdb
+# répondre oui (y) à l'ensemble des prompts de timescaledb-tune
 timescaledb-tune --pg-config=/usr/pgsql-13/bin/pg_config
 echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
 ```
@@ -253,7 +254,7 @@ canopsis=# exit
 ### Configuration de RabbitMQ
 
 Activer et démarrer le service :
-systemctl enable --now canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
+
 ```sh
 systemctl enable --now rabbitmq-server.service
 ```
