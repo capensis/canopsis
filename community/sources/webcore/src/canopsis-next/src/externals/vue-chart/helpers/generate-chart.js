@@ -94,6 +94,10 @@ export const generateChart = (chartId, chartType) => ({
       const color = this.dark ? DARK_COLORS.color : LIGHT_COLORS.color;
       const borderColor = this.dark ? DARK_COLORS.borderColor : LIGHT_COLORS.borderColor;
 
+      if (!scales) {
+        return options;
+      }
+
       return {
         scales: Object.entries(scales).reduce((acc, [key, scale]) => {
           acc[key] = merge({
