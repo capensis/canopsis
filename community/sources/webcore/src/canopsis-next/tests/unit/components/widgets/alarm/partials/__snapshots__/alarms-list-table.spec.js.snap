@@ -2,7 +2,7 @@
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
   <div>
     <div
@@ -244,7 +244,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
   <c-empty-data-table-columns-stub />
   <!---->
@@ -253,7 +253,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with compact mode 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
   <div>
     <div
@@ -329,7 +329,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
   <div>
     <div
@@ -405,7 +405,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but without selectable 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
   <div>
     <div

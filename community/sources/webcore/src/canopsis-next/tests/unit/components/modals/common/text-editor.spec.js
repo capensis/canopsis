@@ -36,6 +36,7 @@ const factory = (options = {}) => shallowMount(TextEditor, {
     },
     provide: {
       $clickOutside: new ClickOutside(),
+      $system: {},
     },
   },
 
@@ -52,6 +53,7 @@ const snapshotFactory = (options = {}) => mount(TextEditor, {
     },
     provide: {
       $clickOutside: new ClickOutside(),
+      $system: {},
     },
   },
 
