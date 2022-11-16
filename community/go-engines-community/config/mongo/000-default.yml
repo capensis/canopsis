@@ -57,6 +57,11 @@ indexes:
         d: 1
       options:
         background: true
+    depends_1:
+      keys:
+        depends: 1
+      options:
+        background: true
 
   periodical_alarm:
     v.meta_1_v.creation_date_1:
