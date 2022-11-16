@@ -11,7 +11,7 @@
             :locked-filters="widget.filters",
             :locked-value="lockedFilter",
             :value="mainFilter",
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            :disabled="!hasAccessToListFilters",
             @input="updateSelectedFilter"
           )
           filters-list-btn(
