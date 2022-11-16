@@ -145,7 +145,6 @@ $networkGraphMinHeight: 100px;
 .healthcheck {
   display: flex;
   flex-direction: column;
-  height: 100%;
 
   &__tabs {
     flex: 1;

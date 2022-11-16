@@ -75,7 +75,7 @@
         )
     v-layout.mt-3(row)
       v-flex
-        span.theme--light.v-label.file-selector__label {{ $t('userInterface.logo') }}
+        span.v-label.file-selector__label {{ $t('userInterface.logo') }}
         v-layout(row)
           file-selector.mt-1(
             ref="fileSelector",

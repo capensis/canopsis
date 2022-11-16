@@ -4,6 +4,7 @@
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
+        :outline="$system.dark",
         @click="remove"
       ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(

@@ -467,6 +467,7 @@ export const THEMES = {
     colors: {
       primary: COLORS.primary,
       secondary: COLORS.secondary,
+      error: '#FF8B8B',
     },
   },
   [THEMES_NAMES.colorBlind]: {
