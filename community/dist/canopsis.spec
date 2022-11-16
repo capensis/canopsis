@@ -67,7 +67,9 @@ echo "and run canopsis-reconfigure"
 echo "After that, you can enable and start services"
 
 %postun
-userdel canopsis
+if [ "$1" = "0" ]; then
+  userdel canopsis
+fi
 
 %clean
 make -C community/go-engines-community clean
