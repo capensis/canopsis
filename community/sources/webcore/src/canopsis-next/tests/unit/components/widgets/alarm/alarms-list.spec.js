@@ -480,54 +480,6 @@ describe('alarms-list', () => {
     );
   });
 
-  it('Filter not updated after trigger filter field without access', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
-        authModule,
-        alarmTagModule,
-      ]),
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const filterSelectorField = selectFilterSelectorField(wrapper);
-
-    const selectedFilter = {
-      _id: Faker.datatype.string(),
-      title: Faker.datatype.string(),
-      filter: {},
-    };
-
-    filterSelectorField.vm.$emit('input', selectedFilter._id);
-
-    await flushPromises();
-
-    expect(updateUserPreference).not.toHaveBeenCalled();
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          page: 1,
-          filter: selectedFilter._id,
-        },
-      },
-      undefined,
-    );
-  });
-
   it('Instruction filters updated after trigger filter field', async () => {
     const wrapper = factory({
       store,
@@ -1787,9 +1739,38 @@ describe('alarms-list', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
+  it('Renders `alarms-list` with default props and user filter permission', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget,
+      },
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
   it('Renders `alarms-list` with clear filter disabled props', async () => {
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         widget: {
           ...widget,
@@ -1800,6 +1781,24 @@ describe('alarms-list', () => {
           },
         },
       },
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
     });
 
     await flushPromises();
