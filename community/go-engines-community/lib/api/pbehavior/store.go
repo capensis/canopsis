@@ -530,15 +530,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.entityDbCollection.FindOne(ctx, bson.M{"_id": r.Entity}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("entity", errors.New("Entity doesn't exist."))
-			}
-			return err
-		}
-
-		err = s.dbCollection.FindOne(ctx, bson.M{
+		err := s.dbCollection.FindOne(ctx, bson.M{
 			"origin": r.Origin,
 			"entity": r.Entity,
 		}).Err()
