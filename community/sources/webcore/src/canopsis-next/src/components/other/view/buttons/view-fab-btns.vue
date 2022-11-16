@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.fab
+  div.view-fab-btns.fab
     v-layout(row)
       view-scroll-top-btn
       view-periodic-refresh-btn
@@ -26,10 +26,9 @@
         )
         view-editing-btn(v-if="updatable")
         v-tooltip(left)
-          v-btn(
+          v-btn.view-fab-btns__add-widget-btn(
             slot="activator",
             v-if="updatable",
-            color="indigo",
             fab,
             dark,
             small,
@@ -185,6 +184,28 @@ export default {
 </script>
 
 <style lang="scss">
+.view-fab-btns {
+  &__add-widget-btn {
+    border-color: #3f51b5 !important;
+    background-color: #3f51b5 !important;
+
+    .theme--dark & {
+      border-color: #2196F3 !important;
+      background-color: #2196F3 !important;
+    }
+  }
+
+  &__add-edit-btn, &__add-fullscreen-btn  {
+    border-color: #3f51b5 !important;
+    background-color: #3f51b5 !important;
+
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
+  }
+}
+
 .view-fullscreen {
   overflow: auto;
   position: fixed;

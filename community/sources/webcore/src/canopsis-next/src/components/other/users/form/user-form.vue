@@ -60,8 +60,7 @@
     v-select(
       v-field="form.ui_theme",
       :label="$tc('common.theme')",
-      :items="themes",
-      @input="setTheme"
+      :items="themes"
     )
     v-layout(row, align-center, v-if="!isNew")
       div {{ $t('common.authKey') }}: {{ user.authkey }}
@@ -91,11 +90,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { GROUPS_NAVIGATION_TYPES, MAX_LIMIT } from '@/constants';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
+import { THEMES_NAMES } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('role');
 
 export default {
-  inject: ['$validator', '$system'],
+  inject: ['$validator'],
   components: {
     ViewSelector,
   },
@@ -142,7 +142,7 @@ export default {
     },
 
     themes() {
-      return this.$system.themes.map(name => ({
+      return Object.values(THEMES_NAMES).map(name => ({
         text: this.$t(`common.themes.${name}`),
         value: name,
       }));
@@ -158,14 +158,6 @@ export default {
     ...mapActions({
       fetchRolesListWithoutStore: 'fetchListWithoutStore',
     }),
-
-    setTheme(value) {
-      this.$system.setTheme(value);
-    },
-
-    setDarkMode(value) {
-      this.$system.setDarkMode(value);
-    },
 
     addAuthKeyCopiedSuccessPopup() {
       this.$popups.success({ text: this.$t('success.authKeyCopied') });
