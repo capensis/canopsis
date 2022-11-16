@@ -6,7 +6,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
     class="layout d-inline-flex align-center row"
   >
     <div
-      class="v-input v-input--selection-controls v-input--checkbox theme--light ml-3 pa-0"
+      class="v-input v-input--selection-controls v-input--checkbox ml-3 pa-0 theme--light"
     >
       <div
         class="v-input__control"
@@ -80,7 +80,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
     class="layout d-inline-flex align-center row"
   >
     <div
-      class="v-input v-input--selection-controls v-input--checkbox theme--light ml-3 pa-0"
+      class="v-input v-input--selection-controls v-input--checkbox ml-3 pa-0 theme--light"
     >
       <div
         class="v-input__control"

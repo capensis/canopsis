@@ -7,6 +7,7 @@ import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
+
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
 
 const localVue = createVueInstance();
@@ -25,6 +26,11 @@ const factory = (options = {}) => shallowMount(PointFormDialog, {
   localVue,
   stubs,
   attachTo: document.body,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -33,6 +39,11 @@ const snapshotFactory = (options = {}) => mount(PointFormDialog, {
   localVue,
   stubs: snapshotStubs,
   attachTo: document.body,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -40,7 +51,7 @@ const snapshotFactory = (options = {}) => mount(PointFormDialog, {
 const selectPointForm = wrapper => wrapper.find('point-form-stub');
 const selectCloseButton = wrapper => wrapper.findAll('button').at(0);
 const selectCancelButton = wrapper => wrapper.findAll('button').at(1);
-const selectDeleteButton = wrapper => wrapper.find('button.error');
+const selectDeleteButton = wrapper => wrapper.find('button[color="error"]');
 const selectSubmitButton = wrapper => wrapper.find('button[type="submit"]');
 
 describe('point-form-dialog', () => {

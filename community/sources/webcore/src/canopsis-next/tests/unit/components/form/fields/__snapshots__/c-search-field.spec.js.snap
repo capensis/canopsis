@@ -1,85 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
-<nav
-  class="white v-toolbar elevation-0 v-toolbar--dense theme--light"
-  style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
+<div
+  class="layout c-search-field row align-center"
 >
   <div
-    class="v-toolbar__content"
-    style="height: 48px;"
+    class="v-input ma-0 v-text-field v-text-field--single-line v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   >
     <div
-      class="v-input v-text-field v-text-field--single-line v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input__control"
     >
       <div
-        class="v-input__control"
+        class="v-input__slot"
       >
         <div
-          class="v-input__slot"
+          class="v-text-field__slot"
         >
-          <div
-            class="v-text-field__slot"
-          >
-            <input
-              aria-label="Search"
-              data-test="searchingTextField"
-              type="text"
-            />
-          </div>
+          <input
+            aria-label="Search"
+            type="text"
+          />
         </div>
       </div>
     </div>
-    <span
-      class="v-tooltip v-tooltip--bottom"
-    >
-      <transition-stub
-        name="slide-y-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          data-test="submitSearchButton"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              search
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--bottom"
-    >
-      <transition-stub
-        name="slide-y-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          data-test="clearSearchButton"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              clear
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
   </div>
-</nav>
+  <c-action-btn
+    icon="search"
+    tooltip="Search"
+  />
+  <c-action-btn
+    icon="clear"
+    tooltip="Clear search input"
+  />
+</div>
 `;
