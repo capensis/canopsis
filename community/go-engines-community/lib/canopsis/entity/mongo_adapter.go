@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -734,8 +735,8 @@ func (a *mongoAdapter) GetWithIdleSince(ctx context.Context) (mongo.Cursor, erro
 		ctx,
 		bson.M{
 			"idle_since": bson.M{"$gt": 0},
-			"type": bson.M{"$in": []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector}},
-			"enabled": true,
+			"type":       bson.M{"$in": []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector}},
+			"enabled":    true,
 		},
 		findOptions,
 	)
@@ -763,30 +764,41 @@ func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Curso
 		{
 			"$lookup": bson.M{
 				"from": mongo.EntityMongoCollection,
-				"localField": "dependencies",
-				"foreignField": "depends",
-				"as": "impacted_services",
-			},
-		},
-		{
-			"$addFields": bson.M{
-				"impacted_services": bson.M{
-					"$map": bson.M{
-						"input": bson.M{
-							"$filter": bson.M{
-								"input": "$impacted_services",
-								"cond": bson.M{"$eq": bson.A{"$$this.type", types.EntityTypeService}},
-							}},
-						"as": "item",
-						"in": "$$item._id",
+				"let":  bson.M{"dependencies": "$dependencies"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"type": types.EntityTypeService,
+						},
+					},
+					{
+						"$addFields": bson.M{
+							"inter": bson.M{
+								"$setIntersection": bson.A{"$depends", "$$dependencies"},
+							},
+						},
+					},
+					{
+						"$match": bson.M{
+							"inter": bson.M{
+								"$ne": bson.A{},
+							},
+						},
 					},
 				},
+				"as": "impacted_services",
 			},
 		},
 		{
 			"$project": bson.M{
 				"_id": 1,
-				"impacted_services": 1,
+				"impacted_services": bson.M{
+					"$map": bson.M{
+						"input": "$impacted_services",
+						"as":    "item",
+						"in":    "$$item._id",
+					},
+				},
 			},
 		},
 	})
