@@ -52,9 +52,9 @@ indexes:
         enabled: 1
       options:
         background: true
-    d_1:
+    depends_1:
       keys:
-        d: 1
+        depends: 1
       options:
         background: true
 
