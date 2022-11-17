@@ -41,14 +41,12 @@ func (f *Feeder) getDirtyEvent(state, Ci, ci, ri int64) types.Event {
 }
 
 func (f *Feeder) getCompatEvent(state, Ci, ci, ri int64) types.Event {
-	st := types.CpsNumber(1)
 	return types.Event{
 		Connector:     "feeder2",
 		ConnectorName: "feeder2_inst" + strconv.Itoa(int(Ci)),
 		Component:     "feeder2_" + strconv.Itoa(int(ci)),
 		Resource:      "feeder2_" + strconv.Itoa(int(ri)),
 		State:         types.CpsNumber(state),
-		StateType:     &st,
 		SourceType:    types.SourceTypeResource,
 		EventType:     types.EventTypeCheck,
 		Timestamp:     types.CpsTime{Time: time.Now()},
