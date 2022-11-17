@@ -101,18 +101,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.Status).UnmarshalJSON(data))
 				}
 			}
-		case "state_type":
-			if in.IsNull() {
-				in.Skip()
-				out.StateType = nil
-			} else {
-				if out.StateType == nil {
-					out.StateType = new(CpsNumber)
-				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.StateType).UnmarshalJSON(data))
-				}
-			}
 		case "source_type":
 			out.SourceType = string(in.String())
 		case "long_output":
@@ -447,15 +435,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.Raw((*in.Status).MarshalJSON())
-		}
-	}
-	{
-		const prefix string = ",\"state_type\":"
-		out.RawString(prefix)
-		if in.StateType == nil {
-			out.RawString("null")
-		} else {
-			out.Raw((*in.StateType).MarshalJSON())
 		}
 	}
 	{
