@@ -28,7 +28,7 @@ L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP
 
 ### Mise à jour système
 
-Assurez-vous que le système est à jour :
+Assurez-vous que le système est à jour (L'installation sur RHEL 8 suppose que le système est relié à des dépôts à jour de la distribution, et en particulier pas figé dans une ancienne version mineure 8.x.) :
 
 ```sh
 dnf update
@@ -52,6 +52,27 @@ mongo           soft    as              unlimited
 mongo           soft    memlock         unlimited
 mongo           hard    nofile          64000
 mongo           hald    nproc           64000
+```
+
+Désactivez la gestion des `Transparent Huge Pages (THP)` selon la [préconisation MongoDB](https://www.mongodb.com/docs/manual/tutorial/transparent-huge-pages/)
+
+```sh
+echo "[Unit]
+Description=Disable Transparent Huge Pages (THP)
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=mongod.service
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo never | tee /sys/kernel/mm/transparent_hugepage/enabled > /dev/null'
+[Install]
+WantedBy=basic.target
+" > /etc/systemd/system/disable-transparent-huge-pages.service
+```
+
+```sh
+systemctl daemon-reload
+systemctl enable --now disable-transparent-huge-pages
 ```
 
 ### Ajout des dépôts tiers
@@ -148,8 +169,8 @@ dnf module disable postgresql
 Activer le module Nginx 1.20.* :
 
 ```sh
+dnf module disable php
 dnf module enable nginx:1.20
-dnf module enable php:8.0
 ```
 
 Activer le module Redis 6.0.* :
@@ -188,28 +209,35 @@ firewall-cmd --reload
 
 ### Configuration de MongoDB
 
+Rendre l'authentification obligatoire dans le fichier `/etc/mongod.conf` 
+
+```yaml
+security:
+  authorization: enabled
+```
+
 Activer et démarrer le service :
 
 ```sh
 systemctl enable --now mongod.service
 ```
 
-Se connecter à MongoDB pour créer l'utilisateur `canopsis` :
+Se connecter à MongoDB pour créer les utilisateurs `root` et `canopsis` :
+
 ```sh
 mongo
-
-> conn = new Mongo();
-> db = conn.getDB('canopsis');
-> db.createUser(
-  {
-    user: "cpsmongo",
-    pwd:  "canopsis",
-    roles: [ { role: "dbOwner", db: "canopsis" },
-             { role: "clusterMonitor", db: "admin" } ]
-  }
-)
+> use admin
+> db.createUser({user: "root", pwd: "UNMOTDEPASSEFORT", roles: [ { role: "root", db: "admin" }]})
 > exit
+systemctl restart mongod
 ```
+
+```sh
+mongo -u root -p UNMOTDEPASSEFORT
+> use canopsis
+> db.createUser({user: "cpsmongo", pwd: "canopsis", roles: [ { role: "dbOwner", db: "canopsis" }, { role: "clusterMonitor", db: "admin"}]})
+```
+
 
 ### Configuration de TimescaleDB
 
@@ -217,8 +245,7 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
 
 ```sh
 postgresql-13-setup initdb
-# répondre oui (y) à l'ensemble des prompts de timescaledb-tune
-timescaledb-tune --pg-config=/usr/pgsql-13/bin/pg_config
+timescaledb-tune -yes --pg-config=/usr/pgsql-13/bin/pg_config
 echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
 ```
 
@@ -232,12 +259,6 @@ Se connecter à l'instance PostgreSQL avec l'identité du superuser `postgres`�
 
 ```sh
 sudo -u postgres psql
-```
-
-Définir le mot de passe du superuser `postgres` :
-
-```
-postgres=#\password postgres
 ```
 
 Créer la base de données `canopsis` et l'utilisateur associé dans l'instance PostgreSQL :
