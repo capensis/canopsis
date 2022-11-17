@@ -313,10 +313,11 @@ Cela est temporaire mais nécessaire.
 
 Que ce soit sur une installation par paquets RPM ou par image Docker, nous vous livrons des configurations à exécuter avec Docker.
 
+Vous devez simplement définir la variable d'environnement `CPS_OLD_API` dans `/opt/canopsis/etc/go-engines-vars.conf` pour une installation paquets ou `compose.env` en installation docker.
 
 !!! warning "Avertissement"
 
-    Les configurations `docker-compose` livrées ne doivent absolument pas être modifiées, notamment les versions d'images utilisée.
+    Les configurations `docker-compose` livrées ne doivent absolument pas être modifiées, notamment les versions d'images utilisées.
 
 ```sh
 cd ../../../mock/external-services/snmp/docker
