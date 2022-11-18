@@ -33,7 +33,7 @@ import {
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
   PBEHAVIOR_TYPE_TYPES,
-  SCENARIO_TRIGGERS,
+  TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
@@ -186,7 +186,6 @@ export default merge({
     id: 'Identifiant',
     reset: 'Réinitialiser',
     selectColor: 'Sélectionner la couleur',
-    triggers: 'Déclencheurs',
     disableDuringPeriods: 'Désactiver pendant les pauses',
     retryDelay: 'Délai entre les tentatives',
     retryUnit: 'Unité d\'essai',
@@ -427,85 +426,86 @@ export default merge({
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
       [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
     },
-    scenarioTriggers: {
-      [SCENARIO_TRIGGERS.create]: {
+    triggers: {
+      title: 'Déclencheurs',
+      [TRIGGERS.create]: {
         text: 'Création d\'alarme',
       },
-      [SCENARIO_TRIGGERS.statedec]: {
+      [TRIGGERS.statedec]: {
         text: 'Diminution de la criticité',
       },
-      [SCENARIO_TRIGGERS.changestate]: {
+      [TRIGGERS.changestate]: {
         text: 'Changement et verrouillage de la criticité',
       },
-      [SCENARIO_TRIGGERS.stateinc]: {
+      [TRIGGERS.stateinc]: {
         text: 'Augmentation de la criticité',
       },
-      [SCENARIO_TRIGGERS.changestatus]: {
+      [TRIGGERS.changestatus]: {
         text: 'Changement de statut (flapping, bagot, ...)',
       },
-      [SCENARIO_TRIGGERS.ack]: {
+      [TRIGGERS.ack]: {
         text: 'Acquittement d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.ackremove]: {
+      [TRIGGERS.ackremove]: {
         text: 'Suppression de l\'acquittement d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.cancel]: {
+      [TRIGGERS.cancel]: {
         text: 'Annulation d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.uncancel]: {
+      [TRIGGERS.uncancel]: {
         text: 'Annulation de l\'annulation d\'une alarme',
         helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
       },
-      [SCENARIO_TRIGGERS.comment]: {
+      [TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
       },
-      [SCENARIO_TRIGGERS.done]: {
+      [TRIGGERS.done]: {
         text: 'Alarme en statut "done"',
         helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
       },
-      [SCENARIO_TRIGGERS.declareticket]: {
+      [TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
       },
-      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+      [TRIGGERS.declareticketwebhook]: {
         text: 'Déclaration de ticket depuis un webhook',
       },
-      [SCENARIO_TRIGGERS.assocticket]: {
+      [TRIGGERS.assocticket]: {
         text: 'Association de ticket sur une alarme',
       },
-      [SCENARIO_TRIGGERS.snooze]: {
+      [TRIGGERS.snooze]: {
         text: 'Mise en veille d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.unsnooze]: {
+      [TRIGGERS.unsnooze]: {
         text: 'Sortie de veille d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.resolve]: {
+      [TRIGGERS.resolve]: {
         text: 'Résolution d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.activate]: {
+      [TRIGGERS.activate]: {
         text: 'Activation d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.pbhenter]: {
+      [TRIGGERS.pbhenter]: {
         text: 'Comportement périodique démarré',
       },
-      [SCENARIO_TRIGGERS.pbhleave]: {
+      [TRIGGERS.pbhleave]: {
         text: 'Comportement périodique terminé',
       },
-      [SCENARIO_TRIGGERS.instructionfail]: {
+      [TRIGGERS.instructionfail]: {
         text: 'Consigne manuelle en erreur',
       },
-      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+      [TRIGGERS.autoinstructionfail]: {
         text: 'Consigne automatique en erreur',
       },
-      [SCENARIO_TRIGGERS.instructionjobfail]: {
+      [TRIGGERS.instructionjobfail]: {
         text: 'Job de remédiation en erreur',
       },
-      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+      [TRIGGERS.instructionjobcomplete]: {
         text: 'Job de remédiation terminé',
       },
-      [SCENARIO_TRIGGERS.instructioncomplete]: {
+      [TRIGGERS.instructioncomplete]: {
         text: 'Consigne manuelle terminée',
       },
-      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+      [TRIGGERS.autoinstructioncomplete]: {
         text: 'Consigne automatique terminée',
       },
     },
@@ -621,8 +621,6 @@ export default merge({
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
-        executeInstruction: 'Exécuter la consigne "{instructionName}"',
-        resumeInstruction: 'Reprendre la consigne "{instructionName}"',
       },
       iconsTitles: {
         ack: 'Acquitter',
@@ -2502,6 +2500,9 @@ export default merge({
     type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
     needApprove: 'Une approbation est nécessaire',
+    executeInstruction: 'Exécuter la consigne "{instructionName}"',
+    resumeInstruction: 'Reprendre la consigne "{instructionName}"',
+    inProgressInstruction: '{instructionName} en cours...',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manuel simplifié',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manuel',
