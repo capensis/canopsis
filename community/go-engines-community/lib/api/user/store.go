@@ -359,9 +359,7 @@ func getViewPipeline() []bson.M {
 func getRenameFieldsPipeline() []bson.M {
 	return []bson.M{
 		{"$addFields": bson.M{
-			"name":                      "$crecord_name",
-			"email":                     "$mail",
-			"ui_groups_navigation_type": "$groupsNavigationType",
+			"name": "$crecord_name",
 		}},
 	}
 }

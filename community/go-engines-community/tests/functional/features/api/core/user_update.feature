@@ -13,6 +13,7 @@ Feature: Update a user
       "email": "test-user-to-update-1-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user"
@@ -44,7 +45,8 @@ Feature: Update a user
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
-      "ui_language": "fr"
+      "ui_language": "fr",
+      "ui_theme": "canopsis"
     }
     """
 
@@ -60,6 +62,7 @@ Feature: Update a user
       "email": "test-user-to-update-2-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user"
@@ -119,6 +122,7 @@ Feature: Update a user
       "email": "test-user-to-update-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user"

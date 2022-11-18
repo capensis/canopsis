@@ -3,6 +3,8 @@ package playlist
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -11,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 const permissionPrefix = "Rights on playlist :"
@@ -186,7 +187,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		"_id":          playlistID,
 		"crecord_name": playlistID,
 		"crecord_type": securitymodel.LineTypeObject,
-		"desc":         fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+		"description":  fmt.Sprintf("%s %s", permissionPrefix, playlistName),
 		"type":         securitymodel.LineObjectTypeRW,
 	})
 	if err != nil {
@@ -240,7 +241,7 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 		},
 		bson.M{
 			"$set": bson.M{
-				"desc": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+				"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
 			},
 		},
 	)

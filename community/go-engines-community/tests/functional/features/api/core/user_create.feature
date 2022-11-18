@@ -13,6 +13,7 @@ Feature: Create a user
       "email": "test-user-to-create-1-email@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",
@@ -44,7 +45,8 @@ Feature: Create a user
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
-      "ui_language": "fr"
+      "ui_language": "fr",
+      "ui_theme": "canopsis"
     }
     """
 
@@ -59,6 +61,7 @@ Feature: Create a user
       "email": "test-user-to-create-2-email@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",
@@ -91,7 +94,8 @@ Feature: Create a user
       },
       "source": "",
       "ui_groups_navigation_type": "top-bar",
-      "ui_language": "fr"
+      "ui_language": "fr",
+      "ui_theme": "canopsis"
     }
     """
 
@@ -106,6 +110,7 @@ Feature: Create a user
       "email": "test-user-to-create-3-email@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",
@@ -135,6 +140,7 @@ Feature: Create a user
       "email": "test-user-to-create-4-email@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",

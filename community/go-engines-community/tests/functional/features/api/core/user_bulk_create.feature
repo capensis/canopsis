@@ -23,6 +23,7 @@ Feature: Bulk create users
         "email": "test-user-to-bulk-create-1-email@canopsis.net",
         "role": "test-role-to-edit-user",
         "ui_language": "fr",
+        "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
@@ -35,6 +36,7 @@ Feature: Bulk create users
         "email": "test-user-to-bulk-create-1-email@canopsis.net",
         "role": "test-role-to-edit-user",
         "ui_language": "fr",
+        "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
@@ -58,6 +60,7 @@ Feature: Bulk create users
         "email": "test-user-to-bulk-create-2-email@canopsis.net",
         "role": "test-role-to-edit-user",
         "ui_language": "fr",
+        "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
@@ -79,6 +82,7 @@ Feature: Bulk create users
           "email": "test-user-to-bulk-create-1-email@canopsis.net",
           "role": "test-role-to-edit-user",
           "ui_language": "fr",
+          "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
@@ -94,6 +98,7 @@ Feature: Bulk create users
           "email": "test-user-to-bulk-create-1-email@canopsis.net",
           "role": "test-role-to-edit-user",
           "ui_language": "fr",
+          "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
@@ -151,6 +156,7 @@ Feature: Bulk create users
           "email": "test-user-to-bulk-create-2-email@canopsis.net",
           "role": "test-role-to-edit-user",
           "ui_language": "fr",
+          "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
@@ -187,7 +193,8 @@ Feature: Bulk create users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr"
+          "ui_language": "fr",
+          "ui_theme": "canopsis"
         },
         {
           "_id": "test-user-to-bulk-create-2-name",
@@ -211,7 +218,8 @@ Feature: Bulk create users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr"
+          "ui_language": "fr",
+          "ui_theme": "canopsis"
         }
       ],
       "meta": {
