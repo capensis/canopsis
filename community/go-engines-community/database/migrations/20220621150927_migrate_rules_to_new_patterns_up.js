@@ -252,7 +252,6 @@ function migrateOldEventPatterns(oldEventPatterns) {
                 case "perf_data":
                 case "status":
                 case "timestamp":
-                case "state_type":
                 case "author":
                 case "routing_key":
                 case "ack_resources":
@@ -271,7 +270,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                                 value: false,
                             },
                         });
-                    } else if (typeof value === "number") {
+                    } else if (typeof value === "number" || value instanceof NumberLong) {
                         newGroup.push({
                             field: newField,
                             field_type: "int",
@@ -519,7 +518,7 @@ function migrateOldIntPattern(oldIntPattern) {
         };
     }
 
-    if (typeof oldIntPattern === "number") {
+    if (typeof oldIntPattern === "number" || oldIntPattern instanceof NumberLong) {
         return {
             type: "eq",
             value: oldIntPattern,
