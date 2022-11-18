@@ -160,7 +160,7 @@ Feature: Bulk create pbehaviors
         }
       },
       {
-        "status": 400,
+        "status": 200,
         "item": {
           "entity": "test-entity-to-bulk-entity-pbehavior-create-not-found/test-component-default",
           "origin": "test-pbehavior-to-bulk-entity-create-3-origin",
@@ -171,9 +171,6 @@ Feature: Bulk create pbehaviors
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-to-pbh-edit"
-        },
-        "errors": {
-          "entity": "Entity doesn't exist."
         }
       }
     ]
@@ -247,13 +244,45 @@ Feature: Bulk create pbehaviors
               "message": "test-pbehavior-to-bulk-entity-create-2-comment"
             }
           ]
+        },
+        {
+          "enabled": true,
+          "author": "root",
+          "name": "test-pbehavior-to-bulk-entity-create-3-name",
+          "origin": "test-pbehavior-to-bulk-entity-create-3-origin",
+          "tstart": 1591172881,
+          "tstop": 1591536400,
+          "color": "#FFFFFF",
+          "type": {
+            "_id": "test-type-to-pbh-edit-1"
+          },
+          "reason": {
+            "_id": "test-reason-to-pbh-edit"
+          },
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-entity-to-bulk-entity-pbehavior-create-not-found/test-component-default"
+                }
+              }
+            ]
+          ],
+          "comments": [
+            {
+              "author": "root",
+              "message": "test-pbehavior-to-bulk-entity-create-3-comment"
+            }
+          ]
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
