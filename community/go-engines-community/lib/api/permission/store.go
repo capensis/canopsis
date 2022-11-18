@@ -2,6 +2,7 @@ package permission
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -17,7 +18,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.RightsMongoCollection),
-		defaultSearchByFields: []string{"_id", "crecord_name", "desc"},
+		defaultSearchByFields: []string{"_id", "crecord_name", "description"},
 		defaultSortBy:         "name",
 	}
 }
@@ -33,8 +34,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	pipeline := []bson.M{
 		{"$match": bson.M{"crecord_type": securitymodel.LineTypeObject}},
 		{"$addFields": bson.M{
-			"name":        "$crecord_name",
-			"description": "$desc",
+			"name": "$crecord_name",
 		}},
 	}
 
