@@ -17,14 +17,14 @@
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(row, align-center)
+        v-layout(v-if="hasAccessToUserFilter", row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
             :locked-value="lockedFilter",
             :value="mainFilter",
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            :disabled="!hasAccessToListFilters",
             :clearable="!widget.parameters.clearFilterDisabled",
             @input="updateSelectedFilter"
           )
