@@ -3,29 +3,68 @@
     v-btn(slot="activator", v-on="$listeners", depressed, small, light)
       v-icon {{ icon }}
     v-list
-      service-entity-alarm-instruction-menu-item(
+      v-list-tile(
         v-for="assignedInstruction in assignedInstructions",
         :key="assignedInstruction._id",
-        :assigned-instruction="assignedInstruction",
-        @execute="$listeners.execute"
+        :disabled="isDisabled(assignedInstruction)",
+        @click.stop.prevent="$emit('execute', assignedInstruction)"
       )
+        v-list-tile-title {{ getLabel(assignedInstruction) }}
 </template>
 
 <script>
-import ServiceEntityAlarmInstructionMenuItem from './service-entity-alarm-instruction-menu-item.vue';
+import { find } from 'lodash';
+
+import { REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+
+import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 
 export default {
-  components: {
-    ServiceEntityAlarmInstructionMenuItem,
-  },
   props: {
+    icon: {
+      type: String,
+      required: true,
+    },
+    entity: {
+      type: Object,
+      default: () => ({}),
+    },
     assignedInstructions: {
       type: Array,
       default: () => [],
     },
-    icon: {
-      type: String,
-      required: true,
+  },
+  computed: {
+    hasRunningInstruction() {
+      return isInstructionExecutionIconInProgress(this.entity.instruction_execution_icon);
+    },
+
+    pausedInstructions() {
+      return this.assignedInstructions.filter(instruction => instruction.execution);
+    },
+  },
+  methods: {
+    isDisabled(instruction) {
+      return this.hasRunningInstruction
+        || (
+          Boolean(this.pausedInstructions.length)
+          && !find(this.pausedInstructions, { _id: instruction._id })
+        );
+    },
+
+    getLabel(instruction) {
+      const { execution, name } = instruction;
+      let titlePrefix = 'execute';
+
+      if (execution) {
+        titlePrefix = execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running
+          ? 'inProgress'
+          : 'resume';
+      }
+
+      return this.$t(`remediationInstructions.${titlePrefix}Instruction`, {
+        instructionName: name,
+      });
     },
   },
 };
