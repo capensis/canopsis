@@ -8,7 +8,6 @@ import { validateMermaidDiagram } from '@/helpers/mermaid';
 import CodeEditor from '@/components/common/code-editor/code-editor.vue';
 
 export default {
-  inject: ['$system'],
   components: { CodeEditor },
   model: {
     prop: 'value',

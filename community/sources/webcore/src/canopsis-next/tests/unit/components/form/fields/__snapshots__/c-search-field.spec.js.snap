@@ -24,11 +24,11 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
       </div>
     </div>
   </div>
-  <c-action-btn
+  <c-action-btn-stub
     icon="search"
     tooltip="Search"
   />
-  <c-action-btn
+  <c-action-btn-stub
     icon="clear"
     tooltip="Clear search input"
   />
