@@ -62,7 +62,7 @@ export default {
     },
 
     shownNavigation() {
-      return !this.$route.meta.hideNavigation;
+      return this.currentUser && !this.$route.meta.hideNavigation;
     },
   },
   beforeCreate() {
@@ -93,6 +93,7 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+          this.setTheme(currentUser.ui_theme);
 
           await Promise.all([
             this.fetchAppInfo(),
@@ -100,7 +101,6 @@ export default {
           ]);
 
           this.setSystemData({ timezone: this.timezone });
-          this.setTheme(currentUser.ui_theme);
 
           this.setTitle();
           this.showPausedExecutionsPopup();

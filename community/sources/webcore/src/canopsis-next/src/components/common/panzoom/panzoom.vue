@@ -132,10 +132,6 @@ export default {
   &__help-icon {
     cursor: pointer;
     color: var(--v-secondary-base) !important;
-
-    .theme--dark & {
-      color: var(--v-secondary-lighten4) !important;
-    }
   }
 }
 </style>
