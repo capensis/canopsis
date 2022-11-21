@@ -53,10 +53,10 @@ export default {
       });
     },
 
-    logoutHandler() {
-      this.$system.setTheme();
+    async logoutHandler() {
+      await this.logout({ redirectTo: { name: ROUTES_NAMES.login } });
 
-      return this.logout({ redirectTo: { name: ROUTES_NAMES.login } });
+      this.$system.setTheme();
     },
 
     async updateUserWithPopup({ data, id }) {

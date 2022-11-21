@@ -5,7 +5,7 @@
       :class="backgroundColor",
       :style="{ opacity }"
     )
-      v-progress-circular(:color="color", indeterminate)
+      v-progress-circular(:color="color", :size="size", indeterminate)
 </template>
 
 <script>
@@ -18,6 +18,10 @@ export default {
     opacity: {
       type: Number,
       default: 0.5,
+    },
+    size: {
+      type: Number,
+      required: false,
     },
     backgroundColor: {
       type: String,
