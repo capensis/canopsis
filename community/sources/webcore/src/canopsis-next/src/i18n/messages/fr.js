@@ -427,7 +427,7 @@ export default merge({
       [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
     },
     triggers: {
-      title: 'Déclencheurs',
+      title: 'Déclencheur | Déclencheurs',
       [TRIGGERS.create]: {
         text: 'Création d\'alarme',
       },
@@ -2659,7 +2659,6 @@ export default merge({
   },
 
   scenario: {
-    triggers: 'Déclencheurs',
     emitTrigger: 'Émettre un déclencheur',
     withAuth: 'Avez-vous besoin de champs d\'authentification ?',
     emptyResponse: 'Réponse vide',
