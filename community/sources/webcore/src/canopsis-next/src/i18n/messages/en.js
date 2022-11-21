@@ -427,7 +427,7 @@ export default merge({
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
     triggers: {
-      title: 'Triggers',
+      title: 'Trigger | Triggers',
       [TRIGGERS.create]: {
         text: 'Alarm creation',
       },
@@ -2659,7 +2659,6 @@ export default merge({
   },
 
   scenario: {
-    triggers: 'Triggers',
     emitTrigger: 'Emit trigger',
     withAuth: 'Do you need auth fields?',
     emptyResponse: 'Empty response',
