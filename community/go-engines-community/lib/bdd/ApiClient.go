@@ -695,6 +695,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 	if !ok {
 		headers = make(map[string]string, 1)
 	}
+	ctx = setApiAuthToken(ctx, token)
 	headers[headerAuthorization] = bearerPrefix + " " + token
 	ctx = setHeaders(ctx, headers)
 

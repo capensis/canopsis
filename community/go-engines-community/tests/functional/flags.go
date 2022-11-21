@@ -30,6 +30,7 @@ type Flags struct {
 	randomize           int64
 	concurrency         int
 	tags                string
+	clearOnScenario     bool
 }
 
 type arrayFlag []string
@@ -57,6 +58,7 @@ func (f *Flags) ParseArgs() {
 	flag.Int64Var(&f.randomize, "godog.randomize", 0, "Enable random order.")
 	flag.IntVar(&f.concurrency, "godog.concurrency", 0, "Concurrency rate.")
 	flag.StringVar(&f.tags, "godog.tags", "", "Filter scenarios.")
+	flag.BoolVar(&f.clearOnScenario, "clearOnScenario", false, "Clear stores on each scenario.")
 	flag.Parse()
 
 	if !f.onlyFixtures && len(f.paths) == 0 {

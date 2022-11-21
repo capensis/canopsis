@@ -12,6 +12,7 @@ type contextKey int
 const (
 	contextKeyScenarioName contextKey = iota
 	contextKeyScenarioUri
+	contextKeyApiAuthToken
 	contextKeyResponseStatusCode
 	contextKeyResponseBody
 	contextKeyResponseBodyOutput
@@ -19,6 +20,7 @@ const (
 	contextKeyCookies
 	contextKeyVars
 	contextConsumer
+	contextWebsocketConn
 )
 
 func getScenarioName(ctx context.Context) (string, bool) {
@@ -37,6 +39,15 @@ func getScenarioUri(ctx context.Context) (string, bool) {
 
 func setScenarioUri(ctx context.Context, v string) context.Context {
 	return context.WithValue(ctx, contextKeyScenarioUri, v)
+}
+
+func getApiAuthToken(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(contextKeyApiAuthToken).(string)
+	return v, ok
+}
+
+func setApiAuthToken(ctx context.Context, v string) context.Context {
+	return context.WithValue(ctx, contextKeyApiAuthToken, v)
 }
 
 func getResponseStatusCode(ctx context.Context) (int, bool) {
@@ -136,6 +147,11 @@ func setConsumer(ctx context.Context, v int) context.Context {
 	return context.WithValue(ctx, contextConsumer, v)
 }
 
-func deleteConsumer(ctx context.Context) context.Context {
-	return context.WithValue(ctx, contextConsumer, nil)
+func setWebsocketConn(ctx context.Context, v int) context.Context {
+	return context.WithValue(ctx, contextWebsocketConn, v)
+}
+
+func getWebsocketConn(ctx context.Context) (int, bool) {
+	v, ok := ctx.Value(contextWebsocketConn).(int)
+	return v, ok
 }
