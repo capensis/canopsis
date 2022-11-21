@@ -289,6 +289,7 @@ export default merge({
     longOutput: 'Sortie longue',
     initialOutput: 'Sortie initiale',
     longInitialOutput: 'Sortie initiale longue',
+    trigger: 'Déclencheur | Déclencheurs',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -427,7 +428,6 @@ export default merge({
       [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
     },
     triggers: {
-      title: 'Déclencheur | Déclencheurs',
       [TRIGGERS.create]: {
         text: 'Création d\'alarme',
       },
