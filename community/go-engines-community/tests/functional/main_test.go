@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"testing"
 	"time"
@@ -25,6 +26,11 @@ import (
 	"github.com/go-testfixtures/testfixtures/v3"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/rs/zerolog"
+)
+
+const (
+	websocketScheme = "ws"
+	websocketRoute  = "/api/v4/ws"
 )
 
 func TestMain(m *testing.M) {
@@ -107,9 +113,16 @@ func TestMain(m *testing.M) {
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
+	wsUrl, err := url.Parse(apiUrl)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("invalid api url")
+	}
+	wsUrl.Scheme = websocketScheme
+	wsUrl.Path = websocketRoute
+	websocketClient := bdd.NewWebsocketClient(wsUrl.String(), templater)
 
 	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
-	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient)
+	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, websocketClient, loader, redisClient, logger)
 	status := godog.TestSuite{
 		Name:                 "canopsis",
 		TestSuiteInitializer: testSuiteInitializer,
@@ -132,15 +145,17 @@ func InitializeTestSuite(
 	logger zerolog.Logger,
 ) func(*godog.TestSuiteContext) {
 	return func(godogCtx *godog.TestSuiteContext) {
-		godogCtx.BeforeSuite(func() {
-			err := clearStores(ctx, flags, loader, redisClient, logger)
-			if err != nil {
-				logger.Fatal().Err(err).Msg("")
-			}
+		if !flags.clearOnScenario {
+			godogCtx.BeforeSuite(func() {
+				err := clearStores(ctx, flags, loader, redisClient, logger)
+				if err != nil {
+					logger.Fatal().Err(err).Msg("")
+				}
 
-			logger.Info().Msg("waiting the next periodical process")
-			time.Sleep(flags.periodicalWaitTime)
-		})
+				logger.Info().Msg("waiting the next periodical process")
+				time.Sleep(flags.periodicalWaitTime)
+			})
+		}
 		godogCtx.AfterSuite(func() {
 			err := clearStores(ctx, flags, loader, redisClient, logger)
 			if err != nil {
@@ -155,6 +170,10 @@ func InitializeScenario(
 	apiClient *bdd.ApiClient,
 	amqpClient *bdd.AmqpClient,
 	mongoClient *bdd.MongoClient,
+	websocketClient *bdd.WebsocketClient,
+	loader fixtures.Loader,
+	redisClient redismod.Cmdable,
+	logger zerolog.Logger,
 ) func(*godog.ScenarioContext) {
 	return func(scenarioCtx *godog.ScenarioContext) {
 		if flags.checkUncaughtEvents {
@@ -172,6 +191,19 @@ func InitializeScenario(
 
 		scenarioCtx.Before(amqpClient.BeforeScenario)
 		scenarioCtx.After(amqpClient.AfterScenario)
+		scenarioCtx.After(websocketClient.AfterScenario)
+
+		if flags.clearOnScenario {
+			scenarioCtx.Before(func(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+				err := clearStores(ctx, flags, loader, redisClient, logger)
+				if err != nil {
+					return ctx, err
+				}
+				logger.Info().Msg("waiting the next periodical process")
+				time.Sleep(flags.periodicalWaitTime)
+				return ctx, nil
+			})
+		}
 
 		scenarioCtx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		scenarioCtx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
@@ -227,6 +259,9 @@ func InitializeScenario(
 		})
 		scenarioCtx.Step(`^I call RPC to engine-axe with alarm ([^:]+):$`, amqpClient.ICallRPCAxeRequest)
 		scenarioCtx.Step(`^I call RPC to engine-webhook with alarm ([^:]+):$`, amqpClient.ICallRPCWebhookRequest)
+		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
+		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
+		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
 	}
 }
 
