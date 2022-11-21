@@ -427,7 +427,7 @@ export default merge({
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
     triggers: {
-      title: 'Trigger | Triggers',
+      trigger: 'Trigger | Triggers',
       [TRIGGERS.create]: {
         text: 'Alarm creation',
       },
