@@ -48,7 +48,7 @@ export const userToForm = (user = {}) => ({
   ui_language: user.ui_language ?? '',
   ui_tours: user.ui_tours ?? {},
   ui_groups_navigation_type: user.ui_groups_navigation_type ?? GROUPS_NAVIGATION_TYPES.sideBar,
-  ui_theme: user.ui_theme ?? THEMES_NAMES.canopsis,
+  ui_theme: user.ui_theme || THEMES_NAMES.canopsis,
 });
 
 /**
