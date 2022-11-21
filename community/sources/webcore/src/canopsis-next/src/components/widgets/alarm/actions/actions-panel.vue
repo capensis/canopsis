@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { get, pickBy, compact } from 'lodash';
+import { get, pickBy, compact, find } from 'lodash';
 
 import {
   MODALS,
@@ -223,7 +223,7 @@ export default {
        * Add actions for available instructions
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
-        const pausedInstruction = this.item.assigned_instructions.find(instruction => instruction.execution);
+        const pausedInstructions = assignedInstructions.filter(instruction => instruction.execution);
         const hasRunningInstruction = isInstructionExecutionIconInProgress(this.item.instruction_execution_icon);
 
         assignedInstructions.forEach((instruction) => {
@@ -244,7 +244,8 @@ export default {
             ...filteredActionsMap.executeInstruction,
 
             cssClass,
-            disabled: hasRunningInstruction || (pausedInstruction && pausedInstruction._id !== instruction._id),
+            disabled: hasRunningInstruction
+              || (Boolean(pausedInstructions.length) && !find(pausedInstructions, { _id: instruction._id })),
             title: this.$t(`remediationInstructions.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
