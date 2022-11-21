@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
 
@@ -12,16 +12,6 @@ const mockData = {
 };
 
 const stubs = {
-  'v-btn': {
-    template: `
-      <button
-        class="v-btn"
-        @click="$listeners.click"
-      >
-        <slot />
-      </button>
-    `,
-  },
   'v-text-field': {
     props: ['value'],
     template: `
@@ -36,13 +26,20 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(CSearchField, {
-  localVue,
-  stubs,
-  ...options,
-});
+const snapshotStubs = {
+  'c-action-btn': true,
+};
 
 describe('c-search-field', () => {
+  const factory = generateShallowRenderer(CSearchField, {
+    localVue,
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(CSearchField, {
+    localVue,
+    stubs: snapshotStubs,
+  });
+
   it('Not empty value was pass into props and it was applied to input field', () => {
     const { search } = mockData;
 
@@ -153,8 +150,7 @@ describe('c-search-field', () => {
   });
 
   it('Renders `c-search-field` correctly', () => {
-    const wrapper = mount(CSearchField, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { value: 'c-search-field' },
     });
 
