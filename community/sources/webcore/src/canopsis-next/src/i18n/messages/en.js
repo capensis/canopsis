@@ -289,6 +289,7 @@ export default merge({
     longOutput: 'Long output',
     initialOutput: 'Initial output',
     longInitialOutput: 'Long initial output',
+    trigger: 'Trigger | Triggers',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -427,7 +428,6 @@ export default merge({
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
     triggers: {
-      trigger: 'Trigger | Triggers',
       [TRIGGERS.create]: {
         text: 'Alarm creation',
       },
