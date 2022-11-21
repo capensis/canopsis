@@ -1,6 +1,5 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
-import { FILTER_MONGO_OPERATORS } from '@/constants';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
@@ -42,24 +41,24 @@ describe('filter-selector', () => {
     {
       _id: '1',
       title: 'Locked filter 1',
-      filter: { [FILTER_MONGO_OPERATORS.and]: { _id: 1 } },
+      filter: { _id: 1 },
     },
     {
       _id: '2',
       title: 'Locked filter 2',
-      filter: { [FILTER_MONGO_OPERATORS.and]: { _id: 2 } },
+      filter: { _id: 2 },
     },
   ];
   const filters = [
     {
       _id: '3',
       title: 'Filter 1',
-      filter: { [FILTER_MONGO_OPERATORS.or]: { _id: 1 } },
+      filter: { _id: 1 },
     },
     {
       _id: '4',
       title: 'Filter 2',
-      filter: { [FILTER_MONGO_OPERATORS.or]: { _id: 2 } },
+      filter: { _id: 2 },
     },
   ];
 

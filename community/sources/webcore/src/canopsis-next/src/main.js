@@ -143,7 +143,6 @@ import CAlarmMetricParametersField from '@/components/forms/fields/alarm/c-alarm
 import CFilterField from '@/components/forms/fields/pattern/c-filter-field.vue';
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
-import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CIconField from '@/components/forms/fields/c-icon-field.vue';
 import CIdField from '@/components/forms/fields/c-id-field.vue';
 import CNameField from '@/components/forms/fields/c-name-field.vue';
@@ -418,7 +417,6 @@ Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 Vue.component('c-entity-state-field', CEntityStateField);
 Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
-Vue.component('c-operator-field', COperatorField);
 Vue.component('c-icon-field', CIconField);
 Vue.component('c-id-field', CIdField);
 Vue.component('c-name-field', CNameField);

@@ -73,39 +73,12 @@ export const PATTERN_CONDITIONS = {
   absoluteTime: 'absolute_time',
 };
 
-export const FILTER_MONGO_OPERATORS = {
-  and: '$and',
-  or: '$or',
-  equal: '$eq',
-  notEqual: '$ne',
-  in: '$in',
-  notIn: '$nin',
-  regex: '$regex',
-  greater: '$gt',
-  less: '$lt',
-};
-
 export const PATTERN_FIELD_TYPES = {
   string: 'string',
   number: 'int',
   boolean: 'bool',
   null: 'null',
   stringArray: 'string_array',
-};
-
-export const FILTER_DEFAULT_VALUES = {
-  condition: FILTER_MONGO_OPERATORS.and, // TODO: remove if we don't need it
-  rule: {
-    field: '',
-    operator: '',
-    input: '',
-    inputType: PATTERN_FIELD_TYPES.string,
-  },
-  group: {
-    condition: FILTER_MONGO_OPERATORS.and,
-    groups: {},
-    rules: {},
-  },
 };
 
 export const PATTERN_OPERATORS_WITHOUT_VALUE = [

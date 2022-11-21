@@ -23,7 +23,7 @@ describe('color-indicator-wrapper', () => {
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: 3,
             },
           },
         },
@@ -47,7 +47,7 @@ describe('color-indicator-wrapper', () => {
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: 3,
             },
           },
         },
@@ -70,6 +70,9 @@ describe('color-indicator-wrapper', () => {
         entity: {},
         alarm: {},
         type: 'unresolved-type',
+      },
+      slots: {
+        default: '<div class="default-slot" />',
       },
     });
 
