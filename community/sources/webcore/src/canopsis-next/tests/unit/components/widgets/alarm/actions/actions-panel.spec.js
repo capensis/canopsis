@@ -1,7 +1,7 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createAlarmModule, createAuthModule, createEventModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -50,34 +50,15 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(ActionsPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ActionsPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
 const selectDropDownActionByType = (wrapper, type) => wrapper.find(`.drop-down-action-${type}`);
 
 describe('actions-panel', () => {
   const timestamp = 1386435600000;
   mockDateNow(timestamp);
-
   const $modals = mockModals();
-  const authModule = {
-    name: 'auth',
-    getters: {
-      currentUserPermissionsById: {},
-    },
-  };
+
+  const { authModule } = createAuthModule();
   const authModuleWithAccess = {
     ...authModule,
     getters: {
@@ -88,20 +69,8 @@ describe('actions-panel', () => {
         }), {}),
     },
   };
-  const fetchAlarmItem = jest.fn();
-  const alarmModule = {
-    name: 'alarm',
-    actions: {
-      fetchItem: fetchAlarmItem,
-    },
-  };
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
+  const { alarmModule } = createAlarmModule();
+  const { eventModule, createEvent } = createEventModule();
 
   const store = createMockedStoreModules([
     authModule,
@@ -167,6 +136,13 @@ describe('actions-panel', () => {
 
   const refreshAlarmsList = jest.fn();
 
+  const factory = generateShallowRenderer(ActionsPanel, {
+    localVue,
+    stubs,
+    mocks: { $modals },
+  });
+  const snapshotFactory = generateRenderer(ActionsPanel, { localVue, stubs });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -191,9 +167,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
         refreshAlarmsList,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -259,9 +232,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const fastAckAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastAck);
@@ -308,9 +278,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         refreshAlarmsList,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const ackRemoveAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove);
@@ -351,9 +318,6 @@ describe('actions-panel', () => {
         item: { ...alarm, entity },
         widget,
         parentAlarm,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -397,9 +361,6 @@ describe('actions-panel', () => {
         parentAlarm,
         refreshAlarmsList,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const snoozeAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
@@ -442,9 +403,6 @@ describe('actions-panel', () => {
         parentAlarm,
         refreshAlarmsList,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const declareTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.declareTicket);
@@ -485,9 +443,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
         refreshAlarmsList,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -530,9 +485,6 @@ describe('actions-panel', () => {
         parentAlarm,
         refreshAlarmsList,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const changeStateAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
@@ -573,9 +525,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
         refreshAlarmsList,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -630,9 +579,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
         isResolvedAlarm: true,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -693,9 +639,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const historyAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
@@ -755,9 +698,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
         refreshAlarmsList,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -825,9 +765,6 @@ describe('actions-panel', () => {
         parentAlarm,
         refreshAlarmsList,
       },
-      mocks: {
-        $modals,
-      },
     });
 
     const manualMetaAlarmUngroupAction = selectDropDownActionByType(
@@ -885,9 +822,6 @@ describe('actions-panel', () => {
         widget: widgetData,
         parentAlarm,
         refreshAlarmsList,
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -959,7 +893,6 @@ describe('actions-panel', () => {
     featureGetSpy.mockClear();
   });
 
-  // TODO: put tests for: no active instructions, one active instruction
   it('Renders `actions-panel` with manual instruction in running', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
@@ -969,6 +902,33 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with simple manual instruction in running', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          assigned_instructions: [
+            ...assignedInstructions,
+            {
+              _id: 3,
+              name: 'Manual simple instruction',
+              type: REMEDIATION_INSTRUCTION_TYPES.simpleManual,
+              execution: null,
+            },
+          ],
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
         },
         widget,
