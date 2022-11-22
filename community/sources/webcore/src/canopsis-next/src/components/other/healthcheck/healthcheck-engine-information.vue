@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { CAT_ENGINES, HEALTHCHECK_ENGINES_NAMES } from '@/constants';
+import { CAT_ENGINES, HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES } from '@/constants';
 
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
@@ -60,12 +60,12 @@ export default {
     },
 
     systemDownMessage() {
-      return this.$t(
-        this.engine.name === HEALTHCHECK_ENGINES_NAMES.fifo
-          ? 'healthcheck.engineDownOrSlow'
-          : 'healthcheck.engineDownOrSlow',
-        { name: this.name },
-      );
+      const messageKey = {
+        [HEALTHCHECK_ENGINES_NAMES.fifo]: 'healthcheck.engineDown',
+        [HEALTHCHECK_SERVICES_NAMES.timescaleDB]: 'healthcheck.timescaleDown',
+      }[this.engine.name] || 'healthcheck.engineDownOrSlow';
+
+      return this.$t(messageKey, { name: this.name });
     },
   },
 };

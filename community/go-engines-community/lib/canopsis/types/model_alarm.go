@@ -83,7 +83,6 @@ const (
 	// Following alarm steps are used for job execution.
 	AlarmStepInstructionJobStart    = "instructionjobstart"
 	AlarmStepInstructionJobComplete = "instructionjobcomplete"
-	AlarmStepInstructionJobAbort    = "instructionjobabort"
 	AlarmStepInstructionJobFail     = "instructionjobfail"
 
 	// Following alarm steps are used for junit.

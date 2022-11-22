@@ -1825,3 +1825,221 @@ Feature: run a job
     When I am noperms
     When I do POST /api/v4/cat/job-executions
     Then the response code should be 403
+
+  Scenario: given job should not add step to resolved alarm and new alarm
+    When I am admin
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-13-name",
+      "config": "test-job-config-to-run-manual-job",
+      "job_id": "test-job-long-succeeded",
+      "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobID={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-job-execution-start-13-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-13"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-job-execution-start-13-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-job-execution-start-13-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-13-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-job-execution-start-13-step-1-operation-1-description",
+              "jobs": ["{{ .jobID }}"]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-job-execution-start-13-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-job-execution-start-13",
+      "connector_name": "test-connector-name-to-job-execution-start-13",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-job-execution-start-13",
+      "resource": "test-resource-to-job-execution-start-13",
+      "state": 1,
+      "output": "test-output-to-job-execution-start-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-13
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "{{ .instructionID }}"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I save response executionID={{ .lastResponse._id }}
+    When I save response operationID={{ (index (index .lastResponse.steps 0).operations 0).operation_id }}
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobID }}"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and response key "steps.0.operations.0.jobs.0.started_at" is greater or equal than 1
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-job-execution-start-13",
+      "connector_name": "test-connector-name-to-job-execution-start-13",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-job-execution-start-13",
+      "resource": "test-resource-to-job-execution-start-13"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-job-execution-start-13",
+      "connector_name": "test-connector-name-to-job-execution-start-13",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-job-execution-start-13",
+      "resource": "test-resource-to-job-execution-start-13"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-job-execution-start-13",
+      "connector_name": "test-connector-name-to-job-execution-start-13",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-job-execution-start-13",
+      "resource": "test-resource-to-job-execution-start-13",
+      "state": 2,
+      "output": "test-output-to-job-execution-start-13"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-13-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-long-succeeded-output"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    When I wait 100ms
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-13&opened=false&with_steps=true
+    Then the response code should be 200
+    Then the response array key "data.0.v.steps" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc",
+        "val": 1
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-13-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-13-name. Job test-job-to-job-execution-start-13-name."
+      },
+      {
+        "_t": "cancel"
+      },
+      {
+        "_t": "statusinc",
+        "val": 4
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-13&opened=true&with_steps=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "steps": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              }
+            ]
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

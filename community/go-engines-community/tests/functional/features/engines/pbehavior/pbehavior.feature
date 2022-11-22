@@ -572,7 +572,7 @@ Feature: update alarm on pbehavior
     {
       "enabled": true,
       "name": "test-pbehavior-8",
-      "tstart": {{ nowAdd "2s" }},
+      "tstart": {{ nowAdd "3s" }},
       "tstop": {{ nowAdd "1h" }},
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",

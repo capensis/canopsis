@@ -2,6 +2,9 @@ package pbehavior_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -12,8 +15,6 @@ import (
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
@@ -58,7 +59,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 
 	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
-		zerolog.Logger{})
+		zerolog.Logger{}, false)
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{
@@ -104,7 +105,7 @@ func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbeh
 
 	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, "test-queue",
-		zerolog.Logger{})
+		zerolog.Logger{}, false)
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{}
@@ -205,7 +206,7 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 
 	computer := pbehavior.NewCancelableComputer(mockService,
 		mockDbClient, mockPublisher, mockEventManager, mockEncoder, queue,
-		zerolog.Logger{})
+		zerolog.Logger{}, false)
 
 	ch := make(chan pbehavior.ComputeTask, 1)
 	ch <- pbehavior.ComputeTask{PbehaviorIds: []string{pbehaviorID}}

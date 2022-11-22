@@ -256,7 +256,7 @@ export default {
           this.updateModel(null);
           break;
         case FILTER_INPUT_TYPES.array:
-          this.updateModel([preparedValue]);
+          this.updateModel(preparedValue ? [preparedValue] : []);
           break;
         default:
           this.updateModel(undefined);

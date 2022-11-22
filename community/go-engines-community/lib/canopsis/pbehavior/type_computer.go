@@ -198,36 +198,42 @@ func (c *typeComputer) runWorkers(
 	pbehaviorsByID map[string]PBehavior,
 	models models,
 ) (map[string]ComputedPbehavior, error) {
+	eventComputer := NewEventComputer(models.typesByID, models.defaultTypes)
 	resCh := make(chan pbhComputeResult)
-	workerChan := c.createWorkerCh(ctx, pbehaviorsByID)
+	workerChan := make(chan PBehavior)
 	g, ctx := errgroup.WithContext(ctx)
 
-	eventComputer := NewEventComputer(models.typesByID, models.defaultTypes)
+	g.Go(func() error {
+		defer close(workerChan)
+
+		for _, pbehavior := range pbehaviorsByID {
+			select {
+			case <-ctx.Done():
+				return nil
+			case workerChan <- pbehavior:
+			}
+		}
+
+		return nil
+	})
 
 	for worker := 0; worker < c.workerPoolSize; worker++ {
 		g.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case p, ok := <-workerChan:
-					if !ok {
-						return nil
-					}
+			for p := range workerChan {
+				res, err := c.computePbehavior(p, span, eventComputer, models)
+				if err != nil {
+					return err
+				}
 
-					res, err := c.computePbehavior(p, span, eventComputer, models)
-					if err != nil {
-						return err
-					}
-
-					if len(res.Types) > 0 {
-						resCh <- pbhComputeResult{
-							id:  p.ID,
-							res: res,
-						}
+				if len(res.Types) > 0 {
+					resCh <- pbhComputeResult{
+						id:  p.ID,
+						res: res,
 					}
 				}
 			}
+
+			return nil
 		})
 	}
 
@@ -246,26 +252,6 @@ func (c *typeComputer) runWorkers(
 	}
 
 	return res, nil
-}
-
-// createWorkerCh creates worker chan and fills it.
-func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[string]PBehavior) <-chan PBehavior {
-	workerChan := make(chan PBehavior)
-
-	go func() {
-		defer close(workerChan)
-
-		for _, pbehavior := range pbehaviorsByID {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				workerChan <- pbehavior
-			}
-		}
-	}()
-
-	return workerChan
 }
 
 // computePbehavior calculates Types for provided timespan.

@@ -441,13 +441,13 @@ Feature: update meta alarm on action
     When I do POST /api/v4/cat/metaalarmrules:
     """
     {
-      "name": "test-metaalarmrule-axe-correlation-8",
+      "name": "test-metaalarmrule-action-correlation-8",
       "type": "attribute",
       "config": {
         "alarm_patterns": [
           {
             "v": {
-              "component": "test-component-axe-correlation-8"
+              "component": "test-component-action-correlation-8"
             }
           }
         ]
@@ -460,46 +460,46 @@ Feature: update meta alarm on action
     When I send an event:
     """
     {
-      "connector": "test-connector-axe-correlation-8",
-      "connector_name": "test-connector-name-axe-correlation-8",
+      "connector": "test-connector-action-correlation-8",
+      "connector_name": "test-connector-name-action-correlation-8",
       "source_type": "resource",
       "event_type": "check",
-      "component":  "test-component-axe-correlation-8",
-      "resource": "test-resource-axe-correlation-8-1",
+      "component":  "test-component-action-correlation-8",
+      "resource": "test-resource-action-correlation-8-1",
       "state": 2,
-      "output": "test-output-axe-correlation-8",
-      "long_output": "test-long-output-axe-correlation-8",
-      "author": "test-author-axe-correlation-8"
+      "output": "test-output-action-correlation-8",
+      "long_output": "test-long-output-action-correlation-8",
+      "author": "test-author-action-correlation-8"
     }
     """
     When I wait the end of 2 events processing
     When I send an event:
     """
     {
-      "connector": "test-connector-axe-correlation-8",
-      "connector_name": "test-connector-name-axe-correlation-8",
+      "connector": "test-connector-action-correlation-8",
+      "connector_name": "test-connector-name-action-correlation-8",
       "source_type": "resource",
       "event_type": "check",
-      "component":  "test-component-axe-correlation-8",
-      "resource": "test-resource-axe-correlation-8-2",
+      "component":  "test-component-action-correlation-8",
+      "resource": "test-resource-action-correlation-8-2",
       "state": 2,
-      "output": "test-output-axe-correlation-8",
-      "long_output": "test-long-output-axe-correlation-8",
-      "author": "test-author-axe-correlation-8"
+      "output": "test-output-action-correlation-8",
+      "long_output": "test-long-output-action-correlation-8",
+      "author": "test-author-action-correlation-8"
     }
     """
     When I wait the end of 2 events processing
     When I send an event:
     """
     {
-      "connector": "test-connector-axe-correlation-8",
-      "connector_name": "test-connector-name-axe-correlation-8",
+      "connector": "test-connector-action-correlation-8",
+      "connector_name": "test-connector-name-action-correlation-8",
       "source_type": "resource",
       "event_type": "ack",
-      "component":  "test-component-axe-correlation-8",
-      "resource": "test-resource-axe-correlation-8-2",
+      "component":  "test-component-action-correlation-8",
+      "resource": "test-resource-action-correlation-8-2",
       "output": "previous ack",
-      "author": "test-author-axe-correlation-8"
+      "author": "test-author-action-correlation-8"
     }
     """
     When I wait the end of event processing
@@ -520,8 +520,8 @@ Feature: update meta alarm on action
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
       "output": "metaalarm ack",
-      "long_output": "test-long-output-axe-correlation-8",
-      "author": "test-author-axe-correlation-8"
+      "long_output": "test-long-output-action-correlation-8",
+      "author": "test-author-action-correlation-8"
     }
     """
     When I wait the end of event processing
@@ -534,18 +534,18 @@ Feature: update meta alarm on action
         {
           "metaalarm": true,
           "rule": {
-            "name": "test-metaalarmrule-axe-correlation-8"
+            "name": "test-metaalarmrule-action-correlation-8"
           },
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "test-author-axe-correlation-8",
+              "a": "test-author-action-correlation-8",
               "m": "metaalarm ack",
               "val": 0
             },
             "children": [
-              "test-resource-axe-correlation-8-1/test-component-axe-correlation-8",
-              "test-resource-axe-correlation-8-2/test-component-axe-correlation-8"
+              "test-resource-action-correlation-8-1/test-component-action-correlation-8",
+              "test-resource-action-correlation-8-2/test-component-action-correlation-8"
             ],
             "component": "metaalarm",
             "connector": "engine",
@@ -568,7 +568,7 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-8",
+                "a": "test-author-action-correlation-8",
                 "m": "metaalarm ack",
                 "val": 0
               }
@@ -584,7 +584,7 @@ Feature: update meta alarm on action
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-correlation-8-1"}]}&with_steps=true&with_consequences=true
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-correlation-8-1"}]}&with_steps=true&with_consequences=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -594,20 +594,20 @@ Feature: update meta alarm on action
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "test-author-axe-correlation-8",
+              "a": "test-author-action-correlation-8",
               "m": "metaalarm ack",
               "val": 0
             },
             "children": [],
-            "component": "test-component-axe-correlation-8",
-            "connector": "test-connector-axe-correlation-8",
-            "connector_name": "test-connector-name-axe-correlation-8",
-            "initial_long_output": "test-long-output-axe-correlation-8",
-            "initial_output": "test-output-axe-correlation-8",
+            "component": "test-component-action-correlation-8",
+            "connector": "test-connector-action-correlation-8",
+            "connector_name": "test-connector-name-action-correlation-8",
+            "initial_long_output": "test-long-output-action-correlation-8",
+            "initial_output": "test-output-action-correlation-8",
             "parents": [
               "{{ .metalarmEntityID }}"
             ],
-            "resource": "test-resource-axe-correlation-8-1",
+            "resource": "test-resource-action-correlation-8-1",
             "state": {
               "val": 2
             },
@@ -630,7 +630,7 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-8",
+                "a": "test-author-action-correlation-8",
                 "m": "metaalarm ack",
                 "val": 0
               }
@@ -646,7 +646,7 @@ Feature: update meta alarm on action
       }
     }
     """
-    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-axe-correlation-8-2"}]}&with_steps=true&with_consequences=true
+    When I do GET /api/v4/alarms?filter={"$and":[{"entity.name":"test-resource-action-correlation-8-2"}]}&with_steps=true&with_consequences=true
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -656,20 +656,20 @@ Feature: update meta alarm on action
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "test-author-axe-correlation-8",
+              "a": "test-author-action-correlation-8",
               "m": "metaalarm ack",
               "val": 0
             },
             "children": [],
-            "component": "test-component-axe-correlation-8",
-            "connector": "test-connector-axe-correlation-8",
-            "connector_name": "test-connector-name-axe-correlation-8",
-            "initial_long_output": "test-long-output-axe-correlation-8",
-            "initial_output": "test-output-axe-correlation-8",
+            "component": "test-component-action-correlation-8",
+            "connector": "test-connector-action-correlation-8",
+            "connector_name": "test-connector-name-action-correlation-8",
+            "initial_long_output": "test-long-output-action-correlation-8",
+            "initial_output": "test-output-action-correlation-8",
             "parents": [
               "{{ .metalarmEntityID }}"
             ],
-            "resource": "test-resource-axe-correlation-8-2",
+            "resource": "test-resource-action-correlation-8-2",
             "state": {
               "val": 2
             },
@@ -692,13 +692,13 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-8",
+                "a": "test-author-action-correlation-8",
                 "m": "previous ack",
                 "val": 0
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-8",
+                "a": "test-author-action-correlation-8",
                 "m": "metaalarm ack",
                 "val": 0
               }
