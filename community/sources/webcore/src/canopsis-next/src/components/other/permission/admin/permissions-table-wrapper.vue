@@ -80,6 +80,12 @@ export default {
         position: sticky;
         top: 48px;
         z-index: 1;
+
+        background: white;
+
+        .theme--dark & {
+          background: #424242;
+        }
       }
     }
 

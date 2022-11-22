@@ -31,6 +31,7 @@
         c-help-icon(
           slot="append",
           :text="$t('storageSettings.entity.archiveDependenciesHelp')",
+          color="info",
           max-width="300",
           top
         )

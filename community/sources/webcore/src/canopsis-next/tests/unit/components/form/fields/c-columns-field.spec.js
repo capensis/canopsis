@@ -83,10 +83,12 @@ const stubs = {
       </button>
     `,
   },
+  'c-help-icon': true,
 };
 
 const snapshotStubs = {
   'c-color-indicator-field': true,
+  'c-help-icon': true,
   'v-text-field': {
     template: '<input class="v-text-field" />',
   },

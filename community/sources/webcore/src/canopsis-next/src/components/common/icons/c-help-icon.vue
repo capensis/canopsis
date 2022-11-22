@@ -14,7 +14,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'info',
+      default: '',
     },
     text: {
       type: String,
