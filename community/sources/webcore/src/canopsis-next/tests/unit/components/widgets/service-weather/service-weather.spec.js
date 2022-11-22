@@ -23,6 +23,7 @@ const stubs = {
   'filters-list-btn': true,
   'c-enabled-field': true,
   'service-weather-item': true,
+  'c-help-icon': true,
 };
 
 const selectEntityCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');

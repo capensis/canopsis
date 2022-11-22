@@ -1,5 +1,6 @@
-import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 import { THEMES_NAMES } from '@/config';
+
+import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 /**
  * @typedef {Object} DefaultView

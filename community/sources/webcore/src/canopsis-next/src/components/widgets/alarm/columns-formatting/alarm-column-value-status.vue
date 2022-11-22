@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-no-events-icon.mr-1(v-if="isNoEventsStatus", :value="idleSince", color="red", top)
+  c-no-events-icon.mr-1(v-if="isNoEventsStatus", :value="idleSince", color="error", top)
   v-tooltip(v-else, top)
     v-icon(slot="activator", :color="statusColor") {{ status.icon }}
     span {{ $t(`common.statusTypes.${statusValue}`) }}

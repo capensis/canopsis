@@ -87,10 +87,11 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import { THEMES_NAMES } from '@/config';
+
 import { GROUPS_NAVIGATION_TYPES, MAX_LIMIT } from '@/constants';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
-import { THEMES_NAMES } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('role');
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   div.text-editor
-    v-label {{ label }}
+    v-label(v-show="label") {{ label }}
     div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
       div(ref="textEditor")
       variables-menu(

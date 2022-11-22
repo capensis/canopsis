@@ -16,7 +16,7 @@
           v-checkbox(:input-value="tile.props.value", :color="parent.color")
         v-list-tile-content {{ item.text }}
         v-list-tile-action(v-if="item.helpText")
-          c-help-icon(:text="item.helpText", size="20", top)
+          c-help-icon(:text="item.helpText", color="info", size="20", top)
 </template>
 
 <script>
