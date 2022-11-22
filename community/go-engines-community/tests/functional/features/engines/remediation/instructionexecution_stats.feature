@@ -342,7 +342,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-2-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
@@ -359,7 +359,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I wait 5s
     When I send an event:
     """json
