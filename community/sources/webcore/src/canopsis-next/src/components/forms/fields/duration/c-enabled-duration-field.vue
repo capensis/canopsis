@@ -9,7 +9,7 @@
         :name="enabledFieldName",
         color="primary"
       )
-        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
+        c-help-icon(v-if="helpText", slot="append", :text="helpText", color="info", max-width="300", top)
     v-flex(xs4)
       c-duration-field(
         v-field="duration",

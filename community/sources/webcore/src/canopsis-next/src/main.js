@@ -214,7 +214,6 @@ import CDensityBtnToggle from '@/components/common/groups/c-density-btn-toggle.v
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
-import { THEMES } from '@/config';
 
 /* eslint-enable import/first */
 
@@ -227,7 +226,7 @@ Vue.use(Vuetify, {
     customProperties: true,
   },
   iconfont: 'md',
-  theme: THEMES.canopsis.colors,
+  theme: config.THEMES.canopsis.colors,
   icons: {
     bullhorn: {
       component: BullhornIcon,

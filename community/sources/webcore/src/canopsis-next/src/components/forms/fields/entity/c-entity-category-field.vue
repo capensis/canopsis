@@ -26,9 +26,8 @@
         @keyup.enter="createCategory",
         @blur="clearCategory"
       )
-        v-tooltip(slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="$t('service.createCategoryHelp')")
+        template(#append="")
+          c-help-icon(icon="help", :text="$t('service.createCategoryHelp')", left)
 </template>
 
 <script>

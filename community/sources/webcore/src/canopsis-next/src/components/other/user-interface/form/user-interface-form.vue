@@ -31,7 +31,6 @@
         c-help-icon(
           slot="append",
           :text="$t('userInterface.tooltips.maxMatchedItems')",
-          color="grey darken-1",
           icon="help",
           left
         )
@@ -45,7 +44,6 @@
         c-help-icon(
           slot="append",
           :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
-          color="grey darken-1",
           icon="help",
           left
         )
