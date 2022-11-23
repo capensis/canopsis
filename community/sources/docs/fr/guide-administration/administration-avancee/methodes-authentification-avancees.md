@@ -19,7 +19,26 @@ security:
 
 Puis vous devez renseigner les différents paramètres d'authentification LDAP.
 
-Voici la liste des paramètres :
+```yaml
+  ldap:
+    inactivity_interval: 24h
+    expiration_interval: 1M
+    url: ldap://ldap.local
+    admin_dn: uid=svccanopsis,ou=Special,dc=example,dc=com
+    admin_passwd:
+    user_dn: ou=People,dc=example,dc=com
+    ufilter: uid=%s
+    username_attr: uid
+    attrs:
+      mail: mail
+      firstname: givenName
+      lastname: sn
+    default_role: Visualisation
+    insecure_skip_verify: false
+    max_tls_ver:
+```
+
+Définition des paramètres :
 
 | Attribut        | Description                                        | Exemple                                                         |
 |-----------------|----------------------------------------------------|-----------------------------------------------------------------|
@@ -34,11 +53,24 @@ Voici la liste des paramètres :
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
 
+Vous devez ensuite **obligatoirement** redémarrer le service API.
 
-Enfin, vous devez ensuite **obligatoirement** redémarrer le service API.
+* Installation via Docker Compose
+
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose restart api
+	```
+
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose restart api
+	```
+
+* Installation Paquets
 
 ```sh
-systemctl restart canopsis-service@canopsis-api
+systemctl restart canopsis-service@canopsis-api.service
 ```
 
 ### Utilisation de LDAP
@@ -62,9 +94,23 @@ security:
     ...
 ```
 
-La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
+Puis vous devez renseigner les différents paramètres d'authentification CAS.
 
-Voici la liste des paramètres nécessaires à la configuration CAS :
+```yaml
+  cas:
+    inactivity_interval: 24h
+    expiration_interval: 1M
+    # title defines label of UI login form.
+    title: Connexion
+    # login_url defines CAS login url to which UI is redirected to authenticate.
+    login_url: http://cas.local/login
+    # validate_url defines CAS validate url which is used to validate received ticket.
+    validate_url: http://cas.local/serviceValidate
+    # default_role defines role of new users which are created on successful CAS login.
+    default_role: Visualisation
+```
+
+Définition des paramètres :
 
 | Attribut       |                    Description                               |            Exemple             |
 | -------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -73,11 +119,24 @@ Voici la liste des paramètres nécessaires à la configuration CAS :
 | `title`        | Label sur le formulaire de connexion                         | Connexion                      |
 | `validate_url`  | URL de validation du serveur CAS à laquelle l'API va accéder | https://cas.info.local/websso/ |
 
-
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
+* Installation via Docker Compose
+
+=== "Canopsis Pro"
+	```sh
+	CPS_EDITION=pro docker-compose restart api
+	```
+
+=== "Canopsis Community"
+	```sh
+	CPS_EDITION=community docker-compose restart api
+	```
+
+* Installation Paquets
+
 ```sh
-systemctl restart canopsis-service@canopsis-api
+systemctl restart canopsis-service@canopsis-api.service
 ```
 
 ### Utilisation de CAS
@@ -86,29 +145,26 @@ systemctl restart canopsis-service@canopsis-api
 Le profil d'affectation sera celui spécifié dans la configuration.
 
 
-
-## Authentification SAMLV2 ( édition community )
+## Authentification SAMLv2
 
 Intégration de l’authentification avec le protocole SAMLV2
 
 ### Configuration et Paramétrage en lien avec l'Identity Provider (IDP )
 
-Le fichier de configuration à utiliser est le fichier `/opt/canopsis/share/config/api/security/config.yml`  utilisé par le service `api` de Canopsis. Dans le cadre d'une configuration SAMLV2, voici un exemple de fichier qui pourra être présenté en volume au conteneur Docker `api` ou directement sur le filesystem d'une installation via paquets.
+La configuration de l'authentification se fait au travers du fichier de configuration de l'API `/opt/canopsis/share/config/api/security/config.yml`.  
+
+Tout d'abord, vous devez activer le mécanisme d'authentification SAML en lui-même :
 
 ```yaml
 security:
-  # auth_providers defines enabled authentication methods.
-  # Possible values:
-  # - basic Auth by username-password.
-  # - apikey Auth by token.
-  # - ldap Auth using LDAP service. Define LDAP config in object collection by cservice.ldapconfig id.
-  # - cas Auth using CAS service. Define CAS config in object collection by cservice.casconfig id.
-  # - saml Auth using SAML service. Define SAML config below(commented saml section)
   auth_providers:
-    - basic
-    - apikey
     - saml
+    ...
+```
 
+Puis vous devez renseigner les différents paramètres d'authentification SAML.
+
+```yaml
   saml:
     x509_cert: /certs/saml.cert
     x509_key:  /certs/saml.key
@@ -139,7 +195,7 @@ Exemple pour des certificats auto-signés :
 $ openssl req -x509 -newkey rsa:2048 -keyout saml.key -out saml.cert -days 365 -nodes -subj "/CN=canopsis-saml.example.com"
 ```
 
-Les options suivantes doivent ensuite être adaptées au contexte de l'IDP
+Définition des paramètres :
 
 | Directive                   | Définition                                                   |
 | --------------------------- | ------------------------------------------------------------ |
@@ -158,9 +214,7 @@ Les options suivantes doivent ensuite être adaptées au contexte de l'IDP
 | `default_role`              | Rôle Canopsis par défaut à attribuer pour l'utilisateur à sa création |
 | `insecure_skip_verify`      | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `false`   |
 
-### Activation de l’authentification SAML2
-
-Redémarrer le service `api` de Canopsis
+Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 * Installation via Docker Compose
 
