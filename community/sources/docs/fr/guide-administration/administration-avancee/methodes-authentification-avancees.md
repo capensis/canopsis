@@ -1,8 +1,31 @@
 # Méthodes d'authentification avancées (LDAP, CAS, SAML2)
 
-## Authentification LDAP ( édition community )
+!!! information "Information"
+
+    Quelque soit le mécanisme d'authentification utilisé, vous pouvez configurer 2 paramètres concernant les expirations d'authentification : `inactivity_interval` et `expiration_interval`.
+    
+    * `inactivity_interval` : Délai de session utilisateur avant expiration sur inactivité
+    * `expiration_interval` : Délai de session utilisateur avant expiration
+    
+    Exemple : si `expiration_interval` vaut **1 mois** et que `inactivity_interval` vaut **24 heures**
+    
+    Cas 1:
+    
+    * L'utilisateur se loggue
+    * L'utilisateur ouvre son interface Canopsis chaque jour
+    * L'utilisateur sera déloggué après 1 mois
+    
+    Cas 2:
+    
+    * L'utilisateur se loggue
+    * L'utilisateur ouvre son interface Canopsis chaque jour ouvré
+    * L'utilisateur sera déloggué dimanche
+    * L'utilisateur se loggue à nouveau lundi
+
+## Authentification LDAP
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
+
 
 ### Configuration de LDAP
 
@@ -43,7 +66,6 @@ Définition des paramètres :
 | Attribut        | Description                                        | Exemple                                                         |
 |-----------------|----------------------------------------------------|-----------------------------------------------------------------|
 | `url`        | Chaîne de connexion LDAP                                | `ldaps://ldap.example.com`                                      |
-| `max_tls_ver`     | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 | `admin_dn`        | Bind DN : DN du compte utilisé pour lire l'annuaire | `uid=svccanopsis,ou=Special,dc=example,dc=com`                 |
 | `admin_passwd`    | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire  |                                          |
 | `user_dn`         | DN de base où rechercher les utilisateurs          | `ou=People,dc=example,dc=com`                                   |
@@ -52,6 +74,7 @@ Définition des paramètres :
 | `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `max_tls_ver` (optionnel) | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
