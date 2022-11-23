@@ -8,6 +8,7 @@
     :filter="filter",
     :label="label",
     :disabled="disabled",
+    :error="error",
     placeholder="−−:−−",
     append-icon="",
     hide-details,
@@ -42,6 +43,10 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    error: {
       type: Boolean,
       default: false,
     },

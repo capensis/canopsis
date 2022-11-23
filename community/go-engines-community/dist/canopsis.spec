@@ -1,7 +1,7 @@
 %define debug_package %{nil} 
 Name: canopsis
 Version: %{version}
-Release: 3%{?dist}
+Release: 1%{?dist}
 Summary: Canopsis
 License: ASL 2.0
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
@@ -67,7 +67,9 @@ echo "and run canopsis-reconfigure"
 echo "After that, you can enable and start services"
 
 %postun
-userdel canopsis
+if [ "$1" = "0" ]; then
+  userdel canopsis
+fi
 
 %clean
 make -C community/go-engines-community clean

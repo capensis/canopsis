@@ -25,13 +25,17 @@
           :label="$t('common.value')",
           :items="values",
           :disabled="disabled",
+          :return-object="false",
           no-filter,
           clearable,
           @change="selectValue",
           @update:searchInput="debouncedOnSelectionChange"
         )
           template(#item="{ item, tile }")
-            v-list-tile(:value="item.value === activeValue", @click="selectValue(item.value)")
+            v-list-tile(
+              v-bind=" { ...tile.props, value: item.value === activeValue }",
+              v-on="tile.on"
+            )
               v-list-tile-content {{ item.text }}
               span.ml-4.grey--text {{ item.value }}
         v-btn(
@@ -123,7 +127,7 @@ export default {
 
       this.activeValue = value ?? undefined;
 
-      if (!this.searchInput) {
+      if (!this.searchInput || this.searchInput === value) {
         this.updateField('value', value);
         return;
       }
@@ -159,7 +163,9 @@ export default {
         this.showItems = this.searchInput[selectionStart - 1] === '{';
 
         if (this.showItems) {
-          this.selectionStart = selectionStart - 1;
+          const selectionOffset = this.searchInput[selectionStart - 2] === '{' ? 2 : 1;
+
+          this.selectionStart = selectionStart - selectionOffset;
           this.selectionEnd = selectionStart;
         }
 

@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
+<div
+  class="modal-wrapper"
+  close="close"
+>
+  <div
+    class="title"
+  >
+    <span>
+      Filters
+    </span>
+  </div>
+   
+  <div
+    class="text"
+  >
+    <c-progress-overlay-stub />
+    <filters-list-component-stub
+      addable="true"
+      editable="true"
+      filters="[object Object],[object Object],[object Object],[object Object]"
+    />
+  </div>
+   
+  <div
+    class="actions"
+  />
+</div>
+`;
+
+exports[`filters-list Renders \`filters-list\` with empty modal 1`] = `
+<div
+  class="modal-wrapper"
+  close="close"
+>
+  <div
+    class="title"
+  >
+    <span>
+      Filters
+    </span>
+  </div>
+   
+  <div
+    class="text"
+  >
+    <c-progress-overlay-stub />
+    <filters-list-component-stub
+      addable="true"
+      editable="true"
+      filters=""
+    />
+  </div>
+   
+  <div
+    class="actions"
+  />
+</div>
+`;

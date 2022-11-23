@@ -395,6 +395,29 @@ export const createPbehaviorTypesModule = () => {
   };
 };
 
+export const createPbehaviorReasonModule = () => {
+  const fetchPbehaviorReasonsListWithoutStore = jest.fn().mockReturnValue({
+    meta: {},
+    data: [],
+  });
+
+  const pbehaviorReasonModule = {
+    name: 'pbehaviorReasons',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorReasonsListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchPbehaviorReasonsListWithoutStore.mockClear();
+  });
+
+  return {
+    pbehaviorReasonModule,
+    fetchPbehaviorReasonsListWithoutStore,
+  };
+};
+
 export const createUserPreferenceModule = () => {
   const fetchUserPreference = jest.fn();
   const getUserPreferenceByWidgetId = jest.fn()
@@ -424,6 +447,18 @@ export const createWidgetModule = () => {
   const createWidget = jest.fn();
   const updateWidget = jest.fn();
   const copyWidget = jest.fn();
+  const createWidgetFilter = jest.fn();
+  const updateWidgetFilter = jest.fn();
+  const removeWidgetFilter = jest.fn();
+
+  afterEach(() => {
+    createWidget.mockClear();
+    updateWidget.mockClear();
+    copyWidget.mockClear();
+    createWidgetFilter.mockClear();
+    updateWidgetFilter.mockClear();
+    removeWidgetFilter.mockClear();
+  });
 
   const widgetModule = {
     name: 'view/widget',
@@ -431,14 +466,20 @@ export const createWidgetModule = () => {
       create: createWidget,
       update: updateWidget,
       copy: copyWidget,
+      createWidgetFilter,
+      updateWidgetFilter,
+      removeWidgetFilter,
     },
   };
 
   return {
+    widgetModule,
     createWidget,
     updateWidget,
     copyWidget,
-    widgetModule,
+    createWidgetFilter,
+    updateWidgetFilter,
+    removeWidgetFilter,
   };
 };
 
@@ -587,6 +628,10 @@ export const createPbehaviorModule = () => {
 
 export const createPbehaviorTimespanModule = () => {
   const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
 
   const pbehaviorTimespanModule = {
     name: 'pbehaviorTimespan',

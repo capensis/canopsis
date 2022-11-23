@@ -29,7 +29,7 @@ import { MODALS } from '@/constants';
 import { isOmitEqual } from '@/helpers/equal';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
-import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 export default {
   $_veeValidate: {
