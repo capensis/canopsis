@@ -34,11 +34,13 @@ export const systemMixin = {
     },
 
     setTheme(name = THEMES_NAMES.canopsis) {
-      const { dark, colors } = THEMES[name];
+      if (THEMES[name]) {
+        const { dark, colors } = THEMES[name];
 
-      this.$vuetify.theme = theme(colors);
+        this.$vuetify.theme = theme(colors);
 
-      this.system.dark = dark;
+        this.system.dark = dark;
+      }
     },
   },
 };
