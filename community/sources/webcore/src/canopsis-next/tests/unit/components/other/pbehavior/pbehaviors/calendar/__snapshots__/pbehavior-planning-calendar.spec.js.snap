@@ -5,7 +5,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
   class="ds-expand ds-calendar-app"
 >
   <div
-    class="layout pa-3 white"
+    class="layout pa-3"
   >
     <div
       class="flex"
@@ -966,7 +966,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
   class="ds-expand ds-calendar-app"
 >
   <div
-    class="layout pa-3 white"
+    class="layout pa-3"
   >
     <div
       class="flex"
