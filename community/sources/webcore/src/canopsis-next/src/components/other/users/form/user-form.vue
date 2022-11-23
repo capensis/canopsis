@@ -1,6 +1,5 @@
 <template lang="pug">
   v-layout(column)
-    c-progress-overlay(:pending="pending")
     c-id-field(v-field="form._id", :disabled="onlyUserPrefs || !isNew")
     c-name-field(
       v-field="form.name",
@@ -36,18 +35,7 @@
       name="password",
       browser-autocomplete="new-password"
     )
-    v-select(
-      v-field="form.role",
-      v-validate="'required'",
-      :label="$tc('common.role')",
-      :items="roles",
-      :disabled="onlyUserPrefs",
-      :error-messages="errors.collect('role')",
-      return-object,
-      item-text="_id",
-      item-value="_id",
-      name="role"
-    )
+    c-role-field(v-field="form.role", :disabled="onlyUserPrefs", required)
     c-language-field(
       v-field="form.ui_language",
       :label="$t('users.language')"
@@ -62,21 +50,17 @@
       :label="$tc('common.theme')",
       :items="themes"
     )
-    v-layout(row, align-center, v-if="!isNew")
+    v-layout(v-if="!isNew", row, align-center)
       div {{ $t('common.authKey') }}: {{ user.authkey }}
-      v-tooltip(left)
-        v-btn(
-          v-clipboard:copy="user.authkey",
-          v-clipboard:success="addAuthKeyCopiedSuccessPopup",
-          v-clipboard:error="addAuthKeyCopiedErrorPopup",
-          slot="activator",
-          small,
-          fab,
-          icon,
-          depressed
-        )
-          v-icon content_copy
-        span {{ $t('modals.variablesHelp.copyToClipboard') }}
+      c-copy-btn(
+        :value="user.authkey",
+        :tooltip="$t('modals.variablesHelp.copyToClipboard')",
+        small,
+        fab,
+        left,
+        @success="showCopyAuthKeySuccessPopup",
+        @error="showCopyAuthKeyErrorPopup"
+      )
     c-enabled-field(
       v-field="form.enable",
       :disabled="onlyUserPrefs"
@@ -85,15 +69,11 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { THEMES_NAMES } from '@/config';
 
-import { GROUPS_NAVIGATION_TYPES, MAX_LIMIT } from '@/constants';
+import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
-
-const { mapActions } = createNamespacedHelpers('role');
 
 export default {
   inject: ['$validator'],
@@ -122,12 +102,6 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      roles: [],
-      pending: true,
-    };
-  },
   computed: {
     passwordRules() {
       return {
@@ -149,22 +123,12 @@ export default {
       }));
     },
   },
-  async mounted() {
-    const { data: roles } = await this.fetchRolesListWithoutStore({ params: { limit: MAX_LIMIT } });
-
-    this.roles = roles;
-    this.pending = false;
-  },
   methods: {
-    ...mapActions({
-      fetchRolesListWithoutStore: 'fetchListWithoutStore',
-    }),
-
-    addAuthKeyCopiedSuccessPopup() {
+    showCopyAuthKeySuccessPopup() {
       this.$popups.success({ text: this.$t('success.authKeyCopied') });
     },
 
-    addAuthKeyCopiedErrorPopup() {
+    showCopyAuthKeyErrorPopup() {
       this.$popups.error({ text: this.$t('errors.default') });
     },
   },

@@ -2,23 +2,30 @@ package account
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*User, error)
+	Update(ctx context.Context, r EditRequest) (*User, error)
 }
 
 type store struct {
-	collection mongo.DbCollection
+	client          mongo.DbClient
+	collection      mongo.DbCollection
+	passwordEncoder password.Encoder
 }
 
-func NewStore(db mongo.DbClient) Store {
+func NewStore(db mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
-		collection: db.Collection(mongo.RightsMongoCollection),
+		client:          db,
+		collection:      db.Collection(mongo.RightsMongoCollection),
+		passwordEncoder: passwordEncoder,
 	}
 }
 
@@ -145,4 +152,26 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	}
 
 	return nil, nil
+}
+
+func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
+	var user *User
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		res, err := s.collection.UpdateOne(ctx,
+			bson.M{"_id": r.ID, "crecord_type": model.LineTypeSubject},
+			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

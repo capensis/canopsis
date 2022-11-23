@@ -182,6 +182,139 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     <div
       class="flex"
     >
+      <!---->
+    </div>
+    <div
+      class="flex"
+    >
+      <alarms-list-remediation-instructions-filters-stub
+        filters=""
+        lockedfilters=""
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <span
+        class="v-chip primary white--text v-chip--label v-chip--removable theme--light"
+        tabindex="0"
+      >
+        <span
+          class="v-chip__content"
+        >
+          Last 1 year
+          <div
+            class="v-chip__close"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              cancel
+            </i>
+          </div>
+        </span>
+      </span>
+      <c-action-btn-stub
+        color="primary"
+        icon="schedule"
+        tooltip="Set a custom date range"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout alarms-list__top-pagination white px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <c-density-btn-toggle-stub />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              itemsids=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        limit="13"
+        total="10"
+        type="top"
+      />
+    </div>
+  </div>
+  <alarms-list-table-stub
+    alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    expandable="true"
+    hidechildren="true"
+    istourenabled="true"
+    pagination="[object Object]"
+    refreshalarmslist="[Function]"
+    selectable="true"
+    selected=""
+    selectedtag=""
+    totalitems="10"
+    widget="[object Object]"
+  >
+    <c-table-pagination-stub
+      rows-per-page="13"
+      total-items="10"
+    />
+  </alarms-list-table-stub>
+  <alarms-expand-panel-tour-stub
+    callbacks="[object Object]"
+  />
+</div>
+`;
+
+exports[`alarms-list Renders \`alarms-list\` with default props and user filter permission 1`] = `
+<div>
+  <div
+    class="layout white row wrap justify-space-between align-center"
+  >
+    <div
+      class="flex"
+    >
+      <c-advanced-search-field-stub
+        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        query="[object Object]"
+        tooltip=<span>Help on the advanced research :</span>
+<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
+<p>The "-" before the research is required</p>
+<p>Operators :
+  <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
+<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
+<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>
+  <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>
+  <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>
+  <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
+  <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>
+  <dd>Alarms whose connectors isn't "connector_1"</dd>
+</dl>
+      />
+    </div>
+    <!---->
+    <!---->
+    <div
+      class="flex"
+    >
       <div
         class="layout row align-center"
       >

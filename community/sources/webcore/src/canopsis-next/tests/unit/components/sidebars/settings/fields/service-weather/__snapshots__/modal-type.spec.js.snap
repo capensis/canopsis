@@ -28,7 +28,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
               <input
                 aria-checked="false"
                 aria-label="More info"
-                name="v-radio-25"
+                name="modalType"
                 role="radio"
                 type="radio"
                 value="more-info"
@@ -60,7 +60,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
               <input
                 aria-checked="false"
                 aria-label="Alarm list"
-                name="v-radio-25"
+                name="modalType"
                 role="radio"
                 type="radio"
                 value="alarm-list"
@@ -92,7 +92,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
               <input
                 aria-checked="false"
                 aria-label="Both"
-                name="v-radio-25"
+                name="modalType"
                 role="radio"
                 type="radio"
                 value="both"
@@ -158,7 +158,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = 
               <input
                 aria-checked="false"
                 aria-label="More info"
-                name="v-radio-12"
+                name="modalType"
                 role="radio"
                 type="radio"
                 value="more-info"
@@ -190,7 +190,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = 
               <input
                 aria-checked="false"
                 aria-label="Alarm list"
-                name="v-radio-12"
+                name="modalType"
                 role="radio"
                 type="radio"
                 value="alarm-list"
@@ -222,7 +222,7 @@ exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = 
               <input
                 aria-checked="false"
                 aria-label="Both"
-                name="v-radio-12"
+                name="modalType"
                 role="radio"
                 type="radio"
                 value="both"

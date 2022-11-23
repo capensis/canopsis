@@ -78,10 +78,12 @@ export const mockModals = () => {
 export const mockPopups = () => {
   const popups = {
     error: jest.fn(),
+    success: jest.fn(),
   };
 
   afterEach(() => {
     popups.error.mockReset();
+    popups.success.mockReset();
   });
 
   return popups;

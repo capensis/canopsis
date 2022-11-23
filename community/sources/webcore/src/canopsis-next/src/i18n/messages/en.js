@@ -289,6 +289,9 @@ export default merge({
     failed: 'Failed',
     close: 'Close',
     alarmId: 'Alarm ID',
+    longOutput: 'Long output',
+    initialOutput: 'Initial output',
+    longInitialOutput: 'Long initial output',
     timestamp: 'Timestamp',
     theme: 'Theme | Themes',
     actions: {
@@ -413,6 +416,8 @@ export default merge({
 
       [PATTERN_OPERATORS.activated]: 'Activated',
       [PATTERN_OPERATORS.inactive]: 'Inactive',
+
+      [PATTERN_OPERATORS.regexp]: 'Regexp',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Ack',
@@ -2030,6 +2035,8 @@ export default merge({
     addExternalData: 'Add external data',
     reference: 'Reference',
     collection: 'Collection',
+    sort: 'Sort',
+    sortBy: 'Sort by',
     externalDataTypes: {
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'MongoDB collection',
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',

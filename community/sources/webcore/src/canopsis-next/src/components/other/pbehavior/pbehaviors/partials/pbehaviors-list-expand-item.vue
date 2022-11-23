@@ -39,7 +39,7 @@ import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
-import PbehaviorPatternsForm from '@/components/other/pbehavior/calendar/partials/pbehavior-patterns-form.vue';
+import PbehaviorPatternsForm from '../form/pbehavior-patterns-form.vue';
 
 import PbehaviorComments from './pbehavior-comments.vue';
 import PbehaviorRecurrenceRule from './pbehavior-recurrence-rule.vue';

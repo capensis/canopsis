@@ -47,11 +47,11 @@ const authModule = {
     fetchCurrentUser,
   },
 };
-const updateUser = jest.fn();
+const updateCurrentUser = jest.fn();
 const userModule = {
   name: 'user',
   actions: {
-    update: updateUser,
+    updateCurrentUser,
   },
 };
 
@@ -73,7 +73,7 @@ describe('alarms-expand-panel-tour', () => {
   });
 
   afterEach(() => {
-    updateUser.mockReset();
+    updateCurrentUser.mockReset();
     fetchCurrentUser.mockReset();
   });
 
@@ -186,8 +186,8 @@ describe('alarms-expand-panel-tour', () => {
     jest.runAllTimers();
     await flushPromises();
 
-    expect(updateUser).toHaveBeenCalledTimes(1);
-    expect(updateUser).toHaveBeenCalledWith(
+    expect(updateCurrentUser).toHaveBeenCalledTimes(1);
+    expect(updateCurrentUser).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -197,7 +197,6 @@ describe('alarms-expand-panel-tour', () => {
             [TOURS.alarmsExpandPanel]: true,
           },
         },
-        id: currentUser._id,
       },
       undefined,
     );
@@ -222,8 +221,8 @@ describe('alarms-expand-panel-tour', () => {
     jest.runAllTimers();
     await flushPromises();
 
-    expect(updateUser).toHaveBeenCalledTimes(1);
-    expect(updateUser).toHaveBeenCalledWith(
+    expect(updateCurrentUser).toHaveBeenCalledTimes(1);
+    expect(updateCurrentUser).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -233,7 +232,6 @@ describe('alarms-expand-panel-tour', () => {
             [TOURS.alarmsExpandPanel]: true,
           },
         },
-        id: currentUser._id,
       },
       undefined,
     );

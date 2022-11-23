@@ -52,7 +52,7 @@ describe('c-input-type-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-input-type-field` with default custom props', () => {
+  it('Renders `c-input-type-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: PATTERN_FIELD_TYPES.number,
