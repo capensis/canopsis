@@ -187,8 +187,7 @@ Feature: Bulk create users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr",
-          "ui_tours": null
+          "ui_language": "fr"
         },
         {
           "_id": "test-user-to-bulk-create-2-name",
@@ -212,8 +211,7 @@ Feature: Bulk create users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr",
-          "ui_tours": null
+          "ui_language": "fr"
         }
       ],
       "meta": {

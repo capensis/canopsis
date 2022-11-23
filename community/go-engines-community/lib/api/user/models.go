@@ -20,17 +20,16 @@ type Request struct {
 }
 
 type EditRequest struct {
-	Password               string          `json:"password"`
-	Name                   string          `json:"name" binding:"required,max=255"`
-	Firstname              string          `json:"firstname" binding:"max=255"`
-	Lastname               string          `json:"lastname" binding:"max=255"`
-	Email                  string          `json:"email" binding:"required,email"`
-	Role                   string          `json:"role" binding:"required"`
-	UILanguage             string          `json:"ui_language"`
-	UIGroupsNavigationType string          `json:"ui_groups_navigation_type"`
-	IsEnabled              *bool           `json:"enable" binding:"required"`
-	DefaultView            string          `json:"defaultview"`
-	UITours                map[string]bool `json:"ui_tours"`
+	Password               string `json:"password"`
+	Name                   string `json:"name" binding:"required,max=255"`
+	Firstname              string `json:"firstname" binding:"max=255"`
+	Lastname               string `json:"lastname" binding:"max=255"`
+	Email                  string `json:"email" binding:"required,email"`
+	Role                   string `json:"role" binding:"required"`
+	UILanguage             string `json:"ui_language"`
+	UIGroupsNavigationType string `json:"ui_groups_navigation_type"`
+	IsEnabled              *bool  `json:"enable" binding:"required"`
+	DefaultView            string `json:"defaultview"`
 }
 
 func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
@@ -64,7 +63,6 @@ func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
 		"groupsNavigationType": r.UIGroupsNavigationType,
 		"enable":               r.IsEnabled,
 		"defaultview":          r.DefaultView,
-		"tours":                r.UITours,
 	}
 	if r.Password != "" {
 		bsonModel["shadowpasswd"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
@@ -74,20 +72,19 @@ func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
 }
 
 type User struct {
-	ID                     string          `bson:"_id" json:"_id"`
-	Name                   string          `bson:"name" json:"name"`
-	Lastname               string          `bson:"lastname" json:"lastname"`
-	Firstname              string          `bson:"firstname" json:"firstname"`
-	Email                  string          `bson:"email" json:"email"`
-	Role                   Role            `bson:"role" json:"role"`
-	UILanguage             string          `bson:"ui_language" json:"ui_language"`
-	UITours                map[string]bool `bson:"ui_tours" json:"ui_tours"`
-	UIGroupsNavigationType string          `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
-	Enabled                bool            `bson:"enable" json:"enable"`
-	DefaultView            *View           `bson:"defaultview" json:"defaultview"`
-	ExternalID             string          `bson:"external_id" json:"external_id"`
-	Source                 string          `bson:"source" json:"source"`
-	AuthApiKey             string          `bson:"authkey" json:"authkey"`
+	ID                     string `bson:"_id" json:"_id"`
+	Name                   string `bson:"name" json:"name"`
+	Lastname               string `bson:"lastname" json:"lastname"`
+	Firstname              string `bson:"firstname" json:"firstname"`
+	Email                  string `bson:"email" json:"email"`
+	Role                   Role   `bson:"role" json:"role"`
+	UILanguage             string `bson:"ui_language" json:"ui_language"`
+	UIGroupsNavigationType string `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
+	Enabled                bool   `bson:"enable" json:"enable"`
+	DefaultView            *View  `bson:"defaultview" json:"defaultview"`
+	ExternalID             string `bson:"external_id" json:"external_id"`
+	Source                 string `bson:"source" json:"source"`
+	AuthApiKey             string `bson:"authkey" json:"authkey"`
 
 	ActiveConnects *int `bson:"-" json:"active_connects,omitempty"`
 }
