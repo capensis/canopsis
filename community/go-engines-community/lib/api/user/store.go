@@ -362,7 +362,6 @@ func getRenameFieldsPipeline() []bson.M {
 			"name":                      "$crecord_name",
 			"email":                     "$mail",
 			"ui_groups_navigation_type": "$groupsNavigationType",
-			"ui_tours":                  "$tours",
 		}},
 	}
 }
