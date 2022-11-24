@@ -122,6 +122,9 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []stri
 
 func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination.Query) []bson.M {
 	beforeLimit, afterLimit := q.createAggregationPipeline()
+	if len(afterLimit) > 0 {
+		afterLimit = append(afterLimit, q.sort)
+	}
 
 	return pagination.CreateAggregationPipeline(
 		query,
