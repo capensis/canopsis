@@ -277,8 +277,10 @@ export default {
       window.addEventListener('scroll', this.changeHeaderPosition);
     }
 
-    window.addEventListener('keydown', this.enableSelecting);
-    window.addEventListener('keyup', this.disableSelecting);
+    if (this.selectable) {
+      window.addEventListener('keydown', this.enableSelecting);
+      window.addEventListener('keyup', this.disableSelecting);
+    }
 
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
@@ -423,7 +425,7 @@ export default {
       }
     }
 
-    &__selecting .alarm-list-row {
+    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row {
       user-select: none;
 
       &:after{
