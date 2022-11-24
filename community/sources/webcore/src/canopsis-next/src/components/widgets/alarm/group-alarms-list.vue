@@ -24,6 +24,7 @@
 
 <script>
 import { orderBy } from 'lodash';
+
 import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
