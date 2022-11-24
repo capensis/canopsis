@@ -132,7 +132,7 @@ func (e *engine) runPeriodicalWorker(
 			if d > worker.GetInterval() {
 				e.logger.Error().
 					Time("start", start).
-					Str("spent time", d.String()).
+					Str("spent_time", d.String()).
 					Msgf("periodical worker %T run too long", worker)
 			}
 			if err != nil {
