@@ -29,6 +29,8 @@ const (
 
 	UserInterfaceMaxMatchedItems          = 10000
 	UserInterfaceCheckCountRequestTimeout = 30
+
+	DataStorageMaxUpdates = 100000
 )
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {
