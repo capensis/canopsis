@@ -7,7 +7,7 @@ import {
   ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
-  DATETIME_FORMATS,
+  DATETIME_FORMATS, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
 import {
@@ -15,6 +15,7 @@ import {
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
+import { defaultColumnsToColumns } from '@/helpers/entities';
 
 /**
  * WIDGET CONVERTERS
@@ -341,30 +342,6 @@ export function prepareQuery(widget, userPreference) {
 }
 
 /**
- * Prepare query for alarm details fetching
- *
- * @param {Alarm} alarm
- * @param {Widget} widget
- * @returns {Object}
- */
-export const prepareAlarmDetailsQuery = (alarm, widget) => ({
-  _id: alarm._id,
-  with_instructions: true,
-  opened: widget.parameters.opened,
-  steps: {
-    page: 1,
-    limit: PAGINATION_LIMIT,
-  },
-  children: {
-    page: 1,
-    limit: PAGINATION_LIMIT,
-    sort_by: '',
-    sort: '',
-    multi_sort: [],
-  },
-});
-
-/**
  * Convert filter to query filters
  *
  * @param {string | string[]} filter
@@ -383,6 +360,66 @@ const convertFiltersToQuery = (filter, lockedFilter) => [
   ...convertFilterToQuery(filter),
   ...convertFilterToQuery(lockedFilter),
 ];
+
+/**
+ * Prepare query for alarm details fetching
+ *
+ * @param {Alarm} alarm
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export const prepareAlarmDetailsQuery = (alarm, widget) => {
+  const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
+  const columns = widgetGroupColumns.length > 0
+    ? widgetGroupColumns
+    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+
+  const query = {
+    _id: alarm._id,
+    with_instructions: true,
+    opened: widget.parameters.opened,
+    steps: {
+      page: 1,
+      limit: PAGINATION_LIMIT,
+    },
+    children: {
+      page: 1,
+      limit: PAGINATION_LIMIT,
+      multiSortBy: [],
+    },
+  };
+
+  if (sort.column && sort.order && columns.some(({ value }) => value.endsWith(sort.column))) {
+    query.children.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+  }
+
+  return query;
+};
+
+/**
+ * Convert multiSortBy query parameter to request
+ *
+ * @param {Object[]} multiSortBy
+ * @returns {string[]}
+ */
+export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
+  .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+
+/**
+ * Convert alarmDetails query to request
+ *
+ * @param query
+ * @returns {*&{children: {multi_sort: string[]}}}
+ */
+export const convertAlarmDetailsQueryToRequest = query => ({
+  ...query,
+
+  children: {
+    ...omit(query.children, ['multiSortBy']),
+
+    multi_sort: convertMultiSortToRequest(query.children?.multiSortBy),
+  },
+});
 
 /**
  * Convert widget query to request parameters
@@ -437,8 +474,7 @@ export const convertWidgetQueryToRequest = (query) => {
   }
 
   if (multiSortBy.length) {
-    result.multi_sort = multiSortBy
-      .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+    result.multi_sort = convertMultiSortToRequest(multiSortBy);
   }
 
   result.limit = limit;
