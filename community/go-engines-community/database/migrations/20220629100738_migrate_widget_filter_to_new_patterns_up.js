@@ -282,6 +282,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.ticket":
                 case "v.canceled":
                 case "v.snooze":
+                case "v.activation_date":
                     if (typeof value === "object" && value && typeof value["$exists"] === "boolean") {
                         newAlarmGroup.push({
                             field: field,
