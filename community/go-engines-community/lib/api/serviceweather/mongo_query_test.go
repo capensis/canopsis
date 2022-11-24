@@ -45,6 +45,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -107,6 +108,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -169,6 +171,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -232,6 +235,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -291,6 +295,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -351,6 +356,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "state.val", Value: -1}, {Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
@@ -432,6 +438,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		"depends": 0,
 		"impact":  0,
 	}})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
 	expected := []bson.M{
 		{"$match": bson.M{
 			"type":    types.EntityTypeService,
