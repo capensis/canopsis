@@ -1,11 +1,29 @@
 <template lang="pug">
   span.ds-calendar-app-period-picker
     template(v-if="!isYearType")
-      v-select.ds-calendar-app-period-picker__week(v-if="isWeekType", v-model="week", :items="weeks")
+      v-select.ds-calendar-app-period-picker__week(
+        v-if="isWeekType",
+        v-model="week",
+        :items="weeks",
+        :menu-props="menuProps"
+      )
       template(v-else)
-        v-select.ds-calendar-app-period-picker__day(v-if="!isMonthType", v-model="day", :items="days")
-        v-select.ds-calendar-app-period-picker__month(v-model="month", :items="months")
-    v-autocomplete.ds-calendar-app-period-picker__year(v-model="year", :items="years")
+        v-select.ds-calendar-app-period-picker__day(
+          v-if="!isMonthType",
+          v-model="day",
+          :items="days",
+          :menu-props="menuProps"
+        )
+        v-select.ds-calendar-app-period-picker__month(
+          v-model="month",
+          :items="months",
+          :menu-props="menuProps"
+        )
+    v-select.ds-calendar-app-period-picker__year(
+      v-model="year",
+      :items="years",
+      :menu-props="menuProps"
+    )
 </template>
 
 <script>
@@ -22,12 +40,22 @@ export default {
       type: Calendar,
       required: true,
     },
-    yearsOffset: {
+    previousYearsOffset: {
+      type: Number,
+      default: 20,
+    },
+    nextYearsOffset: {
       type: Number,
       default: 50,
     },
   },
   computed: {
+    menuProps() {
+      return {
+        auto: true,
+      };
+    },
+
     isWeekType() {
       return this.calendar.type === Units.WEEK;
     },
@@ -122,8 +150,8 @@ export default {
 
     years() {
       const nowYear = new Date().getFullYear();
-      const start = nowYear - this.yearsOffset;
-      const end = nowYear + this.yearsOffset;
+      const start = nowYear - this.previousYearsOffset;
+      const end = nowYear + this.nextYearsOffset;
 
       return range(start, end);
     },
