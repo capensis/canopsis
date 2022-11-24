@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { omit, pick, isObject } from 'lodash';
+import { omit, pick, isObject, isEqual } from 'lodash';
 
 import { API_HOST, API_ROUTES } from '@/config';
 
@@ -360,7 +360,7 @@ export default {
           this.fetchAlarmTagsList({ params: { paginate: false } });
         }
 
-        if (!this.alarmsPending) {
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
             params,
