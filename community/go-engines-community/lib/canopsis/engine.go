@@ -368,8 +368,8 @@ func (de *DefaultEngine) AckMessage(msg amqp.Delivery) {
 			Uint64("tag", msg.DeliveryTag).
 			Str("id", msg.MessageId).
 			Str("exchange", msg.Exchange).
-			Str("routing key", msg.RoutingKey).
-			Str("consumer tag", msg.ConsumerTag).Msg("ack message")
+			Str("routing_key", msg.RoutingKey).
+			Str("consumer_tag", msg.ConsumerTag).Msg("ack message")
 	}
 }
 
@@ -382,8 +382,8 @@ func (de *DefaultEngine) NackMessage(msg amqp.Delivery) {
 			Uint64("tag", msg.DeliveryTag).
 			Str("id", msg.MessageId).
 			Str("exchange", msg.Exchange).
-			Str("routing key", msg.RoutingKey).
-			Str("consumer tag", msg.ConsumerTag).Msg("nack message")
+			Str("routing_key", msg.RoutingKey).
+			Str("consumer_tag", msg.ConsumerTag).Msg("nack message")
 	}
 }
 

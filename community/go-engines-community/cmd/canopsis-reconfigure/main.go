@@ -57,13 +57,13 @@ func main() {
 
 	data, err := ioutil.ReadFile(confFile)
 	if err != nil {
-		logger.Error().Err(err).Int("exit status", 1).Msg("")
+		logger.Error().Err(err).Int("status", 1).Msg("exit")
 		os.Exit(1)
 	}
 
 	var conf Conf
 	if err := toml.Unmarshal(data, &conf); err != nil {
-		logger.Error().Err(err).Int("exit status", 2).Msg("")
+		logger.Error().Err(err).Int("status", 2).Msg("exit")
 		os.Exit(2)
 	}
 
@@ -107,7 +107,7 @@ func main() {
 			exchange.NoWait,
 			exchange.Args)
 		if err != nil {
-			logger.Error().Err(err).Int("exit status", 2).Msgf("Can not initialise exchange %s", exchange.Name)
+			logger.Error().Err(err).Int("status", 2).Msgf("Can not initialise exchange %s", exchange.Name)
 			os.Exit(ErrRabbitInit)
 		}
 		logger.Info().Msgf("Exchange \"%s\" created.", exchange.Name)
@@ -124,7 +124,7 @@ func main() {
 			queue.Args)
 
 		if err != nil {
-			logger.Error().Err(err).Int("exit status", 2).Msgf("Can not initialise queue %s", queue.Name)
+			logger.Error().Err(err).Int("status", 2).Msgf("Can not initialise queue %s", queue.Name)
 			os.Exit(ErrRabbitInit)
 		}
 
@@ -139,7 +139,7 @@ func main() {
 				queue.Bind.Args)
 
 			if err != nil {
-				logger.Error().Err(err).Int("exit status", 2).Msgf("Can not bind queue %s to exchange %s %v", queue.Name, queue.Bind.Exchange, err)
+				logger.Error().Err(err).Int("status", 2).Msgf("Can not bind queue %s to exchange %s %v", queue.Name, queue.Bind.Exchange, err)
 				os.Exit(ErrRabbitInit)
 			}
 			logger.Info().Msgf("\"%s\" bind to \"%s\" exchange with \"%s\" routing key.\n",

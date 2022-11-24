@@ -64,8 +64,8 @@ func (w *periodicalWorker) compute(ctx context.Context, now time.Time) {
 
 	if count >= 0 {
 		w.Logger.Info().
-			Time("interval from", newSpan.From()).
-			Time("interval to", newSpan.To()).
+			Time("interval_from", newSpan.From()).
+			Time("interval_to", newSpan.To()).
 			Int("count", count).
 			Msg("pbehaviors are recomputed")
 	}
@@ -126,8 +126,8 @@ func (w *periodicalWorker) processAlarms(ctx context.Context, now time.Time) {
 			}
 
 			w.Logger.Debug().
-				Str("resolve pbehavior", resolveResult.ResolvedPbhID).
-				Str("resolve type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
+				Str("resolve_pbehavior", resolveResult.ResolvedPbhID).
+				Str("resolve_type", fmt.Sprintf("%+v", resolveResult.ResolvedType)).
 				Str("alarm", alarm.ID).
 				Msgf("send %s event", event.EventType)
 		}
