@@ -118,6 +118,14 @@ indexes:
         v.last_update_date: 1
       options:
         background: true
+    v.resolved_1:
+      keys:
+        v.resolved: 1
+
+  archived_alarms:
+    v.resolved_1:
+      keys:
+        v.resolved: 1
 
   pbehavior_type:
     priority_1:
