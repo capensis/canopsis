@@ -2340,6 +2340,7 @@ export default merge({
     pbehaviorType: 'Type PBehavior',
     pbehaviorReason: 'Raison PBehavior',
     pbehaviorName: 'Nom PBehavior',
+    pbehaviorCanonicalType: 'Type canonique de PBehavior',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2743,6 +2744,13 @@ export default merge({
       [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
+  },
+
+  alarm: {
+    creationDate: 'Date de création',
+    lastUpdateDate: 'Date de la dernière mise à jour',
+    lastEventDate: 'Date du dernier événement',
+    eventsCount: 'Les événements comptent',
   },
 
   entity: {

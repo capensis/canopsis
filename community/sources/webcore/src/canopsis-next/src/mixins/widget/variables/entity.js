@@ -1,10 +1,13 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { ALARM_STEP_FIELDS, ENTITY_TEMPLATE_FIELDS, MAX_LIMIT, PBEHAVIOR_INFO_FIELDS } from '@/constants';
+import { ENTITY_TEMPLATE_FIELDS, MAX_LIMIT } from '@/constants';
+
+import { variablesMixin } from './common';
 
 const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export const entityVariablesMixin = {
+  mixins: [variablesMixin],
   data() {
     return {
       infos: [],
@@ -35,46 +38,6 @@ export const entityVariablesMixin = {
       }));
     },
 
-    alarmStepValueVariable() {
-      return {
-        text: this.$t('common.value'),
-        value: ALARM_STEP_FIELDS.value,
-      };
-    },
-
-    alarmStepTimestampVariable() {
-      return {
-        text: this.$t('common.timestamp'),
-        value: ALARM_STEP_FIELDS.timestamp,
-      };
-    },
-
-    alarmStepMessageVariable() {
-      return {
-        text: this.$t('common.message'),
-        value: ALARM_STEP_FIELDS.message,
-      };
-    },
-
-    alarmStepAuthorVariable() {
-      return {
-        text: this.$t('common.author'),
-        value: ALARM_STEP_FIELDS.author,
-      };
-    },
-
-    stateVariables() {
-      return [this.alarmStepTimestampVariable, this.alarmStepValueVariable];
-    },
-
-    statusVariables() {
-      return [this.alarmStepValueVariable];
-    },
-
-    ticketVariables() {
-      return [this.alarmStepValueVariable];
-    },
-
     snoozeVariables() {
       return [
         this.alarmStepTimestampVariable,
@@ -83,32 +46,7 @@ export const entityVariablesMixin = {
       ];
     },
 
-    ackVariables() {
-      return [
-        this.alarmStepTimestampVariable,
-        this.alarmStepAuthorVariable,
-        this.alarmStepMessageVariable,
-      ];
-    },
-
-    pbehaviorInfoVariables() {
-      return [
-        {
-          text: this.$t('pbehavior.pbehaviorType'),
-          value: PBEHAVIOR_INFO_FIELDS.typeName,
-        },
-        {
-          text: this.$tc('pbehavior.pbehaviorReason'),
-          value: PBEHAVIOR_INFO_FIELDS.reason,
-        },
-        {
-          text: this.$t('pbehavior.pbehaviorName'),
-          value: PBEHAVIOR_INFO_FIELDS.name,
-        },
-      ];
-    },
-
-    variables() {
+    entityVariables() {
       return [
         {
           text: this.$t('common.id'),
