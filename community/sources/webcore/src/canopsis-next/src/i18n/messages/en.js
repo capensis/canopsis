@@ -289,7 +289,7 @@ export default merge({
     alarmId: 'Alarm ID',
     longOutput: 'Long output',
     initialOutput: 'Initial output',
-    longInitialOutput: 'Long initial output',
+    initialLongOutput: 'Long initial output',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
