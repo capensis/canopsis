@@ -2747,9 +2747,6 @@ export default merge({
   },
 
   alarm: {
-    creationDate: 'Creation date',
-    lastUpdateDate: 'Last update date',
-    lastEventDate: 'Last event date',
     eventsCount: 'Events count',
   },
 
