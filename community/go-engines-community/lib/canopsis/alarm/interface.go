@@ -90,14 +90,8 @@ type Adapter interface {
 	// DeleteResolvedAlarms deletes resolved alarms from resolved collection after some duration
 	DeleteResolvedAlarms(ctx context.Context, duration time.Duration) error
 
-	// DeleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
-	DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
-
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
-
-	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
-	ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
 
 	FindToCheckPbehaviorInfo(ctx context.Context, createdAfter types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 }
