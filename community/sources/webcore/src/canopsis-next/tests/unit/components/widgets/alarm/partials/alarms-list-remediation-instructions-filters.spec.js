@@ -4,7 +4,7 @@ import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
-import { FILTER_MONGO_OPERATORS, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import AlarmsListRemediationInstructionsFilters from '@/components/widgets/alarm/partials/alarms-list-remediation-instructions-filters.vue';
 
@@ -68,21 +68,21 @@ describe('alarms-list-remediation-instructions-filters', () => {
   const lockedFilters = [
     {
       title: 'Locked filter 1',
-      filter: { [FILTER_MONGO_OPERATORS.and]: { _id: 1 } },
+      filter: { _id: 1 },
     },
     {
       title: 'Locked filter 2',
-      filter: { [FILTER_MONGO_OPERATORS.and]: { _id: 2 } },
+      filter: { _id: 2 },
     },
   ];
   const filters = [
     {
       title: 'Filter 1',
-      filter: { [FILTER_MONGO_OPERATORS.or]: { _id: 1 } },
+      filter: { _id: 1 },
     },
     {
       title: 'Filter 2',
-      filter: { [FILTER_MONGO_OPERATORS.or]: { _id: 2 } },
+      filter: { _id: 2 },
     },
   ];
 

@@ -289,6 +289,7 @@ export default merge({
     close: 'Fermer',
     alarmId: 'Identifiant de l\'alarme',
     timestamp: 'Horodatage',
+    countOfMax: '{count} sur {total}',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
