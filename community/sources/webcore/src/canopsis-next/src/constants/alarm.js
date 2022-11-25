@@ -258,10 +258,6 @@ export const ALARM_TEMPLATE_FIELDS = {
   lastUpdateDate: 'alarm.v.last_update_date',
   lastEventDate: 'alarm.v.last_event_date',
   pbehaviorInfo: 'alarm.v.pbehavior_info',
-  pbehaviorInfoType: 'alarm.v.pbehavior_info.type',
-  pbehaviorInfoCannonicalType: 'alarm.v.pbehavior_info.canonical_type',
-  pbehaviorInfoReason: 'alarm.v.pbehavior_info.reason',
-  pbehaviorInfoName: 'alarm.v.pbehavior_info.name',
   duration: 'alarm.v.duration',
   eventsCount: 'alarm.v.events_count',
 };
