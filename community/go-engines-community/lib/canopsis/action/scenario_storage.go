@@ -42,14 +42,14 @@ func (s *scenarioStorage) ReloadScenarios() error {
 		valid := true
 		for i, action := range scenario.Actions {
 			if !action.EntityPatterns.IsValid() {
-				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse entity patterns")
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action_number", i).Msg("failed to parse entity patterns")
 				valid = false
 
 				break
 			}
 
 			if !action.AlarmPatterns.IsValid() {
-				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse alarm patterns")
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action_number", i).Msg("failed to parse alarm patterns")
 				valid = false
 
 				break

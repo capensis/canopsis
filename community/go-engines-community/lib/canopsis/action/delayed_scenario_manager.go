@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type DelayedScenarioManager interface {
@@ -173,7 +174,7 @@ func (m *delayedScenarioManager) checkExpiredTimeoutScenario(ctx context.Context
 		go m.waitAlmostExpiredTimeoutScenario(ctx, delayedScenario)
 	}
 
-	m.logger.Debug().Int("expired", len(expired)).Int("almost expired", len(almostExpired)).Msg("checked expired timeout delayed actions")
+	m.logger.Debug().Int("expired", len(expired)).Int("almost_expired", len(almostExpired)).Msg("checked expired timeout delayed actions")
 }
 
 func (m *delayedScenarioManager) waitAlmostExpiredTimeoutScenario(ctx context.Context, scenario DelayedScenario) {

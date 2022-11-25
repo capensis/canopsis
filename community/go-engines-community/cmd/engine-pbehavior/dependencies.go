@@ -69,8 +69,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 
 			if count >= 0 {
 				logger.Info().
-					Time("interval from", newSpan.From()).
-					Time("interval to", newSpan.To()).
+					Time("interval_from", newSpan.From()).
+					Time("interval_to", newSpan.To()).
 					Int("count", count).
 					Msg("pbehaviors are recomputed")
 			}
