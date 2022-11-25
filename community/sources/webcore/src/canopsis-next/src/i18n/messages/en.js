@@ -289,6 +289,7 @@ export default merge({
     close: 'Close',
     alarmId: 'Alarm ID',
     timestamp: 'Timestamp',
+    countOfMax: '{count} of {total}',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',

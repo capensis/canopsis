@@ -73,7 +73,7 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state 
     <span>
       <div
         class="color-indicator white--text"
-        style="background-color: black;"
+        style="background-color: rgb(245, 105, 84);"
       >
         <div
           class="default-slot"
@@ -90,40 +90,20 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state 
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    Invalid val
+    Critical
   </span>
 </div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 1`] = `
 <div>
-  <span
-    class="v-tooltip v-tooltip--right"
-  >
-    <transition-stub
-      name="slide-x-transition"
-    />
-    <span>
-      <div
-        class="color-indicator white--text"
-      >
-        
-      </div>
-    </span>
-  </span>
+  <div
+    class="default-slot"
+  />
 </div>
 `;
 
-exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <span>
-    
-  </span>
-</div>
-`;
+exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 2`] = `undefined`;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without type but with default slot 1`] = `
 <div>
@@ -136,7 +116,7 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without typ
     <span>
       <div
         class="color-indicator white--text"
-        style="background-color: black;"
+        style="background-color: rgb(245, 105, 84);"
       >
         <div
           class="default-slot"
@@ -153,7 +133,7 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without typ
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    Invalid val
+    Critical
   </span>
 </div>
 `;

@@ -125,14 +125,14 @@ export default {
           if (descending) {
             classes.push('desc');
             data.attrs['aria-sort'] = 'descending';
-            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.'; // vuetify TODO: Localization
+            data.attrs['aria-label'] += ': Sorted descending. Activate to remove sorting.';
           } else {
             classes.push('asc');
             data.attrs['aria-sort'] = 'ascending';
-            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.'; // vuetify TODO: Localization
+            data.attrs['aria-label'] += ': Sorted ascending. Activate to sort descending.';
           }
         } else {
-          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.'; // vuetify TODO: Localization
+          data.attrs['aria-label'] += ': Not sorted. Activate to sort ascending.';
         }
       };
 
