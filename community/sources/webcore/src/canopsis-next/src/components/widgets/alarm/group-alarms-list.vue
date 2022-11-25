@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { orderBy } from 'lodash';
+
 import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
@@ -69,6 +71,28 @@ export default {
       }
 
       return defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+    },
+
+    displayedAlarms() {
+      const {
+        page,
+        limit,
+        multiSortBy = [],
+      } = this.query;
+
+      let { alarms } = this;
+      const filteredMultiSortBy = multiSortBy
+        .filter(({ sortBy }) => this.groupColumns.some(({ value }) => value.endsWith(sortBy)));
+
+      if (filteredMultiSortBy.length) {
+        alarms = orderBy(
+          alarms,
+          multiSortBy.map(({ sortBy }) => sortBy),
+          multiSortBy.map(({ descending }) => (descending ? 'desc' : 'asc')),
+        );
+      }
+
+      return alarms.slice((page - 1) * limit, page * limit);
     },
   },
 };
