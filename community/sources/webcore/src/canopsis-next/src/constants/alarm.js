@@ -241,3 +241,27 @@ export const ALARM_STEP_FIELDS = {
   message: 'm',
   author: 'a',
 };
+
+export const ALARM_TEMPLATE_FIELDS = {
+  id: 'alarm._id',
+  ack: 'alarm.v.ack',
+  state: 'alarm.v.state',
+  status: 'alarm.v.status',
+  ticket: 'alarm.v.ticket',
+  component: 'alarm.v.component',
+  connector: 'alarm.v.connector',
+  connectorName: 'alarm.v.connector_name',
+  resource: 'alarm.v.resource',
+  creationDate: 'alarm.v.creation_date',
+  displayName: 'alarm.v.display_name',
+  output: 'alarm.v.output',
+  lastUpdateDate: 'alarm.v.last_update_date',
+  lastEventDate: 'alarm.v.last_event_date',
+  pbehaviorInfo: 'alarm.v.pbehavior_info',
+  pbehaviorInfoType: 'alarm.v.pbehavior_info.type',
+  pbehaviorInfoCannonicalType: 'alarm.v.pbehavior_info.canonical_type',
+  pbehaviorInfoReason: 'alarm.v.pbehavior_info.reason',
+  pbehaviorInfoName: 'alarm.v.pbehavior_info.name',
+  duration: 'alarm.v.duration',
+  eventsCount: 'alarm.v.events_count',
+};
