@@ -640,12 +640,48 @@ export const createPbehaviorTimespanModule = () => {
     },
   };
 
-  afterEach(() => {
-    fetchTimespansListWithoutStore.mockClear();
-  });
-
   return {
     fetchTimespansListWithoutStore,
     pbehaviorTimespanModule,
+  };
+};
+
+export const createAlarmModule = () => {
+  const fetchAlarmItem = jest.fn();
+
+  afterEach(() => {
+    fetchAlarmItem.mockClear();
+  });
+
+  const alarmModule = {
+    name: 'alarm',
+    actions: {
+      fetchItem: fetchAlarmItem,
+    },
+  };
+
+  return {
+    fetchAlarmItem,
+    alarmModule,
+  };
+};
+
+export const createEventModule = () => {
+  const createEvent = jest.fn();
+
+  afterEach(() => {
+    createEvent.mockClear();
+  });
+
+  const eventModule = {
+    name: 'event',
+    actions: {
+      create: createEvent,
+    },
+  };
+
+  return {
+    eventModule,
+    createEvent,
   };
 };
