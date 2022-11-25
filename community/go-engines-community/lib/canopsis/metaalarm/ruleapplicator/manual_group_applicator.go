@@ -74,7 +74,7 @@ func (a ManualGroupApplicator) retrieveListAssociatedAlarms(event *types.Event) 
 	var children []types.AlarmWithEntity
 	err := a.alarmAdapter.GetOpenedAlarmsWithEntityByIDs(*event.MetaAlarmChildren, &children)
 	if err != nil {
-		a.logger.Error().Interface("alarm_id list", *event.MetaAlarmChildren).
+		a.logger.Error().Interface("alarm_id_list", *event.MetaAlarmChildren).
 			Err(err).
 			Msg("Failed to retrieve list of children alarms")
 		return nil, nil, err
@@ -83,7 +83,7 @@ func (a ManualGroupApplicator) retrieveListAssociatedAlarms(event *types.Event) 
 	var metaalarms []types.Alarm
 	err = a.alarmAdapter.GetOpenedAlarmsByIDs(*event.MetaAlarmParents, &metaalarms)
 	if err != nil {
-		a.logger.Error().Interface("meta_alarm_id list", *event.MetaAlarmParents).
+		a.logger.Error().Interface("meta_alarm_id_list", *event.MetaAlarmParents).
 			Err(err).
 			Msg("Failed to retrieve list of meta alarms")
 		return nil, nil, err
