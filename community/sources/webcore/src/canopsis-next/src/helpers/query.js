@@ -7,15 +7,16 @@ import {
   ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
-  DATETIME_FORMATS, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  DATETIME_FORMATS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
+import { defaultColumnsToColumns } from './entities';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
-import { defaultColumnsToColumns } from '@/helpers/entities';
 
 /**
  * WIDGET CONVERTERS
@@ -408,8 +409,8 @@ export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
 /**
  * Convert alarmDetails query to request
  *
- * @param query
- * @returns {*&{children: {multi_sort: string[]}}}
+ * @param {Object} query
+ * @returns {Object}
  */
 export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
