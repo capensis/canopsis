@@ -73,7 +73,7 @@ export const alarmVariablesMixin = {
           value: ALARM_TEMPLATE_FIELDS.resource,
         },
         {
-          text: this.$t('alarm.creationDate'),
+          text: this.$t('common.created'),
           value: ALARM_TEMPLATE_FIELDS.creationDate,
         },
         {
@@ -85,11 +85,11 @@ export const alarmVariablesMixin = {
           value: ALARM_TEMPLATE_FIELDS.output,
         },
         {
-          text: this.$t('alarm.lastUpdateDate'),
+          text: this.$t('common.updated'),
           value: ALARM_TEMPLATE_FIELDS.lastUpdateDate,
         },
         {
-          text: this.$t('alarm.lastEventDate'),
+          text: this.$t('common.lastEventDate'),
           value: ALARM_TEMPLATE_FIELDS.lastEventDate,
         },
         {
