@@ -38,21 +38,6 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// ArchiveResolvedAlarms mocks base method.
-func (m *MockAdapter) ArchiveResolvedAlarms(arg0 context.Context, arg1 types.CpsTime) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ArchiveResolvedAlarms", arg0, arg1)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ArchiveResolvedAlarms indicates an expected call of ArchiveResolvedAlarms.
-func (mr *MockAdapterMockRecorder) ArchiveResolvedAlarms(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ArchiveResolvedAlarms", reflect.TypeOf((*MockAdapter)(nil).ArchiveResolvedAlarms), arg0, arg1)
-}
-
 // CopyAlarmToResolvedCollection mocks base method.
 func (m *MockAdapter) CopyAlarmToResolvedCollection(arg0 context.Context, arg1 types.Alarm) error {
 	m.ctrl.T.Helper()
@@ -80,21 +65,6 @@ func (m *MockAdapter) CountResolvedAlarm(arg0 context.Context, arg1 []string) (i
 func (mr *MockAdapterMockRecorder) CountResolvedAlarm(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountResolvedAlarm", reflect.TypeOf((*MockAdapter)(nil).CountResolvedAlarm), arg0, arg1)
-}
-
-// DeleteArchivedResolvedAlarms mocks base method.
-func (m *MockAdapter) DeleteArchivedResolvedAlarms(arg0 context.Context, arg1 types.CpsTime) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteArchivedResolvedAlarms", arg0, arg1)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DeleteArchivedResolvedAlarms indicates an expected call of DeleteArchivedResolvedAlarms.
-func (mr *MockAdapterMockRecorder) DeleteArchivedResolvedAlarms(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteArchivedResolvedAlarms", reflect.TypeOf((*MockAdapter)(nil).DeleteArchivedResolvedAlarms), arg0, arg1)
 }
 
 // DeleteResolvedAlarms mocks base method.
