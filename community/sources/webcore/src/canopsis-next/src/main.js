@@ -121,7 +121,7 @@ import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
 import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field.vue';
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
-import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
+import CColumnsField from '@/components/forms/fields/columns/c-columns-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
