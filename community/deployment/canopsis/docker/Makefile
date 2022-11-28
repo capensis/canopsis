@@ -18,7 +18,8 @@ CANOPSIS_EDITION = community
 
 VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
 
-TARBALL_FILE = $(CURRENT_BUILD_OUTPUT_DIR)/canopsis-$(CANOPSIS_EDITION)-docker-compose-$(VERSION).tar.gz
+TARBALL_NAME = canopsis-$(CANOPSIS_EDITION)-docker-compose-$(VERSION)
+TARBALL_FILE = $(CURRENT_BUILD_OUTPUT_DIR)/$(TARBALL_NAME).tar.gz
 
 .PHONY: all
 all: tarball
@@ -36,7 +37,7 @@ tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 		--dereference \
 		--exclude-vcs --exclude-vcs-ignores \
 		--exclude=Makefile --exclude=build \
-		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))/;;' \
+		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))/;$(TARBALL_NAME)/;' \
 		$(notdir $(CURRENT_ROOT_DIR))
 
 $(CURRENT_BUILD_OUTPUT_DIR):
