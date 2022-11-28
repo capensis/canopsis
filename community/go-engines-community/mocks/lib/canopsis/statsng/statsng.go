@@ -9,6 +9,7 @@ import (
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+	time "time"
 )
 
 // MockService is a mock of Service interface
@@ -35,17 +36,17 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // ProcessAlarmChange mocks base method
-func (m *MockService) ProcessAlarmChange(arg0 context.Context, arg1 types.AlarmChange, arg2 types.CpsTime, arg3 types.Alarm, arg4 types.Entity, arg5, arg6 string) error {
+func (m *MockService) ProcessAlarmChange(arg0 context.Context, arg1 types.AlarmChange, arg2 types.CpsTime, arg3 types.Alarm, arg4 types.Entity, arg5, arg6 string, arg7 *time.Location) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessAlarmChange", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+	ret := m.ctrl.Call(m, "ProcessAlarmChange", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ProcessAlarmChange indicates an expected call of ProcessAlarmChange
-func (mr *MockServiceMockRecorder) ProcessAlarmChange(arg0, arg1, arg2, arg3, arg4, arg5, arg6 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) ProcessAlarmChange(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAlarmChange", reflect.TypeOf((*MockService)(nil).ProcessAlarmChange), arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAlarmChange", reflect.TypeOf((*MockService)(nil).ProcessAlarmChange), arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 }
 
 // ProcessResolvedAlarm mocks base method

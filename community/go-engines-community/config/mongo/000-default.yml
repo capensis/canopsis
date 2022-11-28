@@ -81,6 +81,14 @@ indexes:
       options:
         unique: true
         background: true
+    v.resolved_1:
+      keys:
+        v.resolved: 1
+
+  archived_alarms:
+    v.resolved_1:
+      keys:
+        v.resolved: 1
 
   junit_test_suite:
     test_suite_id_1:
