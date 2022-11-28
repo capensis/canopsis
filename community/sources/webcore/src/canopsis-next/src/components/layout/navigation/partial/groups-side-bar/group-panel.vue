@@ -3,9 +3,10 @@
     :hide-actions="hideActions",
     :class="{ editing: isEditing }"
   )
-    div.panel-header(slot="header")
-      slot(name="title")
-        span {{ group.title }}
+    template(#header="")
+      div.panel-header
+        slot(name="title")
+          span {{ group.title }}
       v-btn(
         v-show="isEditing",
         :disabled="orderChanged",

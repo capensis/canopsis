@@ -23,7 +23,8 @@
       top-bar-administration-menu
       top-bar-notifications-menu
       top-bar-user-menu
-    groups-top-bar(v-if="isShownGroupsTopBar", slot="extension")
+    template(v-if="isShownGroupsTopBar", #extension="")
+      groups-top-bar
 </template>
 
 <script>
@@ -86,8 +87,6 @@ export default {
   position: relative;
 
   & /deep/ .logged-users-count {
-    position: absolute;
-    top: 0;
     left: -8px;
   }
 }
