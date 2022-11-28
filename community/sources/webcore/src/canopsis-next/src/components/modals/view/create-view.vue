@@ -32,7 +32,7 @@
 <script>
 import { find, isString } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { viewToForm, viewToRequest } from '@/helpers/forms/view';
 
@@ -55,6 +55,7 @@ export default {
   name: MODALS.createView,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { ViewForm, ModalWrapper },
   mixins: [
