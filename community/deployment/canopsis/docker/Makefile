@@ -37,7 +37,7 @@ tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 		--dereference \
 		--exclude-vcs --exclude-vcs-ignores \
 		--exclude=Makefile --exclude=build \
-		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))/;$(TARBALL_NAME)/;' \
+		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))\(/\|$$\);$(TARBALL_NAME)\1;' \
 		$(notdir $(CURRENT_ROOT_DIR))
 
 $(CURRENT_BUILD_OUTPUT_DIR):
