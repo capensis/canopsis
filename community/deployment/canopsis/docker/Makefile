@@ -33,7 +33,7 @@ tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 	tar -z -C $(dir $(CURRENT_ROOT_DIR)) \
 		--create \
 		--verbose \
-		--file $(TARBALL_FILE)\
+		--file $(TARBALL_FILE) \
 		--dereference \
 		--exclude-vcs --exclude-vcs-ignores \
 		--exclude=Makefile --exclude=build \
