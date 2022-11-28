@@ -1,8 +1,9 @@
 <template lang="pug">
   v-expansion-panel.sidebar-playlists(v-if="availablePlaylists.length", expand, focusable, dark)
     v-expansion-panel-content.secondary.lighten-1.white--text
-      div.panel-header(slot="header")
-        span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
+      template(#header="")
+        div.panel-header
+          span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
       router-link(
         v-for="playlist in availablePlaylists",
         :key="playlist._id",

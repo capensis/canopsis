@@ -221,8 +221,6 @@ export default {
     padding: 0.5em 0;
 
     & /deep/ .logged-users-count {
-      position: absolute;
-      top: 0;
       right: 0;
     }
   }

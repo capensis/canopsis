@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         v-text-field(
           v-model="form.title",
           v-validate="'required'",
@@ -11,7 +11,7 @@
           :error-messages="errors.collect('title')",
           name="title"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",

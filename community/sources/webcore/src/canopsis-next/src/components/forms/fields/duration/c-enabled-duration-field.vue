@@ -9,7 +9,8 @@
         :name="enabledFieldName",
         color="primary"
       )
-        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
+        template(#append="")
+          c-help-icon(v-if="helpText", :text="helpText", max-width="300", top)
     v-flex(xs4)
       c-duration-field(
         v-field="duration",
@@ -20,9 +21,7 @@
         :name="name"
       )
     v-flex(xs9)
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(v-for="error in errors.collect(name)", :key="error") {{ error }}
+      v-messages(:value="errors.collect(name)", color="error")
 </template>
 
 <script>
