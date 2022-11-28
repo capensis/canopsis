@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"runtime/trace"
 	"time"
 
@@ -82,23 +83,23 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
-			if err != nil {
-				if err == redislock.ErrNotObtained {
-					return nil
+
+			if err == nil {
+				logger.Info().Msg("started to recompute idle_since")
+				err = entityServicesService.RecomputeIdleSince(ctx)
+				if err != nil {
+					logger.Error().Err(err).Msg("error while recomputing idle_since")
+					return err
 				}
 
-				logger.Error().Err(err).Msg("cannot obtain lock")
-				return err
+				logger.Info().Msg("recomputed idle_since")
+			} else {
+				logger.Error().Err(err).Msg("cannot obtain lock to recompute idle_since")
+				if !errors.Is(err, redislock.ErrNotObtained) {
+					// fail all following actions only if error isn't ErrNotObtained
+					return err
+				}
 			}
-
-			logger.Info().Msg("started to recompute idle_since")
-			err = entityServicesService.RecomputeIdleSince(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("error while recomputing idle_since")
-				return err
-			}
-
-			logger.Info().Msg("recomputed idle_since")
 
 			if !options.RecomputeAllOnInit {
 				return nil
@@ -110,11 +111,11 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
 			if err != nil {
+				logger.Error().Err(err).Msg("cannot obtain lock to recompute entity services")
 				if err == redislock.ErrNotObtained {
 					return nil
 				}
 
-				logger.Error().Err(err).Msg("cannot obtain lock")
 				return err
 			}
 
