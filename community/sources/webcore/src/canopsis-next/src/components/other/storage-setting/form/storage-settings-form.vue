@@ -4,7 +4,7 @@
       :title="$t('storageSettings.alarm.title')",
       :help-text="$t('storageSettings.alarm.titleHelp')"
     )
-      template(v-if="history.alarm", slot="subtitle") {{ alarmSubTitle }}
+      template(v-if="history.alarm", #subtitle="") {{ alarmSubTitle }}
       c-enabled-duration-field(
         v-field="form.alarm.archive_after",
         :label="$t('storageSettings.alarm.archiveAfter')",
@@ -19,7 +19,7 @@
       :title="$t('storageSettings.entity.title')",
       :help-text="$t('storageSettings.entity.titleHelp')"
     )
-      template(v-if="history.entity", slot="subtitle") {{ entitySubTitle }}
+      template(v-if="history.entity", #subtitle="") {{ entitySubTitle }}
       v-radio-group(v-field="form.entity.archive", hide-details, mandatory, row)
         v-radio(:value="true", :label="$t('storageSettings.entity.archiveEntity')", color="primary")
         v-radio(:value="false", :label="$t('storageSettings.entity.deleteEntity')", color="primary")
@@ -28,16 +28,12 @@
         :label="$t('storageSettings.entity.archiveDependencies')",
         color="primary"
       )
-        c-help-icon(
-          slot="append",
-          :text="$t('storageSettings.entity.archiveDependenciesHelp')",
-          max-width="300",
-          top
-        )
+        template(#append="")
+          c-help-icon(:text="$t('storageSettings.entity.archiveDependenciesHelp')", max-width="300", top)
       v-flex
         v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSettings.entity.cleanStorage') }}
     c-information-block(:title="$t('storageSettings.remediation.title')")
-      template(v-if="history.remediation", slot="subtitle") {{ remediationSubTitle }}
+      template(v-if="history.remediation", #subtitle="") {{ remediationSubTitle }}
       c-enabled-duration-field(
         v-field="form.remediation.accumulate_after",
         :label="$t('storageSettings.remediation.accumulateAfter')",
@@ -50,7 +46,7 @@
         :name="remediationDeleteAfterFieldName"
       )
     c-information-block(:title="$t('storageSettings.pbehavior.title')")
-      template(v-if="history.pbehavior", slot="subtitle") {{ pbehaviorSubTitle }}
+      template(v-if="history.pbehavior", #subtitle="") {{ pbehaviorSubTitle }}
       c-enabled-duration-field(
         v-field="form.pbehavior.delete_after",
         :label="$t('storageSettings.pbehavior.deleteAfter')",
@@ -58,7 +54,7 @@
         :name="pbehaviorDeleteAfterFieldName"
       )
     c-information-block(:title="$t('storageSettings.junit.title')")
-      template(v-if="history.junit", slot="subtitle") {{ junitSubTitle }}
+      template(v-if="history.junit", #subtitle="") {{ junitSubTitle }}
       c-enabled-duration-field(
         v-field="form.junit.delete_after",
         :label="$t('storageSettings.junit.deleteAfter')",
@@ -66,7 +62,7 @@
         :name="junitDeleteAfterFieldName"
       )
     c-information-block(:title="$t('storageSettings.healthCheck.title')")
-      template(v-if="history.health_check", slot="subtitle") {{ healthCheckSubTitle }}
+      template(v-if="history.health_check", #subtitle="") {{ healthCheckSubTitle }}
       c-enabled-duration-field(
         v-field="form.health_check.delete_after",
         :label="$t('storageSettings.healthCheck.deleteAfter')",

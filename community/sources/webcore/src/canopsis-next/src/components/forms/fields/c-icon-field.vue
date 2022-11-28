@@ -9,13 +9,13 @@
     :error-messages="errors.collect(name)",
     persistent-hint
   )
-    template(slot="selection", slot-scope="data")
-      v-icon {{ data.item }}
-      span.ml-2 {{ data.item }}
-    template(slot="item", slot-scope="data")
-      v-icon {{ data.item }}
-      span.ml-2 {{ data.item }}
-    template(slot="no-data")
+    template(#selection="{ item }")
+      v-icon {{ item }}
+      span.ml-2 {{ item }}
+    template(#item="{ item }")
+      v-icon {{ item }}
+      span.ml-2 {{ item }}
+    template(#no-data="")
       slot(name="no-data")
 </template>
 

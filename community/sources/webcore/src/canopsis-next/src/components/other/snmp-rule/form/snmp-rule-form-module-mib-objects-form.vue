@@ -15,7 +15,7 @@
             :label="$t('snmpRule.moduleMibObjects')",
             hide-details
           )
-            template(slot="append", v-if="large")
+            template(v-if="large", #append="")
               v-btn(
                 :class="{ active: isVisible }",
                 icon,

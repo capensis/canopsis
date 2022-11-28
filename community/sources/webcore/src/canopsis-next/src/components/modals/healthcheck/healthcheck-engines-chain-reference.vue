@@ -1,15 +1,15 @@
 <template lang="pug">
   modal-wrapper.fill-height(close)
-    template(slot="title")
+    template(#title="")
       span {{ title }}
-    template(slot="text")
+    template(#text="")
       div.pre-wrap {{ $t('healthcheck.chainConfigurationInvalid') }}
       div.healthcheck-engine-chain-reference
         healthcheck-network-graph(
           :engines-graph="enginesGraph",
           :engines-parameters="enginesParameters"
         )
-    template(slot="actions")
+    template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
