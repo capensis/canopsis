@@ -29,7 +29,7 @@
 <script>
 import { isObject } from 'lodash';
 
-import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { isWarningAlarmState } from '@/helpers/entities';
 
@@ -51,6 +51,7 @@ export default {
   name: MODALS.createManualMetaAlarm,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     AlarmGeneralTable,
