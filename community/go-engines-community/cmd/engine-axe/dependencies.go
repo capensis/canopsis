@@ -51,6 +51,7 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 	config.SetDbClientRetry(dbClient, cfg)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -254,9 +255,8 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		&resolvedArchiverWorker{
 			PeriodicalInterval:        time.Hour,
 			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			DataStorageConfigProvider: dataStorageConfigProvider,
 			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			AlarmAdapter:              alarm.NewAdapter(dbClient),
 			Logger:                    logger,
 		},
 		logger,
@@ -271,6 +271,12 @@ func NewEngineAXE(ctx context.Context, options Options, logger zerolog.Logger) e
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		timezoneConfigProvider,
+		logger,
+	))
+	engineAxe.AddPeriodicalWorker(engine.NewLoadConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		config.NewAdapter(dbClient),
+		dataStorageConfigProvider,
 		logger,
 	))
 

@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"time"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type deleteOutdatedRatesWorker struct {
@@ -15,7 +18,6 @@ type deleteOutdatedRatesWorker struct {
 	TimezoneConfigProvider    config.TimezoneConfigProvider
 	DataStorageConfigProvider config.DataStorageConfigProvider
 	LimitConfigAdapter        datastorage.Adapter
-	RateLimitAdapter          ratelimit.Adapter
 	Logger                    zerolog.Logger
 }
 
@@ -24,49 +26,109 @@ func (w *deleteOutdatedRatesWorker) GetInterval() time.Duration {
 }
 
 func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) error {
-	schedule := w.DataStorageConfigProvider.Get().TimeToExecute
-	// Skip if schedule is not defined.
-	if schedule == nil {
-		return nil
-	}
-	// Check now = schedule.
-	location := w.TimezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
-	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return nil
-	}
-
 	conf, err := w.LimitConfigAdapter.Get(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("fail to retrieve data storage config")
 		return nil
 	}
-	// Skip if already executed today.
-	dateFormat := "2006-01-02"
-	if conf.History.HealthCheck != nil && conf.History.HealthCheck.Time.Format(dateFormat) == now.Format(dateFormat) {
+
+	var lastExecuted types.CpsTime
+	if conf.History.HealthCheck != nil {
+		lastExecuted = *conf.History.HealthCheck
+	}
+
+	ok := datastorage.CanRun(lastExecuted, w.DataStorageConfigProvider.Get().TimeToExecute, w.TimezoneConfigProvider.Get().Location)
+	if !ok {
 		return nil
 	}
 
-	updated := false
-	if conf.Config.HealthCheck.DeleteAfter != nil && *conf.Config.HealthCheck.DeleteAfter.Enabled {
-		d := conf.Config.HealthCheck.DeleteAfter.Duration()
-		if d > 0 {
-			updated = true
-			deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, now.Add(-d).Unix())
-			if err != nil {
-				w.Logger.Err(err).Msg("cannot delete message rates")
-			} else if deleted > 0 {
-				w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
-			}
+	d := conf.Config.HealthCheck.DeleteAfter
+	if d != nil && *d.Enabled && d.Seconds > 0 {
+		mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+			w.DataStorageConfigProvider.Get().MongoClientTimeout)
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot connect to mongo")
+			return nil
 		}
-	}
+		defer func() {
+			err = mongoClient.Disconnect(ctx)
+			if err != nil {
+				w.Logger.Err(err).Msg("cannot disconnect from mongo")
+			}
+		}()
 
-	if updated {
-		err := w.LimitConfigAdapter.UpdateHistoryHealthCheck(ctx, types.CpsTime{Time: now})
+		now := types.CpsTime{Time: time.Now()}
+		before := types.CpsTime{Time: now.Add(-d.Duration())}
+		deleted, err := w.delete(ctx, mongoClient.Collection(mongo.MessageRateStatsHourCollectionName), before,
+			w.DataStorageConfigProvider.Get().MaxUpdates)
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot delete message rates")
+		} else if deleted > 0 {
+			w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
+		}
+
+		err = w.LimitConfigAdapter.UpdateHistoryHealthCheck(ctx, now)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot update config history")
 		}
 	}
 
 	return nil
+}
+
+func (w *deleteOutdatedRatesWorker) delete(ctx context.Context, dbCollection mongo.DbCollection, before types.CpsTime, limit int) (int64, error) {
+	opts := options.Find().SetProjection(bson.M{"_id": 1})
+	if limit > 0 {
+		opts.SetLimit(int64(limit))
+	}
+	cursor, err := dbCollection.Find(ctx, bson.M{
+		"_id": bson.M{"$lt": before},
+	}, opts)
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+
+	ids := make([]int64, 0, datastorage.BulkSize)
+	var deleted int64
+
+	for cursor.Next(ctx) {
+		var item struct {
+			ID int64 `bson:"_id"`
+		}
+		err := cursor.Decode(&item)
+		if err != nil {
+			return 0, err
+		}
+
+		ids = append(ids, item.ID)
+
+		if len(ids) >= datastorage.BulkSize {
+			res, err := dbCollection.DeleteMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": ids}},
+			)
+			if err != nil {
+				return 0, err
+			}
+
+			deleted += res
+			ids = ids[:0]
+		}
+	}
+
+	if len(ids) > 0 {
+		res, err := dbCollection.DeleteMany(
+			ctx,
+			bson.M{"_id": bson.M{"$in": ids}},
+		)
+		if err != nil {
+			return 0, err
+		}
+
+		deleted += res
+	}
+
+	return deleted, nil
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -14,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type Options struct {
@@ -40,6 +41,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
@@ -168,11 +170,22 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) libe
 		&deleteOutdatedRatesWorker{
 			PeriodicalInterval:        time.Hour,
 			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			DataStorageConfigProvider: dataStorageConfigProvider,
 			LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
-			RateLimitAdapter:          ratelimit.NewAdapter(mongoClient),
 			Logger:                    logger,
 		},
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		timezoneConfigProvider,
+		logger,
+	))
+	engine.AddPeriodicalWorker(libengine.NewLoadConfigPeriodicalWorker(
+		canopsis.PeriodicalWaitTime,
+		config.NewAdapter(mongoClient),
+		dataStorageConfigProvider,
 		logger,
 	))
 
