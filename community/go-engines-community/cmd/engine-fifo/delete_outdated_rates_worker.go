@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"time"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type deleteOutdatedRatesWorker struct {
@@ -15,7 +18,6 @@ type deleteOutdatedRatesWorker struct {
 	TimezoneConfigProvider    config.TimezoneConfigProvider
 	DataStorageConfigProvider config.DataStorageConfigProvider
 	LimitConfigAdapter        datastorage.Adapter
-	RateLimitAdapter          ratelimit.Adapter
 	Logger                    zerolog.Logger
 }
 
@@ -24,31 +26,40 @@ func (w *deleteOutdatedRatesWorker) GetInterval() time.Duration {
 }
 
 func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
-	schedule := w.DataStorageConfigProvider.Get().TimeToExecute
-	// Skip if schedule is not defined.
-	if schedule == nil {
-		return
-	}
-	// Check now = schedule.
-	location := w.TimezoneConfigProvider.Get().Location
-	now := types.NewCpsTime().In(location)
-	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return
-	}
-
 	conf, err := w.LimitConfigAdapter.Get(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("fail to retrieve data storage config")
 		return
 	}
-	// Skip if already executed today.
-	if conf.History.HealthCheck != nil && conf.History.HealthCheck.EqualDay(now) {
+
+	var lastExecuted types.CpsTime
+	if conf.History.HealthCheck != nil {
+		lastExecuted = *conf.History.HealthCheck
+	}
+
+	ok := datastorage.CanRun(lastExecuted, w.DataStorageConfigProvider.Get().TimeToExecute, w.TimezoneConfigProvider.Get().Location)
+	if !ok {
 		return
 	}
 
 	d := conf.Config.HealthCheck.DeleteAfter
 	if d != nil && *d.Enabled && d.Value > 0 {
-		deleted, err := w.RateLimitAdapter.DeleteBefore(ctx, d.SubFrom(now))
+		mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+			w.DataStorageConfigProvider.Get().MongoClientTimeout, w.Logger)
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot connect to mongo")
+			return
+		}
+		defer func() {
+			err = mongoClient.Disconnect(ctx)
+			if err != nil {
+				w.Logger.Err(err).Msg("cannot disconnect from mongo")
+			}
+		}()
+
+		now := types.NewCpsTime()
+		deleted, err := w.delete(ctx, mongoClient.Collection(mongo.MessageRateStatsHourCollectionName), d.SubFrom(now),
+			w.DataStorageConfigProvider.Get().MaxUpdates)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot delete message rates")
 		} else if deleted > 0 {
@@ -60,4 +71,61 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 			w.Logger.Err(err).Msg("cannot update config history")
 		}
 	}
+}
+
+func (w *deleteOutdatedRatesWorker) delete(ctx context.Context, dbCollection mongo.DbCollection, before types.CpsTime, limit int) (int64, error) {
+	opts := options.Find().SetProjection(bson.M{"_id": 1})
+	if limit > 0 {
+		opts.SetLimit(int64(limit))
+	}
+	cursor, err := dbCollection.Find(ctx, bson.M{
+		"_id": bson.M{"$lt": before},
+	}, opts)
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+
+	ids := make([]int64, 0, datastorage.BulkSize)
+	var deleted int64
+
+	for cursor.Next(ctx) {
+		var item struct {
+			ID int64 `bson:"_id"`
+		}
+		err := cursor.Decode(&item)
+		if err != nil {
+			return 0, err
+		}
+
+		ids = append(ids, item.ID)
+
+		if len(ids) >= datastorage.BulkSize {
+			res, err := dbCollection.DeleteMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": ids}},
+			)
+			if err != nil {
+				return 0, err
+			}
+
+			deleted += res
+			ids = ids[:0]
+		}
+	}
+
+	if len(ids) > 0 {
+		res, err := dbCollection.DeleteMany(
+			ctx,
+			bson.M{"_id": bson.M{"$in": ids}},
+		)
+		if err != nil {
+			return 0, err
+		}
+
+		deleted += res
+	}
+
+	return deleted, nil
 }
