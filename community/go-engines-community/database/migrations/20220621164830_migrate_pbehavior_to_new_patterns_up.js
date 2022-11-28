@@ -33,7 +33,7 @@ function migrateOldGroup(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
