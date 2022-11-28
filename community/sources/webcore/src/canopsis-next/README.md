@@ -1,15 +1,5 @@
 # Prerequisite
-* Node v10
-
-# Test the project :
-* Checkout on the branch you want : ` git checkout branch-name`
-* Install dependencies : `yarn install `
-* Config file `.env`, replace `VUE_APP_API_HOST` variable as your `canopsis-api` url
-* Run project: `yarn serve`
-* Open google chrome with the tag :  `google-chrome --disable-web-security --user-data-dir`
-* Open your Canopsis in this chrome, then login, to have the back-end data
-* Open the link provided by yarn in chrome
-
+* Node v14
 
 # Test the project :
 * Checkout on the branch you want : ` git checkout branch-name`
@@ -19,13 +9,14 @@
 * Open the link provided by yarn in chrome
 
 # How can I create a new widget type ?
+
 **If you want to add new widget type you must follow the instruction.**
 
 Note: *We've added examples of `Counter` widget creation.*
 
 1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
     ```js
-    // file src/constants.js
+    // file src/constants/widget.js
 
     export const WIDGET_TYPES = {
       // ...another widgets
@@ -36,7 +27,7 @@ Note: *We've added examples of `Counter` widget creation.*
 
 2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/widget.js`:
     ```js
-    // file src/constants.js
+    // file src/constants/widget.js
 
     export const WIDGET_ICONS = {
       // ...another widgets icons
@@ -45,61 +36,20 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-3. Create a new component for the widget settings in the `src/components/side-bars/settings`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
+3. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/widget.js`:
     ```js
-    // file src/components/side-bars/settings/counter.vue
-
-    import widgetSettingsMixin from '@/mixins/widget/settings'; // <-- here
-
-    export default {
-      mixins: [widgetSettingsMixin], // <-- here
-      data() {
-        const { widget } = this.config;
-
-        return {
-          settings: {
-            widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true), // <-- here. Also we should put widget converting to the form
-          },
-        };
-      }
-    };
-    ```
-   *Another possible content of the component you can see in another components.*
-
-4. Include our component into settings. Go to `src/components/side-bars/the-sidebars.vue` and put import of our component (which we've created in the previous step) with `Settings` suffix:
-    ```js
-    // file src/components/side-bars/the-sidebars.vue
-
-    // ...another widgets imports
-    import CounterSettings from './settings/counter.vue'; // <-- here
-
-    /**
-     * Wrapper for all side-bars
-     */
-    export default {
-      components: {
-        // ...another widgets
-
-        CounterSettings, // <-- and here
-      },
-      // ...other code of the component
-    };
-    ```
-
-5. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/widget.js`:
-    ```js
-    // file src/constants.js
+    // file src/constants/widget.js
 
     export const SIDE_BARS = {
       // ...another widgets
 
-      counterSettings: 'counter-settings', // <-- here. This value should be equal to the component name in the previous step's import but in the kebab-kase
+      counterSettings: 'counter-settings', // <-- here. This value should be equal to the component export name in the previous step but in the kebab-kase
     };
     ```
 
-6. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/widget.js`:
+4. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/widget.js`:
     ```js
-    // file src/constants.js
+    // file src/constants/widget.js
 
     export const SIDE_BARS_BY_WIDGET_TYPES = {
       // ...another widgets
@@ -108,7 +58,35 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-7. Put new widget into `availableWidgetTypes` in the `src/components/modals/view/create-widget.vue`:
+5. Create a new component for the widget settings in the `src/components/sidebars/settings`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
+    ```js
+    // file src/components/side-bars/settings/counter.vue
+
+    import { SIDE_BARS } from '@/constants';
+   
+    // ...another imports
+   
+    import { widgetSettingsMixin } from '@/mixins/widget/settings'; // <-- here
+
+    export default {
+      name: SIDE_BARS.counter,
+
+      // ...another code
+
+      mixins: [widgetSettingsMixin], // <-- here
+    };
+    ```
+   *Another possible content of the component you can see in another components.*
+
+6. Include our component into settings. Go to `src/components/sidebars/index.js` and put export for our component (which we've created in the previous step) with `Settings` suffix:
+    ```js
+    // file src/components/sidebars/index.js
+
+    // ...another widgets settings exports
+    export { default as CounterSettings } from './settings/counter.vue'; // <-- here
+    ```
+
+7. Put new widget into `availableTypes` in the `src/components/modals/view/create-widget.vue`:
     ```js
     // file src/components/modals/view/create-widget.vue
 
@@ -116,7 +94,7 @@ Note: *We've added examples of `Counter` widget creation.*
       // ...another code
    
       computed: {
-        availableWidgetTypes() {
+        availableTypes() {
           return [
             // ...another widgets
 
@@ -131,14 +109,14 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-8. Also we can add special rule for the widget if we have dependency of the canopsis backend `edition`. Example for the `cat` edition:
+8. Also we can add special rule for the widget if we have dependency of the canopsis backend `edition`. Example for the `pro` edition:
     ```js
-    // file src/constants.js
+    // file src/constants/widget.js
 
     export const WIDGET_TYPES_RULES = {
       // ..another widgets rules
 
-        [WIDGET_TYPES.statsCurves]: { edition: CANOPSIS_EDITION.cat }, // <-- here. Example for the statsCurves widget type
+      [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro }, // <-- here. Example for the statsCalendar widget type
     };
     ```
 
@@ -166,7 +144,7 @@ Note: *We've added examples of `Counter` widget creation.*
     };
     ```
 
-10. Also we should put messages for the widget settings in the i18n messages: `src/i18n/messages/en.js` and `src/i18n/messages/fr.js`:
+10. We should put messages for the widget settings in the i18n messages: `src/i18n/messages/en.js` and `src/i18n/messages/fr.js`:
     ```js
     export default {
       // ...another code
@@ -175,70 +153,61 @@ Note: *We've added examples of `Counter` widget creation.*
         titles: {
           // ...another code
           
-          counterSettings: 'Counter settings', // <-- here
+          [SIDE_BARS.counterSettings]: 'Counter settings', // <-- here
         },
       },
     };
     ```
 
-11. If we need to put default parameters of the widget we must do it by `generateWidgetByType` function from the `src/helpers/entities.js` file.
+11. If we need to put default parameters of the widget on creation then we must do the following steps:
+    1. Create new file `src/helpers/forms/widgets/counter.js` with parameters preparation
     ```js
-    // file src/helpers/entities.js
+            // file src/helpers/forms/widgets/counter.js
     
-    export function generateWidgetByType(type) {
-        // ..another code
-        
-        let specialParameters = {};
-        
-        switch (type) {
-            // ...another widgets
+    export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Special parameters preparation for our new widget type
+      opened: parameters.opened ?? true,
+      blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
+      columnSM: parameters.columnSM ?? 6,
+      columnMD: parameters.columnMD ?? 4,
+      columnLG: parameters.columnLG ?? 3,
+      heightFactor: parameters.heightFactor ?? 6,
+      margin: parameters.margin
+        ? { ...parameters.margin }
+        : { ...DEFAULT_WIDGET_MARGIN },
+      isCorrelationEnabled: parameters.isCorrelationEnabled ?? false,
+      levels: parameters.levels
+        ? cloneDeep(parameters.levels)
+        : {
+          counter: AVAILABLE_COUNTERS.total,
+          colors: { ...ALARM_LEVELS_COLORS },
+          values: { ...ALARM_LEVELS },
+        },
+      alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
+    });
+    ```
+    2. Put this function call inside `src/helpers/forms/widgets/common.js`:
+    ```js
+        // file src/helpers/forms/widgets/common.js
+    
+        import { counterWidgetParametersToForm } from './counter';
 
-            case WIDGET_TYPES.counter: // <-- here
-              specialParameters = {
-                viewFilters: [],
-                alarmsStateFilter: {
-                  opened: true,
-                },
-                blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
-                columnSM: 6,
-                columnMD: 4,
-                columnLG: 3,
-                margin: {
-                  top: 1,
-                  right: 1,
-                  bottom: 1,
-                  left: 1,
-                },
-                heightFactor: 6,
-                isCorrelationEnabled: false,
-                levels: {
-                  counter: AVAILABLE_COUNTERS.total,
-                  colors: {
-                    ok: COLORS.state.ok,
-                    minor: COLORS.state.minor,
-                    major: COLORS.state.major,
-                    critical: COLORS.state.critical,
-                  },
-                  values: {
-                    minor: 20,
-                    major: 30,
-                    critical: 40,
-                  },
-                },
-                alarmsList: alarmsListDefaultParameters,
-              };
-              break;
-        }
-        
         // ...another code
-    }
+        
+        export const widgetParametersToForm = ({ type, parameters } = {}) => {
+          switch (type) {
+            // ...another widgets
+    
+            case WIDGET_TYPES.counter:
+              return counterWidgetParametersToForm(parameters); // <-- Usage of our function for parameters preparation
+          }
+        };
     ```
 
 12. Create a folder for the widget components in the `src/components/widgets`. Example: `counter` folder in the `src/components/widgets`.
 
-13. Create a main component fo the widget inside our new folder. This component will receive: `widget`, `tabId` and `isEditingMode` in the props and you can use it if you want. Example: `counter.vue` in the `src/components/widgets/counter`. Possible content of the component you can see in another components.
+13. Create a main component for the widget inside our new folder. This component will receive some props: `widget`, `tabId`, `edition`. Example: `counter.vue` in the `src/components/widgets/counter`. Possible content of the component you can see in another components.
 
-14. Put import of our new widget component and put new map value into `widgetComponentsMap` / `baseMap` in the `src/components/widgets/widget-wrapper.vue`:
+14. Put import of our new widget component and put new map value into `widgetProps` in the `src/components/widgets/widget-wrapper.vue`:
     ```js
     // file src/components/widgets/widget-wrapper.vue
     
@@ -255,15 +224,16 @@ Note: *We've added examples of `Counter` widget creation.*
         CounterWidget, // <-- here
       },
       // ...another code
-      methods: {
-        getWidgetPropsByType(type) {
+      computed: {
+        // ...another code
+        widgetProps() {
+          // ...another code
+        
           const widgetComponentsMap = {
             // ...another widgets
 
             [WIDGET_TYPES.counter]: 'counter-widget', // <-- here
           };
-
-          // ...another code
         },
       },
     };
@@ -271,7 +241,84 @@ Note: *We've added examples of `Counter` widget creation.*
 
 15. Profit!
 
+# How can I use data from API ?
+
+**!IMPORTANT! All requests sending to API should be placed in the store modules. (We don't use requests sending directly from components without vuex actions)**
+It means that if you need to make some request to the API you **must** create action in the special store module for that.
+
+We have two types of store usage for the API fetching:
+1. Use `fetch<Something>WithoutStore` action
+2. Use whole storage flow (which described below)
+
+We're using the **first type** when we need to fetch data in isolation (without updating application state). Example for `session-count`:
+```js
+import { createNamespacedHelpers } from 'vuex';
+
+const { mapActions } = createNamespacedHelpers('sessionsCount');
+
+export default {
+  data() {
+    return {
+      count: '',
+      pending: false, // here we can put pending if we need to show it 
+    }
+  },
+
+  mounted() {
+    this.startFetchActiveSessionsCount();
+  },
+
+  // ...another code
+
+  methods: {
+    ...mapActions({
+      fetchSessionsCountWithoutStore: 'fetchItemWithoutStore',
+    }),
+
+    async startFetchActiveSessionsCount() {
+      this.pending = true; // if we need pending
+
+      const { count } = await this.fetchSessionsCountWithoutStore();
+
+      this.count = count;
+
+      this.pending = false; // if we need pending
+
+      // ...another code
+    },
+
+  },
+}
+```
+
+## Storage data flow
+
+1. Create new store module for entity with `namespaced: true` flag (if we need to implement new entity else go to second step)
+2. Put new fields into module state
+3. Put new actions which we need to call
+4. Put new mutations for our actions and state
+5. Put new getters for our state values
+
+**!IMPORTANT! We don't use store directly in component! We are using `createNamespaceHelper` from `vuex` (for both types of store usage). Example:**
+```js
+import { createNamespaceHelper } from 'vuex';
+
+const { mapActions, mapGetters } = createNamespaceHelper('someModule');
+
+export default {
+  computed: {
+    ...mapGetters(['someGetter']),
+  },
+  methods: {
+    ...mapActions(['fetchSomething']),
+  },
+};
+```
+
+Also, if we need we can create mixin for the store module in the `src/mixins/entities` folder.
+
 # How can I create a custom feature ?
+
 We have possibility to integrate custom functionality into the application by `features` service.
 This functional must store in the dedicated repository. It means that you can keep it protected if you want.
 
@@ -403,77 +450,3 @@ export default {
 When you need to include your feature into the canopsis you must clone your repo inside `src/features` folder.
 
 *Note: Every folder inside `src/features` will be ignored by `git`. It means that you should include your feature by hands on every environment.*
-
-# How can I use data from API ?
-**!IMPORTANT! All requests sending to API should be placed in the store modules. (We don't use requests sending directly from components without vuex actions)**
-It means that if you need to make some request to the API you **must** create action in the special store module for that.
-
-We have two types of store usage for the API fetching:
-1. Use `fetch<Something>WithoutStore` action
-2. Use whole storage flow (which described below)
-
-We're using the **first type** when we need to fetch data in isolation (without updating application state). Example for `session-count`:
-```js
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions } = createNamespacedHelpers('sessionsCount');
-
-export default {
-  data() {
-    return {
-      count: '',
-      pending: false, // here we can put pending if we need to show it 
-    }
-  },
-
-  mounted() {
-    this.startFetchActiveSessionsCount();
-  },
-
-  // ...another code
-
-  methods: {
-    ...mapActions({
-      fetchSessionsCountWithoutStore: 'fetchItemWithoutStore',
-    }),
-
-    async startFetchActiveSessionsCount() {
-      this.pending = true; // if we need pending
-
-      const { count } = await this.fetchSessionsCountWithoutStore();
-
-      this.count = count;
-
-      this.pending = false; // if we need pending
-
-      // ...another code
-    },
-
-  },
-}
-```
-
-## Storage data flow
-1. Create new store module for entity with `namespaced: true` flag (if we need to implement new entity else go to second step)
-2. Put new fields into module state
-3. Put new actions which we need to call
-4. Put new mutations for our actions and state
-5. Put new getters for our state values
-
-**!IMPORTANT! We don't use store directly in component! We are using `createNamespaceHelper` from `vuex` (for both types of store usage). Example:**
-```js
-import { createNamespaceHelper } from 'vuex';
-
-const { mapActions, mapGetters } = createNamespaceHelper('someModule');
-
-export default {
-  computed: {
-    ...mapGetters(['someGetter']),
-  },
-  methods: {
-    ...mapActions(['fetchSomething']),
-  },
-};
-```
-
-Also, if we need we can create mixin for the store module in the `src/mixins/entities` folder.
