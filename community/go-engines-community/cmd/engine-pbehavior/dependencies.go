@@ -194,7 +194,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			TimezoneConfigProvider:    timezoneConfigProvider,
 			DataStorageConfigProvider: dataStorageConfigProvider,
 			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			PbehaviorCleaner:          pbehavior.NewCleaner(dbClient, logger),
 			Logger:                    logger,
 		},
 		logger,
