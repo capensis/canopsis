@@ -60,7 +60,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	defer func() {
 		eventMetric.EventType = event.EventType
-		eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
+		if event.AlarmChange != nil {
+			eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
+		}
 		if event.Entity != nil {
 			eventMetric.EntityType = event.Entity.Type
 		}
