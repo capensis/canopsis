@@ -790,12 +790,12 @@ Feature: New import entities
 
   Scenario: given disable import should disable entity
     When I am admin
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable-1
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-new-import-component-to-disable",
-      "name": "test-entity-contextgraph-new-import-component-to-disable",
+      "_id": "test-entity-contextgraph-new-import-component-to-disable-1",
+      "name": "test-entity-contextgraph-new-import-component-to-disable-1",
       "enabled": true,
       "type": "component",
       "impact_level": 1
@@ -807,7 +807,7 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "name": "test-entity-contextgraph-new-import-component-to-disable",
+            "name": "test-entity-contextgraph-new-import-component-to-disable-1",
             "type": "component",
             "infos": {
               "new_info": {
@@ -828,15 +828,93 @@ Feature: New import entities
       "status": "done"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable-1
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-new-import-component-to-disable",
-      "name": "test-entity-contextgraph-new-import-component-to-disable",
+      "_id": "test-entity-contextgraph-new-import-component-to-disable-1",
+      "name": "test-entity-contextgraph-new-import-component-to-disable-1",
       "enabled": false,
       "type": "component",
       "impact_level": 1
+    }
+    """
+
+  Scenario: given disable import should disable component and its resources
+    When I am admin
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable-2
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-component-to-disable-2",
+      "enabled": true
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2",
+      "enabled": true
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2",
+      "enabled": true
+    }
+    """
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "name": "test-entity-contextgraph-new-import-component-to-disable-2",
+            "type": "component",
+            "infos": {
+              "new_info": {
+                "value": "2"
+              }
+            },
+            "action": "disable",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable-2
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-component-to-disable-2",
+      "enabled": false
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2",
+      "enabled": false
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2",
+      "enabled": false
     }
     """
 
@@ -1299,6 +1377,30 @@ Feature: New import entities
 
   Scenario: given delete import should delete component and its resources
     When I am admin
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-delete-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-component-to-delete-2"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-2-1/test-entity-contextgraph-new-import-component-to-delete-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-resource-to-delete-2-1/test-entity-contextgraph-new-import-component-to-delete-2"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-2-2/test-entity-contextgraph-new-import-component-to-delete-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-resource-to-delete-2-2/test-entity-contextgraph-new-import-component-to-delete-2"
+    }
+    """
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
     {

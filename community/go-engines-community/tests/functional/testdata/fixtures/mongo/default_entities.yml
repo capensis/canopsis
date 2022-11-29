@@ -937,15 +937,51 @@ default_entities:
     impact: []
     impact_level: 1
 
-  entity_to_contextgraph_new_import_disable:
-    _id: test-entity-contextgraph-new-import-component-to-disable
-    name: test-entity-contextgraph-new-import-component-to-disable
+  entity_to_contextgraph_new_import_disable_1:
+    _id: test-entity-contextgraph-new-import-component-to-disable-1
+    name: test-entity-contextgraph-new-import-component-to-disable-1
     type: component
     enabled: true
-    component: test-entity-contextgraph-new-import-component-to-disable
+    component: test-entity-contextgraph-new-import-component-to-disable-1
     depends: []
     impact: []
     impact_level: 1
+    
+  entity_to_contextgraph_new_import_disable_2_1:
+    _id: test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2
+    name: test-entity-contextgraph-new-import-resource-to-disable-2-1
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-2
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-disable-2
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_2_2:
+    _id: test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2
+    name: test-entity-contextgraph-new-import-resource-to-disable-2-2
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-2
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-disable-2
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_2_3:
+    _id: test-entity-contextgraph-new-import-component-to-disable-2
+    name: test-entity-contextgraph-new-import-component-to-disable-2
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-2
+    depends:
+      - test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2
+      - test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1    
 
   entity_to_contextgraph_import_link_1:
     _id: test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link
