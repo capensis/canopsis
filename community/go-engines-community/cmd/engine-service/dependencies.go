@@ -94,11 +94,13 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 
 				logger.Info().Msg("recomputed idle_since")
 			} else {
-				logger.Error().Err(err).Msg("cannot obtain lock to recompute idle_since")
+				const msgIdleSince = "cannot obtain lock to recompute idle_since"
 				if !errors.Is(err, redislock.ErrNotObtained) {
+					logger.Err(err).Msg(msgIdleSince)
 					// fail all following actions only if error isn't ErrNotObtained
 					return err
 				}
+				logger.Warn().Err(err).Msg(msgIdleSince)
 			}
 
 			if !options.RecomputeAllOnInit {
@@ -110,29 +112,29 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
-			if err != nil {
-				logger.Error().Err(err).Msg("cannot obtain lock to recompute entity services")
-				if err == redislock.ErrNotObtained {
-					return nil
+			if err == nil {
+				logger.Info().Msg("started to recompute entity services")
+				err = entityServicesService.ClearCache(ctx)
+				if err != nil {
+					logger.Error().Err(err).Msg("error while recomputing entity services")
+					return err
 				}
 
-				return err
-			}
+				err = entityServicesService.ComputeAllServices(ctx)
+				if err != nil {
+					logger.Error().Err(err).Msg("error while recomputing entity services")
+					return err
+				}
 
-			logger.Info().Msg("started to recompute entity services")
-			err = entityServicesService.ClearCache(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("error while recomputing entity services")
-				return err
+				logger.Info().Msg("recomputed entity services")
+			} else {
+				const msgEntity = "cannot obtain lock to recompute entity services"
+				if !errors.Is(err, redislock.ErrNotObtained) {
+					logger.Err(err).Msg(msgEntity)
+					return err
+				}
+				logger.Warn().Err(err).Msg(msgEntity)
 			}
-
-			err = entityServicesService.ComputeAllServices(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("error while recomputing entity services")
-				return err
-			}
-
-			logger.Info().Msg("recomputed entity services")
 
 			return nil
 		},
