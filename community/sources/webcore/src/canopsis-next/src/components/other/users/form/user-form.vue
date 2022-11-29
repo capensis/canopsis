@@ -72,21 +72,17 @@
         :items="groupsNavigationItems",
         data-test="navigationType"
       )
-    v-layout(row, align-center, v-if="!isNew")
+    v-layout(v-if="!isNew", row, align-center)
       div {{ $t('common.authKey') }}: {{ user.authkey }}
-      v-tooltip(left)
-        v-btn(
-          v-clipboard:copy="user.authkey",
-          v-clipboard:success="addAuthKeyCopiedSuccessPopup",
-          v-clipboard:error="addAuthKeyCopiedErrorPopup",
-          slot="activator",
-          small,
-          fab,
-          icon,
-          depressed
-        )
-          v-icon content_copy
-        span {{ $t('modals.variablesHelp.copyToClipboard') }}
+      c-copy-btn(
+        :value="user.authkey",
+        :tooltip="$t('modals.variablesHelp.copyToClipboard')",
+        small,
+        fab,
+        left,
+        @success="showCopyAuthKeySuccessPopup",
+        @error="showCopyAuthKeyErrorPopup"
+      )
     v-layout(row)
       c-enabled-field(
         v-field="form.enable",
@@ -163,11 +159,11 @@ export default {
       fetchRolesListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    addAuthKeyCopiedSuccessPopup() {
+    showCopyAuthKeySuccessPopup() {
       this.$popups.success({ text: this.$t('success.authKeyCopied') });
     },
 
-    addAuthKeyCopiedErrorPopup() {
+    showCopyAuthKeyErrorPopup() {
       this.$popups.error({ text: this.$t('errors.default') });
     },
   },
