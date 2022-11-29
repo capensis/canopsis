@@ -62,32 +62,3 @@ func (mr *MockAdapterMockRecorder) FindJunitWidgets(arg0 interface{}) *gomock.Ca
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindJunitWidgets", reflect.TypeOf((*MockAdapter)(nil).FindJunitWidgets), arg0)
 }
-
-// FindJunitWidgetsTestSuiteIDs mocks base method
-func (m *MockAdapter) FindJunitWidgetsTestSuiteIDs(arg0 context.Context, arg1 []string) ([]string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindJunitWidgetsTestSuiteIDs", arg0, arg1)
-	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindJunitWidgetsTestSuiteIDs indicates an expected call of FindJunitWidgetsTestSuiteIDs
-func (mr *MockAdapterMockRecorder) FindJunitWidgetsTestSuiteIDs(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindJunitWidgetsTestSuiteIDs", reflect.TypeOf((*MockAdapter)(nil).FindJunitWidgetsTestSuiteIDs), arg0, arg1)
-}
-
-// RemoveTestSuitesFromJunitWidgets mocks base method
-func (m *MockAdapter) RemoveTestSuitesFromJunitWidgets(arg0 context.Context, arg1 []string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveTestSuitesFromJunitWidgets", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RemoveTestSuitesFromJunitWidgets indicates an expected call of RemoveTestSuitesFromJunitWidgets
-func (mr *MockAdapterMockRecorder) RemoveTestSuitesFromJunitWidgets(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveTestSuitesFromJunitWidgets", reflect.TypeOf((*MockAdapter)(nil).RemoveTestSuitesFromJunitWidgets), arg0, arg1)
-}

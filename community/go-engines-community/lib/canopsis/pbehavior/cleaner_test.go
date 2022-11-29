@@ -2,6 +2,9 @@ package pbehavior_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -9,8 +12,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"testing"
-	"time"
 )
 
 func TestCleaner_Clean_GivenPbehaviorsWithoutRrule_ShouldDeleteThem(t *testing.T) {
@@ -19,20 +20,32 @@ func TestCleaner_Clean_GivenPbehaviorsWithoutRrule_ShouldDeleteThem(t *testing.T
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	d := time.Hour * 24 * 7
-	var expectedDeleted int64 = 10
+	before := types.CpsTime{Time: time.Now().Add(-time.Hour * 24 * 7)}
+	var limit int64 = 1000
+	var expectedDeleted int64 = 1
+	pbhId := "test-pbh"
 
 	mockClient := mock_mongo.NewMockDbClient(ctrl)
 	mockCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
+	mockCursor.EXPECT().Next(gomock.Any()).Return(true)
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
+	mockCursor.EXPECT().Decode(gomock.Any()).Do(func(v *pbehavior.PBehavior) {
+		v.ID = pbhId
+	})
+	emptyMockCursor := mock_mongo.NewMockCursor(ctrl)
+	emptyMockCursor.EXPECT().Next(gomock.Any()).Return(false)
+	emptyMockCursor.EXPECT().Close(gomock.Any()).Return(nil)
 	mockClient.EXPECT().Collection(mongo.PbehaviorMongoCollection).Return(mockCollection)
-	mockCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Any()).Return(expectedDeleted, nil)
-	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
-	cleaner := pbehavior.NewCleaner(mockClient, zerolog.Nop())
+	mockCollection.EXPECT().
+		DeleteMany(gomock.Any(), gomock.Eq(bson.M{"_id": bson.M{"$in": []string{pbhId}}})).
+		Return(expectedDeleted, nil)
+	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCursor, nil)
+	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(emptyMockCursor, nil)
+	cleaner := pbehavior.NewCleaner(mockClient, 1000, zerolog.Nop())
 
-	deleted, err := cleaner.Clean(ctx, d)
+	deleted, err := cleaner.Clean(ctx, before, limit)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -48,8 +61,9 @@ func TestCleaner_Clean_GivenPbehaviorsWithRrule_ShouldDeleteThem(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	d := time.Hour * 24 * 7
 	now := time.Now()
+	before := types.CpsTime{Time: now.Add(-time.Hour * 24 * 7)}
+	var limit int64 = 1000
 	start := types.CpsTime{Time: now.AddDate(0, 0, -100)}
 	var expectedDeleted int64 = 2
 	pbehaviors := []pbehavior.PBehavior{
@@ -95,18 +109,21 @@ func TestCleaner_Clean_GivenPbehaviorsWithRrule_ShouldDeleteThem(t *testing.T) {
 		return nil
 	}).Times(len(pbehaviors))
 	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
+	emptyMockCursor := mock_mongo.NewMockCursor(ctrl)
+	emptyMockCursor.EXPECT().Next(gomock.Any()).Return(false)
+	emptyMockCursor.EXPECT().Close(gomock.Any()).Return(nil)
 	mockClient.EXPECT().Collection(mongo.PbehaviorMongoCollection).Return(mockCollection)
-	mockCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Any()).Return(int64(0), nil)
 	mockCollection.EXPECT().
 		DeleteMany(gomock.Any(), gomock.Eq(bson.M{"_id": bson.M{"$in": []string{
 			pbehaviors[1].ID,
 			pbehaviors[2].ID,
 		}}})).
 		Return(expectedDeleted, nil)
-	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockCursor, nil)
+	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(emptyMockCursor, nil)
+	mockCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCursor, nil)
 
-	cleaner := pbehavior.NewCleaner(mockClient, zerolog.Nop())
-	deleted, err := cleaner.Clean(ctx, d)
+	cleaner := pbehavior.NewCleaner(mockClient, 1000, zerolog.Nop())
+	deleted, err := cleaner.Clean(ctx, before, limit)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
