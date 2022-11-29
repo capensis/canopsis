@@ -236,6 +236,7 @@ func (w *worker) parseEntities(
 
 	createLinks := make(map[string][]string)
 	deletedResources := make(map[string]bool)
+	disabledResources := make(map[string]bool)
 	deletedEvents := make([]types.Event, 0)
 
 	for decoder.More() {
@@ -294,9 +295,6 @@ func (w *worker) parseEntities(
 			}
 
 			if ci.Type == types.EntityTypeResource && !deletedResources[ci.ID] {
-				writeModels = append(writeModels, w.deleteEntity(ci.ID)...)
-				deletedEvents = append(deletedEvents, w.createResolveDeletedEvent(types.EntityTypeResource, ci.ID, now))
-
 				deletedResources[ci.ID] = true
 			}
 
@@ -305,16 +303,16 @@ func (w *worker) parseEntities(
 
 				for _, resourceID := range oldEntity.Depends {
 					if !deletedResources[resourceID] {
+						deletedResources[resourceID] = true
+
 						writeModels = append(writeModels, w.deleteEntity(resourceID)...)
 						deletedEvents = append(deletedEvents, w.createResolveDeletedEvent(types.EntityTypeResource, resourceID, now))
-
-						deletedResources[resourceID] = true
 					}
 				}
-
-				writeModels = append(writeModels, w.deleteEntity(ci.ID)...)
-				deletedEvents = append(deletedEvents, w.createResolveDeletedEvent(types.EntityTypeResource, ci.ID, now))
 			}
+
+			deletedEvents = append(deletedEvents, w.createResolveDeletedEvent(ci.Type, ci.ID, now))
+			writeModels = append(writeModels, w.deleteEntity(ci.ID)...)
 		case ActionEnable:
 			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
@@ -341,11 +339,23 @@ func (w *worker) parseEntities(
 				return res, err
 			}
 
-			writeModels = append(writeModels, w.changeState(ci.ID, false, source, now))
-			if ci.Type == types.EntityTypeComponent {
-				componentInfos[ci.ID] = ci.Infos
-				componentsToDisable[ci.ID] = true
+			if ci.Type == types.EntityTypeResource && !deletedResources[ci.ID] {
+				disabledResources[ci.ID] = true
 			}
+
+			if ci.Type == types.EntityTypeComponent {
+				componentsToDisable[ci.ID] = true
+				componentInfos[ci.ID] = ci.Infos
+
+				for _, resourceID := range oldEntity.Depends {
+					if !deletedResources[resourceID] {
+						deletedResources[resourceID] = true
+						writeModels = append(writeModels, w.changeState(resourceID, false, source, now))
+					}
+				}
+			}
+
+			writeModels = append(writeModels, w.changeState(ci.ID, false, source, now))
 		default:
 			return res, fmt.Errorf("the action %s is not recognized", ci.Action)
 		}
