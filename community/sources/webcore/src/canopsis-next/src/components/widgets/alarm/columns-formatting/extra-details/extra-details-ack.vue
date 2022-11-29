@@ -1,6 +1,7 @@
 <template lang="pug">
-  v-tooltip.c-extra-details(top)
-    v-icon.purple.white--text.c-extra-details__badge(slot="activator", small) {{ icon }}
+  v-tooltip(top)
+    template(#activator="{ on }")
+      v-icon.purple.white--text.c-extra-details__badge(v-on="on", small) {{ icon }}
     div.text-md-center
       strong {{ $t('alarmList.actions.iconsTitles.ack') }}
       div {{ $t('common.by') }} : {{ ack.a }}
