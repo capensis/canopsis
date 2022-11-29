@@ -88,14 +88,8 @@ type Adapter interface {
 	// DeleteResolvedAlarms deletes resolved alarms from resolved collection after some duration
 	DeleteResolvedAlarms(ctx context.Context, duration time.Duration) error
 
-	// DeleteResolvedAlarms deletes resolved alarms from archived collection after some duration
-	DeleteArchivedResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error)
-
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
-
-	// ArchiveResolvedAlarms archives alarm to archived alarm collection
-	ArchiveResolvedAlarms(ctx context.Context, duration time.Duration) (int64, error)
 }
 
 type EventProcessor interface {

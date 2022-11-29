@@ -21,6 +21,8 @@ const (
 	RemediationWaitJobCompleteRetriesAmount   = 12
 	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
+
+	DataStorageMaxUpdates = 100000
 )
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {
