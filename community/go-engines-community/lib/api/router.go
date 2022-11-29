@@ -1097,14 +1097,19 @@ func RegisterRoutes(
 		{
 			contextGraphAPI := contextgraph.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 			contextGraphRouter.PUT(
-				"import",
+				"new-import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
 				contextGraphAPI.ImportAll,
 			)
 			contextGraphRouter.PUT(
+				"import",
+				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+				contextGraphAPI.ImportOldAll,
+			)
+			contextGraphRouter.PUT(
 				"import-partial",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.ImportPartial,
+				contextGraphAPI.ImportOldPartial,
 			)
 			contextGraphRouter.GET(
 				"import/status/:id",

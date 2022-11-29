@@ -1,8 +1,9 @@
 package contextgraph
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 )
 
 const (
@@ -23,6 +24,7 @@ type ImportJob struct {
 	Stats importcontextgraph.Stats `bson:"stats" json:"stats"`
 
 	IsPartial bool `bson:"is_partial" json:"-"`
+	IsOld     bool `bson:"is_old" json:"-"`
 }
 
 type ImportResponse struct {
@@ -36,7 +38,7 @@ type ImportQuery struct {
 // ImportRequest is used only for swagger docs.
 type ImportRequest struct {
 	Json struct {
-		Cis   []importcontextgraph.ConfigurationItem `json:"cis"`
-		Links []importcontextgraph.Link              `json:"links"`
+		Cis   []importcontextgraph.OldConfigurationItem `json:"cis"`
+		Links []importcontextgraph.Link                 `json:"links"`
 	} `json:"json"`
 }

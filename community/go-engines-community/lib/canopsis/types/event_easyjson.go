@@ -1126,6 +1126,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes5(in, &out.PbehaviorInfo)
 		case "sli_avail_state":
 			out.SliAvailState = int64(in.Int64())
+		case "soft_deleted":
+			out.SoftDeleted = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -1327,6 +1329,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"sli_avail_state\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.SliAvailState))
+	}
+	{
+		const prefix string = ",\"soft_deleted\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.SoftDeleted))
 	}
 	out.RawByte('}')
 }
