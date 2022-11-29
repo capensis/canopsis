@@ -64,6 +64,7 @@ const (
 	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
+	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
 	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
 	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
@@ -609,6 +610,7 @@ func isValidEventType(t string) bool {
 		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
+		EventTypeResolveDeleted,
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,

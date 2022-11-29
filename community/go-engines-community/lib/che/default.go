@@ -205,6 +205,11 @@ func NewEngine(
 		Logger:             logger,
 		LoadRules:          !mongoClient.IsDistributed(),
 	})
+	engine.AddPeriodicalWorker("soft delete", &softDeletePeriodicalWorker{
+		collection:         mongoClient.Collection(mongo.EntityMongoCollection),
+		PeriodicalInterval: options.PeriodicalWaitTime,
+		Logger:             logger,
+	})
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(

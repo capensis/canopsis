@@ -72,6 +72,8 @@ type Entity struct {
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
+
+	SoftDeleted bool `bson:"soft_deleted" json:"soft_deleted"`
 }
 
 type Coordinates struct {
