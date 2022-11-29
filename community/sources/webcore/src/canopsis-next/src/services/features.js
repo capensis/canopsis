@@ -4,7 +4,7 @@ class Features {
   constructor() {
     const features = require.context('../features/', true, /index\.js$/);
 
-    Object.values(features
+    this.features = Object.values(features
       .keys()
       .reduce((acc, key) => {
         const [, feature, ...rest] = key.split('/');
