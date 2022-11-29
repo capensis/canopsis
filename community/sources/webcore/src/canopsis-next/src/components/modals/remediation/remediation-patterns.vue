@@ -35,6 +35,7 @@ import {
   OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   QUICK_RANGES,
+  VALIDATION_DELAY,
 } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
@@ -52,6 +53,7 @@ export default {
   name: MODALS.remediationPatterns,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     RemediationPatternsPbehaviorTypesForm,

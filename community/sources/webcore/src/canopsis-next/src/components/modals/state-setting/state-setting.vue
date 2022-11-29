@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
 
@@ -32,6 +32,7 @@ export default {
   name: MODALS.stateSetting,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     StateSettingForm,
