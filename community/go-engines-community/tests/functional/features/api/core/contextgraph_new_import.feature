@@ -1,16 +1,16 @@
 Feature: New import entities
   I need to be able to import entities
 
-  Scenario: import unauthorized
+  Scenario: given unauthorized import request
     When I do PUT /api/v4/contextgraph/new-import
     Then the response code should be 401
 
-  Scenario: import without permissions
+  Scenario: given import request without permissions
     When I am noperms
     When I do PUT /api/v4/contextgraph/new-import
     Then the response code should be 403
 
-  Scenario: import with action set should create new entities
+  Scenario: given set import requests should create new entities and context graph
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-set:
     """json
@@ -18,7 +18,6 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "_id": "test-component-contextgraph-new-import-1",
             "name": "test-component-contextgraph-new-import-1",
             "type": "component",
             "infos": {
@@ -31,7 +30,6 @@ Feature: New import entities
             "enabled": true
           },
           {
-            "_id": "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
             "name": "test-resource-contextgraph-new-import-1-1",
             "type": "resource",
             "infos": {
@@ -45,7 +43,6 @@ Feature: New import entities
             "enabled": true
           },
           {
-            "_id": "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1",
             "name": "test-resource-contextgraph-new-import-1-2",
             "type": "resource",
             "infos": {
@@ -89,18 +86,6 @@ Feature: New import entities
       "impact_level": 1
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-1
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "depends": [
-        "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
-        "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1"
-      ],
-      "impact": []
-    }
-    """
     When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1
     Then the response code should be 200
     Then the response body should contain:
@@ -115,6 +100,33 @@ Feature: New import entities
           "description": "description 2",
           "name": "test_info",
           "value": "value 2"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1",
+      "name": "test-resource-contextgraph-new-import-1-2",
+      "component": "test-component-contextgraph-new-import-1",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 3",
+          "name": "test_info",
+          "value": "value 3"
         }
       },
       "component_infos": {
@@ -150,8 +162,232 @@ Feature: New import entities
       "depends": []
     }
     """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-1
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
+        "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1"
+      ],
+      "impact": []
+    }
+    """
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-set:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "name": "test-resource-contextgraph-new-import-1-3",
+            "type": "resource",
+            "infos": {
+              "test_info": {
+                "description": "description 4",
+                "value": "value 4"
+              }
+            },
+            "action": "set",
+            "component": "test-component-contextgraph-new-import-1",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1",
+      "name": "test-resource-contextgraph-new-import-1-3",
+      "component": "test-component-contextgraph-new-import-1",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 4",
+          "name": "test_info",
+          "value": "value 4"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-1
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
+        "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1",
+        "test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1"
+      ],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "impact": [
+        "test-component-contextgraph-new-import-1"
+      ],
+      "depends": []
+    }
+    """
+    
+  Scenario: given set import request should create component with resource config
+    When I am admin
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-set:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "name": "test-resource-contextgraph-new-import-2-1",
+            "type": "resource",
+            "infos": {
+              "test_info": {
+                "description": "description 2",
+                "value": "value 2"
+              }
+            },
+            "action": "set",
+            "component": "test-component-contextgraph-new-import-2",
+            "enabled": true
+          },
+          {
+            "name": "test-resource-contextgraph-new-import-2-2",
+            "type": "resource",
+            "infos": {
+              "test_info": {
+                "description": "description 3",
+                "value": "value 3"
+              }
+            },
+            "action": "set",
+            "component": "test-component-contextgraph-new-import-2",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-component-contextgraph-new-import-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-component-contextgraph-new-import-2",
+      "name": "test-component-contextgraph-new-import-2",
+      "component": "test-component-contextgraph-new-import-2",
+      "enabled": true,
+      "type": "component",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-2-1/test-component-contextgraph-new-import-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-2-1/test-component-contextgraph-new-import-2",
+      "name": "test-resource-contextgraph-new-import-2-1",
+      "component": "test-component-contextgraph-new-import-2",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 2",
+          "name": "test_info",
+          "value": "value 2"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-2-2/test-component-contextgraph-new-import-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-2-2/test-component-contextgraph-new-import-2",
+      "name": "test-resource-contextgraph-new-import-2-2",
+      "component": "test-component-contextgraph-new-import-2",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 3",
+          "name": "test_info",
+          "value": "value 3"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-contextgraph-new-import-2-1/test-component-contextgraph-new-import-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "impact": [
+        "test-component-contextgraph-new-import-2"
+      ],
+      "depends": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-contextgraph-new-import-2-2/test-component-contextgraph-new-import-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "impact": [
+        "test-component-contextgraph-new-import-2"
+      ],
+      "depends": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-2
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-resource-contextgraph-new-import-2-1/test-component-contextgraph-new-import-2",
+        "test-resource-contextgraph-new-import-2-2/test-component-contextgraph-new-import-2"
+      ],
+      "impact": []
+    }
+    """
 
-  Scenario: import with action update should update entity
+  Scenario: given set import requests should create and update component_infos
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-update:
     """json
@@ -159,12 +395,141 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "_id": "test-entity-contextgraph-new-import-to-update",
-            "name": "test-entity-contextgraph-new-import-to-update",
+            "name": "test-component-contextgraph-new-import-3",
             "type": "component",
             "infos": {
-              "new_info": {
-                "value": "2"
+              "test_info": {
+                "description": "description 1",
+                "value": "value 1"
+              }
+            },
+            "action": "set",
+            "enabled": true
+          },
+          {
+            "name": "test-resource-contextgraph-new-import-3-1",
+            "type": "resource",
+            "infos": {
+              "test_info": {
+                "description": "description 2",
+                "value": "value 2"
+              }
+            },
+            "action": "set",
+            "component": "test-component-contextgraph-new-import-3",
+            "enabled": true
+          },
+          {
+            "name": "test-resource-contextgraph-new-import-3-2",
+            "type": "resource",
+            "infos": {
+              "test_info": {
+                "description": "description 3",
+                "value": "value 3"
+              }
+            },
+            "action": "set",
+            "component": "test-component-contextgraph-new-import-3",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-component-contextgraph-new-import-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-component-contextgraph-new-import-3",
+      "name": "test-component-contextgraph-new-import-3",
+      "component": "test-component-contextgraph-new-import-3",
+      "infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      },
+      "enabled": true,
+      "type": "component",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-3-1/test-component-contextgraph-new-import-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-3-1/test-component-contextgraph-new-import-3",
+      "name": "test-resource-contextgraph-new-import-3-1",
+      "component": "test-component-contextgraph-new-import-3",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 2",
+          "name": "test_info",
+          "value": "value 2"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-3-2/test-component-contextgraph-new-import-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-3-2/test-component-contextgraph-new-import-3",
+      "name": "test-resource-contextgraph-new-import-3-2",
+      "component": "test-component-contextgraph-new-import-3",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 3",
+          "name": "test_info",
+          "value": "value 3"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "value 1"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-update:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "_id": "test-component-contextgraph-new-import-3",
+            "name": "test-component-contextgraph-new-import-3",
+            "type": "component",
+            "infos": {
+              "test_info": {
+                "description": "description 1",
+                "value": "new value"
               }
             },
             "action": "set",
@@ -181,27 +546,138 @@ Feature: New import entities
       "status": "done"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-to-update
+    When I do GET /api/v4/entitybasics?_id=test-component-contextgraph-new-import-3
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-entity-contextgraph-new-import-to-update",
-      "name": "test-entity-contextgraph-new-import-to-update",
-      "enabled": true,
+      "_id": "test-component-contextgraph-new-import-3",
+      "name": "test-component-contextgraph-new-import-3",
+      "component": "test-component-contextgraph-new-import-3",
       "infos": {
-        "new_info": {
-          "description": "",
-          "name": "new_info",
-          "value": "2"
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "new value"
         }
       },
+      "enabled": true,
       "type": "component",
       "impact_level": 1
     }
     """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-3-1/test-component-contextgraph-new-import-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-3-1/test-component-contextgraph-new-import-3",
+      "name": "test-resource-contextgraph-new-import-3-1",
+      "component": "test-component-contextgraph-new-import-3",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 2",
+          "name": "test_info",
+          "value": "value 2"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "new value"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-3-2/test-component-contextgraph-new-import-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-3-2/test-component-contextgraph-new-import-3",
+      "name": "test-resource-contextgraph-new-import-3-2",
+      "component": "test-component-contextgraph-new-import-3",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 3",
+          "name": "test_info",
+          "value": "value 3"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "new value"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-update:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "name": "test-resource-contextgraph-new-import-3-3",
+            "type": "resource",
+            "infos": {
+              "test_info": {
+                "description": "description 4",
+                "value": "value 4"
+              }
+            },
+            "action": "set",
+            "component": "test-component-contextgraph-new-import-3",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-3-3/test-component-contextgraph-new-import-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-resource-contextgraph-new-import-3-3/test-component-contextgraph-new-import-3",
+      "name": "test-resource-contextgraph-new-import-3-3",
+      "component": "test-component-contextgraph-new-import-3",
+      "enabled": true,
+      "infos": {
+        "test_info": {
+          "description": "description 4",
+          "name": "test_info",
+          "value": "value 4"
+        }
+      },
+      "component_infos": {
+        "test_info": {
+          "description": "description 1",
+          "name": "test_info",
+          "value": "new value"
+        }
+      },
+      "type": "resource",
+      "impact_level": 1
+    }
+    """
 
-  Scenario: new import with action set, when name doesn't exist, status should be failed
+  Scenario: given set import request without a name should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -230,7 +706,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action enable
+  Scenario: given enable import should enable entity
     When I am admin
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-enable
     Then the response body should contain:
@@ -282,36 +758,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action enable, when name doesn't exist, status should be failed
-    When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "enable",
-            "enabled": true
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "failed"
-    }
-    """
-
-  Scenario: new-import with action enable, when entity doesn't exist, status should be failed
+  Scenario: given enable import when entity doesn't exist should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -341,7 +788,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action disable
+  Scenario: given disable import should disable entity
     When I am admin
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-disable
     Then the response body should contain:
@@ -393,36 +840,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action disable, when name doesn't exist, status should be failed
-    When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "disable",
-            "enabled": true
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "failed"
-    }
-    """
-
-  Scenario: new-import with action disable, when entity doesn't exist, status should be failed
+  Scenario: given disable import when entity doesn't exist should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -452,7 +870,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action set, patterns should be only in services
+  Scenario: given create import request when patterns not for a service should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -489,7 +907,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action set, wrong action
+  Scenario: given create import request with wrong type should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -526,7 +944,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: new-import with action create, context graph should be valid for entity service
+  Scenario: given create import request should calculate context graph for entity service
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -719,145 +1137,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: given new-import with create resource should set resource component_infos
-    When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-component-contextgraph-new-import-29",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "set",
-            "enabled": true
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "done"
-    }
-    """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-resource-contextgraph-new-import-29",
-            "component": "test-component-contextgraph-new-import-29",
-            "type": "resource",
-            "action": "set",
-            "enabled": true
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "done"
-    }
-    """
-    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-29/test-component-contextgraph-new-import-29
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "component": "test-component-contextgraph-new-import-29",
-      "component_infos": {
-        "test_info": {
-          "description": "description 1",
-          "name": "test_info",
-          "value": "value 1"
-        }
-      }
-    }
-    """
-
-  Scenario: given new-import with create component should set resource component_infos
-    When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-resource-contextgraph-new-import-30",
-            "component": "test-component-contextgraph-new-import-30",
-            "type": "resource",
-            "action": "set",
-            "enabled": true
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "done"
-    }
-    """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
-    """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-component-contextgraph-new-import-30",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "set",
-            "enabled": true
-          }
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """json
-    {
-      "status": "done"
-    }
-    """
-    When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-30/test-component-contextgraph-new-import-30
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "component": "test-component-contextgraph-new-import-30",
-      "component_infos": {
-        "test_info": {
-          "description": "description 1",
-          "name": "test_info",
-          "value": "value 1"
-        }
-      }
-    }
-    """
-
-  Scenario: given new-import with create resource and delete component should be failed
+  Scenario: given set import when component is deleted for the created resource should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -866,13 +1146,13 @@ Feature: New import entities
         "cis": [
           {
             "name": "test-entity-contextgraph-new-import-resource-to-delete-conflict-1",
-            "component": "test-entity-contextgraph-new-import-component-to-delete-conflict",
+            "component": "test-entity-contextgraph-new-import-component-to-delete-conflict-1",
             "type": "resource",
             "action": "set",
             "enabled": true
           },
           {
-            "name": "test-entity-contextgraph-new-import-component-to-delete-conflict",
+            "name": "test-entity-contextgraph-new-import-component-to-delete-conflict-1",
             "type": "component",
             "infos": {
               "test_info": {
@@ -895,7 +1175,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: given new-import with create resource and disable component should be failed
+  Scenario: given set import with when component is disabled for the created resource should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -903,14 +1183,14 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-1",
-            "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-1",
+            "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-2",
+            "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
             "type": "resource",
             "action": "set",
             "enabled": true
           },
           {
-            "name": "test-entity-contextgraph-new-import-component-to-disable-conflict-1",
+            "name": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
             "type": "component",
             "infos": {
               "test_info": {
@@ -933,7 +1213,7 @@ Feature: New import entities
     }
     """
 
-  Scenario: given new-import with create resource when component is disabled
+  Scenario: given set import with when component is already disabled for the created resource should be failed
     When I am admin
     When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
     """json
@@ -941,8 +1221,8 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-2",
-            "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
+            "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-3",
+            "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-3",
             "type": "resource",
             "action": "set",
             "enabled": true
@@ -958,3 +1238,98 @@ Feature: New import entities
       "status": "failed"
     }
     """
+
+  Scenario: given delete import should delete resource
+    When I am admin
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "name": "test-entity-contextgraph-new-import-resource-to-delete-1-1",
+            "component": "test-entity-contextgraph-new-import-component-to-delete-1",
+            "type": "resource",
+            "infos": {
+              "new_info": {
+                "value": "2"
+              }
+            },
+            "action": "delete",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I wait the next periodical process
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-1-1/test-entity-contextgraph-new-import-component-to-delete-1
+    Then the response code should be 404
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-delete-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-entity-contextgraph-new-import-component-to-delete-1",
+      "name": "test-entity-contextgraph-new-import-component-to-delete-1",
+      "enabled": true,
+      "infos": {},
+      "type": "component",
+      "impact_level": 1
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-entity-contextgraph-new-import-component-to-delete-1
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-entity-contextgraph-new-import-resource-to-delete-1-2/test-entity-contextgraph-new-import-component-to-delete-1"
+      ],
+      "impact": []
+    }
+    """
+
+  Scenario: given delete import should delete component and its resources
+    When I am admin
+    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    """json
+    {
+      "json": {
+        "cis": [
+          {
+            "name": "test-entity-contextgraph-new-import-component-to-delete-2",
+            "type": "component",
+            "infos": {
+              "new_info": {
+                "value": "2"
+              }
+            },
+            "action": "delete",
+            "enabled": true
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+    """json
+    {
+      "status": "done"
+    }
+    """
+    When I wait the next periodical process
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-delete-2
+    Then the response code should be 404
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-2-1/test-entity-contextgraph-new-import-component-to-delete-2
+    Then the response code should be 404
+    When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-2-2/test-entity-contextgraph-new-import-component-to-delete-2
+    Then the response code should be 404
