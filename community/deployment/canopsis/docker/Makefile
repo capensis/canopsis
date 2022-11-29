@@ -35,7 +35,7 @@ tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 		--verbose \
 		--file $(TARBALL_FILE) \
 		--dereference \
-		--exclude-vcs --exclude-vcs-ignores \
+		--exclude-vcs \
 		--exclude=Makefile --exclude=build --exclude=.env \
 		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))\(/\|$$\);$(TARBALL_NAME)\1;' \
 		--transform='s;/env$$;/.env;' \
