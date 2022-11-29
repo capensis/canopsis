@@ -4,19 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"time"
 )
 
 type API interface {
 	ImportAll(c *gin.Context)
-	ImportPartial(c *gin.Context)
+	ImportOldAll(c *gin.Context)
+	ImportOldPartial(c *gin.Context)
 	Status(c *gin.Context)
 }
 
@@ -78,10 +79,41 @@ func (a *api) ImportAll(c *gin.Context) {
 	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
 }
 
-// ImportPartial
+// ImportOldAll
 // @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
-func (a *api) ImportPartial(c *gin.Context) {
+func (a *api) ImportOldAll(c *gin.Context) {
+	query := ImportQuery{}
+	if err := c.BindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		return
+	}
+
+	job := ImportJob{
+		Creation: time.Now(),
+		Status:   statusPending,
+		Source:   query.Source,
+		IsOld:    true,
+	}
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
+}
+
+// ImportOldPartial
+// @Param body body ImportRequest true "body"
+// @Success 200 {object} ImportResponse
+func (a *api) ImportOldPartial(c *gin.Context) {
 	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
@@ -93,6 +125,7 @@ func (a *api) ImportPartial(c *gin.Context) {
 		Status:    statusPending,
 		Source:    query.Source,
 		IsPartial: true,
+		IsOld:     true,
 	}
 
 	raw, err := c.GetRawData()
@@ -115,7 +148,7 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 		return "", err
 	}
 
-	err = ioutil.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
+	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
 	if err != nil {
 		return "", err
 	}
