@@ -1,53 +1,48 @@
 <template lang="pug">
   div.ds-expand.ds-calendar-app
     v-layout.pa-3.white
-      slot(
-        name="today",
-        v-bind="{ setToday, todayDate, calendar }"
-      )
+      slot(name="today", v-bind="{ setToday, todayDate, calendar }")
         v-flex
           v-tooltip(bottom)
-            v-btn.ds-skinny-button.ds-calendar-app-action(
-              slot="activator",
-              :icon="$vuetify.breakpoint.smAndDown",
-              depressed,
-              @click="setToday"
-            )
-              span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
-              v-icon(v-else) {{ labels.todayIcon }}
+            template(#activator="{ on }")
+              v-btn.ds-skinny-button.ds-calendar-app-action(
+                v-on="on",
+                :icon="$vuetify.breakpoint.smAndDown",
+                depressed,
+                @click="setToday"
+              )
+                span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
+                v-icon(v-else) {{ labels.todayIcon }}
             span {{ todayDate }}
-      slot(
-        name="pagination",
-        v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }"
-      )
+      slot(name="pagination", v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }")
         v-flex.text-sm-center
-          v-tooltip.mx-2(bottom)
-            v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
-              slot="activator",
-              icon,
-              depressed,
-              @click="prev"
-            )
-              v-icon keyboard_arrow_left
+          v-tooltip(bottom)
+            template(#activator="{ on }")
+              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
+                v-on="on",
+                icon,
+                depressed,
+                @click="prev"
+              )
+                v-icon keyboard_arrow_left
             span {{ prevLabel }}
           span.subheading {{ summary }}
-          v-tooltip.mx-2(bottom)
-            v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
-              slot="activator",
-              icon,
-              depressed,
-              @click="next"
-            )
-              v-icon keyboard_arrow_right
+          v-tooltip(bottom)
+            template(#activator="{ on }")
+              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
+                v-on="on",
+                icon,
+                depressed,
+                @click="next"
+              )
+                v-icon keyboard_arrow_right
             span {{ nextLabel }}
-      slot(
-        name="view",
-        v-bind="{ currentType, types }"
-      )
+      slot(name="view", v-bind="{ currentType, types }")
         v-flex.text-sm-right
           v-menu
-            v-btn.ds-calendar-app-action(flat, slot="activator") {{ currentType.label }}
-              v-icon arrow_drop_down
+            template(#activator="{ on }")
+              v-btn.ds-calendar-app-action(v-on="on", flat) {{ currentType.label }}
+                v-icon arrow_drop_down
             v-list
               v-list-tile(
                 v-for="type in types",
@@ -77,10 +72,7 @@
                 @view-day="viewDay"
               )
           div.ds-expand(v-else)
-            slot(
-              name="calendarAppCalendar",
-              v-bind="{ $scopedSlots, $listeners, calendar, viewDay }"
-            )
+            slot(name="calendarAppCalendar", v-bind="{ $scopedSlots, $listeners, calendar, viewDay }")
               ds-calendar(
                 ref="calendar",
                 v-bind="{ $scopedSlots }",
