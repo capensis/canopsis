@@ -1,18 +1,19 @@
 <template lang="pug">
-  v-menu.ds-calendar-event-placeholder(
+  v-menu(
     :content-class="contentClass",
     :disabled="menuDisabled",
     v-model="menu",
     v-bind="popoverProps"
   )
-    ds-calendar-event-time(
-      slot="activator",
-      v-bind="{ $scopedSlots }",
-      v-on="$listeners",
-      :is-placeholder-with-day="day",
-      :calendar-event="placeholder",
-      :calendar="calendar"
-    )
+    template(#activator="{ on }")
+      div.ds-calendar-event-placeholder(v-on="on")
+        ds-calendar-event-time(
+          v-bind="{ $scopedSlots }",
+          v-on="$listeners",
+          :is-placeholder-with-day="day",
+          :calendar-event="placeholder",
+          :calendar="calendar"
+        )
     slot(
       name="eventCreatePopover",
       v-if="isStart && isShownPopover",
