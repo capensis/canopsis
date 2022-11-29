@@ -28,16 +28,17 @@ all: tarball
 .PHONY: tarball
 tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 	echo $(CANOPSIS_EDITION)
-	sed -i 's/^CPS_EDITION=.*//g' "$(CURRENT_ROOT_DIR)/.env"
-	sed -i '1iCPS_EDITION=$(CANOPSIS_EDITION)' "$(CURRENT_ROOT_DIR)/.env"
+	sed 's/^CPS_EDITION=.*//g' "$(CURRENT_ROOT_DIR)/.env" > env
+	sed -i '1iCPS_EDITION=$(CANOPSIS_EDITION)' "$(CURRENT_ROOT_DIR)/env"
 	tar -z -C $(dir $(CURRENT_ROOT_DIR)) \
 		--create \
 		--verbose \
 		--file $(TARBALL_FILE) \
 		--dereference \
 		--exclude-vcs --exclude-vcs-ignores \
-		--exclude=Makefile --exclude=build \
+		--exclude=Makefile --exclude=build --exclude=.env \
 		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))\(/\|$$\);$(TARBALL_NAME)\1;' \
+		--transform='s;/env$$;/.env;' \
 		$(notdir $(CURRENT_ROOT_DIR))
 
 $(CURRENT_BUILD_OUTPUT_DIR):
@@ -48,6 +49,7 @@ $(CURRENT_BUILD_OUTPUT_DIR):
 
 clean:
 	rm -rf $(CURRENT_BUILD_OUTPUT_DIR)
+	rm -f env
 
 .PHONY: help
 help:
