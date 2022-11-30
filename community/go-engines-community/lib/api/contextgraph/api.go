@@ -16,6 +16,7 @@ import (
 
 type API interface {
 	ImportAll(c *gin.Context)
+	ImportPartial(c *gin.Context)
 	ImportOldAll(c *gin.Context)
 	ImportOldPartial(c *gin.Context)
 	Status(c *gin.Context)
@@ -63,6 +64,37 @@ func (a *api) ImportAll(c *gin.Context) {
 		Creation: time.Now(),
 		Status:   statusPending,
 		Source:   query.Source,
+	}
+
+	raw, err := c.GetRawData()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	jobID, err := a.createImportJob(c.Request.Context(), job, raw)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
+}
+
+// ImportPartial
+// @Param body body ImportRequest true "body"
+// @Success 200 {object} ImportResponse
+func (a *api) ImportPartial(c *gin.Context) {
+	query := ImportQuery{}
+	if err := c.BindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		return
+	}
+
+	job := ImportJob{
+		Creation:  time.Now(),
+		Status:    statusPending,
+		Source:    query.Source,
+		IsPartial: true,
 	}
 
 	raw, err := c.GetRawData()

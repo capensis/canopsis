@@ -574,7 +574,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "{{ `{{index .Header \"Content-Type\"}}` }}"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-4-webhook {{ `{{index .Response \"icon_name\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{index .Response \"_id\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"test-scenario-action-webhook-4-webhook {{ `{{.Response.icon_name}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{.Response._id}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
