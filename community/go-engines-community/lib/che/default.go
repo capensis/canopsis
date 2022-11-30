@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -208,6 +210,7 @@ func NewEngine(
 	engine.AddPeriodicalWorker("soft delete", &softDeletePeriodicalWorker{
 		collection:         mongoClient.Collection(mongo.EntityMongoCollection),
 		PeriodicalInterval: options.PeriodicalWaitTime,
+		EventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		Logger:             logger,
 	})
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)

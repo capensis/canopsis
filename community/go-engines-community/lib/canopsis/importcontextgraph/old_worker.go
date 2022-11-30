@@ -41,7 +41,6 @@ type parseResult struct {
 	removedIds        []string
 	serviceEvents     []types.Event
 	basicEntityEvents []types.Event
-	deleteEvents      []types.Event
 }
 
 type parseEntityResult struct {
@@ -55,7 +54,6 @@ type parseEntityResult struct {
 	removedIds        []string
 	serviceEvents     []types.Event
 	basicEntityEvents []types.Event
-	deleteEvents      []types.Event
 }
 
 // left for backward compatibility

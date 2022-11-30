@@ -156,12 +156,17 @@ func (w *worker) doJob(ctx context.Context, job ImportJob) (importcontextgraph.S
 	w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: Processing import")
 	filename := fmt.Sprintf(w.filePattern, job.ID)
 
-	if !job.IsOld {
-		return w.worker.Work(ctx, filename, job.Source)
+	if job.IsOld {
+		if job.IsPartial {
+			return w.oldWorker.WorkPartial(ctx, filename, job.Source)
+		}
+
+		return w.oldWorker.Work(ctx, filename, job.Source)
 	}
 
 	if job.IsPartial {
-		return w.oldWorker.WorkPartial(ctx, filename, job.Source)
+		return w.worker.WorkPartial(ctx, filename, job.Source)
 	}
-	return w.oldWorker.Work(ctx, filename, job.Source)
+
+	return w.worker.Work(ctx, filename, job.Source)
 }
