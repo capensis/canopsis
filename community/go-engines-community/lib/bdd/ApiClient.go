@@ -16,13 +16,10 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"text/template"
 	"time"
 
-	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
-	"github.com/cucumber/godog"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
@@ -44,83 +41,60 @@ const (
 // ApiClient represents utility struct which implements API steps to feature context.
 type ApiClient struct {
 	// url is base API url.
-	url *url.URL
+	url string
 	// client is http client to make API requests.
 	client *http.Client
 	// db is db client.
-	db mongo.DbClient
-	// response is http response of made API request.
-	response           *http.Response
-	responseBody       interface{}
-	responseBodyOutput string
-	// cookies is http cookies which are retrieved from API response and used in following steps.
-	// todo remove after session remove
-	cookies []*http.Cookie
-	// vars is used to save data between steps.
-	vars map[string]string
-	// request header
-	headers map[string]string
+	db        mongo.DbClient
+	templater *Templater
 }
 
 // NewApiClient creates new API client.
-func NewApiClient(db mongo.DbClient) (*ApiClient, error) {
-	apiUrl, err := GetApiURL()
-	if err != nil {
-		return nil, err
+func NewApiClient(db mongo.DbClient, url string, templater *Templater) *ApiClient {
+	return &ApiClient{
+		url: url,
+		client: &http.Client{
+			Timeout: requestTimeout,
+		},
+		db:        db,
+		templater: templater,
 	}
-
-	var apiClient ApiClient
-	apiClient.client = &http.Client{
-		Timeout: requestTimeout,
-	}
-	apiClient.url = apiUrl
-	apiClient.db = db
-	apiClient.headers = make(map[string]string)
-
-	return &apiClient, nil
 }
 
 // GetApiURL retrieves API url from env var.
-func GetApiURL() (*url.URL, error) {
+func GetApiURL() (string, error) {
 	legacy := os.Getenv(ApiEnvURL)
 	if legacy == "" {
-		return nil, fmt.Errorf("environment variable %s empty", ApiEnvURL)
+		return "", fmt.Errorf("environment variable %s empty", ApiEnvURL)
 	}
 
 	parsed, err := url.Parse(legacy)
 	if err != nil {
-		return nil, fmt.Errorf("cannot parse api url: %w", err)
+		return "", fmt.Errorf("cannot parse api url: %w", err)
 	}
 
-	return parsed, nil
-}
-
-// ResetResponse clears all saved response data.
-func (a *ApiClient) ResetResponse(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
-	a.response = nil
-	a.responseBody = nil
-	a.responseBodyOutput = ""
-	a.cookies = nil
-	a.vars = nil
-	a.headers = make(map[string]string)
-
-	return ctx, nil
+	return parsed.String(), nil
 }
 
 /**
 Step example:
 	Then the response code should be 200
 */
-func (a *ApiClient) TheResponseCodeShouldBe(code int) error {
-	if a.response == nil {
+func (a *ApiClient) TheResponseCodeShouldBe(ctx context.Context, code int) error {
+	responseStatusCode, ok := getResponseStatusCode(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
 		return fmt.Errorf("response is nil")
 	}
 
-	if code != a.response.StatusCode {
+	if code != responseStatusCode {
 		return fmt.Errorf("expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
-			a.response.StatusCode,
-			a.responseBodyOutput,
+			responseStatusCode,
+			responseBodyOutput,
 		)
 	}
 
@@ -138,13 +112,14 @@ Step example:
 	}
 	"""
 */
-func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
-	if a.responseBody == nil {
+func (a *ApiClient) TheResponseBodyShouldBe(ctx context.Context, doc string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
 		return fmt.Errorf("response is nil")
 	}
 
 	// Try to execute template on expected body
-	b, err := a.executeTemplate(doc)
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
@@ -156,7 +131,7 @@ func (a *ApiClient) TheResponseBodyShouldBe(doc string) error {
 		return fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
-	if err := checkResponse(a.responseBody, expectedBody); err != nil {
+	if err := checkResponse(responseBody, expectedBody); err != nil {
 		return err
 	}
 
@@ -170,17 +145,22 @@ Step example:
 	Test
 	"""
 */
-func (a *ApiClient) TheResponseRawBodyShouldBe(doc string) error {
-	// Try execute template on expected body
-	b, err := a.executeTemplate(doc)
+func (a *ApiClient) TheResponseRawBodyShouldBe(ctx context.Context, doc string) error {
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	// Try to execute template on expected body
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
 
 	expectedBody := b.String()
-	if a.responseBodyOutput != expectedBody {
+	if responseBodyOutput != expectedBody {
 		return fmt.Errorf("expected response body to be:\n%v\n but actual is:\n%v",
-			expectedBody, a.responseBodyOutput)
+			expectedBody, responseBodyOutput)
 	}
 
 	return nil
@@ -197,13 +177,14 @@ Step example:
 	}
 	"""
 */
-func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
-	if a.responseBody == nil {
+func (a *ApiClient) TheResponseBodyShouldContain(ctx context.Context, doc string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
 		return fmt.Errorf("response is nil")
 	}
 
-	// Try execute template on expected body
-	b, err := a.executeTemplate(doc)
+	// Try to execute template on expected body
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
@@ -215,7 +196,7 @@ func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 		return fmt.Errorf("cannot unmarshal json %v: %s", err, content)
 	}
 
-	partialBody := getPartialResponse(a.responseBody, expectedBody)
+	partialBody := getPartialResponse(responseBody, expectedBody)
 
 	if err := checkResponse(partialBody, expectedBody); err != nil {
 		return err
@@ -228,8 +209,13 @@ func (a *ApiClient) TheResponseBodyShouldContain(doc string) error {
 Step example:
 	Then the response key "data.0.created_at" should not be "0"
 */
-func (a *ApiClient) TheResponseKeyShouldNotBe(path, value string) error {
-	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+func (a *ApiClient) TheResponseKeyShouldNotBe(ctx context.Context, path, value string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
 		switch v := nestedVal.(type) {
 		case types.Nil:
 			if value != "null" {
@@ -268,16 +254,30 @@ func (a *ApiClient) TheResponseKeyShouldNotBe(path, value string) error {
 		return fmt.Errorf("%v is equal to %v", value, nestedVal)
 	}
 
-	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
 /**
 Step example:
 	Then the response key "data.0.created_at" should not exist
 */
-func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
-	if _, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
-		return fmt.Errorf("%s exists in response:\n%v", path, a.responseBodyOutput)
+func (a *ApiClient) TheResponseKeyShouldNotExist(ctx context.Context, path string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	if _, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
+		return fmt.Errorf("%s exists in response:\n%v", path, responseBodyOutput)
 	}
 
 	return nil
@@ -287,9 +287,17 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(path string) error {
 Step example:
 	Then the response key "data.0.created_at" should exist
 */
-func (a *ApiClient) TheResponseKeyShouldExist(path string) error {
-	if _, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); !ok {
-		return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+func (a *ApiClient) TheResponseKeyShouldExist(ctx context.Context, path string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	if _, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); !ok {
+		return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 	}
 
 	return nil
@@ -299,12 +307,12 @@ func (a *ApiClient) TheResponseKeyShouldExist(path string) error {
 Step example:
 	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
 */
-func (a *ApiClient) TheDifferenceBetweenValues(var1, var2 string, left, right float64) error {
-	val1, err := a.getFloatVar(var1)
+func (a *ApiClient) TheDifferenceBetweenValues(ctx context.Context, var1, var2 string, left, right float64) error {
+	val1, err := parseFloatVar(ctx, var1)
 	if err != nil {
 		return fmt.Errorf("first variable %s", err)
 	}
-	val2, err := a.getFloatVar(var2)
+	val2, err := parseFloatVar(ctx, var2)
 	if err != nil {
 		return fmt.Errorf("second variable %s", err)
 	}
@@ -316,20 +324,20 @@ func (a *ApiClient) TheDifferenceBetweenValues(var1, var2 string, left, right fl
 	return nil
 }
 
-func (a *ApiClient) getFloatVar(name string) (float64, error) {
-	val, ok := a.vars[name]
-	if !ok {
-		return 0, fmt.Errorf("doesn't exist")
-	}
-	return strconv.ParseFloat(val, 64)
-}
-
 /**
 Step example:
 	Then the response key "data.0.duration" should be greater or equal than 3
 */
-func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value float64) error {
-	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(ctx context.Context, path string, value float64) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
 		var fieldVal float64
 		switch v := nestedVal.(type) {
 		case int:
@@ -353,15 +361,24 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(path string, value 
 		return fmt.Errorf("%v is lesser then %v", fieldVal, value)
 	}
 
-	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
 /**
 Step example:
 	Then the response key "data.0.duration" should be greater than 3
 */
-func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(path string, value float64) error {
-	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(ctx context.Context, path string, value float64) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
 		var fieldVal float64
 		switch v := nestedVal.(type) {
 		case int:
@@ -385,7 +402,7 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(path string, value float64
 		return fmt.Errorf("%v is lesser or equal then %v", fieldVal, value)
 	}
 
-	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
 // TheResponseArrayKeyShouldContain
@@ -398,13 +415,22 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(path string, value float64
 //     }
 //   ]
 //   """
-func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) error {
-	b, err := a.executeTemplate(doc)
+func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path string, doc string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
 
-	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
 		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
 
 		switch received := nestedVal.(type) {
@@ -463,7 +489,7 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) er
 		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
 	}
 
-	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
 // TheResponseArrayKeyShouldContainOnly
@@ -475,13 +501,22 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(path string, doc string) er
 //     }
 //   ]
 //   """
-func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(path string, doc string) error {
-	b, err := a.executeTemplate(doc)
+func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(ctx context.Context, path string, doc string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
 
-	if nestedVal, ok := getNestedJsonVal(a.responseBody, strings.Split(path, ".")); ok {
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
 		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
 
 		switch received := nestedVal.(type) {
@@ -549,7 +584,7 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(path string, doc string
 		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
 	}
 
-	return fmt.Errorf("%s not exists in response:\n%v", path, a.responseBodyOutput)
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
 // getNestedJsonVal returns val by path.
@@ -588,19 +623,19 @@ func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 Step example:
 	Given I am admin
 */
-func (a *ApiClient) IAm(ctx context.Context, role string) error {
+func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, error) {
 	var line model.Rbac
 	res := a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
 		"crecord_type": model.LineTypeRole,
 		"crecord_name": role,
 	})
 	if err := res.Err(); err != nil {
-		return fmt.Errorf("cannot fetch role: %w", err)
+		return ctx, fmt.Errorf("cannot fetch role: %w", err)
 	}
 
 	err := res.Decode(&line)
 	if err != nil {
-		return fmt.Errorf("cannot decode role: %w", err)
+		return ctx, fmt.Errorf("cannot decode role: %w", err)
 	}
 
 	res = a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
@@ -608,12 +643,12 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 		"role":         line.ID,
 	})
 	if err := res.Err(); err != nil {
-		return fmt.Errorf("cannot fetch user: %w", err)
+		return ctx, fmt.Errorf("cannot fetch user: %w", err)
 	}
 
 	err = res.Decode(&line)
 	if err != nil {
-		return fmt.Errorf("cannot decode user: %w", err)
+		return ctx, fmt.Errorf("cannot decode user: %w", err)
 	}
 
 	uri := fmt.Sprintf("%s/api/v4/login", a.url)
@@ -622,53 +657,64 @@ func (a *ApiClient) IAm(ctx context.Context, role string) error {
 		"password": userPass,
 	})
 	if err != nil {
-		return err
+		return ctx, err
 	}
 	request, err := http.NewRequest(http.MethodPost, uri, bytes.NewReader(body))
 	if err != nil {
-		return fmt.Errorf("cannot create login request: %w", err)
+		return ctx, fmt.Errorf("cannot create login request: %w", err)
 	}
 
 	request.Header.Set(headerContentType, binding.MIMEJSON)
 
 	response, err := a.client.Do(request)
 	if err != nil {
-		return fmt.Errorf("cannot do login request: %w", err)
+		return ctx, fmt.Errorf("cannot do login request: %w", err)
 	}
 
 	buf, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return fmt.Errorf("cannot fetch login response: %w", err)
+		return ctx, fmt.Errorf("cannot fetch login response: %w", err)
 	}
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected response status %v %s", response.StatusCode, buf)
+		return ctx, fmt.Errorf("unexpected response status %v %s", response.StatusCode, buf)
 	}
 
 	responseBody := make(map[string]string)
 	err = json.Unmarshal(buf, &responseBody)
 	if err != nil {
-		return fmt.Errorf("cannot decode login response: %w", err)
+		return ctx, fmt.Errorf("cannot decode login response: %w", err)
 	}
 
 	token := responseBody["access_token"]
 	if token == "" {
-		return fmt.Errorf("unexpected login response %v", buf)
+		return ctx, fmt.Errorf("unexpected login response %v", buf)
 	}
 
-	a.headers[headerAuthorization] = bearerPrefix + " " + token
+	headers, ok := getHeaders(ctx)
+	if !ok {
+		headers = make(map[string]string, 1)
+	}
+	ctx = setApiAuthToken(ctx, token)
+	headers[headerAuthorization] = bearerPrefix + " " + token
+	ctx = setHeaders(ctx, headers)
 
-	return nil
+	return ctx, nil
 }
 
 /**
 Step example:
 	When I am authenticated with username "user" password "pass"
 */
-func (a *ApiClient) IAmAuthenticatedByBasicAuth(username, password string) error {
-	a.headers[headerAuthorization] = basicPrefix + " " + base64.StdEncoding.EncodeToString([]byte(username+":"+password))
+func (a *ApiClient) IAmAuthenticatedByBasicAuth(ctx context.Context, username, password string) (context.Context, error) {
+	headers, ok := getHeaders(ctx)
+	if !ok {
+		headers = make(map[string]string, 1)
+	}
+	headers[headerAuthorization] = basicPrefix + " " + base64.StdEncoding.EncodeToString([]byte(username+":"+password))
+	ctx = setHeaders(ctx, headers)
 
-	return nil
+	return ctx, nil
 }
 
 /**
@@ -687,35 +733,50 @@ Step example:
 	  }
 	"""
 */
-func (a *ApiClient) ISendAnEvent(doc string) (err error) {
+func (a *ApiClient) ISendAnEvent(ctx context.Context, doc string) (context.Context, error) {
 	uri := fmt.Sprintf("%s/api/v4/event", a.url)
-	body, err := a.executeTemplate(doc)
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
-	responseStr := strings.TrimSpace(body.String())
-	if responseStr == "" || responseStr[0] != '[' {
-		responseStr = "[" + responseStr + "]"
+	events := make([]map[string]interface{}, 0)
+	err = json.Unmarshal(b.Bytes(), &events)
+	if err != nil {
+		event := make(map[string]interface{})
+		err = json.Unmarshal(b.Bytes(), &event)
+		if err != nil {
+			return ctx, err
+		}
+		events = append(events, event)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, uri, body)
+	for i := range events {
+		events[i]["debug"] = true
+	}
+
+	body, err := json.Marshal(events)
 	if err != nil {
-		return fmt.Errorf("cannot create event request: %w", err)
+		return ctx, err
+	}
+	req, err := http.NewRequest(http.MethodPost, uri, bytes.NewBuffer(body))
+	if err != nil {
+		return ctx, fmt.Errorf("cannot create event request: %w", err)
 	}
 
 	req.Header.Set(headerContentType, binding.MIMEJSON)
-	err = a.doRequest(req)
+	ctx, err = a.doRequest(ctx, req)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
-	err = a.TheResponseCodeShouldBe(http.StatusOK)
+	err = a.TheResponseCodeShouldBe(ctx, http.StatusOK)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
-	return a.TheResponseBodyShouldContain(fmt.Sprintf("{\"sent_events\":%s}", responseStr))
+	err = a.TheResponseBodyShouldContain(ctx, fmt.Sprintf("{\"sent_events\":%s}", body))
+	return ctx, err
 }
 
 /**
@@ -723,22 +784,22 @@ Step example:
 	When I do GET /api/v4/alarms
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
-func (a *ApiClient) IDoRequest(method, uri string) error {
+func (a *ApiClient) IDoRequest(ctx context.Context, method, uri string) (context.Context, error) {
 	if strings.Contains(uri, "until") {
-		return fmt.Errorf("step is wrongly matched to IDoRequest")
+		return ctx, fmt.Errorf("step is wrongly matched to IDoRequest")
 	}
 
-	uri, err := a.getRequestURL(uri)
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
-	return a.doRequest(req)
+	return a.doRequest(ctx, req)
 }
 
 /**
@@ -763,22 +824,22 @@ Step example:
 	  }
 	"""
 */
-func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
+func (a *ApiClient) IDoRequestWithBody(ctx context.Context, method, uri string, doc string) (context.Context, error) {
 	if doc == "" {
-		return fmt.Errorf("body is empty")
+		return ctx, fmt.Errorf("body is empty")
 	}
 	if strings.Contains(uri, "until") {
-		return fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
+		return ctx, fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
 	}
 
-	uri, err := a.getRequestURL(uri)
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
-	body, err := a.getRequestBody(doc)
+	body, err := a.getRequestBody(ctx, doc)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(
@@ -787,41 +848,50 @@ func (a *ApiClient) IDoRequestWithBody(method, uri string, doc string) error {
 		body,
 	)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
-	if _, ok := a.headers[headerContentType]; !ok {
+	if headers, ok := getHeaders(ctx); ok {
+		if _, ok := headers[headerContentType]; !ok {
+			req.Header.Set(headerContentType, binding.MIMEJSON)
+		}
+	} else {
 		req.Header.Set(headerContentType, binding.MIMEJSON)
 	}
 
-	return a.doRequest(req)
+	return a.doRequest(ctx, req)
 }
 
 /**
 Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}} until response code is 200
 */
-func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) error {
-	uri, err := a.getRequestURL(uri)
+func (a *ApiClient) IDoRequestUntilResponseCode(ctx context.Context, method, uri string, code int) (context.Context, error) {
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	timeout := startRepeatRequestInterval
 	start := time.Now()
+	var responseStatusCode int
+	var responseBodyOutput string
 	for {
-		err := a.doRequest(req)
+		ctx, err = a.doRequest(ctx, req)
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
-		if code == a.response.StatusCode {
-			return nil
+		responseStatusCode, _ = getResponseStatusCode(ctx)
+		responseBodyOutput, _ = getResponseBodyOutput(ctx)
+
+		if code == responseStatusCode {
+			return ctx, nil
 		}
 
 		if time.Since(start) > totalRepeatRequestInterval {
@@ -832,10 +902,10 @@ func (a *ApiClient) IDoRequestUntilResponseCode(method, uri string, code int) er
 		timeout *= 2
 	}
 
-	return fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
+	return ctx, fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
 		code,
-		a.response.StatusCode,
-		a.responseBodyOutput,
+		responseStatusCode,
+		responseBodyOutput,
 	)
 }
 
@@ -848,43 +918,49 @@ Step example:
     }
     """
 */
-func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc string) error {
+func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri string, code int, doc string) (context.Context, error) {
 	if doc == "" {
-		return fmt.Errorf("body is empty")
+		return ctx, fmt.Errorf("body is empty")
 	}
-	uri, err := a.getRequestURL(uri)
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
-	b, err := a.executeTemplate(doc)
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 	content := b.Bytes()
 	expectedBody, err := unmarshalJson(content)
 	if err != nil {
-		return fmt.Errorf("cannot decode expected response body: %w", err)
+		return ctx, fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
 	var resDiffErr error
 	timeout := startRepeatRequestInterval
 	start := time.Now()
+	var responseStatusCode int
+	var responseBodyOutput string
 	for {
-		err := a.doRequest(req)
+		ctx, err = a.doRequest(ctx, req)
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
-		if code == a.response.StatusCode {
-			resDiffErr = checkResponse(a.responseBody, expectedBody)
+		responseStatusCode, _ = getResponseStatusCode(ctx)
+		responseBody, _ := getResponseBody(ctx)
+		responseBodyOutput, _ = getResponseBodyOutput(ctx)
+
+		if code == responseStatusCode {
+			resDiffErr = checkResponse(responseBody, expectedBody)
 			if resDiffErr == nil {
-				return nil
+				return ctx, nil
 			}
 		}
 
@@ -896,15 +972,15 @@ func (a *ApiClient) IDoRequestUntilResponse(method, uri string, code int, doc st
 		timeout *= 2
 	}
 
-	if code != a.response.StatusCode {
-		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+	if code != responseStatusCode {
+		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
-			a.response.StatusCode,
-			a.responseBodyOutput,
+			responseStatusCode,
+			responseBodyOutput,
 		)
 	}
 
-	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
 /**
@@ -916,45 +992,51 @@ Step example:
     }
     """
 */
-func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int, doc string) error {
+func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method, uri string, code int, doc string) (context.Context, error) {
 	if doc == "" {
-		return fmt.Errorf("body is empty")
+		return ctx, fmt.Errorf("body is empty")
 	}
-	uri, err := a.getRequestURL(uri)
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
-	b, err := a.executeTemplate(doc)
+	b, err := a.templater.Execute(ctx, doc)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 	content := b.Bytes()
 	expectedBody, err := unmarshalJson(content)
 	if err != nil {
-		return fmt.Errorf("cannot decode expected response body: %w", err)
+		return ctx, fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
 	var resDiffErr error
 	timeout := startRepeatRequestInterval
 	start := time.Now()
+	var responseStatusCode int
+	var responseBodyOutput string
 	for {
-		err := a.doRequest(req)
+		ctx, err = a.doRequest(ctx, req)
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
-		if code == a.response.StatusCode {
-			partialBody := getPartialResponse(a.responseBody, expectedBody)
+		responseStatusCode, _ = getResponseStatusCode(ctx)
+		responseBody, _ := getResponseBody(ctx)
+		responseBodyOutput, _ = getResponseBodyOutput(ctx)
+
+		if code == responseStatusCode {
+			partialBody := getPartialResponse(responseBody, expectedBody)
 			resDiffErr = checkResponse(partialBody, expectedBody)
 
 			if resDiffErr == nil {
-				return nil
+				return ctx, nil
 			}
 		}
 
@@ -966,15 +1048,15 @@ func (a *ApiClient) IDoRequestUntilResponseContains(method, uri string, code int
 		timeout *= 2
 	}
 
-	if code != a.response.StatusCode {
-		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+	if code != responseStatusCode {
+		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
-			a.response.StatusCode,
-			a.responseBodyOutput,
+			responseStatusCode,
+			responseBodyOutput,
 		)
 	}
 
-	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
 /**
@@ -982,31 +1064,36 @@ Step example:
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
     """
 */
-func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri string, code int, path string, value float64) error {
-	uri, err := a.getRequestURL(uri)
+func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.Context, method, uri string, code int, path string, value float64) (context.Context, error) {
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	var resDiffErr error
 	timeout := startRepeatRequestInterval
 	start := time.Now()
+	var responseStatusCode int
+	var responseBodyOutput string
 	for {
-		err := a.doRequest(req)
+		ctx, err = a.doRequest(ctx, req)
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
-		if code == a.response.StatusCode {
-			resDiffErr = a.TheResponseKeyShouldBeGreaterOrEqualThan(path, value)
+		responseStatusCode, _ = getResponseStatusCode(ctx)
+		responseBodyOutput, _ = getResponseBodyOutput(ctx)
+
+		if code == responseStatusCode {
+			resDiffErr = a.TheResponseKeyShouldBeGreaterOrEqualThan(ctx, path, value)
 
 			if resDiffErr == nil {
-				return nil
+				return ctx, nil
 			}
 		}
 
@@ -1018,15 +1105,15 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri s
 		timeout *= 2
 	}
 
-	if code != a.response.StatusCode {
-		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+	if code != responseStatusCode {
+		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
-			a.response.StatusCode,
-			a.responseBodyOutput,
+			responseStatusCode,
+			responseBodyOutput,
 		)
 	}
 
-	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
 // IDoRequestUntilResponseArrayKeyContains
@@ -1039,31 +1126,36 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(method, uri s
 //     }
 //   ]
 //   """
-func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(method, uri string, code int, path string, doc string) error {
-	uri, err := a.getRequestURL(uri)
+func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(ctx context.Context, method, uri string, code int, path string, doc string) (context.Context, error) {
+	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
 	req, err := http.NewRequest(method, uri, nil)
 	if err != nil {
-		return fmt.Errorf("cannot create request: %w", err)
+		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	var resDiffErr error
 	timeout := startRepeatRequestInterval
 	start := time.Now()
+	var responseStatusCode int
+	var responseBodyOutput string
 	for {
-		err := a.doRequest(req)
+		ctx, err = a.doRequest(ctx, req)
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
-		if code == a.response.StatusCode {
-			resDiffErr = a.TheResponseArrayKeyShouldContain(path, doc)
+		responseStatusCode, _ = getResponseStatusCode(ctx)
+		responseBodyOutput, _ = getResponseBodyOutput(ctx)
+
+		if code == responseStatusCode {
+			resDiffErr = a.TheResponseArrayKeyShouldContain(ctx, path, doc)
 
 			if resDiffErr == nil {
-				return nil
+				return ctx, nil
 			}
 		}
 
@@ -1075,61 +1167,61 @@ func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(method, uri string, 
 		timeout *= 2
 	}
 
-	if code != a.response.StatusCode {
-		return fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+	if code != responseStatusCode {
+		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
-			a.response.StatusCode,
-			a.responseBodyOutput,
+			responseStatusCode,
+			responseBodyOutput,
 		)
 	}
 
-	return fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
 /**
 Step example:
     When I set header Content-Type=application/json
 */
-func (a *ApiClient) ISetRequestHeader(key, value string) error {
-	b, err := a.executeTemplate(value)
+func (a *ApiClient) ISetRequestHeader(ctx context.Context, key, value string) (context.Context, error) {
+	b, err := a.templater.Execute(ctx, value)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
-	a.headers[key] = b.String()
+	headers, ok := getHeaders(ctx)
+	if ok {
+		headers[key] = b.String()
+	} else {
+		headers = map[string]string{key: b.String()}
+	}
+	ctx = setHeaders(ctx, headers)
 
-	return nil
+	return ctx, nil
 }
 
 /**
 Step example:
 	When I save response id={{ .lastResponse._id }}
 */
-func (a *ApiClient) ISaveResponse(key, value string) error {
-	b, err := a.executeTemplate(value)
+func (a *ApiClient) ISaveResponse(ctx context.Context, key, value string) (context.Context, error) {
+	b, err := a.templater.Execute(ctx, value)
 	if err != nil {
-		return err
+		return ctx, err
 	}
 
-	if a.vars == nil {
-		a.vars = make(map[string]string)
-	}
-
-	a.vars[key] = b.String()
-
-	return nil
+	return setVar(ctx, key, b.String()), nil
 }
 
 // ValueShouldBeGteLteThan
 // Step example:
 //	Then "value1" > "value2"
 //	Then "value1" <= "value2"
-func (a *ApiClient) ValueShouldBeGteLteThan(left, op, right string) error {
-	leftV, err := a.getFloatVar(left)
+func (a *ApiClient) ValueShouldBeGteLteThan(ctx context.Context, left, op, right string) error {
+	leftV, err := parseFloatVar(ctx, left)
 	if err != nil {
 		return err
 	}
-	rightV, err := a.getFloatVar(right)
+	rightV, err := parseFloatVar(ctx, right)
 	if err != nil {
 		return err
 	}
@@ -1158,59 +1250,64 @@ func (a *ApiClient) ValueShouldBeGteLteThan(left, op, right string) error {
 }
 
 // doRequest adds auth credentials and makes request.
-func (a *ApiClient) doRequest(req *http.Request) error {
-	for k, v := range a.headers {
-		req.Header.Set(k, v)
+func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.Context, error) {
+	if headers, ok := getHeaders(ctx); ok {
+		for k, v := range headers {
+			req.Header.Set(k, v)
+		}
 	}
 
 	// Add session's cookies
-	if a.cookies != nil {
-		for _, c := range a.cookies {
+	if cookies, ok := getCookies(ctx); ok {
+		for _, c := range cookies {
 			req.AddCookie(c)
 		}
 	}
 
 	var err error
-	a.responseBody = nil
-	a.responseBodyOutput = ""
-	a.response, err = a.client.Do(req)
+	var responseBody interface{}
+	var responseBodyOutput string
+	response, err := a.client.Do(req)
 	// Read response
 	if err != nil {
-		return fmt.Errorf("cannot do request: %w", err)
+		return ctx, fmt.Errorf("cannot do request: %w", err)
 	}
-	buf, err := ioutil.ReadAll(a.response.Body)
+	buf, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return fmt.Errorf("cannot fetch response: %w", err)
+		return ctx, fmt.Errorf("cannot fetch response: %w", err)
 	}
 
 	// Parse response
 	if len(buf) > 0 {
-		a.responseBody, err = unmarshalJson(buf)
+		responseBody, err = unmarshalJson(buf)
 		if err == nil {
-			ibuf, _ := json.MarshalIndent(a.responseBody, "", "  ")
-			a.responseBodyOutput = string(ibuf)
+			ibuf, _ := json.MarshalIndent(responseBody, "", "  ")
+			responseBodyOutput = string(ibuf)
 		} else {
-			a.responseBodyOutput = string(buf)
+			responseBodyOutput = string(buf)
 		}
 	}
 
 	// Save session
-	cookies := a.response.Cookies()
-	if len(cookies) > 0 {
-		a.cookies = make([]*http.Cookie, 0, len(cookies))
-		for _, cookie := range cookies {
-			if cookie.MaxAge > 0 {
-				a.cookies = append(a.cookies, cookie)
-			}
+	resCookies := response.Cookies()
+	cookies := make([]*http.Cookie, 0, len(resCookies))
+	for _, cookie := range resCookies {
+		if cookie.MaxAge > 0 {
+			cookies = append(cookies, cookie)
 		}
 	}
 
-	return nil
+	ctx = setResponseBody(ctx, responseBody)
+	ctx = setResponseBodyOutput(ctx, responseBodyOutput)
+	ctx = setResponseStatusCode(ctx, response.StatusCode)
+	ctx = setCookies(ctx, cookies)
+
+	return ctx, nil
 }
 
 // getRequestURL applies template uri to last response data.
-func (a *ApiClient) getRequestURL(uri string) (string, error) {
-	b, err := a.executeTemplate(uri)
+func (a *ApiClient) getRequestURL(ctx context.Context, uri string) (string, error) {
+	b, err := a.templater.Execute(ctx, uri)
 	if err != nil {
 		return "", err
 	}
@@ -1219,94 +1316,8 @@ func (a *ApiClient) getRequestURL(uri string) (string, error) {
 }
 
 // getRequestBody executes template body.
-func (a *ApiClient) getRequestBody(body string) (io.Reader, error) {
-	return a.executeTemplate(body)
-}
-
-// executeTemplate executes provided template with last response data and time functions.
-func (a *ApiClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
-	t, err := template.New("tpl").
-		Option("missingkey=error").
-		Funcs(template.FuncMap{
-			"now": func() int64 {
-				return time.Now().Unix()
-			},
-			"nowAdd": func(s string) (int64, error) {
-				d, err := libtypes.ParseDurationWithUnit(s)
-				if err != nil {
-					return 0, err
-				}
-
-				return d.AddTo(libtypes.NewCpsTime()).Unix(), nil
-			},
-			"nowDate": func() int64 {
-				y, m, d := time.Now().UTC().Date()
-
-				return time.Date(y, m, d, 0, 0, 0, 0, time.UTC).Unix()
-			},
-			"nowDateAdd": func(s string) (int64, error) {
-				d, err := libtypes.ParseDurationWithUnit(s)
-				if err != nil {
-					return 0, err
-				}
-
-				year, month, day := time.Now().UTC().Date()
-				now := libtypes.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, time.UTC)}
-
-				return d.AddTo(now).Unix(), nil
-			},
-			"parseTime": func(s string) (int64, error) {
-				t, err := time.ParseInLocation("02-01-2006 15:04", s, time.UTC)
-				if err != nil {
-					return 0, err
-				}
-
-				return t.Unix(), nil
-			},
-			"sumTime": func(args ...interface{}) (int64, error) {
-				var sum int64
-				for _, arg := range args {
-					switch v := arg.(type) {
-					case string:
-						i, err := strconv.Atoi(v)
-						if err != nil {
-							return 0, err
-						}
-
-						sum += int64(i)
-					case int:
-						sum += int64(v)
-					case int64:
-						sum += v
-					default:
-						return 0, fmt.Errorf("unexpected type %T of argument %v", arg, arg)
-					}
-				}
-
-				return sum, nil
-			},
-		}).
-		Parse(tpl)
-	if err != nil {
-		return nil, fmt.Errorf("cannot parse template: %w", err)
-	}
-
-	data := map[string]interface{}{
-		"lastResponse": a.responseBody,
-		"apiURL":       a.url,
-	}
-
-	for k, v := range a.vars {
-		data[k] = v
-	}
-
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, data)
-	if err != nil {
-		return nil, fmt.Errorf("cannot execute template: %w", err)
-	}
-
-	return buf, nil
+func (a *ApiClient) getRequestBody(ctx context.Context, body string) (io.Reader, error) {
+	return a.templater.Execute(ctx, body)
 }
 
 // getPartialResponse removes fields from received which are not presented in expected.

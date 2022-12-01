@@ -1,9 +1,10 @@
 Feature: Durations of an alarm
   I need to be able to get durations of an alarm
 
+  @concurrent
   Scenario: given new alarm should get alarm durations
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -16,7 +17,6 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-1"
     }
     """
-    When I wait the end of event processing
     When I wait 2s
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-1
     Then the response code should be 200
@@ -25,7 +25,7 @@ Feature: Durations of an alarm
     When I save response expectedDuration=2
     Then "duration" >= "expectedDuration"
     Then "currentStateDuration" >= "expectedDuration"
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -38,7 +38,6 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-1"
     }
     """
-    When I wait the end of event processing
     When I wait 1s
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-1
     Then the response code should be 200
@@ -62,9 +61,10 @@ Feature: Durations of an alarm
     }
     """
 
+  @concurrent
   Scenario: given resolved alarm should get alarm durations
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -77,9 +77,8 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-2"
     }
     """
-    When I wait the end of event processing
     When I wait 2s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -92,9 +91,8 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-2"
     }
     """
-    When I wait the end of event processing
     When I wait 1s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "cancel",
@@ -106,8 +104,7 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-2"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "resolve_cancel",
@@ -119,7 +116,6 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-2"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-2
     Then the response code should be 200
     When I save response duration={{ ( index .lastResponse.data 0 ).v.duration }}
@@ -159,9 +155,10 @@ Feature: Durations of an alarm
     }
     """
 
+  @concurrent
   Scenario: given unsnooze event should update alarm snooze duration
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -174,8 +171,7 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-3"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "snooze",
@@ -188,7 +184,6 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-3
     Then the response code should be 200
     Then the response body should contain:
@@ -203,16 +198,27 @@ Feature: Durations of an alarm
       ]
     }
     """
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "unsnooze",
+      "connector" : "test-connector-axe-duration-3",
+      "connector_name" : "test-connector-name-axe-duration-3",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-duration-3",
+      "resource" : "test-resource-axe-duration-3"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-3
     Then the response code should be 200
     When I save response snoozeDuration={{ ( index .lastResponse.data 0 ).v.snooze_duration }}
     When I save response expectedSnoozeDuration=2
     Then "snoozeDuration" >= "expectedSnoozeDuration"
 
+  @concurrent
   Scenario: given snooze event should update alarm snooze duration on resolve
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -225,8 +231,7 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-4"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "snooze",
@@ -239,9 +244,8 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-4"
     }
     """
-    When I wait the end of event processing
     When I wait 2s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "cancel",
@@ -253,8 +257,7 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-4"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "resolve_cancel",
@@ -266,7 +269,6 @@ Feature: Durations of an alarm
       "output" : "test-output-axe-duration-4"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-duration-4
     Then the response code should be 200
     When I save response snoozeDuration={{ ( index .lastResponse.data 0 ).v.snooze_duration }}
