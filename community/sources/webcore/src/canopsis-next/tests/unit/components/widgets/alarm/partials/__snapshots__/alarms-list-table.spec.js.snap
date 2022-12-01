@@ -327,7 +327,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 </div>
 `;
 
-exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown 1`] = `
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = false 1`] = `
 <div
   class="flex white"
 >
@@ -339,10 +339,44 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table theme--light"
+          class="v-datatable v-table v-datatable--select-all theme--light"
         >
           <thead>
             <tr>
+              <th>
+                <div
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+                >
+                  <div
+                    class="v-input__control"
+                  >
+                    <div
+                      class="v-input__slot"
+                    >
+                      <div
+                        class="v-input--selection-controls__input"
+                      >
+                        <input
+                          aria-checked="false"
+                          disabled="disabled"
+                          role="checkbox"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div
+                          class="v-input--selection-controls__ripple"
+                        />
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          check_box_outline_blank
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </th>
               <th
                 aria-label=""
                 aria-sort="none"
@@ -381,7 +415,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
             >
               <th
                 class="column"
-                colspan="2"
+                colspan="3"
               />
             </tr>
           </thead>
@@ -389,7 +423,117 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
             <tr>
               <td
                 class="text-xs-center"
-                colspan="2"
+                colspan="3"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = true 1`] = `
+<div
+  class="flex white"
+>
+  <div>
+    <div
+      class="alarms-list-table columns-sm alarms-list-table__selecting"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table v-datatable--select-all theme--light"
+        >
+          <thead>
+            <tr>
+              <th>
+                <div
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+                >
+                  <div
+                    class="v-input__control"
+                  >
+                    <div
+                      class="v-input__slot"
+                    >
+                      <div
+                        class="v-input--selection-controls__input"
+                      >
+                        <input
+                          aria-checked="false"
+                          disabled="disabled"
+                          role="checkbox"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div
+                          class="v-input--selection-controls__ripple"
+                        />
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          check_box_outline_blank
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </th>
+              <th
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="3"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="text-xs-center"
+                colspan="3"
               >
                 No data available
               </td>
