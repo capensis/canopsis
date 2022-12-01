@@ -35,10 +35,18 @@ type ImportQuery struct {
 	Source string `form:"source" binding:"required"`
 }
 
-// ImportRequest is used only for swagger docs.
-type ImportRequest struct {
+// OldImportRequest is used only for swagger docs.
+type OldImportRequest struct {
 	Json struct {
 		Cis   []importcontextgraph.OldConfigurationItem `json:"cis"`
 		Links []importcontextgraph.Link                 `json:"links"`
+	} `json:"json"`
+}
+
+// ImportRequest is used only for swagger docs.
+type ImportRequest struct {
+	Json struct {
+		Cis   []importcontextgraph.ConfigurationItem `json:"cis"`
+		Links []importcontextgraph.Link              `json:"links"`
 	} `json:"json"`
 }

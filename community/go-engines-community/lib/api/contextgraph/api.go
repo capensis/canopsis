@@ -112,7 +112,7 @@ func (a *api) ImportPartial(c *gin.Context) {
 }
 
 // ImportOldAll
-// @Param body body ImportRequest true "body"
+// @Param body body OldImportRequest true "body"
 // @Success 200 {object} ImportResponse
 func (a *api) ImportOldAll(c *gin.Context) {
 	query := ImportQuery{}
@@ -143,7 +143,7 @@ func (a *api) ImportOldAll(c *gin.Context) {
 }
 
 // ImportOldPartial
-// @Param body body ImportRequest true "body"
+// @Param body body OldImportRequest true "body"
 // @Success 200 {object} ImportResponse
 func (a *api) ImportOldPartial(c *gin.Context) {
 	query := ImportQuery{}

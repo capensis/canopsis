@@ -27,7 +27,7 @@ Feature: new-import entities
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do PUT /api/v4/contextgraph/new-import-partial?source=test-new-import-partial-1-source:
+    When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-1-source:
     """json
     {
       "cis": [
@@ -111,7 +111,7 @@ Feature: new-import entities
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
     When I wait the end of 2 events processing
-    When I do PUT /api/v4/contextgraph/new-import-partial?source=test-new-import-partial-2-source:
+    When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-2-source:
     """json
     {
       "cis": [
@@ -208,7 +208,7 @@ Feature: new-import entities
       }
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import-partial?source=test-new-import-partial-3-source:
+    When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-3-source:
     """json
     {
       "cis": [
@@ -279,7 +279,7 @@ Feature: new-import entities
       }
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import-partial?source=test-new-import-partial-4-source:
+    When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-4-source:
     """json
     {
       "cis": [
@@ -385,7 +385,7 @@ Feature: new-import entities
       }
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import-partial?source=test-new-import-partial-5-source:
+    When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-5-source:
     """json
     {
       "cis": [
