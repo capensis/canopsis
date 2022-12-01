@@ -4,8 +4,8 @@ import (
 	"bytes"
 	crand "crypto/rand"
 	"fmt"
-	"io/ioutil"
 	"math/big"
+	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -37,7 +37,7 @@ func ApplyTranslation(element interface{}, key, formatString string) (string, er
 
 // ReadFile handles opening and reading file at given path
 func ReadFile(path string) ([]byte, error) {
-	source, err := ioutil.ReadFile(path)
+	source, err := os.ReadFile(path)
 	if err != nil {
 		return []byte{}, fmt.Errorf("read file: %v", err)
 	}
