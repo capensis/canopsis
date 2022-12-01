@@ -18,8 +18,10 @@ stage_test:
   script:
     - set
     - ./build-docker.sh
-
-
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - community/{build*,.gitlab-ci.yml,{docker*,sources/{canopsis,db-conf,functional_testing,webcore}}/**/*}
   artifacts:
     paths:
       #- tests_report
