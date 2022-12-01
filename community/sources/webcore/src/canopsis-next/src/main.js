@@ -62,6 +62,7 @@ import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
  */
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 import CAlarmTagChip from '@/components/common/chips/c-alarm-tag-chip.vue';
+import CAlarmTagsChips from '@/components/common/chips/c-alarm-tags-chips.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
@@ -124,7 +125,7 @@ import CColorIndicatorField from '@/components/forms/fields/color/c-color-indica
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
-import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue';
+import CRoleField from '@/components/forms/fields/c-role-field.vue';
 import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue';
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
@@ -168,7 +169,6 @@ import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
 import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
-import CPatternExtraInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-extra-infos-attribute-field.vue';
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
 import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-field.vue';
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
@@ -318,6 +318,7 @@ Vue.component('alarms-list-table', AlarmsListTable);
 /* Global custom canopsis components */
 Vue.component('c-alarm-chip', CAlarmChip);
 Vue.component('c-alarm-tag-chip', CAlarmTagChip);
+Vue.component('c-alarm-tags-chips', CAlarmTagsChips);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
 Vue.component('c-engine-chip', CEngineChip);
@@ -375,7 +376,7 @@ Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
 Vue.component('c-no-events-icon', CNoEventsIcon);
-Vue.component('c-role-picker-field', CRolePickerField);
+Vue.component('c-role-field', CRoleField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);
@@ -415,7 +416,6 @@ Vue.component('c-contextmenu', CContextmenu);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
-Vue.component('c-pattern-extra-infos-attribute-field', CPatternExtraInfosAttributeField);
 Vue.component('c-pattern-operator-field', CPatternOperatorField);
 Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);

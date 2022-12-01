@@ -24,6 +24,8 @@ const (
 
 	prefetchCount = 10000
 	prefetchSize  = 0
+
+	defaultLocation = "Europe/Paris"
 )
 
 func main() {

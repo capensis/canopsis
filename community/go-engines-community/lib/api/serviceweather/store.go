@@ -30,6 +30,7 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
+		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
 
 		alarmStore:   alarmStore,
@@ -37,13 +38,12 @@ func NewStore(
 
 		timezoneConfigProvider: timezoneConfigProvider,
 
-		queryBuilder: NewMongoQueryBuilder(dbClient),
-
 		logger: logger,
 	}
 }
 
 type store struct {
+	dbClient     mongo.DbClient
 	dbCollection mongo.DbCollection
 
 	linksFetcher common.LinksFetcher
@@ -51,13 +51,11 @@ type store struct {
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
-	queryBuilder *MongoQueryBuilder
-
 	logger zerolog.Logger
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline, err := s.queryBuilder.CreateListAggregationPipeline(ctx, r)
+	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +94,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 
 	location := s.timezoneConfigProvider.Get().Location
 	now := libtypes.CpsTime{Time: time.Now().In(location)}
-	pipeline, err := s.queryBuilder.CreateListDependenciesAggregationPipeline(service.Depends, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListDependenciesAggregationPipeline(service.Depends, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -201,4 +199,8 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *EntityAggr
 	}
 
 	return nil
+}
+
+func (s *store) getQueryBuilder() *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.dbClient)
 }

@@ -12,7 +12,7 @@
           v-icon(color="error", small) close
     v-fade-transition
       v-card-text.pa-2
-        v-runtime-template(:template="popupTextContent")
+        v-runtime-template(:template="popupTextContent", :template-props="{ alarm }")
 </template>
 
 <script>

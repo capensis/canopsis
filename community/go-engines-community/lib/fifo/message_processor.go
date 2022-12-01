@@ -70,7 +70,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}()
 
 	event.Format()
-	p.StatsSender.Add(event.Timestamp.Unix(), true)
+	p.StatsSender.Add(time.Now().Unix(), true)
 
 	err = event.InjectExtraInfos(msg)
 	if err != nil {

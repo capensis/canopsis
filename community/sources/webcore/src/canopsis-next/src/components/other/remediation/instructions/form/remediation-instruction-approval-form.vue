@@ -14,12 +14,12 @@
         v-flex(xs6)
           remediation-instruction-approval-type-field(v-field="approval.type", @input="resetErrors")
         v-flex(xs5)
-          c-role-picker-field(
+          c-role-field(
             v-show="isRoleType",
             v-field="approval.role",
             :required="isRoleType",
             :name="roleFieldName",
-            :label="$tc('common.role')"
+            autocomplete
           )
           c-user-picker-field(
             v-show="!isRoleType",

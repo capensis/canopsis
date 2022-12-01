@@ -78,7 +78,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-1-resource&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -236,17 +236,33 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-2-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-2-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-2-resource-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-2-resource-new"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 3
       }
     }
     """
@@ -266,7 +282,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-2-resource&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -465,7 +481,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-3-resource&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -476,13 +492,23 @@ Feature: correlation feature - complex rule with threshold rate
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-3"
           }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-3-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-3-resource-2"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 3
       }
     }
     """
@@ -656,7 +682,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-4-resource&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -701,7 +727,7 @@ Feature: correlation feature - complex rule with threshold rate
           "sort_by": "v.resource",
           "sort": "asc"
         }
-      }      
+      }
     ]
     """
     Then the response code should be 207
@@ -869,7 +895,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-5-resource&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -880,13 +906,18 @@ Feature: correlation feature - complex rule with threshold rate
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-5"
           }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-5-resource-1"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -1047,17 +1078,33 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-6-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-6-resource-2-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-6-resource-2-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-6-resource-2-3"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 3
       }
     }
     """
@@ -1077,7 +1124,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-6-resource&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1151,7 +1198,7 @@ Feature: correlation feature - complex rule with threshold rate
                   "component":  "test-complex-rule-rate-6-component",
                   "resource": "test-complex-rule-rate-6-resource-2-4"
                 }
-              }              
+              }
             ],
             "meta": {
               "page": 1,
@@ -1215,7 +1262,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-1&active_columns[]=v.meta&correlation=true    
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1348,12 +1395,12 @@ Feature: correlation feature - complex rule with threshold rate
     When I send an event:
     """json
     {
-      "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
+      "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
       "connector_name": "test-complex-rule-rate-backward-compatibility-2-connectorname",
       "source_type": "resource",
       "event_type": "check",
-      "component":  "test-complex-rule-rate-backward-compatibility-1-component",
-      "resource": "test-complex-rule-rate-backward-compatibility-1-resource-3",
+      "component":  "test-complex-rule-rate-backward-compatibility-2-component",
+      "resource": "test-complex-rule-rate-backward-compatibility-2-resource-3",
       "state": 2,
       "output": "test",
       "long_output": "test",
@@ -1361,17 +1408,33 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-backward-compatibility-2-resource-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-backward-compatibility-2-resource-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-complex-rule-rate-backward-compatibility-2-resource-3"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 3
       }
     }
     """
@@ -1391,7 +1454,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1548,7 +1611,7 @@ Feature: correlation feature - complex rule with threshold rate
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-7-resource&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json

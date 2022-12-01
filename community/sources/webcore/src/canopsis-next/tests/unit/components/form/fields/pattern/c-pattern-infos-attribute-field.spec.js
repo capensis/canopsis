@@ -34,6 +34,7 @@ describe('c-pattern-infos-attribute-field', () => {
     const wrapper = factory({
       propsData: {
         value,
+        combobox: true,
       },
     });
     const dictionarySelect = selectDictionarySelect(wrapper);
@@ -61,6 +62,7 @@ describe('c-pattern-infos-attribute-field', () => {
     const wrapper = factory({
       propsData: {
         value,
+        combobox: true,
       },
     });
     const fieldSelect = selectFieldSelect(wrapper);
@@ -78,6 +80,21 @@ describe('c-pattern-infos-attribute-field', () => {
       dictionary: value.dictionary,
       field: newField,
     });
+  });
+
+  it('Renders `c-pattern-infos-attribute-field` with default props and combobox', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: {
+          dictionary: '',
+          field: '',
+        },
+        combobox: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
   it('Renders `c-pattern-infos-attribute-field` with default props', () => {
@@ -109,6 +126,30 @@ describe('c-pattern-infos-attribute-field', () => {
         ],
         name: 'custom_filter_infos_attribute_name',
         disabled: true,
+        combobox: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
+  });
+
+  it('Renders `c-pattern-infos-attribute-field` with custom props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: {
+          dictionary: 'Test text',
+          field: 'test',
+        },
+        label: 'Custom label',
+        items: [
+          {
+            value: 'Test text',
+          },
+        ],
+        name: 'custom_filter_infos_attribute_name',
+        disabled: true,
+        combobox: true,
       },
     });
 
