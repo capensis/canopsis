@@ -7,12 +7,11 @@ import (
 	"io"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"github.com/valyala/fastjson"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/valyala/fastjson"
 )
 
 // SetAuthor middleware sets authorized user id to author field to request body. Use it for create and update model endpoints.
