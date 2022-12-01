@@ -34,3 +34,5 @@ stage_test:
     paths:
       #- tests_report
 
+create_release:
+  extends: .create_release
