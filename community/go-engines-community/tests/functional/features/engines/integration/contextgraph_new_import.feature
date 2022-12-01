@@ -1,7 +1,7 @@
 Feature: new-import entities
   I need to be able to new-import entities
 
-  Scenario: given service and new entity by new-import should update service
+  Scenario: given service and new entity by new import should update service
     When I am admin
     When I do POST /api/v4/entityservices:
     """json
@@ -71,7 +71,7 @@ Feature: new-import entities
     }
     """
 
-  Scenario: given service and updated entity by new-import should update service
+  Scenario: given service and updated entity by new import should update service
     When I am admin
     When I send an event:
     """json
@@ -173,7 +173,7 @@ Feature: new-import entities
     }
     """
 
-  Scenario: given disabled entity by new-import should resolve alarm
+  Scenario: given disabled entity by new import should resolve alarm
     When I am admin
     When I send an event:
     """json
@@ -924,7 +924,7 @@ Feature: new-import entities
     ]
     """
 
-  Scenario: given delete import action should delete component and resources which should resolve alarm
+  Scenario: given delete import action should delete component and resources which should resolve metaalarm
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
     """json
