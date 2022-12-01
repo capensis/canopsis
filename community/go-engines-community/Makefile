@@ -42,7 +42,7 @@ DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
-VERSION ?= $(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
+VERSION ?= $(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
