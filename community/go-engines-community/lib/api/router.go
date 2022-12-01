@@ -190,7 +190,13 @@ func RegisterRoutes(
 
 		protected.Group("/ws").GET("", websocket.NewApi(websocketHub).Handler)
 
-		protected.GET("/account/me", account.NewApi(account.NewStore(dbClient)).Me)
+		accountRouter := protected.Group("/account/me")
+		{
+			accountRouter.Use(middleware.OnlyAuth())
+			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
+			accountRouter.GET("", accountAPI.Me)
+			accountRouter.PUT("", accountAPI.Update)
+		}
 		protected.GET("/logged-user-count", authApi.GetLoggedUserCount)
 		protected.GET("/file-access", authApi.GetFileAccess)
 
@@ -867,7 +873,7 @@ func RegisterRoutes(
 			)
 			widgetFilterRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer), // keep PermissionRead for private filters
 				middleware.SetAuthor(),
 				widgetFilterAPI.Create,
 			)
@@ -878,7 +884,7 @@ func RegisterRoutes(
 			)
 			widgetFilterRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer), // keep PermissionRead for private filters
 				middleware.SetAuthor(),
 				widgetFilterAPI.Update,
 			)
@@ -888,6 +894,12 @@ func RegisterRoutes(
 				widgetFilterAPI.Delete,
 			)
 		}
+
+		protected.PUT(
+			"/widget-filter-positions",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			widgetFilterAPI.UpdatePositions,
+		)
 
 		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(dbClient), actionLogger)
 		viewGroupRouter := protected.Group("/view-groups")

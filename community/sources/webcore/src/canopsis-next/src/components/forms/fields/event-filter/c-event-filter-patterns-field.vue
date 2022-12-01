@@ -12,6 +12,7 @@
 <script>
 import {
   BASIC_ENTITY_TYPES,
+  ENTITIES_STATES,
   EVENT_ENTITY_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_SOURCE_TYPES,
@@ -53,6 +54,9 @@ export default {
         PATTERN_OPERATORS.notEqual,
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
+        PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
@@ -144,12 +148,19 @@ export default {
 
     eventTypeOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
+        ],
         valueField: {
-          is: 'c-select-field',
+          is: 'v-combobox',
           props: {
             items: this.eventTypes,
-            ellipsis: true,
+            returnObject: false,
+            combobox: true,
           },
         },
       };
@@ -170,12 +181,33 @@ export default {
 
     sourceTypeOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
+        ],
         valueField: {
           is: 'c-select-field',
           props: {
             items: this.sourceTypes,
           },
+        },
+      };
+    },
+
+    stateOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.higher,
+          PATTERN_OPERATORS.lower,
+        ],
+        defaultValue: ENTITIES_STATES.ok,
+        valueField: {
+          is: 'c-entity-state-field',
         },
       };
     },
@@ -186,6 +218,11 @@ export default {
           text: this.$t('common.eventType'),
           value: EVENT_FILTER_PATTERN_FIELDS.eventType,
           options: this.eventTypeOptions,
+        },
+        {
+          text: this.$t('common.state'),
+          value: EVENT_FILTER_PATTERN_FIELDS.state,
+          options: this.stateOptions,
         },
         {
           text: this.$t('common.sourceType'),
@@ -220,6 +257,10 @@ export default {
           text: this.$tc('common.extraInfo'),
           value: EVENT_FILTER_PATTERN_FIELDS.extraInfos,
           options: this.extraInfosOptions,
+        },
+        {
+          text: this.$t('common.longOutput'),
+          value: EVENT_FILTER_PATTERN_FIELDS.longOutput,
         },
       ];
     },

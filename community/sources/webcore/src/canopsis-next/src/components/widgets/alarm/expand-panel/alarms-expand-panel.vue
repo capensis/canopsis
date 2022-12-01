@@ -109,6 +109,7 @@ import {
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -266,7 +267,7 @@ export default {
       return this.fetchAlarmDetails({
         widgetId: this.widget._id,
         id: this.alarm._id,
-        query: this.query,
+        query: convertAlarmDetailsQueryToRequest(this.query),
       });
     },
   },
