@@ -183,6 +183,7 @@ describe('alarms-list-table', () => {
         widget: defaultWidget,
         alarms: [],
         stickyHeader: true,
+        selectable: true,
       },
     });
 
@@ -517,13 +518,32 @@ describe('alarms-list-table', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown', async () => {
+  it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = false', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         widget: defaultWidget,
         alarms: [],
         columns,
+        selectable: true,
+      },
+    });
+
+    triggerWindowKeyboardEvent('keydown', { key: 'Control' });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = true', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        widget: defaultWidget,
+        alarms: [],
+        columns,
+        selectable: true,
       },
     });
 

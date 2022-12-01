@@ -158,6 +158,10 @@ export default {
       }
     },
 
+    async removeWithoutStore(context, { id }) {
+      return request.delete(`${API_ROUTES.pbehavior.pbehaviors}/${id}`);
+    },
+
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.pbehavior.bulkPbehaviors, { data });
     },
