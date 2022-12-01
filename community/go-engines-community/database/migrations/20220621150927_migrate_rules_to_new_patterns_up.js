@@ -153,6 +153,26 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     cond: timeCond,
                                 });
                                 break;
+                            case "activation_date":
+                                if (vValue === null) {
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: {
+                                            type: "exist",
+                                            value: false,
+                                        },
+                                    });
+                                } else {
+                                    var timeCond = migrateOldTimePattern(vValue)
+                                    if (!timeCond) {
+                                        return null;
+                                    }
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: timeCond,
+                                    });
+                                }
+                                break;
                             case "last_update_date":
                             case "last_event_date":
                             case "resolved":
@@ -252,7 +272,6 @@ function migrateOldEventPatterns(oldEventPatterns) {
                 case "perf_data":
                 case "status":
                 case "timestamp":
-                case "state_type":
                 case "author":
                 case "routing_key":
                 case "ack_resources":
@@ -271,7 +290,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                                 value: false,
                             },
                         });
-                    } else if (typeof value === "number") {
+                    } else if (typeof value === "number" || value instanceof NumberLong) {
                         newGroup.push({
                             field: newField,
                             field_type: "int",
@@ -435,7 +454,7 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
             field: stepField,
             cond: {
                 type: "exist",
-                value: "false"
+                value: false
             }
         };
     }
@@ -519,7 +538,7 @@ function migrateOldIntPattern(oldIntPattern) {
         };
     }
 
-    if (typeof oldIntPattern === "number") {
+    if (typeof oldIntPattern === "number" || oldIntPattern instanceof NumberLong) {
         return {
             type: "eq",
             value: oldIntPattern,
