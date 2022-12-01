@@ -1,11 +1,9 @@
 <template lang="pug">
   div
     v-tooltip(v-if="isEnabled", :disabled="!text", right)
-      div.color-indicator.white--text(
-        slot="activator",
-        :style="{ backgroundColor: color }"
-      )
-        slot {{ value }}
+      template(#activator="{ on }")
+        div.color-indicator.white--text(v-on="on", :style="{ backgroundColor: color }")
+          slot {{ value }}
       span {{ text }}
     slot(v-else)
 </template>
