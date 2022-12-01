@@ -6,19 +6,13 @@ import (
 	"strings"
 	"time"
 
-	libmongo "go.mongodb.org/mongo-driver/mongo"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
-
-	"go.mongodb.org/mongo-driver/bson"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
+	libmongo "go.mongodb.org/mongo-driver/mongo"
 )
 
 type softDeletePeriodicalWorker struct {
