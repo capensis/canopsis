@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 	}
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest("POST", okURL, ioutil.NopCloser(bytes.NewBuffer(noAuthorEncodedBody)))
+	req := httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(noAuthorEncodedBody)))
 
 	router := gin.New()
 	router.POST(
@@ -86,7 +87,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	}
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest("POST", okURL, ioutil.NopCloser(bytes.NewBuffer(noAuthorEncodedBody)))
+	req := httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(noAuthorEncodedBody)))
 
 	router := gin.New()
 	router.POST(
@@ -145,7 +146,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(valid)
-	req := httptest.NewRequest("POST", okURL, ioutil.NopCloser(bytes.NewBuffer(body)))
+	req := httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(body)))
 
 	router := gin.New()
 	router.POST(
@@ -180,7 +181,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	}
 
 	body, _ = json.Marshal(invalid)
-	req = httptest.NewRequest("POST", okURL, ioutil.NopCloser(bytes.NewBuffer(body)))
+	req = httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(body)))
 
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)

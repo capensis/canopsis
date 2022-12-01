@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/valyala/fastjson"
-	"io"
-	"io/ioutil"
-	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"github.com/gin-gonic/gin"
@@ -38,7 +38,7 @@ func SetAuthor() func(c *gin.Context) {
 			panic(err)
 		}
 
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(encodedStr))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(encodedStr))
 
 		c.Next()
 	}
@@ -78,7 +78,7 @@ func PreProcessBulk(cfg config.CanopsisConf, addAuthor bool) func(c *gin.Context
 			}
 		}
 
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonValue.MarshalTo(nil)))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonValue.MarshalTo(nil)))
 
 		c.Next()
 	}
