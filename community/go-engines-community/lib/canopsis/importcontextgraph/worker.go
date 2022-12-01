@@ -600,10 +600,6 @@ func (w *worker) createEntity(ci ConfigurationItem) mongo.WriteModel {
 		ci.Infos = make(map[string]types.Info)
 	}
 
-	if ci.Measurements == nil {
-		ci.Measurements = make([]interface{}, 0)
-	}
-
 	now := types.CpsTime{Time: time.Now()}
 
 	return mongo.NewUpdateOneModel().

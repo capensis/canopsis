@@ -1093,9 +1093,9 @@ func RegisterRoutes(
 			)
 		}
 
+		contextGraphAPI := contextgraph.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		contextGraphRouter := protected.Group("/contextgraph")
 		{
-			contextGraphAPI := contextgraph.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 			contextGraphRouter.PUT(
 				"new-import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
@@ -1122,6 +1122,17 @@ func RegisterRoutes(
 				contextGraphAPI.Status,
 			)
 		}
+
+		protected.PUT(
+			"contextgraph-import",
+			middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+			contextGraphAPI.ImportAll,
+		)
+		protected.PUT(
+			"contextgraph-import-partial",
+			middleware.Authorize(authObjContextGraph, permCreate, enforcer),
+			contextGraphAPI.ImportPartial,
+		)
 
 		stateSettingsRouter := protected.Group("/state-settings")
 		{

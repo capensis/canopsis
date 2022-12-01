@@ -43,7 +43,6 @@ type ConfigurationItem struct {
 	Impact         []string              `json:"-" bson:"impact"`
 	Component      string                `json:"component" bson:"component,omitempty"`
 	EnableHistory  []int64               `json:"-" bson:"enable_history"`
-	Measurements   []interface{}         `json:"measurements" bson:"measurements"`
 	EntityPattern  pattern.Entity        `json:"entity_pattern,omitempty" bson:"entity_pattern"`
 	OutputTemplate string                `json:"output_template,omitempty" bson:"output_template"`
 	Infos          map[string]types.Info `json:"infos" bson:"infos"`

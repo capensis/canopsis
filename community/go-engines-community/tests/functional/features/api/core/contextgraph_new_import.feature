@@ -2,17 +2,17 @@ Feature: New import entities
   I need to be able to import entities
 
   Scenario: given unauthorized import request
-    When I do PUT /api/v4/contextgraph/new-import
+    When I do PUT /api/v4/contextgraph-import
     Then the response code should be 401
 
   Scenario: given import request without permissions
     When I am noperms
-    When I do PUT /api/v4/contextgraph/new-import
+    When I do PUT /api/v4/contextgraph-import
     Then the response code should be 403
 
   Scenario: given set import requests should create new entities and context graph
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-set:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
     {
       "json": {
@@ -174,7 +174,7 @@ Feature: New import entities
       "impact": []
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-set:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
     {
       "json": {
@@ -257,7 +257,7 @@ Feature: New import entities
     
   Scenario: given set import request should create component with resource config
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-set:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
     {
       "json": {
@@ -389,7 +389,7 @@ Feature: New import entities
 
   Scenario: given set import requests should create and update component_infos
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-update:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-update:
     """json
     {
       "json": {
@@ -517,7 +517,7 @@ Feature: New import entities
       "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-update:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-update:
     """json
     {
       "json": {
@@ -620,7 +620,7 @@ Feature: New import entities
       "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-update:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-update:
     """json
     {
       "json": {
@@ -679,7 +679,7 @@ Feature: New import entities
 
   Scenario: given set import request without a name should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -719,7 +719,7 @@ Feature: New import entities
       "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -760,7 +760,7 @@ Feature: New import entities
 
   Scenario: given enable import when entity doesn't exist should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -801,7 +801,7 @@ Feature: New import entities
       "impact_level": 1
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -866,7 +866,7 @@ Feature: New import entities
       "enabled": true
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -920,7 +920,7 @@ Feature: New import entities
 
   Scenario: given disable import when entity doesn't exist should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -950,7 +950,7 @@ Feature: New import entities
 
   Scenario: given create import request when patterns not for a service should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -987,7 +987,7 @@ Feature: New import entities
 
   Scenario: given create import request with wrong type should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -1024,7 +1024,7 @@ Feature: New import entities
 
   Scenario: given create import request should calculate context graph for entity service
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -1217,7 +1217,7 @@ Feature: New import entities
 
   Scenario: given set import when component is deleted for the created resource should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -1255,7 +1255,7 @@ Feature: New import entities
 
   Scenario: given set import with when component is disabled for the created resource should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -1293,7 +1293,7 @@ Feature: New import entities
 
   Scenario: given set import with when component is already disabled for the created resource should be failed
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -1319,7 +1319,7 @@ Feature: New import entities
 
   Scenario: given delete import should delete resource
     When I am admin
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
@@ -1401,7 +1401,7 @@ Feature: New import entities
       "_id": "test-entity-contextgraph-new-import-resource-to-delete-2-2/test-entity-contextgraph-new-import-component-to-delete-2"
     }
     """
-    When I do PUT /api/v4/contextgraph/new-import?source=test-new-import-source:
+    When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
     {
       "json": {
