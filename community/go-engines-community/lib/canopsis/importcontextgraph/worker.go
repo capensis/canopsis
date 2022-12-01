@@ -663,7 +663,7 @@ func (w *worker) deleteEntity(id string) []mongo.WriteModel {
 
 func (w *worker) updateComponentInfos(componentID string, infos map[string]types.Info) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
-		SetFilter(bson.M{"type": types.EntityTypeResource, "impact": componentID}).
+		SetFilter(bson.M{"type": types.EntityTypeResource, "component": componentID}).
 		SetUpdate(bson.M{"$set": bson.M{"component_infos": infos}})
 }
 
