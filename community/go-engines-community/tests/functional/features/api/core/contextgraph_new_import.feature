@@ -766,7 +766,7 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "name": "test-entity-contextgraph-import-to-set-not-exist",
+            "name": "test-entity-contextgraph-new-import-to-set-not-exist",
             "type": "component",
             "infos": {
               "new_info": {
@@ -1030,7 +1030,7 @@ Feature: New import entities
       "json": {
         "cis": [
           {
-            "name": "SC004C",
+            "name": "component_SC004C",
             "type": "component",
             "infos": {},
             "action": "set",
@@ -1038,7 +1038,7 @@ Feature: New import entities
           },
           {
             "name": "script_new-import_service",
-            "component": "SC004C",
+            "component": "component_SC004C",
             "type": "resource",
             "infos": {},
             "action": "set",
@@ -1046,7 +1046,7 @@ Feature: New import entities
           },
           {
             "name": "script_new-import_service_2",
-            "component": "SC004C",
+            "component": "component_SC004C",
             "type": "resource",
             "infos": {},
             "action": "set",
@@ -1082,37 +1082,37 @@ Feature: New import entities
       "status": "done"
     }
     """
-    When I do GET /api/v4/entitybasics?_id=SC004C
+    When I do GET /api/v4/entitybasics?_id=component_SC004C
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "SC004C",
+      "_id": "component_SC004C",
       "enabled": true,
       "impact_level": 1,
       "infos": {},
-      "name": "SC004C",
+      "name": "component_SC004C",
       "type": "component"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=SC004C
+    When I do GET /api/v4/entities/context-graph?_id=component_SC004C
     Then the response code should be 200
     Then the response body should be:
     """json
     {
       "depends": [
-        "script_new-import_service/SC004C",
-        "script_new-import_service_2/SC004C"
+        "script_new-import_service/component_SC004C",
+        "script_new-import_service_2/component_SC004C"
       ],
       "impact": []
     }
     """
-    When I do GET /api/v4/entitybasics?_id=script_new-import_service/SC004C
+    When I do GET /api/v4/entitybasics?_id=script_new-import_service/component_SC004C
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "script_new-import_service/SC004C",
+      "_id": "script_new-import_service/component_SC004C",
       "enabled": true,
       "impact_level": 1,
       "infos": {},
@@ -1120,22 +1120,22 @@ Feature: New import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/SC004C until response code is 200 and body is:
+    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and body is:
     """json
     {
       "depends": [],
       "impact": [
-        "SC004C",
+        "component_SC004C",
         "test-entityservice-service-new-import"
       ]
     }
     """
-    When I do GET /api/v4/entitybasics?_id=script_new-import_service/SC004C
+    When I do GET /api/v4/entitybasics?_id=script_new-import_service/component_SC004C
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "script_new-import_service/SC004C",
+      "_id": "script_new-import_service/component_SC004C",
       "enabled": true,
       "impact_level": 1,
       "infos": {},
@@ -1143,22 +1143,22 @@ Feature: New import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/SC004C until response code is 200 and body is:
+    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and body is:
     """json
     {
       "depends": [],
       "impact": [
-        "SC004C",
+        "component_SC004C",
         "test-entityservice-service-new-import"
       ]
     }
     """
-    When I do GET /api/v4/entitybasics?_id=script_new-import_service_2/SC004C
+    When I do GET /api/v4/entitybasics?_id=script_new-import_service_2/component_SC004C
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "script_new-import_service_2/SC004C",
+      "_id": "script_new-import_service_2/component_SC004C",
       "enabled": true,
       "impact_level": 1,
       "infos": {},
@@ -1166,14 +1166,14 @@ Feature: New import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service_2/SC004C
+    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service_2/component_SC004C
     Then the response code should be 200
     Then the response body should be:
     """json
     {
       "depends": [],
       "impact": [
-        "SC004C",
+        "component_SC004C",
         "test-entityservice-service-new-import"
       ]
     }
@@ -1208,8 +1208,8 @@ Feature: New import entities
     """json
     {
       "depends": [
-        "script_new-import_service/SC004C",
-        "script_new-import_service_2/SC004C"
+        "script_new-import_service/component_SC004C",
+        "script_new-import_service_2/component_SC004C"
       ],
       "impact": []
     }
