@@ -13,6 +13,7 @@ export const entitiesAlarmMixin = {
       getAlarmsListByWidgetId: 'getListByWidgetId',
       getAlarmsMetaByWidgetId: 'getMetaByWidgetId',
       getAlarmsPendingByWidgetId: 'getPendingByWidgetId',
+      getAlarmsFetchingParamsByWidgetId: 'getFetchingParamsByWidgetId',
     }),
 
     alarms() {
@@ -25,6 +26,10 @@ export const entitiesAlarmMixin = {
 
     alarmsPending() {
       return this.getAlarmsPendingByWidgetId(this.widget._id);
+    },
+
+    alarmsFetchingParams() {
+      return this.getAlarmsFetchingParamsByWidgetId(this.widget._id);
     },
   },
   methods: {

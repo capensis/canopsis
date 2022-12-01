@@ -271,7 +271,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
@@ -282,6 +282,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.ticket":
                 case "v.canceled":
                 case "v.snooze":
+                case "v.activation_date":
                     if (typeof value === "object" && value && typeof value["$exists"] === "boolean") {
                         newAlarmGroup.push({
                             field: field,
@@ -332,7 +333,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                         newAlarmGroup.push({
                             field: field,
                             cond: {
-                                type: "ne",
+                                type: "neq",
                                 value: value["$ne"],
                             },
                         });
@@ -495,7 +496,7 @@ function migrateOldGroupForEntityList(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
@@ -578,7 +579,7 @@ function migrateOldGroupForWeather(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
