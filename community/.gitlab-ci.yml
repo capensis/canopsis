@@ -3,9 +3,6 @@ stages:
 
 before_script:
   - cd community/
-  - uname -a
-  - docker -v
-  - git --no-pager show
 
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
@@ -27,10 +24,3 @@ stage_test:
     paths:
       #- tests_report
 
-after_script:
-  - cd community/
-  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
-  - sleep 10
-  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
-  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
-  - docker volume prune -f
