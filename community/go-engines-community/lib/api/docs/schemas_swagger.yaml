@@ -808,9 +808,11 @@ definitions:
         type: object
       remediation:
         properties:
-          accumulate_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
           delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_mod_stats_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
     type: object
