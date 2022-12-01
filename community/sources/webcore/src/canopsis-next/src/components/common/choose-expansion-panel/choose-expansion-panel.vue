@@ -1,5 +1,5 @@
 <template lang="pug">
-  .choose-expansion-panel
+  div.choose-expansion-panel
     v-expansion-panel.my-1
       v-expansion-panel-content.grey.darken-2.white--text(:class="{ error: errors.length }", lazy)
         template(#header="")

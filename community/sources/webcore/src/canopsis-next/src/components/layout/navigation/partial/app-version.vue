@@ -1,6 +1,7 @@
 <template lang="pug">
   v-tooltip(left)
-    div.version(slot="activator") {{ version }}
+    template(#activator="{ on }")
+      div.version(v-on="on") {{ version }}
     div
       div {{ $t('common.stack') }}:
         strong  {{ stack }}
