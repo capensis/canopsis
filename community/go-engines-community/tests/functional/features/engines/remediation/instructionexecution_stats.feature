@@ -254,17 +254,13 @@ Feature: update an instruction statistics
               ]
             }
           }
-        },
-        {
-          "executed_on": {{ .creationTime }},
-          "alarm": null
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -454,17 +450,13 @@ Feature: update an instruction statistics
           "alarm": {
             "_id": "{{ .alarm1ID }}"
           }
-        },
-        {
-          "executed_on": {{ .creationTime }},
-          "alarm": null
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -707,7 +699,7 @@ Feature: update an instruction statistics
       "ok_alarm_states": 1,
       "execution_count": 2,
       "successful": 1,
-      "avg_complete_time": 0,
+      "avg_complete_time": 2,
       "last_executed_on": {{ .execution1Time }},
       "name": "test-instruction-to-stats-update-3-name",
       "type": 0
@@ -737,7 +729,7 @@ Feature: update an instruction statistics
           "ok_alarm_states": 1,
           "execution_count": 2,
           "successful": 1,
-          "avg_complete_time": 0,
+          "avg_complete_time": 2,
           "modified_on": {{ .creationTime }}
         }
       ],
@@ -784,17 +776,13 @@ Feature: update an instruction statistics
               ]
             }
           }
-        },
-        {
-          "executed_on": {{ .creationTime }},
-          "alarm": null
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -976,18 +964,12 @@ Feature: update an instruction statistics
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "executed_on": {{ .creationTime }},
-          "duration": 0,
-          "alarm": null
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
@@ -1434,18 +1416,12 @@ Feature: update an instruction statistics
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "executed_on": {{ .creationTime }},
-          "duration": 0,
-          "alarm": null
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
