@@ -18,6 +18,7 @@ variables:
 
 include:
   - community/.gitlab-ci-common.yml
+  - community/.gitlab-ci-template.yml
 
 stage_test:
   stage: test
