@@ -61,7 +61,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 			},
 			{
 				"$addFields": bson.M{
-					"alarm_exist": bson.M{
+					"alarm_exists": bson.M{
 						"$cond": bson.M{
 							"if":   bson.M{"$eq": bson.A{bson.M{"$size": "$alarm"}, 0}},
 							"then": false,
@@ -89,7 +89,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 			ID                      string         `bson:"_id"`
 			Type                    string         `bson:"type"`
 			ResolveDeletedEventSend *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
-			AlarmExist              bool           `bson:"alarm_exist"`
+			AlarmExists             bool           `bson:"alarm_exists"`
 		}
 
 		err = cursor.Decode(&ent)
@@ -100,7 +100,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 
 		var newModel libmongo.WriteModel
 
-		if !ent.AlarmExist {
+		if !ent.AlarmExists {
 			newModel = libmongo.
 				NewDeleteOneModel().
 				SetFilter(bson.M{"_id": ent.ID, "soft_deleted": true})
