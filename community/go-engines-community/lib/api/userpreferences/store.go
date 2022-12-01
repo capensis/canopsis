@@ -51,7 +51,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.title": 1}},
+		{"$sort": bson.M{"filters.position": 1}},
 		{"$group": bson.M{
 			"_id":     nil,
 			"user":    bson.M{"$first": "$user"},
@@ -84,7 +84,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			"author":     userId,
 			"widget":     widgetId,
 			"is_private": true,
-		}, options.Find().SetSort(bson.M{"title": 1}))
+		}, options.Find().SetSort(bson.M{"position": 1}))
 		if err != nil {
 			return nil, err
 		}

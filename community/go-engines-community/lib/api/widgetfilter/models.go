@@ -79,3 +79,15 @@ func (r *AggregationResult) GetData() interface{} {
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type EditPositionRequest struct {
+	Items []string `json:"items" binding:"required,notblank,unique"`
+}
+
+func (r EditPositionRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *EditPositionRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
+}

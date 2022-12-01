@@ -75,7 +75,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -237,17 +237,33 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-2&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-4"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-5"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 3
       }
     }
     """
@@ -267,7 +283,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-2&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -444,15 +460,31 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 1 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-corel-3&correlation=true&sort_by=v.resource&sort=asc until response code is 200 and body contains:
     """json
     {
-      "data": [],
+      "data": [
+        {
+          "v": {
+            "resource": "test-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-3"
+          }
+        }
+      ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 0
+        "total_count": 3
       }
     }
     """
@@ -488,7 +520,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-3&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -503,13 +535,23 @@ Feature: correlation feature - corel rule
             "resource": "test-1",
             "component": "parent-3"
           }
+        },
+        {
+          "v": {
+            "resource": "test-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-3"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 3
       }
     }
     """
@@ -657,7 +699,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-4&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -675,13 +717,18 @@ Feature: correlation feature - corel rule
               "test-2/child-4"
             ]
           }
+        },
+        {
+          "v": {
+            "resource": "test-1"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -821,7 +868,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-5&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -839,13 +886,18 @@ Feature: correlation feature - corel rule
               "test-3/child-5"
             ]
           }
+        },
+        {
+          "v": {
+            "resource": "test-1"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -1000,7 +1052,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=asc
+    When I do GET /api/v4/alarms?search=test-corel-6&correlation=true&sort_by=t&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1223,7 +1275,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=desc
+    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1298,7 +1350,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=desc
+    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1494,7 +1546,7 @@ Feature: correlation feature - corel rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-corel-8&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json

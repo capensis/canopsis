@@ -30,9 +30,10 @@ type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
 
-	defaultSearchByFields []string
-	defaultSortBy         string
-	defaultSort           string
+	defaultSearchByFields   []string
+	availableSearchByFields map[string]struct{}
+	defaultSortBy           string
+	defaultSort             string
 
 	fieldsAliases        map[string]string
 	fieldsAliasesByRegex map[string]string
@@ -74,6 +75,14 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 			"v.connector_name",
 			"v.component",
 			"v.resource",
+		},
+		availableSearchByFields: map[string]struct{}{
+			"v.connector":      {},
+			"v.connector_name": {},
+			"v.component":      {},
+			"v.resource":       {},
+			"v.display_name":   {},
+			"v.output":         {},
 		},
 		defaultSortBy: "t",
 		defaultSort:   common.SortDesc,
@@ -530,7 +539,12 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, with
 		Options: "i",
 	}
 
-	searchBy := r.SearchBy
+	searchBy := make([]string, 0, len(r.SearchBy))
+	for _, f := range r.SearchBy {
+		if _, ok := q.availableSearchByFields[f]; ok {
+			searchBy = append(searchBy, f)
+		}
+	}
 	if len(searchBy) == 0 {
 		searchBy = q.defaultSearchByFields
 	}

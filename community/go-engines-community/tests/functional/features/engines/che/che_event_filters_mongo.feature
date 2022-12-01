@@ -10,6 +10,8 @@ Feature: modify event on event filter
       "external_data": {
         "component": {
           "type": "mongo",
+          "sort_by": "status",
+          "sort": "asc",
           "select": {
             "customer": "{{ `{{.Event.Component}}` }}"
           },
@@ -314,6 +316,8 @@ Feature: modify event on event filter
       "external_data": {
         "component": {
           "type": "mongo",
+          "sort_by": "status",
+          "sort": "asc",
           "select": {
             "customer": "{{ `{{.Event.Component}}` }}"
           },
@@ -326,10 +330,10 @@ Feature: modify event on event filter
       "event_pattern": [
         [
           {
-            "field": "component",
+            "field": "connector",
             "cond": {
               "type": "eq",
-              "value": "test-eventfilter-mongo-data-regexp-1-customer"
+              "value": "test-connector-che-event-filters-mongo-4"
             }
           }
         ]
@@ -411,6 +415,105 @@ Feature: modify event on event filter
         "page_count": 1,
         "per_page": 10,
         "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given int field in regexp external data should not update entity
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "external_data": {
+        "component": {
+          "type": "mongo",
+          "sort_by": "status",
+          "sort": "asc",
+          "select": {
+            "customer": "{{ `{{.Event.Component}}` }}"
+          },
+          "regexp": {
+            "message": "{{ `{{.Event.Output}}` }}",
+            "state": "{{ `{{.Event.State}}` }}"
+          },
+          "collection": "eventfilter_mongo_data_regexp"
+        }
+      },
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-che-event-filters-mongo-5"
+            }
+          }
+        ]
+      ],
+      "description": "test-event-filter-che-event-filters-mongo-5-description",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "status",
+            "value": "{{ `{{.ExternalData.component.status}}` }}",
+            "description": "status from external collection"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-che-event-filters-mongo-5",
+      "connector_name": "test-connector-name-che-event-filters-mongo-5",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-eventfilter-mongo-data-regexp-1-customer",
+      "resource": "test-resource-che-event-filters-mongo-5",
+      "state": 1,
+      "output": "test-eventfilter-mongo-data-regexp-1-message"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-5
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-mongo-5/test-eventfilter-mongo-data-regexp-1-customer",
+          "infos": {},
+          "name": "test-resource-che-event-filters-mongo-5",
+          "type": "resource",
+          "category": null,
+          "component": "test-eventfilter-mongo-data-regexp-1-customer",
+          "connector": "test-connector-che-event-filters-mongo-5/test-connector-name-che-event-filters-mongo-5",
+          "enabled": true,
+          "impact_level": 1,
+          "impact_state": 1,
+          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
+          "alarm_last_update_date": {{ (index .lastResponse.data 0).alarm_last_update_date }},
+          "ko_events": 1,
+          "ok_events": 0,
+          "state": 1,
+          "status": 1
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
       }
     }
     """
