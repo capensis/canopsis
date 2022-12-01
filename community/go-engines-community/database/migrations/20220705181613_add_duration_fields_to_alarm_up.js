@@ -103,10 +103,10 @@ function updateResolvedAlarms(collectionName) {
 
         db.getCollection(collectionName).updateOne({_id: doc._id}, {
             $set: {
-                "v.inactive_duration": NumberLong(Math.round(inactiveDuration)),
-                "v.active_duration": NumberLong(Math.round(doc.v.duration - inactiveDuration)),
-                "v.snooze_duration": NumberLong(Math.round(snoozeDuration)),
-                "v.pbh_inactive_duration": NumberLong(Math.round(pbhInactiveDuration)),
+                "v.inactive_duration": NumberInt(inactiveDuration),
+                "v.active_duration": NumberInt(doc.v.duration - inactiveDuration),
+                "v.snooze_duration": NumberInt(snoozeDuration),
+                "v.pbh_inactive_duration": NumberInt(pbhInactiveDuration),
             }
         });
     };
@@ -214,12 +214,12 @@ function updateOpenedAlarms(collectionName) {
         }
 
         var set = {
-            "v.inactive_duration": NumberLong(Math.round(inactiveDuration)),
-            "v.snooze_duration": NumberLong(Math.round(snoozeDuration)),
-            "v.pbh_inactive_duration": NumberLong(Math.round(pbhInactiveDuration)),
+            "v.inactive_duration": NumberInt(inactiveDuration),
+            "v.snooze_duration": NumberInt(snoozeDuration),
+            "v.pbh_inactive_duration": NumberInt(pbhInactiveDuration),
         }
         if (inactiveStart !== null) {
-            set["v.inactive_start"] = NumberLong(Math.round(inactiveStart));
+            set["v.inactive_start"] = NumberInt(inactiveStart);
         }
 
         db.getCollection(collectionName).updateOne({_id: doc._id}, {
