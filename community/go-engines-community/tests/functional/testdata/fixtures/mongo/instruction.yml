@@ -1082,6 +1082,53 @@ instruction:
       unit: s
       value: 2
 
+  instruction_to_run_auto_instruction_12_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-12-1
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-12-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-12
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+    last_modified: 1596712203
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-12-1-name
+    timeout_after_execution:
+      unit: s
+      value: 1
+
+  instruction_to_run_auto_instruction_12_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-12-2
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-12-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-12
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-12-2-name
+    timeout_after_execution:
+      unit: s
+      value: 1
+
   instruction_without_patterns:
     <<: *instruction_auto
     _id: test-instruction-without-patterns
@@ -2000,6 +2047,26 @@ instruction:
     timeout_after_execution:
       unit: s
       value: 2
+
+  instruction_to_run_manual_simplified_instruction_5:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-run-manual-simplified-instruction-5
+    description: test-instruction-to-run-manual-simplified-instruction-5-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-manual-simplified-instruction-5
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+      - job: test-job-to-run-manual-simplified-instruction-4
+        stop_on_fail: false
+    name: test-instruction-to-run-manual-simplified-instruction-5-name
+    timeout_after_execution:
+      unit: s
+      value: 1
 
   instruction_alarm_instruction_get_icons_1:
     <<: *instruction_manual

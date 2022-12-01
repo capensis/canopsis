@@ -18,7 +18,7 @@ template:
     _id: <UUID()>,
     created: <NowUnix()>,
     updated: <Current().created>,
-    position: <Index()>,
+    position: 0,
     author: root
   }
   - &widget {
@@ -32,7 +32,8 @@ template:
     is_private: false,
     created: <NowUnix()>,
     updated: <Current().created>,
-    author: root
+    author: root,
+    position: 0
   }
   - &permission {
     _id: <UUID()>,
@@ -100,16 +101,19 @@ viewtabs:
     <<: *tab
     title: En cours
     view: "@view_open_alarms"
+    position: 0
 
   tab_resolved_alarms:
     <<: *tab
     title: Résolues
     view: "@view_resolved_alarms"
+    position: 0
 
   tab_context_explorer:
     <<: *tab
     title: Explorateur de contexte
     view: "@view_context_explorer"
+    position: 0
 
 widgets:
   widget_open_alarms:
@@ -258,6 +262,7 @@ widget_filters:
     <<: *filter
     title: Composant
     widget: "@widget_context_explorer"
+    position: 0
     entity_pattern:
       - - field: type
           cond:
@@ -268,6 +273,7 @@ widget_filters:
     <<: *filter
     title: Connecteur
     widget: "@widget_context_explorer"
+    position: 1
     entity_pattern:
       - - field: type
           cond:
@@ -278,6 +284,7 @@ widget_filters:
     <<: *filter
     title: Ressource
     widget: "@widget_context_explorer"
+    position: 2
     entity_pattern:
       - - field: type
           cond:
@@ -288,6 +295,7 @@ widget_filters:
     <<: *filter
     title: Observateur
     widget: "@widget_context_explorer"
+    position: 3
     entity_pattern:
       - - field: type
           cond:

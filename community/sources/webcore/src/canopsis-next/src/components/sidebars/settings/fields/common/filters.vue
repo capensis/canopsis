@@ -15,6 +15,7 @@
           :filters="filters",
           :addable="addable",
           :editable="editable",
+          @input="$emit('update:filters', $event)",
           @add="showCreateFilterModal",
           @edit="showEditFilterModal",
           @delete="showDeleteFilterModal"

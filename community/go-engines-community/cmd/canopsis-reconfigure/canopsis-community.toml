@@ -198,6 +198,10 @@ Timezone = "Europe/Paris"
 [Canopsis.data_storage]
 # Time to execute data archive and delete. It's used by multiple engines since different engines handle different data.
 TimeToExecute = "Sunday,23"
+# MaxUpdates specifies the amount of items that be updated/removed for once.
+MaxUpdates = 100000
+# MongoClientTimeout specifies the amount of time that a single operation run on Mongo Client can execute before returning an error.
+MongoClientTimeout = "1m"
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -215,10 +219,13 @@ BulkMaxSize = 10000
 # to catch up following parameters.
 [Canopsis.logger]
 Writer = "stdout"
+# SystemD journalctl compatible format
+# Writer = "journald"
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.logger.console_writer]
+# Enabled should be false here when Canopsis.logger.Writer configured as journald
 Enabled = true
 NoColor = false
 TimeFormat = "2006-01-02T15:04:05Z07:00"

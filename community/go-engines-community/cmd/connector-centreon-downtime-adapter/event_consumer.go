@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -181,9 +182,26 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 		return nil
 	}
 
+	hgValues := event.GetArray("hostgroups")
+	if hgValues != nil {
+		hostgroups := make([]string, 0, len(hgValues))
+		for _, v := range hgValues {
+			if s := v.GetStringBytes(); s != nil {
+				hostgroups = append(hostgroups, string(s))
+			}
+		}
+
+		skip = c.inactiveMatch(event.GetFloat64("timestamp"), hostgroups)
+
+		if skip {
+			c.logger.Debug().Str("event", string(msg.Body)).Msg("inactive matches: skip event")
+			return nil
+		}
+	}
+
 	entityID := ""
 	if resource == "" {
-		entityID = resource
+		entityID = component
 	} else {
 		entityID = fmt.Sprintf("%s/%s", resource, component)
 	}
@@ -368,4 +386,45 @@ func (c *eventConsumer) getLockOnUnlock(pbhName, action string, skip bool) *pbhL
 	}
 
 	return nil
+}
+
+func (c *eventConsumer) inactiveMatch(eventTs float64, eventHostgroups []string) (match bool) {
+	if eventTs == 0 || len(eventHostgroups) == 0 {
+		return match
+	}
+	eventTime := time.Unix(int64(eventTs), 0).In(c.config.location)
+	weekdayIndex := int(eventTime.Weekday()) - 1
+	if weekdayIndex < 0 {
+		weekdayIndex = 6
+	}
+	h, err := strconv.Atoi(eventTime.Format("1504"))
+	if err != nil {
+		return match
+	}
+	for _, inactive := range c.config.Inactive {
+		timeMatches := false
+		for _, hr := range inactive.hourRanges {
+			if !hr.weekdays[weekdayIndex] {
+				break
+			}
+			timeMatches = hr.hhmm[0] <= h && h < hr.hhmm[1] && hr.hhmm[0] < hr.hhmm[1] ||
+				hr.hhmm[0] > hr.hhmm[1] && (hr.hhmm[0] <= h || h < hr.hhmm[1])
+			if timeMatches {
+				break
+			}
+		}
+		if !timeMatches {
+			continue
+		}
+		// check hostgroups
+		for _, v := range inactive.Hostgroups {
+			for _, ehg := range eventHostgroups {
+				if match = v == ehg; match {
+					return match
+				}
+			}
+		}
+	}
+
+	return match
 }

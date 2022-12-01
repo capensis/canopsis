@@ -51,6 +51,11 @@ export const PATTERN_OPERATORS = {
 
   with: 'with',
   without: 'without',
+
+  activated: 'activated',
+  inactive: 'inactive',
+
+  regexp: 'regexp',
 };
 
 export const PATTERN_CONDITIONS = {
@@ -68,18 +73,17 @@ export const PATTERN_CONDITIONS = {
   exist: 'exist',
   relativeTime: 'relative_time',
   absoluteTime: 'absolute_time',
+  contains: 'contain',
+  notContains: 'not_contain',
+  beginsWith: 'begin_with',
+  notBeginWith: 'not_begin_with',
+  endsWith: 'end_with',
+  notEndWith: 'not_end_with',
 };
 
 export const FILTER_MONGO_OPERATORS = {
   and: '$and',
   or: '$or',
-  equal: '$eq',
-  notEqual: '$ne',
-  in: '$in',
-  notIn: '$nin',
-  regex: '$regex',
-  greater: '$gt',
-  less: '$lt',
 };
 
 export const PATTERN_FIELD_TYPES = {
@@ -88,21 +92,6 @@ export const PATTERN_FIELD_TYPES = {
   boolean: 'bool',
   null: 'null',
   stringArray: 'string_array',
-};
-
-export const FILTER_DEFAULT_VALUES = {
-  condition: FILTER_MONGO_OPERATORS.and, // TODO: remove if we don't need it
-  rule: {
-    field: '',
-    operator: '',
-    input: '',
-    inputType: PATTERN_FIELD_TYPES.string,
-  },
-  group: {
-    condition: FILTER_MONGO_OPERATORS.and,
-    groups: {},
-    rules: {},
-  },
 };
 
 export const PATTERN_OPERATORS_WITHOUT_VALUE = [
@@ -120,6 +109,8 @@ export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.notCanceled,
   PATTERN_OPERATORS.isNotGrey,
   PATTERN_OPERATORS.isGrey,
+  PATTERN_OPERATORS.activated,
+  PATTERN_OPERATORS.inactive,
 ];
 
 export const PATTERN_RULE_TYPES = {
@@ -159,13 +150,14 @@ export const PATTERN_NUMBER_OPERATORS = [
 
 export const PATTERN_STRING_OPERATORS = [
   PATTERN_OPERATORS.equal,
-  PATTERN_OPERATORS.contains,
   PATTERN_OPERATORS.notEqual,
+  PATTERN_OPERATORS.contains,
   PATTERN_OPERATORS.notContains,
   PATTERN_OPERATORS.beginsWith,
   PATTERN_OPERATORS.notBeginWith,
   PATTERN_OPERATORS.endsWith,
   PATTERN_OPERATORS.notEndWith,
+  PATTERN_OPERATORS.regexp,
 ];
 
 export const PATTERN_BOOLEAN_OPERATORS = [

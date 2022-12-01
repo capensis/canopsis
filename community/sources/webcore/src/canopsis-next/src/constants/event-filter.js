@@ -29,6 +29,8 @@ export const EVENT_FILTER_PATTERN_FIELDS = {
   resource: 'resource',
   output: 'output',
   extraInfos: 'extra',
+  state: 'state',
+  longOutput: 'long_output',
 };
 
 export const EVENT_FILTER_SOURCE_TYPES = {

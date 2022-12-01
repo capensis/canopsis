@@ -1,7 +1,7 @@
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import AlarmColumnValueTags from '@/components/widgets/alarm/columns-formatting/alarm-column-value-tags.vue';
+import AlarmColumnValueTags from '@/components/common/chips/c-alarm-tags-chips.vue';
 
 const localVue = createVueInstance();
 
@@ -27,7 +27,7 @@ const snapshotFactory = (options = {}) => mount(AlarmColumnValueTags, {
 
 const selectChip = wrapper => wrapper.find('.c-alarm-tag-chip');
 
-describe('alarm-column-value-tag', () => {
+describe('c-alarm-tags-chips', () => {
   const tags = [
     { value: 'tag1', color: 'color1' },
     { value: 'tag2', color: 'color2' },
@@ -61,7 +61,7 @@ describe('alarm-column-value-tag', () => {
     expect(wrapper).toEmit('select', tags[0].value);
   });
 
-  it('Renders `alarm-column-value-tag` without selected tag and dropdown', () => {
+  it('Renders `c-alarm-tags-chips` without selected tag and dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm,
@@ -72,7 +72,7 @@ describe('alarm-column-value-tag', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-tag` without selected tag and with dropdown', () => {
+  it('Renders `c-alarm-tags-chips` without selected tag and with dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -88,7 +88,7 @@ describe('alarm-column-value-tag', () => {
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-tag` with selected tag and dropdown', () => {
+  it('Renders `c-alarm-tags-chips` with selected tag and dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {

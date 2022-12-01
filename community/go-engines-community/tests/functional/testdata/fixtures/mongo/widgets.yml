@@ -322,6 +322,26 @@ widgets:
     _id: test-widget-to-filter-check-access
     tab: test-tab-to-filter-check-access
 
+  widget_to_filter_update_position_1:
+    <<: *widget
+    _id: test-widget-to-filter-update-position-1
+    tab: test-tab-to-filter-update-position
+
+  widget_to_filter_update_position_2:
+    <<: *widget
+    _id: test-widget-to-filter-update-position-2
+    tab: test-tab-to-filter-update-position
+
+  widget_to_filter_update_position_3:
+    <<: *widget
+    _id: test-widget-to-filter-update-position-3
+    tab: test-tab-to-filter-update-position
+
+  widget_to_filter_update_position_4:
+    <<: *widget
+    _id: test-widget-to-filter-update-position-4
+    tab: test-tab-to-filter-update-position
+
   widget_to_alarm_get:
     <<: *widget
     _id: test-widget-to-alarm-get

@@ -85,25 +85,26 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 		prefix += "."
 	}
 
+	emptyPbhInfo := types.PbehaviorInfo{}
 	groupQueries := make([]bson.M, len(p))
 	var err error
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
 		for j, fieldCond := range group {
-			f := prefix + fieldCond.Field
+			mongoField := prefix + fieldCond.Field
 			cond := fieldCond.Condition
 
 			if fieldCond.Field == "pbehavior_info.canonical_type" {
 				switch cond.Type {
 				case ConditionEqual:
 					if cond.valueStr != nil && *cond.valueStr == pbhCanonicalTypeActive {
-						condQueries[j] = bson.M{f: bson.M{"$in": bson.A{nil, *cond.valueStr}}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$in": bson.A{nil, *cond.valueStr}}}
 						continue
 					}
 				case ConditionNotEqual:
 					if cond.valueStr != nil && *cond.valueStr == pbhCanonicalTypeActive {
-						condQueries[j] = bson.M{f: bson.M{"$nin": bson.A{nil, *cond.valueStr}}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$nin": bson.A{nil, *cond.valueStr}}}
 						continue
 					}
 				case ConditionIsOneOf:
@@ -121,7 +122,7 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 							values[k] = s
 						}
 						values[len(values)-1] = nil
-						condQueries[j] = bson.M{f: bson.M{"$in": values}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$in": values}}
 						continue
 					}
 				case ConditionIsNotOneOf:
@@ -139,15 +140,19 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 							values[k] = s
 						}
 						values[len(values)-1] = nil
-						condQueries[j] = bson.M{f: bson.M{"$nin": values}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$nin": values}}
 						continue
 					}
 				}
 			}
 
-			condQueries[j], err = cond.ToMongoQuery(f)
+			if _, ok := getPbehaviorInfoStringField(emptyPbhInfo, fieldCond.Field); ok {
+				condQueries[j], err = cond.StringToMongoQuery(mongoField)
+			} else {
+				err = ErrUnsupportedField
+			}
 			if err != nil {
-				return nil, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				return nil, fmt.Errorf("invalid condition for %q field: %w", fieldCond.Field, err)
 			}
 		}
 

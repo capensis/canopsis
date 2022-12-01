@@ -20,7 +20,6 @@ const localVue = createVueInstance();
 const stubs = {
   'c-pattern-attribute-field': true,
   'c-pattern-infos-attribute-field': true,
-  'c-pattern-extra-infos-attribute-field': true,
   'c-quick-date-interval-type-field': true,
   'c-date-time-interval-field': true,
   'c-input-type-field': true,
@@ -48,7 +47,6 @@ const selectPatternAttributeField = wrapper => wrapper.find('c-pattern-attribute
 const selectPatternOperatorField = wrapper => wrapper.find('c-pattern-operator-field-stub');
 const selectMixedInputField = wrapper => wrapper.find('c-mixed-input-field-stub');
 const selectPatternInfosAttributeField = wrapper => wrapper.find('c-pattern-infos-attribute-field-stub');
-const selectPatternExtraInfosAttributeField = wrapper => wrapper.find('c-pattern-extra-infos-attribute-field-stub');
 const selectQuickDateIntervalTypeField = wrapper => wrapper.find('c-quick-date-interval-type-field-stub');
 const selectDateTimeIntervalField = wrapper => wrapper.find('c-date-time-interval-field-stub');
 const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
@@ -195,7 +193,7 @@ describe('c-pattern-rule-field', () => {
 
     const field = Faker.datatype.string();
 
-    const patternExtraInfosAttributeField = selectPatternExtraInfosAttributeField(wrapper);
+    const patternExtraInfosAttributeField = selectPatternInfosAttributeField(wrapper);
 
     patternExtraInfosAttributeField.vm.$emit('input', {
       ...emptyRule,

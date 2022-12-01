@@ -76,6 +76,10 @@ export default {
           value: ALARM_PATTERN_FIELDS.lastEventDate,
           options: { disabled: true },
         },
+        {
+          value: ALARM_PATTERN_FIELDS.activationDate,
+          options: { disabled: true },
+        },
       ];
     },
   },

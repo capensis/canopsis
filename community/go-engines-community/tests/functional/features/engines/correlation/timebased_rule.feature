@@ -61,7 +61,7 @@ Feature: correlation feature - timebased rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-timebased-correlation-resource-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -243,7 +243,7 @@ Feature: correlation feature - timebased rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true&sort_by=t&sort=desc
+    When I do GET /api/v4/alarms?search=test-timebased-correlation-resource-2&correlation=true&sort_by=t&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -288,7 +288,7 @@ Feature: correlation feature - timebased rule
           "sort_by": "v.resource",
           "sort": "asc"
         }
-      }      
+      }
     ]
     """
     Then the response code should be 207
@@ -323,7 +323,7 @@ Feature: correlation feature - timebased rule
                   "component":  "test-timebased-correlation-2",
                   "resource": "test-timebased-correlation-resource-2-5"
                 }
-              }              
+              }
             ],
             "meta": {
               "page": 1,
@@ -354,7 +354,7 @@ Feature: correlation feature - timebased rule
                   "component":  "test-timebased-correlation-2",
                   "resource": "test-timebased-correlation-resource-2-2"
                 }
-              }              
+              }
             ],
             "meta": {
               "page": 1,
@@ -364,7 +364,7 @@ Feature: correlation feature - timebased rule
             }
           }
         }
-      }      
+      }
     ]
     """
 
@@ -446,7 +446,7 @@ Feature: correlation feature - timebased rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-timebased-correlation-resource-3&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -457,13 +457,22 @@ Feature: correlation feature - timebased rule
           "meta_alarm_rule": {
             "name": "test-timebased-correlation-3"
           }
+        },
+        {
+          "is_meta_alarm": false,
+          "v": {
+            "connector": "test-timebased-3",
+            "connector_name": "test-timebased-3-name",
+            "component":  "test-timebased-correlation-3",
+            "resource": "test-timebased-correlation-resource-3-1"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -573,7 +582,7 @@ Feature: correlation feature - timebased rule
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-timebased-correlation-resource-4&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
