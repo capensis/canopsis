@@ -16,6 +16,9 @@ variables:
   CANOPSIS_ENV_CONFIRM: "0"
   CANOPSIS_EDITION: "community"
 
+include:
+  - community/.gitlab-ci-common.yml
+
 stage_test:
   stage: test
   tags: ["canopsis"]
