@@ -461,6 +461,9 @@ func TestHub_Connect_GivenAuthUser_ShouldSendLoggedUserCountMessage(t *testing.T
 		}
 	}).Times(3)
 	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
+		Type: libwebsocket.WMessageAuthSuccess,
+	}))
+	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
 		Type: libwebsocket.WMessageSuccess,
 		Room: libwebsocket.RoomLoggedUserCount,
 		Msg:  1,

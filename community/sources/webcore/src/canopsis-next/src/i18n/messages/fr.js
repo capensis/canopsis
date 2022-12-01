@@ -40,6 +40,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
+  SERVICE_STATES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -166,6 +167,8 @@ export default merge({
     expired: 'Date d\'expiration',
     accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
+    activationDate: 'Date d\'activation',
+    activated: 'Activé',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
     periods: 'Périodes',
@@ -226,7 +229,7 @@ export default merge({
     graph: 'Graphique | Graphiques',
     systemStatus: 'État du système',
     downloadAsPng: 'Télécharger en PNG',
-    rating: 'Notation | Notations',
+    rating: 'Evaluation | Evaluations',
     sampling: 'Échantillonnage',
     parametersToDisplay: '{count} paramètres à afficher',
     uptime: 'Uptime',
@@ -283,6 +286,10 @@ export default merge({
     enginesMetrics: 'Métriques des moteurs',
     failed: 'Échoué',
     close: 'Fermer',
+    alarmId: 'Identifiant de l\'alarme',
+    longOutput: 'Sortie longue',
+    initialOutput: 'Sortie initiale',
+    initialLongOutput: 'Sortie initiale longue',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -402,6 +409,11 @@ export default merge({
 
       [PATTERN_OPERATORS.with]: 'Avec',
       [PATTERN_OPERATORS.without]: 'Sans',
+
+      [PATTERN_OPERATORS.activated]: 'Activé',
+      [PATTERN_OPERATORS.inactive]: 'Inactif',
+
+      [PATTERN_OPERATORS.regexp]: 'Expression régulière',
     },
     entityEventTypes: {
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -510,6 +522,8 @@ export default merge({
     dependencies: 'Dépendances',
     noEventsFilter: 'Aucun filtre d\'événements',
     impactChain: 'Chaîne d\'impact',
+    resolvedAlarms: 'Alarmes résolues',
+    activeAlarm: 'Alarme active',
     impactDepends: 'Impacts/Dépendances',
     treeOfDependencies: 'Arbre de dépendances',
     infosSearchLabel: 'Rechercher une info',
@@ -814,6 +828,8 @@ export default merge({
     isPriorityEnabled: 'Afficher la priorité',
     clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
     alarmsColumns: 'Colonnes de la liste des alarmes',
+    resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
+    activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',
     entitiesColumns: 'Colonnes de l\'explorateur de contexte',
     entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
     exportCsv: {
@@ -2015,6 +2031,8 @@ export default merge({
     addExternalData: 'Ajouter des données externes',
     reference: 'Référence',
     collection: 'Collection',
+    sort: 'Sens du tri',
+    sortBy: 'Colonne de tri',
     externalDataTypes: {
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'Collection MongoDB',
       [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',
@@ -2232,6 +2250,11 @@ export default merge({
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+
+      [SERVICE_STATES.ok]: 'Ok',
+      [SERVICE_STATES.minor]: 'Mineur',
+      [SERVICE_STATES.major]: 'Majeur',
+      [SERVICE_STATES.critical]: 'Critique',
     },
   },
   contextGeneralTable: {
@@ -2571,7 +2594,6 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
-    alarmId: 'Identifiant de l\'alarme',
     executedAt: 'Exécuté à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
@@ -2731,7 +2753,7 @@ export default merge({
     language: 'Langue par défaut',
     auth: 'Type d\'auth.',
     navigationType: 'Type d\'affichage de la barre de vues',
-    active: 'Séance active',
+    active: 'Session active',
     activeConnects: 'Nombre de connexions',
     navigationTypes: {
       [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',
@@ -3115,7 +3137,7 @@ export default merge({
     simpleEditor: 'Éditeur simple',
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
-    discard: 'Jeter le motif',
+    discard: 'Effacer le motif',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',

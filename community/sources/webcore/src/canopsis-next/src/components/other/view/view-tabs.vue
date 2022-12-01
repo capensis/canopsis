@@ -124,7 +124,10 @@ export default {
             value: tab.title,
             validationRules: 'required',
           },
-          action: title => this.updateViewTabAndFetch({ id: tab._id, data: { ...tab, title } }),
+          action: title => this.updateViewTabAndFetch({
+            id: tab._id,
+            data: { ...tab, view: this.view._id, title },
+          }),
         },
       });
     },

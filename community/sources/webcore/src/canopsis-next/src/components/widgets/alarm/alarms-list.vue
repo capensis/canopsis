@@ -17,14 +17,14 @@
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(row, align-center)
+        v-layout(v-if="hasAccessToUserFilter", row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
             :locked-filters="widget.filters",
             :locked-value="lockedFilter",
             :value="mainFilter",
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+            :disabled="!hasAccessToListFilters",
             :clearable="!widget.parameters.clearFilterDisabled",
             @input="updateSelectedFilter"
           )
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { omit, pick, isObject } from 'lodash';
+import { omit, pick, isObject, isEqual } from 'lodash';
 
 import { API_HOST, API_ROUTES } from '@/config';
 
@@ -360,7 +360,7 @@ export default {
           this.fetchAlarmTagsList({ params: { paginate: false } });
         }
 
-        if (!this.alarmsPending) {
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
             params,

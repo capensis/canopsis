@@ -61,6 +61,10 @@ export default {
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: { disabled: true },
         },
+        {
+          value: ALARM_PATTERN_FIELDS.activationDate,
+          options: { disabled: true },
+        },
       ];
     },
 

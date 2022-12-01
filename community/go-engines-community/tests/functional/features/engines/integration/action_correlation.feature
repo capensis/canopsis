@@ -18,7 +18,7 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-action-correlation-1&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
@@ -263,7 +263,7 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-action-correlation-2&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
@@ -591,7 +591,7 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-action-correlation-3&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
@@ -840,7 +840,7 @@ Feature: update meta alarm on action
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-action-correlation-4&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/scenarios:

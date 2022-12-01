@@ -271,7 +271,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
@@ -282,6 +282,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.ticket":
                 case "v.canceled":
                 case "v.snooze":
+                case "v.activation_date":
                     if (typeof value === "object" && value && typeof value["$exists"] === "boolean") {
                         newAlarmGroup.push({
                             field: field,
@@ -332,7 +333,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                         newAlarmGroup.push({
                             field: field,
                             cond: {
-                                type: "ne",
+                                type: "neq",
                                 value: value["$ne"],
                             },
                         });
@@ -442,7 +443,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                     } else if (field.startsWith("v.infos.*.") && strCond !== null) {
                         var info = field.replace("v.infos.*.", "");
                         newAlarmGroup.push({
-                            field: "infos." + info,
+                            field: "v.infos." + info,
                             field_type: "string",
                             cond: strCond,
                         });
@@ -495,7 +496,7 @@ function migrateOldGroupForEntityList(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
@@ -578,7 +579,7 @@ function migrateOldGroupForWeather(oldGroup) {
                     };
                 } else if (value["$ne"] && typeof value["$ne"] === "string") {
                     strCond = {
-                        type: "ne",
+                        type: "neq",
                         value: value["$ne"],
                     };
                 }
@@ -755,9 +756,10 @@ db.widgets.find({
     var newFilters = [];
 
     if (widget.parameters.viewFilters) {
-        widget.parameters.viewFilters.forEach(function (filter) {
+        widget.parameters.viewFilters.forEach(function (filter, fi) {
             var newFilter = migrateOldFilter(widget, filter);
             newFilter.is_private = false;
+            newFilter.position = fi;
             newFilter.author = author;
             newFilter.created = created;
             newFilter.updated = updated;
@@ -772,6 +774,7 @@ db.widgets.find({
         var newFilter = migrateOldMainFilter(widget, mainFilter);
         if (newFilter) {
             newFilter.is_private = false;
+            newFilter.position = newFilters.length;
             newFilter.author = author;
             newFilter.created = created;
             newFilter.updated = updated;
@@ -859,10 +862,11 @@ db.userpreferences.aggregate([
     var newMainFilter = null;
 
     if (viewFilters) {
-        viewFilters.forEach(function (filter) {
+        viewFilters.forEach(function (filter, fi) {
             var newFilter = migrateOldFilter(widget, filter);
             newFilter.is_private = true;
             newFilter.author = userPref.user;
+            newFilter.position = fi;
             newFilter.created = updated;
             newFilter.updated = updated;
             newFilters.push(newFilter);
@@ -885,6 +889,7 @@ db.userpreferences.aggregate([
         if (newFilter) {
             newFilter.is_private = true;
             newFilter.author = userPref.user;
+            newFilter.position = newFilters.length;
             newFilter.created = updated;
             newFilter.updated = updated;
             newFilters.push(newFilter);
@@ -901,3 +906,5 @@ db.userpreferences.aggregate([
         db.widget_filters.insertMany(newFilters);
     }
 });
+
+db.widget_filters.createIndex({widget: 1}, {name: "widget_1"});

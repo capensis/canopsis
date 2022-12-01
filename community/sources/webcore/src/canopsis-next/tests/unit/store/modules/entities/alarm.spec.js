@@ -63,7 +63,7 @@ describe('Entities alarm module', () => {
 
     expect(state).toEqual({
       widgets: {
-        [widgetId]: { pending: true },
+        [widgetId]: { pending: true, fetchingParams: params },
       },
     });
   });
