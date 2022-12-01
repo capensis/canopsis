@@ -1347,7 +1347,6 @@ Feature: New import entities
       "status": "done"
     }
     """
-    When I wait the next periodical process
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-1-1/test-entity-contextgraph-new-import-component-to-delete-1
     Then the response code should be 404
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-delete-1
@@ -1428,7 +1427,20 @@ Feature: New import entities
       "status": "done"
     }
     """
-    When I wait the next periodical process
+    When I do GET /api/v4/entities?search=test-entity-contextgraph-new-import-resource-to-delete-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-component-to-delete-2
     Then the response code should be 404
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-new-import-resource-to-delete-2-1/test-entity-contextgraph-new-import-component-to-delete-2

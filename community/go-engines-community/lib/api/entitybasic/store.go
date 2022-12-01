@@ -35,8 +35,9 @@ func NewStore(db mongo.DbClient) Store {
 func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
+			"_id":          id,
+			"type":         bson.M{"$in": s.basicTypes},
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 		// Find category
 		{"$lookup": bson.M{
