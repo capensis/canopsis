@@ -186,8 +186,8 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 
 func (w *softDeletePeriodicalWorker) createEvent(eventType string, t, id string, now types.CpsTime) (types.Event, error) {
 	event := types.Event{
-		Connector:     "engine",
-		ConnectorName: "engine-che",
+		Connector:     canopsis.EngineConnector,
+		ConnectorName: canopsis.CheEngineName,
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
