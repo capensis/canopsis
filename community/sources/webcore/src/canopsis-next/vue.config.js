@@ -1,4 +1,7 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const TerserPlugin = require('monaco-editor-webpack-plugin');
+const terserOptions = require('@vue/cli-service/lib/config/terserOptions');
+const webpackOptions = require('@vue/cli-service/lib/options');
 
 const updateFieldDirective = require('./tools/update-field-directive');
 
@@ -28,6 +31,13 @@ module.exports = {
         return options;
       })
       .end();
+
+    config.optimization
+      .minimizer('terser')
+      .use(TerserPlugin, [{
+        ...terserOptions(webpackOptions),
+        exclude: /jodit/,
+      }]);
 
     return config;
   },
