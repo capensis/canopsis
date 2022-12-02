@@ -5,7 +5,7 @@ import { mount, createVueInstance } from '@unit/utils/vue';
 import { mockXMLHttpRequest } from '@unit/utils/mock-hooks';
 import { API_HOST, API_ROUTES } from '@/config';
 
-import TextEditor from '@/components/common/text-editor/text-editor.vue';
+const TextEditor = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
 const localVue = createVueInstance();
 
