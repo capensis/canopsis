@@ -1,3 +1,8 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+const TerserPlugin = require('terser-webpack-plugin');
+const terserOptions = require('@vue/cli-service/lib/config/terserOptions');
+const webpackOptions = require('@vue/cli-service/lib/options');
+
 const updateFieldDirective = require('./tools/update-field-directive');
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -22,6 +27,13 @@ module.exports = {
 
         return options;
       });
+
+    config.optimization
+      .minimizer('terser')
+      .use(TerserPlugin, [{
+        ...terserOptions(webpackOptions),
+        exclude: /jodit/,
+      }]);
 
     return config;
   },
