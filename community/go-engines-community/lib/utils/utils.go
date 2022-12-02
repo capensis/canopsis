@@ -5,7 +5,6 @@ import (
 	crand "crypto/rand"
 	"fmt"
 	"math/big"
-	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -33,15 +32,6 @@ func ApplyTranslation(element interface{}, key, formatString string) (string, er
 	}
 
 	return buf.String(), nil
-}
-
-// ReadFile handles opening and reading file at given path
-func ReadFile(path string) ([]byte, error) {
-	source, err := os.ReadFile(path)
-	if err != nil {
-		return []byte{}, fmt.Errorf("read file: %v", err)
-	}
-	return source, nil
 }
 
 // StringInSlice checks if a string is present in a list of strings

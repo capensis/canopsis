@@ -54,7 +54,10 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 				},
 			},
 			{
-				"$addFields": bson.M{
+				"$project": bson.M{
+					"_id":                        1,
+					"type":                       1,
+					"resolve_deleted_event_sent": 1,
 					"alarm_exists": bson.M{
 						"$cond": bson.M{
 							"if":   bson.M{"$eq": bson.A{bson.M{"$size": "$alarm"}, 0}},
@@ -68,6 +71,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	)
 	if err != nil {
 		w.Logger.Error().Err(err).Msg("unable to load soft deleted entities")
+		return
 	}
 
 	defer cursor.Close(ctx)

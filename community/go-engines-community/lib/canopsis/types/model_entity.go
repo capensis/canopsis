@@ -73,7 +73,7 @@ type Entity struct {
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
 
-	SoftDeleted bool `bson:"soft_deleted" json:"soft_deleted"`
+	SoftDeleted bool `bson:"soft_deleted,omitempty" json:"soft_deleted,omitempty"`
 }
 
 type Coordinates struct {
