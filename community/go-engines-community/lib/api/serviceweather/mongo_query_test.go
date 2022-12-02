@@ -47,8 +47,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -109,8 +110,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"name": bson.M{"$eq": "test-resource"}},
@@ -171,8 +173,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
@@ -235,8 +238,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
@@ -293,8 +297,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 	}
 	expected = append(expected, getCategoryLookup()...)
@@ -353,8 +358,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
@@ -435,8 +441,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
+			"type":         types.EntityTypeService,
+			"enabled":      true,
+			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
 		}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"name": bson.M{"$eq": "test-service"}},
