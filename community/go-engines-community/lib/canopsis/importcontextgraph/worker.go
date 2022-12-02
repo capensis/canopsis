@@ -428,7 +428,7 @@ func (w *worker) parseEntities(
 				writeModels = append(writeModels, w.createEntity(ci))
 			} else {
 				if !oldEntity.Enabled {
-					return res, fmt.Errorf("can't create and disable component simutaneously")
+					return res, fmt.Errorf("can't create resource for disabled component")
 				}
 
 				componentInfos[componentName] = oldEntity.Infos
@@ -539,6 +539,9 @@ func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, 
 func (w *worker) validate(ci ConfigurationItem) error {
 	switch ci.Type {
 	case types.EntityTypeService:
+		if len(ci.EntityPattern) == 0 {
+			return fmt.Errorf("service %s contains empty pattern", ci.Name)
+		}
 	case types.EntityTypeResource:
 		if ci.Component == "" {
 			return fmt.Errorf("resource %s contains empty component", ci.Name)
