@@ -1,17 +1,12 @@
 import { omit } from 'lodash';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
 
 const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsTicket, {
-  localVue,
-
-  ...options,
-});
 
 describe('extra-details-ticket', () => {
   const nowTimestamp = 1386435500000;
@@ -26,34 +21,37 @@ describe('extra-details-ticket', () => {
     val: 'ticket-message',
   };
 
-  it('Renders `extra-details-ticket` with full ticket', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ExtraDetailsTicket, {
+    localVue,
+    attachTo: document.body,
+  });
+
+  it('Renders `extra-details-ticket` with full ticket', async () => {
+    snapshotFactory({
       propsData: {
         ticket,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-ticket` without value', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-ticket` without value', async () => {
+    snapshotFactory({
       propsData: {
         ticket: omit(ticket, ['val']),
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-ticket` with date in previous month', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-ticket` with date in previous month', async () => {
+    snapshotFactory({
       propsData: {
         ticket: {
           ...ticket,
@@ -62,9 +60,8 @@ describe('extra-details-ticket', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

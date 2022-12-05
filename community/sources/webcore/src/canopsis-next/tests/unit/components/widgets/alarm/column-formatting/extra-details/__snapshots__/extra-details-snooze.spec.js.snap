@@ -1,199 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
-    >
-      alarm
-    </i>
-  </span>
-</span>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 07/08/2013 19:00:00
-    </div>
-    <div>
-      End : 07/08/2013 19:00:00
-    </div>
-    <div>
-      Initiator : snooze-initiator
-    </div>
-    <div
-      class="c-extra-details__message"
-    >
-      Comment : snooze-message
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Snooze</strong>
+    <div>By : snooze-author</div>
+    <div>Date : 07/08/2013 19:00:00</div>
+    <div>End : 07/08/2013 19:00:00</div>
+    <div>Initiator : snooze-initiator</div>
+    <div class="c-extra-details__message">Comment : snooze-message</div>
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
-    >
-      alarm
-    </i>
-  </span>
-</span>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      End : 6:00:00
-    </div>
-    <div>
-      Initiator : snooze-initiator
-    </div>
-    <div
-      class="c-extra-details__message"
-    >
-      Comment : snooze-message
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Snooze</strong>
+    <div>By : snooze-author</div>
+    <div>Date : 6:00:00</div>
+    <div>End : 6:00:00</div>
+    <div>Initiator : snooze-initiator</div>
+    <div class="c-extra-details__message">Comment : snooze-message</div>
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
-    >
-      alarm
-    </i>
-  </span>
-</span>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      End : 6:00:00
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Snooze</strong>
+    <div>By : snooze-author</div>
+    <div>Date : 6:00:00</div>
+    <div>End : 6:00:00</div>
     <!---->
-    <div
-      class="c-extra-details__message"
-    >
-      Comment : snooze-message
-    </div>
+    <div class="c-extra-details__message">Comment : snooze-message</div>
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
-    >
-      alarm
-    </i>
-  </span>
-</span>
-`;
-
-exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Snooze
-    </strong>
-    <div>
-      By : snooze-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      End : 6:00:00
-    </div>
-    <div>
-      Initiator : snooze-initiator
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Snooze</strong>
+    <div>By : snooze-author</div>
+    <div>Date : 6:00:00</div>
+    <div>End : 6:00:00</div>
+    <div>Initiator : snooze-initiator</div>
     <!---->
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;
