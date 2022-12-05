@@ -1,12 +1,13 @@
 <template lang="pug">
-  v-tooltip(left)
-    template(#activator="{ on }")
-      div.version(v-on="on") {{ version }}
-    div
-      div {{ $t('common.stack') }}:
-        strong  {{ stack }}
-      div {{ $t('common.edition') }}:
-        strong  {{ edition }}
+  div
+    v-tooltip(left)
+      template(#activator="{ on }")
+        div(v-on="on") {{ version }}
+      div
+        div {{ $t('common.stack') }}:
+          strong  {{ stack }}
+        div {{ $t('common.edition') }}:
+          strong  {{ edition }}
 </template>
 
 <script>

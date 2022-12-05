@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import {
@@ -12,13 +12,6 @@ const localVue = createVueInstance();
 const stubs = {
   'categories-list': true,
 };
-
-const snapshotFactory = (options = {}) => mount(AlarmColumnValueCategories, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectMenuContent = wrapper => wrapper.find('.v-menu__content');
 
@@ -55,6 +48,11 @@ describe('alarm-column-value-categories', () => {
         }),
     },
   };
+
+  const snapshotFactory = generateRenderer(AlarmColumnValueCategories, {
+    localVue,
+    stubs,
+  });
 
   it('Renders `alarm-column-value-categories` with default props', () => {
     const wrapper = snapshotFactory();
