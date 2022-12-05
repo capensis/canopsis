@@ -307,7 +307,7 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
           multiSortBy: [],
@@ -339,7 +339,7 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
           multiSortBy: [],

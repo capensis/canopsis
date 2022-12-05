@@ -290,6 +290,7 @@ export default merge({
     initialOutput: 'Sortie initiale',
     longInitialOutput: 'Sortie initiale longue',
     trigger: 'Déclencheur | Déclencheurs',
+    initialLongOutput: 'Sortie initiale longue',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
