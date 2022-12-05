@@ -40,7 +40,8 @@ import { convertDateToString } from '@/helpers/date/date';
 import { formMixin } from '@/mixins/form';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
-import TextEditor from '@/components/common/text-editor/text-editor.vue';
+
+const TextEditor = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
 export default {
   inject: ['$validator'],
