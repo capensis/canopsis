@@ -19,7 +19,7 @@
               box
             )
               template(#append="")
-                c-help-icon(icon="help", :text="$t('remediationInstructions.tooltips.endpoint')", left)
+                c-help-icon(:text="$t('remediationInstructions.tooltips.endpoint')", icon="help", left)
           v-flex(xs1)
 </template>
 
