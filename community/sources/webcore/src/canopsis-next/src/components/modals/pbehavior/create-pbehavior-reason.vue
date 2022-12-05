@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { pbehaviorReasonToForm } from '@/helpers/forms/reason-pbehavior';
 
@@ -26,6 +26,7 @@ export default {
   name: MODALS.createPbehaviorReason,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     CreatePbehaviorReasonForm,
