@@ -2959,12 +2959,12 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Flapping rules',
-      message: '', // TODO: need to put description
+      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.', 
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
       title: 'Resolve rules',
-      message: '', // TODO: need to put description
+      message: 'When an alarm receives a recovery type event, it changes to the closed status. Before considering this alarm as definitively resolved, Canopsis can wait for a delay. This delay can be useful if the alarm flaps or if the user wishes keep the alarm open in case of error.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
