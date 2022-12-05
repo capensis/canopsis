@@ -23,6 +23,7 @@ func NewUpdater(client mongo.DbClient) Updater {
 		client:           client,
 		collection:       client.Collection(mongo.AlarmTagCollection),
 		configCollection: client.Collection(mongo.ConfigurationMongoCollection),
+		tags:             make(map[string]string),
 	}
 }
 
