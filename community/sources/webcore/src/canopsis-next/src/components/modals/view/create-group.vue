@@ -18,16 +18,17 @@
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
-        v-tooltip.ml-2(
+        v-tooltip(
           v-if="group && hasDeleteAnyViewAccess",
           :disabled="group.deletable",
           top
         )
-          v-btn.error(
-            slot="activator",
-            :disabled="submitting || !group.deletable",
-            @click="remove"
-          ) {{ $t('common.delete') }}
+          template(#activator="{ on }")
+            div.ml-2(v-on="on")
+              v-btn.error(
+                :disabled="submitting || !group.deletable",
+                @click="remove"
+              ) {{ $t('common.delete') }}
           span {{ $t('modals.group.errors.isNotEmpty') }}
 </template>
 

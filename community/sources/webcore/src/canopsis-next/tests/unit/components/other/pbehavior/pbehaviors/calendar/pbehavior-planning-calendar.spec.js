@@ -15,6 +15,7 @@ const localVue = createVueInstance();
 localVue.use(DaySpanVuetifyPlugin);
 
 const stubs = {
+  'c-action-btn': true,
   'c-progress-overlay': true,
   'pbehavior-create-event': true,
   'pbehavior-planning-calendar-legend': true,

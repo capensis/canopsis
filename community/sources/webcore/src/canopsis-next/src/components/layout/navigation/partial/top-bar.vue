@@ -12,7 +12,7 @@
     v-layout(v-else, fill-height, align-center)
       app-logo.canopsis-logo.mr-2
       v-layout.version.ml-1(fill-height, align-end)
-        logged-users-count(badgeColor="secondary")
+        logged-users-count(badge-color="secondary")
         app-version
     top-bar-title(:title="appTitle")
     healthcheck-chips-list(v-if="isProVersion && hasAccessToHealthcheckStatus")
