@@ -2959,12 +2959,12 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Règles de bagot',
-      // message: '', // TODO: need to put description
+      message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
       title: 'Règles de résolution',
-      // message: '', // TODO: need to put description
+      message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
