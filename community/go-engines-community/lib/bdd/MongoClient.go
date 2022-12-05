@@ -3,6 +3,7 @@ package bdd
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -16,12 +17,10 @@ type MongoClient struct {
 }
 
 // NewMongoClient creates new mongo client.
-func NewMongoClient(db libmongo.DbClient) (*MongoClient, error) {
-	var mongoClient MongoClient
-	// TODO: change database to test
-	mongoClient.client = db
-
-	return &mongoClient, nil
+func NewMongoClient(db libmongo.DbClient) *MongoClient {
+	return &MongoClient{
+		client: db,
+	}
 }
 
 /**
