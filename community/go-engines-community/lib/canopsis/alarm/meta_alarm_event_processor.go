@@ -317,7 +317,6 @@ func (p *metaAlarmEventProcessor) processParent(ctx context.Context, event types
 			Initiator:  event.Initiator,
 			Status:     event.Status,
 			State:      event.State,
-			StateType:  event.StateType,
 			Ticket:     event.Ticket,
 			Duration:   event.Duration,
 		}
