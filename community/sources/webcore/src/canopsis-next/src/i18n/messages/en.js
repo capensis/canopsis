@@ -2959,12 +2959,12 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Flapping rules',
-      // message: '', // TODO: need to put description
+      message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
       title: 'Resolve rules',
-      // message: '', // TODO: need to put description
+      message: '', // TODO: need to put description
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
