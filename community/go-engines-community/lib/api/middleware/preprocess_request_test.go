@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -28,7 +27,7 @@ func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
 	}
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(noAuthorEncodedBody)))
+	req := httptest.NewRequest("POST", okURL, bytes.NewReader(noAuthorEncodedBody))
 
 	router := gin.New()
 	router.POST(
@@ -86,7 +85,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 	}
 
 	noAuthorEncodedBody, _ := json.Marshal(noAuthorBody)
-	req := httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(noAuthorEncodedBody)))
+	req := httptest.NewRequest("POST", okURL, bytes.NewReader(noAuthorEncodedBody))
 
 	router := gin.New()
 	router.POST(
@@ -145,7 +144,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(valid)
-	req := httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(body)))
+	req := httptest.NewRequest("POST", okURL, bytes.NewReader(body))
 
 	router := gin.New()
 	router.POST(
@@ -180,7 +179,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	}
 
 	body, _ = json.Marshal(invalid)
-	req = httptest.NewRequest("POST", okURL, io.NopCloser(bytes.NewBuffer(body)))
+	req = httptest.NewRequest("POST", okURL, bytes.NewReader(body))
 
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)

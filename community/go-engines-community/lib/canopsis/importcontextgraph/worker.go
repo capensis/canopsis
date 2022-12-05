@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -385,7 +384,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				serviceEvents = append(serviceEvents, w.createServiceEvent(ci, eventType, now))
 			default:
-				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, now)
+				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
 				if err != nil {
 					return res, err
 				}
@@ -682,7 +681,7 @@ func (w *worker) createServiceEvent(ci ConfigurationItem, eventType string, now 
 	}
 }
 
-func (w *worker) createBasicEntityEvent(eventType string, t, id string, now types.CpsTime) (types.Event, error) {
+func (w *worker) createBasicEntityEvent(eventType string, t, name, component string, now types.CpsTime) (types.Event, error) {
 	event := types.Event{
 		Connector:     defaultConnector,
 		ConnectorName: defaultConnectorName,
@@ -693,15 +692,11 @@ func (w *worker) createBasicEntityEvent(eventType string, t, id string, now type
 
 	switch t {
 	case types.EntityTypeComponent:
-		event.Component = id
+		event.Component = component
 		event.SourceType = types.SourceTypeComponent
 	case types.EntityTypeResource:
-		idParts := strings.Split(id, "/")
-		if len(idParts) != 2 {
-			return types.Event{}, fmt.Errorf("invalid resource id = %s", id)
-		}
-		event.Resource = idParts[0]
-		event.Component = idParts[1]
+		event.Resource = name
+		event.Component = component
 		event.SourceType = types.SourceTypeResource
 	}
 

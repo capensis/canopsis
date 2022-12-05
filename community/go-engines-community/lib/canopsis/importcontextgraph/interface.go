@@ -29,7 +29,6 @@ type Stats struct {
 	ExecTime time.Duration `bson:"-" json:"-"`
 	Deleted  int64         `bson:"deleted" json:"deleted"`
 	Updated  int64         `bson:"updated" json:"updated"`
-	Inserted int64         `bson:"inserted" json:"inserted"`
 }
 
 type EventPublisher interface {
