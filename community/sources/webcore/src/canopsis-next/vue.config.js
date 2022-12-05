@@ -29,6 +29,13 @@ module.exports = {
       })
       .end();
 
+    config.optimization
+      .minimizer('terser')
+      .tap(([terserOptions]) => [{
+        ...terserOptions,
+        exclude: /TextEditor/,
+      }]);
+
     return config;
   },
   devServer: {
