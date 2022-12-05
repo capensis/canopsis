@@ -1,0 +1,420 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`column-field Renders \`column-field\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout justify-space-between align-center"
+  >
+    <div
+      class="layout"
+    >
+      <button
+        class="mx-0 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            arrow_upward
+          </i>
+        </div>
+      </button>
+      <button
+        class="mx-0 ml-1 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            arrow_downward
+          </i>
+        </div>
+      </button>
+    </div>
+    <button
+      class="ma-0 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light red--text"
+        >
+          close
+        </i>
+      </div>
+    </button>
+  </div>
+  <div
+    class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            name="undefined.label"
+            placeholder="Label"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            name="undefined.value"
+            placeholder="Value"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout row"
+  >
+    <div
+      class="v-input v-input--selection-controls v-input--switch theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Custom template"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <div
+              class="v-input--switch__track theme--light"
+            />
+            <div
+              class="v-input--switch__thumb theme--light"
+            >
+              <transition-stub
+                mode="out-in"
+                name="fab-transition"
+              />
+            </div>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Custom template
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-input--selection-controls__input"
+        >
+          <input
+            aria-checked="true"
+            aria-label="Is it HTML?"
+            role="checkbox"
+            type="checkbox"
+            value=""
+          />
+          <div
+            class="v-input--selection-controls__ripple primary--text"
+          />
+          <div
+            class="v-input--switch__track theme--light primary--text"
+          />
+          <div
+            class="v-input--switch__thumb theme--light primary--text"
+          >
+            <transition-stub
+              mode="out-in"
+              name="fab-transition"
+            />
+          </div>
+        </div>
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          Is it HTML?
+        </label>
+      </div>
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-input--selection-controls__input"
+        >
+          <input
+            aria-checked="true"
+            aria-label="Color indicator"
+            role="checkbox"
+            type="checkbox"
+            value=""
+          />
+          <div
+            class="v-input--selection-controls__ripple primary--text"
+          />
+          <div
+            class="v-input--switch__track theme--light primary--text"
+          />
+          <div
+            class="v-input--switch__thumb theme--light primary--text"
+          >
+            <transition-stub
+              mode="out-in"
+              name="fab-transition"
+            />
+          </div>
+        </div>
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          Color indicator
+        </label>
+      </div>
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+  <c-color-indicator-field-stub
+    value="impact_state"
+  />
+</div>
+`;
+
+exports[`column-field Renders \`column-field\` with required props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout justify-space-between align-center"
+  >
+    <div
+      class="layout"
+    >
+      <button
+        class="mx-0 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            arrow_upward
+          </i>
+        </div>
+      </button>
+      <button
+        class="mx-0 ml-1 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            arrow_downward
+          </i>
+        </div>
+      </button>
+    </div>
+    <button
+      class="ma-0 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light red--text"
+        >
+          close
+        </i>
+      </div>
+    </button>
+  </div>
+  <div
+    class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            name="undefined.label"
+            placeholder="Label"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            name="undefined.value"
+            placeholder="Value"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+</div>
+`;
