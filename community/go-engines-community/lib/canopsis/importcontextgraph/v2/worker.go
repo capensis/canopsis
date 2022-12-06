@@ -32,12 +32,7 @@ type parseResult struct {
 }
 
 type parseEntityResult struct {
-	writeModels []mongo.WriteModel
-
-	componentInfos map[string]map[string]interface{}
-
-	entityTypes map[string]string
-
+	writeModels       []mongo.WriteModel
 	updatedIds        []string
 	removedIds        []string
 	serviceEvents     []types.Event
