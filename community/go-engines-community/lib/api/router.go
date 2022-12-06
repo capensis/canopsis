@@ -4,9 +4,6 @@ import (
 	"context"
 	"net/url"
 
-	v1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
-	v2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -17,6 +14,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
+	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/engineinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
@@ -1096,7 +1095,7 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV1 := v1.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		contextGraphRouter := protected.Group("/contextgraph")
 		{
 			contextGraphRouter.PUT(
@@ -1116,7 +1115,7 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV2 := v2.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(authObjContextGraph, permCreate, enforcer),
