@@ -17,6 +17,7 @@ import {
   ENTITY_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_OPERATORS,
+  SERVICE_WEATHER_PATTERN_FIELDS,
 } from '@/constants';
 
 import { isValidDateInterval } from '@/helpers/date/date';
@@ -191,7 +192,9 @@ export const isDatePatternRuleField = value => [
 export const isNumberPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.state,
   ALARM_PATTERN_FIELDS.status,
+  EVENT_FILTER_PATTERN_FIELDS.state,
   ENTITY_PATTERN_FIELDS.impactLevel,
+  SERVICE_WEATHER_PATTERN_FIELDS.state,
 ].includes(value);
 
 /**
