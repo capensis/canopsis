@@ -162,7 +162,6 @@ func RegisterRoutes(
 		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
-		security.GetCookieOptions().Secure,
 		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
