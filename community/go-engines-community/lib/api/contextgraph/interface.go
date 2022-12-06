@@ -4,10 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/gin-gonic/gin"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/gin-gonic/gin"
 )
 
 type API interface {
