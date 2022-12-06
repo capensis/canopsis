@@ -1,4 +1,4 @@
-package importcontextgraph
+package v1
 
 import (
 	"context"
@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -24,13 +26,13 @@ const (
 	defaultConnectorName = "task_importctx"
 )
 
-type oldWorker struct {
+type workerV1 struct {
 	entityCollection        libmongo.DbCollection
 	categoryCollection      libmongo.DbCollection
 	alarmCollection         libmongo.DbCollection
 	alarmResolvedCollection libmongo.DbCollection
 
-	publisher         EventPublisher
+	publisher         importcontextgraph.EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
 }
 
@@ -57,12 +59,12 @@ type parseEntityResult struct {
 }
 
 // left for backward compatibility
-func NewOldWorker(
+func NewWorker(
 	dbClient libmongo.DbClient,
-	publisher EventPublisher,
+	publisher importcontextgraph.EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
-) Worker {
-	return &oldWorker{
+) importcontextgraph.Worker {
+	return &workerV1{
 		entityCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
 		categoryCollection:      dbClient.Collection(libmongo.EntityCategoryMongoCollection),
 		alarmCollection:         dbClient.Collection(libmongo.AlarmMongoCollection),
@@ -73,7 +75,7 @@ func NewOldWorker(
 	}
 }
 
-func (w *oldWorker) Work(ctx context.Context, filename, source string) (stats Stats, resErr error) {
+func (w *workerV1) Work(ctx context.Context, filename, source string) (stats importcontextgraph.Stats, resErr error) {
 	startTime := time.Now()
 	defer func() {
 		stats.ExecTime = time.Since(startTime)
@@ -103,7 +105,7 @@ func (w *oldWorker) Work(ctx context.Context, filename, source string) (stats St
 	return stats, nil
 }
 
-func (w *oldWorker) WorkPartial(ctx context.Context, filename, source string) (stats Stats, resErr error) {
+func (w *workerV1) WorkPartial(ctx context.Context, filename, source string) (stats importcontextgraph.Stats, resErr error) {
 	startTime := time.Now()
 	defer func() {
 		stats.ExecTime = time.Since(startTime)
@@ -171,7 +173,7 @@ func (w *oldWorker) WorkPartial(ctx context.Context, filename, source string) (s
 	return stats, nil
 }
 
-func (w *oldWorker) parseFile(ctx context.Context, filename, source string, withEvents bool) (_ parseResult, resErr error) {
+func (w *workerV1) parseFile(ctx context.Context, filename, source string, withEvents bool) (_ parseResult, resErr error) {
 	res := parseResult{}
 	file, err := os.Open(filename)
 	if err != nil {
@@ -252,7 +254,7 @@ func (w *oldWorker) parseFile(ctx context.Context, filename, source string, with
 	return res, nil
 }
 
-func (w *oldWorker) parseEntities(
+func (w *workerV1) parseEntities(
 	ctx context.Context,
 	decoder *json.Decoder,
 	source string,
@@ -269,7 +271,7 @@ func (w *oldWorker) parseEntities(
 	componentInfos := make(map[string]map[string]interface{})
 
 	for decoder.More() {
-		var ci OldConfigurationItem
+		var ci importcontextgraph.ConfigurationItem
 		err := decoder.Decode(&ci)
 		if err != nil {
 			return res, fmt.Errorf("failed to decode cis item: %v", err)
@@ -285,14 +287,14 @@ func (w *oldWorker) parseEntities(
 		ci.Imported = now
 
 		eventType := ""
-		var oldEntity OldConfigurationItem
+		var oldEntity importcontextgraph.ConfigurationItem
 
 		if ci.Type != nil {
 			entityTypes[ci.ID] = *ci.Type
 		}
 
 		switch ci.Action {
-		case ActionCreate:
+		case importcontextgraph.ActionCreate:
 			updatedIds = append(updatedIds, ci.ID)
 			writeModels = append(writeModels, w.createEntity(ci))
 			if ci.Type != nil && *ci.Type == types.EntityTypeComponent {
@@ -306,7 +308,7 @@ func (w *oldWorker) parseEntities(
 					eventType = types.EventTypeEntityUpdated
 				}
 			}
-		case ActionSet:
+		case importcontextgraph.ActionSet:
 			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil && err != mongo.ErrNoDocuments {
@@ -344,7 +346,7 @@ func (w *oldWorker) parseEntities(
 					}
 				}
 			}
-		case ActionUpdate:
+		case importcontextgraph.ActionUpdate:
 			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
@@ -373,7 +375,7 @@ func (w *oldWorker) parseEntities(
 					}
 				}
 			}
-		case ActionDelete:
+		case importcontextgraph.ActionDelete:
 			removedIds = append(removedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
@@ -393,7 +395,7 @@ func (w *oldWorker) parseEntities(
 			if oldEntity.Enabled != nil && *oldEntity.Enabled && *ci.Type == types.EntityTypeService {
 				eventType = types.EventTypeRecomputeEntityService
 			}
-		case ActionEnable:
+		case importcontextgraph.ActionEnable:
 			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
@@ -415,7 +417,7 @@ func (w *oldWorker) parseEntities(
 			default:
 				eventType = types.EventTypeEntityToggled
 			}
-		case ActionDisable:
+		case importcontextgraph.ActionDisable:
 			updatedIds = append(updatedIds, ci.ID)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": ci.ID}).Decode(&oldEntity)
 			if err != nil {
@@ -467,7 +469,7 @@ func (w *oldWorker) parseEntities(
 	return res, nil
 }
 
-func (w *oldWorker) parseLinks(
+func (w *workerV1) parseLinks(
 	ctx context.Context,
 	decoder *json.Decoder,
 	componentInfos map[string]map[string]interface{},
@@ -479,13 +481,13 @@ func (w *oldWorker) parseLinks(
 	}
 
 	for decoder.More() {
-		var link Link
+		var link importcontextgraph.Link
 		err := decoder.Decode(&link)
 		if err != nil {
 			return nil, fmt.Errorf("failed to decode links item: %v", err)
 		}
 
-		ciTo := OldConfigurationItem{}
+		ciTo := importcontextgraph.ConfigurationItem{}
 		err = w.entityCollection.FindOne(ctx, bson.M{"_id": link.To}).Decode(&ciTo)
 		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, err
@@ -497,7 +499,7 @@ func (w *oldWorker) parseLinks(
 		for _, from := range link.From {
 			fromType := entityTypes[from]
 			if fromType == "" {
-				ciFrom := OldConfigurationItem{}
+				ciFrom := importcontextgraph.ConfigurationItem{}
 				err = w.entityCollection.FindOne(ctx, bson.M{"_id": from}).Decode(&ciFrom)
 				if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 					return nil, err
@@ -509,7 +511,7 @@ func (w *oldWorker) parseLinks(
 		}
 
 		switch link.Action {
-		case ActionCreate:
+		case importcontextgraph.ActionCreate:
 			linkWriterModels, err := w.createLink(link, entityTypes)
 			if err != nil {
 				return nil, err
@@ -521,7 +523,7 @@ func (w *oldWorker) parseLinks(
 			} else if ciTo.Type != nil && *ciTo.Type == types.EntityTypeComponent {
 				writeModels = append(writeModels, w.updateComponentInfosOnLinkCreate(link, ciTo.Infos))
 			}
-		case ActionDelete:
+		case importcontextgraph.ActionDelete:
 			writeModels = append(writeModels, w.deleteLink(link, entityTypes)...)
 
 			if _, ok := componentInfos[link.To]; ok {
@@ -529,15 +531,15 @@ func (w *oldWorker) parseLinks(
 			} else if ciTo.Type != nil && *ciTo.Type == types.EntityTypeComponent {
 				writeModels = append(writeModels, w.updateComponentInfosOnLinkDelete(link))
 			}
-		case ActionUpdate:
+		case importcontextgraph.ActionUpdate:
 			//wasn't implemented in python code
-			return nil, ErrNotImplemented
-		case ActionEnable:
+			return nil, importcontextgraph.ErrNotImplemented
+		case importcontextgraph.ActionEnable:
 			//wasn't implemented in python code
-			return nil, ErrNotImplemented
-		case ActionDisable:
+			return nil, importcontextgraph.ErrNotImplemented
+		case importcontextgraph.ActionDisable:
 			//wasn't implemented in python code
-			return nil, ErrNotImplemented
+			return nil, importcontextgraph.ErrNotImplemented
 		default:
 			return nil, fmt.Errorf("the action %s is not recognized", link.Action)
 		}
@@ -546,7 +548,7 @@ func (w *oldWorker) parseLinks(
 	return writeModels, nil
 }
 
-func (w *oldWorker) sendUpdateServiceEvents(ctx context.Context) error {
+func (w *workerV1) sendUpdateServiceEvents(ctx context.Context) error {
 	cursor, err := w.entityCollection.Find(ctx, bson.M{"type": types.EntityTypeService})
 	if err != nil {
 		return err
@@ -578,7 +580,7 @@ func (w *oldWorker) sendUpdateServiceEvents(ctx context.Context) error {
 	return nil
 }
 
-func (w *oldWorker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, limit, limitBytes int) (int64, int64, error) {
+func (w *workerV1) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, limit, limitBytes int) (int64, int64, error) {
 	var updated, deleted int64
 
 	start := 0
@@ -628,7 +630,7 @@ func (w *oldWorker) bulkWrite(ctx context.Context, writeModels []mongo.WriteMode
 	return updated, deleted, nil
 }
 
-func (w *oldWorker) validate(ci OldConfigurationItem) error {
+func (w *workerV1) validate(ci importcontextgraph.ConfigurationItem) error {
 	if ci.ID == "" {
 		return fmt.Errorf("_id is required")
 	}
@@ -653,7 +655,7 @@ func (w *oldWorker) validate(ci OldConfigurationItem) error {
 	return nil
 }
 
-func (w *oldWorker) fillDefaultFields(ci *OldConfigurationItem) {
+func (w *workerV1) fillDefaultFields(ci *importcontextgraph.ConfigurationItem) {
 	if ci.Name == nil {
 		ci.Name = &ci.ID
 	}
@@ -666,7 +668,7 @@ func (w *oldWorker) fillDefaultFields(ci *OldConfigurationItem) {
 	}
 }
 
-func (w *oldWorker) createLink(link Link, entityTypes map[string]string) ([]mongo.WriteModel, error) {
+func (w *workerV1) createLink(link importcontextgraph.Link, entityTypes map[string]string) ([]mongo.WriteModel, error) {
 	updateTo := bson.M{"$addToSet": bson.M{"depends": bson.M{"$each": link.From}}}
 	updateFrom := bson.M{"$addToSet": bson.M{"impact": link.To}}
 
@@ -703,7 +705,7 @@ func (w *oldWorker) createLink(link Link, entityTypes map[string]string) ([]mong
 	}, nil
 }
 
-func (w *oldWorker) deleteLink(link Link, entityTypes map[string]string) []mongo.WriteModel {
+func (w *workerV1) deleteLink(link importcontextgraph.Link, entityTypes map[string]string) []mongo.WriteModel {
 	updateTo := bson.M{"$pull": bson.M{"depends": bson.M{"$in": link.From}}}
 	updateFrom := bson.M{"$pull": bson.M{"impact": link.To}}
 
@@ -730,7 +732,7 @@ func (w *oldWorker) deleteLink(link Link, entityTypes map[string]string) []mongo
 	}
 }
 
-func (w *oldWorker) createEntity(ci OldConfigurationItem) mongo.WriteModel {
+func (w *workerV1) createEntity(ci importcontextgraph.ConfigurationItem) mongo.WriteModel {
 	ci.Depends = []string{}
 	ci.Impact = []string{}
 	ci.EnableHistory = make([]int64, 0)
@@ -755,7 +757,7 @@ func (w *oldWorker) createEntity(ci OldConfigurationItem) mongo.WriteModel {
 		SetUpsert(true)
 }
 
-func (w *oldWorker) updateEntity(ci *OldConfigurationItem, oldEntity OldConfigurationItem, mergeInfos bool) mongo.WriteModel {
+func (w *workerV1) updateEntity(ci *importcontextgraph.ConfigurationItem, oldEntity importcontextgraph.ConfigurationItem, mergeInfos bool) mongo.WriteModel {
 	ci.Depends = oldEntity.Depends
 	ci.Impact = oldEntity.Impact
 	ci.EnableHistory = oldEntity.EnableHistory
@@ -784,7 +786,7 @@ func (w *oldWorker) updateEntity(ci *OldConfigurationItem, oldEntity OldConfigur
 		SetUpsert(true)
 }
 
-func (w *oldWorker) changeState(id string, enabled bool, importSource string, imported types.CpsTime) mongo.WriteModel {
+func (w *workerV1) changeState(id string, enabled bool, importSource string, imported types.CpsTime) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"_id": id}).
 		SetUpdate(bson.M{"$set": bson.M{
@@ -794,7 +796,7 @@ func (w *oldWorker) changeState(id string, enabled bool, importSource string, im
 		}})
 }
 
-func (w *oldWorker) deleteEntity(ci OldConfigurationItem) []mongo.WriteModel {
+func (w *workerV1) deleteEntity(ci importcontextgraph.ConfigurationItem) []mongo.WriteModel {
 	return []mongo.WriteModel{
 		mongo.NewUpdateManyModel().
 			SetFilter(bson.M{"impact": ci.ID}).
@@ -813,7 +815,7 @@ func (w *oldWorker) deleteEntity(ci OldConfigurationItem) []mongo.WriteModel {
 	}
 }
 
-func (w *oldWorker) updateComponentInfosOnComponentUpdate(ci OldConfigurationItem) mongo.WriteModel {
+func (w *workerV1) updateComponentInfosOnComponentUpdate(ci importcontextgraph.ConfigurationItem) mongo.WriteModel {
 	update := bson.M{"component": ci.ID}
 	if len(ci.Infos) > 0 {
 		update["component_infos"] = ci.Infos
@@ -824,13 +826,13 @@ func (w *oldWorker) updateComponentInfosOnComponentUpdate(ci OldConfigurationIte
 		SetUpdate(bson.M{"$set": update})
 }
 
-func (w *oldWorker) updateComponentInfosOnComponentDelete(ci OldConfigurationItem) mongo.WriteModel {
+func (w *workerV1) updateComponentInfosOnComponentDelete(ci importcontextgraph.ConfigurationItem) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"type": types.EntityTypeResource, "impact": ci.ID}).
 		SetUpdate(bson.M{"$unset": bson.M{"component_infos": "", "component": ""}})
 }
 
-func (w *oldWorker) updateComponentInfosOnLinkCreate(link Link, infos map[string]interface{}) mongo.WriteModel {
+func (w *workerV1) updateComponentInfosOnLinkCreate(link importcontextgraph.Link, infos map[string]interface{}) mongo.WriteModel {
 	update := bson.M{"component": link.To}
 	if len(infos) > 0 {
 		update["component_infos"] = infos
@@ -841,13 +843,13 @@ func (w *oldWorker) updateComponentInfosOnLinkCreate(link Link, infos map[string
 		SetUpdate(bson.M{"$set": update})
 }
 
-func (w *oldWorker) updateComponentInfosOnLinkDelete(link Link) mongo.WriteModel {
+func (w *workerV1) updateComponentInfosOnLinkDelete(link importcontextgraph.Link) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"_id": bson.M{"$in": link.From}, "type": types.EntityTypeResource}).
 		SetUpdate(bson.M{"$unset": bson.M{"component_infos": "", "component": ""}})
 }
 
-func (w *oldWorker) createServiceEvent(ci OldConfigurationItem, eventType string, now types.CpsTime) types.Event {
+func (w *workerV1) createServiceEvent(ci importcontextgraph.ConfigurationItem, eventType string, now types.CpsTime) types.Event {
 	return types.Event{
 		EventType:     eventType,
 		Timestamp:     now,
@@ -859,7 +861,7 @@ func (w *oldWorker) createServiceEvent(ci OldConfigurationItem, eventType string
 	}
 }
 
-func (w *oldWorker) createBasicEntityEvent(ctx context.Context, ci, oldEntity OldConfigurationItem, eventType string, now types.CpsTime) (types.Event, error) {
+func (w *workerV1) createBasicEntityEvent(ctx context.Context, ci, oldEntity importcontextgraph.ConfigurationItem, eventType string, now types.CpsTime) (types.Event, error) {
 	event := types.Event{
 		EventType: eventType,
 		Timestamp: now,
@@ -912,7 +914,7 @@ func (w *oldWorker) createBasicEntityEvent(ctx context.Context, ci, oldEntity Ol
 	return event, nil
 }
 
-func (w *oldWorker) fillEventAfterLinksUpdate(ctx context.Context, event types.Event) (types.Event, error) {
+func (w *workerV1) fillEventAfterLinksUpdate(ctx context.Context, event types.Event) (types.Event, error) {
 	switch event.SourceType {
 	case types.SourceTypeComponent:
 		if event.Connector == "" {

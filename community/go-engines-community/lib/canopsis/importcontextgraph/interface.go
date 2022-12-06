@@ -35,7 +35,7 @@ type EventPublisher interface {
 	SendEvent(ctx context.Context, event types.Event) error
 }
 
-type ConfigurationItem struct {
+type EntityConfiguration struct {
 	ID             string                `json:"-" bson:"_id"`
 	Name           string                `json:"name" bson:"name" binding:"required"`
 	Depends        []string              `json:"-" bson:"depends"`
@@ -45,7 +45,7 @@ type ConfigurationItem struct {
 	EntityPattern  pattern.Entity        `json:"entity_pattern" bson:"entity_pattern,omitempty"`
 	OutputTemplate string                `json:"output_template" bson:"output_template,omitempty"`
 	Infos          map[string]types.Info `json:"infos" bson:"infos"`
-	Type           string                `json:"type" bson:"type"`
+	Type           string                `json:"type" bson:"type" binding:"required"`
 	Category       string                `json:"category" bson:"category,omitempty"`
 	ImpactLevel    int64                 `json:"impact_level" bson:"impact_level,omitempty"`
 	Enabled        bool                  `json:"enabled" bson:"enabled,omitempty"`
@@ -54,7 +54,7 @@ type ConfigurationItem struct {
 	Imported       types.CpsTime         `json:"-" bson:"imported"`
 }
 
-type OldConfigurationItem struct {
+type ConfigurationItem struct {
 	ID             string                 `json:"_id" bson:"-"`
 	Name           *string                `json:"name" bson:"name,omitempty"`
 	Depends        []string               `json:"-" bson:"depends"`

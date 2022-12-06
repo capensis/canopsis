@@ -4,6 +4,9 @@ import (
 	"context"
 	"net/url"
 
+	v1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
+	v2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -1093,35 +1096,36 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPI := contextgraph.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV1 := v1.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		contextGraphRouter := protected.Group("/contextgraph")
 		{
 			contextGraphRouter.PUT(
 				"import",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.ImportOldAll,
+				contextGraphAPIV1.ImportAll,
 			)
 			contextGraphRouter.PUT(
 				"import-partial",
 				middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-				contextGraphAPI.ImportOldPartial,
+				contextGraphAPIV1.ImportPartial,
 			)
 			contextGraphRouter.GET(
 				"import/status/:id",
 				middleware.Authorize(authObjContextGraph, permRead, enforcer),
-				contextGraphAPI.Status,
+				contextGraphAPIV1.Status,
 			)
 		}
 
+		contextGraphAPIV2 := v2.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-			contextGraphAPI.ImportAll,
+			contextGraphAPIV2.ImportAll,
 		)
 		protected.PUT(
 			"contextgraph-import-partial",
 			middleware.Authorize(authObjContextGraph, permCreate, enforcer),
-			contextGraphAPI.ImportPartial,
+			contextGraphAPIV2.ImportPartial,
 		)
 
 		stateSettingsRouter := protected.Group("/state-settings")
