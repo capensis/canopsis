@@ -14,50 +14,46 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-component-contextgraph-new-import-1",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "test-resource-contextgraph-new-import-1-1",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 2",
-                "value": "value 2"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-1",
-            "enabled": true
-          },
-          {
-            "name": "test-resource-contextgraph-new-import-1-2",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 3",
-                "value": "value 3"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-1",
-            "enabled": true
+    [
+      {
+        "name": "test-component-contextgraph-new-import-1",
+        "type": "component",
+        "infos": {
+          "test_info": {
+            "description": "description 1",
+            "value": "value 1"
           }
-        ]
+        },
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "test-resource-contextgraph-new-import-1-1",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 2",
+            "value": "value 2"
+          }
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-1",
+        "enabled": true
+      },
+      {
+        "name": "test-resource-contextgraph-new-import-1-2",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 3",
+            "value": "value 3"
+          }
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-1",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -176,25 +172,21 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-resource-contextgraph-new-import-1-3",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 4",
-                "value": "value 4"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-1",
-            "enabled": true
+    [
+      {
+        "name": "test-resource-contextgraph-new-import-1-3",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 4",
+            "value": "value 4"
           }
-        ]
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-1",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -259,38 +251,34 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-resource-contextgraph-new-import-2-1",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 2",
-                "value": "value 2"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-2",
-            "enabled": true
-          },
-          {
-            "name": "test-resource-contextgraph-new-import-2-2",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 3",
-                "value": "value 3"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-2",
-            "enabled": true
+    [
+      {
+        "name": "test-resource-contextgraph-new-import-2-1",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 2",
+            "value": "value 2"
           }
-        ]
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-2",
+        "enabled": true
+      },
+      {
+        "name": "test-resource-contextgraph-new-import-2-2",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 3",
+            "value": "value 3"
+          }
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-2",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -391,50 +379,46 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-update:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-component-contextgraph-new-import-3",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "test-resource-contextgraph-new-import-3-1",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 2",
-                "value": "value 2"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-3",
-            "enabled": true
-          },
-          {
-            "name": "test-resource-contextgraph-new-import-3-2",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 3",
-                "value": "value 3"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-3",
-            "enabled": true
+    [
+      {
+        "name": "test-component-contextgraph-new-import-3",
+        "type": "component",
+        "infos": {
+          "test_info": {
+            "description": "description 1",
+            "value": "value 1"
           }
-        ]
+        },
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "test-resource-contextgraph-new-import-3-1",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 2",
+            "value": "value 2"
+          }
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-3",
+        "enabled": true
+      },
+      {
+        "name": "test-resource-contextgraph-new-import-3-2",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 3",
+            "value": "value 3"
+          }
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-3",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -519,25 +503,21 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-update:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "_id": "test-component-contextgraph-new-import-3",
-            "name": "test-component-contextgraph-new-import-3",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "new value"
-              }
-            },
-            "action": "set",
-            "enabled": true
+    [
+      {
+        "_id": "test-component-contextgraph-new-import-3",
+        "name": "test-component-contextgraph-new-import-3",
+        "type": "component",
+        "infos": {
+          "test_info": {
+            "description": "description 1",
+            "value": "new value"
           }
-        ]
+        },
+        "action": "set",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -622,25 +602,21 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-update:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-resource-contextgraph-new-import-3-3",
-            "type": "resource",
-            "infos": {
-              "test_info": {
-                "description": "description 4",
-                "value": "value 4"
-              }
-            },
-            "action": "set",
-            "component": "test-component-contextgraph-new-import-3",
-            "enabled": true
+    [
+      {
+        "name": "test-resource-contextgraph-new-import-3-3",
+        "type": "resource",
+        "infos": {
+          "test_info": {
+            "description": "description 4",
+            "value": "value 4"
           }
-        ]
+        },
+        "action": "set",
+        "component": "test-component-contextgraph-new-import-3",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -681,22 +657,18 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "set",
-            "enabled": true
+    [
+      {
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "set",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -721,23 +693,19 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-component-to-enable",
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "enable",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-component-to-enable",
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "enable",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -762,23 +730,19 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-to-set-not-exist",
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "enable",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-to-set-not-exist",
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "enable",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -803,23 +767,19 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-component-to-disable-1",
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "disable",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-component-to-disable-1",
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "disable",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -868,23 +828,19 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-component-to-disable-2",
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "disable",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-component-to-disable-2",
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "disable",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -922,23 +878,19 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-import-component-to-disable-not-exist",
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "disable",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-import-component-to-disable-not-exist",
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "disable",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -952,30 +904,26 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "_id": "SC003C",
-            "type": "component",
-            "name": "SC003C",
-            "action": "set",
-            "enabled": true,
-            "entity_pattern": [
-              [
-                {
-                  "field": "name",
-                  "cond": {
-                    "type": "regexp",
-                    "value": "script_new_import"
-                  }
-                }
-              ]
-            ]
-          }
+    [
+      {
+        "_id": "SC003C",
+        "type": "component",
+        "name": "SC003C",
+        "action": "set",
+        "enabled": true,
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "regexp",
+                "value": "script_new_import"
+              }
+            }
+          ]
         ]
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -989,30 +937,26 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "_id": "SC003C",
-            "type": "service",
-            "name": "SC003C",
-            "action": "some",
-            "enabled": true,
-            "entity_pattern": [
-              [
-                {
-                  "field": "name",
-                  "cond": {
-                    "type": "regexp",
-                    "value": "script_new_import"
-                  }
-                }
-              ]
-            ]
-          }
+    [
+      {
+        "_id": "SC003C",
+        "type": "service",
+        "name": "SC003C",
+        "action": "some",
+        "enabled": true,
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "regexp",
+                "value": "script_new_import"
+              }
+            }
+          ]
         ]
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1026,54 +970,50 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "component_SC004C",
-            "type": "component",
-            "infos": {},
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "script_new-import_service",
-            "component": "component_SC004C",
-            "type": "resource",
-            "infos": {},
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "script_new-import_service_2",
-            "component": "component_SC004C",
-            "type": "resource",
-            "infos": {},
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "test-entityservice-service-new-import",
-            "output_template": "abc",
-            "impact_level": 1,
-            "enabled": true,
-            "entity_pattern": [
-              [
-                {
-                  "field": "name",
-                  "cond": {
-                    "type": "regexp",
-                    "value": "script_new-import_service"
-                  }
-                }
-              ]
-            ],
-            "type": "service",
-            "action": "set"
-          }
-        ]
+    [
+      {
+        "name": "component_SC004C",
+        "type": "component",
+        "infos": {},
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "script_new-import_service",
+        "component": "component_SC004C",
+        "type": "resource",
+        "infos": {},
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "script_new-import_service_2",
+        "component": "component_SC004C",
+        "type": "resource",
+        "infos": {},
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "test-entityservice-service-new-import",
+        "output_template": "abc",
+        "impact_level": 1,
+        "enabled": true,
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "regexp",
+                "value": "script_new-import_service"
+              }
+            }
+          ]
+        ],
+        "type": "service",
+        "action": "set"
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1219,31 +1159,27 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-resource-to-delete-conflict-1",
-            "component": "test-entity-contextgraph-new-import-component-to-delete-conflict-1",
-            "type": "resource",
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "test-entity-contextgraph-new-import-component-to-delete-conflict-1",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "delete",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-resource-to-delete-conflict-1",
+        "component": "test-entity-contextgraph-new-import-component-to-delete-conflict-1",
+        "type": "resource",
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "test-entity-contextgraph-new-import-component-to-delete-conflict-1",
+        "type": "component",
+        "infos": {
+          "test_info": {
+            "description": "description 1",
+            "value": "value 1"
           }
-        ]
+        },
+        "action": "delete",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1257,31 +1193,27 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-2",
-            "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
-            "type": "resource",
-            "action": "set",
-            "enabled": true
-          },
-          {
-            "name": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
-            "type": "component",
-            "infos": {
-              "test_info": {
-                "description": "description 1",
-                "value": "value 1"
-              }
-            },
-            "action": "disable",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-2",
+        "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
+        "type": "resource",
+        "action": "set",
+        "enabled": true
+      },
+      {
+        "name": "test-entity-contextgraph-new-import-component-to-disable-conflict-2",
+        "type": "component",
+        "infos": {
+          "test_info": {
+            "description": "description 1",
+            "value": "value 1"
           }
-        ]
+        },
+        "action": "disable",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1295,19 +1227,15 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-3",
-            "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-3",
-            "type": "resource",
-            "action": "set",
-            "enabled": true
-          }
-        ]
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-resource-to-disable-conflict-3",
+        "component": "test-entity-contextgraph-new-import-component-to-disable-conflict-3",
+        "type": "resource",
+        "action": "set",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1321,24 +1249,20 @@ Feature: New import entities
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-resource-to-delete-1-1",
-            "component": "test-entity-contextgraph-new-import-component-to-delete-1",
-            "type": "resource",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "delete",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-resource-to-delete-1-1",
+        "component": "test-entity-contextgraph-new-import-component-to-delete-1",
+        "type": "resource",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "delete",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1402,23 +1326,19 @@ Feature: New import entities
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-source:
     """json
-    {
-      "json": {
-        "cis": [
-          {
-            "name": "test-entity-contextgraph-new-import-component-to-delete-2",
-            "type": "component",
-            "infos": {
-              "new_info": {
-                "value": "2"
-              }
-            },
-            "action": "delete",
-            "enabled": true
+    [
+      {
+        "name": "test-entity-contextgraph-new-import-component-to-delete-2",
+        "type": "component",
+        "infos": {
+          "new_info": {
+            "value": "2"
           }
-        ]
+        },
+        "action": "delete",
+        "enabled": true
       }
-    }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:

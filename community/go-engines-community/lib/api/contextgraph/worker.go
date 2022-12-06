@@ -29,8 +29,8 @@ type worker struct {
 	filePattern         string
 	thdWarnMinPerImport time.Duration
 	thdCritMinPerImport time.Duration
-	oldWorker           importcontextgraph.Worker
-	worker              importcontextgraph.Worker
+	workerV1            importcontextgraph.Worker
+	workerV2            importcontextgraph.Worker
 }
 
 func NewImportWorker(
@@ -38,8 +38,8 @@ func NewImportWorker(
 	publisher EventPublisher,
 	reporter StatusReporter,
 	queue JobQueue,
-	importWorker importcontextgraph.Worker,
-	oldImportWorker importcontextgraph.Worker,
+	workerV1 importcontextgraph.Worker,
+	workerV2 importcontextgraph.Worker,
 	logger zerolog.Logger,
 ) ImportWorker {
 	w := &worker{
@@ -47,8 +47,8 @@ func NewImportWorker(
 		publisher:   publisher,
 		reporter:    reporter,
 		filePattern: conf.ImportCtx.FilePattern,
-		worker:      importWorker,
-		oldWorker:   oldImportWorker,
+		workerV1:    workerV1,
+		workerV2:    workerV2,
 	}
 
 	thdWarnMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdWarnMinPerImport)
@@ -158,15 +158,15 @@ func (w *worker) doJob(ctx context.Context, job ImportJob) (importcontextgraph.S
 
 	if job.IsOld {
 		if job.IsPartial {
-			return w.oldWorker.WorkPartial(ctx, filename, job.Source)
+			return w.workerV1.WorkPartial(ctx, filename, job.Source)
 		}
 
-		return w.oldWorker.Work(ctx, filename, job.Source)
+		return w.workerV1.Work(ctx, filename, job.Source)
 	}
 
 	if job.IsPartial {
-		return w.worker.WorkPartial(ctx, filename, job.Source)
+		return w.workerV2.WorkPartial(ctx, filename, job.Source)
 	}
 
-	return w.worker.Work(ctx, filename, job.Source)
+	return w.workerV2.Work(ctx, filename, job.Source)
 }

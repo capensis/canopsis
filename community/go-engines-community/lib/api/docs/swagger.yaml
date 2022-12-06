@@ -1881,7 +1881,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/contextgraph.OldImportRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportRequest'
             examples:
               basic:
                 summary: Basic
@@ -2168,7 +2168,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/contextgraph.OldImportRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportRequest'
             examples:
               basic:
                 summary: Basic
@@ -2431,73 +2431,69 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportRequest'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/importcontextgraph.EntityConfiguration'
             examples:
               basic:
                 summary: Basic
                 description: Import basic entities
-                value: {
-                  "json": {
-                    "cis": [
-                      {
-                        "name": "cps_component",
-                        "type": "component",
-                        "impact_level": 1,
-                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                        "infos": {
-                          "group": {
-                            "description": "Group id",
-                            "value": "g1"
-                          }
-                        },
-                        "action": "set",
-                        "enabled": true
-                      },
-                      {
-                        "name": "cps_resource_1",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "impact_level": 1,
-                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                        "infos": {
-                          "group": {
-                            "description": "Group id",
-                            "value": "g1"
-                          }
-                        },
-                        "action": "set",
-                        "enabled": true
-                      },
-                      {
-                        "name": "cps_resource_2",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "action": "delete"
-                      },
-                      {
-                        "name": "cps_resource_3",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "action": "enable"
-                      },
-                      {
-                        "name": "cps_resource_4",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "action": "disable"
+                value: [
+                  {
+                    "name": "cps_component",
+                    "type": "component",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
                       }
-                    ]
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_1",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_2",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps_resource_3",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps_resource_4",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "disable"
                   }
-                }
+                ]
               service:
                 summary: Service
                 description: Import services
-                value: {
-                  "json": {
-                    "cis": [
-                      {
-                        "name": "cps-service-1",
-                        "output_template": "All: {{.All}}
+                value: [
+                  {
+                    "name": "cps-service-1",
+                    "output_template": "All: {{.All}}
                           Alarms: {{.Alarms}}
                           Acknowledged: {{.Acknowledged}}
                           NotAcknowledged: {{.NotAcknowledged}}
@@ -2508,51 +2504,49 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_pattern": [
-                          [
-                            {
-                              "field": "type",
-                              "cond": {
-                                "type": "eq",
-                                "value": "resource"
-                              }
-                            },
-                            {
-                              "field": "infos.group",
-                              "cond": {
-                                "type": "eq",
-                                "value": "g1"
-                              }
-                            }
-                          ]
-                        ],
-                        "type": "service",
-                        "impact_level": 2,
-                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                        "infos": {
-                          "group": {
-                            "description": "Group id",
-                            "value": "g1"
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
                           }
                         },
-                        "action": "set",
-                        "enabled": true
-                      },
-                      {
-                        "name": "cps-service-2",
-                        "action": "delete"
-                      },
-                      {
-                        "name": "cps-service-3",
-                        "action": "enable"
-                      },
-                      {
-                        "name": "cps-service-4",
-                        "action": "disable"
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ],
+                    "type": "service",
+                    "impact_level": 2,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
                       }
-                    ]
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps-service-2",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps-service-3",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps-service-4",
+                    "action": "disable"
                   }
-                }
+                ]
         required: true
       responses:
         200:
@@ -2586,73 +2580,69 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportRequest'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/importcontextgraph.EntityConfiguration'
             examples:
               basic:
                 summary: Basic
                 description: Import basic entities
-                value: {
-                  "json": {
-                    "cis": [
-                      {
-                        "name": "cps_component",
-                        "type": "component",
-                        "impact_level": 1,
-                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                        "infos": {
-                          "group": {
-                            "description": "Group id",
-                            "value": "g1"
-                          }
-                        },
-                        "action": "set",
-                        "enabled": true
-                      },
-                      {
-                        "name": "cps_resource_1",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "impact_level": 1,
-                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                        "infos": {
-                          "group": {
-                            "description": "Group id",
-                            "value": "g1"
-                          }
-                        },
-                        "action": "set",
-                        "enabled": true
-                      },
-                      {
-                        "name": "cps_resource_2",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "action": "delete"
-                      },
-                      {
-                        "name": "cps_resource_3",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "action": "enable"
-                      },
-                      {
-                        "name": "cps_resource_4",
-                        "component": "cps_component",
-                        "type": "resource",
-                        "action": "disable"
+                value: [
+                  {
+                    "name": "cps_component",
+                    "type": "component",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
                       }
-                    ]
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_1",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_2",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps_resource_3",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps_resource_4",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "disable"
                   }
-                }
+                ]
               service:
                 summary: Service
                 description: Import services
-                value: {
-                  "json": {
-                    "cis": [
-                      {
-                        "name": "cps-service-1",
-                        "output_template": "All: {{.All}}
+                value: [
+                  {
+                    "name": "cps-service-1",
+                    "output_template": "All: {{.All}}
                           Alarms: {{.Alarms}}
                           Acknowledged: {{.Acknowledged}}
                           NotAcknowledged: {{.NotAcknowledged}}
@@ -2663,51 +2653,49 @@ paths:
                           Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
                           Pause: {{index .PbehaviorCounters \"default_pause\"}}
                           Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
-                        "entity_pattern": [
-                          [
-                            {
-                              "field": "type",
-                              "cond": {
-                                "type": "eq",
-                                "value": "resource"
-                              }
-                            },
-                            {
-                              "field": "infos.group",
-                              "cond": {
-                                "type": "eq",
-                                "value": "g1"
-                              }
-                            }
-                          ]
-                        ],
-                        "type": "service",
-                        "impact_level": 2,
-                        "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
-                        "infos": {
-                          "group": {
-                            "description": "Group id",
-                            "value": "g1"
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
                           }
                         },
-                        "action": "set",
-                        "enabled": true
-                      },
-                      {
-                        "name": "cps-service-2",
-                        "action": "delete"
-                      },
-                      {
-                        "name": "cps-service-3",
-                        "action": "enable"
-                      },
-                      {
-                        "name": "cps-service-4",
-                        "action": "disable"
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ],
+                    "type": "service",
+                    "impact_level": 2,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
                       }
-                    ]
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps-service-2",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps-service-3",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps-service-4",
+                    "action": "disable"
                   }
-                }
+                ]
         required: true
       responses:
         200:

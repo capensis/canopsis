@@ -4,9 +4,17 @@ import (
 	"context"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
+
+type API interface {
+	ImportAll(c *gin.Context)
+	ImportPartial(c *gin.Context)
+	Status(c *gin.Context)
+}
 
 type EventPublisher interface {
 	SendImportResultEvent(ctx context.Context, uuid string, execTime time.Duration, state types.CpsNumber) error
