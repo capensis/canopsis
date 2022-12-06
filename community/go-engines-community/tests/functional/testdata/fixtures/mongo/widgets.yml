@@ -375,3 +375,8 @@ widgets:
     tab: test-tab-to-map-edit
     parameters:
       map: test-map-to-bulk-delete-2
+
+  widget_to_test_alarm_tags_filter:
+    <<: *widget
+    _id: test-widget-to-test-alarm-tags-filter
+    tab: test-tab-to-alarm-test-tags-filter
