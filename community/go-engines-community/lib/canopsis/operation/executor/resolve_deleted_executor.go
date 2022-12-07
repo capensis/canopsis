@@ -22,7 +22,7 @@ func (e *resolveDeletedExecutor) Exec(
 	_ types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
-	if alarm.Value.Resolved != nil || !entity.SoftDeleted {
+	if alarm.Value.Resolved != nil || entity.SoftDeleted == nil {
 		return "", nil
 	}
 

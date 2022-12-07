@@ -270,8 +270,6 @@ func (w *worker) parseEntities(
 
 		switch ci.Action {
 		case importcontextgraph.ActionSet:
-			updatedIds = append(updatedIds, ci.ID)
-
 			if ci.Type == types.EntityTypeResource {
 				createLinks[ci.Component] = append(createLinks[ci.Component], ci.ID)
 			}
@@ -288,11 +286,15 @@ func (w *worker) parseEntities(
 						componentsExist[ci.Component] = false
 					}
 				}
+
+				updatedIds = append(updatedIds, ci.ID)
 			} else {
 				writeModels = append(writeModels, w.updateEntity(&ci, oldEntity, true))
 				if ci.Type == types.EntityTypeResource {
 					componentsExist[ci.Component] = true
 				}
+
+				updatedIds = append(updatedIds, oldEntity.ID)
 			}
 
 			if oldEntity.Enabled || ci.Enabled {
@@ -308,8 +310,6 @@ func (w *worker) parseEntities(
 				}
 			}
 		case importcontextgraph.ActionDelete:
-			removedIds = append(removedIds, ci.ID)
-
 			if oldEntity.ID == "" {
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to delete an entity service with name = %s", ci.Name)
@@ -331,15 +331,18 @@ func (w *worker) parseEntities(
 					if !deletedResources[resourceID] {
 						deletedResources[resourceID] = true
 
-						writeModels = append(writeModels, w.deleteEntity(resourceID)...)
+						writeModels = append(writeModels, w.deleteEntity(resourceID, now)...)
 					}
 				}
 			}
 
-			writeModels = append(writeModels, w.deleteEntity(ci.ID)...)
-		case importcontextgraph.ActionEnable:
-			updatedIds = append(updatedIds, ci.ID)
+			if ci.Type == types.EntityTypeService {
+				eventType = types.EventTypeRecomputeEntityService
+			}
 
+			writeModels = append(writeModels, w.deleteEntity(oldEntity.ID, now)...)
+			removedIds = append(removedIds, oldEntity.ID)
+		case importcontextgraph.ActionEnable:
 			if oldEntity.ID == "" {
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to enable an entity service with name = %s", ci.Name)
@@ -361,10 +364,9 @@ func (w *worker) parseEntities(
 				eventType = types.EventTypeEntityToggled
 			}
 
-			writeModels = append(writeModels, w.changeState(ci.ID, true, source, now))
+			writeModels = append(writeModels, w.changeState(oldEntity.ID, true, source, now))
+			updatedIds = append(updatedIds, oldEntity.ID)
 		case importcontextgraph.ActionDisable:
-			updatedIds = append(updatedIds, ci.ID)
-
 			if oldEntity.ID == "" {
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to disable an entity service with name = %s", ci.Name)
@@ -387,6 +389,7 @@ func (w *worker) parseEntities(
 					if !deletedResources[resourceID] {
 						deletedResources[resourceID] = true
 						writeModels = append(writeModels, w.changeState(resourceID, false, source, now))
+						updatedIds = append(updatedIds, resourceID)
 					}
 				}
 			}
@@ -399,6 +402,7 @@ func (w *worker) parseEntities(
 			}
 
 			writeModels = append(writeModels, w.changeState(ci.ID, false, source, now))
+			updatedIds = append(updatedIds, oldEntity.ID)
 		default:
 			return res, fmt.Errorf("the action %s is not recognized", ci.Action)
 		}
@@ -406,7 +410,7 @@ func (w *worker) parseEntities(
 		if withEvents && eventType != "" {
 			switch ci.Type {
 			case types.EntityTypeService:
-				serviceEvents = append(serviceEvents, w.createServiceEvent(ci, eventType, now))
+				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity, eventType, now))
 			default:
 				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
 				if err != nil {
@@ -658,7 +662,7 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 	now := types.CpsTime{Time: time.Now()}
 
 	return mongo.NewUpdateOneModel().
-		SetFilter(bson.M{"_id": ci.ID}).
+		SetFilter(bson.M{"_id": oldEntity.ID}).
 		SetUpdate(bson.M{"$set": ci, "$setOnInsert": bson.M{"created": now}}).
 		SetUpsert(true)
 }
@@ -673,17 +677,14 @@ func (w *worker) changeState(id string, enabled bool, importSource string, impor
 		}})
 }
 
-func (w *worker) deleteEntity(id string) []mongo.WriteModel {
+func (w *worker) deleteEntity(id string, now types.CpsTime) []mongo.WriteModel {
 	return []mongo.WriteModel{
-		mongo.NewUpdateManyModel().
-			SetFilter(bson.M{"impact": id}).
-			SetUpdate(bson.M{"$pull": bson.M{"impact": id}}),
-		mongo.NewUpdateManyModel().
-			SetFilter(bson.M{"depends": id}).
-			SetUpdate(bson.M{"$pull": bson.M{"depends": id}}),
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{"$set": bson.M{"soft_deleted": true}}),
+			SetUpdate(bson.M{"$set": bson.M{"enabled": false}}),
+		mongo.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": id}).
+			SetUpdate(bson.M{"$set": bson.M{"soft_deleted": types.CpsTime{Time: now.Time}}}),
 	}
 }
 

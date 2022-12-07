@@ -1286,9 +1286,7 @@ Feature: New import entities
       "impact_level": 1
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=test-entity-contextgraph-new-import-component-to-delete-1
-    Then the response code should be 200
-    Then the response body should be:
+    When I do GET /api/v4/entities/context-graph?_id=test-entity-contextgraph-new-import-component-to-delete-1 until response code is 200 and body contains:
     """json
     {
       "depends": [

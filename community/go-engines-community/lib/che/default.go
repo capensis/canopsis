@@ -208,9 +208,10 @@ func NewEngine(
 	})
 	engine.AddPeriodicalWorker("soft delete", &softDeletePeriodicalWorker{
 		collection:         mongoClient.Collection(mongo.EntityMongoCollection),
-		PeriodicalInterval: options.PeriodicalWaitTime,
-		EventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-		Logger:             logger,
+		periodicalInterval: options.PeriodicalWaitTime,
+		eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+		softDeleteWaitTime: options.SoftDeleteWaitTime,
+		logger:             logger,
 	})
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
