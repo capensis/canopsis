@@ -23,6 +23,16 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
 
 La restructuration apportée dans les bases de données pour cette version de Canopsis nous amène à insister d'autant plus sur ce point. Il est donc fortement recommandé de réaliser une **sauvegarde complète** des VM hébergeant vos services Canopsis, avant cette mise à jour.
 
+
+### Authentification
+
+Les configurations des mécanismes d'authentification LDAP, CAS, SAML sont désormais définies dans le fichier de configuration du service d'API Canopsis.  
+Vous devez donc reporter vos configurations dans `/opt/canopsis/share/config/api/security/config.yml`.  
+Si vous êtes sur une installation Docker et que vous avez paramétré une authentification externe, alors vous avez déjà présenté le fichier `config.yml` dans un volume. Il vous reste alors à le configurer correctement.  
+
+Pour connaitre l'ensemble des paramètres disponibles, reportez vous à [la documentation](https://doc.canopsis.net/guide-administration/administration-avancee/methodes-authentification-avancees/).
+
+
 ### Vérification MongoDB
 
 !!! warning "Vérification"

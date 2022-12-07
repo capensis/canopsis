@@ -137,6 +137,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         no_events: noEvents,
       };
     },
@@ -151,6 +152,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         category: categoryId,
       };
     },
@@ -158,6 +160,7 @@ export default {
     fetchList() {
       if (this.hasColumns) {
         const params = this.getQuery();
+
         params.with_flags = true;
 
         this.fetchContextEntitiesList({
