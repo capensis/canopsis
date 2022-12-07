@@ -1,5 +1,6 @@
 <template lang="pug">
   alarms-list-table(
+    v-model="selected",
     :widget="widget",
     :alarms="alarms",
     :total-items="meta.total_count",
@@ -103,6 +104,11 @@ export default {
       type: Function,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      selected: [],
+    };
   },
   computed: {
     pagination: {
