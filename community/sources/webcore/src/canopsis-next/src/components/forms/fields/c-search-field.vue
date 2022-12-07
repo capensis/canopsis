@@ -12,11 +12,11 @@
     v-tooltip(bottom)
       v-btn(slot="activator", data-test="submitSearchButton", icon, @click="submit")
         v-icon search
-      span {{ $t('search.submit') }}
+      span {{ $t('common.search') }}
     v-tooltip(bottom)
       v-btn(slot="activator", data-test="clearSearchButton", icon, @click="clear")
         v-icon clear
-      span {{ $t('search.clear') }}
+      span {{ $t('common.clearSearch') }}
     slot
 </template>
 

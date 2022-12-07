@@ -1,7 +1,7 @@
 <template lang="pug">
   choose-expansion-panel(
     :entities="jobs",
-    :label="$tc('remediationInstructions.job', 2)",
+    :label="$tc('remediation.instruction.job', 2)",
     content-key="name",
     clearable,
     @remove="removeJob",

@@ -13,14 +13,14 @@
         p(v-else) {{ step.m }}
     template(v-else)
       div.header
-        p {{ $t('alarmList.timeLine.stateCounter.header') }}
+        p {{ $t('alarm.timeLine.stateCounter.header') }}
       div.content
         table
           tr
-            td {{ $t('alarmList.timeLine.stateCounter.stateIncreased') }} :
+            td {{ $t('alarm.timeLine.stateCounter.stateIncreased') }} :
             td {{ step.val.stateinc }}
           tr
-            td {{ $t('alarmList.timeLine.stateCounter.stateDecreased') }} :
+            td {{ $t('alarm.timeLine.stateCounter.stateDecreased') }} :
             td {{ step.val.statedec }}
           tr(v-for="state in states")
             td {{ $t('common.state') }} {{ state.text }} :

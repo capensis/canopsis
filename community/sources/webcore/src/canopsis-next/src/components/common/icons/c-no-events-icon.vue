@@ -50,7 +50,7 @@ export default {
     },
 
     message() {
-      return this.$t('icons.noEvents', {
+      return this.$t('common.noReceivedEvents', {
         duration: convertDurationToString(this.durationDiff),
       });
     },

@@ -7,7 +7,7 @@
     centered
   )
     template(v-if="hasMoreInfos")
-      v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
+      v-tab(:class="moreInfosTabClass") {{ $t('alarm.tabs.moreInfos') }}
       v-tab-item
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
@@ -17,7 +17,7 @@
                   :alarm="alarm",
                   :template="widget.parameters.moreInfoTemplate"
                 )
-    v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
+    v-tab(:class="timeLineTabClass") {{ $t('alarm.tabs.timeLine') }}
     v-tab-item
       v-layout.pa-3(row)
         v-flex(:class="cardFlexClass")
@@ -45,7 +45,7 @@
                 :updatable="hasUpdateAnyPbehaviorAccess"
               )
     template(v-if="hasChildren")
-      v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
+      v-tab {{ $t('alarm.tabs.alarmsChildren') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -60,7 +60,7 @@
                   :query.sync="childrenQuery"
                 )
     template(v-if="hasServiceDependencies")
-      v-tab {{ $t('alarmList.tabs.trackSource') }}
+      v-tab {{ $t('alarm.tabs.trackSource') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -73,7 +73,7 @@
                   openable-root
                 )
     template(v-if="hasImpactsDependencies")
-      v-tab {{ $t('alarmList.tabs.impactChain') }}
+      v-tab {{ $t('alarm.tabs.impactChain') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -87,7 +87,7 @@
                   openable-root
                 )
     template(v-if="hasEntityGantt")
-      v-tab {{ $t('alarmList.tabs.entityGantt') }}
+      v-tab {{ $t('alarm.tabs.entityGantt') }}
       v-tab-item(lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")

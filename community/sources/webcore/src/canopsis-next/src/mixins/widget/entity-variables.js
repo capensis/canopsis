@@ -181,7 +181,7 @@ export const entityVariablesMixin = {
           variables: this.pbehaviorInfoVariables,
         },
         {
-          text: this.$t('alarmList.alarmCreationDate'),
+          text: this.$t('alarm.alarmCreationDate'),
           value: ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
         },
         {
@@ -198,7 +198,7 @@ export const entityVariablesMixin = {
           value: ENTITY_TEMPLATE_FIELDS.statsKo,
         },
         {
-          text: this.$t('alarmList.alarmDisplayName'),
+          text: this.$t('alarm.alarmDisplayName'),
           value: ENTITY_TEMPLATE_FIELDS.alarmDisplayName,
         },
         {

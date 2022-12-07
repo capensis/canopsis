@@ -11,7 +11,7 @@
   )
     template(slot="items", slot-scope="props")
       tr
-        td {{ $t(`tables.broadcastMessages.statuses.${props.item.status}`) }}
+        td {{ $t(`broadcastMessage.statuses.${props.item.status}`) }}
         td.broadcast-message-cell
           broadcast-message(:message="props.item.message", :color="props.item.color")
         td {{ props.item.start | date }}
