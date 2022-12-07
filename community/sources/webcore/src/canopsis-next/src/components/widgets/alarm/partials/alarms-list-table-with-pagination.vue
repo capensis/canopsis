@@ -1,6 +1,5 @@
 <template lang="pug">
   alarms-list-table(
-    v-model="selected",
     :widget="widget",
     :alarms="alarms",
     :total-items="meta.total_count",
@@ -15,16 +14,10 @@
     :refresh-alarms-list="refreshAlarmsList",
     :selectable="selectable",
     :expandable="expandable",
-    :hide-actions="hideActions"
+    :hide-actions="hideActions",
+    @update:page="updateQueryPage",
+    @update:rows-per-page="updateRecordsPerPage"
   )
-    c-table-pagination(
-      v-if="!hidePagination",
-      :total-items="meta.total_count",
-      :rows-per-page="query.limit",
-      :page="query.page",
-      @update:page="updateQueryPage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
 </template>
 
 <script>
@@ -105,18 +98,13 @@ export default {
       default: () => {},
     },
   },
-  data() {
-    return {
-      selected: [],
-    };
-  },
   computed: {
     pagination: {
       get() {
-        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
+        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, descending, multiSortBy };
+        return { sortBy, page, limit, descending, multiSortBy };
       },
 
       set(value) {
