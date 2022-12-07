@@ -1,29 +1,33 @@
 <template lang="pug">
-  v-flex(v-resize="changeHeaderPositionOnResize")
-    v-layout.alarms-list-table__top-pagination.px-4.position-relative(row, align-center)
-      v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
-        v-layout(row, align-center, justify-start)
-          c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
-          v-fade-transition
-            v-flex.px-1(v-show="unresolvedSelected.length")
-              mass-actions-panel(
-                v-if="!hideActions",
-                :items="unresolvedSelected",
-                :widget="widget",
-                :refresh-alarms-list="refreshAlarmsList",
-                @clear:items="clearSelected"
-              )
-      v-flex.alarms-list-table__top-pagination--center-absolute(xs4)
-        c-pagination(
-          v-if="!hidePagination && hasColumns",
-          :page="pagination.page",
-          :limit="pagination.limit",
-          :total="totalItems",
-          type="top",
-          @input="updateQueryPage"
-        )
+  v-flex.white(v-resize="changeHeaderPositionOnResize")
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
+      v-layout.alarms-list-table__top-pagination.px-4.position-relative(
+        v-if="totalItems && (densable || !hideActions || !hidePagination)",
+        row,
+        align-center
+      )
+        v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
+          v-layout(row, align-center, justify-start)
+            c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
+            v-fade-transition
+              v-flex.px-1(v-show="unresolvedSelected.length")
+                mass-actions-panel(
+                  v-if="!hideActions",
+                  :items="unresolvedSelected",
+                  :widget="widget",
+                  :refresh-alarms-list="refreshAlarmsList",
+                  @clear:items="clearSelected"
+                )
+        v-flex.alarms-list-table__top-pagination--center-absolute(xs4)
+          c-pagination(
+            v-if="!hidePagination",
+            :page="pagination.page",
+            :limit="pagination.limit",
+            :total="totalItems",
+            type="top",
+            @input="updateQueryPage"
+          )
       v-data-table.alarms-list-table(
         ref="dataTable",
         v-model="selected",
