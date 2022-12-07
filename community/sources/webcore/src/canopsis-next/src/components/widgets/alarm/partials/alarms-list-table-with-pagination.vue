@@ -15,6 +15,7 @@
     :selectable="selectable",
     :expandable="expandable",
     :hide-actions="hideActions",
+    :hide-pagination="hidePagination",
     @update:page="updateQueryPage",
     @update:rows-per-page="updateRecordsPerPage"
   )
