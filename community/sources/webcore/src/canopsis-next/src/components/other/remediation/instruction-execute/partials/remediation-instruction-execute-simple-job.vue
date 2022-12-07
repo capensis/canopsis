@@ -62,14 +62,14 @@ export default {
 
     rowMessage() {
       if (this.job.queue_number > 0) {
-        return this.$t('remediationInstructionExecute.queueNumber', {
+        return this.$t('remediation.instructionExecute.queueNumber', {
           number: this.job.queue_number,
           name: this.job.name,
         });
       }
 
       if (this.isCancelledJob) {
-        return this.$t('remediationInstructionExecute.jobs.stopped');
+        return this.$t('remediation.instructionExecute.jobs.stopped');
       }
 
       return '';

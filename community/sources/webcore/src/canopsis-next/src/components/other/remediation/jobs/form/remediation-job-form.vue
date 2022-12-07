@@ -4,23 +4,23 @@
       c-enabled-field(v-field="form.enabled")
       c-enabled-field(
         v-field="form.multiple_executions",
-        :label="$t('remediationJob.multipleExecutions')"
+        :label="$t('remediation.job.multipleExecutions')"
       )
     c-name-field(v-field="form.name")
     remediation-job-configuration-field(v-field="form.config")
     c-id-field(
       v-field="form.job_id",
-      :label="$t('remediationJob.jobId')",
+      :label="$t('remediation.job.jobId')",
       name="job_id",
       required
     )
     v-layout(row)
       v-flex.pr-3(xs6)
-        c-number-field(v-field="form.retry_amount", :label="$t('remediationJob.retryAmount')")
+        c-number-field(v-field="form.retry_amount", :label="$t('remediation.job.retryAmount')")
       v-flex(xs6)
         c-duration-field(
           v-field="form.retry_interval",
-          :label="$t('remediationJob.retryInterval')",
+          :label="$t('remediation.job.retryInterval')",
           clearable
         )
     v-layout(row)
@@ -29,17 +29,17 @@
         color="primary",
         outline,
         @click="addPayload"
-      ) {{ $t('remediationJob.addPayload') }}
+      ) {{ $t('remediation.job.addPayload') }}
       template(v-else)
         c-json-field(
           v-field="form.payload",
           :label="$t('common.payload')",
-          :help-text="$t('remediationJob.payloadHelp')",
+          :help-text="$t('remediation.job.payloadHelp')",
           name="payload",
           variables
         )
         c-action-btn(
-          :tooltip="$t('remediationJob.deletePayload')",
+          :tooltip="$t('remediation.job.deletePayload')",
           icon="delete",
           color="error",
           bottom,
@@ -47,7 +47,7 @@
         )
     c-text-pairs-field(
       v-field="form.query",
-      :title="$t('remediationJob.query')",
+      :title="$t('remediation.job.query')",
       :text-label="$t('common.field')",
       :value-label="$t('common.value')",
       name="query"

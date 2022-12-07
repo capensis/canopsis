@@ -21,7 +21,7 @@
           )
       template(#headerCell="{ header }")
         span.c-table-header__text--multiline {{ header.text }}
-      template(#type="{ item }") {{ $t(`remediationInstructions.types.${item.type}`) }}
+      template(#type="{ item }") {{ $t(`remediation.instruction.types.${item.type}`) }}
       template(#last_executed_on="{ item }") {{ item.last_executed_on | date }}
       template(#last_modified="{ item }") {{ item.last_modified | date }}
       template(#avg_complete_time="{ item }") {{ item.avg_complete_time | duration }}
@@ -41,7 +41,7 @@
             @click="$emit('rate', item)"
           )
           c-action-btn(
-            :tooltip="$t('remediationInstructionStats.actions.rate')",
+            :tooltip="$t('remediation.instructionStat.actions.rate')",
             :disabled="!item.ratable",
             icon="thumbs_up_down",
             @click="$emit('rate', item)"
@@ -110,7 +110,7 @@ export default {
         },
 
         {
-          text: this.$t('remediationInstructionStats.lastExecutedOn'),
+          text: this.$t('remediation.instructionStat.lastExecutedOn'),
           value: 'last_executed_on',
           width: 180,
         },
@@ -120,25 +120,25 @@ export default {
           width: 180,
         },
         {
-          text: this.$t('remediationInstructionStats.averageCompletionTime'),
+          text: this.$t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
           sortable: false,
           width: 150,
         },
         {
-          text: this.$t('remediationInstructionStats.executionCount'),
+          text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
           sortable: false,
           width: 150,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmStates'),
+          text: this.$t('remediation.instructionStat.alarmStates'),
           value: 'alarm_states',
           sortable: false,
           width: 300,
         },
         {
-          text: this.$t('remediationInstructionStats.okAlarmStates'),
+          text: this.$t('remediation.instructionStat.okAlarmStates'),
           value: 'ok_alarm_states',
           sortable: false,
           width: 150,

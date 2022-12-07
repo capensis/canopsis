@@ -6,7 +6,7 @@
       :loading="pending",
       :pagination.sync="pagination",
       :total-items="entitiesTotalCount",
-      :no-data-text="$t('tables.noData')",
+      :no-data-text="$t('common.noData')",
       :is-disabled-item="isSelectedEntity",
       advanced-pagination,
       select-all
@@ -25,7 +25,7 @@
         v-btn(
           color="primary",
           @click="$emit('select', props.selected)"
-        ) {{ $t('contextGeneralTable.addSelection') }}
+        ) {{ $t('context.addSelection') }}
 </template>
 
 <script>

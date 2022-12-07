@@ -12,7 +12,7 @@
           v-field="job.job",
           v-validate="'required'",
           :items="jobs",
-          :label="$tc('remediationInstructions.job')",
+          :label="$tc('remediation.instruction.job')",
           :error-messages="errors.collect(jobFieldName)",
           :name="jobFieldName",
           :disabled="disabled",
@@ -27,8 +27,8 @@
       c-workflow-field(
         v-field="job.stop_on_fail",
         :disabled="disabled",
-        :label="$t('remediationInstructions.jobWorkflow')",
-        :continue-label="$t('remediationInstructions.remainingJob')"
+        :label="$t('remediation.instruction.jobWorkflow')",
+        :continue-label="$t('remediation.instruction.remainingJob')"
       )
 </template>
 

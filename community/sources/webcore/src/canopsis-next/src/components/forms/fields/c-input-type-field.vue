@@ -68,7 +68,7 @@ export default {
 
     preparedTypes() {
       return this.types.map(
-        type => (type.text ? type : ({ ...type, text: this.$t(`mixedField.types.${type.value}`) })),
+        type => (type.text ? type : ({ ...type, text: this.$t(`common.mixedField.types.${type.value}`) })),
       );
     },
   },

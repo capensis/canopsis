@@ -20,7 +20,7 @@
         outline,
         color="primary",
         @click="$emit('select', props.selected)"
-      ) {{ $tc('remediationJobs.addJobs', props.count, { count: props.count }) }}
+      ) {{ $tc('remediation.job.addJobs', props.count, { count: props.count }) }}
 </template>
 
 <script>
