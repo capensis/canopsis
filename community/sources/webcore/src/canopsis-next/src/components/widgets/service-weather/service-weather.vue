@@ -40,7 +40,7 @@
               v-icon(v-on="on") help
             div(v-if="servicesError.name") {{ $t('common.name') }}: {{ servicesError.name }}
             div(v-if="servicesError.description") {{ $t('common.description') }}: {{ servicesError.description }}
-      v-alert(v-else-if="hasNoData", :value="true", type="info") {{ $t('tables.noData') }}
+      v-alert(v-else-if="hasNoData", :value="true", type="info") {{ $t('common.noData') }}
       template(v-else)
         v-flex(
           v-for="service in services",

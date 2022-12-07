@@ -2,7 +2,7 @@
   v-layout(column)
     v-checkbox(
       v-field="approval.need_approve",
-      :label="$t('remediationInstructions.requestApproval')",
+      :label="$t('remediation.instruction.requestApproval')",
       :disabled="disabled",
       color="primary",
       hide-details

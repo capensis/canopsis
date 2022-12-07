@@ -6,7 +6,7 @@
         slot="activator"
       ) {{ pbehaviorInfo.icon_name }}
       div
-        strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
+        strong {{ $t('alarm.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
           div {{ $t('common.author') }}: {{ pbehavior.author.name }}

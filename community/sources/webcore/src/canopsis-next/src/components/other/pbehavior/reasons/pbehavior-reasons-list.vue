@@ -24,7 +24,7 @@
       )
       c-action-btn(
         v-if="hasDeleteAnyPbehaviorReasonAccess",
-        :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorReasons.usingReason')",
+        :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehavior.reasons.usingReason')",
         :disabled="!props.item.deletable",
         type="delete",
         @click="$emit('remove', props.item._id)"

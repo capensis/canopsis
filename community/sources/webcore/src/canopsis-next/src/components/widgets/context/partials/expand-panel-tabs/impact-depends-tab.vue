@@ -16,7 +16,7 @@
                   template(#no-data="")
                     v-flex
                       v-card
-                        v-card-title {{ $t('tables.noData') }}
+                        v-card-title {{ $t('common.noData') }}
         v-flex(xs6)
           h3.headline.text-xs-center.my-1 {{ $t('context.dependencies') }}
           v-container
@@ -30,7 +30,7 @@
                   template(#no-data="")
                     v-flex
                       v-card
-                        v-card-title {{ $t('tables.noData') }}
+                        v-card-title {{ $t('common.noData') }}
 </template>
 
 <script>
