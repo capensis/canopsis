@@ -7,7 +7,6 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   ENTITIES_STATUSES,
-  ENTITIES_TYPES,
   ENTITY_PATTERN_FIELDS,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
@@ -206,8 +205,7 @@ describe('actions-panel', () => {
         name: MODALS.createAckEvent,
         config: {
           isNoteRequired,
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
         },
       },
@@ -323,8 +321,7 @@ describe('actions-panel', () => {
         config: {
           title: 'Remove ack',
           eventType: EVENT_ENTITY_TYPES.ackRemove,
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
         },
       },
@@ -411,8 +408,7 @@ describe('actions-panel', () => {
         name: MODALS.createSnoozeEvent,
         config: {
           isNoteRequired,
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
         },
       },
@@ -455,8 +451,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createDeclareTicketEvent,
         config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
         },
       },
@@ -499,8 +494,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
         },
       },
@@ -543,8 +537,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createChangeStateEvent,
         config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
         },
       },
@@ -587,8 +580,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
           title: 'Cancel',
           eventType: EVENT_ENTITY_TYPES.cancel,
@@ -644,8 +636,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.variablesHelp,
         config: {
-          itemsIds: [alarmData._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarmData],
           afterSubmit: expect.any(Function),
           variables: [
             {
@@ -769,8 +760,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createCommentEvent,
         config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [commentAlarm],
           afterSubmit: expect.any(Function),
           action: expect.any(Function),
         },
@@ -841,8 +831,7 @@ describe('actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          itemsIds: [alarm._id],
-          itemsType: ENTITIES_TYPES.alarm,
+          items: [alarm],
           afterSubmit: expect.any(Function),
           title: 'Unlink alarm from manual meta alarm',
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,

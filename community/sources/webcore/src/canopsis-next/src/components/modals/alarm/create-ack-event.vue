@@ -106,7 +106,7 @@ export default {
     createAssocTicketEvent() {
       const assocTicketEventData = prepareEventsByAlarms(
         EVENT_ENTITY_TYPES.assocTicket,
-        this.items,
+        this.config.items,
         { ticket: this.form.ticket, output: this.form.output },
       );
 
