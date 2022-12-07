@@ -96,6 +96,7 @@ export default {
         {
           text: this.$t('users.activeConnects'),
           value: 'active_connects',
+          sortable: false,
         },
         {
           text: this.$t('common.actionsLabel'),

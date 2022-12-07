@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type cleanPeriodicalWorker struct {
@@ -15,7 +17,6 @@ type cleanPeriodicalWorker struct {
 	TimezoneConfigProvider    config.TimezoneConfigProvider
 	DataStorageConfigProvider config.DataStorageConfigProvider
 	LimitConfigAdapter        datastorage.Adapter
-	PbehaviorCleaner          libpbehavior.Cleaner
 	Logger                    zerolog.Logger
 }
 
@@ -24,25 +25,19 @@ func (w *cleanPeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
-	schedule := w.DataStorageConfigProvider.Get().TimeToExecute
-	// Skip if schedule is not defined.
-	if schedule == nil {
-		return
-	}
-	// Check now = schedule.
-	location := w.TimezoneConfigProvider.Get().Location
-	now := types.NewCpsTime().In(location)
-	if now.Weekday() != schedule.Weekday || now.Hour() != schedule.Hour {
-		return
-	}
-
 	conf, err := w.LimitConfigAdapter.Get(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("fail to retrieve data storage config")
 		return
 	}
-	// Skip if already executed today.
-	if conf.History.Pbehavior != nil && conf.History.Pbehavior.EqualDay(now) {
+
+	var lastExecuted types.CpsTime
+	if conf.History.Pbehavior != nil {
+		lastExecuted = *conf.History.Pbehavior
+	}
+
+	ok := datastorage.CanRun(lastExecuted, w.DataStorageConfigProvider.Get().TimeToExecute, w.TimezoneConfigProvider.Get().Location)
+	if !ok {
 		return
 	}
 
@@ -51,7 +46,22 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	deleted, err := w.PbehaviorCleaner.Clean(ctx, d.SubFrom(now))
+	mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+		w.DataStorageConfigProvider.Get().MongoClientTimeout, w.Logger)
+	if err != nil {
+		w.Logger.Err(err).Msg("cannot connect to mongo")
+		return
+	}
+	defer func() {
+		err = mongoClient.Disconnect(ctx)
+		if err != nil {
+			w.Logger.Err(err).Msg("cannot disconnect from mongo")
+		}
+	}()
+	now := types.NewCpsTime()
+	cleaner := pbehavior.NewCleaner(mongoClient, datastorage.BulkSize, w.Logger)
+	maxUpdates := int64(w.DataStorageConfigProvider.Get().MaxUpdates)
+	deleted, err := cleaner.Clean(ctx, d.SubFrom(now), maxUpdates)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot accumulate week statistics")
 	} else if deleted > 0 {

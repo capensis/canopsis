@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { omit, pick, isObject } from 'lodash';
+import { omit, pick, isObject, isEqual } from 'lodash';
 
 import { API_HOST, API_ROUTES } from '@/config';
 
@@ -280,6 +280,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         correlation,
       };
     },
@@ -294,6 +295,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         category: categoryId,
       };
     },
@@ -337,7 +339,11 @@ export default {
     },
 
     removeHistoryFilter() {
-      this.query = omit(this.query, ['tstart', 'tstop']);
+      const newQuery = omit(this.query, ['tstart', 'tstop']);
+
+      newQuery.page = 1;
+
+      this.query = newQuery;
     },
 
     showEditLiveReportModal() {
@@ -345,7 +351,12 @@ export default {
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop', 'time_field']),
-          action: params => this.query = { ...this.query, ...params },
+          action: params => this.query = {
+            ...this.query,
+            ...params,
+
+            page: 1,
+          },
         },
       });
     },
@@ -360,7 +371,7 @@ export default {
           this.fetchAlarmTagsList({ params: { paginate: false } });
         }
 
-        if (!this.alarmsPending) {
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
             params,

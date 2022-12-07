@@ -1,11 +1,11 @@
 stages:
   - test
+  - build
+  - publish
+  - release
 
 before_script:
   - cd community/
-  - uname -a
-  - docker -v
-  - git --no-pager show
 
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
@@ -14,6 +14,11 @@ variables:
   CANOPSIS_TAG: "ci"
   CANOPSIS_DOCKER_MODE: "test-ci"
   CANOPSIS_ENV_CONFIRM: "0"
+  CANOPSIS_EDITION: "community"
+
+include:
+  - community/.gitlab-ci-common.yml
+  - community/.gitlab-ci-template.yml
 
 stage_test:
   stage: test
@@ -21,16 +26,13 @@ stage_test:
   script:
     - set
     - ./build-docker.sh
-
-
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - community/{build*,.gitlab-ci.yml,{docker*,sources/{canopsis,db-conf,functional_testing,webcore}}/**/*}
   artifacts:
     paths:
       #- tests_report
 
-after_script:
-  - cd community/
-  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
-  - sleep 10
-  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
-  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
-  - docker volume prune -f
+create_release:
+  extends: .create_release
