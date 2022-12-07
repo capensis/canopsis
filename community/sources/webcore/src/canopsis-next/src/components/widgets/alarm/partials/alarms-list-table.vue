@@ -148,7 +148,7 @@ export default {
     },
     pagination: {
       type: Object,
-      required: false,
+      default: () => ({}),
     },
     isTourEnabled: {
       type: Boolean,
