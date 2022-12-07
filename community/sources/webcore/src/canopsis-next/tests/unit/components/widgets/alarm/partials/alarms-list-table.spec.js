@@ -455,6 +455,7 @@ describe('alarms-list-table', () => {
         pagination: {},
         widget: defaultWidget,
         alarms: [],
+        totalItems: 0,
         columns: [],
       },
     });
@@ -542,6 +543,7 @@ describe('alarms-list-table', () => {
         pagination: {},
         widget: defaultWidget,
         alarms: [],
+        totalItems: 0,
         columns,
         selectable: true,
       },
@@ -561,6 +563,7 @@ describe('alarms-list-table', () => {
         pagination: {},
         widget: defaultWidget,
         alarms: [],
+        totalItems: 0,
         columns,
         selectable: true,
       },
