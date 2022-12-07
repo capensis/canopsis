@@ -23,7 +23,7 @@ Feature: execute request on event
       "parameters": {
         "request": {
           "method": "GET",
-          "url": "{{ .apiUrl }}/api/v4/scenarios",
+          "url": "{{ .apiURL }}/api/v4/scenarios",
           "auth": {
             "username": "root",
             "password": "test"
@@ -55,7 +55,7 @@ Feature: execute request on event
       "parameters": {
         "request": {
           "method": "POST",
-          "url": "{{ .apiUrl }}/api/v4/scenarios",
+          "url": "{{ .apiURL }}/api/v4/scenarios",
           "auth": {
             "username": "root",
             "password": "test"
@@ -173,7 +173,7 @@ Feature: execute request on event
       "parameters": {
         "request": {
           "method": "POST",
-          "url": "{{ .apiUrl }}/api/v4/scenarios",
+          "url": "{{ .apiURL }}/api/v4/scenarios",
           "auth": {
             "username": "root",
             "password": "test"

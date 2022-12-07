@@ -1505,6 +1505,51 @@ Feature: Get alarms
     }
     """
 
+  Scenario: given tags filter with has_not condition should filter alarms properly
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-test-tag-filter&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-test-tag-filter-1"
+        },
+        {
+          "_id": "test-alarm-to-test-tag-filter-2"
+        },
+        {
+          "_id": "test-alarm-to-test-tag-filter-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-test-tag-filter&filters[]=test-widgetfilter-to-alarm-test-tag-filter&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-test-tag-filter-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given get open request should return no content
     When I am admin
     When I do GET /api/v4/open-alarms?_id=test-resource-to-alarm-get-3/test-component-to-alarm-get
