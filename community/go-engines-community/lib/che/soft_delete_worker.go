@@ -15,15 +15,25 @@ import (
 	libmongo "go.mongodb.org/mongo-driver/mongo"
 )
 
+type entityData struct {
+	ID                      string         `bson:"_id"`
+	Name                    string         `bson:"name"`
+	Component               string         `bson:"component"`
+	Type                    string         `bson:"type"`
+	ResolveDeletedEventSend *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
+	AlarmExists             bool           `bson:"alarm_exists"`
+}
+
 type softDeletePeriodicalWorker struct {
 	collection         mongo.DbCollection
-	PeriodicalInterval time.Duration
-	EventPublisher     importcontextgraph.EventPublisher
-	Logger             zerolog.Logger
+	periodicalInterval time.Duration
+	eventPublisher     importcontextgraph.EventPublisher
+	softDeleteWaitTime time.Duration
+	logger             zerolog.Logger
 }
 
 func (w *softDeletePeriodicalWorker) GetInterval() time.Duration {
-	return w.PeriodicalInterval
+	return w.periodicalInterval
 }
 
 func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
@@ -34,7 +44,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		[]bson.M{
 			{
 				"$match": bson.M{
-					"soft_deleted": true,
+					"soft_deleted": bson.M{"$lte": now.Add(-w.softDeleteWaitTime).Unix()},
 				},
 			},
 			{
@@ -56,6 +66,8 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 			{
 				"$project": bson.M{
 					"_id":                        1,
+					"name":                       1,
+					"component":                  1,
 					"type":                       1,
 					"resolve_deleted_event_sent": 1,
 					"alarm_exists": bson.M{
@@ -70,7 +82,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		},
 	)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("unable to load soft deleted entities")
+		w.logger.Error().Err(err).Msg("unable to load soft deleted entities")
 		return
 	}
 
@@ -83,39 +95,45 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	for cursor.Next(ctx) {
 		sendEvent := false
 
-		var ent struct {
-			ID                      string         `bson:"_id"`
-			Type                    string         `bson:"type"`
-			ResolveDeletedEventSend *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
-			AlarmExists             bool           `bson:"alarm_exists"`
-		}
-
+		var ent entityData
 		err = cursor.Decode(&ent)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to decode an entity")
+			w.logger.Error().Err(err).Msg("unable to decode an entity")
 			continue
 		}
 
-		var newModel libmongo.WriteModel
+		var newModels []libmongo.WriteModel
 
 		if !ent.AlarmExists {
-			newModel = libmongo.
-				NewDeleteOneModel().
-				SetFilter(bson.M{"_id": ent.ID, "soft_deleted": true})
+			newModels = []libmongo.WriteModel{
+				libmongo.NewUpdateManyModel().
+					SetFilter(bson.M{"impact": ent.ID}).
+					SetUpdate(bson.M{"$pull": bson.M{"impact": ent.ID}}),
+				libmongo.NewUpdateManyModel().
+					SetFilter(bson.M{"depends": ent.ID}).
+					SetUpdate(bson.M{"$pull": bson.M{"depends": ent.ID}}),
+				libmongo.
+					NewDeleteOneModel().
+					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}),
+			}
 		} else if ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(time.Hour).Before(now.Time) {
 			sendEvent = true
 
-			newModel = libmongo.
-				NewUpdateOneModel().
-				SetFilter(bson.M{"_id": ent.ID, "soft_deleted": true}).
-				SetUpdate(bson.M{"$set": bson.M{"resolve_deleted_event_sent": now}})
+			newModels = []libmongo.WriteModel{
+				libmongo.
+					NewUpdateOneModel().
+					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}).
+					SetUpdate(bson.M{"$set": bson.M{"resolve_deleted_event_sent": now}}),
+			}
 		} else {
 			continue
 		}
 
-		b, err := bson.Marshal(newModel)
+		b, err := bson.Marshal(struct {
+			Arr []libmongo.WriteModel
+		}{Arr: writeModels})
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to marshal eventfilter update model")
+			w.logger.Error().Err(err).Msg("unable to marshal eventfilter update model")
 			continue
 		}
 
@@ -123,13 +141,13 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
 			_, err := w.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
+				w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
 			}
 
 			for _, event := range events {
-				err = w.EventPublisher.SendEvent(ctx, event)
+				err = w.eventPublisher.SendEvent(ctx, event)
 				if err != nil {
-					w.Logger.Error().Err(err).Msg("failed to send event")
+					w.logger.Error().Err(err).Msg("failed to send event")
 					continue
 				}
 			}
@@ -140,28 +158,28 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		}
 
 		if sendEvent {
-			event, err := w.createEvent(types.EventTypeResolveDeleted, ent.Type, ent.ID, now)
+			event, err := w.createEvent(types.EventTypeResolveDeleted, ent, now)
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("failed to create event")
+				w.logger.Error().Err(err).Msg("failed to create event")
 				continue
 			}
 
 			events = append(events, event)
 		}
 
-		writeModels = append(writeModels, newModel)
+		writeModels = append(writeModels, newModels...)
 		bulkBytesSize += newModelLen
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err := w.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
+				w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
 			}
 
 			for _, event := range events {
-				err = w.EventPublisher.SendEvent(ctx, event)
+				err = w.eventPublisher.SendEvent(ctx, event)
 				if err != nil {
-					w.Logger.Error().Err(err).Msg("failed to send event")
+					w.logger.Error().Err(err).Msg("failed to send event")
 					continue
 				}
 			}
@@ -175,20 +193,20 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	if len(writeModels) > 0 {
 		_, err := w.collection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
+			w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
 		}
 
 		for _, event := range events {
-			err = w.EventPublisher.SendEvent(ctx, event)
+			err = w.eventPublisher.SendEvent(ctx, event)
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("failed to send event")
+				w.logger.Error().Err(err).Msg("failed to send event")
 				return
 			}
 		}
 	}
 }
 
-func (w *softDeletePeriodicalWorker) createEvent(eventType string, t, id string, now types.CpsTime) (types.Event, error) {
+func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityData, now types.CpsTime) (types.Event, error) {
 	event := types.Event{
 		Connector:     canopsis.EngineConnector,
 		ConnectorName: canopsis.CheEngineName,
@@ -197,18 +215,24 @@ func (w *softDeletePeriodicalWorker) createEvent(eventType string, t, id string,
 		Author:        canopsis.DefaultEventAuthor,
 	}
 
-	switch t {
+	switch ent.Type {
 	case types.EntityTypeComponent:
-		event.Component = id
 		event.SourceType = types.SourceTypeComponent
+		event.Component = ent.ID
 	case types.EntityTypeResource:
-		idParts := strings.Split(id, "/")
-		if len(idParts) != 2 {
-			return types.Event{}, fmt.Errorf("invalid resource id = %s", id)
-		}
-		event.Resource = idParts[0]
-		event.Component = idParts[1]
 		event.SourceType = types.SourceTypeResource
+
+		event.Resource = ent.Name
+		event.Component = ent.Component
+		if event.Component == "" {
+			idParts := strings.Split(ent.ID, "/")
+			if len(idParts) != 2 {
+				return types.Event{}, fmt.Errorf("invalid resource id = %s", ent.ID)
+			}
+
+			event.Resource = idParts[0]
+			event.Component = idParts[1]
+		}
 	}
 
 	return event, nil

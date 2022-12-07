@@ -439,13 +439,13 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	var entities []types.Entity
 
 	if entity != nil {
-		if event.SourceType == types.SourceTypeResource && (entity.SoftDeleted || !entity.HasDepend(connectorID)) {
+		if event.SourceType == types.SourceTypeResource && (entity.SoftDeleted != nil || !entity.HasDepend(connectorID)) {
 			entity.Connector = connectorID
 			entity.Depends = append(entity.Depends, connectorID)
 			entities = []types.Entity{connector, component, *entity}
 		}
 
-		if event.SourceType == types.SourceTypeComponent && (entity.SoftDeleted || !entity.HasImpact(connectorID)) {
+		if event.SourceType == types.SourceTypeComponent && (entity.SoftDeleted != nil || !entity.HasImpact(connectorID)) {
 			entity.Connector = connectorID
 			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
