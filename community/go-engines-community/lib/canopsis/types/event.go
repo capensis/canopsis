@@ -318,7 +318,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
 	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
-		EventTypeEntityToggled, EventTypeEntityUpdated:
+		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -327,7 +327,7 @@ func (e *Event) IsContextable() bool {
 
 func (e *Event) IsOnlyServiceUpdate() bool {
 	switch e.EventType {
-	case EventTypeEntityToggled, EventTypeEntityUpdated:
+	case EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
