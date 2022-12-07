@@ -2,8 +2,38 @@
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
+  <div
+    class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list-table__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <c-density-btn-toggle-stub
+          value="true"
+        />
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <!---->
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list-table__top-pagination--center-absolute xs4"
+    >
+      <!---->
+    </div>
+  </div>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -71,25 +101,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   arrow_upward
                 </i>
               </th>
-              <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left"
-                role="columnheader"
-                scope="col"
-              >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag="tag"
-                />
-              </th>
             </tr>
             <tr
               class="v-datatable__progress"
             >
               <th
                 class="column"
-                colspan="3"
+                colspan="2"
               >
                 <transition-stub
                   name="fade-transition"
@@ -136,6 +154,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               istourenabled="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
@@ -149,7 +168,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -157,6 +176,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -169,7 +189,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -177,6 +197,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -189,7 +210,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -197,6 +218,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -209,7 +231,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -217,6 +239,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -229,7 +252,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -239,22 +262,90 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
     </div>
   </div>
   <!---->
+  <!---->
 </div>
 `;
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
+  <div
+    class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list-table__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <!---->
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              items=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list-table__top-pagination--center-absolute xs4"
+    >
+      <!---->
+    </div>
+  </div>
   <c-empty-data-table-columns-stub />
+  <c-table-pagination-stub />
   <!---->
 </div>
 `;
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with compact mode 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
+  <div
+    class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list-table__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <!---->
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              items=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list-table__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        type="top"
+      />
+    </div>
+  </div>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -323,14 +414,49 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
+  <c-table-pagination-stub />
   <!---->
 </div>
 `;
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = false 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
+  <div
+    class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list-table__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <!---->
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              items=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list-table__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        type="top"
+      />
+    </div>
+  </div>
   <div>
     <div
       class="alarms-list-table columns-sm alarms-list-table__selecting"
@@ -433,14 +559,49 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
+  <c-table-pagination-stub />
   <!---->
 </div>
 `;
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = true 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
+  <div
+    class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list-table__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <!---->
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              items=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list-table__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        type="top"
+      />
+    </div>
+  </div>
   <div>
     <div
       class="alarms-list-table columns-sm alarms-list-table__selecting"
@@ -543,14 +704,50 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
+  <c-table-pagination-stub />
   <!---->
 </div>
 `;
 
 exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but without selectable 1`] = `
 <div
-  class="flex white"
+  class="flex"
 >
+  <div
+    class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+  >
+    <div
+      class="flex alarms-list-table__top-pagination--left xs6"
+    >
+      <div
+        class="layout row align-center justify-start"
+      >
+        <!---->
+        <transition-stub
+          name="fade-transition"
+        >
+          <div
+            class="flex px-1"
+            style="display: none;"
+          >
+            <mass-actions-panel-stub
+              items=""
+              refreshalarmslist="[Function]"
+              widget="[object Object]"
+            />
+          </div>
+        </transition-stub>
+      </div>
+    </div>
+    <div
+      class="flex alarms-list-table__top-pagination--center-absolute xs4"
+    >
+      <c-pagination-stub
+        total="5"
+        type="top"
+      />
+    </div>
+  </div>
   <div>
     <div
       class="alarms-list-table columns-sm"
@@ -713,6 +910,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
       </div>
     </div>
   </div>
+  <c-table-pagination-stub
+    total-items="5"
+  />
   <!---->
 </div>
 `;
