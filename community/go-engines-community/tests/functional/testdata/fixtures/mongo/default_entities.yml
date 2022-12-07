@@ -4371,3 +4371,46 @@ default_entities:
     _id: test-entity-to-bulk-toggle-service
     impact_level: 1
     name: test-entity-to-bulk-toggle-service-name
+  connector_to_test_tag_filter:
+    <<: *connector
+    _id: test-connector-to-alarm-test-tag-filter/test-connector-to-alarm-test-tag-filter-name
+    name: test-connector-to-alarm-test-tag-filter-name
+    impact:
+      - test-resource-to-alarm-test-tag-filter-1
+      - test-resource-to-alarm-test-tag-filter-2
+      - test-resource-to-alarm-test-tag-filter-3
+    depends:
+      - test-component-to-alarm-test-tag-filter
+
+  component_to_test_tag_filter:
+    <<: *component
+    _id: test-component-to-alarm-test-tag-filter
+    name: <Current()._id>
+    component: <Current()._id>
+    depends:
+      - test-resource-to-alarm-test-tag-filter-1/test-component-to-alarm-test-tag-filter
+      - test-resource-to-alarm-test-tag-filter-2/test-component-to-alarm-test-tag-filter
+      - test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
+  resource_to_test_tag_filter_1:
+    <<: *resource
+    _id: test-resource-to-alarm-test-tag-filter-1/test-component-to-alarm-test-tag-filter
+    name: test-resource-to-alarm-test-tag-filter-1
+    category: test-category-to-alarm-test-tag-filter-1
+    impact:
+      - test-component-to-alarm-test-tag-filter
+    component: test-component-to-alarm-test-tag-filter
+  resource_to_test_tag_filter_2:
+    <<: *resource
+    _id: test-resource-to-alarm-test-tag-filter-2/test-component-to-alarm-test-tag-filter
+    name: test-resource-to-alarm-test-tag-filter-2
+    impact:
+      - test-component-to-alarm-test-tag-filter
+    component: test-component-to-alarm-test-tag-filter
+    category: test-category-to-alarm-test-tag-filter-2
+  resource_to_test_tag_filter_3:
+    <<: *resource
+    _id: test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
+    name: test-resource-to-alarm-test-tag-filter-3
+    impact:
+      - test-component-to-alarm-test-tag-filter
+    component: test-component-to-alarm-test-tag-filter
