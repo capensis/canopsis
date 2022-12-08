@@ -256,11 +256,11 @@ func (w *worker) parseEntities(
 		eventType := ""
 		var oldEntity importcontextgraph.EntityConfiguration
 
-		var findCriteria bson.M
+		findCriteria := bson.M{"soft_deleted": bson.M{"$exists": false}}
 		if ci.Type == types.EntityTypeService {
-			findCriteria = bson.M{"name": ci.Name}
+			findCriteria["name"] = ci.Name
 		} else {
-			findCriteria = bson.M{"_id": ci.ID}
+			findCriteria["_id"] = ci.ID
 		}
 
 		err = w.entityCollection.FindOne(ctx, findCriteria).Decode(&oldEntity)
@@ -435,7 +435,7 @@ func (w *worker) parseEntities(
 		if !exists {
 			var oldEntity types.Entity
 			updatedIds = append(updatedIds, componentName)
-			err := w.entityCollection.FindOne(ctx, bson.M{"_id": componentName}).Decode(&oldEntity)
+			err := w.entityCollection.FindOne(ctx, bson.M{"_id": componentName, "soft_deleted": bson.M{"$exists": false}}).Decode(&oldEntity)
 			if err != nil && err != mongo.ErrNoDocuments {
 				return res, err
 			}
@@ -634,7 +634,11 @@ func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.W
 
 	return mongo.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": ci.ID}).
-		SetUpdate(bson.M{"$set": ci, "$setOnInsert": bson.M{"created": now}}).
+		SetUpdate(bson.M{
+			"$set":         ci,
+			"$setOnInsert": bson.M{"created": now},
+			"$unset":       bson.M{"soft_deleted": ""},
+		}).
 		SetUpsert(true)
 }
 
@@ -663,7 +667,11 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 
 	return mongo.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": oldEntity.ID}).
-		SetUpdate(bson.M{"$set": ci, "$setOnInsert": bson.M{"created": now}}).
+		SetUpdate(bson.M{
+			"$set":         ci,
+			"$setOnInsert": bson.M{"created": now},
+			"$unset":       bson.M{"soft_deleted": ""},
+		}).
 		SetUpsert(true)
 }
 
