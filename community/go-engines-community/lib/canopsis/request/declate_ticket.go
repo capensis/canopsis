@@ -1,4 +1,4 @@
-package types
+package request
 
 import (
 	"encoding/json"
@@ -6,25 +6,12 @@ import (
 	"fmt"
 )
 
-type WebhookRequest struct {
-	URL        string            `bson:"url" json:"url" binding:"required,url"`
-	Method     string            `bson:"method" json:"method" binding:"required"`
-	Auth       *WebhookBasicAuth `bson:"auth,omitempty" json:"auth,omitempty"`
-	Headers    map[string]string `bson:"headers,omitempty" json:"headers,omitempty"`
-	Payload    string            `bson:"payload,omitempty" json:"payload,omitempty"`
-	SkipVerify bool              `bson:"skip_verify" json:"skip_verify"`
-}
-
-type WebhookBasicAuth struct {
-	Username string `bson:"username" json:"username"`
-	Password string `bson:"password" json:"password"`
-}
-
 type WebhookDeclareTicket struct {
 	EmptyResponse bool              `bson:"empty_response" json:"empty_response"`
-	TicketID      string            `bson:"ticket_id" json:"ticket_id"`
 	IsRegexp      bool              `bson:"is_regexp" json:"is_regexp"`
-	Fields        map[string]string `bson:",inline"`
+	TicketID      string            `bson:"ticket_id,omitempty" json:"ticket_id"`
+	TicketUrl     string            `bson:"ticket_url,omitempty" json:"ticket_url"`
+	CustomFields  map[string]string `bson:",inline"`
 }
 
 func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
@@ -52,19 +39,22 @@ func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 		}
 	}
 
-	fields := make(map[string]string)
+	customFields := make(map[string]string)
 	for k, v := range m {
 		if strVal, ok := v.(string); ok {
-			if k == "ticket_id" {
+			switch k {
+			case "ticket_id":
 				t.TicketID = strVal
-			} else {
-				fields[k] = strVal
+			case "ticket_url":
+				t.TicketUrl = strVal
+			default:
+				customFields[k] = strVal
 			}
 		} else {
 			return fmt.Errorf("invalid type of %s", k)
 		}
 	}
-	t.Fields = fields
+	t.CustomFields = customFields
 
 	return nil
 }
@@ -74,9 +64,10 @@ func (t WebhookDeclareTicket) MarshalJSON() ([]byte, error) {
 		"empty_response": t.EmptyResponse,
 		"is_regexp":      t.IsRegexp,
 		"ticket_id":      t.TicketID,
+		"ticket_url":     t.TicketUrl,
 	}
 
-	for k, v := range t.Fields {
+	for k, v := range t.CustomFields {
 		m[k] = v
 	}
 
