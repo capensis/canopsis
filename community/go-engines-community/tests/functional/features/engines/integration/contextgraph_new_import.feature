@@ -6,6 +6,7 @@ Feature: new-import entities
     When I do POST /api/v4/entityservices:
     """json
     {
+      "_id": "test-entityservice-new-import-partial-1",
       "name": "test-entityservice-new-import-partial-1-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
@@ -26,19 +27,29 @@ Feature: new-import entities
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "component": "test-entityservice-new-import-partial-1"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-1"
+      }
+    ]
+    """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-1-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "set",
-          "name": "test-component-new-import-partial-1",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "set",
+        "name": "test-component-new-import-partial-1",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -47,7 +58,13 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "entitytoggled",
+      "component": "test-component-new-import-partial-1"
+    }
+    """
     When I do GET /api/v4/entities/context-graph?_id=test-component-new-import-partial-1
     Then the response code should be 200
     Then the response body should be:
@@ -73,7 +90,7 @@ Feature: new-import entities
 
   Scenario: given service and updated entity by new import should update service
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-2",
@@ -85,10 +102,10 @@ Feature: new-import entities
       "output": "test-output-new-import-partial-2"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
+      "_id": "test-entityservice-new-import-partial-2",
       "name": "test-entityservice-new-import-partial-2-name",
       "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
       "impact_level": 1,
@@ -110,25 +127,35 @@ Feature: new-import entities
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "component": "test-entityservice-new-import-partial-2"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-2"
+      }
+    ]
+    """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-2-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "set",
-          "name": "test-component-new-import-partial-2",
-          "type": "component",
-          "infos": {
-            "test-component-new-import-partial-2-infos-1": {
-              "name": "test-component-new-import-partial-2-infos-1",
-              "value": "test-component-new-import-partial-2-infos-1-value"
-            }
-          },
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "set",
+        "name": "test-component-new-import-partial-2",
+        "type": "component",
+        "infos": {
+          "test-component-new-import-partial-2-infos-1": {
+            "name": "test-component-new-import-partial-2-infos-1",
+            "value": "test-component-new-import-partial-2-infos-1-value"
+          }
+        },
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -137,18 +164,27 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "entityupdated",
+        "component": "test-component-new-import-partial-2"
+      },
+      {
+        "event_type": "activate",
+        "component": "test-entityservice-new-import-partial-2"
+      }
+    ]
+    """
     When I do GET /api/v4/entities/context-graph?_id=test-component-new-import-partial-2
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "impact" should contain:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "test-connector-new-import-partial-2/test-connector-name-new-import-partial-2",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-new-import-partial-2/test-connector-name-new-import-partial-2",
+      "{{ .serviceID }}"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-connector-new-import-partial-2/test-connector-name-new-import-partial-2
     Then the response code should be 200
@@ -175,7 +211,7 @@ Feature: new-import entities
 
   Scenario: given disabled entity by new import should resolve alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-3",
@@ -187,7 +223,6 @@ Feature: new-import entities
       "output": "test-output-new-import-partial-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-component-new-import-partial-3&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -210,16 +245,14 @@ Feature: new-import entities
     """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-3-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "disable",
-          "name": "test-component-new-import-partial-3",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "disable",
+        "name": "test-component-new-import-partial-3",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -228,7 +261,13 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "entitytoggled",
+      "component": "test-component-new-import-partial-3"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-component-new-import-partial-3&opened=true
     Then the response code should be 200
     Then the response body should be:
@@ -246,7 +285,7 @@ Feature: new-import entities
 
   Scenario: given deleted entity by new import should resolve alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-4",
@@ -258,7 +297,6 @@ Feature: new-import entities
       "output": "test-output-new-import-partial-4"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-component-new-import-partial-4&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -281,16 +319,14 @@ Feature: new-import entities
     """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-4-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "delete",
-          "name": "test-component-new-import-partial-4",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "delete",
+        "name": "test-component-new-import-partial-4",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -299,7 +335,13 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "resolve_deleted",
+      "component": "test-component-new-import-partial-4"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-component-new-import-partial-4&opened=true
     Then the response code should be 200
     Then the response body should be:
@@ -314,10 +356,12 @@ Feature: new-import entities
       }
     }
     """
+    When I wait 4s
+    Then an entity test-component-new-import-partial-4 should not be in the db
 
   Scenario: given deleted component by new import should resolve alarm for resources
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-5",
@@ -330,8 +374,7 @@ Feature: new-import entities
       "output": "test-output-new-import-partial-5"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-5",
@@ -344,7 +387,6 @@ Feature: new-import entities
       "output": "test-output-new-import-partial-5"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-new-import-partial-5-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -387,16 +429,14 @@ Feature: new-import entities
     """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-5-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "delete",
-          "name": "test-component-new-import-partial-5",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "delete",
+        "name": "test-component-new-import-partial-5",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -405,7 +445,19 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-5-1"
+      },
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-5-2"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-new-import-partial-5-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -434,6 +486,10 @@ Feature: new-import entities
       }
     }
     """
+    When I wait 4s
+    Then an entity test-component-new-import-partial-5 should not be in the db
+    Then an entity test-resource-new-import-partial-5-1/test-component-new-import-partial-5 should not be in the db
+    Then an entity test-resource-new-import-partial-5-2/test-component-new-import-partial-5 should not be in the db
 
   Scenario: given delete import action should delete component and resources which should update service state
     When I am admin
@@ -469,7 +525,19 @@ Feature: new-import entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "component": "test-entityservice-new-import-partial-6"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-6"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -483,7 +551,19 @@ Feature: new-import entities
       "output": "test-output-import-partial-6"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "resource": "test-resource-new-import-partial-6-1"
+      },
+      {
+        "event_type": "activate",
+        "component": "test-entityservice-new-import-partial-6"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -497,7 +577,19 @@ Feature: new-import entities
       "output": "test-output-import-partial-6"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "resource": "test-resource-new-import-partial-6-2"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-6"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -511,7 +603,19 @@ Feature: new-import entities
       "output": "test-output-import-partial-6"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "resource": "test-resource-new-import-partial-6-3"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-6"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -525,7 +629,19 @@ Feature: new-import entities
       "output": "test-output-import-partial-6"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "resource": "test-resource-new-import-partial-6-4"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-6"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-entityservice-new-import-partial-6&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -584,16 +700,14 @@ Feature: new-import entities
     """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-6-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "delete",
-          "name": "test-component-new-import-partial-6-2",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "delete",
+        "name": "test-component-new-import-partial-6-2",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -602,7 +716,27 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of 4 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-6-3"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-6"
+      },
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-6-4"
+      },
+      {
+        "event_type": "check",
+        "component": "test-entityservice-new-import-partial-6"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-entityservice-new-import-partial-6&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -650,6 +784,10 @@ Feature: new-import entities
       }
     }
     """
+    When I wait 4s
+    Then an entity test-component-new-import-partial-6 should not be in the db
+    Then an entity test-resource-new-import-partial-6-3/test-component-new-import-partial-6 should not be in the db
+    Then an entity test-resource-new-import-partial-6-4/test-component-new-import-partial-6 should not be in the db
 
   Scenario: given delete import action should delete component and resources which should update metaalarm state
     When I am admin
@@ -690,7 +828,7 @@ Feature: new-import entities
     """
     Then the response code should be 201
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-7",
@@ -703,8 +841,7 @@ Feature: new-import entities
       "output": "test-output-import-partial-7"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-7",
@@ -717,8 +854,7 @@ Feature: new-import entities
       "output": "test-output-import-partial-7"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-7",
@@ -731,8 +867,7 @@ Feature: new-import entities
       "output": "test-output-import-partial-7"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-7",
@@ -745,7 +880,13 @@ Feature: new-import entities
       "output": "test-output-import-partial-7"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "activate",
+      "component": "metaalarm"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-new-import-partial-7-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
@@ -832,16 +973,14 @@ Feature: new-import entities
     """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-7-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "delete",
-          "name": "test-component-new-import-partial-7-2",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "delete",
+        "name": "test-component-new-import-partial-7-2",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -850,7 +989,19 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-7-3"
+      },
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-7-4"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-new-import-partial-7-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
@@ -923,6 +1074,10 @@ Feature: new-import entities
       }
     ]
     """
+    When I wait 4s
+    Then an entity test-component-new-import-partial-7 should not be in the db
+    Then an entity test-resource-new-import-partial-7-3/test-component-new-import-partial-7 should not be in the db
+    Then an entity test-resource-new-import-partial-7-4/test-component-new-import-partial-7 should not be in the db
 
   Scenario: given delete import action should delete component and resources which should resolve metaalarm
     When I am admin
@@ -955,7 +1110,7 @@ Feature: new-import entities
     """
     Then the response code should be 201
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-8",
@@ -968,8 +1123,7 @@ Feature: new-import entities
       "output": "test-output-import-partial-8"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-new-import-partial-8",
@@ -982,7 +1136,13 @@ Feature: new-import entities
       "output": "test-output-import-partial-8"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "activate",
+      "component": "metaalarm"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-new-import-partial-8-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
@@ -1057,16 +1217,14 @@ Feature: new-import entities
     """
     When I do PUT /api/v4/contextgraph-import-partial?source=test-new-import-partial-8-source:
     """json
-    {
-      "cis": [
-        {
-          "action": "delete",
-          "name": "test-component-new-import-partial-8-1",
-          "type": "component",
-          "enabled": true
-        }
-      ]
-    }
+    [
+      {
+        "action": "delete",
+        "name": "test-component-new-import-partial-8-1",
+        "type": "component",
+        "enabled": true
+      }
+    ]
     """
     Then the response code should be 200
     When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
@@ -1075,8 +1233,24 @@ Feature: new-import entities
        "status": "done"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-8-1"
+      },
+      {
+        "event_type": "resolve_deleted",
+        "resource": "test-resource-new-import-partial-8-2"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-new-import-partial-8-1&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
+    When I wait 4s
+    Then an entity test-component-new-import-partial-8 should not be in the db
+    Then an entity test-resource-new-import-partial-8-1/test-component-new-import-partial-8 should not be in the db
+    Then an entity test-resource-new-import-partial-8-2/test-component-new-import-partial-8 should not be in the db
 
   Scenario: given delete import action should delete service and resolve it's alarm
     When I am admin
