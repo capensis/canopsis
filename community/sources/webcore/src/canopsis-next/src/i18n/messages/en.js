@@ -2841,6 +2841,10 @@ export default merge({
       accumulateAfter: 'Accumulate instructions statistics after',
       deleteAfter: 'Delete instructions data after',
       deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+      deleteStatsAfter: 'Delete instructions data after',
+      deleteStatsAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+      deleteModStatsAfter: 'Delete instructions data after',
+      deleteModStatsAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
     },
     entity: {
       title: 'Entities data storage',

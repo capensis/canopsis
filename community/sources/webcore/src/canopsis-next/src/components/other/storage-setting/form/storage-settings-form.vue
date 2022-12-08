@@ -49,6 +49,18 @@
         :help-text="$t('storageSettings.remediation.deleteAfterHelpText')",
         :name="remediationDeleteAfterFieldName"
       )
+      c-enabled-duration-field(
+        v-field="form.remediation.delete_stats_after",
+        :label="$t('storageSettings.remediation.deleteStatsAfter')",
+        :help-text="$t('storageSettings.remediation.deleteStatsAfterHelpText')",
+        :name="remediationDeleteStatsAfterFieldName"
+      )
+      c-enabled-duration-field(
+        v-field="form.remediation.delete_mod_stats_after",
+        :label="$t('storageSettings.remediation.deleteModStatsAfter')",
+        :help-text="$t('storageSettings.remediation.deleteModStatsAfterHelpText')",
+        :name="remediationDeleteModStatsAfterFieldName"
+      )
     c-information-block(:title="$t('storageSettings.pbehavior.title')")
       template(v-if="history.pbehavior", slot="subtitle") {{ pbehaviorSubTitle }}
       c-enabled-duration-field(
@@ -114,6 +126,14 @@ export default {
 
     remediationDeleteAfterFieldName() {
       return 'remediation.delete_after';
+    },
+
+    remediationDeleteStatsAfterFieldName() {
+      return 'remediation.delete_stats_after';
+    },
+
+    remediationDeleteModStatsAfterFieldName() {
+      return 'remediation.delete_mod_stats_after';
     },
 
     pbehaviorDeleteAfterFieldName() {
