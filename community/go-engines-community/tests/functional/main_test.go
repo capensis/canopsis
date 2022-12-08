@@ -231,6 +231,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		scenarioCtx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
 		scenarioCtx.Step(`^an entity (.+) should be in the db$`, mongoClient.EntityShouldBeInTheDb)
+		scenarioCtx.Step(`^an entity (.+) should not be in the db$`, mongoClient.EntityShouldNotBeInTheDb)
 		scenarioCtx.Step(`^I set header ([\w\.\-]+)=(.+)$`, apiClient.ISetRequestHeader)
 		scenarioCtx.Step(`^I wait (\w+)$`, func(str string) error {
 			duration, err := time.ParseDuration(str)
