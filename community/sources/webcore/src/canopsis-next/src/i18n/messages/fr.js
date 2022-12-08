@@ -2841,6 +2841,10 @@ export default merge({
       accumulateAfter: 'Accumuler les statistiques des consignes après',
       deleteAfter: 'Supprimer les données des consignes après',
       deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+      deleteStatsAfter: 'Supprimer les données des consignes après',
+      deleteStatsAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+      deleteModStatsAfter: 'Supprimer les données des consignes après',
+      deleteModStatsAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
