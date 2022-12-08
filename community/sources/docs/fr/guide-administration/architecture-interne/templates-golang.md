@@ -202,7 +202,7 @@ Le payload de ce webhook sera donc constitué d'un attribut `message` dont la va
 Si vous appelez une clé non existente dans un template, la compilation de celui-ci échouera.  
 Pour éviter cette situation, la fonction `map_has_key` permet de contrôler l'existence de la clé avant son utilisation.  
 
-Exemple, `Tester l'existence de la clé "une_clé"` :
+Exemple, Tester l'existence de la clé `une_cle` :
 
 ```
 {{if map_has_key .Entity.Infos "une_cle" }}{{.Entity.Infos.une_cle.Value}}{{else}}default value{{end}}
