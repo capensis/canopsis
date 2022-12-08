@@ -7,7 +7,6 @@ import { get, pickBy, compact } from 'lodash';
 
 import {
   MODALS,
-  ENTITIES_TYPES,
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
@@ -161,8 +160,7 @@ export default {
     },
     modalConfig() {
       return {
-        itemsType: ENTITIES_TYPES.alarm,
-        itemsIds: [this.item._id],
+        items: [this.item],
         afterSubmit: this.refreshAlarmsList,
       };
     },
