@@ -71,7 +71,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
 		"type":         types.EntityTypeService,
 		"enabled":      true,
-		"soft_deleted": bson.M{"$in": bson.A{false, nil}},
+		"soft_deleted": bson.M{"$exists": false},
 	}})
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
