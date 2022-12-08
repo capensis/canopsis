@@ -66,30 +66,8 @@
           color="black",
           @click="exportAlarmsList"
         )
-    v-layout.alarms-list__top-pagination.white.px-4.position-relative(row, align-center)
-      v-flex.alarms-list__top-pagination--left(xs6)
-        v-layout(row, align-center, justify-start)
-          c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
-          v-fade-transition
-            v-flex.px-1(v-show="selectedIds.length")
-              mass-actions-panel(
-                :items-ids="selectedIds",
-                :widget="widget",
-                :refresh-alarms-list="fetchList",
-                @clear:items="clearSelected"
-              )
-      v-flex.alarms-list__top-pagination--center-absolute(xs4)
-        c-pagination(
-          v-if="hasColumns",
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total_count",
-          type="top",
-          @input="updateQueryPage"
-        )
     alarms-list-table(
       ref="alarmsTable",
-      v-model="selected",
       :widget="widget",
       :alarms="alarms",
       :total-items="alarmsMeta.total_count",
@@ -104,16 +82,13 @@
       :selected-tag="query.tag",
       selectable,
       expandable,
+      densable,
       @select:tag="selectTag",
+      @update:dense="updateDense",
+      @update:page="updateQueryPage",
+      @update:rows-per-page="updateRecordsPerPage",
       @clear:tag="clearTag"
     )
-      c-table-pagination(
-        :total-items="alarmsMeta.total_count",
-        :rows-per-page="query.limit",
-        :page="query.page",
-        @update:page="updateQueryPage",
-        @update:rows-per-page="updateRecordsPerPage"
-      )
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
@@ -124,7 +99,6 @@ import { API_HOST, API_ROUTES } from '@/config';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
-import { isResolvedAlarm, mapIds } from '@/helpers/entities';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
@@ -201,14 +175,9 @@ export default {
   data() {
     return {
       downloading: false,
-      selected: [],
     };
   },
   computed: {
-    selectedIds() {
-      return mapIds(this.selected.filter(item => !isResolvedAlarm(item)));
-    },
-
     tourCallbacks() {
       return {
         onPreviousStep: this.onTourPreviousStep,
@@ -271,10 +240,6 @@ export default {
       newQuery.page = 1;
 
       this.query = newQuery;
-    },
-
-    clearSelected() {
-      this.selected = [];
     },
 
     updateCorrelation(correlation) {
@@ -431,20 +396,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.alarms-list__top-pagination {
-  position: relative;
-  min-height: 48px;
-
-  &--left {
-    padding-right: 80px;
-  }
-
-  &--center-absolute {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-}
-</style>
