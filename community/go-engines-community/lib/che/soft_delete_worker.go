@@ -22,6 +22,7 @@ type entityData struct {
 	Type                    string         `bson:"type"`
 	ResolveDeletedEventSend *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
 	AlarmExists             bool           `bson:"alarm_exists"`
+	SoftDeleted             types.CpsTime  `bson:"soft_deleted"`
 }
 
 type softDeletePeriodicalWorker struct {
@@ -44,7 +45,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		[]bson.M{
 			{
 				"$match": bson.M{
-					"soft_deleted": bson.M{"$lte": now.Add(-w.softDeleteWaitTime).Unix()},
+					"soft_deleted": bson.M{"$exists": true},
 				},
 			},
 			{
@@ -70,6 +71,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 					"component":                  1,
 					"type":                       1,
 					"resolve_deleted_event_sent": 1,
+					"soft_deleted":               1,
 					"alarm_exists": bson.M{
 						"$cond": bson.M{
 							"if":   bson.M{"$eq": bson.A{bson.M{"$size": "$alarm"}, 0}},
@@ -105,6 +107,10 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		var newModels []libmongo.WriteModel
 
 		if !ent.AlarmExists {
+			if now.Add(-w.softDeleteWaitTime).Before(ent.SoftDeleted.Time) {
+				continue
+			}
+
 			newModels = []libmongo.WriteModel{
 				libmongo.NewUpdateManyModel().
 					SetFilter(bson.M{"impact": ent.ID}).

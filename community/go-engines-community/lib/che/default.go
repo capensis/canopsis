@@ -206,13 +206,18 @@ func NewEngine(
 		Logger:             logger,
 		LoadRules:          !mongoClient.IsDistributed(),
 	})
-	engine.AddPeriodicalWorker("soft delete", &softDeletePeriodicalWorker{
-		collection:         mongoClient.Collection(mongo.EntityMongoCollection),
-		periodicalInterval: options.PeriodicalWaitTime,
-		eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-		softDeleteWaitTime: options.SoftDeleteWaitTime,
-		logger:             logger,
-	})
+	engine.AddPeriodicalWorker("soft delete", libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheSoftDeletePeriodicalLockKey,
+		&softDeletePeriodicalWorker{
+			collection:         mongoClient.Collection(mongo.EntityMongoCollection),
+			periodicalInterval: options.PeriodicalWaitTime,
+			eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			softDeleteWaitTime: options.SoftDeleteWaitTime,
+			logger:             logger,
+		},
+		logger,
+	))
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
