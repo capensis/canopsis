@@ -102,7 +102,7 @@ func (v *basicValidator) checkExist(ctx context.Context, ids []string, validType
 	count, err := v.dbClient.Collection(mongo.EntityMongoCollection).CountDocuments(ctx, bson.M{
 		"_id":          bson.M{"$in": ids},
 		"type":         bson.M{"$in": validTypes},
-		"soft_deleted": bson.M{"$in": bson.A{false, nil}},
+		"soft_deleted": bson.M{"$exists": false},
 	})
 	if err != nil {
 		return false, err

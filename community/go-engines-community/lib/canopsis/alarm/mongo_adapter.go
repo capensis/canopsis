@@ -430,7 +430,7 @@ func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, create
 			"as":           "entity",
 		}},
 		{"$unwind": "$entity"},
-		{"$match": bson.M{"entity.enabled": true, "entity.soft_deleted": bson.M{"$in": bson.A{false, nil}}}},
+		{"$match": bson.M{"entity.enabled": true, "entity.soft_deleted": bson.M{"$exists": false}}},
 	})
 }
 
@@ -528,7 +528,7 @@ func (a mongoAdapter) entityAggregateCursor(ctx context.Context, filter bson.M) 
 			"as":           "entity",
 		}},
 		{"$unwind": "$entity"},
-		{"$match": bson.M{"entity.enabled": true, "entity.soft_deleted": bson.M{"$in": bson.A{false, nil}}}},
+		{"$match": bson.M{"entity.enabled": true, "entity.soft_deleted": bson.M{"$exists": false}}},
 	})
 
 	if err != nil {
@@ -687,7 +687,7 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefo
 			"as":           "entity",
 		}},
 		{"$unwind": "$entity"},
-		{"$match": bson.M{"entity.enabled": true, "entity.soft_deleted": bson.M{"$in": bson.A{false, nil}}}},
+		{"$match": bson.M{"entity.enabled": true, "entity.soft_deleted": bson.M{"$exists": false}}},
 	})
 }
 
