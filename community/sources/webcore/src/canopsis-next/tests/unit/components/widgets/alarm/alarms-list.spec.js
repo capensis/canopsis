@@ -406,6 +406,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+
+          page: 1,
           correlation: !userPreferences.content.isCorrelationEnabled,
         },
       },
@@ -669,7 +671,11 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         id: widget._id,
-        query: omit(defaultQuery, ['tstart', 'tstop']),
+        query: {
+          ...omit(defaultQuery, ['tstart', 'tstop']),
+
+          page: 1,
+        },
       },
       undefined,
     );
@@ -723,6 +729,8 @@ describe('alarms-list', () => {
         query: {
           ...defaultQuery,
           ...actionValue,
+
+          page: 1,
         },
       },
       undefined,
@@ -786,6 +794,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+
+          page: 1,
           category: newCategory._id,
         },
       },
