@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -186,7 +187,7 @@ func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event types
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event types.RPCWebhookEvent, ticketId string, ticketData map[string]string) error {
+func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event rpc.WebhookEvent, ticketId string, ticketData map[string]string) error {
 	if event.Alarm == nil || ticketId == "" {
 		return nil
 	}

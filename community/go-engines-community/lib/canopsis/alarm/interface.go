@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
@@ -112,7 +113,7 @@ type MetaAlarmEventProcessor interface {
 	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
 	ProcessAxeRpc(ctx context.Context, event types.RPCAxeEvent, eventRes types.RPCAxeResultEvent) error
 	// ProcessWebhookRpc handles related meta alarm parents and children after alarm change.
-	ProcessWebhookRpc(ctx context.Context, event types.RPCWebhookEvent, ticketId string, ticketData map[string]string) error
+	ProcessWebhookRpc(ctx context.Context, event rpc.WebhookEvent, ticketId string, ticketData map[string]string) error
 	// CreateMetaAlarm creates meta alarm by event.
 	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
 	// ProcessAckResources ackes resource after component ack.
