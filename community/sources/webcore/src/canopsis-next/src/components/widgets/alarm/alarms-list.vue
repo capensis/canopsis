@@ -260,12 +260,17 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         tag,
       };
     },
 
     clearTag() {
-      this.query = omit(this.query, ['tag']);
+      const newQuery = omit(this.query, ['tag']);
+
+      newQuery.page = 1;
+
+      this.query = newQuery;
     },
 
     clearSelected() {
