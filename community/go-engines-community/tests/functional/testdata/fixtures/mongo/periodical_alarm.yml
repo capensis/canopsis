@@ -2624,6 +2624,47 @@ periodical_alarm:
             a: b
             c: d
 
+  alarm_to_test_tag_filter_1:
+    <<: *alarm
+    _id: test-alarm-to-test-tag-filter-1
+    d: test-resource-to-alarm-test-tag-filter-1/test-component-to-alarm-test-tag-filter
+    t: 1597030220
+    tags:
+      - test-tag-filter-1
+    v:
+      <<: *alarm_value
+      connector: test-connector-default
+      connector_name: test-connector-default-name
+      component: test-component-to-alarm-get
+      resource: test-resource-to-alarm-test-tag-filter-1
+
+  alarm_to_test_tag_filter_2:
+    <<: *alarm
+    _id: test-alarm-to-test-tag-filter-2
+    d: test-resource-to-alarm-test-tag-filter-2/test-component-to-alarm-test-tag-filter
+    tags:
+      - test-tag-filter-1
+      - test-tag-filter-2
+    v:
+      <<: *alarm_value
+      connector: test-connector-to-alarm-test-tag-filter
+      connector_name: test-connector-to-alarm-test-tag-filter-name
+      component: test-component-to-alarm-test-tag-filter
+      resource: test-resource-to-alarm-test-tag-filter-2
+
+  alarm_to_test_tag_filter_3:
+    <<: *alarm
+    _id: test-alarm-to-test-tag-filter-3
+    d: test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
+    tags:
+      - test-tag-filter-2
+    v:
+      <<: *alarm_value
+      connector: test-connector-to-alarm-test-tag-filter
+      connector_name: test-connector-to-alarm-test-tag-filter-name
+      component: test-component-to-alarm-test-tag-filter
+      resource: test-resource-to-alarm-test-tag-filter-3
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3
