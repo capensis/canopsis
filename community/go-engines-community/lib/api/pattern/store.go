@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -17,7 +19,6 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
-	"reflect"
 )
 
 type Store interface {
@@ -70,6 +71,7 @@ func NewStore(
 			mongo.DynamicInfosRulesMongoCollection,
 			mongo.FlappingRuleMongoCollection,
 			mongo.KpiFilterMongoCollection,
+			mongo.DeclareTicketRuleMongoCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,

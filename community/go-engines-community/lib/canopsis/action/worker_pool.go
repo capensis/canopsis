@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -250,7 +251,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 	}, nil
 }
 
-func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWebhookEvent, error) {
+func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookEvent, error) {
 	children := make([]types.Alarm, 0)
 	if len(task.Alarm.Value.Children) > 0 {
 		err := s.alarmAdapter.GetOpenedAlarmsByIDs(ctx, task.Alarm.Value.Children, &children)
@@ -293,16 +294,14 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	}
 	request.Headers = headers
 
-	webhookParams := types.RPCWebhookParameters{
+	webhookParams := rpc.WebhookParameters{
 		Request:       request,
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
-		RetryCount:    task.Action.Parameters.RetryCount,
-		RetryDelay:    task.Action.Parameters.RetryDelay,
 		Author:        additionalData.Author,
 		User:          additionalData.User,
 	}
 
-	return &types.RPCWebhookEvent{
+	return &rpc.WebhookEvent{
 		Parameters:   webhookParams,
 		Alarm:        &task.Alarm,
 		Entity:       &task.Entity,

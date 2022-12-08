@@ -11,6 +11,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/cucumber/godog"
@@ -509,7 +510,7 @@ func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc
 		return err
 	}
 
-	var event types.RPCWebhookEvent
+	var event rpc.WebhookEvent
 	err = c.decoder.Decode(content.Bytes(), &event)
 	if err != nil {
 		return err
@@ -527,7 +528,7 @@ func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc
 		return err
 	}
 
-	var resultEvent types.RPCWebhookResultEvent
+	var resultEvent rpc.WebhookResultEvent
 	err = c.decoder.Decode(res, &resultEvent)
 	if err != nil {
 		return err

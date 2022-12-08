@@ -5,6 +5,8 @@ import (
 	"errors"
 )
 
+// todo move all to rpc package
+
 type RPCAxeEvent struct {
 	EventType  string           `json:"event_type"`
 	Parameters RPCAxeParameters `json:"parameters,omitempty"`
@@ -95,33 +97,6 @@ func (e *RPCError) UnmarshalJSON(b []byte) error {
 	e.Error = errors.New(s)
 
 	return nil
-}
-
-type RPCWebhookEvent struct {
-	Parameters   RPCWebhookParameters   `json:"parameters"`
-	Alarm        *Alarm                 `json:"alarm"`
-	Entity       *Entity                `json:"entity"`
-	AckResources bool                   `json:"ack_resources"`
-	Header       map[string]string      `json:"header,omitempty"`
-	Response     map[string]interface{} `json:"response,omitempty"`
-	Message      string                 `json:"message"`
-}
-
-type RPCWebhookParameters struct {
-	Request       WebhookRequest        `json:"request"`
-	DeclareTicket *WebhookDeclareTicket `json:"declare_ticket,omitempty"`
-	RetryCount    int64                 `json:"retry_count,omitempty"`
-	RetryDelay    *DurationWithUnit     `json:"retry_delay,omitempty"`
-	Author        string                `json:"author"`
-	User          string                `json:"user"`
-}
-
-type RPCWebhookResultEvent struct {
-	Alarm           *Alarm                 `json:"alarm"`
-	AlarmChangeType AlarmChangeType        `json:"alarm_change_type"`
-	Header          map[string]string      `json:"header,omitempty"`
-	Response        map[string]interface{} `json:"response,omitempty"`
-	Error           *RPCError              `json:"error"`
 }
 
 type RPCRemediationEvent struct {

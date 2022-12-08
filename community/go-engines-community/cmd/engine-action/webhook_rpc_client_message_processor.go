@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/rs/zerolog"
 )
 
@@ -17,7 +18,7 @@ type webhookRpcClientMessageProcessor struct {
 }
 
 func (p *webhookRpcClientMessageProcessor) Process(_ context.Context, msg engine.RPCMessage) error {
-	var event types.RPCWebhookResultEvent
+	var event rpc.WebhookResultEvent
 	err := p.Decoder.Decode(msg.Body, &event)
 	if err != nil {
 		p.logError(err, "cannot decode event", msg.Body)
