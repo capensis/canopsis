@@ -84,7 +84,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 		"_id":          id,
 		"type":         libtypes.EntityTypeService,
 		"enabled":      true,
-		"soft_deleted": bson.M{"$in": bson.A{false, nil}},
+		"soft_deleted": bson.M{"$exists": false},
 	}).Decode(&service)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {

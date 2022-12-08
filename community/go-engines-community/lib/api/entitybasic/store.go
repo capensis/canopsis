@@ -37,7 +37,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 		{"$match": bson.M{
 			"_id":          id,
 			"type":         bson.M{"$in": s.basicTypes},
-			"soft_deleted": bson.M{"$in": bson.A{false, nil}},
+			"soft_deleted": bson.M{"$exists": false},
 		}},
 		// Find category
 		{"$lookup": bson.M{
