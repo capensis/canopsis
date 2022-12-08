@@ -4,8 +4,10 @@
     :alarms="alarmItems",
     :columns="columns",
     :loading="pending",
+    :total-items="alarmItems.length",
     expandable,
-    hasColumns
+    hide-pagination,
+    has-columns
   )
 </template>
 
