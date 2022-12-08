@@ -160,15 +160,12 @@ Feature: New import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
-        "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
+      "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1"
+    ]
     """
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
     """json
@@ -224,16 +221,13 @@ Feature: New import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
-        "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1",
-        "test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
+      "test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1",
+      "test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-contextgraph-new-import-1-3/test-component-contextgraph-new-import-1
     Then the response code should be 200
@@ -364,15 +358,12 @@ Feature: New import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-2
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-contextgraph-new-import-2-1/test-component-contextgraph-new-import-2",
-        "test-resource-contextgraph-new-import-2-2/test-component-contextgraph-new-import-2"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-contextgraph-new-import-2-1/test-component-contextgraph-new-import-2",
+      "test-resource-contextgraph-new-import-2-2/test-component-contextgraph-new-import-2"
+    ]
     """
 
   Scenario: given set import requests should create and update component_infos
@@ -1037,15 +1028,12 @@ Feature: New import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=component_SC004C
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "script_new-import_service/component_SC004C",
-        "script_new-import_service_2/component_SC004C"
-      ],
-      "impact": []
-    }
+    [
+      "script_new-import_service/component_SC004C",
+      "script_new-import_service_2/component_SC004C"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=script_new-import_service/component_SC004C
     Then the response code should be 200
@@ -1060,15 +1048,12 @@ Feature: New import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and body is:
+    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and response array key "impact" contains:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "component_SC004C",
-        "test-entityservice-service-new-import"
-      ]
-    }
+    [
+      "component_SC004C",
+      "test-entityservice-service-new-import"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=script_new-import_service/component_SC004C
     Then the response code should be 200
@@ -1083,15 +1068,12 @@ Feature: New import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and body is:
+    When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and response array key "impact" contains:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "component_SC004C",
-        "test-entityservice-service-new-import"
-      ]
-    }
+    [
+      "component_SC004C",
+      "test-entityservice-service-new-import"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=script_new-import_service_2/component_SC004C
     Then the response code should be 200
@@ -1108,15 +1090,12 @@ Feature: New import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=script_new-import_service_2/component_SC004C
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "impact" should contain:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "component_SC004C",
-        "test-entityservice-service-new-import"
-      ]
-    }
+    [
+      "component_SC004C",
+      "test-entityservice-service-new-import"
+    ]
     """
     When I do GET /api/v4/entityservices/test-entityservice-service-new-import
     Then the response code should be 200
@@ -1144,15 +1123,12 @@ Feature: New import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-entityservice-service-new-import
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "script_new-import_service/component_SC004C",
-        "script_new-import_service_2/component_SC004C"
-      ],
-      "impact": []
-    }
+    [
+      "script_new-import_service/component_SC004C",
+      "script_new-import_service_2/component_SC004C"
+    ]
     """
 
   Scenario: given set import when component is deleted for the created resource should be failed
@@ -1283,7 +1259,10 @@ Feature: New import entities
       "enabled": true,
       "infos": {},
       "type": "component",
-      "impact_level": 1
+      "impact_level": 1,
+      "changeable_depends": [
+        "test-entity-contextgraph-new-import-resource-to-delete-1-2/test-entity-contextgraph-new-import-component-to-delete-1"
+      ]
     }
     """
     When I do GET /api/v4/entities/context-graph?_id=test-entity-contextgraph-new-import-component-to-delete-1 until response code is 200 and body contains:
