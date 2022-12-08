@@ -689,7 +689,7 @@ Feature: new-import entities
     }
     """
     Then the response code should be 201
-    When I wait the next periodical process
+    When I wait 4s
     When I send an event:
     """json
     {
@@ -954,7 +954,7 @@ Feature: new-import entities
     }
     """
     Then the response code should be 201
-    When I wait the next periodical process
+    When I wait 4s
     When I send an event:
     """json
     {
@@ -1277,5 +1277,5 @@ Feature: new-import entities
       }
     }
     """
-    When I wait the next periodical process
+    When I wait 4s
     Then an entity test-entityservice-new-import-partial-9-1 should not be in the db
