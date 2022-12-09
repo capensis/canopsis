@@ -2959,7 +2959,7 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Flapping rules',
-      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.', 
+      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {

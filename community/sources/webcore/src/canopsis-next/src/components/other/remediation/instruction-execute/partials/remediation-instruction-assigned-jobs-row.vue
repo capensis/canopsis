@@ -2,14 +2,6 @@
   tr
     td.pa-0
       v-layout(row, align-center)
-        v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!hasStatusMessage", max-width="400", right)
-          v-icon.mr-1(slot="activator", :color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
-          div(v-if="job.fail_reason")
-            span {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
-            span.pre-wrap(v-html="job.fail_reason")
-          div(v-if="job.output")
-            span {{ $t('remediationInstructionExecute.jobs.output') }}:&nbsp;
-            span.pre-wrap(v-html="job.output")
         v-btn.primary(
           :disabled="isRunningJob || isFailedJob",
           round,
@@ -17,6 +9,18 @@
           block,
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
+        v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!hasStatusMessage", max-width="400", right)
+          v-btn.mr-1(
+            slot="activator",
+            :loading="outputPending",
+            icon,
+            small,
+            @click="toggleExpanded"
+          )
+            v-icon(:color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
+          div(v-if="job.fail_reason")
+            span {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
+            span.pre-wrap(v-html="job.fail_reason")
         v-tooltip(v-show="isRunningJob && hasJobsInQueue", top)
           v-btn.error.ml-2(
             slot="activator",
@@ -26,9 +30,8 @@
             @click="$emit('cancel-job-execution', job)"
           ) {{ $t('common.cancel') }}
           span {{ queueNumberTooltip }}
-    td.text-xs-center
+    progress-cell.text-xs-center(:pending="isRunningJob && !job.started_at")
       span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
-      span(v-else) -
     progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
       span {{ job.launched_at | date('long', '-') }}
     progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
@@ -36,17 +39,30 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/forms/remediation-job';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
+
+const { mapActions } = createNamespacedHelpers('remediationJobExecution');
 
 export default {
   components: { ProgressCell },
   props: {
     job: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      outputPending: false,
+    };
   },
   computed: {
     isRunningJob() {
@@ -89,7 +105,7 @@ export default {
     },
 
     hasStatusMessage() {
-      return this.job.output || this.job.fail_reason;
+      return this.job.fail_reason;
     },
 
     hasJobsInQueue() {
@@ -97,7 +113,7 @@ export default {
     },
 
     statusIcon() {
-      return this.isFailedJob ? 'cancel' : 'check';
+      return this.isFailedJob ? 'warning' : 'check';
     },
 
     queueNumberTooltip() {
@@ -105,6 +121,27 @@ export default {
         number: this.job.queue_number,
         name: this.job.name,
       });
+    },
+  },
+  methods: {
+    ...mapActions(['fetchOutput']),
+
+    async toggleExpanded() {
+      if (!this.expanded) {
+        try {
+          this.outputPending = true;
+
+          await this.fetchOutput({ id: this.job._id });
+        } catch (err) {
+          this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
+
+          console.warn(err);
+        } finally {
+          this.outputPending = false;
+        }
+      }
+
+      this.$emit('update:expanded', !this.expanded);
     },
   },
 };
