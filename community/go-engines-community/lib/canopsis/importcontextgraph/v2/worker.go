@@ -8,6 +8,8 @@ import (
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -590,9 +592,13 @@ func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
 }
 
 func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now types.CpsTime) {
-	ci.ID = ci.Name
-	if ci.Type == types.EntityTypeResource {
+	switch ci.Type {
+	case types.EntityTypeService:
+		ci.ID = utils.NewID()
+	case types.EntityTypeResource:
 		ci.ID = ci.Name + "/" + ci.Component
+	case types.EntityTypeComponent:
+		ci.ID = ci.Name
 	}
 
 	if ci.ImpactLevel == 0 {
@@ -689,10 +695,7 @@ func (w *worker) deleteEntity(id string, now types.CpsTime) []mongo.WriteModel {
 	return []mongo.WriteModel{
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{"$set": bson.M{"enabled": false}}),
-		mongo.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{"$set": bson.M{"soft_deleted": types.CpsTime{Time: now.Time}}}),
+			SetUpdate(bson.M{"$set": bson.M{"enabled": false, "soft_deleted": now}}),
 	}
 }
 
@@ -711,6 +714,7 @@ func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, e
 		ConnectorName: types.ConnectorEngineService,
 		Component:     ci.ID,
 		SourceType:    types.SourceTypeService,
+		Initiator:     types.InitiatorSystem,
 	}
 }
 
@@ -721,6 +725,7 @@ func (w *worker) createBasicEntityEvent(eventType string, t, name, component str
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
+		Initiator:     types.InitiatorSystem,
 	}
 
 	switch t {

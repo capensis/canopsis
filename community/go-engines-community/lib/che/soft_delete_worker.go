@@ -122,7 +122,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 					NewDeleteOneModel().
 					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}),
 			}
-		} else if ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(time.Hour).Before(now.Time) {
+		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(time.Hour).Before(now.Time)) {
 			sendEvent = true
 
 			newModels = []libmongo.WriteModel{
@@ -219,6 +219,7 @@ func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityDat
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
+		Initiator:     types.InitiatorSystem,
 	}
 
 	switch ent.Type {

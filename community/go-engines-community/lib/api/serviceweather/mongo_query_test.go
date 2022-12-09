@@ -47,9 +47,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -110,9 +109,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"name": bson.M{"$eq": "test-resource"}},
@@ -173,9 +171,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
@@ -238,9 +235,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
@@ -297,9 +293,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 	}
 	expected = append(expected, getCategoryLookup()...)
@@ -358,9 +353,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 	}
 	expected = append(expected, getAlarmLookup()...)
@@ -441,9 +435,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}})
 	expected := []bson.M{
 		{"$match": bson.M{
-			"type":         types.EntityTypeService,
-			"enabled":      true,
-			"soft_deleted": bson.M{"$exists": false},
+			"type":    types.EntityTypeService,
+			"enabled": true,
 		}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"name": bson.M{"$eq": "test-service"}},
