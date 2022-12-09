@@ -219,7 +219,7 @@ export default {
   connectorName: 'Nom du connecteur',
   component: 'Composant',
   resource: 'Ressource',
-  extraDetails: 'Détails supplémentaires',
+  extraDetail: 'Détails supplémentaires',
   ack: 'Acquittement',
   acked: 'Acquitté',
   ackedAt: 'Acquitté à',

@@ -293,13 +293,6 @@ export default {
       edit: 'Éditer un groupe',
     },
   },
-  addStat: {
-    title: {
-      add: 'Ajouter une statistique',
-      edit: 'Éditer une statistique',
-    },
-    slaRequired: "La paramètre 'SLA' est obligatoire",
-  },
   group: {
     create: {
       title: 'Créer un groupe',
