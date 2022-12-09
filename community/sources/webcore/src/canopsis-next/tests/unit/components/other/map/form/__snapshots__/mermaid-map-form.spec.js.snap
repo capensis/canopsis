@@ -8,7 +8,9 @@ exports[`mermaid-map-form Renders \`mermaid-map-form\` with form 1`] = `
     value="Mermaid"
   />
   <mermaid-editor-stub
-    value="[object Object]"
+    form="[object Object]"
+    minheight="500"
+    name="parameters"
   />
 </div>
 `;

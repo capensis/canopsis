@@ -293,13 +293,6 @@ export default {
       edit: 'Edit a group',
     },
   },
-  addStat: {
-    title: {
-      add: 'Add a stat',
-      edit: 'Edit a stat',
-    },
-    slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
-  },
   group: {
     create: {
       title: 'Create group',
