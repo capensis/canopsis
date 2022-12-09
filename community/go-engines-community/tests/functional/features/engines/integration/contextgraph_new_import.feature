@@ -1,6 +1,7 @@
 Feature: new-import entities
   I need to be able to new-import entities
 
+  @concurrent
   Scenario: given service and new entity by new import should update service
     When I am admin
     When I do POST /api/v4/entityservices:
@@ -88,6 +89,7 @@ Feature: new-import entities
     }
     """
 
+  @concurrent
   Scenario: given service and updated entity by new import should update service
     When I am admin
     When I send an event and wait the end of event processing:
@@ -209,6 +211,7 @@ Feature: new-import entities
     }
     """
 
+  @concurrent
   Scenario: given disabled entity by new import should resolve alarm
     When I am admin
     When I send an event and wait the end of event processing:
@@ -283,6 +286,7 @@ Feature: new-import entities
     }
     """
 
+  @concurrent
   Scenario: given deleted entity by new import should resolve alarm
     When I am admin
     When I send an event and wait the end of event processing:
@@ -359,6 +363,7 @@ Feature: new-import entities
     When I wait 4s
     Then an entity test-component-new-import-partial-4 should not be in the db
 
+  @concurrent
   Scenario: given deleted component by new import should resolve alarm for resources
     When I am admin
     When I send an event and wait the end of event processing:
@@ -491,6 +496,7 @@ Feature: new-import entities
     Then an entity test-resource-new-import-partial-5-1/test-component-new-import-partial-5 should not be in the db
     Then an entity test-resource-new-import-partial-5-2/test-component-new-import-partial-5 should not be in the db
 
+  @concurrent
   Scenario: given delete import action should delete component and resources which should update service state
     When I am admin
     When I do POST /api/v4/entityservices:
@@ -789,6 +795,7 @@ Feature: new-import entities
     Then an entity test-resource-new-import-partial-6-3/test-component-new-import-partial-6 should not be in the db
     Then an entity test-resource-new-import-partial-6-4/test-component-new-import-partial-6 should not be in the db
 
+  @concurrent
   Scenario: given delete import action should delete component and resources which should update metaalarm state
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1070,6 +1077,7 @@ Feature: new-import entities
     Then an entity test-resource-new-import-partial-7-3/test-component-new-import-partial-7 should not be in the db
     Then an entity test-resource-new-import-partial-7-4/test-component-new-import-partial-7 should not be in the db
 
+  @concurrent
   Scenario: given delete import action should delete component and resources which should resolve metaalarm
     When I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1234,6 +1242,7 @@ Feature: new-import entities
     Then an entity test-resource-new-import-partial-8-1/test-component-new-import-partial-8 should not be in the db
     Then an entity test-resource-new-import-partial-8-2/test-component-new-import-partial-8 should not be in the db
 
+  @concurrent
   Scenario: given delete import action should delete service and resolve it's alarm
     When I am admin
     When I do POST /api/v4/entityservices:
