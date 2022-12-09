@@ -62,7 +62,6 @@ Par exemple:
 
 Il y a un match si l'attribut `component` vaut `test-component-1` **ET** que l'attribut `name` vaut `test-resource-1`.
 
-An entity matches the pattern if the field `component` equals `test-component-1` **AND** the field `name` equals `test-resource-1`.
 
 Les dimensions peuvent être combinées :
 
@@ -211,7 +210,7 @@ Etant donné que les `infos` d'une entité peuvent être de type différent, il 
 ]
 ```
 
-Les différents types sont ::
+Les différents types sont :
 
 - string
 - int
