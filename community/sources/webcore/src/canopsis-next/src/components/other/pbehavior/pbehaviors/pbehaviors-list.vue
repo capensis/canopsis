@@ -5,7 +5,7 @@
     :loading="pending",
     :headers="headers",
     :total-items="totalItems",
-    :search-tooltip="$t('pbehaviors.searchHelp')",
+    :search-tooltip="$t('pbehavior.searchHelp')",
     :select-all="removable || enablable || disablable",
     advanced-search,
     advanced-pagination,
