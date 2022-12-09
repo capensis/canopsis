@@ -2536,14 +2536,17 @@ paths:
                   },
                   {
                     "name": "cps-service-2",
+                    "type": "service",
                     "action": "delete"
                   },
                   {
                     "name": "cps-service-3",
+                    "type": "service",
                     "action": "enable"
                   },
                   {
                     "name": "cps-service-4",
+                    "type": "service",
                     "action": "disable"
                   }
                 ]
@@ -2685,14 +2688,17 @@ paths:
                   },
                   {
                     "name": "cps-service-2",
+                    "type": "service",
                     "action": "delete"
                   },
                   {
                     "name": "cps-service-3",
+                    "type": "service",
                     "action": "enable"
                   },
                   {
                     "name": "cps-service-4",
+                    "type": "service",
                     "action": "disable"
                   }
                 ]
