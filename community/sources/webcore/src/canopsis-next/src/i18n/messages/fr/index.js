@@ -108,4 +108,4 @@ export default merge({
   treeOfDependencies,
   shareToken,
   techMetric,
-}, featureService.get('i18n.en'));
+}, featureService.get('i18n.fr'));
