@@ -569,6 +569,7 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 			Component:     service.ID,
 			Timestamp:     types.CpsTime{Time: time.Now()},
 			Author:        canopsis.DefaultEventAuthor,
+			Initiator:     types.InitiatorSystem,
 			SourceType:    types.SourceTypeService,
 		})
 		if err != nil {
@@ -853,6 +854,7 @@ func (w *worker) createServiceEvent(ci importcontextgraph.ConfigurationItem, eve
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
+		Initiator:     types.InitiatorSystem,
 		Connector:     types.ConnectorEngineService,
 		ConnectorName: types.ConnectorEngineService,
 		Component:     ci.ID,
@@ -865,6 +867,7 @@ func (w *worker) createBasicEntityEvent(ctx context.Context, ci, oldEntity impor
 		EventType: eventType,
 		Timestamp: now,
 		Author:    canopsis.DefaultEventAuthor,
+		Initiator: types.InitiatorSystem,
 	}
 
 	alarm := types.Alarm{}

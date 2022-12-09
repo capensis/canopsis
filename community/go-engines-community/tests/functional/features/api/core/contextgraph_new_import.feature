@@ -1048,11 +1048,50 @@ Feature: New import entities
       "type": "resource"
     }
     """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-entityservice-context-graph-new-import-1",
+      "widget": "test-widget-to-weather-get",
+      "is_private": true,
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-entityservice-service-new-import"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-entityservice-service-new-import"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response serviceID={{ (index .lastResponse.data 0)._id }}
     When I do GET /api/v4/entities/context-graph?_id=script_new-import_service/component_SC004C until response code is 200 and response array key "impact" contains:
     """json
     [
       "component_SC004C",
-      "test-entityservice-service-new-import"
+      "{{ .serviceID }}"
     ]
     """
     When I do GET /api/v4/entitybasics?_id=script_new-import_service/component_SC004C
@@ -1072,7 +1111,7 @@ Feature: New import entities
     """json
     [
       "component_SC004C",
-      "test-entityservice-service-new-import"
+      "{{ .serviceID }}"
     ]
     """
     When I do GET /api/v4/entitybasics?_id=script_new-import_service_2/component_SC004C
@@ -1094,15 +1133,14 @@ Feature: New import entities
     """json
     [
       "component_SC004C",
-      "test-entityservice-service-new-import"
+      "{{ .serviceID }}"
     ]
     """
-    When I do GET /api/v4/entityservices/test-entityservice-service-new-import
+    When I do GET /api/v4/entityservices/{{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-entityservice-service-new-import",
       "enabled": true,
       "entity_pattern": [
         [
@@ -1121,7 +1159,7 @@ Feature: New import entities
       "type": "service"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-service-new-import
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
     Then the response array key "depends" should contain:
     """json

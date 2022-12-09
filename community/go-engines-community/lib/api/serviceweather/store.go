@@ -81,10 +81,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesListRequest) (*EntityAggregationResult, error) {
 	var service libtypes.Entity
 	err := s.dbCollection.FindOne(ctx, bson.M{
-		"_id":          id,
-		"type":         libtypes.EntityTypeService,
-		"enabled":      true,
-		"soft_deleted": bson.M{"$exists": false},
+		"_id":     id,
+		"type":    libtypes.EntityTypeService,
+		"enabled": true,
 	}).Decode(&service)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {

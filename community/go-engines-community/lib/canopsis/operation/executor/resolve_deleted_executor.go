@@ -26,6 +26,9 @@ func (e *resolveDeletedExecutor) Exec(
 		return "", nil
 	}
 
+	entity.IdleSince = nil
+	entity.LastIdleRuleApply = ""
+
 	err := alarm.PartialUpdateResolve(types.NewCpsTime())
 	if err != nil {
 		return "", err
