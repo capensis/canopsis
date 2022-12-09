@@ -25,7 +25,7 @@
             :label="$t('common.description')",
             hide-details
           )
-          remediation-instruction-execute-assigned-jobs.mt-4(
+          remediation-instruction-execute-assigned-jobs-table.mt-4(
             v-if="operation.jobs.length",
             :jobs="operation.jobs",
             @execute-job="executeJob",
@@ -43,13 +43,13 @@
 import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
-import RemediationInstructionExecuteAssignedJobs from './remediation-instruction-assigned-jobs.vue';
+import RemediationInstructionExecuteAssignedJobsTable from './remediation-instruction-assigned-jobs-table.vue';
 
 export default {
   components: {
     TextEditorBlurred,
     RemediationInstructionStatus,
-    RemediationInstructionExecuteAssignedJobs,
+    RemediationInstructionExecuteAssignedJobsTable,
   },
   props: {
     isFirstStep: {
