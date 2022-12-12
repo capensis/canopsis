@@ -2125,6 +2125,7 @@ Feature: instruction approval creation
       "description": "test-instruction-to-create-with-approval-16-description",
       "enabled": true,
       "priority": 100,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
