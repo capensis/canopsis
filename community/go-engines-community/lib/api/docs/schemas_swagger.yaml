@@ -369,7 +369,7 @@ definitions:
       opened:
         type: boolean
       steps:
-        $ref: '#/definitions/pagination.Query'
+        $ref: '#/definitions/alarm.StepsRequest'
       with_instructions:
         type: boolean
     required:
@@ -503,6 +503,17 @@ definitions:
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  alarm.StepsRequest:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      reversed:
+        type: boolean
     type: object
   alarmtag.Response:
     properties:
@@ -2230,15 +2241,6 @@ definitions:
   oldpattern.EntityPatternList:
     type: object
   oldpattern.EventPatternList:
-    type: object
-  pagination.Query:
-    properties:
-      limit:
-        type: integer
-      page:
-        type: integer
-      paginate:
-        type: boolean
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
