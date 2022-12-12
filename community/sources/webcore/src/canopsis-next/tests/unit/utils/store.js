@@ -356,3 +356,296 @@ export const testsEntityModule = ({
     axiosMockAdapter,
   };
 };
+
+export const createAuthModule = () => {
+  const currentUserPermissionsById = jest.fn()
+    .mockReturnValue({});
+  const authModule = {
+    name: 'auth',
+    getters: {
+      currentUserPermissionsById,
+    },
+  };
+
+  afterEach(() => {
+    currentUserPermissionsById.mockClear();
+  });
+
+  return {
+    authModule,
+    currentUserPermissionsById,
+  };
+};
+
+export const createPbehaviorTypesModule = () => {
+  const fetchPbehaviorTypesListWithoutStore = jest.fn().mockReturnValue({
+    data: [],
+  });
+
+  const pbehaviorTypesModule = {
+    name: 'pbehaviorTypes',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+    },
+  };
+
+  return {
+    pbehaviorTypesModule,
+    fetchPbehaviorTypesListWithoutStore,
+  };
+};
+
+export const createPbehaviorReasonModule = () => {
+  const fetchPbehaviorReasonsListWithoutStore = jest.fn().mockReturnValue({
+    meta: {},
+    data: [],
+  });
+
+  const pbehaviorReasonModule = {
+    name: 'pbehaviorReasons',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorReasonsListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchPbehaviorReasonsListWithoutStore.mockClear();
+  });
+
+  return {
+    pbehaviorReasonModule,
+    fetchPbehaviorReasonsListWithoutStore,
+  };
+};
+
+export const createUserPreferenceModule = () => {
+  const fetchUserPreference = jest.fn();
+  const getUserPreferenceByWidgetId = jest.fn()
+    .mockReturnValue({ content: {} });
+  const updateUserPreference = jest.fn();
+
+  const userPreferenceModule = {
+    name: 'userPreference',
+    actions: {
+      fetchItem: fetchUserPreference,
+      update: updateUserPreference,
+    },
+    getters: {
+      getItemByWidgetId: () => getUserPreferenceByWidgetId,
+    },
+  };
+
+  return {
+    fetchUserPreference,
+    updateUserPreference,
+    userPreferenceModule,
+    getUserPreferenceByWidgetId,
+  };
+};
+
+export const createWidgetModule = () => {
+  const createWidget = jest.fn();
+  const updateWidget = jest.fn();
+  const copyWidget = jest.fn();
+  const createWidgetFilter = jest.fn();
+  const updateWidgetFilter = jest.fn();
+  const removeWidgetFilter = jest.fn();
+
+  afterEach(() => {
+    createWidget.mockClear();
+    updateWidget.mockClear();
+    copyWidget.mockClear();
+    createWidgetFilter.mockClear();
+    updateWidgetFilter.mockClear();
+    removeWidgetFilter.mockClear();
+  });
+
+  const widgetModule = {
+    name: 'view/widget',
+    actions: {
+      create: createWidget,
+      update: updateWidget,
+      copy: copyWidget,
+      createWidgetFilter,
+      updateWidgetFilter,
+      removeWidgetFilter,
+    },
+  };
+
+  return {
+    widgetModule,
+    createWidget,
+    updateWidget,
+    copyWidget,
+    createWidgetFilter,
+    updateWidgetFilter,
+    removeWidgetFilter,
+  };
+};
+
+export const createServiceModule = () => {
+  const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
+    data: [],
+    meta: { total_count: 0 },
+  });
+  const fetchServiceAlarmsWithoutStore = jest.fn();
+  const fetchServicesList = jest.fn();
+  const getServicesPendingByWidgetId = jest.fn().mockReturnValue(false);
+  const getServicesListByWidgetId = jest.fn().mockReturnValue([]);
+  const getServicesErrorByWidgetId = jest.fn();
+
+  const serviceModule = {
+    name: 'service',
+    getters: {
+      getPendingByWidgetId: () => getServicesPendingByWidgetId,
+      getListByWidgetId: () => getServicesListByWidgetId,
+      getErrorByWidgetId: () => getServicesErrorByWidgetId,
+    },
+    actions: {
+      fetchInfosKeysWithoutStore: fetchEntityInfosKeysWithoutStore,
+      fetchAlarmsWithoutStore: fetchServiceAlarmsWithoutStore,
+      fetchList: fetchServicesList,
+    },
+  };
+
+  return {
+    getServicesPendingByWidgetId,
+    getServicesListByWidgetId,
+    getServicesErrorByWidgetId,
+    fetchEntityInfosKeysWithoutStore,
+    fetchServicesList,
+    fetchServiceAlarmsWithoutStore,
+    serviceModule,
+  };
+};
+
+export const createServiceEntityModule = () => {
+  const serviceEntityModule = {
+    name: 'service/entity',
+    getters: {
+    },
+    actions: {
+    },
+  };
+
+  return {
+    serviceEntityModule,
+  };
+};
+
+export const createQueryModule = () => {
+  const getQueryById = jest.fn().mockReturnValue(() => ({}));
+  const getQueryNonceById = jest.fn().mockReturnValue(() => 'nonce');
+  const updateQuery = jest.fn();
+
+  const queryModule = {
+    name: 'query',
+    getters: {
+      getQueryById,
+      getQueryNonceById,
+    },
+    actions: {
+      update: updateQuery,
+    },
+  };
+
+  return {
+    getQueryById,
+    getQueryNonceById,
+    updateQuery,
+    queryModule,
+  };
+};
+
+export const createActiveViewModule = () => {
+  const registerEditingOffHandler = jest.fn();
+  const unregisterEditingOffHandler = jest.fn();
+  const fetchActiveView = jest.fn();
+
+  const activeViewModule = {
+    name: 'activeView',
+    actions: {
+      registerEditingOffHandler,
+      unregisterEditingOffHandler,
+      fetch: fetchActiveView,
+    },
+  };
+
+  return {
+    registerEditingOffHandler,
+    unregisterEditingOffHandler,
+    fetchActiveView,
+    activeViewModule,
+  };
+};
+
+export const createPbehaviorEntitiesModule = () => {
+  const fetchPbehaviorEntitiesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: { total_count: 0 },
+  });
+
+  const pbehaviorEntitiesModule = {
+    name: 'pbehavior/entities',
+    actions: {
+      fetchListWithoutStore: fetchPbehaviorEntitiesListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchPbehaviorEntitiesListWithoutStore.mockClear();
+  });
+
+  return {
+    fetchPbehaviorEntitiesListWithoutStore,
+    pbehaviorEntitiesModule,
+  };
+};
+
+export const createPbehaviorModule = () => {
+  const fetchPbehaviorsByEntityIdWithoutStore = jest.fn().mockResolvedValue([]);
+  const removePbehavior = jest.fn();
+
+  const pbehaviorModule = {
+    name: 'pbehavior',
+    actions: {
+      fetchListByEntityIdWithoutStore: fetchPbehaviorsByEntityIdWithoutStore,
+      removeWithoutStore: removePbehavior,
+    },
+  };
+
+  afterEach(() => {
+    removePbehavior.mockClear();
+    fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+  });
+
+  return {
+    removePbehavior,
+    fetchPbehaviorsByEntityIdWithoutStore,
+    pbehaviorModule,
+  };
+};
+
+export const createPbehaviorTimespanModule = () => {
+  const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
+
+  const pbehaviorTimespanModule = {
+    name: 'pbehaviorTimespan',
+    actions: {
+      fetchListWithoutStore: fetchTimespansListWithoutStore,
+    },
+  };
+
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
+
+  return {
+    fetchTimespansListWithoutStore,
+    pbehaviorTimespanModule,
+  };
+};

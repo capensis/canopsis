@@ -40,7 +40,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
-  SERVICE_STATES,
+  SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -242,6 +242,7 @@ export default merge({
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    activePbehavior: 'Active pbehavior | Active pbehaviors',
     searchBy: 'Search by',
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
@@ -289,6 +290,7 @@ export default merge({
     longOutput: 'Long output',
     initialOutput: 'Initial output',
     longInitialOutput: 'Long initial output',
+    timestamp: 'Timestamp',
     trigger: 'Trigger | Triggers',
     initialLongOutput: 'Long initial output',
     actions: {
@@ -605,6 +607,8 @@ export default merge({
     },
   },
   alarmList: {
+    alarmCreationDate: 'Alarm creation date',
+    alarmDisplayName: 'Alarm display name',
     actions: {
       titles: {
         ack: 'Ack',
@@ -732,17 +736,9 @@ export default merge({
     moreInfos: 'More info',
   },
   pbehaviors: {
-    connector: 'Connector Type',
-    connectorName: 'Connector name',
     isEnabled: 'Is enabled',
     begins: 'Begins',
     ends: 'Ends',
-    type: 'Type',
-    reason: 'Reason',
-    rrule: 'Recurrence',
-    status: 'Status',
-    created: 'Creation date',
-    updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
     massRemove: 'Remove pbehaviors',
     massEnable: 'Enable pbehaviors',
@@ -831,6 +827,7 @@ export default merge({
     activeAlarmsColumns: 'Column names for active alarms',
     entitiesColumns: 'Context explorer columns',
     entityInfoPopup: 'Entity info popup',
+    modal: '(Modal)',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -866,9 +863,9 @@ export default merge({
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',
     blockTemplate: 'Template - Tile',
-    columnSM: 'Columns - Small',
-    columnMD: 'Columns - Medium',
-    columnLG: 'Columns - Large',
+    columnMobile: 'Columns - Mobile',
+    columnTablet: 'Columns - Tablet',
+    columnDesktop: 'Columns - Desktop',
     limit: 'Limit',
     height: 'Height',
     margin: {
@@ -914,6 +911,8 @@ export default merge({
       },
     },
     counters: 'Counters',
+    pbehaviorCounters: 'Pbehavior counters',
+    entityStateCounters: 'Entity states counters',
     remediationInstructionsFilters: 'Instructions filters',
     colorIndicator: {
       title: 'Color indicator',
@@ -1153,8 +1152,6 @@ export default merge({
     },
     createPause: {
       title: 'Create Pause event',
-      comment: 'Comment',
-      reason: 'Reason',
     },
     createAckRemove: {
       title: 'Remove ack',
@@ -1197,7 +1194,6 @@ export default merge({
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -2229,12 +2225,14 @@ export default merge({
   serviceWeather: {
     seeAlarms: 'See alarms',
     grey: 'Gray',
+    hideGrey: 'Hide gray',
     primaryIcon: 'Primary icon',
     secondaryIcon: 'Secondary icon',
     massActions: 'Mass actions',
     cannotBeApplied: 'This action cannot be applied',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Cancel acknowledge',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
@@ -2246,14 +2244,35 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
     },
     iconTypes: {
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-
-      [SERVICE_STATES.ok]: 'Ok',
-      [SERVICE_STATES.minor]: 'Minor',
-      [SERVICE_STATES.major]: 'Major',
-      [SERVICE_STATES.critical]: 'Critical',
+      ok: 'Ok',
+      minorOrMajor: 'Minor or Major',
+      critical: 'Critical',
+    },
+    stateCounters: {
+      [SERVICE_WEATHER_STATE_COUNTERS.all]: 'Number of alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.active]: 'Number of active alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'Number of dependencies',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'Ok',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'Minor',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'Major',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'Critical',
+      [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'Acknowledged',
+      [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Not acknowledged',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Under PBh',
+      [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acknowledged under PBh',
+    },
+    stateCountersTooltips: {
+      [SERVICE_WEATHER_STATE_COUNTERS.all]: 'alarms total',
+      [SERVICE_WEATHER_STATE_COUNTERS.active]: 'active alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'dependencies',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'OK state',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'minor alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'major alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'critical alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'alarms acked',
+      [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'not acked',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'under PBh',
+      [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'acked under PBh',
     },
   },
   contextGeneralTable: {
@@ -2315,6 +2334,12 @@ export default merge({
 
   pbehavior: {
     periodsCalendar: 'Calendar with periods',
+    notEditable: 'Cannot be modified',
+    pbehaviorInfo: 'Pbehavior info',
+    pbehaviorType: 'Pbehavior type',
+    pbehaviorReason: 'Pbehavior reason',
+    pbehaviorName: 'Pbehavior name',
+    pbehaviorCanonicalType: 'Pbehavior canonical type',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2722,6 +2747,10 @@ export default merge({
     },
   },
 
+  alarm: {
+    eventsCount: 'Events count',
+  },
+
   entity: {
     manageInfos: 'Manage Infos',
     form: 'Form',
@@ -2730,6 +2759,8 @@ export default merge({
     addInformation: 'Add Information',
     emptyInfos: 'No information',
     availabilityState: 'Hi availability state',
+    okEvents: 'OK events',
+    koEvents: 'KO events',
     types: {
       [ENTITY_TYPES.component]: 'Component',
       [ENTITY_TYPES.connector]: 'Connector',
@@ -2960,7 +2991,7 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Flapping rules',
-      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.', 
+      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
