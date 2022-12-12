@@ -45,14 +45,11 @@ const (
 	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
-	EventTypeDone              = "done"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
 	EventTypePerf              = "perf"
 	EventTypeSnooze            = "snooze"
 	EventTypeUnsnooze          = "unsnooze"
-	EventTypeStatCounterInc    = "statcounterinc"
-	EventTypeStatDuration      = "statduration"
 	EventTypeStatStateInterval = "statstateinterval"
 	EventTypeUncancel          = "uncancel"
 
@@ -61,7 +58,6 @@ const (
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
-	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
 	EventTypeUpdateStatus       = "updatestatus"
@@ -601,12 +597,10 @@ func isValidEventType(t string) bool {
 		EventTypeComment,
 		EventTypeDeclareTicket,
 		EventTypeDeclareTicketWebhook,
-		EventTypeDone,
 		EventTypeChangestate,
 		EventTypeSnooze,
 		EventTypeUnsnooze,
 		EventTypeUncancel,
-		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
 		EventTypePbhEnter,
