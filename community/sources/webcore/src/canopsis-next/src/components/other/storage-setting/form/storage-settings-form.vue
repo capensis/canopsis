@@ -39,11 +39,6 @@
     c-information-block(:title="$t('storageSettings.remediation.title')")
       template(v-if="history.remediation", slot="subtitle") {{ remediationSubTitle }}
       c-enabled-duration-field(
-        v-field="form.remediation.accumulate_after",
-        :label="$t('storageSettings.remediation.accumulateAfter')",
-        :name="remediationAccumulateAfterFieldName"
-      )
-      c-enabled-duration-field(
         v-field="form.remediation.delete_after",
         :label="$t('storageSettings.remediation.deleteAfter')",
         :help-text="$t('storageSettings.remediation.deleteAfterHelpText')",
@@ -118,10 +113,6 @@ export default {
 
     alarmDeleteAfterFieldName() {
       return 'alarm.delete_after';
-    },
-
-    remediationAccumulateAfterFieldName() {
-      return 'remediation.accumulate_after';
     },
 
     remediationDeleteAfterFieldName() {
