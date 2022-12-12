@@ -2838,7 +2838,6 @@ export default merge({
     },
     remediation: {
       title: 'Stockage des données de consigne',
-      accumulateAfter: 'Accumuler les statistiques des consignes après',
       deleteAfter: 'Supprimer les données des consignes après',
       deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
       deleteStatsAfter: 'Supprimer les données de qualification d\'instruction après',
