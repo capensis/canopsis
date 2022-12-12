@@ -22,13 +22,13 @@
       v-layout
         c-action-btn(
           :disabled="!item.editable",
-          :tooltip="item.editable ? $t('common.edit') : $t('pbehaviorTypes.defaultType')",
+          :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.types.defaultType')",
           type="edit",
           @click="$emit('edit', item)"
         )
         c-action-btn(
           :disabled="!item.deletable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('pbehaviorTypes.defaultType')",
+          :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.types.defaultType')",
           type="delete",
           @click="$emit('remove', item._id)"
         )

@@ -57,43 +57,43 @@ export default {
         {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
-          title: this.$t('alarmList.actions.titles.pbehavior'),
+          title: this.$t('alarm.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
-          title: this.$t('alarmList.actions.titles.ack'),
+          title: this.$t('alarm.actions.titles.ack'),
           method: this.showAckModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
-          title: this.$t('alarmList.actions.titles.fastAck'),
+          title: this.$t('alarm.actions.titles.fastAck'),
           method: this.createMassFastAckEvent,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
-          title: this.$t('alarmList.actions.titles.ackRemove'),
+          title: this.$t('alarm.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
-          title: this.$t('alarmList.actions.titles.cancel'),
+          title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
-          title: this.$t('alarmList.actions.titles.associateTicket'),
+          title: this.$t('alarm.actions.titles.associateTicket'),
           method: this.showCreateAssociateTicketEventModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.snooze,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
-          title: this.$t('alarmList.actions.titles.snooze'),
+          title: this.$t('alarm.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
       ];
@@ -103,13 +103,13 @@ export default {
           {
             type: ALARM_LIST_ACTIONS_TYPES.groupRequest,
             icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
-            title: this.$t('alarmList.actions.titles.groupRequest'),
+            title: this.$t('alarm.actions.titles.groupRequest'),
             method: this.showCreateGroupRequestEventModal,
           },
           {
             type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup,
             icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
-            title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+            title: this.$t('alarm.actions.titles.manualMetaAlarmGroup'),
             method: this.showCreateManualMetaAlarmModal,
           },
         );

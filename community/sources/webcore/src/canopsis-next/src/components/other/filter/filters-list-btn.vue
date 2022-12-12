@@ -1,6 +1,6 @@
 <template lang="pug">
   c-action-btn(
-    :tooltip="$t('filterSelector.buttons.list')",
+    :tooltip="$t('filter.selector.buttons.list')",
     icon="filter_list",
     small,
     @click="showFiltersListModal"

@@ -3,9 +3,9 @@
     thead
       tr
         th
-        th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.startedAt') }}
-        th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
-        th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.completedAt') }}
+        th.grey--text.lighten-3 {{ $t('remediation.instructionExecute.jobs.startedAt') }}
+        th.grey--text.lighten-3 {{ $t('remediation.instructionExecute.jobs.launchedAt') }}
+        th.grey--text.lighten-3 {{ $t('remediation.instructionExecute.jobs.completedAt') }}
     tbody
       remediation-instruction-execute-simple-job(v-for="job in jobs", :key="job.job_id", :job="job")
 </template>
