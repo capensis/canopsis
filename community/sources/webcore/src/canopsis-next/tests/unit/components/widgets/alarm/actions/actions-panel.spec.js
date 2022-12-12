@@ -120,6 +120,13 @@ describe('actions-panel', () => {
       name: 'New instruction',
       execution: null,
     },
+    {
+      _id: 3,
+      name: 'Paused instruction',
+      execution: {
+        status: REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused,
+      },
+    },
   ];
 
   const assignedInstructionsWithPaused = [

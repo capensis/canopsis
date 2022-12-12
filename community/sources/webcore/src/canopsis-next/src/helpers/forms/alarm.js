@@ -32,7 +32,7 @@
 /**
  * @typedef {Object} AlarmAssignedInstructionExecution
  * @property {string} _id
- * @property {string} status
+ * @property {number} status
  */
 
 /**
