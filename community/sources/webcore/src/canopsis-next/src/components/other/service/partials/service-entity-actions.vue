@@ -5,8 +5,9 @@
         service-entity-alarm-instruction-menu(
           v-if="action.type === $constants.WEATHER_ACTIONS_TYPES.executeInstruction",
           v-on="on",
-          :assigned-instructions="assignedInstructions",
           :icon="action.icon",
+          :entity="entity",
+          :assigned-instructions="assignedInstructions",
           @execute="$listeners.execute"
         )
         v-btn(
@@ -30,6 +31,10 @@ export default {
     ServiceEntityAlarmInstructionMenu,
   },
   props: {
+    entity: {
+      type: Object,
+      default: () => ({}),
+    },
     actions: {
       type: Array,
       default: () => [],
