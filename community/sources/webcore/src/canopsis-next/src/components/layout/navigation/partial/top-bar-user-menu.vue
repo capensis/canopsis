@@ -6,7 +6,7 @@
       v-list-tile(@click="showEditUserModal")
         v-list-tile-avatar
           v-icon(color="black") person
-        v-list-tile-title.text-uppercase.body-2 {{ $t('users.seeProfile') }}
+        v-list-tile-title.text-uppercase.body-2 {{ $t('user.seeProfile') }}
       v-list-tile(:to="profilePatternsLink", active-class="")
         v-list-tile-avatar
           v-icon(color="black") filter_list

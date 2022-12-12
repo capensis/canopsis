@@ -166,7 +166,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           ...this.modalConfig,
 
-          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
+          title: this.$t('alarm.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
           parentsIds: [get(this.parentAlarm, 'd')],
         },

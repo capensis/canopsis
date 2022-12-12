@@ -20,7 +20,7 @@
         outline,
         color="primary",
         @click="$emit('select', selected)"
-      ) {{ $tc('remediationJobs.addJobs', count, { count: count }) }}
+      ) {{ $tc('remediation.job.addJobs', count, { count: count }) }}
 </template>
 
 <script>

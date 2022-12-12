@@ -29,7 +29,7 @@
                 v-flex.pl-2(xs3)
                   v-text-field.step-time-complete-unit(
                     :value="timeToComplete | duration('refreshFieldFormat')",
-                    :label="$t('remediationInstructions.timeToComplete')",
+                    :label="$t('remediation.instruction.timeToComplete')",
                     readonly
                   )
                 v-flex.mt-1(xs1)
@@ -39,8 +39,8 @@
                 v-layout(v-if="expanded", column)
                   c-workflow-field(
                     v-field="step.stop_on_fail",
-                    :label="$t('remediationInstructions.workflow')",
-                    :continue-label="$t('remediationInstructions.remainingStep')",
+                    :label="$t('remediation.instruction.workflow')",
+                    :continue-label="$t('remediation.instruction.remainingStep')",
                     :disabled="disabled"
                   )
                   remediation-instruction-step-endpoint-field(v-field="step.endpoint", :disabled="disabled")

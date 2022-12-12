@@ -3,7 +3,7 @@
     v-runtime-template(v-if="template", :template="compiledTemplate")
     v-layout(v-else, justify-center)
       v-icon(color="info") infos
-      p.ma-0 {{ $t('alarmList.moreInfos.defineATemplate') }}
+      p.ma-0 {{ $t('alarm.moreInfos.defineATemplate') }}
 </template>
 
 <script>

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     v-flex(v-if="!steps.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptySteps') }}
+      v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptySteps') }}
     draggable(v-field="steps", :options="draggableOptions")
       v-card.my-2(v-for="(step, index) in steps", :key="step.key")
         v-card-text
@@ -17,8 +17,8 @@
         :disabled="disabled",
         outline,
         @click="addStep"
-      ) {{ $t('remediationInstructions.addStep') }}
-      span.error--text(v-show="hasStepsErrors") {{ $t('remediationInstructions.errors.stepRequired') }}
+      ) {{ $t('remediation.instruction.addStep') }}
+      span.error--text(v-show="hasStepsErrors") {{ $t('remediation.instruction.errors.stepRequired') }}
 </template>
 
 <script>

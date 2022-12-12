@@ -35,7 +35,7 @@
               v-card-title {{ item.from | date }} — {{ item.to | date }}
         v-flex(#no-data="")
           v-card
-            v-card-title {{ $t('tables.noData') }}
+            v-card-title {{ $t('common.noData') }}
 </template>
 
 <script>

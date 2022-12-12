@@ -1,15 +1,15 @@
 <template lang="pug">
   div.jobs-assigned
     v-layout(row)
-      span.subheading {{ $t('remediationInstructionExecute.jobs.title') }}
+      span.subheading {{ $t('remediation.instructionExecute.jobs.title') }}
     v-layout(column)
       v-data-table(:items="jobs", hide-actions)
         template(#headers="")
           tr
             th
-            th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.startedAt') }}
-            th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
-            th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.completedAt') }}
+            th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.startedAt') }}
+            th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.launchedAt') }}
+            th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.completedAt') }}
         template(#items="{ item }")
           remediation-instruction-assigned-job(
             :job="item",
