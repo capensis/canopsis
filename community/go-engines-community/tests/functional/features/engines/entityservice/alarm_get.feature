@@ -7,7 +7,7 @@ Feature: Get alarms
     """json
     {
       "name": "test-entityservice-to-alarm-service-get-1-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "test-entityservice-to-alarm-service-get-1-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -204,7 +204,7 @@ Feature: Get alarms
     """json
     {
       "name": "test-entityservice-to-alarm-service-get-2-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "test-entityservice-to-alarm-service-get-2-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [

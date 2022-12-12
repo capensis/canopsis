@@ -828,17 +828,6 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			},
 		},
 		{
-			"$lookup": bson.M{
-				"from":         mongo.InstructionMongoCollection,
-				"localField":   "instruction",
-				"foreignField": "_id",
-				"as":           "instruction",
-			},
-		},
-		{
-			"$unwind": "$instruction",
-		},
-		{
 			"$sort": bson.M{
 				"started_at": -1,
 			},
@@ -846,12 +835,12 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		{
 			"$group": bson.M{
 				"_id": bson.M{
-					"alarm_id":    "$alarm",
-					"instruction": "$instruction._id",
+					"alarm":       "$alarm",
+					"instruction": "$instruction",
 				},
-				"instruction_id":   bson.M{"$first": "$instruction._id"},
-				"instruction_name": bson.M{"$first": "$instruction.name"},
-				"instruction_type": bson.M{"$first": "$instruction.type"},
+				"instruction_id":   bson.M{"$first": "$instruction"},
+				"instruction_name": bson.M{"$first": "$name"},
+				"instruction_type": bson.M{"$first": "$type"},
 				"status":           bson.M{"$first": "$status"},
 				"started_at":       bson.M{"$first": "$started_at"},
 			},
@@ -863,7 +852,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		},
 		{
 			"$group": bson.M{
-				"_id": "$_id.alarm_id",
+				"_id": "$_id.alarm",
 				"all_failed": bson.M{
 					"$push": bson.M{
 						"$cond": bson.M{

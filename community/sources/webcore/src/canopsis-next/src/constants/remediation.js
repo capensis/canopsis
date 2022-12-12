@@ -1,3 +1,5 @@
+import { TRIGGERS } from './common';
+
 export const REMEDIATION_TABS = {
   instructions: 'instructions',
   configurations: 'configurations',
@@ -57,3 +59,12 @@ export const INSTRUCTION_EXECUTION_ICONS = {
   autoSuccessfulWithManualAvailable: 14,
   manualSuccessfulWithManualAvailable: 15,
 };
+
+export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS = [
+  TRIGGERS.stateinc,
+  TRIGGERS.statedec,
+  TRIGGERS.pbhenter,
+  TRIGGERS.pbhleave,
+  TRIGGERS.activate,
+  TRIGGERS.unsnooze,
+];

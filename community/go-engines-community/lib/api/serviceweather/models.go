@@ -15,6 +15,7 @@ type ListRequest struct {
 	pagination.Query
 	Filters  []string `form:"filters[]" json:"filters"`
 	Category string   `form:"category" json:"category"`
+	HideGrey bool     `form:"hide_grey" json:"hide_grey"`
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
 	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
 }
@@ -24,6 +25,7 @@ type EntitiesListRequest struct {
 	WithInstructions bool   `form:"with_instructions"`
 	Sort             string `form:"sort"`
 	SortBy           string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+	PbhOrigin        string `form:"pbh_origin" json:"pbh_origin"`
 }
 
 type Service struct {
@@ -43,8 +45,7 @@ type Service struct {
 	SecondaryIcon  string                   `json:"secondary_icon" bson:"secondary_icon"`
 	Output         string                   `json:"output" bson:"output"`
 	LastUpdateDate *types.CpsTime           `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
-	AlarmCounters  []AlarmCounter           `json:"alarm_counters" bson:"alarm_counters"`
-	DependsCount   int64                    `json:"depends_count" bson:"depends_count"`
+	Counters       Counters                 `json:"counters" bson:"counters"`
 	PbehaviorInfo  *entity.PbehaviorInfo    `json:"pbehavior_info" bson:"pbehavior_info"`
 	Pbehaviors     []alarm.Pbehavior        `json:"pbehaviors" bson:"pbehaviors"`
 	ImpactLevel    int                      `json:"impact_level" bson:"impact_level"`
@@ -61,7 +62,24 @@ type Info struct {
 	Value       interface{} `bson:"value" json:"value"`
 }
 
-type AlarmCounter struct {
+type Counters struct {
+	All    int64 `bson:"all" json:"all"`
+	Alarms int64 `bson:"active" json:"active"`
+	State  struct {
+		Critical int64 `bson:"critical" json:"critical"`
+		Major    int64 `bson:"major" json:"major"`
+		Minor    int64 `bson:"minor" json:"minor"`
+		Ok       int64 `bson:"ok" json:"ok"`
+	} `bson:"state" json:"state"`
+	Acknowledged         int64            `bson:"acked" json:"acked"`
+	NotAcknowledged      int64            `bson:"unacked" json:"unacked"`
+	AcknowledgedUnderPbh int64            `bson:"acked_under_pbh" json:"acked_under_pbh"`
+	UnderPbehavior       int64            `bson:"under_pbh" json:"under_pbh"`
+	Depends              int64            `bson:"depends" json:"depends"`
+	PbhTypeCounters      []PbhTypeCounter `bson:"pbh_types" json:"pbh_types"`
+}
+
+type PbhTypeCounter struct {
 	Count int64              `json:"count" bson:"count"`
 	Type  pbehaviortype.Type `json:"type" bson:"type"`
 }
@@ -111,6 +129,7 @@ type Entity struct {
 	Icon           string                     `json:"icon" bson:"icon"`
 	Pbehaviors     []alarm.Pbehavior          `json:"pbehaviors" bson:"pbehaviors"`
 	PbehaviorInfo  *entity.PbehaviorInfo      `json:"pbehavior_info" bson:"pbehavior_info"`
+	PbhOriginIcon  string                     `json:"pbh_origin_icon" bson:"pbh_origin_icon,omitempty"`
 	IsGrey         bool                       `json:"is_grey" bson:"is_grey"`
 	ImpactLevel    int                        `json:"impact_level" bson:"impact_level"`
 	ImpactState    int                        `json:"impact_state" bson:"impact_state"`
