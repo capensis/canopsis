@@ -395,7 +395,8 @@ Feature: Get alarms
           "job": "test-job-to-run-auto-instruction-8"
         }
       ],
-      "priority": 30
+      "priority": 30,
+      "triggers": ["create"]
     }
     """
     Then the response code should be 201

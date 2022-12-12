@@ -9,7 +9,6 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   ENTITIES_STATUSES,
-  ENTITIES_TYPES,
   ENTITY_PATTERN_FIELDS,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
@@ -125,12 +124,7 @@ describe('mass-actions-panel', () => {
         }), {}),
     },
   };
-  const entitiesModule = {
-    name: 'entities',
-    getters: {
-      getList: () => () => [alarm, metaAlarm],
-    },
-  };
+  const items = [alarm, metaAlarm];
   const createEvent = jest.fn();
   const eventModule = {
     name: 'event',
@@ -162,9 +156,9 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
       ]),
       propsData: {
+        items,
         widget,
         parentAlarm,
       },
@@ -211,14 +205,12 @@ describe('mass-actions-panel', () => {
       },
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -236,8 +228,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createAckEvent,
         config: {
           isNoteRequired,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -269,14 +260,9 @@ describe('mass-actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         eventModule,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => fastAckAlarms,
-          },
-        },
       ]),
       propsData: {
+        items: fastAckAlarms,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -318,14 +304,9 @@ describe('mass-actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         eventModule,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => fastAckAlarms,
-          },
-        },
       ]),
       propsData: {
+        items: fastAckAlarms,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -360,14 +341,12 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -386,8 +365,7 @@ describe('mass-actions-panel', () => {
         config: {
           title: 'Remove ack',
           eventType: EVENT_ENTITY_TYPES.ackRemove,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -409,14 +387,12 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -433,8 +409,7 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
           title: 'Cancel',
           eventType: EVENT_ENTITY_TYPES.cancel,
@@ -458,14 +433,12 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -482,8 +455,7 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -508,14 +480,12 @@ describe('mass-actions-panel', () => {
       },
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -533,8 +503,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createSnoozeEvent,
         config: {
           isNoteRequired,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -556,19 +525,12 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [alarm],
-          },
-        },
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -587,8 +549,7 @@ describe('mass-actions-panel', () => {
         config: {
           title: 'Suggest group request for meta alarm',
           eventType: EVENT_ENTITY_TYPES.groupRequest,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -610,19 +571,12 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [alarm],
-          },
-        },
       ]),
       propsData: {
-        itemsIds,
+        items,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -640,8 +594,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createManualMetaAlarm,
         config: {
           title: 'Manual meta alarm management',
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -661,12 +614,6 @@ describe('mass-actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [],
-          },
-        },
       ]),
       propsData: {
         widget,
@@ -680,12 +627,6 @@ describe('mass-actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [alarm, metaAlarm],
-          },
-        },
       ]),
       propsData: {
         widget,
