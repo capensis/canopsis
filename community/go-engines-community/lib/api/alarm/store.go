@@ -469,10 +469,25 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 
 	if r.Steps != nil {
-		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-			"steps.data":  bson.M{"$slice": bson.A{"$v.steps", (r.Steps.Page - 1) * r.Steps.Limit, r.Steps.Limit}},
-			"steps_count": bson.M{"$size": "$v.steps"},
-		}})
+		if r.Steps.Reversed {
+			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+				"steps.data": bson.M{"$slice": bson.A{
+					bson.M{"$reverseArray": "$v.steps"},
+					(r.Steps.Page - 1) * r.Steps.Limit,
+					r.Steps.Limit},
+				},
+				"steps_count": bson.M{"$size": "$v.steps"},
+			}})
+		} else {
+			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+				"steps.data": bson.M{"$slice": bson.A{
+					"$v.steps",
+					(r.Steps.Page - 1) * r.Steps.Limit,
+					r.Steps.Limit},
+				},
+				"steps_count": bson.M{"$size": "$v.steps"},
+			}})
+		}
 	}
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
@@ -496,7 +511,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 
 	if r.Steps != nil {
-		details.Steps.Meta, err = common.NewPaginatedMeta(*r.Steps, details.StepsCount)
+		details.Steps.Meta, err = common.NewPaginatedMeta(r.Steps.Query, details.StepsCount)
 		if err != nil {
 			return nil, err
 		}
