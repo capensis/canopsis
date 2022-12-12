@@ -64,6 +64,15 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 	if err != nil {
 		return nil, err
 	}
+	if r.WithFlags {
+		q.project = append(q.project, bson.M{"$addFields": bson.M{
+			"editable": bson.M{"$cond": bson.M{
+				"if":   "$origin",
+				"then": false,
+				"else": true,
+			}},
+		}})
+	}
 
 	beforeLimit := make([]bson.M, 0)
 	for _, m := range q.lookupBeforeMatch {
@@ -239,7 +248,7 @@ func GetNestedReasonPipeline() []bson.M {
 func GetNestedTypePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "type_",
 			"foreignField": "_id",
 			"as":           "type",
@@ -257,7 +266,7 @@ func GetNestedExdatesPipeline() []bson.M {
 			"includeArrayIndex":          "exdate_index",
 		}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "exdates.type",
 			"foreignField": "_id",
 			"as":           "exdates.type",
@@ -296,7 +305,7 @@ func GetNestedExdatesPipeline() []bson.M {
 			"includeArrayIndex":          "exdate_index",
 		}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "exceptions.exdates.type",
 			"foreignField": "_id",
 			"as":           "exceptions.exdates.type",
