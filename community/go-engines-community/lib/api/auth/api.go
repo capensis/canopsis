@@ -31,7 +31,6 @@ func NewApi(
 	websocketHub websocket.Hub,
 	cookieName string,
 	cookieMaxAge int,
-	cookieSecure bool,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -43,8 +42,8 @@ func NewApi(
 
 		cookieName:     cookieName,
 		cookieMaxAge:   cookieMaxAge,
-		cookieSecure:   cookieSecure,
 		cookieSameSite: http.SameSiteNoneMode,
+		cookieSecure:   true, // must be always set with SameSite=None
 	}
 }
 
