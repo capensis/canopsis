@@ -9,12 +9,9 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ProgressCell from '@/components/common/table/progress-cell.vue';
-
 const { mapGetters } = createNamespacedHelpers('remediationJobExecution');
 
 export default {
-  components: { ProgressCell },
   props: {
     job: {
       type: Object,
