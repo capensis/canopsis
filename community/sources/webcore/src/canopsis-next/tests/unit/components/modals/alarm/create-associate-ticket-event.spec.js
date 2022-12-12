@@ -10,7 +10,6 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
 import {
-  ENTITIES_TYPES,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
@@ -100,8 +99,7 @@ describe('create-associate-ticket-event', () => {
       type: Faker.datatype.number(),
     },
   };
-  const itemsType = ENTITIES_TYPES.alarm;
-  const itemsIds = [alarm._id];
+  const items = [alarm];
   const eventData = {
     id: alarm._id,
     component: alarm.v.component,
@@ -125,14 +123,6 @@ describe('create-associate-ticket-event', () => {
     ticket: '',
   };
 
-  const getEntitiesList = jest.fn().mockReturnValue([alarm]);
-  const entitiesModule = {
-    name: 'entities',
-    getters: {
-      getList: () => getEntitiesList,
-    },
-  };
-
   const createEvent = jest.fn();
   const eventModule = {
     name: 'event',
@@ -140,11 +130,10 @@ describe('create-associate-ticket-event', () => {
       create: createEvent,
     },
   };
-  const store = createMockedStoreModules([entitiesModule, eventModule]);
+  const store = createMockedStoreModules([eventModule]);
 
   afterEach(() => {
     createEvent.mockClear();
-    getEntitiesList.mockClear();
   });
 
   test('Default parameters applied to form', () => {
@@ -162,26 +151,20 @@ describe('create-associate-ticket-event', () => {
 
   test('Form submitted after trigger submit button', async () => {
     const afterSubmit = jest.fn();
-    const config = {
-      itemsType,
-      itemsIds,
-      afterSubmit,
-    };
-    getEntitiesList.mockReturnValueOnce([{
-      ...alarm,
-      v: {
-        ...alarm.v,
-        ack: {},
-      },
-    }]);
     const wrapper = factory({
-      store: createMockedStoreModules([
-        entitiesModule,
-        eventModule,
-      ]),
+      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            items: [{
+              ...alarm,
+              v: {
+                ...alarm.v,
+                ack: {},
+              },
+            }],
+            afterSubmit,
+          },
         },
       },
       mocks: {
@@ -218,6 +201,13 @@ describe('create-associate-ticket-event', () => {
   test('Form didn\'t submitted after trigger submit button with error', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config: {
+            items,
+          },
+        },
+      },
       mocks: {
         $modals,
       },
@@ -238,25 +228,22 @@ describe('create-associate-ticket-event', () => {
       ticket: 'Ticket error',
     };
     createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    getEntitiesList.mockReturnValueOnce([{
-      ...alarm,
-      v: {
-        ...alarm.v,
-        ack: null,
-      },
-    }]);
     const fastAckOutput = {
       enabled: true,
       value: Faker.datatype.string(),
     };
     const wrapper = factory({
-      store: createMockedStoreModules([
-        entitiesModule,
-        eventModule,
-      ]),
+      store,
       propsData: {
         modal: {
           config: {
+            items: [{
+              ...alarm,
+              v: {
+                ...alarm.v,
+                ack: null,
+              },
+            }],
             fastAckOutput,
           },
         },
@@ -304,19 +291,22 @@ describe('create-associate-ticket-event', () => {
       anotherUnavailableField: 'Second error',
     };
     createEvent.mockRejectedValueOnce(errors);
-    getEntitiesList.mockReturnValueOnce([{
-      ...alarm,
-      v: {
-        ...alarm.v,
-        ack: {},
-      },
-    }]);
 
     const wrapper = factory({
-      store: createMockedStoreModules([
-        entitiesModule,
-        eventModule,
-      ]),
+      store,
+      propsData: {
+        modal: {
+          config: {
+            items: [{
+              ...alarm,
+              v: {
+                ...alarm.v,
+                ack: {},
+              },
+            }],
+          },
+        },
+      },
       mocks: {
         $modals,
         $popups,
@@ -357,6 +347,13 @@ describe('create-associate-ticket-event', () => {
   test('Modal submitted with correct data after trigger form with ticket', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config: {
+            items,
+          },
+        },
+      },
       mocks: {
         $modals,
       },
@@ -406,6 +403,13 @@ describe('create-associate-ticket-event', () => {
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config: {
+            items,
+          },
+        },
+      },
       mocks: {
         $modals,
       },
@@ -423,6 +427,13 @@ describe('create-associate-ticket-event', () => {
   test('Renders `create-associate-ticket-event` with empty modal', () => {
     const wrapper = snapshotFactory({
       store,
+      propsData: {
+        modal: {
+          config: {
+            items,
+          },
+        },
+      },
       mocks: {
         $modals,
       },
@@ -437,6 +448,7 @@ describe('create-associate-ticket-event', () => {
       propsData: {
         modal: {
           config: {
+            items,
             fastAckOutput: {
               enabled: true,
               value: 'Test',

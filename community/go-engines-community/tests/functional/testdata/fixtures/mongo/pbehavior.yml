@@ -67,7 +67,6 @@ pbehavior:
     tstop: 1591536400
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
-
   pbehavior_to_get_by_name_2:
     _id: test-pbehavior-to-get-by-name-2
     author: root
@@ -83,6 +82,26 @@ pbehavior:
         ]
       }
     name: test-pbehavior-to-get-by-name-2-name
+    reason: test-reason-to-pbh-edit
+    rrule: ""
+    tstart: 1591172881
+    color: "#FFFFFF"
+    type_: test-type-to-pbh-edit-2
+    comments: [ ]
+    updated: 1592215337
+  pbehavior_to_get_by_name_3:
+    _id: test-pbehavior-to-get-by-name-3
+    author: root
+    created: 1592215337
+    enabled: true
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-pbehavior-to-get-by-name-3-pattern
+    entity: test-pbehavior-to-get-by-name-3-pattern
+    origin: test-pbehavior-to-get-by-name-3-origin
+    name: test-pbehavior-to-get-by-name-3-name
     reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
@@ -523,3 +542,69 @@ pbehavior:
           cond:
             type: eq
             value: test-resource-to-pbh-calendar-get-by-entity
+
+  pbehavior_to_bulk_entity_delete_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-bulk-entity-delete-1
+    origin: test-pbehavior-to-bulk-entity-delete-1-origin
+    entity: test-entity-to-bulk-entity-pbehavior-delete-1/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-bulk-entity-pbehavior-delete-1/test-component-default
+  pbehavior_to_bulk_entity_delete_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-bulk-entity-delete-2
+    origin: test-pbehavior-to-bulk-entity-delete-2-origin
+    entity: test-entity-to-bulk-entity-pbehavior-delete-2/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-bulk-entity-pbehavior-delete-2/test-component-default
+  pbehavior_to_entity_update_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entity-update-1
+    origin: test-pbehavior-to-entity-update-1-origin
+    entity: test-entity-to-entity-pbehavior-update-1/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-entity-pbehavior-update-1/test-component-default
+  pbehavior_to_entity_update_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entity-update-2
+    origin: test-pbehavior-to-entity-update-2-origin
+    entity: test-entity-to-entity-pbehavior-update-2/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-entity-pbehavior-update-2/test-component-default
+  pbehavior_to_entity_update_3:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entity-update-3
+    origin: test-pbehavior-to-entity-update-3-origin
+    entity: test-entity-to-entity-pbehavior-update-3/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-entity-pbehavior-update-3/test-component-default
+    comments:
+      - _id: test-pbehavior-to-entity-update-3-comment
+        author: root
+        message: <LoremIpsumSentence(3)>
+        ts: <NowUnix()>
+  pbehavior_to_entity_patch_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entity-patch-1
+    origin: test-pbehavior-to-entity-patch-1-origin
+    entity: test-entity-to-entity-pbehavior-patch-1/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-entity-pbehavior-patch-1/test-component-default

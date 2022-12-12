@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-field\` with custom props 1`] = `
+<div
+  class="layout date-time-splitted-field column"
+>
+  <div
+    class="layout row reverse"
+  >
+    <div
+      class="flex date-time-splitted-field__date"
+    >
+      <c-date-picker-field-stub
+        disabled="true"
+        hide-details="hide-details"
+        label="Custom label"
+        max="1970-01-03"
+        min="1970-01-02"
+        value="1970-01-02"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="v-text-field__details mt-2"
+  >
+    <div
+      class="v-messages theme--light error--text"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-field\` with default props 1`] = `
+<div
+  class="layout date-time-splitted-field column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex date-time-splitted-field__date pr-1"
+    >
+      <c-date-picker-field-stub
+        hide-details="hide-details"
+        label=""
+      />
+    </div>
+    <time-picker-field-stub
+      class="date-time-splitted-field__time"
+      hide-details="hide-details"
+      label=""
+      stepsinhours="4"
+    />
+  </div>
+  <div
+    class="v-text-field__details mt-2"
+  >
+    <div
+      class="v-messages theme--light error--text"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-field\` with errors 1`] = `
+<div
+  class="layout date-time-splitted-field column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex date-time-splitted-field__date pr-1"
+    >
+      <c-date-picker-field-stub
+        error="true"
+        hide-details="hide-details"
+        label=""
+      />
+    </div>
+    <time-picker-field-stub
+      class="date-time-splitted-field__time"
+      error="true"
+      hide-details="hide-details"
+      label=""
+      stepsinhours="4"
+    />
+  </div>
+  <div
+    class="v-text-field__details mt-2"
+  >
+    <div
+      class="v-messages theme--light error--text"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      >
+        <div
+          class="v-messages__message"
+        >
+          Error message
+        </div>
+      </transition-group-stub>
+    </div>
+  </div>
+</div>
+`;

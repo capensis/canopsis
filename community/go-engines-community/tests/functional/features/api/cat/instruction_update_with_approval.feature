@@ -1720,6 +1720,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-11-description",
       "enabled": true,
       "priority": 1000,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -1779,6 +1780,7 @@ Feature: instruction approval update
           "unit": "s"
         },
         "priority": 19,
+        "triggers": ["create"],
         "jobs": [
           {
             "job": {
@@ -1823,6 +1825,7 @@ Feature: instruction approval update
           "unit": "m"
         },
         "priority": 1000,
+        "triggers": ["create"],
         "jobs": [
           {
             "job": {
@@ -1901,6 +1904,7 @@ Feature: instruction approval update
         "unit": "m"
       },
       "priority": 1000,
+      "triggers": ["create"],
       "jobs": [
         {
           "job": {
@@ -1977,6 +1981,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-12-description-updated",
       "enabled": true,
       "priority": 1000,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -2112,6 +2117,7 @@ Feature: instruction approval update
         "unit": "m"
       },
       "priority": 1000,
+      "triggers": ["create"],
       "jobs": [
         {
           "job": {
@@ -2147,6 +2153,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-12-description-updated",
       "enabled": true,
       "priority": 1000,
+      "triggers": ["create"],
       "entity_pattern": [
         [
           {
@@ -2219,6 +2226,7 @@ Feature: instruction approval update
         "unit": "m"
       },
       "priority": 1000,
+      "triggers": ["create"],
       "jobs": [
         {
           "job": {
@@ -2254,6 +2262,7 @@ Feature: instruction approval update
       "description": "test-instruction-to-update-with-approval-12-description-updated",
       "enabled": true,
       "priority": 1000,
+      "triggers": ["create"],
       "entity_pattern": [
         [
           {
@@ -2344,6 +2353,7 @@ Feature: instruction approval update
         "unit": "m"
       },
       "priority": 1000,
+      "triggers": ["create"],
       "jobs": [
         {
           "job": {

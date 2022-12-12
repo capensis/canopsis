@@ -52,15 +52,14 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
+    const [firstItem] = this.modal.config.items ?? [];
+
     return {
       form: {
         output: '',
-        state: ENTITIES_STATES.major,
+        state: firstItem ? firstItem.v.state.val : ENTITIES_STATES.major,
       },
     };
-  },
-  mounted() {
-    this.form.state = this.firstItem.v.state.val;
   },
   methods: {
     async submit() {
