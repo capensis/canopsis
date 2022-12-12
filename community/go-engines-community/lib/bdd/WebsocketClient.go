@@ -88,7 +88,12 @@ func (c *WebsocketClient) ISubscribeToRoom(ctx context.Context, room string) (co
 		}
 	}
 
-	err := conn.WriteJSON(libwebsocket.RMessage{
+	b, err := c.templater.Execute(ctx, room)
+	if err != nil {
+		return ctx, err
+	}
+	room = b.String()
+	err = conn.WriteJSON(libwebsocket.RMessage{
 		Type: libwebsocket.RMessageJoin,
 		Room: room,
 	})
@@ -127,6 +132,11 @@ func (c *WebsocketClient) waitMessageFromRoom(
 	if err != nil {
 		return err
 	}
+	b, err = c.templater.Execute(ctx, room)
+	if err != nil {
+		return err
+	}
+	room = b.String()
 	errCh := make(chan error, 1)
 	msgsMx := sync.Mutex{}
 	caughtMsgs := make([]interface{}, 0)

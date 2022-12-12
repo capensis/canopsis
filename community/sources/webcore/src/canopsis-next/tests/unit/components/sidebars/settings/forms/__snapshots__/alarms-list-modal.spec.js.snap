@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] = `
+<widget-settings-group-stub
+  title="Alarm list settings"
+  value="[object Object]"
+>
+  <field-columns-stub
+    columns=""
+    label="Column names"
+    with-state="with-state"
+    withhtml="true"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-default-elements-per-page-stub
+    value="10"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-info-popup-stub
+    columns=""
+    popups=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-text-editor-stub
+    title="\\"More Infos\\" Popup"
+    value=""
+  />
+</widget-settings-group-stub>
+`;
+
+exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] = `
+<widget-settings-group-stub
+  title="Alarm list settings"
+>
+  <field-columns-stub
+    columns=""
+    label="Column names"
+    with-state="with-state"
+    withhtml="true"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-default-elements-per-page-stub
+    value="10"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-info-popup-stub
+    columns=""
+    popups=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-text-editor-stub
+    title="\\"More Infos\\" Popup"
+    value=""
+  />
+</widget-settings-group-stub>
+`;

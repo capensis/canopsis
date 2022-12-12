@@ -49,6 +49,7 @@ import CInformationBlock from '@/components/common/block/c-information-block.vue
 import CInformationBlockRow from '@/components/common/block/c-information-block-row.vue';
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
 /**
  * Overlays
@@ -159,7 +160,9 @@ import CSelectField from '@/components/forms/fields/c-select-field.vue';
 import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 import CServiceWeatherPatternsField from '@/components/forms/fields/service-weather/c-service-weather-patterns-field.vue';
 import CServiceWeatherIconField from '@/components/forms/fields/service-weather/c-service-weather-icon-field.vue';
+import CServiceWeatherStateCounterField from '@/components/forms/fields/service-weather/c-service-weather-state-counter-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
+import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
 
@@ -196,6 +199,10 @@ import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
+import NotificationImportantStrokeIcon from '@/components/icons/notification_important-stroke.vue';
+import MediationIcon from '@/components/icons/mediation.vue';
+import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
+import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
 
 /**
@@ -245,6 +252,18 @@ Vue.use(Vuetify, {
     },
     density_small: {
       component: DensitySmallIcon,
+    },
+    notification_important_stroke: {
+      component: NotificationImportantStrokeIcon,
+    },
+    mediation: {
+      component: MediationIcon,
+    },
+    warning_stroke: {
+      component: WarningStrokeIcon,
+    },
+    playlist_build: {
+      component: PlaylistBuildIcon,
     },
     manual_instruction: {
       component: ManualInstruction,
@@ -413,6 +432,7 @@ Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
 Vue.component('c-contextmenu', CContextmenu);
+Vue.component('c-column-size-field', CColumnSizeField);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
@@ -426,6 +446,7 @@ Vue.component('c-pattern-advanced-editor-field', CPatternAdvancedEditorField);
 Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-patterns-field', CPatternsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
+Vue.component('c-runtime-template', CRuntimeTemplate);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);
@@ -435,6 +456,7 @@ Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
 
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
+Vue.component('c-service-weather-state-counter-field', CServiceWeatherStateCounterField);
 
 Vue.component('c-map-field', CMapField);
 Vue.component('c-coordinates-field', CCoordinatesField);
