@@ -45,13 +45,12 @@ const (
 	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
-	EventTypeChangestate       = "changestate"
-	EventTypeKeepstate         = "keepstate"
-	EventTypePerf              = "perf"
-	EventTypeSnooze            = "snooze"
-	EventTypeUnsnooze          = "unsnooze"
-	EventTypeStatStateInterval = "statstateinterval"
-	EventTypeUncancel          = "uncancel"
+	EventTypeChangestate = "changestate"
+	EventTypeKeepstate   = "keepstate"
+	EventTypePerf        = "perf"
+	EventTypeSnooze      = "snooze"
+	EventTypeUnsnooze    = "unsnooze"
+	EventTypeUncancel    = "uncancel"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
