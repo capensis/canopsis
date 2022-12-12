@@ -11,7 +11,7 @@
           with-alarm,
           with-entity
         )
-        c-collapse-panel(:title="$t('remediationPatterns.tabs.pbehaviorTypes.title')")
+        c-collapse-panel(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
           remediation-patterns-pbehavior-types-form(v-model="form")
       template(#actions="")
         v-btn(

@@ -3,7 +3,7 @@
     v-tabs(v-model="activeTab", color="secondary lighten-1", slider-color="primary", dark, centered)
       v-tab {{ $t('common.summary') }}
       v-tab {{ $t('common.statistics') }}
-      v-tab(v-if="remediationInstruction.execution_count") {{ $t('remediationInstructionStats.alarmsTimeline') }}
+      v-tab(v-if="remediationInstruction.execution_count") {{ $t('remediation.instructionStat.alarmsTimeline') }}
       v-tab {{ $tc('common.rating') }}
     v-layout.pa-3.secondary.lighten-2
       v-flex(xs12)

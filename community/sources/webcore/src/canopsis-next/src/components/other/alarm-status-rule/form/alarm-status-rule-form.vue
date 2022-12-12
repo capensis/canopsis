@@ -6,7 +6,7 @@
     c-number-field(
       v-if="flapping",
       v-field="form.freq_limit",
-      :label="$t('alarmStatusRules.frequencyLimit')",
+      :label="$t('common.frequencyLimit')",
       :min="1",
       name="freq_limit"
     )

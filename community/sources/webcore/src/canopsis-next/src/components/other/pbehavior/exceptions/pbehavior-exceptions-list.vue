@@ -24,7 +24,7 @@
       )
       c-action-btn(
         v-if="hasDeleteAnyPbehaviorExceptionAccess",
-        :tooltip="item.deletable ? $t('common.delete') : $t('pbehaviorExceptions.usingException')",
+        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')",
         :disabled="!item.deletable",
         type="delete",
         @click="$emit('remove', item._id)"

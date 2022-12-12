@@ -3,12 +3,12 @@
     template(#activator="{ on }")
       v-icon.blue.white--text.c-extra-details__badge(v-on="on", small) {{ icon }}
     div.text-md-center
-      strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
+      strong {{ $t('alarm.actions.iconsTitles.declareTicket') }}
       div {{ $t('common.by') }} : {{ ticket.a }}
       div {{ $t('common.date') }} : {{ date }}
       div(
         v-if="ticket.val"
-      ) {{ $t('alarmList.actions.iconsFields.ticketNumber') }} : {{ ticket.val }}
+      ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.val }}
 </template>
 
 <script>

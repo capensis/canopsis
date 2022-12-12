@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    span.pl-4.subheading.grey--text.text--darken-2 {{ $t('kpiFilters.helpInformation') }}
+    span.pl-4.subheading.grey--text.text--darken-2 {{ $t('kpi.filters.helpInformation') }}
     kpi-filters-list(
       :pagination.sync="pagination",
       :filters="filters",

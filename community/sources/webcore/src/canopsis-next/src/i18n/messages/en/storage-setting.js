@@ -1,0 +1,48 @@
+export default {
+  alarm: {
+    title: 'Alarm data storage',
+    titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
+    archiveAfter: 'Archive resolved alarms data after',
+    deleteAfter: 'Delete resolved alarms data after',
+  },
+  junit: {
+    title: 'JUnit data storage',
+    deleteAfter: 'Delete test suites data after',
+    deleteAfterHelpText: 'When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period.',
+  },
+  remediation: {
+    title: 'Instructions data storage',
+    accumulateAfter: 'Accumulate instructions statistics after',
+    deleteAfter: 'Delete instructions data after',
+    deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+  },
+  entity: {
+    title: 'Entities data storage',
+    titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
+    archiveEntity: 'Archive disabled entities',
+    deleteEntity: 'Delete disabled entities forever from archive',
+    archiveDependencies: 'Remove the impacting and dependent entities as well',
+    archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
+    cleanStorage: 'Clean storage',
+  },
+  pbehavior: {
+    title: 'PBehavior data storage',
+    deleteAfter: 'Delete PBehavior data after',
+    deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
+  },
+  healthCheck: {
+    title: 'Healthcheck data storage',
+    deleteAfter: 'Delete FIFO incoming flow data after',
+  },
+  history: {
+    scriptLaunched: 'Script launched at {launchedAt}.',
+    alarm: {
+      deletedCount: 'Alarms deleted: {count}.',
+      archivedCount: 'Alarms archived: {count}.',
+    },
+    entity: {
+      deletedCount: 'Entities deleted: {count}.',
+      archivedCount: 'Entities archived: {count}.',
+    },
+  },
+};

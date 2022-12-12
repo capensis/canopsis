@@ -6,10 +6,10 @@
           template(#activator="{ on }")
             v-icon.mr-1(v-on="on", :color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
           div(v-if="job.fail_reason")
-            span {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
+            span {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
             span.pre-wrap(v-html="job.fail_reason")
           div(v-if="job.output")
-            span {{ $t('remediationInstructionExecute.jobs.output') }}:&nbsp;
+            span {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
             span.pre-wrap(v-html="job.output")
         v-btn.primary(
           :disabled="isRunningJob || isFailedJob",
@@ -103,7 +103,7 @@ export default {
     },
 
     queueNumberTooltip() {
-      return this.$t('remediationInstructionExecute.queueNumber', {
+      return this.$t('remediation.instructionExecute.queueNumber', {
         number: this.job.queue_number,
         name: this.job.name,
       });

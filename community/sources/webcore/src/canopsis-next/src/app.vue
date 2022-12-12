@@ -121,7 +121,7 @@ export default {
       }
 
       pausedExecutions.forEach((execution = {}) => this.$popups.info({
-        text: this.$t('remediationInstructionExecute.popups.wasPaused', {
+        text: this.$t('remediation.instructionExecute.popups.wasPaused', {
           instructionName: execution.instruction_name,
           alarmName: execution.alarm_name,
           date: convertDateToString(execution.paused),

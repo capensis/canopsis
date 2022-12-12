@@ -11,7 +11,7 @@
   )
     template(#items="{ item }")
       tr
-        td {{ $t(`tables.broadcastMessages.statuses.${item.status}`) }}
+        td {{ $t(`broadcastMessage.statuses.${props.item.status}`) }}
         td.broadcast-message-cell
           broadcast-message(:message="item.message", :color="item.color")
         td {{ item.start | date }}

@@ -37,19 +37,19 @@ export default {
     },
 
     completedLabel() {
-      return this.$t('remediationInstructionExecute.completedAt', {
+      return this.$t('remediation.instructionExecute.completedAt', {
         time: this.convertDate(this.completedAt),
       });
     },
 
     startedLabel() {
-      return this.$t('remediationInstructionExecute.startedAt', {
+      return this.$t('remediation.instructionExecute.startedAt', {
         time: this.convertDate(this.startedAt),
       });
     },
 
     failedLabel() {
-      return this.$t('remediationInstructionExecute.failedAt', {
+      return this.$t('remediation.instructionExecute.failedAt', {
         time: this.convertDate(this.failedAt),
       });
     },
@@ -57,7 +57,7 @@ export default {
     timeToCompleteLabel() {
       const { value, unit } = this.timeToComplete;
 
-      return this.$t('remediationInstructionExecute.timeToComplete', {
+      return this.$t('remediation.instructionExecute.timeToComplete', {
         duration: convertDurationToString(toSeconds(value, unit)),
       });
     },

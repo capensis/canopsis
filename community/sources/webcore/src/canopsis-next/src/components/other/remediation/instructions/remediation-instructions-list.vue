@@ -24,16 +24,16 @@
         v-tooltip(v-if="item.approval", bottom)
           template(#activator="{ on }")
             v-icon(color="black") query_builder
-          span {{ $t('remediationInstructions.approvalPending') }}
+          span {{ $t('remediation.instruction.approvalPending') }}
         v-icon(v-else, color="primary") check_circle
-      template(#type="{ item }") {{ $t(`remediationInstructions.types.${item.type}`) }}
+      template(#type="{ item }") {{ $t(`remediation.instruction.types.${item.type}`) }}
       template(#last_modified="{ item }") {{ item.last_modified | date }}
       template(#last_executed_on="{ item }") {{ item.last_executed_on | date }}
       template(#actions="{ item, disabled }")
         v-layout(row, justify-end)
           c-action-btn(
             v-if="item.approval && isApprovalForCurrentUser(item.approval)",
-            :tooltip="$t('remediationInstructions.needApprove')",
+            :tooltip="$t('remediation.instruction.needApprove')",
             icon="notification_important",
             color="error",
             @click="$emit('approve', item)"
@@ -56,7 +56,7 @@
           )
           c-action-btn(
             v-if="removable",
-            :tooltip="disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
+            :tooltip="disabled ? $t('remediation.instruction.usingInstruction') : $t('common.delete')",
             :disabled="disabled",
             type="delete",
             @click="$emit('remove', item)"
@@ -126,12 +126,12 @@ export default {
           value: 'status',
         },
         {
-          text: this.$t('remediationInstructions.table.monthExecutions'),
+          text: this.$t('remediation.instruction.table.monthExecutions'),
           value: 'month_executions',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructions.table.lastExecutedOn'),
+          text: this.$t('remediation.instruction.table.lastExecutedOn'),
           value: 'last_executed_on',
         },
         {

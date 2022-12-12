@@ -3,7 +3,7 @@
     template(#activator="{ on }")
       v-icon.c-extra-details__badge.secondary.accent-2.white--text(v-on="on", small) {{ pbehaviorInfo.icon_name }}
     div
-      strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
+      strong {{ $t('alarm.actions.iconsTitles.pbehaviors') }}
       div
         div.mt-2.font-weight-bold {{ pbehavior.name }}
         div {{ $t('common.author') }}: {{ pbehavior.author.name }}

@@ -31,7 +31,8 @@ module.exports = {
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^vue$': 'vue/dist/vue.common.dev.js',
-    mermaid: '<rootDir>/node_modules/mermaid/dist/mermaid.js',
+    '^mermaid$': '<rootDir>/node_modules/mermaid/dist/mermaid.js',
+    '^monaco-mermaid$': '<rootDir>/node_modules/mermaid/dist/mermaid.js',
     './assets': '<rootDir>/tests/unit/mocks/flowchartAssets.js',
   },
   snapshotSerializers: [

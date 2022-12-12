@@ -5,7 +5,7 @@
         c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
-          :tooltip="$t('search.alarmAdvancedSearch')"
+          :tooltip="$t('alarm.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
@@ -53,7 +53,7 @@
           @input="removeHistoryFilter"
         ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
-          :tooltip="$t('liveReporting.button')",
+          :tooltip="$t('alarm.liveReporting')",
           :color="activeRange ? 'primary' : 'black'",
           icon="schedule",
           @click="showEditLiveReportModal"

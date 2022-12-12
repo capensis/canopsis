@@ -3,7 +3,7 @@
     v-fade-transition(v-if="countersPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
     v-layout.fill-height(key="content", wrap)
-      v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('tables.noData') }}
+      v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('common.noData') }}
       template(v-else)
         v-flex(v-for="counter in countersWithFilters", :key="counter.filter.title", :class="flexSize")
           counter-item.weatherItem(

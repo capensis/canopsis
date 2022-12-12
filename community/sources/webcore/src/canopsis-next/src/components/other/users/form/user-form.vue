@@ -13,14 +13,14 @@
     v-layout(row)
       v-text-field(
         v-field="form.firstname",
-        :label="$t('users.firstName')",
+        :label="$t('user.firstName')",
         :disabled="onlyUserPrefs",
         data-test="firstName"
       )
     v-layout(row)
       v-text-field(
         v-field="form.lastname",
-        :label="$t('users.lastName')",
+        :label="$t('user.lastName')",
         :disabled="onlyUserPrefs",
         data-test="lastName"
       )
@@ -28,7 +28,7 @@
       v-text-field(
         v-field="form.email",
         v-validate="'required|email'",
-        :label="$t('users.email')",
+        :label="$t('user.email')",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('email')",
         name="email",
@@ -63,12 +63,12 @@
     v-layout(data-test="languageLayout", row)
       c-language-field(
         v-field="form.ui_language",
-        :label="$t('users.language')"
+        :label="$t('user.language')"
       )
     v-layout(data-test="navigationTypeLayout", row)
       v-select.mt-0(
         v-field="form.ui_groups_navigation_type",
-        :label="$t('users.navigationType')",
+        :label="$t('user.navigationType')",
         :items="groupsNavigationItems",
         data-test="navigationType"
       )
@@ -143,7 +143,7 @@ export default {
 
     groupsNavigationItems() {
       return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
-        text: this.$t(`users.navigationTypes.${type}`),
+        text: this.$t(`user.navigationTypes.${type}`),
         value: type,
       }));
     },

@@ -76,9 +76,9 @@ export default {
       return [
         { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.author'), value: 'author' },
-        { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
-        { text: this.$t('pbehaviors.begins'), value: 'tstart' },
-        { text: this.$t('pbehaviors.ends'), value: 'tstop' },
+        { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
+        { text: this.$t('pbehavior.begins'), value: 'tstart' },
+        { text: this.$t('pbehavior.ends'), value: 'tstop' },
         { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
         { text: this.$t('common.recurrence'), value: 'rrule' },
