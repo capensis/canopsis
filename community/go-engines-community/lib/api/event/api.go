@@ -140,7 +140,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeMetaAlarm ||
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeKeepstate ||
-		eventType == types.EventTypeStatStateInterval ||
 		eventType == types.EventTypeJunitTestSuiteUpdated {
 		state, isNotInt, err := getIntField(value, "state")
 
