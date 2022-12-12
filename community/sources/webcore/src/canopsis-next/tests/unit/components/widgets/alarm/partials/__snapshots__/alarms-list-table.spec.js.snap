@@ -6,6 +6,36 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
 >
   <div>
     <div
+      class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+    >
+      <div
+        class="flex alarms-list-table__top-pagination--left xs6"
+      >
+        <div
+          class="layout row align-center justify-start"
+        >
+          <c-density-btn-toggle-stub
+            value="true"
+          />
+          <transition-stub
+            name="fade-transition"
+          >
+            <div
+              class="flex px-1"
+              style="display: none;"
+            >
+              <!---->
+            </div>
+          </transition-stub>
+        </div>
+      </div>
+      <div
+        class="flex alarms-list-table__top-pagination--center-absolute xs4"
+      >
+        <!---->
+      </div>
+    </div>
+    <div
       class="alarms-list-table columns-sm"
     >
       <div
@@ -71,25 +101,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   arrow_upward
                 </i>
               </th>
-              <th
-                aria-label="Actions: Not sorted."
-                aria-sort="none"
-                class="column text-xs-left"
-                role="columnheader"
-                scope="col"
-              >
-                <alarm-header-cell-stub
-                  header="[object Object]"
-                  selectedtag="tag"
-                />
-              </th>
             </tr>
             <tr
               class="v-datatable__progress"
             >
               <th
                 class="column"
-                colspan="3"
+                colspan="2"
               >
                 <transition-stub
                   name="fade-transition"
@@ -136,6 +154,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               istourenabled="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
@@ -149,7 +168,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -157,6 +176,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -169,7 +189,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -177,6 +197,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -189,7 +210,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -197,6 +218,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -209,7 +231,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -217,6 +239,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              hideactions="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -229,7 +252,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             >
               <transition-group-stub
                 class="v-datatable__expand-col"
-                colspan="3"
+                colspan="2"
                 tag="td"
               />
             </tr>
@@ -239,6 +262,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
     </div>
   </div>
   <!---->
+  <!---->
 </div>
 `;
 
@@ -247,6 +271,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   class="flex white"
 >
   <c-empty-data-table-columns-stub />
+  <c-table-pagination-stub
+    total-items="0"
+  />
   <!---->
 </div>
 `;
@@ -256,6 +283,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   class="flex white"
 >
   <div>
+    <!---->
     <div
       class="alarms-list-table columns-sm"
     >
@@ -323,15 +351,17 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
+  <c-table-pagination-stub />
   <!---->
 </div>
 `;
 
-exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown 1`] = `
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = false 1`] = `
 <div
   class="flex white"
 >
   <div>
+    <!---->
     <div
       class="alarms-list-table columns-sm alarms-list-table__selecting"
     >
@@ -339,10 +369,44 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table theme--light"
+          class="v-datatable v-table v-datatable--select-all theme--light"
         >
           <thead>
             <tr>
+              <th>
+                <div
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+                >
+                  <div
+                    class="v-input__control"
+                  >
+                    <div
+                      class="v-input__slot"
+                    >
+                      <div
+                        class="v-input--selection-controls__input"
+                      >
+                        <input
+                          aria-checked="false"
+                          disabled="disabled"
+                          role="checkbox"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div
+                          class="v-input--selection-controls__ripple"
+                        />
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          check_box_outline_blank
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </th>
               <th
                 aria-label=""
                 aria-sort="none"
@@ -381,7 +445,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
             >
               <th
                 class="column"
-                colspan="2"
+                colspan="3"
               />
             </tr>
           </thead>
@@ -389,7 +453,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
             <tr>
               <td
                 class="text-xs-center"
-                colspan="2"
+                colspan="3"
               >
                 No data available
               </td>
@@ -399,6 +463,123 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
+  <c-table-pagination-stub
+    total-items="0"
+  />
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = true 1`] = `
+<div
+  class="flex white"
+>
+  <div>
+    <!---->
+    <div
+      class="alarms-list-table columns-sm alarms-list-table__selecting"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table v-datatable--select-all theme--light"
+        >
+          <thead>
+            <tr>
+              <th>
+                <div
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+                >
+                  <div
+                    class="v-input__control"
+                  >
+                    <div
+                      class="v-input__slot"
+                    >
+                      <div
+                        class="v-input--selection-controls__input"
+                      >
+                        <input
+                          aria-checked="false"
+                          disabled="disabled"
+                          role="checkbox"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div
+                          class="v-input--selection-controls__ripple"
+                        />
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          check_box_outline_blank
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </th>
+              <th
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="3"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="text-xs-center"
+                colspan="3"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    total-items="0"
+  />
   <!---->
 </div>
 `;
@@ -408,6 +589,41 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
   class="flex white"
 >
   <div>
+    <div
+      class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+    >
+      <div
+        class="flex alarms-list-table__top-pagination--left xs6"
+      >
+        <div
+          class="layout row align-center justify-start"
+        >
+          <!---->
+          <transition-stub
+            name="fade-transition"
+          >
+            <div
+              class="flex px-1"
+              style="display: none;"
+            >
+              <mass-actions-panel-stub
+                items=""
+                refreshalarmslist="[Function]"
+                widget="[object Object]"
+              />
+            </div>
+          </transition-stub>
+        </div>
+      </div>
+      <div
+        class="flex alarms-list-table__top-pagination--center-absolute xs4"
+      >
+        <c-pagination-stub
+          total="5"
+          type="top"
+        />
+      </div>
+    </div>
     <div
       class="alarms-list-table columns-sm"
     >
@@ -569,6 +785,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
       </div>
     </div>
   </div>
+  <c-table-pagination-stub
+    total-items="5"
+  />
   <!---->
 </div>
 `;

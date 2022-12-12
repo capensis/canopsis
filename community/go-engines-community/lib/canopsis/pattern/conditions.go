@@ -495,7 +495,7 @@ func (c *Condition) StringArrayToMongoQuery(f string) (bson.M, error) {
 			return nil, ErrWrongConditionValue
 		}
 
-		return bson.M{f: bson.M{"$elemMatch": bson.M{"$nin": c.valueStrArray}}}, nil
+		return bson.M{f: bson.M{"$nin": c.valueStrArray}}, nil
 	default:
 		return nil, ErrUnsupportedConditionType
 	}

@@ -39,7 +39,13 @@ export const widgetFetchQueryMixin = {
   },
   methods: {
     setQuery() {
-      this.query = prepareQuery(this.widget, this.userPreference);
+      const { search = '' } = this.query;
+
+      this.query = {
+        ...prepareQuery(this.widget, this.userPreference),
+
+        search,
+      };
     },
   },
 };

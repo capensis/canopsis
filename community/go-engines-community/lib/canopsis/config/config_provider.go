@@ -94,7 +94,9 @@ type TechMetricsConfig struct {
 }
 
 type DataStorageConfig struct {
-	TimeToExecute *ScheduledTime
+	TimeToExecute      *ScheduledTime
+	MaxUpdates         int
+	MongoClientTimeout time.Duration
 }
 
 type MetricsConfig struct {
@@ -516,10 +518,15 @@ func (p *BaseUserInterfaceConfigProvider) Get() UserInterfaceConf {
 }
 
 func NewDataStorageConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseDataStorageConfigProvider {
+	sectionName := "data_storage"
 	return &BaseDataStorageConfigProvider{
 		conf: DataStorageConfig{
-			TimeToExecute: parseScheduledTime(cfg.DataStorage.TimeToExecute,
-				"TimeToExecute", "data_storage", logger, "data archive and delete are disabled"),
+			TimeToExecute: parseScheduledTime(cfg.DataStorage.TimeToExecute, "TimeToExecute", sectionName, logger,
+				"data archive and delete are disabled"),
+			MaxUpdates: parseInt(cfg.DataStorage.MaxUpdates, DataStorageMaxUpdates, "MaxUpdates", sectionName,
+				logger),
+			MongoClientTimeout: parseTimeDurationByStr(cfg.DataStorage.MongoClientTimeout, 0,
+				"MongoClientTimeout", sectionName, logger),
 		},
 		logger: logger,
 	}
@@ -535,10 +542,22 @@ func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
-	t, ok := parseUpdatedScheduledTime(cfg.DataStorage.TimeToExecute, p.conf.TimeToExecute,
-		"TimeToExecute", "data_storage", p.logger)
+	sectionName := "data_storage"
+	t, ok := parseUpdatedScheduledTime(cfg.DataStorage.TimeToExecute, p.conf.TimeToExecute, "TimeToExecute",
+		sectionName, p.logger)
 	if ok {
 		p.conf.TimeToExecute = t
+	}
+
+	i, ok := parseUpdatedInt(cfg.DataStorage.MaxUpdates, p.conf.MaxUpdates, "MaxUpdates", sectionName, p.logger)
+	if ok {
+		p.conf.MaxUpdates = i
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.DataStorage.MongoClientTimeout, p.conf.MongoClientTimeout,
+		"MongoClientTimeout", sectionName, p.logger)
+	if ok {
+		p.conf.MongoClientTimeout = d
 	}
 }
 
@@ -598,9 +617,11 @@ func parseUpdatedScheduledTime(
 	}
 	t, ok := stringToScheduledTime(v)
 	if !ok {
-		logger.Error().
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		if oldVal != nil {
+			logger.Error().
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
 		return nil, false
 	}
 
@@ -626,7 +647,7 @@ func stringToScheduledTime(v string) (ScheduledTime, bool) {
 	if len(split) == 2 {
 		if d, ok := weekdays[split[0]]; ok {
 			h, err := strconv.Atoi(split[1])
-			if err == nil {
+			if err == nil && h >= 0 && h <= 24 {
 				t.Weekday = d
 				t.Hour = h
 				return t, true
@@ -644,19 +665,29 @@ func parseTimeDurationByStr(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.String()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+		if defaultVal > 0 {
+			logger.Warn().
+				Str("default", defaultVal.String()).
+				Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+		} else {
+			logger.Info().Msgf("%s of %s config section is not defined", name, sectionName)
+		}
 
 		return defaultVal
 	}
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
-		logger.Err(err).
-			Str("default", defaultVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		if defaultVal > 0 {
+			logger.Err(err).
+				Str("default", defaultVal.String()).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		} else {
+			logger.Err(err).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section", name, sectionName)
+		}
 
 		return defaultVal
 	}
@@ -726,10 +757,12 @@ func parseUpdatedTimeDurationByStr(
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
-		logger.Err(err).
-			Str("previous", oldVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		if oldVal > 0 {
+			logger.Err(err).
+				Str("previous", oldVal.String()).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
 		return 0, false
 	}
 

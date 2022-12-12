@@ -3,11 +3,12 @@ package entityservice
 import (
 	"context"
 	"fmt"
+	"regexp"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
-	"regexp"
 )
 
 // maxRetries is the maximum number of times a redis WATCH transaction will be
@@ -17,16 +18,17 @@ const maxRetries = 10
 // counterName* are the name of the keys used to store each field of an
 // AlarmCounter in redis.
 const (
-	cacheKeyTpl                  = "service:counters:%s:%s"
-	counterNameAll               = "all"
-	counterNameAlarms            = "alarms"
-	counterNameStateCritical     = "state:critical"
-	counterNameStateMajor        = "state:major"
-	counterNameStateMinor        = "state:minor"
-	counterNameStateInfo         = "state:info"
-	counterNameAcknowledged      = "acknowledged"
-	counterNameNotAcknowledged   = "not_acknowledged"
-	counterNamePbehaviorCounters = "pbehavior_counters"
+	cacheKeyTpl                     = "service:counters:%s:%s"
+	counterNameAll                  = "all"
+	counterNameActive               = "active"
+	counterNameStateCritical        = "state:critical"
+	counterNameStateMajor           = "state:major"
+	counterNameStateMinor           = "state:minor"
+	counterNameStateOk              = "state:ok"
+	counterNameAcknowledged         = "acknowledged"
+	counterNameNotAcknowledged      = "not_acknowledged"
+	counterNameAcknowledgedUnderPbh = "acknowledged_under_pbh"
+	counterNamePbehaviorCounters    = "pbehavior_counters"
 )
 
 // redisCounterKey returns the name of the key used to store a field of a
@@ -86,10 +88,10 @@ func (s *countersCache) incrementCounters(
 			ctx,
 			redisCounterKey(counterNameAll, serviceID),
 			incrementBy.All),
-		Alarms: pipe.IncrBy(
+		Active: pipe.IncrBy(
 			ctx,
-			redisCounterKey(counterNameAlarms, serviceID),
-			incrementBy.Alarms),
+			redisCounterKey(counterNameActive, serviceID),
+			incrementBy.Active),
 		State: stateCountersCmds{
 			Critical: pipe.IncrBy(
 				ctx,
@@ -103,10 +105,10 @@ func (s *countersCache) incrementCounters(
 				ctx,
 				redisCounterKey(counterNameStateMinor, serviceID),
 				incrementBy.State.Minor),
-			Info: pipe.IncrBy(
+			Ok: pipe.IncrBy(
 				ctx,
-				redisCounterKey(counterNameStateInfo, serviceID),
-				incrementBy.State.Info),
+				redisCounterKey(counterNameStateOk, serviceID),
+				incrementBy.State.Ok),
 		},
 		Acknowledged: pipe.IncrBy(
 			ctx,
@@ -116,6 +118,10 @@ func (s *countersCache) incrementCounters(
 			ctx,
 			redisCounterKey(counterNameNotAcknowledged, serviceID),
 			incrementBy.NotAcknowledged),
+		AcknowledgedUnderPbh: pipe.IncrBy(
+			ctx,
+			redisCounterKey(counterNameAcknowledgedUnderPbh, serviceID),
+			incrementBy.AcknowledgedUnderPbh),
 		PbehaviorCounters: pbehaviorCountersCmd{
 			All:  pipe.HGetAll(ctx, redisCounterKey(counterNamePbehaviorCounters, serviceID)),
 			Incr: pbehaviorCounters,
@@ -131,13 +137,14 @@ func (s *countersCache) removeCounters(
 	return pipe.Del(
 		ctx,
 		redisCounterKey(counterNameAll, serviceID),
-		redisCounterKey(counterNameAlarms, serviceID),
+		redisCounterKey(counterNameActive, serviceID),
 		redisCounterKey(counterNameStateCritical, serviceID),
 		redisCounterKey(counterNameStateMajor, serviceID),
 		redisCounterKey(counterNameStateMinor, serviceID),
-		redisCounterKey(counterNameStateInfo, serviceID),
+		redisCounterKey(counterNameStateOk, serviceID),
 		redisCounterKey(counterNameAcknowledged, serviceID),
 		redisCounterKey(counterNameNotAcknowledged, serviceID),
+		redisCounterKey(counterNameAcknowledgedUnderPbh, serviceID),
 		redisCounterKey(counterNamePbehaviorCounters, serviceID),
 	)
 }
@@ -149,15 +156,16 @@ func (s countersCache) getCounters(
 ) getAlarmCountersCmds {
 	return getAlarmCountersCmds{
 		All:    pipe.Get(ctx, redisCounterKey(counterNameAll, serviceID)),
-		Alarms: pipe.Get(ctx, redisCounterKey(counterNameAlarms, serviceID)),
+		Active: pipe.Get(ctx, redisCounterKey(counterNameActive, serviceID)),
 		State: getStateCountersCmds{
 			Critical: pipe.Get(ctx, redisCounterKey(counterNameStateCritical, serviceID)),
 			Major:    pipe.Get(ctx, redisCounterKey(counterNameStateMajor, serviceID)),
 			Minor:    pipe.Get(ctx, redisCounterKey(counterNameStateMinor, serviceID)),
-			Info:     pipe.Get(ctx, redisCounterKey(counterNameStateInfo, serviceID)),
+			Ok:       pipe.Get(ctx, redisCounterKey(counterNameStateOk, serviceID)),
 		},
-		Acknowledged:    pipe.Get(ctx, redisCounterKey(counterNameAcknowledged, serviceID)),
-		NotAcknowledged: pipe.Get(ctx, redisCounterKey(counterNameNotAcknowledged, serviceID)),
+		Acknowledged:         pipe.Get(ctx, redisCounterKey(counterNameAcknowledged, serviceID)),
+		NotAcknowledged:      pipe.Get(ctx, redisCounterKey(counterNameNotAcknowledged, serviceID)),
+		AcknowledgedUnderPbh: pipe.Get(ctx, redisCounterKey(counterNameAcknowledgedUnderPbh, serviceID)),
 		PbehaviorCounters: getPbehaviorCountersCmd{
 			All: pipe.HGetAll(ctx, redisCounterKey(counterNamePbehaviorCounters, serviceID)),
 		},

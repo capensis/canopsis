@@ -28,29 +28,20 @@ type Info struct {
 
 // Entity ...
 type Entity struct {
-	ID                   string          `bson:"_id" json:"_id"`
-	Name                 string          `bson:"name" json:"name"`
-	Description          string          `bson:"description" json:"description"`
-	EnableHistory        []CpsTime       `bson:"enable_history" json:"enable_history"`
-	Measurements         interface{}     `bson:"measurements" json:"measurements"` // unused collection ids
-	Enabled              bool            `bson:"enabled" json:"enabled"`
-	Infos                map[string]Info `bson:"infos" json:"infos"`
-	ComponentInfos       map[string]Info `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
-	Type                 string          `bson:"type" json:"type"`
-	Category             string          `bson:"category" json:"category"`
-	ImpactLevel          int64           `bson:"impact_level" json:"impact_level"`
-	IsNew                bool            `bson:"-" json:"-"`
-	AlarmsCumulativeData struct {
-		// Only for Service.
-		// WatchedCount is count of unresolved alarms.
-		WatchedCount int64 `bson:"watched_count"`
-		// WatchedPbehaviorCount contains counters of unresolved and in pbehavior alarms.
-		WatchedPbehaviorCount map[string]int64 `bson:"watched_pbehavior_count"`
-		// WatchedNotAckedCount is count of unresolved and not acked and active (by pbehavior) alarms.
-		WatchedNotAckedCount int64 `bson:"watched_not_acked_count"`
-	} `bson:"alarms_cumulative_data,omitempty" json:"-"`
-	Created       CpsTime  `bson:"created" json:"created"`
-	LastEventDate *CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
+	ID             string          `bson:"_id" json:"_id"`
+	Name           string          `bson:"name" json:"name"`
+	Description    string          `bson:"description" json:"description"`
+	EnableHistory  []CpsTime       `bson:"enable_history" json:"enable_history"`
+	Measurements   interface{}     `bson:"measurements" json:"measurements"` // unused collection ids
+	Enabled        bool            `bson:"enabled" json:"enabled"`
+	Infos          map[string]Info `bson:"infos" json:"infos"`
+	ComponentInfos map[string]Info `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
+	Type           string          `bson:"type" json:"type"`
+	Category       string          `bson:"category" json:"category"`
+	ImpactLevel    int64           `bson:"impact_level" json:"impact_level"`
+	IsNew          bool            `bson:"-" json:"-"`
+	Created        CpsTime         `bson:"created" json:"created"`
+	LastEventDate  *CpsTime        `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
 	Impacts []string `bson:"impact" json:"impact"`
 	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method

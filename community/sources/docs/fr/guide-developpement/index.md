@@ -40,9 +40,13 @@ Si l'API est interrogée via un navigateur (Firefox, Chrome, Safari, etc) ou un 
 
 L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites "classiques", par exemple via des scripts, via l'outil `curl` ou encore via des webhooks de solutions externes.
 
+## Filtres
+
+* [Langage utilisé par les filtres](filtres/index.md)
+
 ## Structure des évènements
 
-* [Structure des évènements](struct-event.md)
+* [Structure des évènements](structures/index.md)
 
 ## Collections de base de données
 
@@ -51,4 +55,4 @@ L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites 
 
 ## Aides au développement
 
-* [Développement d'un linkbuilder](dev-linkbuilder.md)
+* [Développement d'un linkbuilder](linkbuilder/index.md)
