@@ -4,9 +4,9 @@
       template(#activator="{ on, attrs }")
         v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", v-bind="attrs", small) {{ icon }}
       div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+        strong {{ $t('alarm.actions.iconsTitles.grouping') }}
         div {{ $t('common.title') }} : {{ ruleName }}
-        div {{ $t('alarmList.actions.iconsFields.children') }} : {{ total }}
+        div {{ $t('alarm.actions.iconsFields.children') }} : {{ total }}
 </template>
 
 <script>
