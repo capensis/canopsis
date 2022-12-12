@@ -38,7 +38,7 @@ export default {
       const { execution } = assignedInstruction;
       const titlePrefix = execution ? 'resume' : 'execute';
 
-      return this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
+      return this.$t(`alarm.actions.titles.${titlePrefix}Instruction`, {
         instructionName: assignedInstruction.name,
       });
     },

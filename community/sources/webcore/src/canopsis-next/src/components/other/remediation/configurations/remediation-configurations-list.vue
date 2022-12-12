@@ -26,7 +26,7 @@
       )
       c-action-btn(
         v-if="removable",
-        :tooltip="disabled ? $t('remediationConfigurations.usingConfiguration') : $t('common.delete')",
+        :tooltip="disabled ? $t('remediation.configuration.usingConfiguration') : $t('common.delete')",
         :disabled="disabled",
         type="delete",
         @click="$emit('remove', item)"
@@ -81,7 +81,7 @@ export default {
           value: 'type',
         },
         {
-          text: this.$t('remediationConfigurations.table.host'),
+          text: this.$t('remediation.configuration.host'),
           value: 'host',
         },
         {
