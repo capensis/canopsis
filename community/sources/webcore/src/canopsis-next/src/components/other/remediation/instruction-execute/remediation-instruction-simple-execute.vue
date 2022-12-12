@@ -8,16 +8,16 @@
       template(v-if="isJobsFinished")
         v-icon(:color="statusIcon.color") {{ statusIcon.name }}
         span.ml-2 {{ statusIcon.text }}
-    remediation-instruction-execute-simple-jobs-list(:jobs="jobs")
+    remediation-instruction-execute-jobs-table(:jobs="jobs")
 </template>
 
 <script>
 import { isJobExecutionSucceeded, isJobFinished } from '@/helpers/forms/remediation-job';
 
-import RemediationInstructionExecuteSimpleJobsList from './remediation-instruction-execute-simple-jobs-list.vue';
+import RemediationInstructionExecuteJobsTable from './remediation-instruction-assigned-jobs-table.vue';
 
 export default {
-  components: { RemediationInstructionExecuteSimpleJobsList },
+  components: { RemediationInstructionExecuteJobsTable },
   props: {
     jobs: {
       type: Array,

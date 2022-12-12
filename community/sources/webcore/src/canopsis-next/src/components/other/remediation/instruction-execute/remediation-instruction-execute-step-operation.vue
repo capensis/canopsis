@@ -25,12 +25,15 @@
             :label="$t('common.description')",
             hide-details
           )
-          remediation-instruction-execute-assigned-jobs-table.mt-4(
-            v-if="operation.jobs.length",
-            :jobs="operation.jobs",
-            @execute-job="executeJob",
-            @cancel-job-execution="cancelJobExecution"
-          )
+          v-layout.mt-4(row)
+            span.subheading {{ $t('remediationInstructionExecute.jobs.title') }}
+          v-layout(column)
+            remediation-instruction-execute-assigned-jobs-table.mt-4(
+              v-if="operation.jobs.length",
+              :jobs="operation.jobs",
+              @execute-job="executeJob",
+              @cancel-job-execution="cancelJobExecution"
+            )
           v-layout.mb-2(row, justify-end)
             v-btn.accent(
               :disabled="isFirstOperation && isFirstStep",

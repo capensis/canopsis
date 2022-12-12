@@ -3,12 +3,15 @@
     td.pa-0
       v-layout(row, align-center)
         v-btn.primary(
+          v-if="hasExecuteJobListener",
           :disabled="isRunningJob || isFailedJob",
           round,
           small,
           block,
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
+        span.body-1(v-else) {{ job.name }}
+
         v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!hasStatusMessage", max-width="400", right)
           v-btn.mr-1(
             slot="activator",
@@ -30,12 +33,15 @@
             @click="$emit('cancel-job-execution', job)"
           ) {{ $t('common.cancel') }}
           span {{ queueNumberTooltip }}
-    progress-cell.text-xs-center(:pending="isRunningJob && !job.started_at")
-      span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
-    progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
-      span {{ job.launched_at | date('long', '-') }}
-    progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
-      span {{ job.completed_at | date('long', '-') }}
+    td(v-if="rowMessage", colspan="3")
+      div.error--text.text-xs-center {{ rowMessage }}
+    template(v-else)
+      progress-cell.text-xs-center(:pending="isRunningJob && !job.started_at")
+        span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}
+      progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
+        span {{ job.launched_at | date('long', '-') }}
+      progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
+        span {{ job.completed_at | date('long', '-') }}
 </template>
 
 <script>
@@ -65,6 +71,10 @@ export default {
     };
   },
   computed: {
+    hasExecuteJobListener() {
+      return this.$listeners?.['execute-job'];
+    },
+
     isRunningJob() {
       return isJobExecutionRunning(this.job);
     },
@@ -121,6 +131,21 @@ export default {
         number: this.job.queue_number,
         name: this.job.name,
       });
+    },
+
+    rowMessage() {
+      if (this.job.queue_number > 0) {
+        return this.$t('remediationInstructionExecute.queueNumber', {
+          number: this.job.queue_number,
+          name: this.job.name,
+        });
+      }
+
+      if (this.isCancelledJob) {
+        return this.$t('remediationInstructionExecute.jobs.stopped');
+      }
+
+      return '';
     },
   },
   methods: {
