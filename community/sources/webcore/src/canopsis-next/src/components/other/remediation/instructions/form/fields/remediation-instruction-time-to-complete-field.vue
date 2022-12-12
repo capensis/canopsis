@@ -3,7 +3,7 @@
     v-flex(xs8)
       c-number-field(
         v-field="duration.value",
-        :label="$t('remediationInstructions.timeToComplete')",
+        :label="$t('remediation.instruction.timeToComplete')",
         :name="durationFieldName",
         :disabled="disabled",
         :min="min",

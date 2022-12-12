@@ -10,7 +10,7 @@
           v-tooltip(v-if="filter.old_mongo_query", top)
             template(#activator="{ on, attrs }")
               v-icon.cursor-pointer.mr-2(v-on="on", v-bind="attrs", color="grey") error_outline
-            span {{ $t('filter.oldPattern') }}
+            span {{ $t('pattern.oldPatternFormat') }}
           c-action-btn(type="edit", @click="$emit('edit')")
           c-action-btn(type="delete", @click="$emit('delete')")
 </template>
