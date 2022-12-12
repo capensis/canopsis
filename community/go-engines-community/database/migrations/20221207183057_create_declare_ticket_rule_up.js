@@ -40,7 +40,7 @@ db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
         }
     });
 
-    if (Object.keys(set) > 0) {
+    if (Object.keys(set).length > 0) {
         var update = {};
         update["$set"] = set;
         update["$unset"] = unset;
@@ -70,7 +70,7 @@ db.eventfilter.find({type: "enrichment", external_data: {$ne: null}}).forEach(fu
         }
     });
 
-    if (Object.keys(set) > 0) {
+    if (Object.keys(set).length > 0) {
         var update = {};
         update["$set"] = set;
         update["$unset"] = unset;
