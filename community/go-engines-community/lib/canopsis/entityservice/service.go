@@ -10,8 +10,10 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -47,6 +49,8 @@ type service struct {
 	lockClient      libredis.LockClient
 	redisClient     redis.Cmdable
 	logger          zerolog.Logger
+
+	templateExecutor *template.Executor
 }
 
 // NewService gives the correct service adapter.
@@ -61,6 +65,7 @@ func NewService(
 	storage Storage,
 	lockClient libredis.LockClient,
 	redisClient redis.Cmdable,
+	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
 ) Service {
 	service := service{
@@ -76,6 +81,8 @@ func NewService(
 		lockClient:      lockClient,
 		redisClient:     redisClient,
 		logger:          logger,
+
+		templateExecutor: template.NewExecutor(timezoneConfigProvider),
 	}
 	return &service
 }
@@ -117,7 +124,11 @@ func (s *service) updateServiceState(
 	}
 
 	counters.Depends = count
-	output, err := GetServiceOutput(serviceOutput, counters)
+	counters.UnderPbehavior = 0
+	for _, c := range counters.PbehaviorCounters {
+		counters.UnderPbehavior += c
+	}
+	output, err := s.templateExecutor.Execute(serviceOutput, counters)
 	if err != nil {
 		return err
 	}
