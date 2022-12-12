@@ -11,12 +11,13 @@
     )
     v-layout(row)
       v-tooltip(top)
-        v-checkbox(
-          slot="activator",
-          v-field="form.ack_resources",
-          :label="$t('modals.createAckEvent.fields.ackResources')",
-          color="primary"
-        )
+        template(#activator="{ on }")
+          v-checkbox(
+            v-on="on",
+            v-field="form.ack_resources",
+            :label="$t('modals.createAckEvent.fields.ackResources')",
+            color="primary"
+          )
         span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
 </template>
 

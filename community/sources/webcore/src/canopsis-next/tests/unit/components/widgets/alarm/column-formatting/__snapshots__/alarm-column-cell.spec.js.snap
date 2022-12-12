@@ -58,41 +58,16 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column status 1`] 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with invalid html 1`] = `<div />`;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 1`] = `
-<div
-  class="v-menu v-menu--inline"
->
-  <div
-    class="v-menu__activator v-menu__activator--active"
-  >
-    <div>
-      <div
-        class="layout align-center"
-      >
-        <c-ellipsis-stub
-          text="Name"
-        />
-        <button
-          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              info
-            </i>
-          </div>
-        </button>
-      </div>
-    </div>
-  </div>
-  <transition-stub
-    name="v-menu-transition"
-  />
+<div class="v-menu__content theme--light menuable__content__active " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;">
+  <alarm-column-cell-popup-body-stub alarm="[object Object]" template="template"></alarm-column-cell-popup-body-stub>
+</div>
+<div class="layout d-inline-flex align-center">
+  <c-ellipsis-stub text="Name"></c-ellipsis-stub><button type="button" class="ma-0 v-btn v-btn--icon v-btn--small theme--light">
+    <div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">info</i></div>
+  </button>
+</div>
+<div class="v-menu">
+  <transition-stub name="v-menu-transition"></transition-stub>
 </div>
 `;
 
@@ -110,37 +85,8 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 2`] = `
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 1`] = `
 <div
-  class="v-menu v-menu--inline"
+  class="v-menu"
 >
-  <div
-    class="v-menu__activator"
-  >
-    <div>
-      <div
-        class="layout align-center"
-      >
-        <c-ellipsis-stub
-          text="Name"
-        />
-        <button
-          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              info
-            </i>
-          </div>
-        </button>
-      </div>
-    </div>
-  </div>
   <transition-stub
     name="v-menu-transition"
   />
@@ -161,39 +107,8 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups and html 1`] = `
 <div
-  class="v-menu v-menu--inline"
+  class="v-menu"
 >
-  <div
-    class="v-menu__activator v-menu__activator--active"
-  >
-    <div>
-      <div
-        class="layout align-center"
-      >
-        <div>
-          <div>
-            Name
-          </div>
-        </div>
-        <button
-          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              info
-            </i>
-          </div>
-        </button>
-      </div>
-    </div>
-  </div>
   <transition-stub
     name="v-menu-transition"
   />

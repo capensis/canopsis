@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-tooltip.c-extra-details(top)
-    template(#activator="{ on, attrs }")
-      v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", v-bind="attrs", small) {{ icon }}
+  v-tooltip(top)
+    template(#activator="{ on }")
+      v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", small) {{ icon }}
     div.text-md-center
       strong {{ $t('alarm.actions.iconsTitles.grouping') }}
       v-layout(column)

@@ -1,16 +1,16 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ config.title }}
-      template(slot="text")
+      template(#text="")
         v-alert(:value="true", color="warning", icon="info")
           span.pre-line(v-html="config.text")
         div.my-3
           p.mb-2 {{ config.phraseText }}
           pre.grey.lighten-2.d-inline.pa-1 {{ originalPhrase }}
         v-text-field.mt-2(v-model="phrase", :label="$t('modals.confirmationPhrase.phrase')")
-      template(slot="actions")
+      template(#actions="")
         v-btn(@click="$modals.hide", flat) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",

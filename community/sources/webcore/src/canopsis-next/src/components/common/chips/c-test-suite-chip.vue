@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.test-suite-chip.white--text(:style="{ background: color }")
+  div.test-suite-chip.white--text(v-on="$listeners", :style="{ background: color }")
     slot {{ $t(`testSuite.statuses.${value}`) }}
 </template>
 

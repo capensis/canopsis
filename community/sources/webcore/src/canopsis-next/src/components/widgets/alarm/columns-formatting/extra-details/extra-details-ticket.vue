@@ -1,14 +1,14 @@
 <template lang="pug">
-  div
-    v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.blue.white--text(slot="activator", small) {{ icon }}
-      div.text-md-center
-        strong {{ $t('alarm.actions.iconsTitles.declareTicket') }}
-        div {{ $t('common.by') }} : {{ ticket.a }}
-        div {{ $t('common.date') }} : {{ date }}
-        div(
-          v-if="ticket.val"
-        ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.val }}
+  v-tooltip(top)
+    template(#activator="{ on }")
+      v-icon.blue.white--text.c-extra-details__badge(v-on="on", small) {{ icon }}
+    div.text-md-center
+      strong {{ $t('alarm.actions.iconsTitles.declareTicket') }}
+      div {{ $t('common.by') }} : {{ ticket.a }}
+      div {{ $t('common.date') }} : {{ date }}
+      div(
+        v-if="ticket.val"
+      ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.val }}
 </template>
 
 <script>
