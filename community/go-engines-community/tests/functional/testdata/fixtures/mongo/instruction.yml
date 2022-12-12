@@ -58,6 +58,7 @@ template:
     _id: <UUID()>,
     type: 1,
     name: <UniqueName()>,
+    triggers: ["create"],
     enabled: true,
     description: <LoremIpsumSentence(3)>,
     author: root,
@@ -566,93 +567,6 @@ instruction:
     <<: *instruction_manual
     _id: test-instruction-execution-running
 
-  instruction_to_cancel_execution_running:
-    <<: *instruction_manual
-    _id: test-instruction-cancel-execution-running-1
-
-  instruction_to_cancel_execution_running_2_1:
-    <<: *instruction_manual
-    _id: test-instruction-to-update-w-approval-should-cancel-execution
-    steps:
-      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
-        endpoint: test-instruction-to-update-w-approval-should-cancel-execution-step-1-endpoint
-        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
-        operations:
-          - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
-            description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
-            jobs: [ ]
-            name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 1
-        stop_on_fail: true
-
-  instruction_to_cancel_execution_running_2_2:
-    <<: *instruction_manual
-    _id: test-instruction-to-update-w-approval-should-cancel-execution-updated
-    approval:
-      comment: test
-      requested_by: root
-      user: approveruser
-    name: test-instruction-to-update-w-approval-should-cancel-execution-name
-    original_id: test-instruction-to-update-w-approval-should-cancel-execution
-    status: 2
-    steps:
-      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
-        endpoint: new endpoint
-        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
-        operations:
-          - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
-            description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
-            jobs: [ ]
-            name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 1
-        stop_on_fail: true
-
-  instruction_to_delete_execution_running:
-    <<: *instruction_manual
-    _id: test-instruction-delete-execution-running
-
-  instruction_to_execution_resume:
-    <<: *instruction_manual
-    _id: test-instruction-execution-resume-1
-    description: test-instruction-execution-resume-1-description
-    name: test-instruction-execution-resume-1-name
-    steps:
-      - _id: test-instruction-execution-resume-1-step-1
-        endpoint: test-instruction-execution-resume-1-step-1-endpoint
-        name: test-instruction-execution-resume-1-step-1-name
-        operations:
-          - _id: test-instruction-execution-resume-1-step-1-operation-1
-            description: test-instruction-execution-resume-1-step-1-operation-1-description
-            jobs: [ ]
-            name: test-instruction-execution-resume-1-step-1-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 1
-          - _id: test-instruction-execution-resume-1-step-1-operation-2
-            description: test-instruction-execution-resume-1-step-1-operation-2-description
-            jobs: [ ]
-            name: test-instruction-execution-resume-1-step-1-operation-2-name
-            time_to_complete:
-              unit: s
-              value: 3
-        stop_on_fail: true
-      - _id: test-instruction-execution-resume-1-step-2
-        endpoint: test-instruction-execution-resume-1-step-2-endpoint
-        name: test-instruction-execution-resume-1-step-2-name
-        operations:
-          - _id: test-instruction-execution-resume-1-step-2-operation-1
-            description: test-instruction-execution-resume-1-step-2-operation-1-description
-            jobs: [ ]
-            name: test-instruction-execution-resume-1-step-2-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 6
-        stop_on_fail: true
-
   instruction_to_rate_1:
     <<: *instruction_manual
     _id: test-instruction-to-rate-1
@@ -732,6 +646,24 @@ instruction:
         stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-1-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_1_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-1-3
+    description: test-instruction-to-run-auto-instruction-1-3-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-1
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-1-3-name
     timeout_after_execution:
       unit: s
       value: 2
