@@ -19,6 +19,12 @@ import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 import { enabledToForm } from './shared/common';
 
 /**
+ * @typedef {
+ *   'stateinc' | 'statedec' | 'pbhenter' | 'pbhleave' | 'activate' | 'unsnooze'
+ * } RemediationInstructionAutoTrigger
+ */
+
+/**
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} operation_id
  * @property {string} name
@@ -86,6 +92,7 @@ import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} RemediationInstructionAuto
+ * @property {RemediationInstructionAutoTrigger[]} triggers
  * @property {number} [priority]
  * @property {RemediationInstructionJob[]} [jobs]
  */
@@ -229,25 +236,35 @@ const remediationInstructionJobsToForm = (jobs = [undefined]) => jobs.map(remedi
  * @param {RemediationInstruction} remediationInstruction
  * @returns {RemediationInstructionForm}
  */
-export const remediationInstructionToForm = (remediationInstruction = {}) => ({
-  name: remediationInstruction.name || '',
-  priority: remediationInstruction.priority || 0,
-  type: !isUndefined(remediationInstruction.type) ? remediationInstruction.type : REMEDIATION_INSTRUCTION_TYPES.manual,
-  enabled: enabledToForm(remediationInstruction.enabled),
-  timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
-  active_on_pbh: remediationInstruction.active_on_pbh
-    ? cloneDeep(remediationInstruction.active_on_pbh)
-    : [],
-  disabled_on_pbh: remediationInstruction.disabled_on_pbh
-    ? cloneDeep(remediationInstruction.disabled_on_pbh)
-    : [],
-  alarm_pattern: remediationInstruction.alarm_pattern,
-  entity_pattern: remediationInstruction.entity_pattern,
-  description: remediationInstruction.description || '',
-  steps: remediationInstructionStepsToForm(remediationInstruction.steps),
-  approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
-  jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
-});
+export const remediationInstructionToForm = (remediationInstruction = {}) => {
+  const form = {
+    name: remediationInstruction.name || '',
+    priority: remediationInstruction.priority || 0,
+    type: !isUndefined(remediationInstruction.type)
+      ? remediationInstruction.type
+      : REMEDIATION_INSTRUCTION_TYPES.manual,
+    enabled: enabledToForm(remediationInstruction.enabled),
+    timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
+    active_on_pbh: remediationInstruction.active_on_pbh
+      ? cloneDeep(remediationInstruction.active_on_pbh)
+      : [],
+    disabled_on_pbh: remediationInstruction.disabled_on_pbh
+      ? cloneDeep(remediationInstruction.disabled_on_pbh)
+      : [],
+    alarm_pattern: remediationInstruction.alarm_pattern,
+    entity_pattern: remediationInstruction.entity_pattern,
+    description: remediationInstruction.description || '',
+    steps: remediationInstructionStepsToForm(remediationInstruction.steps),
+    approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
+    jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
+  };
+
+  if (remediationInstruction.triggers) {
+    form.triggers = [...remediationInstruction.triggers];
+  }
+
+  return form;
+};
 
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
@@ -315,7 +332,7 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  */
 export const formToRemediationInstruction = (form) => {
   const {
-    steps, jobs, priority, ...instruction
+    steps, jobs, priority, triggers, ...instruction
   } = form;
 
   if (isInstructionManual(form)) {
@@ -325,6 +342,7 @@ export const formToRemediationInstruction = (form) => {
 
     if (isInstructionAuto(form)) {
       instruction.priority = priority;
+      instruction.triggers = triggers;
     }
   }
 

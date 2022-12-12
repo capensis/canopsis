@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { get, pickBy, compact } from 'lodash';
+import { get, pickBy, compact, find } from 'lodash';
 
 import {
   MODALS,
@@ -11,6 +11,7 @@ import {
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -220,18 +221,30 @@ export default {
        * Add actions for available instructions
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
-        const pausedInstruction = this.item.assigned_instructions.find(instruction => instruction.execution);
+        const pausedInstructions = assignedInstructions.filter(instruction => instruction.execution);
         const hasRunningInstruction = isInstructionExecutionIconInProgress(this.item.instruction_execution_icon);
 
         assignedInstructions.forEach((instruction) => {
           const { execution } = instruction;
-          const titlePrefix = execution ? 'resume' : 'execute';
+          let titlePrefix = 'execute';
+          let cssClass = '';
+
+          if (execution) {
+            if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running) {
+              titlePrefix = 'inProgress';
+              cssClass = 'font-italic';
+            } else {
+              titlePrefix = 'resume';
+            }
+          }
 
           const action = {
             ...filteredActionsMap.executeInstruction,
 
-            disabled: hasRunningInstruction || (pausedInstruction && pausedInstruction._id !== instruction._id),
-            title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
+            cssClass,
+            disabled: hasRunningInstruction
+              || (Boolean(pausedInstructions.length) && !find(pausedInstructions, { _id: instruction._id })),
+            title: this.$t(`remediationInstructions.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
             method: () => filteredActionsMap.executeInstruction.method(instruction),
