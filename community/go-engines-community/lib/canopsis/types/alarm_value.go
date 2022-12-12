@@ -317,7 +317,6 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 type AlarmValue struct {
 	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
 	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
