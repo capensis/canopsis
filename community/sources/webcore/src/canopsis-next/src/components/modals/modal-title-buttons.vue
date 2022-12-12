@@ -8,13 +8,14 @@
         :disabled="!hasMinimizedModal",
         left
       )
-        v-btn.v-btn--minimize.my-0(
-          slot="activator",
-          :disabled="hasMinimizedModal",
-          icon,
-          @click="$modals.minimize({ id: $modal.id })"
-        )
-          v-icon(color="white", large) minimize
+        template(#activator="{ on }")
+          v-btn.v-btn--minimize.my-0(
+            v-on="on",
+            :disabled="hasMinimizedModal",
+            icon,
+            @click="$modals.minimize({ id: $modal.id })"
+          )
+            v-icon(color="white", large) minimize
         span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
       v-btn.my-0(
         v-else,

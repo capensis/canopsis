@@ -12,25 +12,25 @@
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar", slot-scope="props")
-      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && props.selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', props.selected)", icon)
+    template(#toolbar="{ selected }")
+      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selected.length", xs4)
+        v-btn(@click="$emit('remove-selected', selected)", icon)
           v-icon delete
-    template(slot="actions", slot-scope="props")
+    template(#actions="{ item }")
       c-action-btn(
         v-if="hasUpdateAnyPbehaviorExceptionAccess",
         type="edit",
-        @click="$emit('edit', props.item)"
+        @click="$emit('edit', item)"
       )
       c-action-btn(
         v-if="hasDeleteAnyPbehaviorExceptionAccess",
-        :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')",
-        :disabled="!props.item.deletable",
+        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')",
+        :disabled="!item.deletable",
         type="delete",
-        @click="$emit('remove', props.item._id)"
+        @click="$emit('remove', item._id)"
       )
-    template(slot="expand", slot-scope="props")
-      pbehavior-exceptions-list-expand-panel(:pbehaviorException="props.item")
+    template(#expand="{ item }")
+      pbehavior-exceptions-list-expand-panel(:pbehavior-exception="item")
 </template>
 
 <script>

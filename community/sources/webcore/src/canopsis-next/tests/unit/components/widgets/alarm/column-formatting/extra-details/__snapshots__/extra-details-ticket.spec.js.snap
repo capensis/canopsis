@@ -1,134 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in previous month 1`] = `
-<div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
-  >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
-    <span>
-      <i
-        aria-hidden="true"
-        class="v-icon c-extra-details__badge blue white--text material-icons theme--light"
-        style="font-size: 16px;"
-      >
-        report_problem
-      </i>
-    </span>
-  </span>
-</div>
-`;
-
-exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in previous month 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Declare ticket
-    </strong>
-    <div>
-      By : ticket-author
-    </div>
-    <div>
-      Date : 07/08/2013 19:00:00
-    </div>
-    <div>
-      Ticket number : ticket-message
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Declare ticket</strong>
+    <div>By : ticket-author</div>
+    <div>Date : 07/08/2013 19:00:00</div>
+    <div>Ticket number : ticket-message</div>
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 1`] = `
-<div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
-  >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
-    <span>
-      <i
-        aria-hidden="true"
-        class="v-icon c-extra-details__badge blue white--text material-icons theme--light"
-        style="font-size: 16px;"
-      >
-        report_problem
-      </i>
-    </span>
-  </span>
-</div>
-`;
-
-exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Declare ticket
-    </strong>
-    <div>
-      By : ticket-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
-    <div>
-      Ticket number : ticket-message
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Declare ticket</strong>
+    <div>By : ticket-author</div>
+    <div>Date : 6:00:00</div>
+    <div>Ticket number : ticket-message</div>
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 1`] = `
-<div>
-  <span
-    class="v-tooltip c-extra-details v-tooltip--top"
-  >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
-    <span>
-      <i
-        aria-hidden="true"
-        class="v-icon c-extra-details__badge blue white--text material-icons theme--light"
-        style="font-size: 16px;"
-      >
-        report_problem
-      </i>
-    </span>
-  </span>
-</div>
-`;
-
-exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div
-    class="text-md-center"
-  >
-    <strong>
-      Declare ticket
-    </strong>
-    <div>
-      By : ticket-author
-    </div>
-    <div>
-      Date : 6:00:00
-    </div>
+<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;">
+  <div class="text-md-center"><strong>Declare ticket</strong>
+    <div>By : ticket-author</div>
+    <div>Date : 6:00:00</div>
     <!---->
   </div>
-</div>
+</div><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
 `;

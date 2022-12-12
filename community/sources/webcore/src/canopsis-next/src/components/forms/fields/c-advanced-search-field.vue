@@ -1,8 +1,9 @@
 <template lang="pug">
   c-search-field(v-model="searchingText", @submit="submit", @clear="clear")
     v-tooltip(v-if="tooltip", bottom)
-      v-btn(slot="activator", icon)
-        v-icon help_outline
+      template(#activator="{ on }")
+        v-btn(v-on="on", icon)
+          v-icon help_outline
       div(v-html="tooltip")
 </template>
 

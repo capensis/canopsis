@@ -1,13 +1,13 @@
 <template lang="pug">
   c-action-btn(v-bind="$attrs", :tooltip="tooltip")
-    v-btn.mx-1(
-      slot="button",
-      v-clipboard:copy="value",
-      v-clipboard:success="onSuccessCopied",
-      v-clipboard:error="onErrorCopied",
-      icon
-    )
-      v-icon(:color="color") {{ icon }}
+    template(#button="")
+      v-btn.mx-1(
+        v-clipboard:copy="value",
+        v-clipboard:success="onSuccessCopied",
+        v-clipboard:error="onErrorCopied",
+        icon
+      )
+        v-icon(:color="color") {{ icon }}
 </template>
 
 <script>

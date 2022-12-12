@@ -9,24 +9,24 @@
     search,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="items", slot-scope="props")
+    template(#items="{ item }")
       tr
         td {{ $t(`broadcastMessage.statuses.${props.item.status}`) }}
         td.broadcast-message-cell
-          broadcast-message(:message="props.item.message", :color="props.item.color")
-        td {{ props.item.start | date }}
-        td {{ props.item.end | date }}
+          broadcast-message(:message="item.message", :color="item.color")
+        td {{ item.start | date }}
+        td {{ item.end | date }}
         td
           v-layout(row)
             c-action-btn(
               v-if="hasUpdateAnyBroadcastMessageAccess",
               type="edit",
-              @click="$emit('edit', props.item)"
+              @click="$emit('edit', item)"
             )
             c-action-btn(
               v-if="hasDeleteAnyBroadcastMessageAccess",
               type="delete",
-              @click="$emit('remove', props.item._id)"
+              @click="$emit('remove', item._id)"
             )
 </template>
 
