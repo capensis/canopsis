@@ -33,9 +33,9 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import TextEditorField from '@/components/common/text-editor/text-editor.vue';
-
 import ModalWrapper from '../modal-wrapper.vue';
+
+const TextEditorField = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
 export default {
   name: MODALS.textEditor,
