@@ -9,9 +9,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-yaml"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"gopkg.in/yaml.v3"
 )
 
 const exportFileName = "export_configurations.yml"
