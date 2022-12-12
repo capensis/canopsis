@@ -93,7 +93,7 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
-          this.setTheme(currentUser.ui_theme);
+          this.setTheme();
 
           await Promise.all([
             this.fetchAppInfo(),
