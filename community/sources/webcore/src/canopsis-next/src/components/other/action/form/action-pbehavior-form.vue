@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 export default {
   components: { PbehaviorForm },
