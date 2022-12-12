@@ -33,7 +33,7 @@ export const systemMixin = {
       });
     },
 
-    setTheme(name = THEMES_NAMES.canopsisDark) {
+    setTheme(name = THEMES_NAMES.canopsis) {
       if (THEMES[name]) {
         const { dark, colors } = THEMES[name];
 
