@@ -10,8 +10,8 @@
         :search="searchingText",
         item-key="name"
       )
-        template(slot="items", slot-scope="props")
-          td(v-for="column in headers", :key="column.value") {{ props.item | get(column.value) }}
+        template(#items="{ item }")
+          td(v-for="column in headers", :key="column.value") {{ item | get(column.value) }}
 </template>
 
 <script>

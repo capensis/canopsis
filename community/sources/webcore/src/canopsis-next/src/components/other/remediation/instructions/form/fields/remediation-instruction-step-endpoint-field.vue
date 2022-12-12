@@ -18,9 +18,8 @@
               :disabled="disabled",
               box
             )
-              v-tooltip(slot="append", left)
-                v-icon(slot="activator") help
-                span {{ $t('remediation.instruction.tooltips.endpoint') }}
+              template(#append="")
+                c-help-icon(:text="$t('remediation.instruction.tooltips.endpoint')", icon="help", left)
           v-flex(xs1)
 </template>
 

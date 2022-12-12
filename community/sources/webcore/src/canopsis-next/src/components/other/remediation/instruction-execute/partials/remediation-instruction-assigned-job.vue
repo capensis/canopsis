@@ -3,7 +3,8 @@
     td.pa-0
       v-layout(row, align-center)
         v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!hasStatusMessage", max-width="400", right)
-          v-icon.mr-1(slot="activator", :color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
+          template(#activator="{ on }")
+            v-icon.mr-1(v-on="on", :color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
           div(v-if="job.fail_reason")
             span {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
             span.pre-wrap(v-html="job.fail_reason")
@@ -18,13 +19,14 @@
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
         v-tooltip(v-show="isRunningJob && hasJobsInQueue", top)
-          v-btn.error.ml-2(
-            slot="activator",
-            round,
-            small,
-            block,
-            @click="$emit('cancel-job-execution', job)"
-          ) {{ $t('common.cancel') }}
+          template(#activator="{ on }")
+            v-btn.error.ml-2(
+              v-on="on",
+              round,
+              small,
+              block,
+              @click="$emit('cancel-job-execution', job)"
+            ) {{ $t('common.cancel') }}
           span {{ queueNumberTooltip }}
     td.text-xs-center
       span(v-if="!isCancelledJob") {{ job.started_at | date('long', '-') }}

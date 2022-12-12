@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { DATETIME_FORMATS } from '@/constants';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
@@ -18,20 +18,6 @@ const stubs = {
   'c-ellipsis': true,
 };
 
-const factory = (options = {}) => shallowMount(AlarmColumnCell, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmColumnCell, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectOpenButton = wrapper => wrapper.find('.v-btn');
 const selectEllipsis = wrapper => wrapper.find('c-ellipsis-stub');
 const selectAlarmColumnPopupBody = wrapper => wrapper.find('alarm-column-cell-popup-body-stub');
@@ -42,6 +28,17 @@ describe('alarm-column-cell', () => {
   const widget = {
     parameters: {},
   };
+
+  const factory = generateShallowRenderer(AlarmColumnCell, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(AlarmColumnCell, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
 
   it.each([
     'v.last_update_date',
@@ -365,6 +362,8 @@ describe('alarm-column-cell', () => {
       },
     });
 
+    await flushPromises();
+
     const openButton = selectOpenButton(wrapper);
 
     openButton.trigger('click');
@@ -373,7 +372,7 @@ describe('alarm-column-cell', () => {
 
     const menu = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
     expect(menu.element).toMatchSnapshot();
   });
 
@@ -394,6 +393,8 @@ describe('alarm-column-cell', () => {
         },
       },
     });
+
+    await flushPromises();
 
     const openButton = selectOpenButton(wrapper);
 

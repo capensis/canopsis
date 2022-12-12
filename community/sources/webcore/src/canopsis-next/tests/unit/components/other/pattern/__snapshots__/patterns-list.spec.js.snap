@@ -225,15 +225,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -275,15 +266,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -327,15 +309,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -377,15 +350,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -429,15 +393,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -479,15 +434,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -531,15 +477,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -581,15 +518,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -633,15 +561,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -684,15 +603,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -734,15 +644,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>
@@ -922,15 +823,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -969,15 +861,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -1018,15 +901,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -1065,15 +939,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -1114,15 +979,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -1161,15 +1017,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -1210,15 +1057,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -1257,15 +1095,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
           </tr>
           <tr>
             <td>
@@ -1306,15 +1135,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -1354,15 +1174,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
               </div>
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
           <tr>
             <td>
               <div
@@ -1401,15 +1212,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 />
               </div>
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>

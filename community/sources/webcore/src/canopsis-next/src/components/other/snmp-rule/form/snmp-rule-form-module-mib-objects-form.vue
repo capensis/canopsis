@@ -9,19 +9,20 @@
           full-width,
           offset-y
         )
-          v-text-field.vars-input.pt-0(
-            slot="activator",
-            v-field="form.value",
-            :label="$t('snmpRule.moduleMibObjects')",
-            hide-details
-          )
-            template(slot="append", v-if="large")
-              v-btn(
-                :class="{ active: isVisible }",
-                icon,
-                @click.stop="toggleVisibility"
-              )
-                v-icon attach_file
+          template(#activator="{ on }")
+            v-text-field.vars-input.pt-0(
+              v-on="on",
+              v-field="form.value",
+              :label="$t('snmpRule.moduleMibObjects')",
+              hide-details
+            )
+              template(v-if="large", #append="")
+                v-btn(
+                  :class="{ active: isVisible }",
+                  icon,
+                  @click.stop="toggleVisibility"
+                )
+                  v-icon attach_file
           v-list
             v-list-tile(
               v-for="(item, index) in items",

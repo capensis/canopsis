@@ -1,7 +1,8 @@
 <template lang="pug">
   v-menu(offset-y, @click.prevent.stop="")
-    v-btn(slot="activator", v-on="$listeners", depressed, small, light)
-      v-icon {{ icon }}
+    template(#activator="{ on }")
+      v-btn(v-on="on", depressed, small, light)
+        v-icon {{ icon }}
     v-list
       v-list-tile(
         v-for="assignedInstruction in assignedInstructions",

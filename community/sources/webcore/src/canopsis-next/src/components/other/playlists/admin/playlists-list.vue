@@ -11,22 +11,22 @@
     search,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="fullscreen", slot-scope="props")
-      c-enabled(:value="props.item.fullscreen")
-    template(slot="interval", slot-scope="props") {{ props.item.interval | duration }}
-    template(slot="enabled", slot-scope="props")
-      c-enabled(:value="props.item.enabled")
-    template(slot="actions", slot-scope="props")
+    template(#fullscreen="{ item }")
+      c-enabled(:value="item.fullscreen")
+    template(#interval="{ item }") {{ item.interval | duration }}
+    template(#enabled="{ item }")
+      c-enabled(:value="item.enabled")
+    template(#actions="{ item }")
       v-layout(row)
         c-action-btn(:tooltip="$t('common.play')")
-          v-btn.mx-1(
-            slot="button",
-            :to="getPlaylistRouteById(props.item._id, true)",
-            icon
-          )
-            v-icon play_arrow
+          template(#button="")
+            v-btn.mx-1(
+              :to="getPlaylistRouteById(item._id, true)",
+              icon
+            )
+              v-icon play_arrow
         c-copy-btn(
-          :value="getPlaylistRouteFullUrlById(props.item._id)",
+          :value="getPlaylistRouteFullUrlById(item._id)",
           :tooltip="$t('common.copyLink')",
           @success="onSuccessCopied",
           @error="onErrorCopied"
@@ -34,20 +34,20 @@
         c-action-btn(
           v-if="hasCreateAnyPlaylistAccess",
           type="duplicate",
-          @click="$emit('duplicate', props.item)"
+          @click="$emit('duplicate', item)"
         )
         c-action-btn(
           v-if="hasUpdateAnyPlaylistAccess",
           type="edit",
-          @click="$emit('edit', props.item)"
+          @click="$emit('edit', item)"
         )
         c-action-btn(
           v-if="hasDeleteAnyPlaylistAccess",
           type="delete",
-          @click="$emit('remove', props.item._id)"
+          @click="$emit('remove', item._id)"
         )
-    template(slot="expand", slot-scope="props")
-      playlist-list-expand-item(:playlist="props.item")
+    template(#expand="{ item }")
+      playlist-list-expand-item(:playlist="item")
 </template>
 
 <script>

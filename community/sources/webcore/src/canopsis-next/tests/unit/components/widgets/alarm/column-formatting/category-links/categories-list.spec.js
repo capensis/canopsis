@@ -1,4 +1,6 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
+
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 
 import CategoriesList from '@/components/widgets/alarm/columns-formatting/category-links/categories-list.vue';
 
@@ -8,24 +10,23 @@ const stubs = {
   'category-links': true,
 };
 
-const snapshotFactory = (options = {}) => mount(CategoriesList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const selectMenuContent = wrapper => wrapper.find('.v-menu__content');
-
 describe('categories-list', () => {
-  it('Renders `categories-list` with default props', () => {
-    const wrapper = snapshotFactory();
-
-    expect(wrapper.element).toMatchSnapshot();
+  const snapshotFactory = generateRenderer(CategoriesList, {
+    localVue,
+    stubs,
+    attachTo: document.body,
   });
 
-  it('Renders `categories-list` with custom props', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `categories-list` with default props', async () => {
+    snapshotFactory();
+
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
+  });
+
+  it('Renders `categories-list` with custom props', async () => {
+    snapshotFactory({
       propsData: {
         categories: [
           {
@@ -41,9 +42,8 @@ describe('categories-list', () => {
       },
     });
 
-    const menuContent = selectMenuContent(wrapper);
+    await flushPromises();
 
-    expect(menuContent.element).toMatchSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });
