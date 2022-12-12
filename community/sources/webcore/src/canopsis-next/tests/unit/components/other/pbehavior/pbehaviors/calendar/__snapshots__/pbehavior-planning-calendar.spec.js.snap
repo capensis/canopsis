@@ -10,111 +10,221 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     <div
       class="flex"
     >
+      <button
+        class="ds-skinny-button ds-calendar-app-action v-btn v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <span>
+            TODAY
+          </span>
+        </div>
+      </button>
       <span
         class="v-tooltip v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-skinny-button ds-calendar-app-action v-btn v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <span>
-                TODAY
-              </span>
-            </div>
-          </button>
-        </span>
       </span>
     </div>
     <div
       class="flex text-sm-center"
     >
+      <button
+        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_left
+          </i>
+        </div>
+      </button>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                keyboard_arrow_left
-              </i>
-            </div>
-          </button>
-        </span>
       </span>
       <span
-        class="subheading"
+        class="ds-calendar-app-period-picker"
       >
-        December 2013
+        <!---->
+        <div
+          class="v-input ds-calendar-app-period-picker__month v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-select__slot"
+              >
+                <div
+                  class="v-select__selections"
+                >
+                  <div
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    common.months.december
+                  </div>
+                  <input
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
+                  />
+                </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-input ds-calendar-app-period-picker__year v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-select__slot"
+              >
+                <div
+                  class="v-select__selections"
+                >
+                  <div
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    2013
+                  </div>
+                  <input
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
+                  />
+                </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </span>
+      <button
+        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_right
+          </i>
+        </div>
+      </button>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                keyboard_arrow_right
-              </i>
-            </div>
-          </button>
-        </span>
       </span>
     </div>
     <div
       class="flex text-sm-right"
     >
-      <div
-        class="v-menu v-menu--inline"
+      <button
+        class="ds-calendar-app-action v-btn v-btn--flat theme--light"
+        type="button"
       >
         <div
-          class="v-menu__activator"
+          class="v-btn__content"
         >
-          <button
-            class="ds-calendar-app-action v-btn v-btn--flat theme--light"
-            type="button"
+          Month
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
           >
-            <div
-              class="v-btn__content"
-            >
-              Month
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </button>
+            arrow_drop_down
+          </i>
         </div>
+      </button>
+      <div
+        class="v-menu"
+      >
         <transition-stub
           name="v-menu-transition"
         />
@@ -971,111 +1081,221 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     <div
       class="flex"
     >
+      <button
+        class="ds-skinny-button ds-calendar-app-action v-btn v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <span>
+            TODAY
+          </span>
+        </div>
+      </button>
       <span
         class="v-tooltip v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-skinny-button ds-calendar-app-action v-btn v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <span>
-                TODAY
-              </span>
-            </div>
-          </button>
-        </span>
       </span>
     </div>
     <div
       class="flex text-sm-center"
     >
+      <button
+        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_left
+          </i>
+        </div>
+      </button>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                keyboard_arrow_left
-              </i>
-            </div>
-          </button>
-        </span>
       </span>
       <span
-        class="subheading"
+        class="ds-calendar-app-period-picker"
       >
-        December 2013
+        <!---->
+        <div
+          class="v-input ds-calendar-app-period-picker__month v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-select__slot"
+              >
+                <div
+                  class="v-select__selections"
+                >
+                  <div
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    common.months.december
+                  </div>
+                  <input
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
+                  />
+                </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-input ds-calendar-app-period-picker__year v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-select__slot"
+              >
+                <div
+                  class="v-select__selections"
+                >
+                  <div
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    2013
+                  </div>
+                  <input
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
+                  />
+                </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </span>
+      <button
+        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_right
+          </i>
+        </div>
+      </button>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                keyboard_arrow_right
-              </i>
-            </div>
-          </button>
-        </span>
       </span>
     </div>
     <div
       class="flex text-sm-right"
     >
-      <div
-        class="v-menu v-menu--inline"
+      <button
+        class="ds-calendar-app-action v-btn v-btn--flat theme--light"
+        type="button"
       >
         <div
-          class="v-menu__activator"
+          class="v-btn__content"
         >
-          <button
-            class="ds-calendar-app-action v-btn v-btn--flat theme--light"
-            type="button"
+          Month
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
           >
-            <div
-              class="v-btn__content"
-            >
-              Month
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                arrow_drop_down
-              </i>
-            </div>
-          </button>
+            arrow_drop_down
+          </i>
         </div>
+      </button>
+      <div
+        class="v-menu"
+      >
         <transition-stub
           name="v-menu-transition"
         />
