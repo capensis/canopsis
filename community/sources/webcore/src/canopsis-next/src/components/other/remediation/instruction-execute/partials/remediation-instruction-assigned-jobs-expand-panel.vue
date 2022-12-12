@@ -1,6 +1,6 @@
 <template lang="pug">
   v-sheet.px-3.py-2(color="grey lighten-3")
-    div {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
+    div(v-if="isFailedJob") {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
       span.pre-wrap(v-html="job.fail_reason")
     div {{ $t('remediationInstructionExecute.jobs.output') }}:&nbsp;
       span.pre-line(v-html="output")
@@ -8,8 +8,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-
-import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/forms/remediation-job';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
 
@@ -28,26 +26,6 @@ export default {
 
     output() {
       return this.getOutputById(this.job._id);
-    },
-
-    isRunningJob() {
-      return isJobExecutionRunning(this.job);
-    },
-
-    isCancelledJob() {
-      return isJobExecutionCancelled(this.job);
-    },
-
-    isStartedJob() {
-      return !!this.job.started_at;
-    },
-
-    isLaunchedJob() {
-      return !!this.job.launched_at;
-    },
-
-    isCompletedJob() {
-      return !!this.job.completed_at;
     },
 
     isFailedJob() {
