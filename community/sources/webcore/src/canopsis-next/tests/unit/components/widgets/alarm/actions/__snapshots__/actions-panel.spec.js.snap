@@ -64,13 +64,19 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
-    Resume Running instruction|assignment|executeInstruction
+    Running instruction in progress...|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;
@@ -147,13 +153,19 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
-    Resume Running instruction|assignment|executeInstruction
+    Running instruction in progress...|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;
@@ -222,13 +234,19 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
-    Resume Running instruction|assignment|executeInstruction
+    Running instruction in progress...|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;
@@ -388,13 +406,18 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="drop-down-action-executeInstruction"
   >
-    Resume Running instruction|assignment|executeInstruction
+    Running instruction in progress...|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;
@@ -447,13 +470,18 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
   <button
     class="drop-down-action-executeInstruction"
   >
-    Resume Running instruction|assignment|executeInstruction
+    Running instruction in progress...|assignment|executeInstruction
   </button>
   <button
     class="drop-down-action-executeInstruction"
     disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    Resume Paused instruction|assignment|executeInstruction
   </button>
 </div>
 `;

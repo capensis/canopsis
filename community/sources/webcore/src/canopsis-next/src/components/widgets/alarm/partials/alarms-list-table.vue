@@ -2,9 +2,35 @@
   v-flex.white(v-resize="changeHeaderPositionOnResize")
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
+      v-layout.alarms-list-table__top-pagination.px-4.position-relative(
+        v-if="totalItems && (densable || !hideActions || !hidePagination)",
+        row,
+        align-center
+      )
+        v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
+          v-layout(row, align-center, justify-start)
+            c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
+            v-fade-transition
+              v-flex.px-1(v-show="unresolvedSelected.length")
+                mass-actions-panel(
+                  v-if="!hideActions",
+                  :items="unresolvedSelected",
+                  :widget="widget",
+                  :refresh-alarms-list="refreshAlarmsList",
+                  @clear:items="clearSelected"
+                )
+        v-flex.alarms-list-table__top-pagination--center-absolute(xs4)
+          c-pagination(
+            v-if="!hidePagination",
+            :page="pagination.page",
+            :limit="pagination.limit",
+            :total="totalItems",
+            type="top",
+            @input="updateQueryPage"
+          )
       v-data-table.alarms-list-table(
         ref="dataTable",
-        v-field="selected",
+        v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
         :headers="headers",
@@ -53,7 +79,14 @@
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
-    slot
+    c-table-pagination(
+      v-if="!hidePagination",
+      :total-items="totalItems",
+      :rows-per-page="pagination.limit",
+      :page="pagination.page",
+      @update:page="updateQueryPage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
     component(
       v-bind="additionalComponent.props",
       v-on="additionalComponent.on",
@@ -65,12 +98,16 @@
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
+import { isResolvedAlarm } from '@/helpers/entities';
+
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
+import MassActionsPanel from '../actions/mass-actions-panel.vue';
+
 import AlarmsListRow from './alarms-list-row.vue';
 
 /**
@@ -80,6 +117,7 @@ import AlarmsListRow from './alarms-list-row.vue';
    */
 export default {
   components: {
+    MassActionsPanel,
     AlarmHeaderCell,
     AlarmsExpandPanel,
     AlarmsListRow,
@@ -91,15 +129,7 @@ export default {
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
-  model: {
-    prop: 'selected',
-    event: 'input',
-  },
   props: {
-    selected: {
-      type: Array,
-      default: () => [],
-    },
     widget: {
       type: Object,
       required: true,
@@ -118,7 +148,7 @@ export default {
     },
     pagination: {
       type: Object,
-      required: false,
+      default: () => ({}),
     },
     isTourEnabled: {
       type: Boolean,
@@ -164,6 +194,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    hidePagination: {
+      type: Boolean,
+      default: false,
+    },
+    densable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const data = featuresService.has('components.alarmListTable.data')
@@ -173,6 +211,7 @@ export default {
     return {
       selecting: false,
       columnsFilters: [],
+      selected: [],
       columnsFiltersPending: false,
 
       ...data,
@@ -180,6 +219,10 @@ export default {
   },
 
   computed: {
+    unresolvedSelected() {
+      return this.selected.filter(item => !isResolvedAlarm(item));
+    },
+
     hasColumns() {
       return this.columns.length > 0;
     },
@@ -277,8 +320,10 @@ export default {
       window.addEventListener('scroll', this.changeHeaderPosition);
     }
 
-    window.addEventListener('keydown', this.enableSelecting);
-    window.addEventListener('keyup', this.disableSelecting);
+    if (this.selectable) {
+      window.addEventListener('keydown', this.enableSelecting);
+      window.addEventListener('keyup', this.disableSelecting);
+    }
 
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
@@ -300,6 +345,18 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    clearSelected() {
+      this.selected = [];
+    },
+
+    updateRecordsPerPage(limit) {
+      this.$emit('update:rows-per-page', limit);
+    },
+
+    updateQueryPage(page) {
+      this.$emit('update:page', page);
+    },
 
     enableSelecting({ key }) {
       if (key === 'Control') {
@@ -406,6 +463,21 @@ export default {
 
 <style lang="scss">
   .alarms-list-table {
+    &__top-pagination {
+      position: relative;
+      min-height: 48px;
+
+      &--left {
+        padding-right: 80px;
+      }
+
+      &--center-absolute {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+    }
+
     .alarm-list-row {
       position: relative;
 
@@ -423,7 +495,7 @@ export default {
       }
     }
 
-    &__selecting .alarm-list-row {
+    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row {
       user-select: none;
 
       &:after{

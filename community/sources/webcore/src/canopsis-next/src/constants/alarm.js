@@ -230,7 +230,7 @@ export const ALARM_PATTERN_FIELDS = {
   lastComment: 'v.last_comment.m',
   longOutput: 'v.long_output',
   initialOutput: 'v.initial_output',
-  longInitialOutput: 'v.long_initial_output',
+  initialLongOutput: 'v.initial_long_output',
   tags: 'tags',
   activated: 'activated',
 };
