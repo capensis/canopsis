@@ -6,9 +6,13 @@ Summary: Canopsis
 License: ASL 2.0
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
 
-BuildRequires: make >= 3.81, gcc, nodejs = 2:14.18.3, yarn, systemd-rpm-macros
+BuildRequires: make >= 3.81, gcc, nodejs = 2:14.18.3, yarn
 
 Conflicts: canopsis-pro
+
+Prefix: /usr
+Prefix: /etc
+Prefix: /opt
 
 %description
 Canopsis Community RPM Package
