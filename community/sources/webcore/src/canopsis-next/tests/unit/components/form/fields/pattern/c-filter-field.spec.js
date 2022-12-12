@@ -125,7 +125,7 @@ describe('c-filter-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-filter-field` with default custom props', () => {
+  it('Renders `c-filter-field` with custom props', () => {
     filtersGetter.mockReturnValueOnce(filters);
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([filterModule]),

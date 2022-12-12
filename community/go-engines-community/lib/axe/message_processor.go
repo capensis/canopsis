@@ -126,14 +126,22 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 }
 
 func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Event, msg []byte) error {
-	if p.RemediationRpcClient == nil {
+	if p.RemediationRpcClient == nil || event.Alarm == nil || event.Entity == nil || event.AlarmChange == nil {
 		return nil
 	}
 
 	switch event.AlarmChange.Type {
-	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter,
-		types.AlarmChangeTypeResolve, types.AlarmChangeTypeStateDecrease,
-		types.AlarmChangeTypeChangeState:
+	case types.AlarmChangeTypeCreate,
+		types.AlarmChangeTypeCreateAndPbhEnter,
+		types.AlarmChangeTypeStateIncrease,
+		types.AlarmChangeTypeStateDecrease,
+		types.AlarmChangeTypeChangeState,
+		types.AlarmChangeTypeUnsnooze,
+		types.AlarmChangeTypeActivate,
+		types.AlarmChangeTypePbhEnter,
+		types.AlarmChangeTypePbhLeave,
+		types.AlarmChangeTypePbhLeaveAndEnter,
+		types.AlarmChangeTypeResolve:
 	default:
 		return nil
 	}

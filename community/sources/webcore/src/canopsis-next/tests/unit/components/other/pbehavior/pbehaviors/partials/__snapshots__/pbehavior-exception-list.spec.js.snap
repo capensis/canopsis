@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-exception-list Renders \`pbehavior-exception-list\` with exceptions 1`] = `
+<div
+  class="v-data-iterator theme--light"
+>
+  <div>
+    <div
+      class="flex"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__title"
+        >
+          exception-0
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__title"
+        >
+          exception-1
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__title"
+        >
+          exception-2
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__title"
+        >
+          exception-3
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <div
+        class="v-card v-sheet theme--light"
+      >
+        <div
+          class="v-card__title"
+        >
+          exception-4
+        </div>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehavior-exception-list Renders \`pbehavior-exception-list\` without exceptions 1`] = `
+<div
+  class="v-data-iterator theme--light"
+>
+  <div>
+    <div
+      class="text-xs-center"
+      style="width: 100%;"
+    >
+      <div
+        class="flex"
+      >
+        <div
+          class="v-card v-sheet theme--light"
+        >
+          <div
+            class="v-card__title"
+          >
+            No data
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

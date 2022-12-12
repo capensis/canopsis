@@ -1,6 +1,7 @@
 package pbehaviorcomment
 
 import (
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -42,6 +43,11 @@ func (a *api) Create(c *gin.Context) {
 	model := a.transformer.TransformRequestToModel(&request)
 	ok, err := a.store.Insert(c.Request.Context(), request.Pbehavior, model)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
@@ -56,6 +62,11 @@ func (a *api) Create(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
 	}
 
