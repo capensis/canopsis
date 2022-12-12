@@ -119,7 +119,7 @@ Ainsi, `{{ .Alarm.Value.ACK.Message | json }}` va renvoyer la chaîne `"ACK by s
 
 `split` va diviser une chaîne de caractères en plusieurs sous-chaînes selon un séparateur et retourner une de ces sous-chaînes à partir d'un indice.
 
-Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.Output | split \"#\" 2 }}` va renvoyer la chaîne `DOWN`. Comme les indices commencent à 0, `SERVER` a pour indice 0, `69420` a pour indice 1 et `DOWN` a pour indice 2.
+Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.Output | split "#" 2 }}` va renvoyer la chaîne `DOWN`. Comme les indices commencent à 0, `SERVER` a pour indice 0, `69420` a pour indice 1 et `DOWN` a pour indice 2.
 
 ##### `trim`
 
@@ -129,7 +129,7 @@ La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de
 
 `replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurrences de la regex par la chaîne.
 
-Par exemple `{{ .Event.Output | replace \"\\r?\\n\" \"\"  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
+Par exemple `{{ .Event.Output | replace "\\r?\\n" ""  }}` possède pour paramètre l'expression régulière `\r?\n` et la chaîne vide. Cela va supprimer tous les caractères de fin de ligne de l'output de l'événement.
 
 ##### `formattedDate`
 
@@ -195,6 +195,17 @@ Le payload de ce webhook sera donc constitué d'un attribut `message` dont la va
 {
   "message": "23818029-b80d-416e-9d12-5963c76bcbfa - message alarme conséquence 1\n6594ddea-9fd7-4423-a2db-ba10b72c67aa - message alarme conséquence 2\n"
 }
+```
+
+## Tester l'exitence d'une clé
+
+Si vous appelez une clé non existente dans un template, la compilation de celui-ci échouera.  
+Pour éviter cette situation, la fonction `map_has_key` permet de contrôler l'existence de la clé avant son utilisation.  
+
+Exemple, Tester l'existence de la clé `une_cle` :
+
+```
+{{if map_has_key .Entity.Infos "une_cle" }}{{.Entity.Infos.une_cle.Value}}{{else}}default value{{end}}
 ```
 
 ## Exemples

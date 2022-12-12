@@ -417,8 +417,8 @@ export default {
           value: ALARM_PATTERN_FIELDS.initialOutput,
         },
         {
-          text: this.$t('common.longInitialOutput'),
-          value: ALARM_PATTERN_FIELDS.longInitialOutput,
+          text: this.$t('common.initialLongOutput'),
+          value: ALARM_PATTERN_FIELDS.initialLongOutput,
         },
       ];
     },
