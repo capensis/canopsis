@@ -9,7 +9,7 @@
             left,
             small
           ) {{ icon }}
-          span.body-1 {{ title }}
+          span.body-1(:class="cssClass") {{ title }}
     template(v-else)
       c-action-btn(
         :tooltip="title",
@@ -47,6 +47,10 @@ export default {
       required: true,
     },
     iconColor: {
+      type: String,
+      default: '',
+    },
+    cssClass: {
       type: String,
       default: '',
     },

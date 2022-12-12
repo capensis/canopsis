@@ -6,6 +6,7 @@
           v-layout(v-if="availableActions.length", row, align-center, wrap)
             div {{ $t('common.actionsLabel') }}:
             service-entity-actions(
+              :entity="entity",
               :actions="availableActions",
               :assigned-instructions="entity.assigned_instructions",
               @apply="applyActionForEntity",
