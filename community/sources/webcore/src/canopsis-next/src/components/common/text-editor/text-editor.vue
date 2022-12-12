@@ -52,7 +52,9 @@ Ajax.prototype.send = function send(...args) {
       this.options.data.forEach(fileValidator);
     }
 
-    delete this.options.headers['X-REQUESTED-WITH'];
+    if (this.options.headers?.['X-REQUESTED-WITH']) {
+      delete this.options.headers['X-REQUESTED-WITH'];
+    }
 
     return originalSend.call(this, ...args);
   } catch (err) {

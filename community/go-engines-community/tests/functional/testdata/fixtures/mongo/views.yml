@@ -310,3 +310,7 @@ views:
   view_to_map_edit:
     <<: *view
     _id: test-view-to-map-edit
+
+  view_to_test_alarm_tags_filter:
+    <<: *view
+    _id: test-view-to-test-alarm-tags-filter

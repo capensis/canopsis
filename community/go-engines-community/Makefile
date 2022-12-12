@@ -42,7 +42,7 @@ DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
-VERSION ?= $(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
+VERSION ?= $(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
 # TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
@@ -246,12 +246,6 @@ systemd_install: systemd_install-common
 	install -d -m 755 -- "$(DESTDIR)/usr/lib/systemd/system"
 	install -c -m 755 -p -- $(foreach systemd_units,$(SYSTEMD_UNITS),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@$(systemd_units).service") "$(DESTDIR)/usr/lib/systemd/system/"
 	install -c -m 755 -p -- $(foreach services,$(SERVICES),"$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@$(services).service") "$(DESTDIR)/usr/lib/systemd/system/"
-
-nginx_config:
-	@echo "==> installing Nginx default config"
-	install -d -m 755 -- "$(DESTDIR)/etc/nginx/conf.d"
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/config/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/"
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/config/nginx/resolvers.inc" "$(DESTDIR)/etc/nginx/"
 
 #
 # TESTS

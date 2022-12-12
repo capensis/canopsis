@@ -17,10 +17,10 @@ Canopsis Community RPM Package
 %setup -q
 echo "install golang"
 wget https://go.dev/dl/go1.18.6.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.18.6.linux-amd64.tar.gz
+tar -C ~ -xzf go1.18.6.linux-amd64.tar.gz
 
 %build
-export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:~/go/bin
 make -C community/go-engines-community VERSION=%{version}
 make -C community/sources/webcore/src/canopsis-next VERSION=%{version}
 
@@ -28,7 +28,7 @@ make -C community/sources/webcore/src/canopsis-next VERSION=%{version}
 make -C community/go-engines-community DESTDIR=%{buildroot} install
 make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYSTEMD_UNITS="engine-action engine-axe engine-che engine-fifo engine-pbehavior engine-service" SERVICES="canopsis-api"
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} install
-make -C community/go-engines-community DESTDIR=%{buildroot} nginx_config
+make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} nginx_config
 
 %pre
 getent passwd canopsis >/dev/null || \

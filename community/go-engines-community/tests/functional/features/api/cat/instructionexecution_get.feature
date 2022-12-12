@@ -80,21 +80,21 @@ Feature: get running instruction
         {
           "name": "test-instruction-execution-get-1-step-1",
           "time_to_complete": {"value": 181, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "completed_at": 0,
+              "completed_at": null,
               "name": "test-instruction-execution-get-1-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-get-1-step-1-operation-1-description"
             },
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-get-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"m"},
-              "description": "",
+              "description": "test-instruction-execution-get-1-step-1-operation-2-description",
               "jobs": []
             }
           ],
@@ -103,15 +103,15 @@ Feature: get running instruction
         {
           "name": "test-instruction-execution-get-1-step-2",
           "time_to_complete": {"value": 2, "unit":"h"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-get-1-step-2-operation-1",
               "time_to_complete": {"value": 2, "unit":"h"},
-              "description": "",
+              "description": "test-instruction-execution-get-1-step-2-operation-1-description",
               "jobs": []
             }
           ],
@@ -120,7 +120,9 @@ Feature: get running instruction
       ]
     }
     """
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
 
   Scenario: given moved to next step instruction should get it
     When I am admin
@@ -204,7 +206,7 @@ Feature: get running instruction
         {
           "name": "test-instruction-execution-get-2-step-1",
           "time_to_complete": {"value": 4, "unit":"s"},
-          "failed_at": 0,
+          "failed_at": null,
           "operations": [
             {
               "name": "test-instruction-execution-get-2-step-1-operation-1",
@@ -224,11 +226,11 @@ Feature: get running instruction
         {
           "name": "test-instruction-execution-get-2-step-2",
           "time_to_complete": {"value": 6, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "completed_at": 0,
+              "completed_at": null,
               "name": "test-instruction-execution-get-2-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
               "description": "test-instruction-execution-get-2-step-2-operation-1-description",
@@ -240,12 +242,19 @@ Feature: get running instruction
       ]
     }
     """
-    Then the response key "steps.0.completed_at" should not be "0"
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
-    Then the response key "steps.0.operations.0.completed_at" should not be "0"
-    Then the response key "steps.0.operations.1.started_at" should not be "0"
-    Then the response key "steps.0.operations.1.completed_at" should not be "0"
-    Then the response key "steps.1.operations.0.started_at" should not be "0"
+    When I save response step1CompletedAt={{ (index .lastResponse.steps 0).completed_at }}
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response op1CompletedAt={{ (index (index .lastResponse.steps 0).operations 0).completed_at }}
+    When I save response op2StartedAt={{ (index (index .lastResponse.steps 0).operations 1).started_at }}
+    When I save response op2CompletedAt={{ (index (index .lastResponse.steps 0).operations 1).completed_at }}
+    When I save response op3StartedAt={{ (index (index .lastResponse.steps 1).operations 0).started_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
+    Then "op1CompletedAt" >= "op1StartedAt"
+    Then "op2StartedAt" >= "op1CompletedAt"
+    Then "op2CompletedAt" >= "op2StartedAt"
+    Then "step1CompletedAt" >= "op2CompletedAt"
+    Then "op3StartedAt" >= "op2CompletedAt"
 
   Scenario: given moved to previous step instruction should get it
     When I am admin
@@ -295,7 +304,7 @@ Feature: get running instruction
             {
               "name": "test-instruction-execution-get-3-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "test-instruction-execution-get-3-step-2-operation-1-description"
+              "description": "test-instruction-execution-get-1-step-3-operation-1-description"
             }
           ],
           "stop_on_fail": true,
@@ -331,8 +340,8 @@ Feature: get running instruction
         {
           "name": "test-instruction-execution-get-3-step-1",
           "time_to_complete": {"value": 4, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
               "name": "test-instruction-execution-get-3-step-1-operation-1",
@@ -340,7 +349,7 @@ Feature: get running instruction
               "description": "test-instruction-execution-get-3-step-1-operation-1-description"
             },
             {
-              "completed_at": 0,
+              "completed_at": null,
               "name": "test-instruction-execution-get-3-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-get-3-step-1-operation-2-description",
@@ -352,15 +361,15 @@ Feature: get running instruction
         {
           "name": "test-instruction-execution-get-3-step-2",
           "time_to_complete": {"value": 6, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-get-3-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "",
+              "description": "test-instruction-execution-get-1-step-3-operation-1-description",
               "jobs": []
             }
           ],
@@ -369,9 +378,13 @@ Feature: get running instruction
       ]
     }
     """
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
-    Then the response key "steps.0.operations.0.completed_at" should not be "0"
-    Then the response key "steps.0.operations.1.started_at" should not be "0"
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response op1CompletedAt={{ (index (index .lastResponse.steps 0).operations 0).completed_at }}
+    When I save response op2StartedAt={{ (index (index .lastResponse.steps 0).operations 1).started_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
+    Then "op1CompletedAt" >= "op1StartedAt"
+    Then "op2StartedAt" >= "op1CompletedAt"
 
   Scenario: given not running instruction should not get it
     When I am admin

@@ -10,7 +10,7 @@
 
 ## Structure basique d'un évènement
 
-Voici la structure de base d'un [évènement](../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'évènements](#liste-des-types-devenements).
+Voici la structure de base d'un [évènement](../../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'évènements](#liste-des-types-devenements).
 
 ```javascript
 {
@@ -31,7 +31,7 @@ Voici la structure de base d'un [évènement](../guide-utilisation/vocabulaire/i
 
 ## Liste des types d'évènements
 
-Certains de ces événements déclenchent également un [trigger](../guide-administration/architecture-interne/triggers.md).
+Certains de ces événements déclenchent également un [trigger](../../guide-administration/architecture-interne/triggers.md).
 
 Type              | Description                                                                                                                                |
 ------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
@@ -43,7 +43,7 @@ cancel            | Annule un évènement et met son statut dans un état "cance
 changestate       | Change et verrouille la criticité d'une alarme                                                                                             |
 check             | Envoie le résultat d'un check (depuis Nagios, Icinga,...)                                                                                  |
 comment           | Ajoute un commentaire sur une alarme                                                                                                           |
-snmp              | Envoyé par le connecteur [`snmp2canopsis`](../interconnexions/Supervision/SNMPtrap.md) au moteur [`snmp`](../guide-administration/moteurs/moteur-snmp.md) |
+snmp              | Envoyé par le connecteur [`snmp2canopsis`](../../interconnexions/Supervision/SNMPtrap.md) au moteur [`snmp`](../../guide-administration/moteurs/moteur-snmp.md) |
 snooze            | Place un Snooze sur une alarme                                                                                                             |
 statcounterinc    | Incrémente un compteur dans l'engine statistics                                                                                            |
 statduration      | Ajoute une durée dans l'engine statistics                                                                                                  |
@@ -53,7 +53,7 @@ updatewatcher     | Déclenche la mise à jour de l'état d'un watcher (interne)
 
 ## Ajout d'éléments et personnalisation
 
-Après avoir défini la structure de base de l'[évènement](../guide-utilisation/vocabulaire/index.md#evenement), choisissez le type d'événement que vous souhaitez envoyer et ajoutez les champs correspondants.
+Après avoir défini la structure de base de l'[évènement](../../guide-utilisation/vocabulaire/index.md#evenement), choisissez le type d'événement que vous souhaitez envoyer et ajoutez les champs correspondants.
 
 ### Event Acknowledgment Structure
 

@@ -153,6 +153,26 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     cond: timeCond,
                                 });
                                 break;
+                            case "activation_date":
+                                if (vValue === null) {
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: {
+                                            type: "exist",
+                                            value: false,
+                                        },
+                                    });
+                                } else {
+                                    var timeCond = migrateOldTimePattern(vValue)
+                                    if (!timeCond) {
+                                        return null;
+                                    }
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: timeCond,
+                                    });
+                                }
+                                break;
                             case "last_update_date":
                             case "last_event_date":
                             case "resolved":
@@ -434,7 +454,7 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
             field: stepField,
             cond: {
                 type: "exist",
-                value: "false"
+                value: false
             }
         };
     }
