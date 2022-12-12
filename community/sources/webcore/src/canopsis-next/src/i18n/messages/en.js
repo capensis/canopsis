@@ -34,7 +34,7 @@ import {
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
   PBEHAVIOR_TYPE_TYPES,
-  SCENARIO_TRIGGERS,
+  TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
@@ -187,7 +187,6 @@ export default merge({
     id: 'Id',
     reset: 'Reset',
     selectColor: 'Select color',
-    triggers: 'Triggers',
     disableDuringPeriods: 'Disable during periods',
     retryDelay: 'Delay',
     retryUnit: 'Unit',
@@ -293,6 +292,8 @@ export default merge({
     initialOutput: 'Initial output',
     longInitialOutput: 'Long initial output',
     timestamp: 'Timestamp',
+    trigger: 'Trigger | Triggers',
+    initialLongOutput: 'Long initial output',
     theme: 'Theme | Themes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -431,85 +432,85 @@ export default merge({
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
-    scenarioTriggers: {
-      [SCENARIO_TRIGGERS.create]: {
+    triggers: {
+      [TRIGGERS.create]: {
         text: 'Alarm creation',
       },
-      [SCENARIO_TRIGGERS.statedec]: {
+      [TRIGGERS.statedec]: {
         text: 'Alarm state decrease',
       },
-      [SCENARIO_TRIGGERS.changestate]: {
+      [TRIGGERS.changestate]: {
         text: 'Alarm state has been changed by "change state" action',
       },
-      [SCENARIO_TRIGGERS.stateinc]: {
+      [TRIGGERS.stateinc]: {
         text: 'Alarm state increase',
       },
-      [SCENARIO_TRIGGERS.changestatus]: {
+      [TRIGGERS.changestatus]: {
         text: 'Alarm status changes eg. flapping',
       },
-      [SCENARIO_TRIGGERS.ack]: {
+      [TRIGGERS.ack]: {
         text: 'Alarm has been acked',
       },
-      [SCENARIO_TRIGGERS.ackremove]: {
+      [TRIGGERS.ackremove]: {
         text: 'Alarm has been unacked',
       },
-      [SCENARIO_TRIGGERS.cancel]: {
+      [TRIGGERS.cancel]: {
         text: 'Alarm has been cancelled',
       },
-      [SCENARIO_TRIGGERS.uncancel]: {
+      [TRIGGERS.uncancel]: {
         text: 'Alarm has been uncancelled',
         helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
       },
-      [SCENARIO_TRIGGERS.comment]: {
+      [TRIGGERS.comment]: {
         text: 'Alarm has been commented',
       },
-      [SCENARIO_TRIGGERS.done]: {
+      [TRIGGERS.done]: {
         text: 'Alarm is "done"',
         helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
       },
-      [SCENARIO_TRIGGERS.declareticket]: {
+      [TRIGGERS.declareticket]: {
         text: 'Ticket has been declared by the UI action',
       },
-      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+      [TRIGGERS.declareticketwebhook]: {
         text: 'Ticket has been declared by the webhook',
       },
-      [SCENARIO_TRIGGERS.assocticket]: {
+      [TRIGGERS.assocticket]: {
         text: 'Ticket has been associated with an alarm',
       },
-      [SCENARIO_TRIGGERS.snooze]: {
+      [TRIGGERS.snooze]: {
         text: 'Alarm has been snoozed',
       },
-      [SCENARIO_TRIGGERS.unsnooze]: {
+      [TRIGGERS.unsnooze]: {
         text: 'Alarm has been unsnoozed',
       },
-      [SCENARIO_TRIGGERS.resolve]: {
+      [TRIGGERS.resolve]: {
         text: 'Alarm has been resolved',
       },
-      [SCENARIO_TRIGGERS.activate]: {
+      [TRIGGERS.activate]: {
         text: 'Alarm has been activated',
       },
-      [SCENARIO_TRIGGERS.pbhenter]: {
+      [TRIGGERS.pbhenter]: {
         text: 'Alarm enters a periodic behavior',
       },
-      [SCENARIO_TRIGGERS.pbhleave]: {
+      [TRIGGERS.pbhleave]: {
         text: 'Alarm leaves a periodic behavior',
       },
-      [SCENARIO_TRIGGERS.instructionfail]: {
+      [TRIGGERS.instructionfail]: {
         text: 'Manual instruction has failed',
       },
-      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+      [TRIGGERS.autoinstructionfail]: {
         text: 'Auto instruction has failed',
       },
-      [SCENARIO_TRIGGERS.instructionjobfail]: {
+      [TRIGGERS.instructionjobfail]: {
         text: 'Manual or auto instruction\'s job is failed',
       },
-      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+      [TRIGGERS.instructionjobcomplete]: {
         text: 'Manual or auto instruction\'s job is completed',
       },
-      [SCENARIO_TRIGGERS.instructioncomplete]: {
+      [TRIGGERS.instructioncomplete]: {
         text: 'Manual instruction is completed',
       },
-      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+      [TRIGGERS.autoinstructioncomplete]: {
         text: 'Auto instruction is completed',
       },
     },
@@ -633,8 +634,6 @@ export default merge({
         manualMetaAlarmGroup: 'Manual meta alarm management',
         manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
-        executeInstruction: 'Execute {instructionName}',
-        resumeInstruction: 'Resume {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -2348,6 +2347,7 @@ export default merge({
     pbehaviorType: 'Pbehavior type',
     pbehaviorReason: 'Pbehavior reason',
     pbehaviorName: 'Pbehavior name',
+    pbehaviorCanonicalType: 'Pbehavior canonical type',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2534,6 +2534,9 @@ export default merge({
     type: 'Instruction type',
     approvalPending: 'Approval pending',
     needApprove: 'Approval is needed',
+    executeInstruction: 'Execute {instructionName}',
+    resumeInstruction: 'Resume {instructionName}',
+    inProgressInstruction: '{instructionName} in progress...',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
@@ -2690,7 +2693,6 @@ export default merge({
   },
 
   scenario: {
-    triggers: 'Triggers',
     emitTrigger: 'Emit trigger',
     withAuth: 'Do you need auth fields?',
     emptyResponse: 'Empty response',
@@ -2751,6 +2753,10 @@ export default merge({
       [PATTERN_FIELD_TYPES.null]: '@:variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:variableTypes.array',
     },
+  },
+
+  alarm: {
+    eventsCount: 'Events count',
   },
 
   entity: {
@@ -2993,12 +2999,12 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Flapping rules',
-      // message: '', // TODO: need to put description
+      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
       title: 'Resolve rules',
-      // message: '', // TODO: need to put description
+      message: 'When an alarm receives a recovery type event, it changes to the closed status. Before considering this alarm as definitively resolved, Canopsis can wait for a delay. This delay can be useful if the alarm flaps or if the user wishes keep the alarm open in case of error.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {

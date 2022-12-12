@@ -33,6 +33,7 @@ export default {
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending', false),
+    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
 
     getItem: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
       ENTITIES_TYPES.alarm,
@@ -42,12 +43,10 @@ export default {
       ENTITIES_TYPES.alarm,
       ids,
     ),
-
-    getFetchingParamsByWidgetId: state => widgetId => get(state.widgets[widgetId], 'fetchingParams'),
   },
   mutations: {
-    [types.FETCH_LIST](state, { widgetId }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: true });
+    [types.FETCH_LIST](state, { widgetId, params }) {
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
       Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
@@ -81,7 +80,7 @@ export default {
       try {
         await useRequestCancelling(async (source) => {
           if (!withoutPending) {
-            commit(types.FETCH_LIST, { widgetId });
+            commit(types.FETCH_LIST, { widgetId, params });
           }
 
           await dispatch('entities/fetch', {

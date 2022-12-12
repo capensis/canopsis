@@ -4,7 +4,7 @@
     v-field="value",
     :items="availableTriggers",
     :disabled="disabled",
-    :label="label || $t('common.triggers')",
+    :label="label || $tc('common.trigger', 2)",
     :error-messages="errors.collect(name)",
     :name="name",
     multiple,
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { SCENARIO_TRIGGERS, PRO_SCENARIO_TRIGGERS } from '@/constants';
+import { TRIGGERS, PRO_TRIGGERS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -34,7 +34,7 @@ export default {
   props: {
     value: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     label: {
       type: String,
@@ -48,13 +48,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    triggers: {
+      type: Array,
+      default: () => Object.values(TRIGGERS),
+    },
   },
   computed: {
     availableTriggers() {
-      return Object.values(SCENARIO_TRIGGERS)
+      return Object.values(this.triggers)
         .reduce((acc, type) => {
-          if (!PRO_SCENARIO_TRIGGERS.includes(type) || this.isProVersion) {
-            const { text, helpText } = this.$t(`common.scenarioTriggers.${type}`);
+          if (!PRO_TRIGGERS.includes(type) || this.isProVersion) {
+            const { text, helpText } = this.$t(`common.triggers.${type}`);
 
             acc.push({
               text,

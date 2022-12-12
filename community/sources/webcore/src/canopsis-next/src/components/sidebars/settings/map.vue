@@ -30,7 +30,7 @@
       field-text-editor(
         v-model="form.parameters.entity_info_template",
         :title="$t('settings.entityInfoPopup')",
-        :variables="variables"
+        :variables="entityVariables"
       )
       v-divider
 
@@ -55,8 +55,8 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entityVariablesMixin } from '@/mixins/widget/variables';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
-import { entityVariablesMixin } from '@/mixins/widget/entity-variables';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
@@ -88,8 +88,8 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    permissionsWidgetsMapFilters,
     entityVariablesMixin,
+    permissionsWidgetsMapFilters,
   ],
 };
 </script>
