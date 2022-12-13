@@ -462,10 +462,6 @@ export default merge({
       [TRIGGERS.comment]: {
         text: 'Alarm has been commented',
       },
-      [TRIGGERS.done]: {
-        text: 'Alarm is "done"',
-        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
-      },
       [TRIGGERS.declareticket]: {
         text: 'Ticket has been declared by the UI action',
       },
