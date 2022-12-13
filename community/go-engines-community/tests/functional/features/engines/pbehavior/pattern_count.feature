@@ -221,6 +221,26 @@ Feature: Count matches
     When I do POST /api/v4/patterns-count:
     """json
     {
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-pattern-count-2-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-pattern-count-2-2"
+            }
+          }
+        ]
+      ],
       "pbehavior_pattern": [
         [
           {
