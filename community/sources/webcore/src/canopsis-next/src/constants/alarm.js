@@ -223,6 +223,7 @@ export const ALARM_PATTERN_FIELDS = {
   ack: 'v.ack',
   ackAt: 'v.ack.t',
   ackBy: 'v.ack.a',
+  ackMessage: 'v.ack.m',
   resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
