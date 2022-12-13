@@ -39,7 +39,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"priority\": 10001, \"name\": \"{{ `test-scenario-action-multiple-alarm-webhook-1!!!{{ .Alarm.Value.Output }}!!!{{ .Alarm.Value.Resource }}|||{{ .Alarm.Value.State.Value }}` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-action-scenario-multiple-alarm-webhook-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": {{ `{{ .Alarm.Value.Output }}` }}, \"name\": \"{{ `test-scenario-action-multiple-alarm-webhook-1!!!{{ .Alarm.Value.Output }}!!!{{ .Alarm.Value.Resource }}|||{{ .Alarm.Value.State.Value }}` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-action-scenario-multiple-alarm-webhook-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -66,7 +66,7 @@ Feature: execute action on trigger
       "component" :  "test-component-multiple-alarm-webhook-1",
       "resource" : "test-resource-multiple-alarm-webhook-1-1",
       "state" : 2,
-      "output" : "test-output-multiple-alarm-webhook-1-1"
+      "output" : "10001"
     }
     """
     When I send an event:
@@ -79,7 +79,7 @@ Feature: execute action on trigger
       "component" :  "test-component-multiple-alarm-webhook-1",
       "resource" : "test-resource-multiple-alarm-webhook-1-2",
       "state" : 3,
-      "output" : "test-output-multiple-alarm-webhook-1-2"
+      "output" : "100010"
     }
     """
     When I wait the end of 2 events processing
@@ -95,7 +95,7 @@ Feature: execute action on trigger
               "_t": "declareticket",
               "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
               "data": {
-                "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-1!!!test-resource-multiple-alarm-webhook-1-1|||2"
+                "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2"
               }
             },
             "connector": "test-connector-multiple-alarm-webhook-1",
@@ -110,7 +110,7 @@ Feature: execute action on trigger
               "_t": "declareticket",
               "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
               "data": {
-                "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-2!!!test-resource-multiple-alarm-webhook-1-2|||3"
+                "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3"
               }
             },
             "connector": "test-connector-multiple-alarm-webhook-1",
@@ -210,14 +210,14 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-1!!!test-resource-multiple-alarm-webhook-1-1|||2",
+          "name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2",
           "enabled": true,
           "triggers": [
             "create"
           ]
         },
         {
-          "name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-2!!!test-resource-multiple-alarm-webhook-1-2|||3",
+          "name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3",
           "enabled": true,
           "triggers": [
             "create"
