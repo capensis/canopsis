@@ -2838,12 +2838,12 @@ export default merge({
     },
     remediation: {
       title: 'Instructions data storage',
-      deleteAfter: 'Delete instructions data after',
-      deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
-      deleteStatsAfter: 'Delete instruction rating data after',
-      deleteStatsAfterHelpText: 'When switched on, the instruction ratings will be deleted after the defined time period.',
-      deleteModStatsAfter: 'Delete statistics of alarms affected by state after',
-      deleteModStatsAfterHelpText: 'When switched on, the accumulated data of resulting alarm states will be deleted after the defined time period.',
+      deleteAfter: 'Delete instructions timeline data after',
+      deleteAfterHelpText: 'When switched on, the instructions timelines data will be deleted after the defined time period.',
+      deleteStatsAfter: 'Delete instruction statistics data after',
+      deleteStatsAfterHelpText: 'When switched on, the instruction statistics will be deleted after the defined time period.',
+      deleteModStatsAfter: 'Delete instructions summary data after',
+      deleteModStatsAfterHelpText: 'When switched on, the instructions summary data will be deleted after the defined time period.',
     },
     entity: {
       title: 'Entities data storage',
