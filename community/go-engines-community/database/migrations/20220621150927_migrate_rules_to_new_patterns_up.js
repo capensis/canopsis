@@ -116,7 +116,7 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
 
                         switch (vField) {
                             case "ack":
-                                var ackCond = migrateOldAlarmStepPattern(vValue, newField, true)
+                                var ackCond = migrateOldAlarmStepPattern(vValue, newField, true, true, true)
                                 if (!ackCond) {
                                     return null;
                                 }
@@ -126,7 +126,7 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                             case "canceled":
                             case "ticket":
                             case "snooze":
-                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, false)
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, false, false, false)
                                 if (!stepCond) {
                                     return null;
                                 }
@@ -448,7 +448,7 @@ function migrateOldTimePattern(oldTimePattern) {
     return null;
 }
 
-function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
+function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime, allowAuthor, allowMsg) {
     if (oldAlarmStepPattern === null) {
         return {
             field: stepField,
@@ -470,6 +470,34 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
                 }
 
                 var cond = migrateOldTimePattern(value);
+                if (!cond) {
+                    return null;
+                }
+                res = {
+                    field: stepField + "." + field,
+                    cond: cond,
+                };
+                break;
+            case "a":
+                if (!allowAuthor) {
+                    return null;
+                }
+
+                var cond = migrateOldStringPattern(value);
+                if (!cond) {
+                    return null;
+                }
+                res = {
+                    field: stepField + "." + field,
+                    cond: cond,
+                };
+                break;
+            case "m":
+                if (!allowMsg) {
+                    return null;
+                }
+
+                var cond = migrateOldStringPattern(value);
                 if (!cond) {
                     return null;
                 }
