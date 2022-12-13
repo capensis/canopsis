@@ -7,6 +7,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-multiple-alarm-webhook-1",
+      "priority": 10000,
       "enabled": true,
       "triggers": [
         "create"
@@ -38,7 +39,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-multiple-alarm-webhook-1!!!{{ .Alarm.Value.Output }}!!!{{ .Alarm.Value.Resource }}|||{{ .Alarm.Value.State.Value }}` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-action-scenario-multiple-alarm-webhook-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10001, \"name\": \"{{ `test-scenario-action-multiple-alarm-webhook-1!!!{{ .Alarm.Value.Output }}!!!{{ .Alarm.Value.Resource }}|||{{ .Alarm.Value.State.Value }}` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-action-scenario-multiple-alarm-webhook-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,

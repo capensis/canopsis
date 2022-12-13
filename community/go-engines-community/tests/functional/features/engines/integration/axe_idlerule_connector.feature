@@ -456,6 +456,7 @@ Feature: update connector alarm
     """json
     {
       "name": "test-scenario-axe-idlerule-connector-4-name",
+      "priority": 10059,
       "enabled": true,
       "priority": 60,
       "triggers": ["create"],
