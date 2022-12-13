@@ -2838,12 +2838,12 @@ export default merge({
     },
     remediation: {
       title: 'Stockage des données de consigne',
-      deleteAfter: 'Supprimer les données des consignes après',
-      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
-      deleteStatsAfter: 'Supprimer les données de qualification d\'instruction après',
-      deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les qualifications d\'instruction seront supprimées après la période de temps définie.',
-      deleteModStatsAfter: 'Supprimer les statistiques des alarmes affectées par l\'état après',
-      deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données accumulées des états d\'alarme résultants seront supprimées après la période de temps définie.',
+      deleteAfter: 'Supprimer les données de la chronologie des instructions après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
+      deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
+      deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
+      deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
+      deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
