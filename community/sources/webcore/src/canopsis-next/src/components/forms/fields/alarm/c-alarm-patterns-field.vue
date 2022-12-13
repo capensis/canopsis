@@ -369,6 +369,11 @@ export default {
           options: this.ackByOptions,
         },
         {
+          text: this.$t('common.ackMessage'),
+          value: ALARM_PATTERN_FIELDS.ackMessage,
+          options: this.stringWithExistOptions,
+        },
+        {
           text: this.$t('common.resolvedAt'),
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.dateOptions,
