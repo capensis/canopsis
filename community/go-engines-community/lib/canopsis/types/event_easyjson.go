@@ -771,8 +771,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.ID = string(in.String())
 		case "name":
 			out.Name = string(in.String())
+		case "reason_name":
+			out.ReasonName = string(in.String())
 		case "reason":
-			out.Reason = string(in.String())
+			out.ReasonID = string(in.String())
 		case "type":
 			out.TypeID = string(in.String())
 		case "type_name":
@@ -813,9 +815,14 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.Name))
 	}
 	{
+		const prefix string = ",\"reason_name\":"
+		out.RawString(prefix)
+		out.String(string(in.ReasonName))
+	}
+	{
 		const prefix string = ",\"reason\":"
 		out.RawString(prefix)
-		out.String(string(in.Reason))
+		out.String(string(in.ReasonID))
 	}
 	{
 		const prefix string = ",\"type\":"
