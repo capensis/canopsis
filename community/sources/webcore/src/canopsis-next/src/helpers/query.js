@@ -415,6 +415,12 @@ export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
 export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
 
+  steps: {
+    ...query.steps,
+
+    reversed: true,
+  },
+
   children: {
     ...omit(query.children, ['multiSortBy']),
 
