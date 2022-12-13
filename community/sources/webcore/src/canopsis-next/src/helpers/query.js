@@ -236,9 +236,9 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertWeatherUserPreferenceToQuery({ content }) {
-  const { category, mainFilter } = content;
+  const { category, mainFilter, hide_grey: hideGrey = false } = content;
 
-  return { category, filter: mainFilter };
+  return { category, filter: mainFilter, hide_grey: hideGrey };
 }
 
 /**
@@ -414,6 +414,12 @@ export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
  */
 export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
+
+  steps: {
+    ...query.steps,
+
+    reversed: true,
+  },
 
   children: {
     ...omit(query.children, ['multiSortBy']),
