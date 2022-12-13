@@ -14,16 +14,11 @@
     :refresh-alarms-list="refreshAlarmsList",
     :selectable="selectable",
     :expandable="expandable",
-    :hide-actions="hideActions"
+    :hide-actions="hideActions",
+    :hide-pagination="hidePagination",
+    @update:page="updateQueryPage",
+    @update:rows-per-page="updateRecordsPerPage"
   )
-    c-table-pagination(
-      v-if="!hidePagination",
-      :total-items="meta.total_count",
-      :rows-per-page="query.limit",
-      :page="query.page",
-      @update:page="updateQueryPage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
 </template>
 
 <script>
@@ -107,10 +102,10 @@ export default {
   computed: {
     pagination: {
       get() {
-        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
+        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, descending, multiSortBy };
+        return { sortBy, page, limit, descending, multiSortBy };
       },
 
       set(value) {
