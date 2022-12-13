@@ -50,6 +50,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-2-name",
+      "priority": 10032,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -122,6 +123,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-3-name",
+      "priority": 10033,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -198,6 +200,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-4-name",
+      "priority": 10034,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -277,6 +280,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-1-name",
+      "priority": 10035,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -359,6 +363,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-6-name",
+      "priority": 10036,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -437,6 +442,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-7-name",
+      "priority": 10037,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -515,6 +521,7 @@ Feature: send activation event on create
     """json
     {
       "name": "test-scenario-action-activation-8-name",
+      "priority": 10038,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
