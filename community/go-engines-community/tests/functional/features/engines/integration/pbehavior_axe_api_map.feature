@@ -286,7 +286,8 @@ Feature: Get a map's state
                 "canonical_type": "maintenance",
                 "icon_name": "build",
                 "name": "test-pbehavior-pbehavior-axe-api-map-3",
-                "reason": "Test Engine",
+                "reason": "test-reason-to-engine",
+                "reason_name": "Test Engine",
                 "type": "test-maintenance-type-to-engine",
                 "type_name": "Engine maintenance"
               },
