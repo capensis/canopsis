@@ -154,3 +154,198 @@ Feature: Count matches
       }
     }
     """
+
+  Scenario: given count requests for pbh reasons
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-1",
+        "state": 1,
+        "output": "noveo alarm"
+      },
+      {
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-2",
+        "state": 1,
+        "output": "noveo alarm"
+      },
+      {
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-3",
+        "state": 1,
+        "output": "noveo alarm"
+      },
+      {
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-4",
+        "state": 1,
+        "output": "noveo alarm"
+      }
+    ]
+    """
+    When I wait the end of 4 events processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-pattern-count-2-1",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-pattern-count-1-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-pattern-count-1-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-pattern-count-2-2",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine-2",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-pattern-count-1-3"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-pattern-count-1-4"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of 4 events processing
+    Then I wait 2s
+    When I do POST /api/v4/patterns-count:
+    """json
+    {
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.reason",
+            "cond": {
+              "type": "eq",
+              "value": "test-reason-to-engine"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "pbehavior_pattern": {
+        "count": 2,
+        "over_limit": false
+      }
+    }
+    """
+    When I do POST /api/v4/patterns-count:
+    """json
+    {
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.reason",
+            "cond": {
+              "type": "eq",
+              "value": "test-reason-to-engine-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "pbehavior_pattern": {
+        "count": 2,
+        "over_limit": false
+      }
+    }
+    """
+    When I do POST /api/v4/patterns-count:
+    """json
+    {
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.reason",
+            "cond": {
+              "type": "eq",
+              "value": "test-reason-to-engine-not-exist"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "pbehavior_pattern": {
+        "count": 0,
+        "over_limit": false
+      }
+    }
+    """
