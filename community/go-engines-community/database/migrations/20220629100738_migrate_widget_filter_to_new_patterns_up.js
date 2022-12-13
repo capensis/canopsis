@@ -299,6 +299,13 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.connector_name":
                 case "v.resource":
                 case "v.component":
+                case "v.display_name":
+                case "v.output":
+                case "v.long_output":
+                case "v.initial_output":
+                case "v.initial_long_output":
+                case "v.ack.a":
+                case "v.ack.m":
                     if (strCond === null) {
                         return null;
                     }
