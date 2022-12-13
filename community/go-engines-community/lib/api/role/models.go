@@ -5,6 +5,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 )
 
+const adminId = "admin"
+
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy     string `form:"sort_by" binding:"oneoforempty=name"`
@@ -30,6 +32,8 @@ type Role struct {
 	Description string       `bson:"description" json:"description"`
 	DefaultView *View        `bson:"defaultview" json:"defaultview"`
 	Permissions []Permission `bson:"permissions" json:"permissions"`
+	Editable    *bool        `bson:"editable,omitempty" json:"editable,omitempty"`
+	Deletable   *bool        `bson:"deletable,omitempty" json:"deletable,omitempty"`
 
 	AuthConfig security.AuthMethodConf `bson:"auth_config" json:"auth_config"`
 }
