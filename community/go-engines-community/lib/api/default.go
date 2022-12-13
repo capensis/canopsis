@@ -125,11 +125,10 @@ func Default(
 	cookieOptions := CookieOptions{
 		FileAccessName: "token",
 		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-		Secure:         flags.SecureSession,
 	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
-	sessionStore.Options.Secure = cookieOptions.Secure
+	sessionStore.Options.Secure = flags.SecureSession
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}

@@ -90,11 +90,9 @@ describe('ack-event-form', () => {
       },
     });
 
-    const descriptionField = selectCheckboxField(wrapper);
-
     const ackResources = !form.ack_resources;
 
-    descriptionField.vm.$emit('input', ackResources);
+    selectCheckboxField(wrapper).vm.$emit('change', ackResources);
 
     expect(wrapper).toEmit('input', { ...form, ack_resources: ackResources });
   });

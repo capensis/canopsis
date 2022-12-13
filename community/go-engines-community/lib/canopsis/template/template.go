@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
+	"reflect"
 	"regexp"
 	"strings"
 	"sync"
@@ -194,6 +195,14 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			}
 
 			return ""
+		},
+		"map_has_key": func(m any, key any) bool {
+			rv := reflect.ValueOf(m)
+			if !rv.IsValid() || rv.Kind() != reflect.Map {
+				return false
+			}
+
+			return rv.MapIndex(reflect.ValueOf(key)).IsValid()
 		},
 	}
 }
