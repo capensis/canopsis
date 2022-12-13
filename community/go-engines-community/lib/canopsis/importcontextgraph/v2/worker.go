@@ -273,9 +273,7 @@ func (w *worker) parseEntities(
 		case importcontextgraph.ActionSet:
 			if ci.Type == types.EntityTypeResource {
 				createLinks[ci.Component] = append(createLinks[ci.Component], ci.ID)
-			}
-
-			if ci.Type == types.EntityTypeComponent {
+			} else if ci.Type == types.EntityTypeComponent {
 				componentInfos[ci.ID] = ci.Infos
 				componentsExist[ci.ID] = true
 			}
@@ -323,9 +321,7 @@ func (w *worker) parseEntities(
 
 			if ci.Type == types.EntityTypeResource && !deletedResources[ci.ID] {
 				deletedResources[ci.ID] = true
-			}
-
-			if ci.Type == types.EntityTypeComponent {
+			} else if ci.Type == types.EntityTypeComponent {
 				componentsToDelete[ci.ID] = true
 
 				for _, resourceID := range oldEntity.Depends {
@@ -335,9 +331,7 @@ func (w *worker) parseEntities(
 						writeModels = append(writeModels, w.deleteEntity(resourceID, now)...)
 					}
 				}
-			}
-
-			if ci.Type == types.EntityTypeService {
+			} else if ci.Type == types.EntityTypeService {
 				eventType = types.EventTypeRecomputeEntityService
 			}
 
@@ -354,14 +348,14 @@ func (w *worker) parseEntities(
 				return res, err
 			}
 
-			if ci.Type == types.EntityTypeComponent {
-				componentInfos[ci.ID] = ci.Infos
-			}
-
 			switch ci.Type {
 			case types.EntityTypeService:
 				eventType = types.EventTypeRecomputeEntityService
 			default:
+				if ci.Type == types.EntityTypeComponent {
+					componentInfos[ci.ID] = ci.Infos
+				}
+
 				eventType = types.EventTypeEntityToggled
 			}
 
@@ -380,9 +374,7 @@ func (w *worker) parseEntities(
 
 			if ci.Type == types.EntityTypeResource && !deletedResources[ci.ID] {
 				disabledResources[ci.ID] = true
-			}
-
-			if ci.Type == types.EntityTypeComponent {
+			} else if ci.Type == types.EntityTypeComponent {
 				componentsToDisable[ci.ID] = true
 				componentInfos[ci.ID] = ci.Infos
 
@@ -502,7 +494,7 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,
 			Component:     service.ID,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     types.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
 			SourceType:    types.SourceTypeService,
 		})
@@ -635,13 +627,11 @@ func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.W
 		ci.Infos = make(map[string]types.Info)
 	}
 
-	now := types.CpsTime{Time: time.Now()}
-
 	return mongo.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": ci.ID}).
 		SetUpdate(bson.M{
 			"$set":         ci,
-			"$setOnInsert": bson.M{"created": now},
+			"$setOnInsert": bson.M{"created": types.NewCpsTime()},
 			"$unset":       bson.M{"soft_deleted": ""},
 		}).
 		SetUpsert(true)
@@ -668,13 +658,11 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 		ci.Infos = oldEntity.Infos
 	}
 
-	now := types.CpsTime{Time: time.Now()}
-
 	return mongo.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": oldEntity.ID}).
 		SetUpdate(bson.M{
 			"$set":         ci,
-			"$setOnInsert": bson.M{"created": now},
+			"$setOnInsert": bson.M{"created": types.NewCpsTime()},
 			"$unset":       bson.M{"soft_deleted": ""},
 		}).
 		SetUpsert(true)
