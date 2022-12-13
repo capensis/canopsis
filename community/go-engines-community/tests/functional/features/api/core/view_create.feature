@@ -116,14 +116,19 @@ Feature: Create a view
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/permissions?search={{ .lastResponse._id}}
+    Then I save response viewId={{ .lastResponse._id }}
+    When I do GET /api/v4/permissions?search={{ .viewId }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
         {
+          "_id": "{{ .viewId }}",
+          "name": "{{ .viewId }}",
           "description": "Rights on view : test-view-to-create-3-title",
+          "view": "test-view-to-create-3-title",
+          "view_group": "test-viewgroup-to-view-edit-title",
           "type": "RW"
         }
       ],

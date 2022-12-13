@@ -12,6 +12,12 @@ type Permission struct {
 	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description" json:"description"`
 	Type        string `bson:"type" json:"type"`
+	// View is used only for view permissions.
+	View string `bson:"view" json:"view,omitempty"`
+	// ViewGroup is used only for view permissions.
+	ViewGroup string `bson:"view_group" json:"view_group,omitempty"`
+	// Playlist is used only for playlist permissions.
+	Playlist string `bson:"playlist" json:"playlist,omitempty"`
 }
 
 type AggregationResult struct {
