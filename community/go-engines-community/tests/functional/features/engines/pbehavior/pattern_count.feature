@@ -192,7 +192,7 @@ Feature: Count matches
       "tstop": {{ nowAdd "1h" }},
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
-      "reason": "test-reason-to-engine-2",
+      "reason": "test-reason-to-engine-3",
       "entity_pattern": [
         [
           {
@@ -247,7 +247,7 @@ Feature: Count matches
             "field": "pbehavior_info.reason",
             "cond": {
               "type": "eq",
-              "value": "test-reason-to-engine-2"
+              "value": "test-reason-to-engine-3"
             }
           }
         ]
