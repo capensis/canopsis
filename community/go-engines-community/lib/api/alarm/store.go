@@ -469,25 +469,21 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 
 	if r.Steps != nil {
+		var stepsArray any
 		if r.Steps.Reversed {
-			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-				"steps.data": bson.M{"$slice": bson.A{
-					bson.M{"$reverseArray": "$v.steps"},
-					(r.Steps.Page - 1) * r.Steps.Limit,
-					r.Steps.Limit},
-				},
-				"steps_count": bson.M{"$size": "$v.steps"},
-			}})
+			stepsArray = bson.M{"$reverseArray": "$v.steps"}
 		} else {
-			pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-				"steps.data": bson.M{"$slice": bson.A{
-					"$v.steps",
-					(r.Steps.Page - 1) * r.Steps.Limit,
-					r.Steps.Limit},
-				},
-				"steps_count": bson.M{"$size": "$v.steps"},
-			}})
+			stepsArray = "$v.steps"
 		}
+
+		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+			"steps.data": bson.M{"$slice": bson.A{
+				stepsArray,
+				(r.Steps.Page - 1) * r.Steps.Limit,
+				r.Steps.Limit},
+			},
+			"steps_count": bson.M{"$size": "$v.steps"},
+		}})
 	}
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
