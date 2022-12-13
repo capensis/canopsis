@@ -2845,7 +2845,16 @@ definitions:
         type: string
       name:
         type: string
+      playlist:
+        description: Playlist is used only for playlist permissions.
+        type: string
       type:
+        type: string
+      view:
+        description: View is used only for view permissions.
+        type: string
+      view_group:
+        description: ViewGroup is used only for view permissions.
         type: string
     type: object
   playlist.EditRequest:
@@ -3088,8 +3097,12 @@ definitions:
         $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         $ref: '#/definitions/role.View'
+      deletable:
+        type: boolean
       description:
         type: string
+      editable:
+        type: boolean
       name:
         type: string
       permissions:
