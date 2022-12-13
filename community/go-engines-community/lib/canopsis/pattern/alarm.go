@@ -462,6 +462,12 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		}
 
 		return alarm.Value.ACK.Message, true
+	case "v.ack.initiator":
+		if alarm.Value.ACK == nil {
+			return "", true
+		}
+
+		return alarm.Value.ACK.Initiator, true
 	default:
 		return "", false
 	}
