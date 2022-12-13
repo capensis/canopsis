@@ -263,6 +263,7 @@ export default merge({
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
+    ackMessage: 'Ack message',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
