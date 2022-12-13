@@ -607,6 +607,107 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(ctx context.Context, pa
 	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
+// TheResponseArrayKeyShouldContainInOrder
+// Step example:
+//   Then the response array key "data.0.v.steps" should contain in order:
+//   """
+//   [
+//     {
+//       "_t": "stateinc"
+//     }
+//   ]
+//   """
+func (a *ApiClient) TheResponseArrayKeyShouldContainInOrder(ctx context.Context, path string, doc string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	b, err := a.templater.Execute(ctx, doc)
+	if err != nil {
+		return err
+	}
+
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
+		receivedStr, _ := json.MarshalIndent(nestedVal, "", "  ")
+
+		switch received := nestedVal.(type) {
+		case []interface{}:
+			expected := make([]map[string]interface{}, 0)
+			err := json.Unmarshal(b.Bytes(), &expected)
+			if err != nil {
+				expected := make([]interface{}, 0)
+				err := json.Unmarshal(b.Bytes(), &expected)
+				if err != nil {
+					return err
+				}
+				prevIndex := -1
+				for _, ev := range expected {
+					foundIndex := -1
+					for j, v := range received {
+						if err := checkResponse(v, ev); err == nil {
+							foundIndex = j
+							break
+						}
+					}
+
+					if foundIndex < 0 {
+						return fmt.Errorf("%s\nis not in:\n%s", ev, receivedStr)
+					}
+
+					if prevIndex > foundIndex {
+						return fmt.Errorf("invalid order:\n%s", pretty.Compare(received, expected))
+					}
+
+					prevIndex = foundIndex
+				}
+
+				return nil
+			}
+
+			if len(expected) == 0 {
+				return fmt.Errorf("%s is empty", doc)
+			}
+
+			prevIndex := -1
+			for _, ev := range expected {
+				if len(ev) == 0 {
+					return fmt.Errorf("%s contains empty element", doc)
+				}
+
+				foundIndex := -1
+				for j, v := range received {
+					if err := checkResponse(getPartialResponse(v, ev), ev); err == nil {
+						foundIndex = j
+						break
+					}
+				}
+
+				if foundIndex < 0 {
+					expectedStr, _ := json.MarshalIndent(ev, "", "  ")
+					return fmt.Errorf("%s\nis not in:\n%s", expectedStr, receivedStr)
+				}
+
+				if prevIndex > foundIndex {
+					return fmt.Errorf("invalid order:\n%s", pretty.Compare(received, expected))
+				}
+
+				prevIndex = foundIndex
+			}
+
+			return nil
+		}
+
+		return fmt.Errorf("%s is not array but %T:\n%s", path, nestedVal, receivedStr)
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
+}
+
 // getNestedJsonVal returns val by path.
 func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 	field := path[0]

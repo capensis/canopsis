@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-entity-tree-of-dependencies-tab Renders \`service-entity-tree-of-dependencies-tab\` with custom props 1`] = `
+<service-dependencies-stub
+  columns="[object Object]"
+  light="true"
+  openableroot="true"
+  root="[object Object]"
+/>
+`;
+
+exports[`service-entity-tree-of-dependencies-tab Renders \`service-entity-tree-of-dependencies-tab\` with default props 1`] = `
+<service-dependencies-stub
+  light="true"
+  openableroot="true"
+  root="[object Object]"
+/>
+`;

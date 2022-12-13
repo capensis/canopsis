@@ -80,11 +80,6 @@ import (
 const baseUrl = "/api/v4"
 
 const (
-	authObjPbh          = apisecurity.ObjPbehavior
-	authObjPbhType      = apisecurity.ObjPbehaviorType
-	authObjPbhReason    = apisecurity.ObjPbehaviorReason
-	authObjPbhException = apisecurity.ObjPbehaviorException
-
 	authObjAction = apisecurity.ObjAction
 
 	authObjEntity         = apisecurity.ObjEntity
@@ -164,7 +159,6 @@ func RegisterRoutes(
 		websocketHub,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
-		security.GetCookieOptions().Secure,
 		logger,
 	)
 	sessionauthApi := sessionauth.NewApi(
@@ -397,12 +391,12 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/pbehavior-timespans",
-			middleware.Authorize(authObjPbh, permRead, enforcer),
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 			pbehaviortimespan.GetTimeSpans(pbehaviortimespan.NewService(dbClient, timezoneConfigProvider)),
 		)
 		protected.GET(
 			"/pbehavior-ics/:id",
-			middleware.Authorize(authObjPbh, permRead, enforcer),
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 			pbehaviorics.GetICS(pbehaviorics.NewStore(dbClient), pbehaviorics.NewService(timezoneConfigProvider)),
 		)
 
@@ -456,38 +450,38 @@ func RegisterRoutes(
 		{
 			pbehaviorRouter.POST(
 				"",
-				middleware.Authorize(authObjPbh, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Create)
 			pbehaviorRouter.GET(
 				"",
-				middleware.Authorize(authObjPbh, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 				pbehaviorApi.List)
 			pbehaviorRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjPbh, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 				pbehaviorApi.Get)
 			pbehaviorRouter.GET(
 				"/:id/entities",
-				middleware.Authorize(authObjPbh, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 				pbehaviorApi.ListEntities)
 			pbehaviorRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Update)
 			pbehaviorRouter.PATCH(
 				"/:id",
-				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorApi.Patch)
 			pbehaviorRouter.DELETE(
 				"",
-				middleware.Authorize(authObjPbh, permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 				pbehaviorApi.DeleteByName)
 			pbehaviorRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjPbh, permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 				pbehaviorApi.Delete)
 		}
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
@@ -495,13 +489,13 @@ func RegisterRoutes(
 			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewModelTransformer(), pbehaviorcomment.NewStore(dbClient))
 			pbehaviorCommentRouter.POST(
 				"",
-				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				pbehaviorCommentAPI.Create,
 			)
 			pbehaviorCommentRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjPbh, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
 				pbehaviorCommentAPI.Delete,
 			)
 		}
@@ -528,14 +522,14 @@ func RegisterRoutes(
 			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
-				middleware.Authorize(authObjPbh, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 				pbehaviorApi.ListByEntityID,
 			)
 
 			entityRouter.GET(
 				"/pbehavior-calendar",
 				middleware.Authorize(authObjEntity, permRead, enforcer),
-				middleware.Authorize(authObjPbh, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
 				pbehaviorApi.CalendarByEntityID,
 			)
 		}
@@ -606,16 +600,16 @@ func RegisterRoutes(
 				actionLogger,
 				logger,
 			)
-			pbhTypeAuthorizeRead := middleware.Authorize(authObjPbhType, permRead, enforcer)
-			pbhTypeAuthorizeCreate := middleware.Authorize(authObjPbhType, permCreate, enforcer)
+			pbhTypeAuthorizeRead := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionRead, enforcer)
+			pbhTypeAuthorizeCreate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionCreate, enforcer)
 
 			typeRouter.GET("", pbhTypeAuthorizeRead, pbehaviorTypeApi.List)
 			typeRouter.POST("", pbhTypeAuthorizeCreate, pbehaviorTypeApi.Create)
 
 			pbhTypeIDGroup := typeRouter.Group("")
 			{
-				pbhTypeAuthorizeUpdate := middleware.Authorize(authObjPbhType, permUpdate, enforcer)
-				pbhTypeAuthorizeDelete := middleware.Authorize(authObjPbhType, permDelete, enforcer)
+				pbhTypeAuthorizeUpdate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer)
+				pbhTypeAuthorizeDelete := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer)
 
 				pbhTypeIDGroup.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeApi.Get)
 				pbhTypeIDGroup.PUT("/:id", pbhTypeAuthorizeUpdate, pbehaviorTypeApi.Update)
@@ -633,23 +627,23 @@ func RegisterRoutes(
 			)
 			reasonRouter.POST(
 				"",
-				middleware.Authorize(authObjPbhReason, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionCreate, enforcer),
 				reasonAPI.Create)
 			reasonRouter.GET(
 				"",
-				middleware.Authorize(authObjPbhReason, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionRead, enforcer),
 				reasonAPI.List)
 			reasonRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjPbhReason, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionRead, enforcer),
 				reasonAPI.Get)
 			reasonRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjPbhReason, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionUpdate, enforcer),
 				reasonAPI.Update)
 			reasonRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjPbhReason, permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionDelete, enforcer),
 				reasonAPI.Delete)
 		}
 		exceptionRouter := protected.Group("/pbehavior-exceptions")
@@ -663,23 +657,23 @@ func RegisterRoutes(
 			)
 			exceptionRouter.POST(
 				"",
-				middleware.Authorize(authObjPbhException, permCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer),
 				exceptionAPI.Create)
 			exceptionRouter.GET(
 				"",
-				middleware.Authorize(authObjPbhException, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionRead, enforcer),
 				exceptionAPI.List)
 			exceptionRouter.GET(
 				"/:id",
-				middleware.Authorize(authObjPbhException, permRead, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionRead, enforcer),
 				exceptionAPI.Get)
 			exceptionRouter.PUT(
 				"/:id",
-				middleware.Authorize(authObjPbhException, permUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionUpdate, enforcer),
 				exceptionAPI.Update)
 			exceptionRouter.DELETE(
 				"/:id",
-				middleware.Authorize(authObjPbhException, permDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionDelete, enforcer),
 				exceptionAPI.Delete)
 		}
 
@@ -1401,6 +1395,22 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					pbehaviorApi.BulkDelete,
+				)
+			}
+
+			entityPbehaviorRouter := bulkRouter.Group("/entity-pbehaviors")
+			{
+				entityPbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.PreProcessBulk(conf, true),
+					pbehaviorApi.BulkEntityCreate,
+				)
+				entityPbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					pbehaviorApi.BulkEntityDelete,
 				)
 			}
 

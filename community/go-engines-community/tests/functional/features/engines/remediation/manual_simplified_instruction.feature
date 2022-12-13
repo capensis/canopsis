@@ -28,6 +28,67 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-instruction-to-run-manual-simplified-instruction-1-name",
+      "description": "test-instruction-to-run-manual-simplified-instruction-1-description",
+      "status": 0,
+      "instruction_type": 2,
+      "complete_time": null,
+      "completed_at": null,
+      "jobs": [
+        {
+          "job_id": "test-job-to-run-manual-simplified-instruction-1",
+          "name": "test-job-to-run-manual-simplified-instruction-1-name",
+          "fail_reason": "",
+          "output": "",
+          "status": 0,
+          "started_at": null,
+          "launched_at": null,
+          "completed_at": null,
+          "queue_number": 0
+        },
+        {
+          "job_id": "test-job-to-run-manual-simplified-instruction-2",
+          "name": "test-job-to-run-manual-simplified-instruction-2-name",
+          "fail_reason": "",
+          "output": "",
+          "status": 0,
+          "started_at": null,
+          "launched_at": null,
+          "completed_at": null,
+          "queue_number": null
+        }
+      ]
+    }
+    """
+    When I save response startedAt={{ .lastResponse.started_at }}
+    When I save response expectedStartedAt=1
+    Then "startedAt" >= "expectedStartedAt"
+    When I do GET /api/v4/cat/executions/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-instruction-to-run-manual-simplified-instruction-1-name",
+      "description": "test-instruction-to-run-manual-simplified-instruction-1-description",
+      "status": 0,
+      "instruction_type": 2,
+      "complete_time": null,
+      "completed_at": null,
+      "jobs": [
+        {
+          "job_id": "test-job-to-run-manual-simplified-instruction-1",
+          "name": "test-job-to-run-manual-simplified-instruction-1-name"
+        },
+        {
+          "job_id": "test-job-to-run-manual-simplified-instruction-2",
+          "name": "test-job-to-run-manual-simplified-instruction-2-name"
+        }
+      ]
+    }
+    """
     When I wait the end of 3 events processing
     When I do POST /api/v4/alarm-details:
     """json

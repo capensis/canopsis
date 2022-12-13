@@ -227,6 +227,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
 		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
 		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
+		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain in order:$`, apiClient.TheResponseArrayKeyShouldContainInOrder)
 		scenarioCtx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
 		scenarioCtx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		scenarioCtx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
