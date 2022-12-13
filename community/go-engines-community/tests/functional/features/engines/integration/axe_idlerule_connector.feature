@@ -199,7 +199,8 @@ Feature: update connector alarm
             "pbehavior_info": {
               "canonical_type": "maintenance",
               "name": "test-pbehavior-axe-idlerule-connector-2",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "type": "test-maintenance-type-to-engine",
               "type_name": "Engine maintenance"
             }
