@@ -496,6 +496,7 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 			Component:     service.ID,
 			Timestamp:     types.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
+			Initiator:     types.InitiatorSystem,
 			SourceType:    types.SourceTypeService,
 		})
 		if err != nil {
