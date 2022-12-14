@@ -10,6 +10,7 @@ import (
 	time "time"
 
 	config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	rpc "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
@@ -821,7 +822,7 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAxeRpc(arg0, arg1, arg
 }
 
 // ProcessWebhookRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessWebhookRpc(arg0 context.Context, arg1 types.RPCWebhookEvent, arg2 string, arg3 map[string]string) error {
+func (m *MockMetaAlarmEventProcessor) ProcessWebhookRpc(arg0 context.Context, arg1 rpc.WebhookEvent, arg2 string, arg3 map[string]string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessWebhookRpc", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
