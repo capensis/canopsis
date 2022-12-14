@@ -2893,15 +2893,40 @@ definitions:
       name:
         type: string
       playlist:
+        $ref: '#/definitions/permission.Playlist'
         description: Playlist is used only for playlist permissions.
-        type: string
       type:
         type: string
       view:
+        $ref: '#/definitions/permission.View'
         description: View is used only for view permissions.
-        type: string
       view_group:
+        $ref: '#/definitions/permission.ViewGroup'
         description: ViewGroup is used only for view permissions.
+    type: object
+  permission.Playlist:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  permission.View:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
+        type: string
+    type: object
+  permission.ViewGroup:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
         type: string
     type: object
   playlist.EditRequest:
