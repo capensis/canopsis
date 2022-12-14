@@ -20,19 +20,19 @@ db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
 
     var set = {};
     var unset = {};
-    doc.actions.forEach(function (index, action) {
+    doc.actions.forEach(function (action, index) {
         if (action.type !== "webhook") {
             return;
         }
 
-        if (action.request) {
-            if (action.request.retry_count) {
-                set["action." + index + ".retry_count"] = action.request.retry_count;
-                unset["action." + index + ".request.retry_count"] = "";
+        if (action.parameters && action.parameters.request) {
+            if (action.parameters.request.retry_count) {
+                set["actions." + index + ".parameters.retry_count"] = action.parameters.request.retry_count;
+                unset["actions." + index + ".parameters.request.retry_count"] = "";
             }
-            if (action.request.retry_delay) {
-                set["action." + index + ".retry_delay"] = action.request.retry_delay;
-                unset["action." + index + ".request.retry_delay"] = "";
+            if (action.parameters.request.retry_delay) {
+                set["actions." + index + ".parameters.retry_delay"] = action.parameters.request.retry_delay;
+                unset["actions." + index + ".parameters.request.retry_delay"] = "";
             }
         }
     });
