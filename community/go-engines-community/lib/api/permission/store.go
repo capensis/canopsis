@@ -71,11 +71,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 			"as":           "playlist",
 		}},
 		{"$unwind": bson.M{"path": "$playlist", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"view":       "$view.title",
-			"view_group": "$view_group.title",
-			"playlist":   "$playlist.name",
-		}},
 	}
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
