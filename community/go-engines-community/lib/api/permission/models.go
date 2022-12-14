@@ -13,11 +13,28 @@ type Permission struct {
 	Description string `bson:"description" json:"description"`
 	Type        string `bson:"type" json:"type"`
 	// View is used only for view permissions.
-	View string `bson:"view" json:"view,omitempty"`
+	View *View `bson:"view" json:"view,omitempty"`
 	// ViewGroup is used only for view permissions.
-	ViewGroup string `bson:"view_group" json:"view_group,omitempty"`
+	ViewGroup *ViewGroup `bson:"view_group" json:"view_group,omitempty"`
 	// Playlist is used only for playlist permissions.
-	Playlist string `bson:"playlist" json:"playlist,omitempty"`
+	Playlist *Playlist `bson:"playlist" json:"playlist,omitempty"`
+}
+
+type View struct {
+	ID       string `bson:"_id" json:"_id"`
+	Title    string `bson:"title" json:"title"`
+	Position int64  `bson:"position" json:"position"`
+}
+
+type ViewGroup struct {
+	ID       string `bson:"_id" json:"_id"`
+	Title    string `bson:"title" json:"title"`
+	Position int64  `bson:"position" json:"position"`
+}
+
+type Playlist struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
 }
 
 type AggregationResult struct {

@@ -119,7 +119,7 @@ Feature: Create a view
     Then I save response viewId={{ .lastResponse._id }}
     When I do GET /api/v4/permissions?search={{ .viewId }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -127,8 +127,14 @@ Feature: Create a view
           "_id": "{{ .viewId }}",
           "name": "{{ .viewId }}",
           "description": "Rights on view : test-view-to-create-3-title",
-          "view": "test-view-to-create-3-title",
-          "view_group": "test-viewgroup-to-view-edit-title",
+          "view": {
+            "_id": "{{ .viewId }}",
+            "title": "test-view-to-create-3-title"
+          },
+          "view_group": {
+            "_id": "test-viewgroup-to-view-edit",
+            "title": "test-viewgroup-to-view-edit-title"
+          },
           "type": "RW"
         }
       ],
