@@ -3,7 +3,7 @@
     ref="textarea",
     v-validate="",
     v-field="value",
-    :label="'label'",
+    :label="label",
     :name="name",
     :rows="rows",
     :readonly="readonly",
@@ -11,13 +11,17 @@
     :error-messages="errors.collect(name)",
     :row-height="lineHeight",
     :style="textareaStyle",
-    auto-grow
+    auto-grow,
+    @update:searchInput="debouncedOnSelectionChange"
   )
     template(#prepend-inner="")
       div(:style="{ width: `${lineHeight}px` }")
     template(#append="")
       span.c-payload-field__lines(:style="linesStyle")
         span.c-payload-field__line(v-for="(line, index) in lines", :key="index", :style="lineStyle")
+          span.c-payload-field__fake-line(v-if="selectedVariable && index === selectedVariable.index")
+            | {{ line.text.slice(0, selectedVariable.start) }}
+            span.c-payload-field__highlight {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
           v-tooltip(v-if="line.error", top)
             template(#activator="{ on }")
               v-icon.c-payload-field__warning-icon(v-on="on", :size="lineHeight", color="error") warning
@@ -26,7 +30,7 @@
 </template>
 
 <script>
-import { keyBy } from 'lodash';
+import { debounce, keyBy } from 'lodash';
 
 export default {
   inject: ['$validator'],
@@ -52,8 +56,8 @@ export default {
       default: 5,
     },
     variables: {
-      type: [Boolean, Array],
-      default: false,
+      type: Array,
+      default: () => [],
     },
     readonly: {
       type: Boolean,
@@ -69,28 +73,51 @@ export default {
     },
     linesErrors: {
       type: Array,
-      default: () => [{
-        lineNumber: 1,
-        message: 'Second line error',
-      }, {
-        lineNumber: 2,
-        message: 'Second line error',
-      }, {
-        lineNumber: 3,
-        message: 'Second line error',
-      }],
+      default: () => [],
     },
   },
+  data() {
+    return {
+      selectionVariableStart: 0,
+      selectionVariableEnd: 0,
+    };
+  },
   computed: {
-    linesErrorsByLineNumber() {
-      return keyBy(this.linesErrors, 'lineNumber');
-    },
-
     lines() {
-      return this.value.split(/\r|\r\n|\n/).map((text, index) => ({
+      return this.value.split(/\n/).map((text, index) => ({
         text,
         error: this.linesErrorsByLineNumber[index + 1],
       }));
+    },
+
+    selectedVariable() {
+      let end = this.selectionVariableEnd;
+
+      for (let index = 0; index < this.lines.length; index += 1) {
+        const { text } = this.lines[index];
+
+        const lineCharactersCount = text.length + 1;
+
+        if (end < lineCharactersCount) {
+          return {
+            start: Math.max(0, this.selectionVariableStart - (this.selectionVariableEnd - end)),
+            end,
+            index,
+          };
+        }
+
+        end -= lineCharactersCount;
+      }
+
+      return undefined;
+    },
+
+    availableVariables() {
+      return this.variables;
+    },
+
+    linesErrorsByLineNumber() {
+      return keyBy(this.linesErrors, 'lineNumber');
     },
 
     lineHeightPixel() {
@@ -116,6 +143,27 @@ export default {
         marginLeft: this.lineHeightPixel,
         maxWidth: `calc(100% - ${this.lineHeightPixel})`,
       };
+    },
+  },
+  created() {
+    this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 50);
+  },
+  mounted() {
+    document.addEventListener('selectionchange', this.debouncedOnSelectionChange);
+  },
+  beforeDestroy() {
+    document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
+  },
+  methods: {
+    onSelectionChange() {
+      if (!this.$el.contains(document.activeElement)) {
+        return;
+      }
+
+      const { selectionStart, selectionEnd } = this.$refs.textarea.$refs.input;
+      /** TODO: Need to check variable and replace on variable coordinate */
+      this.selectionVariableStart = selectionStart;
+      this.selectionVariableEnd = selectionEnd;
     },
   },
 };
@@ -154,12 +202,20 @@ $iconBarWidth: 18px;
     max-height: 100%;
   }
 
-  &__line {
+  &__line, &__fake-line {
     white-space: pre-wrap;
     word-break: normal;
     text-align: start;
     overflow-wrap: break-word;
     color: transparent;
+  }
+
+  &__fake-line {
+    position: absolute;
+  }
+
+  &__highlight {
+    outline: 1px solid red;
   }
 
   &__warning-icon {

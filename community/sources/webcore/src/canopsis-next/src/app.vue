@@ -3,6 +3,7 @@
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
+        c-payload-field(v-model="test")
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar
@@ -49,6 +50,7 @@ export default {
   ],
   data() {
     return {
+      test: 'TEST',
       pending: true,
     };
   },
