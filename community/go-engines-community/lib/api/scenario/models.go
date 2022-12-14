@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -147,10 +148,9 @@ type Parameters struct {
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 	// Webhook
-	Request       *types.WebhookRequest       `json:"request,omitempty" bson:"request"`
-	DeclareTicket *types.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
-	RetryCount    int64                       `json:"retry_count,omitempty" bson:"retry_count"`
-	RetryDelay    *types.DurationWithUnit     `json:"retry_delay,omitempty" bson:"retry_delay"`
+	Request       *request.Parameters           `json:"request,omitempty" bson:"request"`
+	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
+	SystemName    string                        `json:"system_name,omitempty" bson:"system_name"`
 }
 
 type AggregationResult struct {

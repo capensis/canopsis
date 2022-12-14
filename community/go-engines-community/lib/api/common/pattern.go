@@ -246,7 +246,8 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
 		mongo.InstructionMongoCollection,
-		mongo.KpiFilterMongoCollection:
+		mongo.KpiFilterMongoCollection,
+		mongo.DeclareTicketRuleMongoCollection:
 		return []string{"last_event_date"}
 	default:
 		return nil
@@ -261,7 +262,8 @@ func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
-		mongo.InstructionMongoCollection:
+		mongo.InstructionMongoCollection,
+		mongo.DeclareTicketRuleMongoCollection:
 		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
 	default:
 		return nil
@@ -276,7 +278,8 @@ func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
-		mongo.InstructionMongoCollection:
+		mongo.InstructionMongoCollection,
+		mongo.DeclareTicketRuleMongoCollection:
 		return []string{"v.creation_date", "v.ack.t", "v.activation_date"}
 	default:
 		return nil

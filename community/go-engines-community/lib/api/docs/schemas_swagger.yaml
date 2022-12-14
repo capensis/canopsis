@@ -58,7 +58,7 @@ definitions:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/types.WebhookDeclareTicket'
+        $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
@@ -76,15 +76,8 @@ definitions:
         description: Reason is used in pbehavior action.
         type: string
       request:
-        $ref: '#/definitions/types.WebhookRequest'
+        $ref: '#/definitions/request.Parameters'
         description: Request is used in webhook action.
-      retry_count:
-        description: RetryCount is used in webhook action.
-        minimum: 0
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
-        description: RetryDelay is used in webhook action.
       rrule:
         description: RRule is used in pbehavior action.
         type: string
@@ -99,6 +92,8 @@ definitions:
             * `2` - Major
             * `3` - Critical
         type: integer
+      system_name:
+        type: string
       ticket:
         description: Ticket is used in assocticket action.
         maxLength: 255
@@ -1530,10 +1525,6 @@ definitions:
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
-      retry_count:
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
       select:
         additionalProperties:
           type: string
@@ -2907,12 +2898,46 @@ definitions:
           type: string
         type: object
       method:
+        enum:
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - CONNECT
+        - OPTIONS
+        - TRACE
         type: string
       payload:
         type: string
+      retry_count:
+        type: integer
+      retry_delay:
+        $ref: '#/definitions/types.DurationWithUnit'
       skip_verify:
         type: boolean
+      timeout:
+        $ref: '#/definitions/types.DurationWithUnit'
       url:
+        type: string
+    required:
+    - method
+    - url
+    type: object
+  request.WebhookDeclareTicket:
+    properties:
+      customFields:
+        additionalProperties:
+          type: string
+        type: object
+      empty_response:
+        type: boolean
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+      ticket_url:
         type: string
     type: object
   resolverule.CreateRequest:
@@ -3404,7 +3429,7 @@ definitions:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/types.WebhookDeclareTicket'
+        $ref: '#/definitions/request.WebhookDeclareTicket'
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
         description: Snooze and Pbehavior
@@ -3418,12 +3443,8 @@ definitions:
       reason:
         $ref: '#/definitions/pbehavior.Reason'
       request:
-        $ref: '#/definitions/types.WebhookRequest'
+        $ref: '#/definitions/request.Parameters'
         description: Webhook
-      retry_count:
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
       rrule:
         type: string
       start_on_trigger:
@@ -3431,6 +3452,8 @@ definitions:
       state:
         description: ChangeState
         type: integer
+      system_name:
+        type: string
       ticket:
         description: AssocTicket
         type: string
@@ -3840,46 +3863,6 @@ definitions:
         type: integer
       end:
         type: integer
-    type: object
-  types.WebhookBasicAuth:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  types.WebhookDeclareTicket:
-    properties:
-      empty_response:
-        type: boolean
-      fields:
-        additionalProperties:
-          type: string
-        type: object
-      is_regexp:
-        type: boolean
-      ticket_id:
-        type: string
-    type: object
-  types.WebhookRequest:
-    properties:
-      auth:
-        $ref: '#/definitions/types.WebhookBasicAuth'
-      headers:
-        additionalProperties:
-          type: string
-        type: object
-      method:
-        type: string
-      payload:
-        type: string
-      skip_verify:
-        type: boolean
-      url:
-        type: string
-    required:
-    - method
-    - url
     type: object
   user.BulkDeleteRequestItem:
     properties:

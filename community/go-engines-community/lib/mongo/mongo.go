@@ -93,6 +93,8 @@ const (
 	MapMongoCollection = "map"
 
 	AlarmTagCollection = "alarm_tag"
+
+	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
 )
 
 const (
