@@ -15,6 +15,8 @@ import (
 	libmongo "go.mongodb.org/mongo-driver/mongo"
 )
 
+const ResolveDeletedEventWaitTime = time.Hour
+
 type entityData struct {
 	ID                      string         `bson:"_id"`
 	Name                    string         `bson:"name"`
@@ -122,7 +124,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 					NewDeleteOneModel().
 					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}),
 			}
-		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(time.Hour).Before(now.Time)) {
+		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(ResolveDeletedEventWaitTime).Before(now.Time)) {
 			sendEvent = true
 
 			newModels = []libmongo.WriteModel{
