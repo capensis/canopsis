@@ -103,7 +103,10 @@ Feature: Create a playlist
           "_id": "{{ .playlistId }}",
           "name": "{{ .playlistId }}",
           "description": "Rights on playlist : test-playlist-to-create-3-name",
-          "playlist": "test-playlist-to-create-3-name",
+          "playlist": {
+            "_id": "{{ .playlistId }}",
+            "name": "test-playlist-to-create-3-name"
+          },
           "type": "RW"
         }
       ],
