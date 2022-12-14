@@ -138,7 +138,7 @@ Feature: Copy a view
     Then I save response viewId={{ .lastResponse._id }}
     When I do GET /api/v4/permissions?search={{ .viewId }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -146,8 +146,14 @@ Feature: Copy a view
           "_id": "{{ .viewId }}",
           "name": "{{ .viewId }}",
           "description": "Rights on view : test-view-to-copy-1-title-updated",
-          "view": "test-view-to-copy-1-title-updated",
-          "view_group": "test-viewgroup-to-view-copy-title",
+          "view": {
+            "_id": "{{ .viewId }}",
+            "title": "test-view-to-copy-1-title-updated"
+          },
+          "view_group": {
+            "_id": "test-viewgroup-to-view-copy",
+            "title": "test-viewgroup-to-view-copy-title"
+          },
           "type": "RW"
         }
       ],
