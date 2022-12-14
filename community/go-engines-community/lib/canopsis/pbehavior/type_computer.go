@@ -325,7 +325,7 @@ func (c *typeComputer) computePbehavior(
 		return ComputedPbehavior{
 			Name:       pbehavior.Name,
 			ReasonName: reasonName,
-			ReasonID:   reason.ID,
+			ReasonID:   pbehavior.Reason,
 			Types:      compitedTypes,
 			Created:    pbehavior.Created.Unix(),
 			Color:      pbehavior.Color,
