@@ -17,6 +17,7 @@ import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
+  ALARM_ACK_INITIATORS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
@@ -287,6 +288,18 @@ export default {
       };
     },
 
+    ackInitiatorOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: Object.values(ALARM_ACK_INITIATORS),
+          },
+        },
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -372,6 +385,11 @@ export default {
           text: this.$t('common.ackMessage'),
           value: ALARM_PATTERN_FIELDS.ackMessage,
           options: this.stringWithExistOptions,
+        },
+        {
+          text: this.$t('common.ackInitiator'),
+          value: ALARM_PATTERN_FIELDS.ackInitiator,
+          options: this.ackInitiatorOptions,
         },
         {
           text: this.$t('common.resolvedAt'),
