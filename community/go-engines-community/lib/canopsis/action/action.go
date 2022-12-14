@@ -3,6 +3,7 @@ package action
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -87,11 +88,8 @@ type Parameters struct {
 	// StartOnTrigger is used in pbehavior action.
 	StartOnTrigger *bool `json:"start_on_trigger" bson:"start_on_trigger,omitempty"`
 	// Request is used in webhook action.
-	Request *types.WebhookRequest `json:"request" bson:"request,omitempty"`
+	Request *request.Parameters `json:"request" bson:"request,omitempty"`
 	// DeclareTicket is used in webhook action.
-	DeclareTicket *types.WebhookDeclareTicket `json:"declare_ticket" bson:"declare_ticket,omitempty"`
-	// RetryCount is used in webhook action.
-	RetryCount int64 `json:"retry_count" bson:"retry_count,omitempty" binding:"min=0"`
-	// RetryDelay is used in webhook action.
-	RetryDelay *types.DurationWithUnit `json:"retry_delay" bson:"retry_delay,omitempty"`
+	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket" bson:"declare_ticket,omitempty"`
+	SystemName    string                        `json:"system_name" bson:"system_name,omitempty"`
 }

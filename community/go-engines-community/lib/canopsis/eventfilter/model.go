@@ -49,9 +49,7 @@ type ExternalDataParameters struct {
 	Sort       string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
 
 	// are used in api external data
-	RequestParameters *request.Parameters     `bson:"request,omitempty" json:"request,omitempty"`
-	RetryCount        int                     `bson:"retry_count,omitempty" json:"retry_count,omitempty"`
-	RetryDelay        *types.DurationWithUnit `bson:"retry_delay" json:"retry_delay,omitempty"`
+	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }
 
 type Rule struct {
