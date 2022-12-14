@@ -264,6 +264,7 @@ export default merge({
     ackedAt: 'Acquitté à',
     ackedBy: 'Acquitté par',
     ackMessage: 'Message de acquittement',
+    ackInitiator: 'Accusé réception de l\'initiateur',
     resolvedAt: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
@@ -2960,12 +2961,12 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Règles de bagot',
-      message: 'Une alarme hérite du statut bagot lorsqu\'elle oscille d\'une criticité d\'alerte à un état stable un certain nombre de fois sur une période donnée.', 
+      message: 'Une alarme hérite du statut bagot lorsqu\'elle oscille d\'une criticité d\'alerte à un état stable un certain nombre de fois sur une période donnée.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
       title: 'Règles de résolution',
-      message: 'Lorsqu\'une alarme reçoit un événement de type contre alarme, elle passe dans le statut fermée.\nAvant de considérer cette alarme comme définitivement résolue, Canopsis peut attendre un délai.\nCe délai peut être utile si l\'alarme bagotte ou si l\'utilisateur souhaite conserver l\'alarme ouverte en cas d\'erreur.', 
+      message: 'Lorsqu\'une alarme reçoit un événement de type contre alarme, elle passe dans le statut fermée.\nAvant de considérer cette alarme comme définitivement résolue, Canopsis peut attendre un délai.\nCe délai peut être utile si l\'alarme bagotte ou si l\'utilisateur souhaite conserver l\'alarme ouverte en cas d\'erreur.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
