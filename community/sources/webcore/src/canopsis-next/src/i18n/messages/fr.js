@@ -295,6 +295,7 @@ export default merge({
     timestamp: 'Horodatage',
     trigger: 'Déclencheur | Déclencheurs',
     initialLongOutput: 'Sortie initiale longue',
+    totalStateChanges: 'Changements d\'état totaux',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
