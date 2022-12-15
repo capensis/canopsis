@@ -306,6 +306,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.initial_long_output":
                 case "v.ack.a":
                 case "v.ack.m":
+                case "v.ack.initiator":
                     if (strCond === null) {
                         return null;
                     }

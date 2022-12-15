@@ -264,6 +264,7 @@ export default merge({
     ackedAt: 'Acquitté à',
     ackedBy: 'Acquitté par',
     ackMessage: 'Message de acquittement',
+    ackInitiator: 'Accusé réception de l\'initiateur',
     resolvedAt: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
