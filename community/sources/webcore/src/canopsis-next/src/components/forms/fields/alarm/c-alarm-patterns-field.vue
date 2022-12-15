@@ -23,6 +23,7 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   MAX_LIMIT,
+  PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
@@ -300,6 +301,13 @@ export default {
       };
     },
 
+    totalStateChangesOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.number,
+        operators: PATTERN_NUMBER_OPERATORS,
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -442,6 +450,11 @@ export default {
         {
           text: this.$t('common.initialLongOutput'),
           value: ALARM_PATTERN_FIELDS.initialLongOutput,
+        },
+        {
+          text: this.$t('common.totalStateChanges'),
+          value: ALARM_PATTERN_FIELDS.totalStateChanges,
+          options: this.totalStateChangesOptions,
         },
       ];
     },
