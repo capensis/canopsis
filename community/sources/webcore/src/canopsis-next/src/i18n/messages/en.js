@@ -264,6 +264,7 @@ export default merge({
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
     ackMessage: 'Ack message',
+    ackInitiator: 'Ack initiator',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
