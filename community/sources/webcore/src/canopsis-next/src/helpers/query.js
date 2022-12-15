@@ -380,6 +380,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_instructions: true,
     opened: widget.parameters.opened,
     steps: {
+      reversed: true,
       page: 1,
       limit: PAGINATION_LIMIT,
     },
@@ -414,12 +415,6 @@ export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
  */
 export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
-
-  steps: {
-    ...query.steps,
-
-    reversed: true,
-  },
 
   children: {
     ...omit(query.children, ['multiSortBy']),
