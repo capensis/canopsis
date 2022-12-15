@@ -1,3 +1,7 @@
+function isInt(value) {
+    return typeof value === "number" || value instanceof NumberLong;
+}
+
 function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
     if (!oldEntityPatterns) {
         return null;
@@ -195,6 +199,16 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     cond: cond,
                                 });
                                 break;
+                            case "total_state_changes":
+                                var cond = migrateOldIntPattern(vValue);
+                                if (!cond) {
+                                    return null;
+                                }
+                                newGroup.push({
+                                    field: newField,
+                                    cond: cond,
+                                });
+                                break;
                             default:
                                 return null;
                         }
@@ -290,7 +304,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                                 value: false,
                             },
                         });
-                    } else if (typeof value === "number" || value instanceof NumberLong) {
+                    } else if (isInt(value)) {
                         newGroup.push({
                             field: newField,
                             field_type: "int",
@@ -554,7 +568,7 @@ function migrateOldIntPattern(oldIntPattern) {
         };
     }
 
-    if (typeof oldIntPattern === "number" || oldIntPattern instanceof NumberLong) {
+    if (isInt(oldIntPattern)) {
         return {
             type: "eq",
             value: oldIntPattern,
