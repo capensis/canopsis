@@ -292,6 +292,7 @@ export default merge({
     longOutput: 'Sortie longue',
     initialOutput: 'Sortie initiale',
     initialLongOutput: 'Sortie initiale longue',
+    totalStateChanges: 'Changements d\'état totaux',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
