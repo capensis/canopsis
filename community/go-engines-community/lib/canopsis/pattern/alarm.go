@@ -485,6 +485,8 @@ func getAlarmIntField(alarm types.Alarm, f string) (int64, bool) {
 			return 0, true
 		}
 		return int64(alarm.Value.Status.Value), true
+	case "v.total_state_changes":
+		return int64(alarm.Value.TotalStateChanges), true
 	default:
 		return 0, false
 	}
