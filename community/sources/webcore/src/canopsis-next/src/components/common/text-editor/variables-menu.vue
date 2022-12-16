@@ -4,6 +4,7 @@
     :position-x="positionX",
     :position-y="positionY",
     :close-on-content-click="false",
+    ignore-click-outside,
     ref="menu",
     @input="$emit('close')"
   )
@@ -11,6 +12,7 @@
       :variables="variables",
       :value="value",
       :z-index="submenuZIndex",
+      :show-value="showValue",
       @input="$emit('input', $event)"
     )
 </template>
@@ -40,6 +42,10 @@ export default {
     variables: {
       type: Array,
       default: () => [],
+    },
+    showValue: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
