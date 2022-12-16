@@ -7,6 +7,7 @@ Feature: update alarm on action
     """json
     {
       "name": "test-scenario-action-axe-1-name",
+      "priority": 10040,
       "enabled": true,
       "triggers": ["resolve"],
       "actions": [
@@ -32,7 +33,7 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10041,\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -106,6 +107,7 @@ Feature: update alarm on action
     """json
     {
       "name": "test-scenario-action-axe-2-name",
+      "priority": 10042,
       "enabled": true,
       "triggers": ["resolve"],
       "actions": [
