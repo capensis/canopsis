@@ -19,11 +19,13 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :disabled="!item.editable",
           type="edit",
           @click="$emit('edit', item)"
         )
         c-action-btn(
           v-if="removable",
+          :disabled="!item.deletable",
           type="delete",
           @click="$emit('remove', item._id)"
         )
