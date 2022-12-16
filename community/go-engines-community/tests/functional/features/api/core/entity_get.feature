@@ -13,10 +13,7 @@ Feature: Get entities
           "_id": "test-component-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-2",
-            "name": "test-category-to-entity-get-2-name",
-            "author": "test-category-to-entity-get-2-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-2-name"
           },
           "enabled": true,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
@@ -35,10 +32,7 @@ Feature: Get entities
           "_id": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-1",
-            "name": "test-category-to-entity-get-1-name",
-            "author": "test-category-to-entity-get-1-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-1-name"
           },
           "enabled": true,
           "impact_level": 1,
@@ -56,10 +50,7 @@ Feature: Get entities
           "_id": "test-resource-to-entity-get-1/test-component-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-2",
-            "name": "test-category-to-entity-get-2-name",
-            "author": "test-category-to-entity-get-2-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-2-name"
           },
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -350,7 +351,7 @@ func getAlarmLookup() []bson.M {
 }
 
 func getPbehaviorLookup() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "pbehavior_info.id",
@@ -365,13 +366,6 @@ func getPbehaviorLookup() []bson.M {
 			"pbehavior.comments": 0,
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.author",
-			"as":           "pbehavior.author",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.type_",
@@ -385,7 +379,28 @@ func getPbehaviorLookup() []bson.M {
 			"as":           "pbehavior.reason",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
+	}
+
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$addFields": bson.M{
+			"pbehavior.last_comment": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior.last_comment._id",
+					"then": "$pbehavior.last_comment",
+					"else": "$$REMOVE",
+				},
+			}}},
+		bson.M{"$addFields": bson.M{
+			"pbehavior": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior._id",
+					"then": "$pbehavior",
+					"else": "$$REMOVE",
+				},
+			}}},
+		bson.M{"$addFields": bson.M{
 			// todo keep array for backward compatibility
 			"pbehaviors": bson.M{"$cond": bson.M{
 				"if":   "$pbehavior._id",
@@ -393,7 +408,8 @@ func getPbehaviorLookup() []bson.M {
 				"else": bson.A{},
 			}},
 		}},
-	}
+	)
+	return pipeline
 }
 
 func getPbehaviorInfoTypeLookup() []bson.M {

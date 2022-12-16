@@ -42,7 +42,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-1",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-1-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -72,7 +75,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-1",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-1-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -126,7 +132,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-2",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -156,7 +165,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-2",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -210,7 +222,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-3",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -240,7 +255,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-3",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -305,7 +323,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-4",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -346,7 +367,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-4",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -412,7 +436,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-5",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-5",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -455,7 +482,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-5",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-5",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -513,7 +543,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -558,7 +591,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -638,7 +674,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -679,7 +718,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -745,7 +787,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-7",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-7-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -788,7 +833,10 @@ Feature: Update a metaalarmrule
       "_id": "test-metaalarm-to-update-7",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-7-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "config": {
         "threshold_count": 10
@@ -1716,7 +1764,10 @@ Feature: Update a metaalarmrule
     {
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {

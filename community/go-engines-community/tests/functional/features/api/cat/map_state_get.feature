@@ -42,10 +42,7 @@ Feature: Get a map's state
               "enabled": true,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
-                "name": "test-category-to-map-state-get-1-name",
-                "author": "root",
-                "created": 1592215337,
-                "updated": 1592215337
+                "name": "test-category-to-map-state-get-1-name"
               },
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -245,10 +242,7 @@ Feature: Get a map's state
               "enabled": true,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
-                "name": "test-category-to-map-state-get-1-name",
-                "author": "root",
-                "created": 1592215337,
-                "updated": 1592215337
+                "name": "test-category-to-map-state-get-1-name"
               },
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -366,10 +360,7 @@ Feature: Get a map's state
               "enabled": true,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
-                "name": "test-category-to-map-state-get-1-name",
-                "author": "root",
-                "created": 1592215337,
-                "updated": 1592215337
+                "name": "test-category-to-map-state-get-1-name"
               },
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",

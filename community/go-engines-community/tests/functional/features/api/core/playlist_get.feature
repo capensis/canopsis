@@ -12,7 +12,10 @@ Feature: Get a playlist
       "data": [
         {
           "_id": "test-playlist-to-get-1",
-          "author": "test-playlist-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1608284568,
           "enabled": true,
           "fullscreen": true,
@@ -28,7 +31,10 @@ Feature: Get a playlist
         },
         {
           "_id": "test-playlist-to-get-2",
-          "author": "test-playlist-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1608284568,
           "enabled": true,
           "fullscreen": true,
@@ -60,7 +66,10 @@ Feature: Get a playlist
     """json
     {
       "_id": "test-playlist-to-get-1",
-      "author": "test-playlist-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1608284568,
       "enabled": true,
       "fullscreen": true,
