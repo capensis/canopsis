@@ -224,6 +224,7 @@ export const ALARM_PATTERN_FIELDS = {
   ackAt: 'v.ack.t',
   ackBy: 'v.ack.a',
   ackMessage: 'v.ack.m',
+  ackInitiator: 'v.ack.initiator',
   resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
@@ -232,8 +233,15 @@ export const ALARM_PATTERN_FIELDS = {
   longOutput: 'v.long_output',
   initialOutput: 'v.initial_output',
   initialLongOutput: 'v.initial_long_output',
+  totalStateChanges: 'v.total_state_changes',
   tags: 'tags',
   activated: 'activated',
+};
+
+export const ALARM_ACK_INITIATORS = {
+  user: 'user',
+  system: 'system',
+  external: 'external',
 };
 
 export const ALARM_STEP_FIELDS = {
