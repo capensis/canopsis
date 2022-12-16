@@ -29,6 +29,11 @@ function updateResolvedAlarms(collectionName) {
 
         for (var step of doc.v.steps) {
             var stepTs = step.t;
+
+            if (isNaN(stepTs)) {
+                continue
+            }
+
             if (stepTs < doc.v.creation_date) {
                 stepTs = doc.v.creation_date;
             }
@@ -37,6 +42,11 @@ function updateResolvedAlarms(collectionName) {
                 case "snooze":
                     var snoozeStartTs = stepTs;
                     var snoozeEndTs = step.val;
+
+                    if (isNaN(snoozeEndTs)) {
+                        break
+                    }
+
                     if (snoozeEndTs > doc.v.resolved) {
                         snoozeEndTs = doc.v.resolved;
                     }
@@ -49,6 +59,10 @@ function updateResolvedAlarms(collectionName) {
 
                     break;
                 case "pbhenter":
+                    if (pbhIndex !== null) {
+                        break;
+                    }
+
                     if (step.pbehavior_canonical_type !== "active") {
                         pbhIndex = inactivePeriods.length;
                         inactivePeriods.push({
@@ -125,6 +139,11 @@ function updateOpenedAlarms(collectionName) {
 
         for (var step of doc.v.steps) {
             var stepTs = step.t;
+
+            if (isNaN(stepTs)) {
+                continue
+            }
+
             if (stepTs < doc.v.creation_date) {
                 stepTs = doc.v.creation_date;
             }
@@ -133,6 +152,10 @@ function updateOpenedAlarms(collectionName) {
                 case "snooze":
                     var snoozeStartTs = stepTs;
                     var snoozeEndTs = step.val;
+
+                    if (isNaN(snoozeEndTs)) {
+                        break
+                    }
 
                     if (snoozeEndTs < now) {
                         snoozeDuration += snoozeEndTs - snoozeStartTs;
@@ -148,6 +171,10 @@ function updateOpenedAlarms(collectionName) {
                     }
                     break;
                 case "pbhenter":
+                    if (pbhIndex !== null) {
+                        break;
+                    }
+
                     if (step.pbehavior_canonical_type !== "active") {
                         pbhIndex = inactivePeriods.length;
                         inactivePeriods.push({
