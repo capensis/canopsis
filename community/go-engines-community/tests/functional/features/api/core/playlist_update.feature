@@ -24,7 +24,10 @@ Feature: Update an playlist
     """json
     {
       "_id": "test-playlist-to-update",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1608284568,
       "enabled": false,
       "fullscreen": false,
