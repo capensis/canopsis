@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -154,6 +155,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 		r.Query,
 		pipeline,
 		sort,
+		author.Pipeline(),
 	))
 
 	if err != nil {
@@ -175,7 +177,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 }
 
 func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, error) {
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"_id": id,
 			"$or": bson.A{
@@ -183,7 +185,9 @@ func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, err
 				bson.M{"is_private": false},
 			}},
 		},
-	})
+	}
+	pipeline = append(pipeline, author.Pipeline()...)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
