@@ -79,6 +79,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
+			if r.WithFlags {
+				isNotAdmin := res.Data[i].ID != adminId
+				res.Data[i].Editable = &isNotAdmin
+				res.Data[i].Deletable = &isNotAdmin
+			}
 		}
 	}
 
