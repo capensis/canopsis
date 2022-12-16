@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -15,9 +16,9 @@ import (
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*Category, error)
-	Insert(ctx context.Context, r EditRequest) (*Category, error)
-	Update(ctx context.Context, r EditRequest) (*Category, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -25,7 +26,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EntityCategoryMongoCollection),
-		defaultSearchByFields: []string{"_id", "name", "author"},
+		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
 	}
 }
@@ -53,6 +54,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
+		author.Pipeline(),
 	))
 
 	if err != nil {
@@ -73,25 +75,30 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*Category, error) {
-	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil, nil
-		}
-		return nil, err
-	}
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	pipeline = append(pipeline, author.Pipeline()...)
 
-	category := &Category{}
-	err := res.Decode(category)
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	return category, nil
+	defer cursor.Close(ctx)
+	if cursor.Next(ctx) {
+		response := Response{}
+		err := cursor.Decode(&response)
+		if err != nil {
+			return nil, err
+		}
+
+		return &response, nil
+	}
+
+	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r EditRequest) (*Category, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := types.CpsTime{Time: time.Now()}
 	category := Category{
 		ID:      utils.NewID(),
@@ -100,17 +107,23 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Category, error) {
 		Created: &now,
 		Updated: &now,
 	}
-	_, err := s.dbCollection.InsertOne(ctx, category)
-	if err != nil {
-		return nil, err
-	}
+	var response *Response
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		response = nil
+		_, err := s.dbCollection.InsertOne(ctx, category)
+		if err != nil {
+			return err
+		}
+		response, err = s.GetOneBy(ctx, category.ID)
+		return err
+	})
 
-	return &category, nil
+	return response, err
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (*Category, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	now := types.CpsTime{Time: time.Now()}
-	var result *Category
+	var result *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil

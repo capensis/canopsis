@@ -489,7 +489,7 @@ func RegisterRoutes(
 		}
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
-			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewModelTransformer(), pbehaviorcomment.NewStore(dbClient))
+			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewStore(dbClient))
 			pbehaviorCommentRouter.POST(
 				"",
 				middleware.Authorize(authObjPbh, permUpdate, enforcer),
