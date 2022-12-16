@@ -119,6 +119,7 @@ export const PATTERN_RULE_TYPES = {
   date: 'date',
   duration: 'duration',
   string: 'string',
+  number: 'number',
 };
 
 export const PATTERN_RULE_INFOS_FIELDS = {

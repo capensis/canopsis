@@ -529,6 +529,7 @@ Feature: abort a instruction execution
     """
     {
       "name": "test-scenario-remediation-instruction-execution-abort-5-name",
+      "priority": 10067,
       "enabled": true,
       "triggers": ["ack"],
       "actions": [
