@@ -263,6 +263,8 @@ export default merge({
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
+    ackMessage: 'Ack message',
+    ackInitiator: 'Ack initiator',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
@@ -293,6 +295,7 @@ export default merge({
     timestamp: 'Timestamp',
     trigger: 'Trigger | Triggers',
     initialLongOutput: 'Long initial output',
+    totalStateChanges: 'Total state changes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
