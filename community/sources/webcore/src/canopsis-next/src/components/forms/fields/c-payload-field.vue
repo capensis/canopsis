@@ -12,7 +12,7 @@
     :row-height="lineHeight",
     :style="textareaStyle",
     auto-grow,
-    @change="debouncedOnSelectionChange"
+    @input="debouncedOnSelectionChange"
   )
     template(#prepend-inner="")
       div(:style="{ width: `${lineHeight}px` }")
