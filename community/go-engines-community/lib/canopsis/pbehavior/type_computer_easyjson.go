@@ -204,8 +204,10 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		switch key {
 		case "n":
 			out.Name = string(in.String())
+		case "rn":
+			out.ReasonName = string(in.String())
 		case "r":
-			out.Reason = string(in.String())
+			out.ReasonID = string(in.String())
 		case "f":
 			out.Filter = string(in.String())
 		case "t":
@@ -323,9 +325,14 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.Name))
 	}
 	{
+		const prefix string = ",\"rn\":"
+		out.RawString(prefix)
+		out.String(string(in.ReasonName))
+	}
+	{
 		const prefix string = ",\"r\":"
 		out.RawString(prefix)
-		out.String(string(in.Reason))
+		out.String(string(in.ReasonID))
 	}
 	{
 		const prefix string = ",\"f\":"

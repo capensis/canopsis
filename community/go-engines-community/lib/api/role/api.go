@@ -37,7 +37,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	roles, err := a.store.Find(c.Request.Context(), query)
+	roles, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +54,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Role
 func (a *api) Get(c *gin.Context) {
-	role, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	role, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +76,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	role, err := a.store.Insert(c.Request.Context(), request)
+	role, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -100,6 +100,13 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Role
 func (a *api) Update(c *gin.Context) {
+	id := c.Param("id")
+
+	if id == adminId {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "admin cannot be updated"})
+		return
+	}
+
 	request := EditRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -107,7 +114,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	role, err := a.store.Update(c.Request.Context(), c.Param("id"), request)
+	role, err := a.store.Update(c, id, request)
 	if err != nil {
 		panic(err)
 	}
@@ -131,8 +138,13 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
 
+	if id == adminId {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "admin cannot be deleted"})
+		return
+	}
+
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
 		if err == ErrLinkedToUser {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

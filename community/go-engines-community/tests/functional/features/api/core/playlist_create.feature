@@ -92,14 +92,21 @@ Feature: Create a playlist
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/permissions?search={{ .lastResponse._id}}
+    Then I save response playlistId={{ .lastResponse._id }}
+    When I do GET /api/v4/permissions?search={{ .playlistId }}
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
         {
+          "_id": "{{ .playlistId }}",
+          "name": "{{ .playlistId }}",
           "description": "Rights on playlist : test-playlist-to-create-3-name",
+          "playlist": {
+            "_id": "{{ .playlistId }}",
+            "name": "test-playlist-to-create-3-name"
+          },
           "type": "RW"
         }
       ],
