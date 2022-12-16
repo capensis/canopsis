@@ -16,7 +16,10 @@ Feature: Copy a view tab
     """json
     {
       "title": "test-tab-to-copy-1-title-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "widgets": [
         {
           "title": "test-widget-to-tab-copy-1-title",
@@ -38,15 +41,24 @@ Feature: Copy a view tab
             {
               "title": "test-widgetfilter-to-tab-copy-1-title",
               "is_private": false,
-              "author": "root"
+              "author": {
+                "_id": "root",
+                "name": "root"
+              }
             },
             {
               "title": "test-widgetfilter-to-tab-copy-2-title",
               "is_private": false,
-              "author": "root"
+              "author": {
+                "_id": "root",
+                "name": "root"
+              }
             }
           ],
-          "author": "root"
+          "author": {
+            "_id": "root",
+            "name": "root"
+          }
         }
       ]
     }
@@ -57,7 +69,10 @@ Feature: Copy a view tab
     """json
     {
       "title": "test-tab-to-copy-1-title-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "widgets": [
         {
           "title": "test-widget-to-tab-copy-1-title",
@@ -78,7 +93,10 @@ Feature: Copy a view tab
           "filters": [
             {
               "title": "test-widgetfilter-to-tab-copy-1-title",
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "is_private": false,
               "alarm_pattern": [
                 [
@@ -94,7 +112,10 @@ Feature: Copy a view tab
             },
             {
               "title": "test-widgetfilter-to-tab-copy-2-title",
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "is_private": false,
               "alarm_pattern": [
                 [
@@ -109,7 +130,10 @@ Feature: Copy a view tab
               ]
             }
           ],
-          "author": "root"
+          "author": {
+            "_id": "root",
+            "name": "root"
+          }
         }
       ]
     }

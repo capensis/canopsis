@@ -23,12 +23,18 @@ Feature: Create a view
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-view-to-create-1-description",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
-        "author": "test-viewgroup-to-view-edit-author",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
         "updated": 1611229670
@@ -44,7 +50,10 @@ Feature: Create a view
       ],
       "tabs": [
         {
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "title": "Default",
           "widgets": []
         }
@@ -74,12 +83,18 @@ Feature: Create a view
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-view-to-create-2-description",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
-        "author": "test-viewgroup-to-view-edit-author",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
         "updated": 1611229670
@@ -95,7 +110,10 @@ Feature: Create a view
       ],
       "tabs": [
         {
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "title": "Default",
           "widgets": []
         }
