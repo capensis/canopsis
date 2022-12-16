@@ -240,6 +240,8 @@ export const WORKFLOW_TYPES = {
 
 export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
 
+export const PAYLOAD_OPERATORS = ['range', 'end'];
+
 export const PATTERNS_TYPES = {
   alarm: 'alarm',
   event: 'event',

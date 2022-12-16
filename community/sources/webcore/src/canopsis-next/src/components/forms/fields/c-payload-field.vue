@@ -12,16 +12,27 @@
     :row-height="lineHeight",
     :style="textareaStyle",
     auto-grow,
-    @update:searchInput="debouncedOnSelectionChange"
+    @change="debouncedOnSelectionChange"
   )
     template(#prepend-inner="")
       div(:style="{ width: `${lineHeight}px` }")
     template(#append="")
+      variables-menu(
+        v-if="variables",
+        :variables="availableVariables",
+        :visible="variablesShown",
+        :value="variablesMenuValue",
+        :position-x="variablesMenuPosition.x",
+        :position-y="variablesMenuPosition.y",
+        show-value,
+        @input="pasteVariable"
+      )
       span.c-payload-field__lines(:style="linesStyle")
         span.c-payload-field__line(v-for="(line, index) in lines", :key="index", :style="lineStyle")
           span.c-payload-field__fake-line(v-if="selectedVariable && index === selectedVariable.index")
             | {{ line.text.slice(0, selectedVariable.start) }}
-            span.c-payload-field__highlight {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
+            span.c-payload-field__highlight(ref="variable")
+              | {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
           v-tooltip(v-if="line.error", top)
             template(#activator="{ on }")
               v-icon.c-payload-field__warning-icon(v-on="on", :size="lineHeight", color="error") warning
@@ -32,8 +43,20 @@
 <script>
 import { debounce, keyBy } from 'lodash';
 
+import {
+  findSelectedVariable,
+  matchPayloadOperators,
+  matchPayloadVariables,
+} from '@/helpers/payload-json';
+
+import { formBaseMixin } from '@/mixins/form';
+
+import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
+
 export default {
   inject: ['$validator'],
+  components: { VariablesMenu },
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -57,7 +80,22 @@ export default {
     },
     variables: {
       type: Array,
-      default: () => [],
+      /** TODO: Should be removed after integrate */
+      default: () => [{
+        value: '.Alarms',
+        enumerable: true,
+        variables: [{
+          value: '.Value.Component',
+          text: 'Component',
+        }],
+      }, {
+        value: '.Entity',
+        enumerable: true,
+        variables: [{
+          value: '.Infos.%infos_name%.Value',
+          text: 'Infos value',
+        }],
+      }],
     },
     readonly: {
       type: Boolean,
@@ -80,6 +118,14 @@ export default {
     return {
       selectionVariableStart: 0,
       selectionVariableEnd: 0,
+      variableGroup: undefined,
+      operatorGroup: undefined,
+      newVariableGroup: undefined,
+      variablesShown: false,
+      variablesMenuPosition: {
+        x: 0,
+        y: 0,
+      },
     };
   },
   computed: {
@@ -91,6 +137,10 @@ export default {
     },
 
     selectedVariable() {
+      if (!this.variablesShown) {
+        return undefined;
+      }
+
       let end = this.selectionVariableEnd;
 
       for (let index = 0; index < this.lines.length; index += 1) {
@@ -113,7 +163,34 @@ export default {
     },
 
     availableVariables() {
-      return this.variables;
+      return this.variables.reduce((acc, variable) => {
+        if (variable.enumerable) {
+          acc.push(...variable.variables.map(({ value, text }) => ({
+            text,
+            value: (this.variableGroup || this.newVariableGroup) && this.operatorGroup
+              ? `{{ ${value} }}`
+              : `{{ range ${variable.value} }} {{ ${value} }} {{ end }}`,
+          })));
+        }
+
+        return acc;
+      }, []);
+    },
+
+    variablesMenuValue() {
+      if (this.variableGroup) {
+        return this.variableGroup[0];
+      }
+
+      return this.operatorGroup && this.operatorGroup[0];
+    },
+
+    valueVariables() {
+      return matchPayloadVariables(this.value);
+    },
+
+    valueOperators() {
+      return matchPayloadOperators(this.value);
     },
 
     linesErrorsByLineNumber() {
@@ -146,7 +223,7 @@ export default {
     },
   },
   created() {
-    this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 50);
+    this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 100);
   },
   mounted() {
     document.addEventListener('selectionchange', this.debouncedOnSelectionChange);
@@ -155,15 +232,93 @@ export default {
     document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
   methods: {
+    setVariableSelection(start, end) {
+      this.selectionVariableStart = start;
+      this.selectionVariableEnd = end;
+    },
+
+    setVariableSelectionByGroup(group) {
+      const [value] = group;
+
+      this.setVariableSelection(group.index, group.index + value.length);
+    },
+
+    resetVariableSelection() {
+      this.selectionVariableStart = undefined;
+      this.selectionVariableEnd = undefined;
+    },
+
+    pasteVariable(variable) {
+      const newValue = `${this.value.slice(0, this.selectionVariableStart)}${variable}${this.value.slice(this.selectionVariableEnd)}`;
+
+      this.updateModel(newValue);
+      this.resetVariableSelection();
+      this.hideVariablesMenu();
+    },
+
+    showVariablesMenu() {
+      this.variablesShown = true;
+
+      this.$nextTick(() => {
+        const [variableElement] = this.$refs.variable;
+        const { top, left, height } = variableElement.getBoundingClientRect();
+
+        this.variablesMenuPosition.x = left;
+        this.variablesMenuPosition.y = top + height;
+      });
+    },
+
+    hideVariablesMenu() {
+      this.variablesShown = false;
+    },
+
+    isVariableCreatingInsideOperatorContent() {
+      const { index, groups } = this.operatorGroup;
+
+      return (
+        this.newVariableGroup.index > index + groups.open.length
+        && this.newVariableGroup.index < index + groups.variable.length - groups.close.length
+      );
+    },
+
     onSelectionChange() {
       if (!this.$el.contains(document.activeElement)) {
         return;
       }
 
       const { selectionStart, selectionEnd } = this.$refs.textarea.$refs.input;
-      /** TODO: Need to check variable and replace on variable coordinate */
-      this.selectionVariableStart = selectionStart;
-      this.selectionVariableEnd = selectionEnd;
+
+      this.variableGroup = findSelectedVariable(
+        this.valueVariables,
+        selectionStart,
+        selectionEnd,
+      );
+      this.operatorGroup = findSelectedVariable(
+        this.valueOperators,
+        selectionStart,
+        selectionEnd,
+      );
+      this.newVariableGroup = this.value.slice(0, selectionStart).match(/({{){1,2}$/);
+
+      if (this.newVariableGroup && !this.variableGroup) {
+        if (
+          !this.operatorGroup
+          || this.isVariableCreatingInsideOperatorContent()
+        ) {
+          this.setVariableSelection(this.newVariableGroup.index, selectionEnd);
+          this.showVariablesMenu();
+          return;
+        }
+      }
+
+      if (this.variableGroup || this.operatorGroup) {
+        this.setVariableSelectionByGroup(this.variableGroup || this.operatorGroup);
+        this.showVariablesMenu();
+        return;
+      }
+
+      this.hideVariablesMenu();
+      this.resetVariableSelection();
     },
   },
 };
@@ -215,7 +370,9 @@ $iconBarWidth: 18px;
   }
 
   &__highlight {
-    outline: 1px solid red;
+    outline: 1px solid grey;
+    border-radius: 2px;
+    background: rgba(grey, 0.2);
   }
 
   &__warning-icon {
