@@ -260,7 +260,10 @@ Feature: Get a scenario
     {
       "_id": "test-scenario-backward-compatibility-to-get-1",
       "name": "test-scenario-backward-compatibility-to-get-1",
-      "author": "test-scenario-backward-compatibility-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "disable_during_periods": null,
       "triggers": [
