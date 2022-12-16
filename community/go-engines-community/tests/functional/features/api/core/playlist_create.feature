@@ -25,7 +25,10 @@ Feature: Create a playlist
     {
       "fullscreen": true,
       "name": "test-playlist-to-create-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tabs_list": [
         "test-tab-to-playlist-edit-1"
       ],
@@ -62,7 +65,10 @@ Feature: Create a playlist
     {
       "fullscreen": true,
       "name": "test-playlist-to-create-2-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tabs_list": [
         "test-tab-to-playlist-edit-1"
       ],

@@ -1,6 +1,7 @@
 package scenario
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -12,7 +13,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author expected_interval created updated enabled priority delay"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name expected_interval created updated enabled priority delay"`
 }
 
 type EditRequest struct {
@@ -102,7 +103,7 @@ type ActionRequest struct {
 type Scenario struct {
 	ID                   string                  `bson:"_id" json:"_id"`
 	Name                 string                  `bson:"name" json:"name"`
-	Author               string                  `bson:"author" json:"author"`
+	Author               *author.Author          `bson:"author" json:"author"`
 	Enabled              bool                    `bson:"enabled" json:"enabled"`
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
 	Triggers             []string                `bson:"triggers" json:"triggers"`

@@ -1,6 +1,7 @@
 package idlerule
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
@@ -12,7 +13,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author duration created updated type priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name duration created updated type priority"`
 }
 
 type EditRequest struct {
@@ -59,7 +60,7 @@ type Rule struct {
 	ID                string                       `bson:"_id,omitempty" json:"_id"`
 	Name              string                       `bson:"name" json:"name"`
 	Description       string                       `bson:"description" json:"description"`
-	Author            string                       `bson:"author" json:"author"`
+	Author            *author.Author               `bson:"author" json:"author"`
 	Enabled           bool                         `bson:"enabled" json:"enabled"`
 	Type              string                       `bson:"type" json:"type"`
 	Priority          int64                        `bson:"priority" json:"priority"`

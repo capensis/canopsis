@@ -1,6 +1,7 @@
 package resolverule
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
@@ -37,7 +38,7 @@ type Response struct {
 	OldAlarmPatterns  oldpattern.AlarmPatternList  `bson:"old_alarm_patterns" json:"old_alarm_patterns"`
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns" json:"old_entity_patterns"`
 	Priority          int                          `bson:"priority" json:"priority"`
-	Author            common.User                  `bson:"author" json:"author"`
+	Author            *author.Author               `bson:"author" json:"author"`
 	Created           types.CpsTime                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated           types.CpsTime                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
@@ -60,5 +61,5 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description duration author created updated priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description duration author.name created updated priority"`
 }
