@@ -7,11 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rs/zerolog"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/rs/zerolog"
 )
 
 type Service interface {
