@@ -1,7 +1,7 @@
 <template lang="pug">
   v-textarea.c-payload-field(
     ref="textarea",
-    v-validate="",
+    v-validate="rules",
     v-field="value",
     :label="label",
     :name="name",
@@ -113,6 +113,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -129,6 +133,12 @@ export default {
     };
   },
   computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+
     lines() {
       return this.value.split(/\n/).map((text, index) => ({
         text,
