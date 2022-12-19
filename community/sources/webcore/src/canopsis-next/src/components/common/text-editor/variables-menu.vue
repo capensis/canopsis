@@ -4,7 +4,7 @@
     :position-x="positionX",
     :position-y="positionY",
     :close-on-content-click="false",
-    ignore-click-outside,
+    :ignore-click-outside="ignoreClickOutside",
     ref="menu",
     @input="$emit('close')"
   )
@@ -44,6 +44,10 @@ export default {
       default: () => [],
     },
     showValue: {
+      type: Boolean,
+      default: false,
+    },
+    ignoreClickOutside: {
       type: Boolean,
       default: false,
     },

@@ -24,6 +24,7 @@
         :value="variablesMenuValue",
         :position-x="variablesMenuPosition.x",
         :position-y="variablesMenuPosition.y",
+        ignore-click-outside,
         show-value,
         @input="pasteVariable"
       )
