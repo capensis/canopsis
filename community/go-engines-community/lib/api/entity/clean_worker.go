@@ -2,11 +2,12 @@ package entity
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type DisabledCleaner interface {
@@ -64,7 +65,7 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 					w.metricMetaUpdater.UpdateAll(ctx)
 				}
 
-				w.logger.Info().Int64("alarm number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
+				w.logger.Info().Int64("alarm_number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
 				continue
 			}
 
@@ -83,7 +84,7 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 				continue
 			}
 
-			w.logger.Info().Int64("alarm number", deleted).Str("user", task.UserID).Msg("archived entities have been deleted")
+			w.logger.Info().Int64("alarm_number", deleted).Str("user", task.UserID).Msg("archived entities have been deleted")
 		}
 	}
 }
