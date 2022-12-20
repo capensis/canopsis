@@ -41,7 +41,7 @@
           v-if="updatable",
           :disabled="!item.editable",
           :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-          :badge-value="!!item.old_mongo_query",
+          :badge-value="isOldPattern(item)",
           :badge-tooltip="$t('pattern.oldPatternTooltip')",
           type="edit",
           @click="$emit('edit', item)"
@@ -63,6 +63,7 @@
 <script>
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
+import { isOldPattern } from '@/helpers/pattern';
 
 export default {
   inject: ['$system'],
@@ -126,6 +127,11 @@ export default {
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
+    },
+  },
+  methods: {
+    isOldPattern(item) {
+      return isOldPattern(item);
     },
   },
 };

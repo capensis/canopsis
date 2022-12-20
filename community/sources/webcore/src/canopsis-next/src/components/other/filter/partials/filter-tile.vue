@@ -9,7 +9,7 @@
         v-layout(row, align-center)
           c-action-btn(
             type="edit",
-            :badge-value="!!filter.old_mongo_query",
+            :badge-value="isOldPattern",
             :badge-tooltip="$t('pattern.oldPatternTooltip')",
             @click="$emit('edit')"
           )
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { isOldPattern } from '@/helpers/pattern';
+
 export default {
   props: {
     filter: {
@@ -26,6 +28,11 @@ export default {
     editable: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    isOldPattern() {
+      return isOldPattern(this.filter);
     },
   },
 };
