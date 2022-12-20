@@ -221,3 +221,12 @@ export const OLD_PATTERNS_FIELDS = {
   patterns: 'old_patterns',
   mongoQuery: 'old_mongo_query',
 };
+
+export const OLD_PATTERN_FIELDS_TO_NEW_FIELDS = {
+  [OLD_PATTERNS_FIELDS.mongoQuery]: [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+  [OLD_PATTERNS_FIELDS.alarm]: [PATTERNS_FIELDS.alarm],
+  [OLD_PATTERNS_FIELDS.entity]: [PATTERNS_FIELDS.entity],
+  [OLD_PATTERNS_FIELDS.event]: [PATTERNS_FIELDS.event],
+  [OLD_PATTERNS_FIELDS.totalEntity]: [PATTERNS_FIELDS.totalEntity],
+  [OLD_PATTERNS_FIELDS.patterns]: [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
+};
