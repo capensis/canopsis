@@ -272,6 +272,6 @@ export default {
 
 <style lang="scss">
 .c-patterns-field {
-  gap: 8px;
+  gap: 16px;
 }
 </style>

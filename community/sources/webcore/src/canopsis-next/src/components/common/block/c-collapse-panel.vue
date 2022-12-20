@@ -78,6 +78,6 @@ export default {
 .c-collapse-panel {
   border-radius: 5px;
   overflow: hidden;
-  outline: 2px solid transparent;
+  outline: 3px solid transparent;
 }
 </style>
