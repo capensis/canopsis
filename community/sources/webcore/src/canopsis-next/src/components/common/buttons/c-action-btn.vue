@@ -2,7 +2,7 @@
   v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left")
     template(#activator="{ on: tooltipOn }")
       slot(name="button", :on="tooltipOn")
-        v-badge.action-btn__badge(v-if="badgeValue", :color="badgeColor", overlap)
+        v-badge.c-action-btn__badge(v-if="badgeValue", :color="badgeColor", overlap)
           template(#badge="")
             v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left", :disabled="!badgeTooltip")
               template(#activator="{ on: badgeTooltipOn }")
@@ -130,7 +130,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.action-btn__badge {
+.c-action-btn__badge {
   margin: 6px 4px;
 
   & /deep/ .v-badge__badge {
