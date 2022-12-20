@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
 
@@ -102,7 +103,7 @@ func (a *api) Create(c *gin.Context) {
 func (a *api) Update(c *gin.Context) {
 	id := c.Param("id")
 
-	if id == adminId {
+	if id == security.RoleAdmin {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "admin cannot be updated"})
 		return
 	}
@@ -139,7 +140,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	if id == adminId {
+	if id == security.RoleAdmin {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "admin cannot be deleted"})
 		return
 	}

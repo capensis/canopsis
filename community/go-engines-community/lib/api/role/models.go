@@ -5,8 +5,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 )
 
-const adminId = "admin"
-
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy     string `form:"sort_by" binding:"oneoforempty=name"`
