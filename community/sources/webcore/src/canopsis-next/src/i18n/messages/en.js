@@ -3184,6 +3184,7 @@ export default merge({
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
       existExcluded: 'The rules include excluded rule.',
+      required: 'At least one pattern has to be defined. Please define filter patterns for rule',
     },
   },
 
