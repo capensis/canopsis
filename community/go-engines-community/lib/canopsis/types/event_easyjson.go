@@ -1133,6 +1133,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes5(in, &out.PbehaviorInfo)
 		case "sli_avail_state":
 			out.SliAvailState = int64(in.Int64())
+		case "soft_deleted":
+			if in.IsNull() {
+				in.Skip()
+				out.SoftDeleted = nil
+			} else {
+				if out.SoftDeleted == nil {
+					out.SoftDeleted = new(CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.SoftDeleted).UnmarshalJSON(data))
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -1334,6 +1346,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"sli_avail_state\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.SliAvailState))
+	}
+	if in.SoftDeleted != nil {
+		const prefix string = ",\"soft_deleted\":"
+		out.RawString(prefix)
+		out.Raw((*in.SoftDeleted).MarshalJSON())
 	}
 	out.RawByte('}')
 }
