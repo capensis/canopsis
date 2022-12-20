@@ -1,5 +1,7 @@
 package security
 
+const RoleAdmin = "admin"
+
 const (
 	// QueryParamApiKey is the user api key for auth.
 	QueryParamApiKey = "authkey"
