@@ -16,6 +16,8 @@
         :disabled="disabled",
         :icon="icon",
         :color="iconColor",
+        :badge-value="badgeValue",
+        :badge-tooltip="badgeTooltip",
         @click="method"
       )
 </template>
@@ -57,6 +59,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    badgeValue: {
+      type: Boolean,
+      required: false,
+    },
+    badgeTooltip: {
+      type: String,
+      required: false,
     },
   },
 };

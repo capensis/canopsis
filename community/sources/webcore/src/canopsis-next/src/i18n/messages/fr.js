@@ -2597,7 +2597,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
-    executedAt: 'Exécuté à',
+    executedAt: 'Terminé à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
@@ -3141,6 +3141,7 @@ export default merge({
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
     discard: 'Effacer le motif',
+    oldPatternTooltip: 'Les modèles de filtre ne sont pas migrés',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -3155,10 +3156,6 @@ export default merge({
       existExcluded: 'Les règles incluent la règle exclue.',
       required: 'Au moins un modèle doit être défini. Veuillez définir des modèles de filtre pour la règle',
     },
-  },
-
-  filter: {
-    oldPattern: 'Ancien format de filtre',
   },
 
   map: {
