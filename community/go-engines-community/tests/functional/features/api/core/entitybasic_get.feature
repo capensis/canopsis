@@ -26,6 +26,7 @@ Feature: Get entity basic
       ],
       "description": "test-entitybasic-to-get-resource-description",
       "enabled": true,
+      "old_entity_patterns": null,
       "impact_level": 3,
       "infos": {
         "test-entitybasic-to-get-info-1": {
