@@ -3186,6 +3186,7 @@ export default merge({
       countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
       oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
       existExcluded: 'Les règles incluent la règle exclue.',
+      required: 'Au moins un modèle doit être défini. Veuillez définir des modèles de filtre pour la règle',
     },
   },
 
