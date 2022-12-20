@@ -49,7 +49,7 @@
           v-list-tile-title.v-list-badge__tile__title
             span {{ item.title }}
             v-badge(
-              :value="!!item.old_mongo_query",
+              :value="isOldPattern(item)",
               color="error",
               overlap
             )
@@ -66,6 +66,8 @@
 
 <script>
 import { isArray } from 'lodash';
+
+import { isOldPattern } from '@/helpers/pattern';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -175,6 +177,10 @@ export default {
 
     getItemIcon(item) {
       return item.is_private ? 'person' : 'lock';
+    },
+
+    isOldPattern(filter) {
+      return isOldPattern(filter);
     },
 
     isFilterItemDisabled(filter) {

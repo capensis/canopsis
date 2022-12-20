@@ -16,7 +16,7 @@
         v-list-tile-content
           v-list-tile-title.v-list-badge__tile__title
             v-badge(
-              :value="!!item.old_entity_patterns",
+              :value="isOldPattern(item)",
               color="error",
               overlap
             )
@@ -29,7 +29,9 @@
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants';
+import { MAX_LIMIT, OLD_PATTERNS_FIELDS } from '@/constants';
+
+import { isOldPattern } from '@/helpers/pattern';
 
 import { entitiesFilterMixin } from '@/mixins/entities/filter';
 
@@ -57,6 +59,10 @@ export default {
     this.fetchList();
   },
   methods: {
+    isOldPattern(item) {
+      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity]);
+    },
+
     fetchList() {
       if (!this.filtersPending) {
         this.fetchFiltersList({ params: { limit: MAX_LIMIT } });
