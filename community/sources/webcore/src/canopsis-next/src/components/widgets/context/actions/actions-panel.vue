@@ -40,6 +40,8 @@ export default {
           icon: 'edit',
           iconColor: 'primary',
           title: this.$t('context.actions.titles.editEntity'),
+          badgeValue: !!this.item.old_entity_patterns,
+          badgeTooltip: this.$t('pattern.oldPatternTooltip'),
           method: this.showEditEntityModal,
         },
         duplicateEntity: {
