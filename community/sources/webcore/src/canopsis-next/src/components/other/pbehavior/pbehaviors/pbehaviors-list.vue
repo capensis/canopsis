@@ -61,9 +61,10 @@
 </template>
 
 <script>
+import { isOldPattern } from '@/helpers/pattern';
+
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
-import { isOldPattern } from '@/helpers/pattern';
 
 export default {
   inject: ['$system'],
