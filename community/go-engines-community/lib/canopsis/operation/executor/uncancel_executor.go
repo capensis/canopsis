@@ -2,15 +2,16 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func NewUncancelExecutor(configProvider config.AlarmConfigProvider, alarmStatusService alarmstatus.Service) operationlib.Executor {
+func NewUncancelExecutor(configProvider config.AlarmConfigProvider, alarmStatusService alarmstatus.Service) operation.Executor {
 	return &uncancelExecutor{configProvider: configProvider, alarmStatusService: alarmStatusService}
 }
 
@@ -21,13 +22,13 @@ type uncancelExecutor struct {
 
 func (e *uncancelExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	if userID == "" {
 		userID = params.User

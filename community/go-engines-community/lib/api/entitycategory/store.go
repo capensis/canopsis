@@ -138,7 +138,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Category, error) {
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	entityCollection := s.dbClient.Collection(mongo.EntityMongoCollection)
-	res := entityCollection.FindOne(ctx, bson.M{"category": id})
+	res := entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}})
 	if err := res.Err(); err != nil {
 		if err != mongodriver.ErrNoDocuments {
 			return false, err

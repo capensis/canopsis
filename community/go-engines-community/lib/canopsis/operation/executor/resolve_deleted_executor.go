@@ -2,20 +2,19 @@ package executor
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func NewResolveDisabledExecutor() operation.Executor {
-	return &resolveDisabledExecutor{}
+func NewResolveDeletedExecutor() operation.Executor {
+	return &resolveDeletedExecutor{}
 }
 
-type resolveDisabledExecutor struct {
+type resolveDeletedExecutor struct {
 }
 
-func (e *resolveDisabledExecutor) Exec(
+func (e *resolveDeletedExecutor) Exec(
 	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
@@ -23,10 +22,14 @@ func (e *resolveDisabledExecutor) Exec(
 	_ types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
+	if alarm.Value.Resolved != nil || entity.SoftDeleted == nil {
+		return "", nil
+	}
+
 	entity.IdleSince = nil
 	entity.LastIdleRuleApply = ""
 
-	err := alarm.PartialUpdateResolve(types.CpsTime{Time: time.Now()})
+	err := alarm.PartialUpdateResolve(types.NewCpsTime())
 	if err != nil {
 		return "", err
 	}

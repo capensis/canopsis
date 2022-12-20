@@ -2175,6 +2175,38 @@ definitions:
         - service
         type: string
     type: object
+  importcontextgraph.EntityConfiguration:
+    properties:
+      action:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
   importcontextgraph.Link:
     properties:
       _id:
@@ -3957,6 +3989,14 @@ definitions:
         type: integer
       end:
         type: integer
+    type: object
+  types.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value: {}
     type: object
   types.WebhookBasicAuth:
     properties:
