@@ -13,7 +13,7 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected, clearSelected }")
-      pbehaviors-mass-actions-panel.ml-3(
+      pbehaviors-mass-actions-panel(
         :items="selected",
         :removable="removable",
         :enablable="enablable",
@@ -41,6 +41,8 @@
           v-if="updatable",
           :disabled="!item.editable",
           :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
+          :badge-value="!!item.old_mongo_query",
+          :badge-tooltip="$t('pattern.oldPatternTooltip')",
           type="edit",
           @click="$emit('edit', item)"
         )

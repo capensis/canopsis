@@ -46,13 +46,22 @@
             :disabled="tile.props.disabled"
           )
         v-list-tile-content
-          v-list-tile-title
+          v-list-tile-title.v-list-badge__tile__title
             span {{ item.title }}
-            v-icon.ml-2(
-              v-if="!hideIcon",
-              :color="tile.props.value ? parent.color : ''",
-              small
-            ) {{ item.is_private ? 'person' : 'lock' }}
+            v-badge(
+              :value="!!item.old_mongo_query",
+              color="error",
+              overlap
+            )
+              template(#badge="")
+                v-tooltip(top)
+                  template(#activator="{ on: badgeTooltipOn }")
+                    v-icon(v-on="badgeTooltipOn", color="white") priority_high
+                  span {{ $t('pattern.oldPatternTooltip') }}
+              v-icon.ml-2(
+                :color="tile.props.value ? parent.color : ''",
+                small
+              ) {{ getItemIcon(item) }}
 </template>
 
 <script>
@@ -90,10 +99,6 @@ export default {
     itemValue: {
       type: String,
       default: '_id',
-    },
-    hideIcon: {
-      type: Boolean,
-      default: false,
     },
     disabled: {
       type: Boolean,
@@ -166,6 +171,10 @@ export default {
 
     getItemValue(item) {
       return item[this.itemValue];
+    },
+
+    getItemIcon(item) {
+      return item.is_private ? 'person' : 'lock';
     },
 
     isFilterItemDisabled(filter) {
