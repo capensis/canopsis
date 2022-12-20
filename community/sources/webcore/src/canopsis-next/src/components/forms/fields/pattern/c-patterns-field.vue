@@ -1,6 +1,10 @@
 <template lang="pug">
-  v-layout(column)
-    c-collapse-panel.mb-2(v-if="withAlarm", :title="$t('common.alarmPatterns')")
+  v-layout.c-patterns-field(column)
+    c-collapse-panel(
+      v-if="withAlarm",
+      :outline-color="alarmPatternOutlineColor",
+      :title="$t('common.alarmPatterns')"
+    )
       c-alarm-patterns-field(
         v-field="value.alarm_pattern",
         :required="isPatternRequired",
@@ -13,7 +17,11 @@
         @input="errors.remove(alarmFieldName)"
       )
 
-    c-collapse-panel.mb-2(v-if="withEntity", :title="$t('common.entityPatterns')")
+    c-collapse-panel(
+      v-if="withEntity",
+      :outline-color="entityPatternOutlineColor",
+      :title="$t('common.entityPatterns')"
+    )
       c-entity-patterns-field(
         v-field="value.entity_pattern",
         :required="isPatternRequired",
@@ -27,7 +35,11 @@
         @input="errors.remove(entityFieldName)"
       )
 
-    c-collapse-panel.mb-2(v-if="withPbehavior", :title="$t('common.pbehaviorPatterns')")
+    c-collapse-panel(
+      v-if="withPbehavior",
+      :outline-color="pbehaviorPatternOutlineColor",
+      :title="$t('common.pbehaviorPatterns')"
+    )
       c-pbehavior-patterns-field(
         v-field="value.pbehavior_pattern",
         :required="isPatternRequired",
@@ -39,7 +51,11 @@
         @input="errors.remove(pbehaviorFieldName)"
       )
 
-    c-collapse-panel.mb-2(v-if="withEvent", :title="$t('common.eventPatterns')")
+    c-collapse-panel(
+      v-if="withEvent",
+      :outline-color="eventPatternOutlineColor",
+      :title="$t('common.eventPatterns')"
+    )
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
         :required="isPatternRequired",
@@ -49,7 +65,11 @@
         @input="errors.remove(eventFieldName)"
       )
 
-    c-collapse-panel.mb-2(v-if="withTotalEntity", :title="$t('common.totalEntityPatterns')")
+    c-collapse-panel(
+      v-if="withTotalEntity",
+      :outline-color="totalEntityPatternOutlineColor",
+      :title="$t('common.totalEntityPatterns')"
+    )
       c-entity-patterns-field(
         v-field="value.total_entity_pattern",
         :required="isPatternRequired",
@@ -60,7 +80,11 @@
         @input="errors.remove(totalEntityFieldName)"
       )
 
-    c-collapse-panel.mb-2(v-if="withServiceWeather", :title="$t('common.serviceWeatherPatterns')")
+    c-collapse-panel(
+      v-if="withServiceWeather",
+      :outline-color="serviceWeatherPatternOutlineColor",
+      :title="$t('common.serviceWeatherPatterns')"
+    )
       c-service-weather-patterns-field(
         v-field="value.weather_service_pattern",
         :required="isPatternRequired",
@@ -68,10 +92,19 @@
         :name="serviceWeatherFieldName",
         @input="errors.remove(serviceWeatherFieldName)"
       )
+
+    v-messages(v-if="someRequired && !hasPatterns", :value="[$t('pattern.errors.required')]", color="error")
 </template>
 
 <script>
+import { isString } from 'lodash';
+
 import { PATTERNS_FIELDS } from '@/constants';
+
+import { COLORS } from '@/config';
+
+import { isValidPatternRule } from '@/helpers/pattern';
+import { formGroupsToPatternRules } from '@/helpers/forms/pattern';
 
 export default {
   inject: ['$validator'],
@@ -178,11 +211,67 @@ export default {
     serviceWeatherFieldName() {
       return this.preparePatternsFieldName(PATTERNS_FIELDS.serviceWeather);
     },
+
+    alarmPatternOutlineColor() {
+      return this.getPatternOutlineColor(PATTERNS_FIELDS.alarm);
+    },
+
+    entityPatternOutlineColor() {
+      return this.getPatternOutlineColor(PATTERNS_FIELDS.entity);
+    },
+
+    eventPatternOutlineColor() {
+      return this.getPatternOutlineColor(PATTERNS_FIELDS.event);
+    },
+
+    totalEntityPatternOutlineColor() {
+      return this.getPatternOutlineColor(PATTERNS_FIELDS.totalEntity);
+    },
+
+    pbehaviorPatternOutlineColor() {
+      return this.getPatternOutlineColor(PATTERNS_FIELDS.pbehavior);
+    },
+
+    serviceWeatherPatternOutlineColor() {
+      return this.getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather);
+    },
   },
   methods: {
+    isValidPatternRules(rules) {
+      return !!rules.length && rules.every(
+        group => group.every((rule) => {
+          if (!isValidPatternRule(rule)) {
+            return false;
+          }
+
+          if (isString(rule.cond.value)) {
+            return rule.cond.value.length > 0;
+          }
+
+          return true;
+        }),
+      );
+    },
+
+    getPatternOutlineColor(name) {
+      const rules = formGroupsToPatternRules(this.value[name]?.groups ?? []);
+
+      if (!this.isPatternRequired && !rules.length) {
+        return undefined;
+      }
+
+      return this.isValidPatternRules(rules) ? COLORS.primary : COLORS.error;
+    },
+
     preparePatternsFieldName(name) {
       return [this.name, name].filter(Boolean).join('.');
     },
   },
 };
 </script>
+
+<style lang="scss">
+.c-patterns-field {
+  gap: 8px;
+}
+</style>
