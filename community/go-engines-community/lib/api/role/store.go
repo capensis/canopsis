@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -80,7 +81,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
 			if r.WithFlags {
-				isNotAdmin := res.Data[i].ID != adminId
+				isNotAdmin := res.Data[i].ID != security.RoleAdmin
 				res.Data[i].Editable = &isNotAdmin
 				res.Data[i].Deletable = &isNotAdmin
 			}
