@@ -11,7 +11,7 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected }")
-      c-action-btn.ml-3(
+      c-action-btn(
         v-if="removable",
         :tooltip="$t('shareToken.revokeSelectedTokens')",
         type="delete",
