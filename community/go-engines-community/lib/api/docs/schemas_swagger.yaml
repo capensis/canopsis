@@ -895,6 +895,10 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         description: Flags
         type: boolean
@@ -903,6 +907,12 @@ definitions:
         type: integer
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -927,6 +937,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -1074,6 +1086,10 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         description: Flags
         type: boolean
@@ -1084,6 +1100,12 @@ definitions:
         type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -1108,6 +1130,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
