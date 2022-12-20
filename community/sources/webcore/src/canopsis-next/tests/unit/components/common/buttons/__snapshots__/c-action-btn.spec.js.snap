@@ -89,7 +89,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     class="v-tooltip"
   >
     <span
-      class="v-badge action-btn__badge v-badge--overlap"
+      class="v-badge c-action-btn__badge v-badge--overlap"
     >
       <button
         class="v-btn ma-0 c-action-btn__button"
