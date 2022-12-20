@@ -155,18 +155,44 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Filter 1
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light primary--text"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light primary--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -225,18 +251,44 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Filter 2
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -298,18 +350,44 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Locked filter 1
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -368,18 +446,339 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Locked filter 2
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`filter-selector Renders \`filter-selector\` with badges 1`] = `
+<div
+  class="v-input filter-selector v-text-field v-select theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label=""
+            aria-readonly="false"
+            autocomplete="on"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`filter-selector Renders \`filter-selector\` with badges 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list theme--light"
+      role="list"
+    >
+      <c-enabled-field-stub
+        class="mx-3"
+        hide-details="hide-details"
+        label="Mix filters"
+      />
+      <hr
+        class="mt-3 v-divider theme--light"
+      />
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <!---->
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title v-list-badge__tile__title"
+            >
+              <span>
+                Filter 1
+              </span>
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <!---->
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title v-list-badge__tile__title"
+            >
+              <span>
+                Filter 2
+              </span>
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <hr
+        class="v-divider theme--light"
+      />
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <!---->
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title v-list-badge__tile__title"
+            >
+              <span>
+                Locked filter 1
+              </span>
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <!---->
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title v-list-badge__tile__title"
+            >
+              <span>
+                Locked filter 2
+              </span>
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -508,12 +907,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Filter 1
               </span>
-              <!---->
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light primary--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -529,12 +960,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Filter 2
               </span>
-              <!---->
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -553,12 +1016,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Locked filter 1
               </span>
-              <!---->
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -574,12 +1069,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Locked filter 2
               </span>
-              <!---->
+              <span
+                class="v-badge v-badge--overlap"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -684,18 +1211,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Filter 1
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light primary--text"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light primary--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -711,18 +1264,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Filter 2
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -741,18 +1320,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Locked filter 1
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
@@ -768,18 +1373,44 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title v-list-badge__tile__title"
             >
               <span>
                 Locked filter 2
               </span>
-              <i
-                aria-hidden="true"
-                class="v-icon ml-2 material-icons theme--light"
-                style="font-size: 16px;"
+              <span
+                class="v-badge v-badge--overlap"
               >
-                lock
-              </i>
+                <i
+                  aria-hidden="true"
+                  class="v-icon ml-2 material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+                <transition-stub
+                  name="fab-transition"
+                >
+                  <span
+                    class="v-badge__badge error"
+                    style="display: none;"
+                  >
+                    <span
+                      class="v-tooltip v-tooltip--top"
+                    >
+                      <transition-stub
+                        name="slide-y-reverse-transition"
+                      />
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
+                    </span>
+                  </span>
+                </transition-stub>
+              </span>
             </div>
           </div>
         </a>
