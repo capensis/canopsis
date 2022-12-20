@@ -23,7 +23,7 @@
       )
       v-flex(v-if="hasMassActionsSlot", xs12)
         v-expand-transition
-          v-layout(v-if="selected.length")
+          v-layout.px-3(v-if="selected.length")
             slot(
               name="mass-actions",
               :selected="selected",
