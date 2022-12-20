@@ -13,7 +13,11 @@
       @update:pagination="$emit('update:pagination', $event)"
     )
       template(#mass-actions="{ selected }")
-        c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+        c-action-btn(
+          v-if="removable",
+          type="delete",
+          @click="$emit('remove-selected', selected)"
+        )
       template(#headerCell="{ header }")
         span.c-table-header__text--multiline {{ header.text }}
       template(#author="{ item }")
@@ -46,6 +50,8 @@
           c-action-btn(
             v-if="updatable",
             :tooltip="$t('modals.patterns.title')",
+            :badge-value="!!item.old_entity_patterns || !!item.old_alarm_patterns",
+            :badge-tooltip="$t('pattern.oldPatternTooltip')",
             icon="assignment",
             @click="$emit('assign-patterns', item)"
           )
