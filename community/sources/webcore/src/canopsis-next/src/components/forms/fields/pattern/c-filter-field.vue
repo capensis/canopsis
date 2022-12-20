@@ -11,6 +11,21 @@
     hide-details,
     clearable
   )
+    template(#item="{ item, tile }")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
+        v-list-tile-content
+          v-list-tile-title.v-list-badge__tile__title
+            v-badge(
+              :value="!!item.old_entity_patterns",
+              color="error",
+              overlap
+            )
+              template(#badge="")
+                v-tooltip(top)
+                  template(#activator="{ on: badgeTooltipOn }")
+                    v-icon(v-on="badgeTooltipOn", color="white") priority_high
+                  span {{ $t('pattern.oldPatternTooltip') }}
+              span {{ item.name }}
 </template>
 
 <script>
