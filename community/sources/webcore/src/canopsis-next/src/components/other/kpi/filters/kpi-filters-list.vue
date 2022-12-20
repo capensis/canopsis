@@ -17,6 +17,8 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :badge-value="!!item.old_entity_patterns",
+          :badge-tooltip="$t('pattern.oldPatternTooltip')",
           type="edit",
           @click="$emit('edit', item)"
         )
