@@ -6,6 +6,8 @@ import {
   DEFAULT_WIDGET_GRID_PARAMETERS,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import {
   alarmListWidgetParametersToForm,
   formToAlarmListWidgetParameters,
@@ -174,26 +176,26 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  * @return {WidgetParametersForm}
  */
 export const widgetParametersToForm = ({ type, parameters } = {}) => {
-  switch (type) {
-    case WIDGET_TYPES.alarmList:
-      return alarmListWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.context:
-      return contextWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.serviceWeather:
-      return serviceWeatherWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.statsCalendar:
-      return statsCalendarWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.counter:
-      return counterWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.testingWeather:
-      return testingWeatherWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.text:
-      return textWidgetParametersToForm(parameters);
-    case WIDGET_TYPES.map:
-      return mapWidgetParametersToForm(parameters);
-    default:
-      return parameters ? cloneDeep(parameters) : {};
+  const widgetsMap = {
+    [WIDGET_TYPES.alarmList]: alarmListWidgetParametersToForm,
+    [WIDGET_TYPES.context]: contextWidgetParametersToForm,
+    [WIDGET_TYPES.serviceWeather]: serviceWeatherWidgetParametersToForm,
+    [WIDGET_TYPES.statsCalendar]: statsCalendarWidgetParametersToForm,
+    [WIDGET_TYPES.counter]: counterWidgetParametersToForm,
+    [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
+    [WIDGET_TYPES.text]: textWidgetParametersToForm,
+    [WIDGET_TYPES.map]: mapWidgetParametersToForm,
+
+    ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
+  };
+
+  const preparer = widgetsMap[type];
+
+  if (preparer) {
+    return preparer(parameters);
   }
+
+  return parameters ? cloneDeep(parameters) : {};
 };
 
 /**
@@ -244,22 +246,20 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
  * @return {WidgetParameters}
  */
 export const formToWidgetParameters = ({ type, parameters }) => {
-  switch (type) {
-    case WIDGET_TYPES.alarmList:
-      return formToAlarmListWidgetParameters(parameters);
-    case WIDGET_TYPES.serviceWeather:
-      return formToServiceWeatherWidgetParameters(parameters);
-    case WIDGET_TYPES.statsCalendar:
-      return formToStatsCalendarWidgetParameters(parameters);
-    case WIDGET_TYPES.counter:
-      return formToCounterWidgetParameters(parameters);
-    case WIDGET_TYPES.testingWeather:
-      return formToTestingWeatherWidgetParameters(parameters);
-    case WIDGET_TYPES.map:
-      return formToMapWidgetParameters(parameters);
-    default:
-      return parameters;
-  }
+  const widgetsMap = {
+    [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
+    [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
+    [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
+    [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
+    [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
+    [WIDGET_TYPES.map]: formToMapWidgetParameters,
+
+    ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
+  };
+
+  const preparer = widgetsMap[type];
+
+  return preparer ? preparer(parameters) : parameters;
 };
 
 /**

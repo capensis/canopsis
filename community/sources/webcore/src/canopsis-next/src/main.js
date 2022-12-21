@@ -530,6 +530,7 @@ Vue.use(SidebarPlugin, {
 
   components: {
     ...sidebarsComponents,
+    ...featuresService.get('components.sidebars.components'),
   },
 });
 Vue.use(SetSeveralPlugin);
