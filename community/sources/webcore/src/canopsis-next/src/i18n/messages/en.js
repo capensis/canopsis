@@ -2597,7 +2597,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
-    executedAt: 'Executed at',
+    executedAt: 'Completed at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
@@ -3141,6 +3141,7 @@ export default merge({
     noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
     noDataDisabled: 'No pattern set.',
     discard: 'Discard pattern',
+    oldPatternTooltip: 'Filter patterns are not migrated',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -3153,11 +3154,8 @@ export default merge({
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
       existExcluded: 'The rules include excluded rule.',
+      required: 'At least one pattern has to be defined. Please define filter patterns for rule',
     },
-  },
-
-  filter: {
-    oldPattern: 'Old pattern format',
   },
 
   map: {
