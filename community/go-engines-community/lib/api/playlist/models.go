@@ -8,7 +8,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string   `json:"sort_by" form:"sort_by" binding:"oneoforempty=name enabled fullscreen interval"`
+	SortBy string   `json:"sort_by" form:"sort_by" binding:"oneoforempty=name enabled fullscreen"`
 	Ids    []string `form:"-"`
 }
 
