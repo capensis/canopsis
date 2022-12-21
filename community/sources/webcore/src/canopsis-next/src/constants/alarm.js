@@ -233,6 +233,7 @@ export const ALARM_PATTERN_FIELDS = {
   longOutput: 'v.long_output',
   initialOutput: 'v.initial_output',
   initialLongOutput: 'v.initial_long_output',
+  totalStateChanges: 'v.total_state_changes',
   tags: 'tags',
   activated: 'activated',
 };

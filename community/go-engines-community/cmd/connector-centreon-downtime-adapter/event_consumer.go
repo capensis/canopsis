@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -235,7 +235,7 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 		defer response.Body.Close()
 
 		if response.StatusCode != http.StatusCreated {
-			b, err := ioutil.ReadAll(response.Body)
+			b, err := io.ReadAll(response.Body)
 			if err == nil && response.StatusCode == http.StatusBadRequest {
 				responseBody, err := fastjson.ParseBytes(b)
 				if err == nil {
@@ -268,7 +268,7 @@ func (c *eventConsumer) processMsg(ctx context.Context, msg amqp.Delivery) error
 		defer response.Body.Close()
 
 		if response.StatusCode != http.StatusNoContent {
-			b, _ := ioutil.ReadAll(response.Body)
+			b, _ := io.ReadAll(response.Body)
 
 			c.logger.Error().
 				Int("response_code", response.StatusCode).

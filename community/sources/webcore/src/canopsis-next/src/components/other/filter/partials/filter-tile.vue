@@ -7,16 +7,17 @@
           v-list-tile-content {{ filter.title }}
       v-list-tile-action(v-if="editable")
         v-layout(row, align-center)
-          v-tooltip(v-if="!hasSomeOnePattern && isOldPatternFormat", top)
-            template(#activator="{ on, attrs }")
-              v-icon.cursor-pointer.mr-2(v-on="on", v-bind="attrs", color="grey") error_outline
-            span {{ $t('filter.oldPattern') }}
-          c-action-btn(type="edit", @click="$emit('edit')")
+          c-action-btn(
+            type="edit",
+            :badge-value="isOldPattern",
+            :badge-tooltip="$t('pattern.oldPatternTooltip')",
+            @click="$emit('edit')"
+          )
           c-action-btn(type="delete", @click="$emit('delete')")
 </template>
 
 <script>
-import { PATTERNS_FIELDS } from '@/constants';
+import { isOldPattern } from '@/helpers/pattern';
 
 export default {
   props: {
@@ -30,12 +31,8 @@ export default {
     },
   },
   computed: {
-    hasSomeOnePattern() {
-      return Object.values(PATTERNS_FIELDS).some(field => this.filter[field]?.length);
-    },
-
-    isOldPatternFormat() {
-      return this.filter.old_mongo_query;
+    isOldPattern() {
+      return isOldPattern(this.filter);
     },
   },
 };
