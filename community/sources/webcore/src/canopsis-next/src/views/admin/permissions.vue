@@ -150,7 +150,7 @@ export default {
           await this.fetchCurrentUser();
         }
 
-        await this.fetchRolesList({ params: { limit: MAX_LIMIT } });
+        await this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } });
 
         this.$popups.success({ text: this.$t('success.default') });
 
