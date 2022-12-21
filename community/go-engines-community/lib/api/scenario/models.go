@@ -13,7 +13,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name expected_interval created updated enabled priority delay"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name created updated enabled priority"`
 }
 
 type EditRequest struct {
