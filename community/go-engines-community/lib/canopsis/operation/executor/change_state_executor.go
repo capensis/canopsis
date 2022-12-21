@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,7 +18,7 @@ func NewChangeStateExecutor(
 	configProvider config.AlarmConfigProvider,
 	alarmStatusService alarmstatus.Service,
 	metricsSender metrics.Sender,
-) operationlib.Executor {
+) operation.Executor {
 	return &changeStateExecutor{
 		configProvider:     configProvider,
 		alarmStatusService: alarmStatusService,
@@ -36,13 +36,13 @@ type changeStateExecutor struct {
 // Exec emits change state event.
 func (e *changeStateExecutor) Exec(
 	ctx context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 	if params.State == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}

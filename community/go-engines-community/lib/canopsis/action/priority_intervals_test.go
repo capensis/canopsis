@@ -97,7 +97,7 @@ func TestPriorityIntervalsSet(t *testing.T) {
 				t.Errorf("expected intervals = %v, got = %v", dataset.expectedIntervals, pi.GetIntervals())
 			}
 
-			if !reflect.DeepEqual(dataset.expectedIntervals, pi.GetIntervals()) {
+			if !reflect.DeepEqual(dataset.expectedKeys, pi.GetSortedKeys()) {
 				t.Errorf("expected keys = %v, got = %v", dataset.expectedKeys, pi.GetSortedKeys())
 			}
 		})
@@ -177,10 +177,10 @@ func TestPriorityIntervalsRestore(t *testing.T) {
 		},
 		{
 			testName:          "between two intervals, without merge",
-			setPriorities:     []int{3, 4, 5},
-			restorePriorities: []int{4},
-			expectedIntervals: map[int]int{1: 2, 4: 4, 6: 0},
-			expectedKeys:      []int{1, 4, 6},
+			setPriorities:     []int{3, 4, 5, 6, 7},
+			restorePriorities: []int{4, 6},
+			expectedIntervals: map[int]int{1: 2, 4: 4, 6: 6, 8: 0},
+			expectedKeys:      []int{1, 4, 6, 8},
 		},
 		{
 			testName:          "mixed",
@@ -214,7 +214,7 @@ func TestPriorityIntervalsRestore(t *testing.T) {
 				t.Errorf("expected intervals = %v, got = %v", dataset.expectedIntervals, pi.GetIntervals())
 			}
 
-			if !reflect.DeepEqual(dataset.expectedIntervals, pi.GetIntervals()) {
+			if !reflect.DeepEqual(dataset.expectedKeys, pi.GetSortedKeys()) {
 				t.Errorf("expected keys = %v, got = %v", dataset.expectedKeys, pi.GetSortedKeys())
 			}
 		})
