@@ -2513,6 +2513,310 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /contextgraph-import:
+    put:
+      tags:
+        - contextgraph-import
+      summary: Create new import task
+      description: Create new import task
+      operationId: contextgraph-import-create-new-import
+      parameters:
+        - name: source
+          in: query
+          description: source
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/importcontextgraph.EntityConfiguration'
+            examples:
+              basic:
+                summary: Basic
+                description: Import basic entities
+                value: [
+                  {
+                    "name": "cps_component",
+                    "type": "component",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_1",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_2",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps_resource_3",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps_resource_4",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "disable"
+                  }
+                ]
+              service:
+                summary: Service
+                description: Import services
+                value: [
+                  {
+                    "name": "cps-service-1",
+                    "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ],
+                    "type": "service",
+                    "impact_level": 2,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps-service-2",
+                    "type": "service",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps-service-3",
+                    "type": "service",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps-service-4",
+                    "type": "service",
+                    "action": "disable"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /contextgraph-import-partial:
+    put:
+      tags:
+        - contextgraph-import
+      summary: Create new import partial task
+      description: Create new import partial task
+      operationId: contextgraph-import-create-new-import-partial
+      parameters:
+        - name: source
+          in: query
+          description: source
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/importcontextgraph.EntityConfiguration'
+            examples:
+              basic:
+                summary: Basic
+                description: Import basic entities
+                value: [
+                  {
+                    "name": "cps_component",
+                    "type": "component",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_1",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_2",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps_resource_3",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps_resource_4",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "disable"
+                  }
+                ]
+              service:
+                summary: Service
+                description: Import services
+                value: [
+                  {
+                    "name": "cps-service-1",
+                    "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ],
+                    "type": "service",
+                    "impact_level": 2,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps-service-2",
+                    "type": "service",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps-service-3",
+                    "type": "service",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps-service-4",
+                    "type": "service",
+                    "action": "disable"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /contextgraph/import/status/{id}:
     get:
       tags:

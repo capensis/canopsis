@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // NewAssocTicketExecutor creates new executor.
-func NewAssocTicketExecutor(metricsSender metrics.Sender) operationlib.Executor {
+func NewAssocTicketExecutor(metricsSender metrics.Sender) operation.Executor {
 	return &assocTicketExecutor{metricsSender: metricsSender}
 }
 
@@ -20,13 +20,13 @@ type assocTicketExecutor struct {
 // Exec creates new assoc ticket step for alarm.
 func (e *assocTicketExecutor) Exec(
 	ctx context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	if userID == "" {
 		userID = params.User
