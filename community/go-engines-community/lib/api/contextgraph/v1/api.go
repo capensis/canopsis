@@ -1,43 +1,33 @@
-package contextgraph
+package v1
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
-type API interface {
-	ImportAll(c *gin.Context)
-	ImportPartial(c *gin.Context)
-	Status(c *gin.Context)
-}
-
-type Graph struct {
-	Impact  *[]string
-	Depends *[]string
-}
-
 type api struct {
-	jobQueue    JobQueue
-	reporter    StatusReporter
+	jobQueue    contextgraph.JobQueue
+	reporter    contextgraph.StatusReporter
 	filePattern string
 	logger      zerolog.Logger
 }
 
 func NewApi(
 	conf config.CanopsisConf,
-	jobQueue JobQueue,
-	reporter StatusReporter,
+	jobQueue contextgraph.JobQueue,
+	reporter contextgraph.StatusReporter,
 	logger zerolog.Logger,
-) API {
+) contextgraph.API {
 	a := &api{
 		jobQueue:    jobQueue,
 		filePattern: conf.ImportCtx.FilePattern,
@@ -52,16 +42,17 @@ func NewApi(
 // @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
 func (a *api) ImportAll(c *gin.Context) {
-	query := ImportQuery{}
+	query := contextgraph.ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
-	job := ImportJob{
+	job := contextgraph.ImportJob{
 		Creation: time.Now(),
-		Status:   statusPending,
+		Status:   contextgraph.StatusPending,
 		Source:   query.Source,
+		IsOld:    true,
 	}
 
 	raw, err := c.GetRawData()
@@ -75,24 +66,25 @@ func (a *api) ImportAll(c *gin.Context) {
 		panic(err)
 	}
 
-	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
+	c.JSON(http.StatusOK, contextgraph.ImportResponse{ID: jobID})
 }
 
 // ImportPartial
 // @Param body body ImportRequest true "body"
 // @Success 200 {object} ImportResponse
 func (a *api) ImportPartial(c *gin.Context) {
-	query := ImportQuery{}
+	query := contextgraph.ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
-	job := ImportJob{
+	job := contextgraph.ImportJob{
 		Creation:  time.Now(),
-		Status:    statusPending,
+		Status:    contextgraph.StatusPending,
 		Source:    query.Source,
 		IsPartial: true,
+		IsOld:     true,
 	}
 
 	raw, err := c.GetRawData()
@@ -106,16 +98,16 @@ func (a *api) ImportPartial(c *gin.Context) {
 		panic(err)
 	}
 
-	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
+	c.JSON(http.StatusOK, contextgraph.ImportResponse{ID: jobID})
 }
 
-func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (string, error) {
+func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, raw []byte) (string, error) {
 	err := a.reporter.ReportCreate(ctx, &job)
 	if err != nil {
 		return "", err
 	}
 
-	err = ioutil.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
+	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -129,7 +121,7 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 func (a *api) Status(c *gin.Context) {
 	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		if errors.Is(err, ErrNotFound) {
+		if errors.Is(err, contextgraph.ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 			return
 		}
