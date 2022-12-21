@@ -35,8 +35,9 @@ func NewStore(db mongo.DbClient) Store {
 func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
+			"_id":          id,
+			"type":         bson.M{"$in": s.basicTypes},
+			"soft_deleted": bson.M{"$exists": false},
 		}},
 		// Find category
 		{"$lookup": bson.M{
@@ -53,7 +54,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"connectFromField":        "impact",
 			"connectToField":          "_id",
 			"as":                      "changeable_impact",
-			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
+			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}, "soft_deleted": bson.M{"$exists": false}},
 			"maxDepth":                0,
 		}},
 		{"$addFields": bson.M{
@@ -67,7 +68,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"connectFromField":        "depends",
 			"connectToField":          "_id",
 			"as":                      "changeable_depends",
-			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
+			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}, "soft_deleted": bson.M{"$exists": false}},
 			"maxDepth":                0,
 		}},
 		{"$addFields": bson.M{

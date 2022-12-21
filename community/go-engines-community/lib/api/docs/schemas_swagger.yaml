@@ -902,6 +902,10 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         description: Flags
         type: boolean
@@ -910,6 +914,12 @@ definitions:
         type: integer
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -934,6 +944,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -1081,6 +1093,10 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         description: Flags
         type: boolean
@@ -1091,6 +1107,12 @@ definitions:
         type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -1115,6 +1137,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -2182,6 +2206,38 @@ definitions:
         - service
         type: string
     type: object
+  importcontextgraph.EntityConfiguration:
+    properties:
+      action:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
   importcontextgraph.Link:
     properties:
       _id:
@@ -2899,7 +2955,41 @@ definitions:
         type: string
       name:
         type: string
+      playlist:
+        $ref: '#/definitions/permission.Playlist'
+        description: Playlist is used only for playlist permissions.
       type:
+        type: string
+      view:
+        $ref: '#/definitions/permission.View'
+        description: View is used only for view permissions.
+      view_group:
+        $ref: '#/definitions/permission.ViewGroup'
+        description: ViewGroup is used only for view permissions.
+    type: object
+  permission.Playlist:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  permission.View:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
+        type: string
+    type: object
+  permission.ViewGroup:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
         type: string
     type: object
   playlist.EditRequest:
@@ -3142,8 +3232,12 @@ definitions:
         $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         $ref: '#/definitions/role.View'
+      deletable:
+        type: boolean
       description:
         type: string
+      editable:
+        type: boolean
       name:
         type: string
       permissions:
@@ -3926,6 +4020,14 @@ definitions:
         type: integer
       end:
         type: integer
+    type: object
+  types.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value: {}
     type: object
   types.WebhookBasicAuth:
     properties:

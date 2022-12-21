@@ -831,6 +831,7 @@ Feature: Get alarms
         "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
         "enabled": true,
+        "old_entity_patterns": null,
         "impact_level": 1,
         "infos": {},
         "name": "test-resource-to-alarm-get-3",

@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -237,9 +238,9 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		return err
 	}
 
-	_, err = s.aclCollection.UpdateOne(ctx,
+	_, err = s.aclCollection.UpdateMany(ctx,
 		bson.M{
-			"_id":          user.Role,
+			"_id":          bson.M{"$in": bson.A{user.Role, security.RoleAdmin}},
 			"crecord_type": securitymodel.LineTypeRole,
 		},
 		bson.M{
@@ -277,7 +278,6 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 }
 
 func (s *store) deletePermission(ctx context.Context, playlistID string) error {
-
 	_, err := s.aclCollection.UpdateMany(ctx,
 		bson.M{
 			"crecord_type":         securitymodel.LineTypeRole,
