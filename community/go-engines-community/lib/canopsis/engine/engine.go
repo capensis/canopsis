@@ -70,7 +70,7 @@ func (e *engine) AddDeferFunc(deferFunc func(ctx context.Context)) {
 func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).
-		Int("periodical workers", len(e.periodicalWorkers)).
+		Int("periodical_workers", len(e.periodicalWorkers)).
 		Int("routines", len(e.routines)).
 		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
@@ -185,7 +185,7 @@ func (e *engine) runPeriodicalWorker(
 					e.logger.Error().
 						Str("worker", name).
 						Time("start", start).
-						Str("spent time", time.Since(start).String()).
+						Str("spent_time", time.Since(start).String()).
 						Msg("previous run still in progress, skip periodical worker")
 				}
 
@@ -207,7 +207,7 @@ func (e *engine) runPeriodicalWorker(
 			e.logger.Info().
 				Str("worker", name).
 				Time("start", start).
-				Str("spent time", d.String()).
+				Str("spent_time", d.String()).
 				Msg("periodical worker continues to work properly")
 		}
 

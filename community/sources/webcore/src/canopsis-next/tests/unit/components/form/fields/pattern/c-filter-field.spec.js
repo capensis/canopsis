@@ -3,6 +3,7 @@ import Faker from 'faker';
 
 import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+import { createSelectInputStub } from '@unit/stubs/input';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -10,8 +11,13 @@ import CFilterField from '@/components/forms/fields/pattern/c-filter-field.vue';
 
 const localVue = createVueInstance();
 
+const stubs = {
+  'v-autocomplete': createSelectInputStub('v-autocomplete'),
+};
+
 const factory = (options = {}) => shallowMount(CFilterField, {
   localVue,
+  stubs,
 
   ...options,
 });
@@ -22,7 +28,7 @@ const snapshotFactory = (options = {}) => mount(CFilterField, {
   ...options,
 });
 
-const selectAutocomplete = wrapper => wrapper.find('v-autocomplete-stub');
+const selectAutocomplete = wrapper => wrapper.find('.v-autocomplete');
 
 describe('c-filter-field', () => {
   const filters = [
@@ -131,6 +137,20 @@ describe('c-filter-field', () => {
       store: createMockedStoreModules([filterModule]),
       propsData: {
         value: 'id1',
+        label: 'Custom label',
+        name: 'customName',
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
+  });
+
+  it('Renders `c-filter-field` with old_entity_patterns', () => {
+    filtersGetter.mockReturnValueOnce(filters.map(filter => ({ ...filter, old_entity_patterns: true })));
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([filterModule]),
+      propsData: {
         label: 'Custom label',
         name: 'customName',
       },
