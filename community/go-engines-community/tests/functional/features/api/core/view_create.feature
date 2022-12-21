@@ -122,7 +122,7 @@ Feature: Create a view
     """
 
   Scenario: given create request should create new permission
-    When I am admin
+    When I am test-role-to-view-edit
     When I do POST /api/v4/views:
     """json
     {
@@ -135,6 +135,11 @@ Feature: Create a view
     """
     Then the response code should be 201
     Then I save response viewId={{ .lastResponse._id }}
+    When I do GET /api/v4/views/{{ .viewId }}
+    Then the response code should be 200
+    Then I am admin
+    When I do GET /api/v4/views/{{ .viewId }}
+    Then the response code should be 200
     When I do GET /api/v4/permissions?search={{ .viewId }}
     Then the response code should be 200
     Then the response body should contain:
@@ -163,6 +168,32 @@ Feature: Create a view
         "total_count": 1
       }
     }
+    """
+    When I do GET /api/v4/roles/admin
+    Then the response code should be 200
+    Then the response array key "permissions" should contain:
+    """json
+    [
+      {
+        "_id": "{{ .viewId }}",
+        "name": "{{ .viewId }}",
+        "description": "Rights on view : test-view-to-create-3-title",
+        "type": "RW"
+      }
+    ]
+    """
+    When I do GET /api/v4/roles/test-role-to-view-edit
+    Then the response code should be 200
+    Then the response array key "permissions" should contain:
+    """json
+    [
+      {
+        "_id": "{{ .viewId }}",
+        "name": "{{ .viewId }}",
+        "description": "Rights on view : test-view-to-create-3-title",
+        "type": "RW"
+      }
+    ]
     """
 
   Scenario: given create request and no auth user should not allow access

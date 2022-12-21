@@ -5,10 +5,10 @@
 <script>
 import { compact, pickBy } from 'lodash';
 
-import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, OLD_PATTERNS_FIELDS } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue, isOldPattern } from '@/helpers/pattern';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -40,6 +40,8 @@ export default {
           icon: 'edit',
           iconColor: 'primary',
           title: this.$t('context.actions.titles.editEntity'),
+          badgeValue: isOldPattern(this.item, [OLD_PATTERNS_FIELDS.entity]),
+          badgeTooltip: this.$t('pattern.oldPatternTooltip'),
           method: this.showEditEntityModal,
         },
         duplicateEntity: {
