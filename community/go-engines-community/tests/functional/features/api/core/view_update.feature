@@ -52,6 +52,35 @@ Feature: Update a view
       ]
     }
     """
+    When I do GET /api/v4/permissions?search=test-view-to-update
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-view-to-update",
+          "name": "test-view-to-update",
+          "description": "Rights on view : test-view-to-update-1-title-updated",
+          "view": {
+            "_id": "test-view-to-update",
+            "title": "test-view-to-update-1-title-updated"
+          },
+          "view_group": {
+            "_id": "test-viewgroup-to-view-edit",
+            "title": "test-viewgroup-to-view-edit-title"
+          },
+          "type": "RW"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
 
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/views/test-view-to-update

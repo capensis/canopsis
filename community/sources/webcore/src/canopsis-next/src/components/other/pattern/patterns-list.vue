@@ -10,12 +10,11 @@
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(#toolbar="{ selected }")
-      v-flex(v-show="selected.length", xs4)
-        c-action-btn(
-          type="delete",
-          @click="$emit('remove-selected', selected)"
-        )
+    template(#mass-actions="{ selected }")
+      c-action-btn(
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#type="{ item }")
       span {{ $t(`pattern.types.${item.type}`) }}
     template(#updated="{ item }")
