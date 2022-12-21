@@ -43,7 +43,7 @@ import {
   SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
-import featureService from '@/services/features';
+import featuresService from '@/services/features';
 
 export default merge({
   common: {
@@ -3314,4 +3314,4 @@ export default merge({
     generateDump: 'Générer un nouveau dump',
     downloadDump: 'Télécharger le dump',
   },
-}, featureService.get('i18n.fr'));
+}, featuresService.get('i18n.fr'));
