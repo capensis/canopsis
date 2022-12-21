@@ -1007,7 +1007,10 @@ definitions:
         description: Name is Name of pbehavior.PBehavior.
         type: string
       reason:
-        description: Reason is Name of pbehavior.Reason.
+        description: ReasonID is ID of pbehavior.Reason.
+        type: string
+      reason_name:
+        description: ReasonName is Name of pbehavior.Reason.
         type: string
       timestamp:
         description: |-

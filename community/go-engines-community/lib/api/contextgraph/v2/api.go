@@ -40,7 +40,7 @@ func NewApi(
 
 // ImportAll
 // @Param body body []importcontextgraph.EntityConfiguration true "body"
-// @Success 200 {object} ImportResponse
+// @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportAll(c *gin.Context) {
 	query := contextgraph.ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
@@ -70,7 +70,7 @@ func (a *api) ImportAll(c *gin.Context) {
 
 // ImportPartial
 // @Param body body []importcontextgraph.EntityConfiguration true "body"
-// @Success 200 {object} ImportResponse
+// @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportPartial(c *gin.Context) {
 	query := contextgraph.ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
@@ -115,7 +115,7 @@ func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, r
 }
 
 // Status
-// @Success 200 {object} ImportJob
+// @Success 200 {object} contextgraph.ImportJob
 func (a *api) Status(c *gin.Context) {
 	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
 	if err != nil {
