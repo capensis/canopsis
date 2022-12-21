@@ -7,6 +7,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-1-name",
+      "priority": 10002,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -271,6 +272,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-negative-1-name",
+      "priority": 10003,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -404,6 +406,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-2-name",
+      "priority": 10004,
       "enabled": true,
       "triggers": ["create"],
       "delay": {
@@ -564,6 +567,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-3-name-1",
+      "priority": 10005,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -595,6 +599,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-3-name-2",
+      "priority": 10006,
       "enabled": true,
       "triggers": ["assocticket"],
       "actions": [
@@ -788,6 +793,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-double-ack",
+      "priority": 10007,
       "enabled": true,
       "triggers": ["ack"],
       "actions": [

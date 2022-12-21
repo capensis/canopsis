@@ -9,9 +9,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -96,7 +96,7 @@ func NewServiceProvider(
 		}
 		defer res.Body.Close()
 
-		rawMetadata, err := ioutil.ReadAll(res.Body)
+		rawMetadata, err := io.ReadAll(res.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -108,7 +108,7 @@ func NewServiceProvider(
 	}
 
 	if config.Security.Saml.IdpMetadataXml != "" {
-		rawMetadata, err := ioutil.ReadFile(config.Security.Saml.IdpMetadataXml)
+		rawMetadata, err := os.ReadFile(config.Security.Saml.IdpMetadataXml)
 		if err != nil {
 			return nil, err
 		}

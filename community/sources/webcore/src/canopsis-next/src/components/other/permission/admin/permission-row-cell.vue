@@ -5,7 +5,7 @@
       v-bind="checkbox.bind",
       v-on="checkbox.on",
       :key="index",
-      :disabled="disabled",
+      :disabled="disabled || disabledForRole",
       hide-details
     )
 </template>
@@ -39,6 +39,10 @@ export default {
     },
   },
   computed: {
+    disabledForRole() {
+      return !this.role.editable;
+    },
+
     checkboxes() {
       const actions = getPermissionActions(this.permission);
 
