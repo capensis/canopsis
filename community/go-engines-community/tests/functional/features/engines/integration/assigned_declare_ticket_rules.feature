@@ -419,10 +419,10 @@ Feature: Assigned declare tickets
           "stop_on_fail": true
         }
       ],
-      "entity_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "name",
+            "field": "v.resource",
             "cond": {
               "type": "eq",
               "value": "test-assigned-declare-ticket-resource-3-1"
@@ -471,10 +471,10 @@ Feature: Assigned declare tickets
           "stop_on_fail": true
         }
       ],
-      "entity_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "component",
+            "field": "v.component",
             "cond": {
               "type": "eq",
               "value": "test-assigned-declare-ticket-component-3"
@@ -560,10 +560,10 @@ Feature: Assigned declare tickets
           "stop_on_fail": true
         }
       ],
-      "entity_pattern": [
+      "alarm_pattern": [
         [
           {
-            "field": "component",
+            "field": "v.component",
             "cond": {
               "type": "eq",
               "value": "test-assigned-declare-ticket-component-3"
@@ -593,5 +593,284 @@ Feature: Assigned declare tickets
     """json
     [
       "{{ .alarmID1 }}"
+    ]
+    """
+
+  @concurrent
+  Scenario: given get assigned declare ticket rules request should return assigned rules by pbh patterns
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-assigned-declare-ticket-connector-4",
+      "connector_name": "test-assigned-declare-ticket-connector-4-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-assigned-declare-ticket-component-4",
+      "resource": "test-assigned-declare-ticket-resource-4-1",
+      "state": 2,
+      "output": "test-assigned-declare-ticket-output",
+      "long_output": "test-assigned-declare-ticket-long-output",
+      "author": "test-assigned-declare-ticket-author"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-assigned-declare-ticket-connector-4",
+      "connector_name": "test-assigned-declare-ticket-connector-4-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-assigned-declare-ticket-component-4",
+      "resource": "test-assigned-declare-ticket-resource-4-2",
+      "state": 2,
+      "output": "test-assigned-declare-ticket-output",
+      "long_output": "test-assigned-declare-ticket-long-output",
+      "author": "test-assigned-declare-ticket-author"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-4-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-4-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID2={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-assigned-declare-ticket-pbehavior-4-1",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-assigned-declare-ticket-resource-4-1"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response pbehaviorID={{ .lastResponse._id }}
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-assigned-declare-ticket-pbehavior-4-2",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-assigned-declare-ticket-resource-4-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "resource": "test-assigned-declare-ticket-resource-4-1"
+      },
+      {
+        "event_type": "pbhenter",
+        "resource": "test-assigned-declare-ticket-resource-4-2"
+      }
+    ]
+    """
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-assigned-declare-ticket-rule-4-1",
+      "system_name": "test-assigned-declare-ticket-rule-4-1-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "https://canopsis-test.com",
+            "method": "GET",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            },
+            "skip_verify": true,
+            "timeout": {
+              "value": 30,
+              "unit": "s"
+            },
+            "retry_count": 3,
+            "retry_delay": {
+              "value": 1,
+              "unit": "s"
+            }
+          },
+          "declare_ticket": {
+            "is_regexp": false,
+            "ticket_id": "_id",
+            "ticket_url": "url",
+            "ticket_custom": "custom",
+            "empty_response": false
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.id",
+            "cond": {
+              "type": "eq",
+              "value": "{{ .pbehaviorID }}"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleID1={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-assigned-declare-ticket-rule-4-2",
+      "system_name": "test-assigned-declare-ticket-rule-4-2-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "https://canopsis-test.com",
+            "method": "GET",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            },
+            "skip_verify": true,
+            "timeout": {
+              "value": 30,
+              "unit": "s"
+            },
+            "retry_count": 3,
+            "retry_delay": {
+              "value": 1,
+              "unit": "s"
+            }
+          },
+          "declare_ticket": {
+            "is_regexp": false,
+            "ticket_id": "_id",
+            "ticket_url": "url",
+            "ticket_custom": "custom",
+            "empty_response": false
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.canonical_type",
+            "cond": {
+              "type": "eq",
+              "value": "maintenance"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleID2={{ .lastResponse._id }}
+    When I do GET /api/v4/cat/declare-ticket-alarms?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
+    Then the response code should be 200
+    Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
+    """json
+    [
+      {
+        "_id": "{{ .ruleID1 }}",
+        "name": "test-assigned-declare-ticket-rule-4-1"
+      },
+      {
+        "_id": "{{ .ruleID2 }}",
+        "name": "test-assigned-declare-ticket-rule-4-2"
+      }
+    ]
+    """
+    Then the response array key "by_alarms.{{ .alarmID2 }}" should contain:
+    """json
+    [
+      {
+        "_id": "{{ .ruleID2 }}",
+        "name": "test-assigned-declare-ticket-rule-4-2"
+      }
+    ]
+    """
+    Then the response array key "by_rules.{{ .ruleID1 }}.alarms" should contain:
+    """json
+    [
+      "{{ .alarmID1 }}"
+    ]
+    """
+    Then the response array key "by_rules.{{ .ruleID2 }}.alarms" should contain:
+    """json
+    [
+      "{{ .alarmID1 }}",
+      "{{ .alarmID2 }}"
     ]
     """
