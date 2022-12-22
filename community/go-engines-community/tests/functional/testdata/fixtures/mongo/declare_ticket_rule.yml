@@ -44,7 +44,7 @@ template:
     pbehavior_pattern: [
       [
         {
-          field: pbehavior_infos.canonical_type,
+          field: pbehavior_info.canonical_type,
           cond: {
             type: eq,
             value: maintenance
