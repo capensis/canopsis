@@ -145,7 +145,7 @@ Feature: Get a scenario
 
   Scenario: given sort request should return sorted scenarios
     When I am admin
-    When I do GET /api/v4/scenarios?search=test-scenario-to-get&sort_by=delay&sort=desc
+    When I do GET /api/v4/scenarios?search=test-scenario-to-get&sort_by=name&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
