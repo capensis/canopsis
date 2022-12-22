@@ -181,7 +181,7 @@ Feature: Assigned declare tickets
     """
     Then the response code should be 201
     Then I save response ruleID2={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/declare-ticket-alarms?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
+    When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
     """json
@@ -294,7 +294,7 @@ Feature: Assigned declare tickets
     }
     """
     When I save response alarmID2={{ (index .lastResponse.data 0)._id }}
-    When I do GET /api/v4/cat/declare-ticket-alarms?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
+    When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -486,7 +486,7 @@ Feature: Assigned declare tickets
     """
     Then the response code should be 201
     Then I save response ruleID2={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/declare-ticket-alarms?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
+    When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
     """json
@@ -574,7 +574,7 @@ Feature: Assigned declare tickets
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/declare-ticket-alarms?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
+    When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
     """json
@@ -837,7 +837,7 @@ Feature: Assigned declare tickets
     """
     Then the response code should be 201
     Then I save response ruleID2={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/declare-ticket-alarms?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
+    When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
     """json
