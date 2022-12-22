@@ -225,7 +225,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^the difference between ([\w\.]+) ([\w\.]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
 		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
-		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
+		scenarioCtx.Step(`^the response array key \"([^"]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
 		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
 		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain in order:$`, apiClient.TheResponseArrayKeyShouldContainInOrder)
 		scenarioCtx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
