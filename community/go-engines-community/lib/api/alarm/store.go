@@ -739,11 +739,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		{"$addFields": bson.M{
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 			"v.duration": bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
-				}},
+				now,
 				"$v.creation_date",
 			}},
 		}},
