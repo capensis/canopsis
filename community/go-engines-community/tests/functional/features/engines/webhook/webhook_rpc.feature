@@ -185,7 +185,7 @@ Feature: execute request on event
           "empty_response": false,
           "is_regexp": true,
           "ticket_id": ".*id.*",
-          "scenario_name": ".*name.*"
+          "scenario_name": "^name$"
         }
       }
     }
