@@ -51,7 +51,8 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, ro
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
 func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, userID, role, initiator string) error {
 	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, userID, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, ticketData)
+	// todo url
+	ticketStep := newStep.NewTicket(ticketNumber, "", ticketData)
 	a.Value.Ticket = &ticketStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -233,9 +234,9 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 }
 
 // PartialUpdateDeclareTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber string, data map[string]string, userID, role, initiator string) error {
+func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber, ticketUrl string, data map[string]string, userID, role, initiator string) error {
 	newStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, data)
+	ticketStep := newStep.NewTicket(ticketNumber, ticketUrl, data)
 	a.Value.Ticket = &ticketStep
 
 	err := a.Value.Steps.Add(newStep)
@@ -245,6 +246,51 @@ func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ti
 
 	a.AddUpdate("$set", bson.M{"v.ticket": a.Value.Ticket})
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, author, output, ticketNumber, ticketUrl string, data map[string]string, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepWebhookComplete, timestamp, author, output, userID, role, initiator)
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	newTicketStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator)
+	ticketStep := newTicketStep.NewTicket(ticketNumber, ticketUrl, data)
+	a.Value.Ticket = &ticketStep
+
+	err = a.Value.Steps.Add(newTicketStep)
+	if err != nil {
+		return err
+	}
+
+	a.AddUpdate("$set", bson.M{"v.ticket": a.Value.Ticket})
+	a.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{newStep, newTicketStep}}})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp CpsTime, author, output, userID, role, initiator string) error {
+	stepType := AlarmStepWebhookFail
+	if request {
+		stepType = AlarmStepWebhookComplete
+	}
+
+	newStep := NewAlarmStep(stepType, timestamp, author, output, userID, role, initiator)
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	newTicketStep := NewAlarmStep(AlarmStepDeclareTicketFail, timestamp, author, output, userID, role, initiator)
+	err = a.Value.Steps.Add(newTicketStep)
+	if err != nil {
+		return err
+	}
+
+	a.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{newStep, newTicketStep}}})
 
 	return nil
 }
