@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//Alarm states
+// Alarm states
 const (
 	AlarmStateOK = iota
 	AlarmStateMinor
@@ -26,7 +26,7 @@ const (
 	AlarmStateTitleCritical = "critical"
 )
 
-//Alarm statuses
+// Alarm statuses
 const (
 	AlarmStatusOff = iota
 	AlarmStatusOngoing
@@ -44,7 +44,7 @@ const (
 	AlarmStatusTitleCancelled = "cancelled"
 )
 
-//Alarm steps
+// Alarm steps
 const (
 	AlarmStepStateIncrease   = "stateinc"
 	AlarmStepStateDecrease   = "statedec"
@@ -56,14 +56,19 @@ const (
 	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
 	AlarmStepDone            = "done"
-	AlarmStepDeclareTicket   = "declareticket"
-	AlarmStepAssocTicket     = "assocticket"
 	AlarmStepSnooze          = "snooze"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+
+	AlarmStepAssocTicket       = "assocticket"
+	AlarmStepDeclareTicket     = "declareticket"
+	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepWebhookStart      = "webhookstart"
+	AlarmStepWebhookComplete   = "webhookcomplete"
+	AlarmStepWebhookFail       = "webhookfail"
 
 	// Following alarm steps are used for manual instruction execution.
 	AlarmStepInstructionStart    = "instructionstart"
@@ -144,7 +149,16 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.ACK)
 	}
 	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
+		// todo find better way to retrieve output
+		output := ""
+		for i := len(a.Value.Steps) - 1; i >= 0; i-- {
+			step := a.Value.Steps[i]
+			if step.Type == ticket.Type {
+				output = step.Message
+				break
+			}
+		}
+		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, output, ticket.UserID, ticket.Role, ""))
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)

@@ -3,25 +3,20 @@ package executor
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
-// NewDeclareTicketWebhookExecutor creates new executor.
-func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
-	return &declareTicketWebhookExecutor{configProvider: configProvider, metricsSender: metricsSender}
+func NewWebhookCompleteExecutor(metricsSender metrics.Sender) operationlib.Executor {
+	return &webhookCompleteExecutor{metricsSender: metricsSender}
 }
 
-type declareTicketWebhookExecutor struct {
-	configProvider config.AlarmConfigProvider
-	metricsSender  metrics.Sender
+type webhookCompleteExecutor struct {
+	metricsSender metrics.Sender
 }
 
-// Exec creates new declare ticket step for alarm.
-func (e *declareTicketWebhookExecutor) Exec(
+func (e *webhookCompleteExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
@@ -35,10 +30,27 @@ func (e *declareTicketWebhookExecutor) Exec(
 		userID = params.User
 	}
 
-	err := alarm.PartialUpdateDeclareTicket(
+	if params.Ticket == "" {
+		err := alarm.PartialUpdateAddStep(
+			types.AlarmStepWebhookComplete,
+			time,
+			params.Author,
+			params.Output,
+			userID,
+			role,
+			initiator,
+		)
+		if err != nil {
+			return "", err
+		}
+
+		return types.AlarmChangeTypeWebhookComplete, nil
+	}
+
+	err := alarm.PartialUpdateWebhookDeclareTicket(
 		time,
 		params.Author,
-		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
+		params.Output,
 		params.Ticket,
 		params.TicketUrl,
 		params.TicketData,
