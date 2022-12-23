@@ -7,42 +7,6 @@ import (
 
 // todo move all to rpc package
 
-type RPCAxeEvent struct {
-	EventType  string           `json:"event_type"`
-	Parameters RPCAxeParameters `json:"parameters,omitempty"`
-	Alarm      *Alarm           `json:"alarm"`
-	Entity     *Entity          `json:"entity"`
-}
-
-type RPCAxeParameters struct {
-	Output string `json:"output"`
-	Author string `json:"author"`
-	User   string `json:"user"`
-	// ChangeState
-	State *CpsNumber `json:"state"`
-	// AssocTicket
-	Ticket string `json:"ticket"`
-	// Snooze and Pbehavior
-	Duration *DurationWithUnit `json:"duration"`
-	// Pbehavior
-	Name           string   `json:"name"`
-	Reason         string   `json:"reason"`
-	Type           string   `json:"type"`
-	RRule          string   `json:"rrule"`
-	Tstart         *CpsTime `json:"tstart"`
-	Tstop          *CpsTime `json:"tstop"`
-	StartOnTrigger *bool    `json:"start_on_trigger"`
-	// Instruction
-	Execution   string `json:"execution"`
-	Instruction string `json:"instruction"`
-}
-
-type RPCAxeResultEvent struct {
-	Alarm           *Alarm          `json:"alarm"`
-	AlarmChangeType AlarmChangeType `json:"alarm_change"`
-	Error           *RPCError       `json:"error"`
-}
-
 type RPCServiceEvent struct {
 	Alarm       *Alarm       `json:"alarm"`
 	Entity      *Entity      `json:"entity"`

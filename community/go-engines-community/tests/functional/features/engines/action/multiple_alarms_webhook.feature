@@ -145,60 +145,57 @@ Feature: execute action on trigger
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
-                "user_id": ""
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
+        "_t": "stateinc"
       },
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
-                "user_id": ""
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
+        "user_id": "",
+        "m": "Scenario test-scenario-multiple-alarm-webhook-1"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
+        "user_id": ""
+      },
+      {
+        "_t": "declareticket",
+        "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
+        "user_id": ""
+      }
+    ]
+    """
+    Then the response array key "1.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
+        "user_id": "",
+        "m": "Scenario test-scenario-multiple-alarm-webhook-1"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
+        "user_id": ""
+      },
+      {
+        "_t": "declareticket",
+        "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
+        "user_id": ""
       }
     ]
     """
