@@ -39,11 +39,11 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
+
 	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
 	// to trigger webhook with declare ticket parameter.
+	// todo remove
 	EventTypeDeclareTicket = "declareticket"
-	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
 	EventTypeDone              = "done"
 	EventTypeChangestate       = "changestate"
@@ -55,6 +55,11 @@ const (
 	EventTypeStatDuration      = "statduration"
 	EventTypeStatStateInterval = "statstateinterval"
 	EventTypeUncancel          = "uncancel"
+
+	EventTypeDeclareTicketWebhook = "declareticketwebhook"
+	EventTypeWebhookStarted       = "webhookstarted"
+	EventTypeWebhookCompleted     = "webhookcompleted"
+	EventTypeWebhookFailed        = "webhookfailed"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
@@ -163,7 +168,8 @@ type Event struct {
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
 	Duration     CpsNumber              `json:"duration"`
-	Ticket       string                 `bson:"ticket" json:"ticket"`
+	Ticket       string                 `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketUrl    string                 `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
 	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
