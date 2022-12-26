@@ -283,10 +283,10 @@ func (m *MockScenarioExecutionStorage) EXPECT() *MockScenarioExecutionStorageMoc
 }
 
 // Create mocks base method.
-func (m *MockScenarioExecutionStorage) Create(arg0 context.Context, arg1 action.ScenarioExecution) (string, error) {
+func (m *MockScenarioExecutionStorage) Create(arg0 context.Context, arg1 action.ScenarioExecution) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", arg0, arg1)
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 
@@ -120,8 +121,8 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					return
 				}
 
-				if task.AbandonedExecutionID != "" {
-					execution, err := e.executionStorage.Get(ctx, task.AbandonedExecutionID)
+				if task.AbandonedExecutionCacheKey != "" {
+					execution, err := e.executionStorage.Get(ctx, task.AbandonedExecutionCacheKey)
 					if err != nil {
 						e.logger.Err(err).Msg("cannot find abandoned scenario")
 						e.outputChannel <- ScenarioResult{
@@ -142,18 +143,18 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					}
 
 					e.taskChannel <- Task{
-						Source:         "input listener",
-						Action:         execution.ActionExecutions[step].Action,
-						Alarm:          task.Alarm,
-						Entity:         task.Entity,
-						Step:           step,
-						ExecutionID:    execution.ID,
-						ScenarioID:     execution.ScenarioID,
-						AckResources:   execution.AckResources,
-						Header:         execution.Header,
-						Response:       execution.Response,
-						ResponseMap:    execution.ResponseMap,
-						AdditionalData: task.AdditionalData,
+						Source:            "input listener",
+						Action:            execution.ActionExecutions[step].Action,
+						Alarm:             task.Alarm,
+						Entity:            task.Entity,
+						Step:              step,
+						ExecutionCacheKey: execution.GetCacheKey(),
+						ScenarioID:        execution.ScenarioID,
+						AckResources:      execution.AckResources,
+						Header:            execution.Header,
+						Response:          execution.Response,
+						ResponseMap:       execution.ResponseMap,
+						AdditionalData:    task.AdditionalData,
 					}
 
 					return
@@ -188,7 +189,7 @@ func (e *redisBasedManager) finishExecution(
 	executionErr error,
 ) {
 	if execution.Tries > 0 {
-		err := e.executionStorage.Del(ctx, execution.ID)
+		err := e.executionStorage.Del(ctx, execution.GetCacheKey())
 		if err != nil {
 			e.logger.Err(err).Msg("cannot delete execution")
 			return
@@ -203,7 +204,7 @@ func (e *redisBasedManager) finishExecution(
 		return
 	}
 
-	err = e.executionStorage.Del(ctx, execution.ID)
+	err = e.executionStorage.Del(ctx, execution.GetCacheKey())
 	if err != nil {
 		e.logger.Err(err).Msg("cannot delete execution")
 		return
@@ -255,7 +256,7 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 					return
 				}
 
-				executionId := execIdAndStep[0]
+				executionCacheKey := execIdAndStep[0]
 				step, err := strconv.Atoi(execIdAndStep[1])
 				if err != nil {
 					taskRes.Status = TaskRpcError
@@ -275,7 +276,7 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 				taskRes.Alarm = *r.Alarm
 				taskRes.Step = step
 				taskRes.AlarmChangeType = result.AlarmChangeType
-				taskRes.ExecutionID = executionId
+				taskRes.ExecutionCacheKey = executionCacheKey
 				taskRes.Header = result.Header
 				taskRes.Response = result.Response
 
@@ -312,22 +313,26 @@ func (e *redisBasedManager) listenTaskResultChannel(ctx context.Context, wg *syn
 }
 
 func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskResult) {
-	if taskRes.ExecutionID == "" {
+	if taskRes.ExecutionCacheKey == "" {
 		e.logger.Error().Err(taskRes.Err).Msg("cannot get execution")
 		return
 	}
 
-	scenarioExecution, err := e.executionStorage.Get(ctx, taskRes.ExecutionID)
+	scenarioExecution, err := e.executionStorage.Get(ctx, taskRes.ExecutionCacheKey)
 	if err != nil || scenarioExecution == nil {
-		e.logger.Error().Err(err).Str("execution_id", taskRes.ExecutionID).Msg("cannot get execution")
+		e.logger.Error().Err(err).Str("execution", taskRes.ExecutionCacheKey).Msg("cannot get execution")
 		return
 	}
 
 	if taskRes.Status == TaskCancelled {
 		e.logger.Warn().Msgf("worker task was cancelled, error = %s", taskRes.Err.Error())
 
-		if taskRes.ExecutionID != "" {
-			e.logger.Debug().Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Worker returned error, drop scenario")
+		if taskRes.ExecutionCacheKey != "" {
+			e.logger.Debug().Str("source", taskRes.Source).
+				Str("alarm", taskRes.Alarm.ID).
+				Str("execution", taskRes.ExecutionCacheKey).
+				Int("step", taskRes.Step).
+				Msg("Worker returned error, drop scenario")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 		}
 
@@ -335,14 +340,22 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	}
 
 	if taskRes.Err != nil {
-		e.logger.Err(taskRes.Err).Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Execution failed, drop scenario")
+		e.logger.Err(taskRes.Err).
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).
+			Int("step", taskRes.Step).Msg("Execution failed, drop scenario")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 
 		return
 	}
 
 	if taskRes.Status == TaskNotMatched && scenarioExecution.ActionExecutions[taskRes.Step].Action.DropScenarioIfNotMatched {
-		e.logger.Debug().Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Action is not matched, drop scenario")
+		e.logger.Debug().
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).Int("step", taskRes.Step).
+			Msg("Action is not matched, drop scenario")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
 		return
 	}
@@ -396,18 +409,18 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		additionalData := scenarioExecution.AdditionalData
 		additionalData.AlarmChangeType = taskRes.AlarmChangeType
 		nextTask := Task{
-			Source:         "process task func",
-			Action:         scenarioExecution.ActionExecutions[nextStep].Action,
-			Alarm:          taskRes.Alarm,
-			Entity:         scenarioExecution.Entity,
-			Step:           nextStep,
-			ExecutionID:    taskRes.ExecutionID,
-			ScenarioID:     scenarioExecution.ScenarioID,
-			AckResources:   scenarioExecution.AckResources,
-			Header:         scenarioExecution.Header,
-			Response:       scenarioExecution.Response,
-			ResponseMap:    scenarioExecution.ResponseMap,
-			AdditionalData: additionalData,
+			Source:            "process task func",
+			Action:            scenarioExecution.ActionExecutions[nextStep].Action,
+			Alarm:             taskRes.Alarm,
+			Entity:            scenarioExecution.Entity,
+			Step:              nextStep,
+			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
+			ScenarioID:        scenarioExecution.ScenarioID,
+			AckResources:      scenarioExecution.AckResources,
+			Header:            scenarioExecution.Header,
+			Response:          scenarioExecution.Response,
+			ResponseMap:       scenarioExecution.ResponseMap,
+			AdditionalData:    additionalData,
 		}
 
 		select {
@@ -417,7 +430,12 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			e.taskChannel <- nextTask
 		}
 	} else {
-		e.logger.Debug().Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Scenario is finished")
+		e.logger.Debug().
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).
+			Int("step", taskRes.Step).
+			Msg("Scenario is finished")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
 	}
 }
@@ -508,7 +526,8 @@ func (e *redisBasedManager) startExecution(
 		)
 	}
 
-	executionID, err := e.executionStorage.Create(ctx, ScenarioExecution{
+	execution := ScenarioExecution{
+		ID:               utils.NewID(),
 		ScenarioID:       scenario.ID,
 		AlarmID:          alarm.ID,
 		Entity:           entity,
@@ -517,26 +536,26 @@ func (e *redisBasedManager) startExecution(
 		AckResources:     ackResources,
 		AdditionalData:   data,
 		FifoAckEvent:     fifoAckEvent,
-	})
+	}
+	ok, err := e.executionStorage.Create(ctx, execution)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save execution")
 		return
 	}
-	if executionID == "" {
+	if !ok {
 		e.logger.Err(err).Msg("scenario is already executing")
 		return
 	}
 
 	e.taskChannel <- Task{
-		Source:         "input listener",
-		Action:         scenario.Actions[0],
-		Alarm:          alarm,
-		Entity:         entity,
-		Step:           0,
-		ExecutionID:    executionID,
-		ScenarioID:     scenario.ID,
-		AckResources:   ackResources,
-		AdditionalData: data,
+		Source:            "input listener",
+		Action:            scenario.Actions[0],
+		Alarm:             alarm,
+		Entity:            entity,
+		Step:              0,
+		ExecutionCacheKey: execution.GetCacheKey(),
+		ScenarioID:        scenario.ID,
+		AckResources:      ackResources,
+		AdditionalData:    data,
 	}
-
 }

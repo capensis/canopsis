@@ -107,8 +107,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						},
 					},
 				},
-				ExecutionID: "execution_1",
-				Step:        2,
+				ExecutionCacheKey: "execution_1",
+				Step:              2,
 			},
 			expectedOutput: "output 1",
 			expectedAuthor: "author 1",
@@ -128,8 +128,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Alarm: types.Alarm{
 					ID: "8",
 				},
-				ExecutionID: "execution_2",
-				Step:        1,
+				ExecutionCacheKey: "execution_2",
+				Step:              1,
 			},
 			expectedNotMatched: true,
 		},
@@ -157,8 +157,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						},
 					},
 				},
-				ExecutionID: "execution_3",
-				Step:        4,
+				ExecutionCacheKey: "execution_3",
+				Step:              4,
 			},
 			expectedOutput: "output 3",
 			expectedAuthor: "author 3",
@@ -189,8 +189,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						},
 					},
 				},
-				ExecutionID: "execution_1",
-				Step:        2,
+				ExecutionCacheKey: "execution_1",
+				Step:              2,
 			},
 			expectedOutput: "rendered output: test",
 			expectedAuthor: "rendered author: 9",
@@ -212,7 +212,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						message := val1.(engine.RPCMessage)
 						correlationID := message.CorrelationID
 
-						expectedCorrelationID := fmt.Sprintf("%s&&%d", dataset.task.ExecutionID, dataset.task.Step)
+						expectedCorrelationID := fmt.Sprintf("%s&&%d", dataset.task.ExecutionCacheKey, dataset.task.Step)
 						if expectedCorrelationID != correlationID {
 							t.Errorf("expected correlation_id = %s, got %s", expectedCorrelationID, correlationID)
 						}
@@ -240,7 +240,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				result := <-resultChannel
 				if result.Status == action.TaskNotMatched {
 					if !dataset.expectedNotMatched {
-						t.Errorf("Task for action executionID=%s should be matched", result.ExecutionID)
+						t.Errorf("Task for action executionCacheKey=%s should be matched", result.ExecutionCacheKey)
 					}
 				}
 			} else {
