@@ -114,12 +114,14 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
-            "ticket": {
-              "_t": "assocticket",
-              "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
-              "m": "test-scenario-action-1-action-1-ticket",
-              "val": "test-scenario-action-1-action-1-ticket"
-            },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
+                "m": "test-scenario-action-1-action-1-ticket",
+                "ticket": "test-scenario-action-1-action-1-ticket"
+              }
+            ],
             "ack": {
               "_t": "ack",
               "a": "root",
@@ -134,12 +136,14 @@ Feature: execute action on trigger
         },
         {
           "v": {
-            "ticket": {
-              "_t": "assocticket",
-              "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
-              "m": "test-scenario-action-1-action-1-ticket",
-              "val": "test-scenario-action-1-action-1-ticket"
-            },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
+                "m": "test-scenario-action-1-action-1-ticket",
+                "ticket": "test-scenario-action-1-action-1-ticket"
+              }
+            ],
             "ack": {
               "_t": "ack",
               "a": "root",
@@ -480,12 +484,14 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
-            "ticket": {
-              "_t": "assocticket",
-              "a": "root",
-              "m": "test-ticket-action-2",
-              "val": "test-ticket-action-2"
-            },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "root",
+                "m": "test-ticket-action-2",
+                "ticket": "test-ticket-action-2"
+              }
+            ],
             "ack": {
               "_t": "ack",
               "a": "test-scenario-action-2-action-2-author test-resource-action-2",
@@ -645,12 +651,14 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-ticket-action-3",
-              "val": "test-ticket-action-3"
-            },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-ticket-action-3",
+                "ticket": "test-ticket-action-3"
+              }
+            ],
             "ack": {
               "_t": "ack",
               "a": "root",
@@ -887,12 +895,14 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
-            "ticket": {
-              "_t": "assocticket",
-              "a": "test-scenario-backward-compatibility-actions-1-author",
-              "m": "test-scenario-backward-compatibility-actions-1-ticket",
-              "val": "test-scenario-backward-compatibility-actions-1-ticket"
-            },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-scenario-backward-compatibility-actions-1-author",
+                "m": "test-scenario-backward-compatibility-actions-1-ticket",
+                "ticket": "test-scenario-backward-compatibility-actions-1-ticket"
+              }
+            ],
             "ack": {
               "_t": "ack",
               "a": "test-scenario-backward-compatibility-actions-1-author",

@@ -217,7 +217,7 @@ func (p AlarmValuePattern) Matches(value types.AlarmValue, matches *AlarmValueRe
 		p.Snooze.Matches(value.Snooze, &matches.Snooze) &&
 		p.State.Matches(value.State, &matches.State) &&
 		p.Status.Matches(value.Status, &matches.Status) &&
-		p.Ticket.Matches(value.Ticket, &matches.Ticket) &&
+		p.Ticket.Matches(value.Tickets, &matches.Ticket) &&
 		p.Component.Matches(value.Component, &matches.Component) &&
 		p.Connector.Matches(value.Connector, &matches.Connector) &&
 		p.ConnectorName.Matches(value.ConnectorName, &matches.ConnectorName) &&

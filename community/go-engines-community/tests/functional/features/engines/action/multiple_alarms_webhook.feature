@@ -90,13 +90,15 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
-            "ticket": {
-              "_t": "declareticket",
-              "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
-              "data": {
-                "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-1!!!test-resource-multiple-alarm-webhook-1-1|||2"
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-1!!!test-resource-multiple-alarm-webhook-1-1|||2"
+                }
               }
-            },
+            ],
             "connector": "test-connector-multiple-alarm-webhook-1",
             "connector_name": "test-connector-name-multiple-alarm-webhook-1",
             "component": "test-component-multiple-alarm-webhook-1",
@@ -105,13 +107,15 @@ Feature: execute action on trigger
         },
         {
           "v": {
-            "ticket": {
-              "_t": "declareticket",
-              "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
-              "data": {
-                "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-2!!!test-resource-multiple-alarm-webhook-1-2|||3"
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-2!!!test-resource-multiple-alarm-webhook-1-2|||3"
+                }
               }
-            },
+            ],
             "connector": "test-connector-multiple-alarm-webhook-1",
             "connector_name": "test-connector-name-multiple-alarm-webhook-1",
             "component": "test-component-multiple-alarm-webhook-1",

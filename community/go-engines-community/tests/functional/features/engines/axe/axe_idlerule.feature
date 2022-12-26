@@ -164,11 +164,13 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-first-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-first-ticket"
+              }
+            ]
           }
         }
       ],
@@ -268,11 +270,18 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-first-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-first-ticket"
+              },
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-first-ticket"
+              }
+            ]
           }
         }
       ],
@@ -504,11 +513,13 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-2-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-2-ticket"
+              }
+            ]
           }
         }
       ],
@@ -602,11 +613,13 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-2-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-2-ticket"
+              }
+            ]
           }
         }
       ],
@@ -710,11 +723,18 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-2-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-2-ticket"
+              },
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-2-ticket"
+              }
+            ]
           }
         }
       ],
@@ -1638,11 +1658,13 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-6-2-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-6-2-ticket"
+              }
+            ]
           }
         }
       ],
@@ -2479,11 +2501,13 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
-            "ticket": {
-              "_t": "assocticket",
-              "a": "system",
-              "m": "test-idlerule-axe-idlerule-9-1-ticket"
-            }
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "test-idlerule-axe-idlerule-9-1-ticket"
+              }
+            ]
           }
         }
       ],
