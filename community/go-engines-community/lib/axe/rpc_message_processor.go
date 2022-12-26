@@ -134,6 +134,15 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 
 func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.AxeEvent) (types.AlarmChange, error) {
 	alarm := event.Alarm
+	alarmChange := types.AlarmChange{
+		PreviousState:                   alarm.Value.State.Value,
+		PreviousStateChange:             alarm.Value.State.Timestamp,
+		PreviousStatus:                  alarm.Value.Status.Value,
+		PreviousStatusChange:            alarm.Value.Status.Timestamp,
+		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
+		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
+	}
+
 	op := types.Operation{
 		Type: event.EventType,
 		Parameters: types.OperationParameters{
@@ -158,15 +167,7 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 		return types.AlarmChange{}, err
 	}
 
-	alarmChange := types.AlarmChange{
-		Type:                            alarmChangeType,
-		PreviousState:                   alarm.Value.State.Value,
-		PreviousStateChange:             alarm.Value.State.Timestamp,
-		PreviousStatus:                  alarm.Value.Status.Value,
-		PreviousStatusChange:            alarm.Value.Status.Timestamp,
-		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
-		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
-	}
+	alarmChange.Type = alarmChangeType
 
 	return alarmChange, nil
 }
