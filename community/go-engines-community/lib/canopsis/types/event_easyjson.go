@@ -147,10 +147,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RK = string(in.String())
 		case "ack_resources":
 			out.AckResources = bool(in.Bool())
-		case "duration":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Duration).UnmarshalJSON(data))
-			}
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -174,6 +170,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.WantComma()
 				}
 				in.Delim('}')
+			}
+		case "duration":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Duration).UnmarshalJSON(data))
 			}
 		case "stat_name":
 			out.StatName = string(in.String())
@@ -502,15 +502,10 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.RK))
 	}
-	{
+	if in.AckResources {
 		const prefix string = ",\"ack_resources\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.AckResources))
-	}
-	{
-		const prefix string = ",\"duration\":"
-		out.RawString(prefix)
-		out.Raw((in.Duration).MarshalJSON())
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
@@ -540,6 +535,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte('}')
 		}
+	}
+	{
+		const prefix string = ",\"duration\":"
+		out.RawString(prefix)
+		out.Raw((in.Duration).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"stat_name\":"
