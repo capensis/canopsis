@@ -1,6 +1,7 @@
 Feature: execute action on trigger
   I need to be able to trigger action on event
 
+  @concurrent
   Scenario: given scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -49,7 +50,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-1",
@@ -62,7 +63,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-1
     Then the response code should be 200
     Then the response body should contain:
@@ -136,6 +136,7 @@ Feature: execute action on trigger
     ]
     """
 
+  @concurrent
   Scenario: given scenario and check event should emit declare ticket trigger
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -213,7 +214,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-2",
@@ -226,7 +227,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-2
     Then the response code should be 200
     Then the response body should contain:
@@ -319,212 +319,7 @@ Feature: execute action on trigger
     ]
     """
 
-  Scenario: given scenario and ack resources event should update resource alarms
-    Given I am admin
-    When I do POST /api/v4/scenarios:
-    """json
-    {
-      "name": "test-scenario-action-webhook-3-name",
-      "enabled": true,
-      "triggers": ["ack"],
-      "actions": [
-        {
-          "entity_pattern": [
-            [
-              {
-                "field": "_id",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-component-action-webhook-3"
-                }
-              }
-            ]
-          ],
-          "type": "webhook",
-          "parameters": {
-            "request": {
-              "method": "POST",
-              "url": "{{ .apiURL }}/api/v4/scenarios",
-              "auth": {
-                "username": "root",
-                "password": "test"
-              },
-              "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-3\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-3\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
-            },
-            "declare_ticket": {
-              "empty_response": false,
-              "is_regexp": false,
-              "ticket_id": "_id",
-              "scenario_name": "name"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-3",
-      "connector_name" : "test-connector-name-action-webhook-3",
-      "source_type" : "component",
-      "event_type" : "check",
-      "component" :  "test-component-action-webhook-3",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-3",
-      "connector_name" : "test-connector-name-action-webhook-3",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" :  "test-component-action-webhook-3",
-      "resource" : "test-resource-action-webhook-3",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-3",
-      "connector_name" : "test-connector-name-action-webhook-3",
-      "source_type" : "component",
-      "event_type" : "ack",
-      "component" :  "test-component-action-webhook-3",
-      "ack_resources": true,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?search=test-component-action-webhook-3&sort_by=v.resource&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket"
-            },
-            "ack": {
-              "_t": "ack"
-            },
-            "connector": "test-connector-action-webhook-3",
-            "connector_name": "test-connector-name-action-webhook-3",
-            "component": "test-component-action-webhook-3"
-          }
-        },
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket"
-            },
-            "ack": {
-              "_t": "ack"
-            },
-            "connector": "test-connector-action-webhook-3",
-            "connector_name": "test-connector-name-action-webhook-3",
-            "component": "test-component-action-webhook-3",
-            "resource": "test-resource-action-webhook-3"
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
-    When I save response ticketID={{ (index .lastResponse.data 0).v.ticket.val }}
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      },
-      {
-        "_id": "{{ (index .lastResponse.data 1)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response array key "0.data.steps.data" should contain only:
-    """json
-    [
-      {
-        "_t": "stateinc"
-      },
-      {
-        "_t": "statusinc"
-      },
-      {
-        "_t": "ack",
-        "a": "root",
-        "user_id": "root"
-      },
-      {
-        "_t": "webhookstart",
-        "a": "system",
-        "user_id": "",
-        "m": "Scenario test-scenario-action-webhook-3-name"
-      },
-      {
-        "_t": "webhookcomplete",
-        "a": "system",
-        "user_id": "",
-        "m": "Scenario: test-scenario-action-webhook-3-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-3."
-      },
-      {
-        "_t": "declareticket",
-        "a": "system",
-        "user_id": "",
-        "m": "Scenario: test-scenario-action-webhook-3-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-3."
-      }
-    ]
-    """
-    Then the response array key "1.data.steps.data" should contain only:
-    """json
-    [
-      {
-        "_t": "stateinc"
-      },
-      {
-        "_t": "statusinc"
-      },
-      {
-        "_t": "ack",
-        "a": "root",
-        "user_id": "root"
-      },
-      {
-        "_t": "declareticket",
-        "a": "system",
-        "user_id": "",
-        "m": "Scenario: test-scenario-action-webhook-3-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-3."
-      }
-    ]
-    """
-
+  @concurrent
   Scenario: given webhook scenario to test response and header templates
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -594,7 +389,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-4",
@@ -607,7 +402,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-4-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -642,6 +436,7 @@ Feature: execute action on trigger
     }
     """
 
+  @concurrent
   Scenario: given scenarios with 2 actions and webhook should be able to use additional data in template
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -825,7 +620,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-6",
@@ -839,7 +634,6 @@ Feature: execute action on trigger
       "initiator": "user"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-6
     Then the response code should be 200
     Then the response body should contain:
@@ -1121,6 +915,7 @@ Feature: execute action on trigger
     }
     """
 
+  @concurrent
   Scenario: given webhook scenario to test multiple response templates
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -1277,7 +1072,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-7",
@@ -1290,7 +1085,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-7-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -1325,6 +1119,7 @@ Feature: execute action on trigger
     }
     """
 
+  @concurrent
   Scenario: given webhook scenario to test document with a document with arrays in response
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -1422,7 +1217,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-8",
@@ -1435,7 +1230,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-8-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -1551,6 +1345,7 @@ Feature: execute action on trigger
     ]
     """
 
+  @concurrent
   Scenario: given webhook scenario where the webhook response is an array
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -1648,7 +1443,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-9",
@@ -1661,7 +1456,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-9-webhook
     Then the response code should be 200
     Then the response body should contain:

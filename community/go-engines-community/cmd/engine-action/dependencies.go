@@ -81,15 +81,10 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		webhookRpcClient = engine.NewRPCClient(
 			canopsis.ActionRPCConsumerName,
 			canopsis.WebhookRPCQueueServerName,
-			canopsis.ActionWebhookRPCClientQueueName,
+			"",
 			cfg.Global.PrefetchCount,
 			cfg.Global.PrefetchSize,
-			&webhookRpcClientMessageProcessor{
-				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-				Decoder:                  json.NewDecoder(),
-				Logger:                   logger,
-				ResultChannel:            rpcResultChannel,
-			},
+			nil,
 			amqpChannel,
 			logger,
 		)
@@ -110,7 +105,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, timezoneConfigProvider),
+				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, timezoneConfigProvider),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -209,9 +204,6 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	if webhookRpcClient != nil {
-		engineAction.AddConsumer(webhookRpcClient)
-	}
 	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,

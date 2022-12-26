@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -50,33 +49,13 @@ type AxeParameters struct {
 type AxeResultEvent struct {
 	Alarm           *types.Alarm          `json:"alarm"`
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
-	Error           *types.RPCError       `json:"error"`
+	WebhookHeader   map[string]string     `json:"webhook_header,omitempty"`
+	WebhookResponse map[string]any        `json:"webhook_response,omitempty"`
+	Error           *Error                `json:"error"`
 }
 
 type WebhookEvent struct {
-	Parameters   WebhookParameters      `json:"parameters"`
-	Alarm        *types.Alarm           `json:"alarm"`
-	Entity       *types.Entity          `json:"entity"`
-	AckResources bool                   `json:"ack_resources"`
-	Header       map[string]string      `json:"header,omitempty"`
-	Response     map[string]interface{} `json:"response,omitempty"`
-	Message      string                 `json:"message"`
-}
-
-type WebhookParameters struct {
-	Request       request.Parameters            `json:"request"`
-	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty"`
-	Scenario      string                        `json:"scenario"`
-	Author        string                        `json:"author"`
-	User          string                        `json:"user"`
-}
-
-type WebhookResultEvent struct {
-	Alarm           *types.Alarm          `json:"alarm"`
-	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
-	Header          map[string]string     `json:"header,omitempty"`
-	Response        map[string]any        `json:"response,omitempty"`
-	Error           *Error                `json:"error"`
+	Execution string `json:"execution"`
 }
 
 type Error struct {

@@ -33,10 +33,9 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 		}
 	}(timerCtx)
 	task := action.ExecuteScenariosTask{
-		Triggers:     []string{"create"},
-		Entity:       types.Entity{ID: "test-entity"},
-		Alarm:        types.Alarm{ID: "test-alarm"},
-		AckResources: false,
+		Triggers: []string{"create"},
+		Entity:   types.Entity{ID: "test-entity"},
+		Alarm:    types.Alarm{ID: "test-alarm"},
 	}
 	scenario := action.Scenario{
 		ID:   "test-scenario",
@@ -142,10 +141,9 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		}
 	}(timerCtx)
 	task := action.ExecuteScenariosTask{
-		Triggers:     []string{"create"},
-		Entity:       types.Entity{ID: "test-entity"},
-		Alarm:        types.Alarm{ID: "test-alarm"},
-		AckResources: false,
+		Triggers: []string{"create"},
+		Entity:   types.Entity{ID: "test-entity"},
+		Alarm:    types.Alarm{ID: "test-alarm"},
 	}
 	firstScenario := action.Scenario{
 		ID:   "test-scenario-1",
@@ -306,7 +304,6 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 		DelayedScenarioID: scenario.ID,
 		Entity:            types.Entity{ID: "test-entity"},
 		Alarm:             types.Alarm{ID: "test-alarm"},
-		AckResources:      false,
 	}
 	execution := action.ScenarioExecution{
 		ScenarioID: scenario.ID,
@@ -404,7 +401,6 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 		AbandonedExecutionCacheKey: executionCacheKey,
 		Entity:                     types.Entity{ID: "test-entity"},
 		Alarm:                      types.Alarm{ID: "test-alarm"},
-		AckResources:               false,
 	}
 	scenario := action.Scenario{
 		ID:   "test-scenario",

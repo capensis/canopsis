@@ -91,7 +91,7 @@ func NewEngine(
 	)
 	actionRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
-		canopsis.ActionWebhookRPCClientQueueName,
+		canopsis.ActionAxeRPCClientQueueName,
 		"",
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
