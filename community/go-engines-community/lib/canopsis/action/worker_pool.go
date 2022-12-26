@@ -25,30 +25,30 @@ const (
 )
 
 type Task struct {
-	Source         string
-	Action         Action
-	Alarm          types.Alarm
-	Entity         types.Entity
-	Step           int
-	ExecutionID    string
-	ScenarioID     string
-	AckResources   bool
-	Header         map[string]string
-	Response       map[string]interface{}
-	ResponseMap    map[string]interface{}
-	AdditionalData AdditionalData
+	Source            string
+	Action            Action
+	Alarm             types.Alarm
+	Entity            types.Entity
+	Step              int
+	ExecutionCacheKey string
+	ScenarioID        string
+	AckResources      bool
+	Header            map[string]string
+	Response          map[string]interface{}
+	ResponseMap       map[string]interface{}
+	AdditionalData    AdditionalData
 }
 
 type TaskResult struct {
-	Source          string
-	Alarm           types.Alarm
-	Step            int
-	ExecutionID     string
-	AlarmChangeType types.AlarmChangeType
-	Status          int
-	Header          map[string]string
-	Response        map[string]interface{}
-	Err             error
+	Source            string
+	Alarm             types.Alarm
+	Step              int
+	ExecutionCacheKey string
+	AlarmChangeType   types.AlarmChangeType
+	Status            int
+	Header            map[string]string
+	Response          map[string]interface{}
+	Err               error
 }
 
 type WorkerPool interface {
@@ -135,22 +135,22 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 
 						if !match {
 							resultChannel <- TaskResult{
-								Source:      source,
-								Alarm:       task.Alarm,
-								Step:        task.Step,
-								ExecutionID: task.ExecutionID,
-								Status:      TaskNotMatched,
+								Source:            source,
+								Alarm:             task.Alarm,
+								Step:              task.Step,
+								ExecutionCacheKey: task.ExecutionCacheKey,
+								Status:            TaskNotMatched,
 							}
 						} else {
 							err := s.call(ctx, task, id)
 							if err != nil {
 								resultChannel <- TaskResult{
-									Source:      source,
-									Alarm:       task.Alarm,
-									Step:        task.Step,
-									ExecutionID: task.ExecutionID,
-									Status:      TaskRpcError,
-									Err:         err,
+									Source:            source,
+									Alarm:             task.Alarm,
+									Step:              task.Step,
+									ExecutionCacheKey: task.ExecutionCacheKey,
+									Status:            TaskRpcError,
+									Err:               err,
 								}
 
 								break
@@ -199,7 +199,7 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 	}
 
 	err = rpcClient.Call(ctx, engine.RPCMessage{
-		CorrelationID: fmt.Sprintf("%s&&%d", task.ExecutionID, task.Step),
+		CorrelationID: fmt.Sprintf("%s&&%d", task.ExecutionCacheKey, task.Step),
 		Body:          body,
 	})
 	if err != nil {
