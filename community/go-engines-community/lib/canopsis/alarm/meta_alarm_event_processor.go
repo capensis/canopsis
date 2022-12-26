@@ -283,9 +283,13 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 	}
 	if eventRes.AlarmChangeType == types.AlarmChangeTypeDeclareTicketWebhook {
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
-		childEvent.Ticket = eventRes.Alarm.Value.Ticket.Value
-		childEvent.TicketUrl = eventRes.Alarm.Value.Ticket.URL
-		childEvent.TicketData = eventRes.Alarm.Value.Ticket.Data
+
+		ticket := eventRes.Alarm.Value.GetLastTicket()
+		if ticket != nil {
+			childEvent.Ticket = ticket.Ticket
+			childEvent.TicketUrl = ticket.TicketURL
+			childEvent.TicketData = ticket.TicketData
+		}
 	}
 
 	if event.Parameters.State != nil {
@@ -315,18 +319,13 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 	}
 
 	componentAlarm := eventRes.Alarm
-	if componentAlarm == nil || componentAlarm.Value.Ticket == nil {
+	if componentAlarm == nil {
 		return nil
 	}
 
-	// todo retrieve output in better way
-	output := ""
-	for i := len(componentAlarm.Value.Steps) - 1; i >= 0; i-- {
-		step := componentAlarm.Value.Steps[i]
-		if step.Type == componentAlarm.Value.Ticket.Type {
-			output = step.Message
-			break
-		}
+	ticket := componentAlarm.Value.GetLastTicket()
+	if ticket == nil {
+		return nil
 	}
 
 	resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Alarm.Value.Component)
@@ -346,10 +345,10 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 			Resource:      resource.Alarm.Value.Resource,
 			Component:     resource.Alarm.Value.Component,
 			Timestamp:     types.NewCpsTime(),
-			Output:        output,
-			Ticket:        componentAlarm.Value.Ticket.Value,
-			TicketUrl:     componentAlarm.Value.Ticket.URL,
-			TicketData:    componentAlarm.Value.Ticket.Data,
+			Output:        ticket.Message,
+			Ticket:        ticket.Ticket,
+			TicketUrl:     ticket.TicketURL,
+			TicketData:    ticket.TicketData,
 			Author:        event.Parameters.Author,
 			UserID:        event.Parameters.User,
 			Initiator:     types.InitiatorSystem,

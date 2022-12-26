@@ -264,4 +264,9 @@ type AlarmStep struct {
 	Initiator    string             `bson:"initiator" json:"initiator"`
 	Execution    string             `bson:"exec,omitempty" json:"-"`
 	StateCounter *types.CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
+
+	// Ticket related fields
+	Ticket     string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 }

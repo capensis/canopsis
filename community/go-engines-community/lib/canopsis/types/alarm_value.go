@@ -27,6 +27,11 @@ type AlarmStep struct {
 	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
 	// Execution contains id if instruction execution for instruction steps only.
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
+
+	// Ticket related fields
+	Ticket     string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 }
 
 // NewAlarmStep returns an AlarmStep.
@@ -154,7 +159,7 @@ func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, boo
 		if step.Type == AlarmStepStateIncrease || step.Type == AlarmStepStateDecrease {
 			nbStepsToCrop += 1
 		}
-		if step == *currentStatus {
+		if step.Equal(*currentStatus) {
 			currentStatusIdx = i
 		}
 	}
@@ -316,15 +321,15 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
-	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
-	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
-	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
-	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps       AlarmSteps   `bson:"steps" json:"steps"`
+	ACK         *AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
+	Steps       AlarmSteps  `bson:"steps" json:"steps"`
 
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
@@ -385,32 +390,50 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-// AlarmTicket step is distinct from generic alarm step because value is a string
-// TODO: move string value to message (and in py and js too)
-type AlarmTicket struct {
-	Type      string  `bson:"_t" json:"_t"`
-	Timestamp CpsTime `bson:"t" json:"t"`
-	Author    string  `bson:"a" json:"a"`
-	UserID    string  `bson:"user_id" json:"user_id"`
-	Message   string  `bson:"m" json:"m"`
-	Role      string  `bson:"role,omitempty" json:"role,omitempty"`
-	Value     string  `bson:"val" json:"val"`
-	URL       string  `bson:"url" json:"url"`
-	Data      map[string]string
+func (v *AlarmValue) GetLastTicket() *AlarmStep {
+	if len(v.Tickets) > 0 {
+		return &v.Tickets[len(v.Tickets)-1]
+	}
+
+	return nil
 }
 
-// NewTicket creates a Ticket Step from a normal step
-// TODO: annihilate this heresy (Ticket has a distinct format from other classical steps !)
-func (s AlarmStep) NewTicket(value, url string, data map[string]string) AlarmTicket {
-	return AlarmTicket{
-		Author:    s.Author,
-		Message:   value,
-		Timestamp: s.Timestamp,
-		Type:      s.Type,
-		UserID:    s.UserID,
-		Value:     value,
-		Data:      data,
-		Role:      s.Role,
-		URL:       url,
+func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator, value, url string, data map[string]string) AlarmStep {
+	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
+
+	s.Ticket = value
+	s.TicketURL = url
+	s.TicketData = data
+
+	return s
+}
+
+func (s *AlarmStep) Equal(comp AlarmStep) bool {
+	if s.Type != comp.Type ||
+		!s.Timestamp.Time.Equal(comp.Timestamp.Time) ||
+		s.Author != comp.Author ||
+		s.UserID != comp.UserID ||
+		s.Message != comp.Message ||
+		s.Role != comp.Role ||
+		s.Value != comp.Value ||
+		s.StateCounter != comp.StateCounter ||
+		s.PbehaviorCanonicalType != comp.PbehaviorCanonicalType ||
+		s.Initiator != comp.Initiator ||
+		s.Execution != comp.Execution ||
+		s.Ticket != comp.Ticket ||
+		s.TicketURL != comp.TicketURL {
+		return false
 	}
+
+	if len(s.TicketData) != len(comp.TicketData) {
+		return false
+	}
+
+	for k, v := range s.TicketData {
+		if compV, ok := comp.TicketData[k]; !ok || v != compV {
+			return false
+		}
+	}
+
+	return true
 }

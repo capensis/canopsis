@@ -365,13 +365,15 @@ Feature: update meta alarm on action
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
                   "resource": "test-resource-action-correlation-2-1",
-                  "ticket": {
-                    "_t": "declareticket",
-                    "val": "testticket",
-                    "data": {
-                      "ticket_data": "testdata"
+                  "tickets": [
+                    {
+                      "_t": "declareticket",
+                      "ticket": "testticket",
+                      "ticket_data": {
+                        "ticket_data": "testdata"
+                      }
                     }
-                  }
+                  ]
                 }
               },
               {
@@ -380,13 +382,15 @@ Feature: update meta alarm on action
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
                   "resource": "test-resource-action-correlation-2-2",
-                  "ticket": {
-                    "_t": "declareticket",
-                    "val": "testticket",
-                    "data": {
-                      "ticket_data": "testdata"
+                  "tickets": [
+                    {
+                      "_t": "declareticket",
+                      "ticket": "testticket",
+                      "ticket_data": {
+                        "ticket_data": "testdata"
+                      }
                     }
-                  }
+                  ]
                 }
               },
               {
@@ -395,13 +399,15 @@ Feature: update meta alarm on action
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
                   "resource": "test-resource-action-correlation-2-3",
-                  "ticket": {
-                    "_t": "declareticket",
-                    "val": "testticket",
-                    "data": {
-                      "ticket_data": "testdata"
+                  "tickets": [
+                    {
+                      "_t": "declareticket",
+                      "ticket": "testticket",
+                      "ticket_data": {
+                        "ticket_data": "testdata"
+                      }
                     }
-                  }
+                  ]
                 }
               }
             ],
