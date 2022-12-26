@@ -117,7 +117,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
 					return
 				}
 
@@ -148,9 +148,9 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						Alarm:             task.Alarm,
 						Entity:            task.Entity,
 						Step:              step,
+						ExecutionID:       execution.ID,
 						ExecutionCacheKey: execution.GetCacheKey(),
 						ScenarioID:        execution.ScenarioID,
-						AckResources:      execution.AckResources,
 						Header:            execution.Header,
 						Response:          execution.Response,
 						ResponseMap:       execution.ResponseMap,
@@ -277,8 +277,8 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 				taskRes.Step = step
 				taskRes.AlarmChangeType = result.AlarmChangeType
 				taskRes.ExecutionCacheKey = executionCacheKey
-				taskRes.Header = result.Header
-				taskRes.Response = result.Response
+				taskRes.Header = result.WebhookHeader
+				taskRes.Response = result.WebhookResponse
 
 				if r.Error != nil {
 					taskRes.Status = TaskRpcError
@@ -414,9 +414,9 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Alarm:             taskRes.Alarm,
 			Entity:            scenarioExecution.Entity,
 			Step:              nextStep,
+			ExecutionID:       scenarioExecution.ID,
 			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
 			ScenarioID:        scenarioExecution.ScenarioID,
-			AckResources:      scenarioExecution.AckResources,
 			Header:            scenarioExecution.Header,
 			Response:          scenarioExecution.Response,
 			ResponseMap:       scenarioExecution.ResponseMap,
@@ -461,7 +461,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
 	}
 
 	return true, nil
@@ -498,8 +498,8 @@ func (e *redisBasedManager) processEmittedTrigger(
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, prevScenarioExecution.AckResources,
-			additionalData, prevScenarioExecution.FifoAckEvent)
+		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
+			prevScenarioExecution.FifoAckEvent)
 	}
 
 	return nil
@@ -510,7 +510,6 @@ func (e *redisBasedManager) startExecution(
 	scenario Scenario,
 	alarm types.Alarm,
 	entity types.Entity,
-	ackResources bool,
 	data AdditionalData,
 	fifoAckEvent types.Event,
 ) {
@@ -533,7 +532,6 @@ func (e *redisBasedManager) startExecution(
 		Entity:           entity,
 		ActionExecutions: executions,
 		LastUpdate:       time.Now().Unix(),
-		AckResources:     ackResources,
 		AdditionalData:   data,
 		FifoAckEvent:     fifoAckEvent,
 	}
@@ -553,9 +551,9 @@ func (e *redisBasedManager) startExecution(
 		Alarm:             alarm,
 		Entity:            entity,
 		Step:              0,
+		ExecutionID:       execution.ID,
 		ExecutionCacheKey: execution.GetCacheKey(),
 		ScenarioID:        scenario.ID,
-		AckResources:      ackResources,
 		AdditionalData:    data,
 	}
 }

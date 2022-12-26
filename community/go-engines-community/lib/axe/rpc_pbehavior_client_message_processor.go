@@ -183,7 +183,7 @@ func (p *rpcPBehaviorClientMessageProcessor) logError(err error, errMsg string, 
 }
 
 func (p *rpcPBehaviorClientMessageProcessor) getErrRpcEvent(err error) []byte {
-	msg, _ := p.getRpcEvent(rpc.AxeResultEvent{Error: &types.RPCError{Error: err}})
+	msg, _ := p.getRpcEvent(rpc.AxeResultEvent{Error: &rpc.Error{Error: err}})
 	return msg
 }
 
