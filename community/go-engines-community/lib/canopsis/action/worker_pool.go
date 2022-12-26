@@ -7,14 +7,19 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libwebhook "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -31,8 +36,8 @@ type Task struct {
 	Entity            types.Entity
 	Step              int
 	ExecutionCacheKey string
+	ExecutionID       string
 	ScenarioID        string
-	AckResources      bool
 	Header            map[string]string
 	Response          map[string]interface{}
 	ResponseMap       map[string]interface{}
@@ -59,17 +64,19 @@ type pool struct {
 	size             int
 	axeRpcClient     engine.RPCClient
 	webhookRpcClient engine.RPCClient
-	alarmAdapter     alarm.Adapter
 	encoder          encoding.Encoder
 	logger           zerolog.Logger
 	templateExecutor *template.Executor
+
+	alarmCollection          mongo.DbCollection
+	webhookHistoryCollection mongo.DbCollection
 }
 
 func NewWorkerPool(
 	size int,
+	dbClient mongo.DbClient,
 	axeRpcClient engine.RPCClient,
 	webhookRpcClient engine.RPCClient,
-	alarmAdapter alarm.Adapter,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 	timezoneConfigProvider config.TimezoneConfigProvider,
@@ -78,10 +85,12 @@ func NewWorkerPool(
 		size:             size,
 		axeRpcClient:     axeRpcClient,
 		webhookRpcClient: webhookRpcClient,
-		alarmAdapter:     alarmAdapter,
 		encoder:          encoder,
 		logger:           logger,
 		templateExecutor: template.NewExecutor(timezoneConfigProvider),
+
+		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
+		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryMongoCollection),
 	}
 }
 
@@ -142,7 +151,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 								Status:            TaskNotMatched,
 							}
 						} else {
-							err := s.call(ctx, task, id)
+							skip, err := s.call(ctx, task, id)
 							if err != nil {
 								resultChannel <- TaskResult{
 									Source:            source,
@@ -151,6 +160,17 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 									ExecutionCacheKey: task.ExecutionCacheKey,
 									Status:            TaskRpcError,
 									Err:               err,
+								}
+
+								break
+							}
+							if skip {
+								resultChannel <- TaskResult{
+									Source:            source,
+									Alarm:             task.Alarm,
+									Step:              task.Step,
+									ExecutionCacheKey: task.ExecutionCacheKey,
+									Status:            TaskNotMatched,
 								}
 
 								break
@@ -171,31 +191,32 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 	return resultChannel, nil
 }
 
-func (s *pool) call(ctx context.Context, task Task, workerId int) error {
+func (s *pool) call(ctx context.Context, task Task, workerId int) (bool, error) {
 	var event interface{}
 	var rpcClient engine.RPCClient
+	var skip bool
 	var err error
 	switch task.Action.Type {
 	case types.ActionTypeWebhook:
 		rpcClient = s.webhookRpcClient
-		event, err = s.getRPCWebhookEvent(ctx, task)
+		event, skip, err = s.getRPCWebhookEvent(ctx, task)
 	default:
 		rpcClient = s.axeRpcClient
 		event, err = s.getRPCAxeEvent(task)
 	}
 
 	if rpcClient == nil {
-		return fmt.Errorf("cannot process action %s", task.Action.Type)
+		return false, fmt.Errorf("cannot process action %s", task.Action.Type)
 	}
 
-	if err != nil {
-		return err
+	if err != nil || skip || event == nil {
+		return skip, err
 	}
 
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		s.logger.Warn().Err(err).Msgf("Worker %d encode rpc for action '%s' failed", workerId, task.Action.Type)
-		return err
+		return false, err
 	}
 
 	err = rpcClient.Call(ctx, engine.RPCMessage{
@@ -204,10 +225,10 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 	})
 	if err != nil {
 		s.logger.Warn().Err(err).Msgf("Worker %d send rpc for action '%s' failed", workerId, task.Action.Type)
-		return err
+		return false, err
 	}
 
-	return nil
+	return false, nil
 }
 
 func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
@@ -251,18 +272,39 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	}, nil
 }
 
-func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookEvent, error) {
+func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookEvent, bool, error) {
 	children := make([]types.Alarm, 0)
 	if len(task.Alarm.Value.Children) > 0 {
-		err := s.alarmAdapter.GetOpenedAlarmsByIDs(ctx, task.Alarm.Value.Children, &children)
+		cursor, err := s.alarmCollection.Find(ctx, bson.M{
+			"d":          bson.M{"$in": task.Alarm.Value.Children},
+			"v.resolved": nil,
+		})
 		if err != nil {
-			return nil, fmt.Errorf("cannot find children : %v", err)
+			return nil, false, fmt.Errorf("cannot find children: %w", err)
+		}
+		err = cursor.All(ctx, &children)
+		if err != nil {
+			return nil, false, fmt.Errorf("cannot decode children: %w", err)
+		}
+	}
+	// Skip webhooks for children
+	// todo add flag to action
+	if len(task.Alarm.Value.Parents) > 0 {
+		err := s.alarmCollection.FindOne(ctx, bson.M{
+			"d":          bson.M{"$in": task.Alarm.Value.Parents},
+			"v.resolved": nil,
+		}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, false, fmt.Errorf("cannot find parents: %w", err)
+		}
+		if err == nil {
+			return nil, true, nil
 		}
 	}
 
 	additionalData, err := s.resolveAuthor(task)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	tplData := map[string]interface{}{
@@ -278,39 +320,56 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	request := *task.Action.Parameters.Request
 	request.URL, err = s.templateExecutor.Execute(request.URL, tplData)
 	if err != nil {
-		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+		return nil, false, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 	}
 	request.Payload, err = s.templateExecutor.Execute(request.Payload, tplData)
 	if err != nil {
-		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+		return nil, false, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	headers := make(map[string]string, len(request.Headers))
 	for k, v := range request.Headers {
 		headers[k], err = s.templateExecutor.Execute(v, tplData)
 		if err != nil {
-			return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+			return nil, false, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
 		}
 	}
 	request.Headers = headers
 
-	webhookParams := rpc.WebhookParameters{
+	history := libwebhook.History{
+		ID:            utils.NewID(),
+		Alarms:        []string{task.Alarm.ID},
+		Scenario:      task.ScenarioID,
+		Action:        int64(task.Step),
+		Execution:     task.ExecutionID,
+		SystemName:    task.Action.Parameters.SystemName,
+		Status:        libwebhook.StatusRunning,
+		Comment:       task.Action.Comment,
 		Request:       request,
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
-		Scenario:      task.ScenarioID,
-		Author:        additionalData.Author,
-		User:          additionalData.User,
+		UserID:        additionalData.User,
+		Username:      additionalData.Author,
+		CreatedAt:     types.NewCpsTime(),
+	}
+
+	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,
+		bson.M{
+			"execution": history.Execution,
+			"scenario":  history.Scenario,
+			"action":    history.Action,
+		},
+		bson.M{
+			"$setOnInsert": history,
+		},
+		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After),
+	).Decode(&history)
+	if err != nil {
+		return nil, false, fmt.Errorf("cannot save webhook history scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	return &rpc.WebhookEvent{
-		Parameters:   webhookParams,
-		Alarm:        &task.Alarm,
-		Entity:       &task.Entity,
-		AckResources: task.AckResources,
-		Header:       task.Header,
-		Response:     task.Response,
-		Message:      fmt.Sprintf("step %d of scenario %s", task.Step, task.ScenarioID),
-	}, nil
+		Execution: history.ID,
+	}, false, nil
 }
 
 func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {

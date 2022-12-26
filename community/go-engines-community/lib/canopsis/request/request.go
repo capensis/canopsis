@@ -1,12 +1,15 @@
 package request
 
-//todo: copy from webhook package, webhook package should use this package instead of its own models
-
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
+
+	"github.com/valyala/fastjson"
 )
 
 func CreateRequest(ctx context.Context, params Parameters) (*http.Request, error) {
@@ -60,4 +63,48 @@ func Flatten(in interface{}, prevKey string) map[string]interface{} {
 	}
 
 	return out
+}
+
+// ValidateStatusCode checks response status code and generates error if status code is not allowed.
+func ValidateStatusCode(
+	request *http.Request,
+	response *http.Response,
+	resErrMsgKey string,
+) error {
+	switch response.StatusCode {
+	case http.StatusOK, http.StatusCreated, http.StatusAccepted, http.StatusNoContent:
+		return nil
+	}
+
+	reqUrl := request.URL.String()
+	errMsg := ""
+	if resErrMsgKey != "" {
+		body, err := io.ReadAll(response.Body)
+		if err == nil {
+			parsed, err := fastjson.ParseBytes(body)
+			if err == nil {
+				errFieldVal := parsed.GetStringBytes(strings.Split(resErrMsgKey, ".")...)
+				if len(errFieldVal) > 0 {
+					errMsg = string(errFieldVal)
+				}
+			}
+		}
+	}
+
+	if errMsg == "" {
+		switch response.StatusCode {
+		case http.StatusNotFound:
+			errMsg = fmt.Sprintf("url %s not found", reqUrl)
+		case http.StatusMethodNotAllowed:
+			errMsg = fmt.Sprintf("method %s not allowed for url %s", request.Method, reqUrl)
+		case http.StatusUnauthorized:
+			errMsg = fmt.Sprintf("url %s is unauthorized", reqUrl)
+		case http.StatusForbidden:
+			errMsg = fmt.Sprintf("url %s is forbidden", reqUrl)
+		default:
+			errMsg = fmt.Sprintf("request url %s failed with status code %d", reqUrl, response.StatusCode)
+		}
+	}
+
+	return errors.New(errMsg)
 }
