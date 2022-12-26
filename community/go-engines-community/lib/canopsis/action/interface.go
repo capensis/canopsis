@@ -4,6 +4,7 @@ package action
 
 import (
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -59,9 +60,9 @@ type TaskManager interface {
 }
 
 type ScenarioExecution struct {
-	ID               string                 `json:"-"`
-	ScenarioID       string                 `json:"-"`
-	AlarmID          string                 `json:"-"`
+	ID               string                 `json:"_id"`
+	ScenarioID       string                 `json:"sid"`
+	AlarmID          string                 `json:"aid"`
 	Entity           types.Entity           `json:"e"`
 	ActionExecutions []Execution            `json:"ae"`
 	LastUpdate       int64                  `json:"u"`
@@ -75,6 +76,10 @@ type ScenarioExecution struct {
 	FifoAckEvent     types.Event            `json:"fev"`
 }
 
+func (e ScenarioExecution) GetCacheKey() string {
+	return fmt.Sprintf("%s$$%s", e.AlarmID, e.ScenarioID)
+}
+
 type ScenarioResult struct {
 	Alarm            types.Alarm
 	Err              error
@@ -83,14 +88,15 @@ type ScenarioResult struct {
 }
 
 type ExecuteScenariosTask struct {
-	Triggers             []string
-	DelayedScenarioID    string
-	AbandonedExecutionID string
-	Entity               types.Entity
-	Alarm                types.Alarm
-	AckResources         bool
-	AdditionalData       AdditionalData
-	FifoAckEvent         types.Event
+	Triggers          []string
+	DelayedScenarioID string
+	Entity            types.Entity
+	Alarm             types.Alarm
+	AckResources      bool
+	AdditionalData    AdditionalData
+	FifoAckEvent      types.Event
+
+	AbandonedExecutionCacheKey string
 }
 
 type AdditionalData struct {
