@@ -486,10 +486,10 @@ func getAlarmRefField(alarm types.Alarm, f string) (interface{}, bool) {
 		}
 		return alarm.Value.ACK, true
 	case "v.ticket":
-		if alarm.Value.Ticket == nil {
+		if alarm.Value.Tickets == nil {
 			return nil, true
 		}
-		return alarm.Value.Ticket, true
+		return alarm.Value.GetLastTicket(), true
 	case "v.canceled":
 		if alarm.Value.Canceled == nil {
 			return nil, true
