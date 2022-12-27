@@ -168,14 +168,20 @@ type Event struct {
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
 	Duration     CpsNumber              `json:"duration"`
-	Ticket       string                 `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketUrl    string                 `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
 	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
 	ExtraInfos   map[string]interface{} `json:"extra"`
 	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+
+	// Ticket related fields
+	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketUrl         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
+	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
+	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty,omitempty"`
+	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`

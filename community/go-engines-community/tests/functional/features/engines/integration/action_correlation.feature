@@ -369,11 +369,20 @@ Feature: update meta alarm on action
                     {
                       "_t": "declareticket",
                       "ticket": "testticket",
+                      "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                       "ticket_data": {
                         "ticket_data": "testdata"
                       }
                     }
-                  ]
+                  ],
+                  "ticket": {
+                    "_t": "declareticket",
+                    "ticket": "testticket",
+                    "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                    "ticket_data": {
+                      "ticket_data": "testdata"
+                    }
+                  }
                 }
               },
               {
@@ -386,11 +395,20 @@ Feature: update meta alarm on action
                     {
                       "_t": "declareticket",
                       "ticket": "testticket",
+                      "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                       "ticket_data": {
                         "ticket_data": "testdata"
                       }
                     }
-                  ]
+                  ],
+                  "ticket": {
+                    "_t": "declareticket",
+                    "ticket": "testticket",
+                    "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                    "ticket_data": {
+                      "ticket_data": "testdata"
+                    }
+                  }
                 }
               },
               {
@@ -403,11 +421,20 @@ Feature: update meta alarm on action
                     {
                       "_t": "declareticket",
                       "ticket": "testticket",
+                      "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                       "ticket_data": {
                         "ticket_data": "testdata"
                       }
                     }
-                  ]
+                  ],
+                  "ticket": {
+                    "_t": "declareticket",
+                    "ticket": "testticket",
+                    "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                    "ticket_data": {
+                      "ticket_data": "testdata"
+                    }
+                  }
                 }
               }
             ],

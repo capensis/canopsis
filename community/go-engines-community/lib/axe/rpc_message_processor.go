@@ -154,9 +154,13 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 			Execution:   event.Parameters.Execution,
 			Instruction: event.Parameters.Instruction,
 
-			Ticket:               event.Parameters.Ticket,
-			TicketUrl:            event.Parameters.TicketUrl,
-			TicketData:           event.Parameters.TicketData,
+			Ticket:           event.Parameters.Ticket,
+			TicketUrl:        event.Parameters.TicketUrl,
+			TicketComment:    event.Parameters.TicketComment,
+			TicketSystemName: event.Parameters.TicketSystemName,
+			TicketRuleName:   event.Parameters.TicketRuleName,
+			TicketData:       event.Parameters.TicketData,
+
 			DeclareTicket:        event.Parameters.DeclareTicket,
 			DeclareTicketRequest: event.Parameters.DeclareTicketRequest,
 		},

@@ -1243,6 +1243,13 @@ Feature: create and update alarm by main event stream
                 "ticket": "testticket"
               }
             ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "test-author-axe-9",
+              "m": "testticket",
+              "t": {{ .ticketEventTimestamp }},
+              "ticket": "testticket"
+            },
             "component": "test-component-axe-9",
             "connector": "test-connector-axe-9",
             "connector_name": "test-connector-name-axe-9",

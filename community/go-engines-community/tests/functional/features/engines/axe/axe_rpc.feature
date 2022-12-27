@@ -386,6 +386,12 @@ Feature: update alarm by RPC stream
                 "ticket": "testticket"
               }
             ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "testticket",
+              "ticket": "testticket"
+            },
             "component": "test-component-axe-rpc-4",
             "connector": "test-connector-axe-rpc-4",
             "connector_name": "test-connector-name-axe-rpc-4",
