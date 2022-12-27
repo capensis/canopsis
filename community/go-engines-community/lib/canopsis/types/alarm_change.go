@@ -34,9 +34,14 @@ const (
 
 	// AlarmChangeTypeDeclareTicket is used for manual declareticket trigger which is designed
 	// to trigger webhook with declare ticket parameter.
+	// todo remove
 	AlarmChangeTypeDeclareTicket AlarmChangeType = "declareticket"
-	// AlarmChangeTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	AlarmChangeTypeDeclareTicketWebhook AlarmChangeType = "declareticketwebhook"
+
+	AlarmChangeTypeWebhookStart             AlarmChangeType = "webhookstart"
+	AlarmChangeTypeWebhookComplete          AlarmChangeType = "webhookcomplete"
+	AlarmChangeTypeWebhookFail              AlarmChangeType = "webhookfail"
+	AlarmChangeTypeDeclareTicketWebhook     AlarmChangeType = "declareticketwebhook"
+	AlarmChangeTypeDeclareTicketWebhookFail AlarmChangeType = "declareticketwebhookfail"
 
 	// Following change types are used for manual instruction execution.
 	AlarmChangeTypeInstructionStart    AlarmChangeType = "instructionstart"
@@ -99,6 +104,10 @@ func GetTriggers(t AlarmChangeType) []string {
 		triggers = append(triggers, string(AlarmChangeTypePbhEnter), string(AlarmChangeTypePbhLeave))
 	case AlarmChangeTypeDoubleAck:
 		triggers = append(triggers, string(AlarmChangeTypeAck))
+	case AlarmChangeTypeWebhookStart,
+		AlarmChangeTypeWebhookComplete,
+		AlarmChangeTypeWebhookFail:
+		// not a trigger
 	default:
 		trigger := string(t)
 		if trigger != "" {

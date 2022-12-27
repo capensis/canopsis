@@ -210,7 +210,7 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) error {
 	return nil
 }
 
-func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
+func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	params := task.Action.Parameters
 	tplData := types.AlarmWithEntity{
 		Alarm:  task.Alarm,
@@ -227,7 +227,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 		return nil, err
 	}
 
-	axeParams := types.RPCAxeParameters{
+	axeParams := rpc.AxeParameters{
 		Output:         params.Output,
 		Author:         additionalData.Author,
 		User:           additionalData.User,
@@ -243,7 +243,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*types.RPCAxeEvent, error) {
 		StartOnTrigger: params.StartOnTrigger,
 	}
 
-	return &types.RPCAxeEvent{
+	return &rpc.AxeEvent{
 		EventType:  task.Action.Type,
 		Parameters: axeParams,
 		Alarm:      &task.Alarm,
@@ -297,6 +297,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	webhookParams := rpc.WebhookParameters{
 		Request:       request,
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
+		Scenario:      task.ScenarioID,
 		Author:        additionalData.Author,
 		User:          additionalData.User,
 	}
