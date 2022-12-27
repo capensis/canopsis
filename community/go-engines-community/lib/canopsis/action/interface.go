@@ -4,7 +4,6 @@ package action
 
 import (
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -77,7 +76,7 @@ type ScenarioExecution struct {
 }
 
 func (e ScenarioExecution) GetCacheKey() string {
-	return fmt.Sprintf("%s$$%s", e.AlarmID, e.ScenarioID)
+	return e.AlarmID + "$$" + e.ScenarioID
 }
 
 type ScenarioResult struct {
