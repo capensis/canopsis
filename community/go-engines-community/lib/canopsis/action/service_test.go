@@ -3,7 +3,6 @@ package action_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"reflect"
 	"sync"
 	"testing"
@@ -234,7 +233,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 					processInOrder = append(processInOrder, process)
 				}
 
-				body := []byte(fmt.Sprintf("body %s", info.Alarm.ID))
+				body := []byte("body " + info.Alarm.ID)
 				encode := encoderMock.
 					EXPECT().
 					Encode(gomock.Any()).
