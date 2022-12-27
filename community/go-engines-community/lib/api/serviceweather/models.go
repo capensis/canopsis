@@ -105,6 +105,7 @@ type Entity struct {
 	Snooze         *common.AlarmStep          `json:"snooze" bson:"snooze"`
 	Ack            *common.AlarmStep          `json:"ack" bson:"ack"`
 	Ticket         *common.AlarmStep          `json:"ticket" bson:"ticket"`
+	Tickets        []common.AlarmStep         `json:"tickets" bson:"tickets"`
 	LastUpdateDate *types.CpsTime             `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	CreationDate   *types.CpsTime             `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                     `json:"alarm_display_name" bson:"display_name"`
