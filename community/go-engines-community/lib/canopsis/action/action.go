@@ -89,7 +89,7 @@ type Parameters struct {
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
 	// Request is used in webhook action.
 	Request      *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
-	SkipForChild *bool               `json:"skip_for_child,omitempty" json:"skip_for_child,omitempty"`
+	SkipForChild *bool               `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
 	// DeclareTicket is used in webhook action.
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
 	SystemName    string                        `json:"system_name,omitempty" bson:"system_name,omitempty"`
