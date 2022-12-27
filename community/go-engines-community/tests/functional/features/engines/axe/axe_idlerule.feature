@@ -170,7 +170,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-first-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-first-ticket"
+            }
           }
         }
       ],
@@ -281,7 +286,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-first-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-first-ticket"
+            }
           }
         }
       ],
@@ -519,7 +529,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-2-ticket"
+            }
           }
         }
       ],
@@ -619,7 +634,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-2-ticket"
+            }
           }
         }
       ],
@@ -734,7 +754,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-2-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-2-ticket"
+            }
           }
         }
       ],
@@ -1664,7 +1689,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-6-2-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-6-2-ticket"
+            }
           }
         }
       ],
@@ -2507,7 +2537,12 @@ Feature: update alarm on idle rule
                 "a": "system",
                 "m": "test-idlerule-axe-idlerule-9-1-ticket"
               }
-            ]
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "system",
+              "m": "test-idlerule-axe-idlerule-9-1-ticket"
+            }
           }
         }
       ],

@@ -114,12 +114,7 @@ func (p AlarmTicketRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
 // Matches returns true if an alarm ticket step is matched by a pattern. If the
 // pattern contains regular expressions with sub-expressions, the values of the
 // sub-expressions are written in the matches argument.
-func (p AlarmTicketRefPattern) Matches(tickets []types.AlarmStep, matches *AlarmTicketRegexMatches) bool {
-	var step *types.AlarmStep
-	if len(tickets) > 0 {
-		step = &tickets[len(tickets)-1]
-	}
-
+func (p AlarmTicketRefPattern) Matches(step *types.AlarmStep, matches *AlarmTicketRegexMatches) bool {
 	if p.ShouldBeNil {
 		return step == nil
 	}

@@ -189,6 +189,12 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 							},
 						},
 					},
+					Ticket: &types.AlarmStep{
+						Type: "test7",
+						TicketData: map[string]string{
+							"priority_id": "2 - Critical",
+						},
+					},
 					Component:                     "test8",
 					Connector:                     "test9",
 					ConnectorName:                 "test10",
@@ -236,6 +242,9 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 						{
 							Type: "test7",
 						},
+					},
+					Ticket: &types.AlarmStep{
+						Type: "test7",
 					},
 					Component:                     "test8",
 					Connector:                     "test9",
