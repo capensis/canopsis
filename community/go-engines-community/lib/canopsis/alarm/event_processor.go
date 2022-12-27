@@ -482,7 +482,8 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
 	parameters := types.OperationParameters{
 		Ticket:      event.Ticket,
-		Data:        event.TicketData,
+		TicketUrl:   event.TicketUrl,
+		TicketData:  event.TicketData,
 		Output:      event.Output,
 		Author:      event.Author,
 		Execution:   event.Execution,
