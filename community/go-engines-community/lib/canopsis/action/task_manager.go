@@ -142,15 +142,21 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						}
 					}
 
+					action := execution.ActionExecutions[step].Action
+					skipForChild := false
+					if action.Parameters.SkipForChild != nil {
+						skipForChild = *action.Parameters.SkipForChild
+					}
 					e.taskChannel <- Task{
 						Source:            "input listener",
-						Action:            execution.ActionExecutions[step].Action,
+						Action:            action,
 						Alarm:             task.Alarm,
 						Entity:            task.Entity,
 						Step:              step,
 						ExecutionID:       execution.ID,
 						ExecutionCacheKey: execution.GetCacheKey(),
 						ScenarioID:        execution.ScenarioID,
+						SkipForChild:      skipForChild,
 						Header:            execution.Header,
 						Response:          execution.Response,
 						ResponseMap:       execution.ResponseMap,
@@ -408,15 +414,21 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	if len(scenarioExecution.ActionExecutions) > nextStep {
 		additionalData := scenarioExecution.AdditionalData
 		additionalData.AlarmChangeType = taskRes.AlarmChangeType
+		action := scenarioExecution.ActionExecutions[nextStep].Action
+		skipForChild := false
+		if action.Parameters.SkipForChild != nil {
+			skipForChild = *action.Parameters.SkipForChild
+		}
 		nextTask := Task{
 			Source:            "process task func",
-			Action:            scenarioExecution.ActionExecutions[nextStep].Action,
+			Action:            action,
 			Alarm:             taskRes.Alarm,
 			Entity:            scenarioExecution.Entity,
 			Step:              nextStep,
 			ExecutionID:       scenarioExecution.ID,
 			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
 			ScenarioID:        scenarioExecution.ScenarioID,
+			SkipForChild:      skipForChild,
 			Header:            scenarioExecution.Header,
 			Response:          scenarioExecution.Response,
 			ResponseMap:       scenarioExecution.ResponseMap,
@@ -545,15 +557,21 @@ func (e *redisBasedManager) startExecution(
 		return
 	}
 
+	action := scenario.Actions[0]
+	skipForChild := false
+	if action.Parameters.SkipForChild != nil {
+		skipForChild = *action.Parameters.SkipForChild
+	}
 	e.taskChannel <- Task{
 		Source:            "input listener",
-		Action:            scenario.Actions[0],
+		Action:            action,
 		Alarm:             alarm,
 		Entity:            entity,
 		Step:              0,
 		ExecutionID:       execution.ID,
 		ExecutionCacheKey: execution.GetCacheKey(),
 		ScenarioID:        scenario.ID,
+		SkipForChild:      skipForChild,
 		AdditionalData:    data,
 	}
 }

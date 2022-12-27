@@ -38,6 +38,7 @@ type Task struct {
 	ExecutionCacheKey string
 	ExecutionID       string
 	ScenarioID        string
+	SkipForChild      bool
 	Header            map[string]string
 	Response          map[string]interface{}
 	ResponseMap       map[string]interface{}
@@ -288,8 +289,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		}
 	}
 	// Skip webhooks for children
-	// todo add flag to action
-	if len(task.Alarm.Value.Parents) > 0 {
+	if task.SkipForChild && len(task.Alarm.Value.Parents) > 0 {
 		err := s.alarmCollection.FindOne(ctx, bson.M{
 			"d":          bson.M{"$in": task.Alarm.Value.Parents},
 			"v.resolved": nil,
