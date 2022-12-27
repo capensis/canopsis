@@ -41,6 +41,8 @@ func (e *declareTicketWebhookExecutor) Exec(
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
 		params.Ticket,
 		params.TicketUrl,
+		params.TicketMetaAlarmID,
+		params.TicketRuleName,
 		params.TicketData,
 		userID,
 		role,

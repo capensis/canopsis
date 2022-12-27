@@ -481,14 +481,19 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 
 func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
 	parameters := types.OperationParameters{
-		Ticket:      event.Ticket,
-		TicketUrl:   event.TicketUrl,
-		TicketData:  event.TicketData,
-		Output:      event.Output,
-		Author:      event.Author,
-		Execution:   event.Execution,
-		Instruction: event.Instruction,
+		Ticket:            event.Ticket,
+		TicketUrl:         event.TicketUrl,
+		TicketMetaAlarmID: event.TicketMetaAlarmID,
+		TicketSystemName:  event.TicketSystemName,
+		TicketComment:     event.TicketComment,
+		TicketRuleName:    event.TicketRuleName,
+		TicketData:        event.TicketData,
+		Output:            event.Output,
+		Author:            event.Author,
+		Execution:         event.Execution,
+		Instruction:       event.Instruction,
 	}
+
 	switch event.EventType {
 	case types.EventTypeSnooze:
 		parameters.Duration = &types.DurationWithUnit{

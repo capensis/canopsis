@@ -75,11 +75,20 @@ Feature: execute action on trigger
               {
                 "_t": "declareticket",
                 "a": "system",
+                "ticket_rule_name": "test-scenario-action-webhook-1-name",
                 "ticket_data": {
                   "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
                 }
               }
             ],
+            "ticket": {
+              "_t": "declareticket",
+              "a": "system",
+              "ticket_rule_name": "test-scenario-action-webhook-1-name",
+              "ticket_data": {
+                "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
+              }
+            },
             "connector": "test-connector-action-webhook-1",
             "connector_name": "test-connector-name-action-webhook-1",
             "component": "test-component-action-webhook-1",
@@ -246,6 +255,13 @@ Feature: execute action on trigger
                 }
               }
             ],
+            "ticket": {
+              "_t": "declareticket",
+              "a": "root",
+              "ticket_data": {
+                "scenario_name": "test-scenario-action-webhook-2 test-resource-action-webhook-2"
+              }
+            },
             "ack": {
               "_t": "ack"
             },
@@ -424,6 +440,9 @@ Feature: execute action on trigger
                 "_t": "declareticket"
               }
             ],
+            "ticket": {
+              "_t": "declareticket"
+            },
             "ack": {
               "_t": "ack"
             },
@@ -439,6 +458,9 @@ Feature: execute action on trigger
                 "_t": "declareticket"
               }
             ],
+            "ticket": {
+              "_t": "declareticket"
+            },
             "ack": {
               "_t": "ack"
             },
@@ -1491,6 +1513,14 @@ Feature: execute action on trigger
                 }
               }
             ],
+            "ticket": {
+              "_t": "declareticket",
+              "a": "system",
+              "ticket": "test3",
+              "ticket_data": {
+                "test_val": "test1"
+              }
+            },
             "connector": "test-connector-action-webhook-8",
             "connector_name": "test-connector-name-action-webhook-8",
             "component": "test-component-action-webhook-8",
@@ -1719,6 +1749,14 @@ Feature: execute action on trigger
                 }
               }
             ],
+            "ticket": {
+              "_t": "declareticket",
+              "a": "system",
+              "ticket": "test3",
+              "ticket_data": {
+                "test_val": "test1"
+              }
+            },
             "connector": "test-connector-action-webhook-9",
             "connector_name": "test-connector-name-action-webhook-9",
             "component": "test-component-action-webhook-9",
