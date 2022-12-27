@@ -446,37 +446,43 @@ Feature: update meta alarm on action
     ]
     """
     Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "comment"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-correlation-2-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      }
+    ]
+    """
     Then the response body should contain:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "comment"
-              },
-              {
-                "_t": "declareticket"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 4
-            }
-          }
-        }
+        "status": 200
       },
       {
         "status": 200,
@@ -498,7 +504,10 @@ Feature: update meta alarm on action
                 "_t": "comment"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": "",
+                "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
               }
             ],
             "meta": {
@@ -530,7 +539,10 @@ Feature: update meta alarm on action
                 "_t": "comment"
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": "",
+                "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
               }
             ],
             "meta": {
@@ -559,7 +571,10 @@ Feature: update meta alarm on action
                 "val": 0
               },
               {
-                "_t": "declareticket"
+                "_t": "declareticket",
+                "a": "system",
+                "user_id": "",
+                "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
               }
             ],
             "meta": {
