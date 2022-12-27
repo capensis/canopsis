@@ -75,7 +75,6 @@ Feature: execute action on trigger
               {
                 "_t": "declareticket",
                 "a": "system",
-                "ticket_rule_name": "test-scenario-action-webhook-1-name",
                 "ticket_data": {
                   "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
                 }
@@ -84,7 +83,6 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "ticket_rule_name": "test-scenario-action-webhook-1-name",
               "ticket_data": {
                 "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
               }
