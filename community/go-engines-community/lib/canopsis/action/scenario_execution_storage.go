@@ -223,13 +223,13 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 }
 
 func (s *redisScenarioExecutionStorage) getRedisKey(key string) string {
-	return fmt.Sprintf("%s-execution-%s", s.redisKeyPrefix, key)
+	return s.redisKeyPrefix + "-execution-" + key
 }
 
 func (s *redisScenarioExecutionStorage) parseRedisKey(key string) string {
-	return strings.ReplaceAll(key, fmt.Sprintf("%s-execution-", s.redisKeyPrefix), "")
+	return strings.ReplaceAll(key, s.redisKeyPrefix+"-execution-", "")
 }
 
 func (s *redisScenarioExecutionStorage) getRedisIncKey(key string) string {
-	return fmt.Sprintf("%s-inc-%s", s.redisKeyPrefix, key)
+	return s.redisKeyPrefix + "-inc-" + key
 }
