@@ -22,9 +22,12 @@ type AxeParameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
-	Ticket     string            `json:"ticket,omitempty"`
-	TicketUrl  string            `json:"ticket_url,omitempty"`
-	TicketData map[string]string `json:"ticket_data,omitempty"`
+	Ticket           string            `json:"ticket,omitempty"`
+	TicketUrl        string            `json:"ticket_url,omitempty"`
+	TicketComment    string            `json:"ticket_comment,omitempty"`
+	TicketSystemName string            `json:"ticket_system_name"`
+	TicketRuleName   string            `json:"ticket_rule_name,omitempty"`
+	TicketData       map[string]string `json:"ticket_data,omitempty"`
 	// Webhook
 	DeclareTicket        bool              `json:"declare_ticket,omitempty"`
 	DeclareTicketRequest bool              `json:"declare_ticket_request,omitempty"`

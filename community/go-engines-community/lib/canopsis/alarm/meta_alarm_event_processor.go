@@ -283,13 +283,13 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 	}
 	if eventRes.AlarmChangeType == types.AlarmChangeTypeDeclareTicketWebhook {
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
-
-		ticket := eventRes.Alarm.Value.GetLastTicket()
-		if ticket != nil {
-			childEvent.Ticket = ticket.Ticket
-			childEvent.TicketUrl = ticket.TicketURL
-			childEvent.TicketData = ticket.TicketData
-		}
+		childEvent.Ticket = eventRes.Alarm.Value.Ticket.Ticket
+		childEvent.TicketUrl = eventRes.Alarm.Value.Ticket.TicketURL
+		childEvent.TicketData = eventRes.Alarm.Value.Ticket.TicketData
+		childEvent.TicketComment = eventRes.Alarm.Value.Ticket.TicketComment
+		childEvent.TicketRuleName = eventRes.Alarm.Value.Ticket.TicketRuleName
+		childEvent.TicketSystemName = eventRes.Alarm.Value.Ticket.TicketSystemName
+		childEvent.TicketMetaAlarmID = eventRes.Alarm.ID
 	}
 
 	if event.Parameters.State != nil {
@@ -319,12 +319,7 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 	}
 
 	componentAlarm := eventRes.Alarm
-	if componentAlarm == nil {
-		return nil
-	}
-
-	ticket := componentAlarm.Value.GetLastTicket()
-	if ticket == nil {
+	if componentAlarm == nil || componentAlarm.Value.Ticket == nil {
 		return nil
 	}
 
@@ -345,10 +340,10 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 			Resource:      resource.Alarm.Value.Resource,
 			Component:     resource.Alarm.Value.Component,
 			Timestamp:     types.NewCpsTime(),
-			Output:        ticket.Message,
-			Ticket:        ticket.Ticket,
-			TicketUrl:     ticket.TicketURL,
-			TicketData:    ticket.TicketData,
+			Output:        componentAlarm.Value.Ticket.Message,
+			Ticket:        componentAlarm.Value.Ticket.Ticket,
+			TicketUrl:     componentAlarm.Value.Ticket.TicketURL,
+			TicketData:    componentAlarm.Value.Ticket.TicketData,
 			Author:        event.Parameters.Author,
 			UserID:        event.Parameters.User,
 			Initiator:     types.InitiatorSystem,

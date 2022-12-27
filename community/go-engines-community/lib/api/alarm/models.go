@@ -234,6 +234,7 @@ type AlarmValue struct {
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
+	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 
@@ -270,16 +271,6 @@ type AlarmValue struct {
 
 	RuleVersion map[string]string                 `bson:"infos_rule_version" json:"infos_rule_version"`
 	Infos       map[string]map[string]interface{} `bson:"infos" json:"infos"`
-}
-
-type AlarmTicket struct {
-	Type      string            `bson:"_t" json:"_t"`
-	Timestamp types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
-	Author    string            `bson:"a" json:"a"`
-	UserID    string            `bson:"user_id,omitempty" json:"user_id"`
-	Message   string            `bson:"m" json:"m"`
-	Value     string            `bson:"val" json:"val"`
-	Data      map[string]string `bson:"data" json:"data"`
 }
 
 type Pbehavior struct {

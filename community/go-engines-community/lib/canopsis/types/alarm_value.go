@@ -29,9 +29,13 @@ type AlarmStep struct {
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 
 	// Ticket related fields
-	Ticket     string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketURL  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
+	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
+	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
+	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 }
 
 // NewAlarmStep returns an AlarmStep.
@@ -159,7 +163,7 @@ func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, boo
 		if step.Type == AlarmStepStateIncrease || step.Type == AlarmStepStateDecrease {
 			nbStepsToCrop += 1
 		}
-		if step.Equal(*currentStatus) {
+		if step.Type == currentStatus.Type && step.Timestamp.Time.Equal(currentStatus.Timestamp.Time) {
 			currentStatusIdx = i
 		}
 	}
@@ -329,7 +333,9 @@ type AlarmValue struct {
 	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
-	Steps       AlarmSteps  `bson:"steps" json:"steps"`
+	// Ticket contains the last ticket
+	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps  AlarmSteps `bson:"steps" json:"steps"`
 
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
@@ -390,50 +396,14 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-func (v *AlarmValue) GetLastTicket() *AlarmStep {
-	if len(v.Tickets) > 0 {
-		return &v.Tickets[len(v.Tickets)-1]
-	}
-
-	return nil
-}
-
-func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator, value, url string, data map[string]string) AlarmStep {
+func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator, value, url, ticketMetaAlarmID, ticketRuleName string, data map[string]string) AlarmStep {
 	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 
 	s.Ticket = value
 	s.TicketURL = url
 	s.TicketData = data
+	s.TicketMetaAlarmID = ticketMetaAlarmID
+	s.TicketRuleName = ticketRuleName
 
 	return s
-}
-
-func (s *AlarmStep) Equal(comp AlarmStep) bool {
-	if s.Type != comp.Type ||
-		!s.Timestamp.Time.Equal(comp.Timestamp.Time) ||
-		s.Author != comp.Author ||
-		s.UserID != comp.UserID ||
-		s.Message != comp.Message ||
-		s.Role != comp.Role ||
-		s.Value != comp.Value ||
-		s.StateCounter != comp.StateCounter ||
-		s.PbehaviorCanonicalType != comp.PbehaviorCanonicalType ||
-		s.Initiator != comp.Initiator ||
-		s.Execution != comp.Execution ||
-		s.Ticket != comp.Ticket ||
-		s.TicketURL != comp.TicketURL {
-		return false
-	}
-
-	if len(s.TicketData) != len(comp.TicketData) {
-		return false
-	}
-
-	for k, v := range s.TicketData {
-		if compV, ok := comp.TicketData[k]; !ok || v != compV {
-			return false
-		}
-	}
-
-	return true
 }

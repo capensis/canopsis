@@ -37,6 +37,8 @@ func (e *assocTicketExecutor) Exec(
 		nil,
 		params.Author,
 		params.Ticket,
+		params.TicketMetaAlarmID,
+		params.TicketRuleName,
 		userID,
 		role,
 		initiator,
