@@ -179,7 +179,7 @@ type Event struct {
 	TicketUrl         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
 	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
 	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
-	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty,omitempty"`
+	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
 	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
 	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 
