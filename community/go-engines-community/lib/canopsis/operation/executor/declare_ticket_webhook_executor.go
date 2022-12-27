@@ -43,6 +43,8 @@ func (e *declareTicketWebhookExecutor) Exec(
 		params.TicketUrl,
 		params.TicketMetaAlarmID,
 		params.TicketRuleName,
+		params.TicketSystemName,
+		params.TicketComment,
 		params.TicketData,
 		userID,
 		role,
