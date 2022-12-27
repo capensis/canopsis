@@ -396,14 +396,16 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator, value, url, ticketMetaAlarmID, ticketRuleName string, data map[string]string) AlarmStep {
+func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator, value, url, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment string, data map[string]string) AlarmStep {
 	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 
 	s.Ticket = value
 	s.TicketURL = url
-	s.TicketData = data
 	s.TicketMetaAlarmID = ticketMetaAlarmID
+	s.TicketSystemName = ticketSystemName
+	s.TicketComment = ticketComment
 	s.TicketRuleName = ticketRuleName
+	s.TicketData = data
 
 	return s
 }
