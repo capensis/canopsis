@@ -95,7 +95,7 @@ describe('c-map-field', () => {
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-map-field` with default custom props', () => {
+  it('Renders `c-map-field` with custom props', async () => {
     fetchMapsListWithoutStore.mockReturnValueOnce({
       data: [
         { _id: 'map-id-1' },
@@ -114,6 +114,8 @@ describe('c-map-field', () => {
         hideDetails: true,
       },
     });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();

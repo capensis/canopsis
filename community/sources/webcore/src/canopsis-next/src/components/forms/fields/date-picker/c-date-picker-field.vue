@@ -9,8 +9,9 @@
     right,
     lazy
   )
-    div(slot="activator")
+    template(#activator="{ on }")
       v-text-field(
+        v-on="on",
         :value="value | date(format)",
         :label="label",
         :error="error",
@@ -22,16 +23,15 @@
         :readonly="!disabled",
         @click:append="clear"
       )
-        template(slot="append")
+        template(#append="")
           slot(name="append")
     v-date-picker.date-picker(
-      :value="value",
+      v-field="value",
       :opened="opened",
       :color="color",
       :min="min",
       :max="max",
       :allowed-dates="allowedDates",
-      @input="input",
       @change="change"
     )
 </template>
@@ -55,10 +55,6 @@ export default {
   inject: ['$validator'],
   mixins: [formBaseMixin],
   props: {
-    clearable: {
-      type: Boolean,
-      default: false,
-    },
     value: {
       type: [String, Number],
       default: null,
@@ -103,6 +99,10 @@ export default {
       type: Function,
       required: false,
     },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -122,9 +122,7 @@ export default {
     clear() {
       this.updateModel(null);
     },
-    input(value) {
-      this.updateModel(value);
-    },
+
     change(value) {
       this.$emit('change', value);
 
