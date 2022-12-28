@@ -2,14 +2,15 @@ package action_test
 
 import (
 	"context"
+	"reflect"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestRedisDelayedScenarioStorage_Add(t *testing.T) {
@@ -18,7 +19,7 @@ func TestRedisDelayedScenarioStorage_Add(t *testing.T) {
 		panic(err)
 	}
 
-	storage := action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
+	storage := action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
 	scenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
@@ -39,7 +40,7 @@ func TestRedisDelayedScenarioStorage_Get(t *testing.T) {
 		panic(err)
 	}
 
-	storage := action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
+	storage := action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
 	expectedScenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
@@ -70,7 +71,7 @@ func TestRedisDelayedScenarioStorage_GetAll(t *testing.T) {
 		panic(err)
 	}
 
-	storage := action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
+	storage := action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
 	expectedScenarios := []action.DelayedScenario{
 		{
 			ScenarioID:    "test-scenario-id-1",
@@ -119,7 +120,7 @@ func TestRedisDelayedScenarioStorage_Delete(t *testing.T) {
 		panic(err)
 	}
 
-	storage := action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
+	storage := action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
 	scenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
@@ -156,7 +157,7 @@ func TestRedisDelayedScenarioStorage_Update(t *testing.T) {
 		panic(err)
 	}
 
-	storage := action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
+	storage := action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, session, json.NewEncoder(), json.NewDecoder())
 	expectedScenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",

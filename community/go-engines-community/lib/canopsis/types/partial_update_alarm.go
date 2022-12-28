@@ -185,7 +185,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		"Pbehavior %s. Type: %s. Reason: %s.",
 		a.Value.PbehaviorInfo.Name,
 		a.Value.PbehaviorInfo.TypeName,
-		a.Value.PbehaviorInfo.Reason,
+		a.Value.PbehaviorInfo.ReasonName,
 	)
 
 	leaveStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, leaveOutput, userID, role, initiator)

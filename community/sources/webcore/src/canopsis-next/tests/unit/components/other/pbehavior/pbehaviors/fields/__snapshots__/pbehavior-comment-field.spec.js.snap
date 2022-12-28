@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with custom props 1`] = `
+<div>
+  <div
+    class="layout row wrap align-center"
+  >
+    <div
+      class="flex xs11"
+    >
+      <div
+        class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Message
+              </label>
+              <textarea
+                aria-label="Message"
+                name="undefined_message"
+                rows="5"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex xs1"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light error"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            delete
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with default props 1`] = `
+<div>
+  <div
+    class="layout row wrap align-center"
+  >
+    <div
+      class="flex xs11"
+    >
+      <div
+        class="v-input v-textarea v-text-field theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                Message
+              </label>
+              <textarea
+                aria-label="Message"
+                name="undefined_message"
+                rows="5"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex xs1"
+    >
+      <button
+        class="v-btn v-btn--icon theme--light error"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            delete
+          </i>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;

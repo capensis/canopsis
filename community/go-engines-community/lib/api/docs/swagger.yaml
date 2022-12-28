@@ -1477,6 +1477,107 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/entity-pbehaviors:
+    post:
+      tags:
+        - pbehaviors
+      summary: Bulk create entity pbehaviors
+      description: Bulk create entity pbehaviors
+      operationId: entity-pbehaviors-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkEntityCreateRequestItem'
+            examples:
+              create:
+                summary: Create
+                description: Create entity pbehaviors
+                value: [
+                  {
+                    "entity": "cps_resource/cps_component",
+                    "origin": "centreon",
+                    "name": "Downtime",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "type": "default_maintenance",
+                    "reason": "default_reason",
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkEntityCreateRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Bulk delete entity pbehaviors
+      description: Bulk delete entity pbehaviors
+      operationId: entity-pbehaviors-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkEntityDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete entity pbehaviors
+                value: [
+                  {
+                    "entity": "cps_resource/cps_component",
+                    "origin": "centreon"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkEntityDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/scenarios:
     put:
       tags:
@@ -2412,6 +2513,310 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /contextgraph-import:
+    put:
+      tags:
+        - contextgraph-import
+      summary: Create new import task
+      description: Create new import task
+      operationId: contextgraph-import-create-new-import
+      parameters:
+        - name: source
+          in: query
+          description: source
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/importcontextgraph.EntityConfiguration'
+            examples:
+              basic:
+                summary: Basic
+                description: Import basic entities
+                value: [
+                  {
+                    "name": "cps_component",
+                    "type": "component",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_1",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_2",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps_resource_3",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps_resource_4",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "disable"
+                  }
+                ]
+              service:
+                summary: Service
+                description: Import services
+                value: [
+                  {
+                    "name": "cps-service-1",
+                    "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ],
+                    "type": "service",
+                    "impact_level": 2,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps-service-2",
+                    "type": "service",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps-service-3",
+                    "type": "service",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps-service-4",
+                    "type": "service",
+                    "action": "disable"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /contextgraph-import-partial:
+    put:
+      tags:
+        - contextgraph-import
+      summary: Create new import partial task
+      description: Create new import partial task
+      operationId: contextgraph-import-create-new-import-partial
+      parameters:
+        - name: source
+          in: query
+          description: source
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/importcontextgraph.EntityConfiguration'
+            examples:
+              basic:
+                summary: Basic
+                description: Import basic entities
+                value: [
+                  {
+                    "name": "cps_component",
+                    "type": "component",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_1",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "impact_level": 1,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps_resource_2",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps_resource_3",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps_resource_4",
+                    "component": "cps_component",
+                    "type": "resource",
+                    "action": "disable"
+                  }
+                ]
+              service:
+                summary: Service
+                description: Import services
+                value: [
+                  {
+                    "name": "cps-service-1",
+                    "output_template": "All: {{.All}}
+                          Alarms: {{.Alarms}}
+                          Acknowledged: {{.Acknowledged}}
+                          NotAcknowledged: {{.NotAcknowledged}}
+                          StateCritical: {{.State.Critical}}
+                          StateMajor: {{.State.Major}}
+                          StateMinor: {{.State.Minor}}
+                          StateInfo: {{.State.Info}}
+                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
+                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
+                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ],
+                    "type": "service",
+                    "impact_level": 2,
+                    "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
+                    "infos": {
+                      "group": {
+                        "description": "Group id",
+                        "value": "g1"
+                      }
+                    },
+                    "action": "set",
+                    "enabled": true
+                  },
+                  {
+                    "name": "cps-service-2",
+                    "type": "service",
+                    "action": "delete"
+                  },
+                  {
+                    "name": "cps-service-3",
+                    "type": "service",
+                    "action": "enable"
+                  },
+                  {
+                    "name": "cps-service-4",
+                    "type": "service",
+                    "action": "disable"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/contextgraph.ImportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /contextgraph/import/status/{id}:
     get:
       tags:
@@ -2662,6 +3067,7 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/withFlags'
       responses:
         200:
           description: OK
@@ -6063,6 +6469,14 @@ paths:
       description: Get paginated list of behavior types
       operationId: pbehavior-types-find-all
       parameters:
+        - name: types[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
@@ -9690,6 +10104,10 @@ paths:
           description: category
           schema:
             type: string
+        - name: hide_grey
+          in: query
+          schema:
+            type: boolean
       responses:
         200:
           description: OK

@@ -9,7 +9,6 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
 import {
-  ENTITIES_TYPES,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
@@ -99,8 +98,7 @@ describe('create-snooze-event', () => {
       type: Faker.datatype.number(),
     },
   };
-  const itemsType = ENTITIES_TYPES.alarm;
-  const itemsIds = [alarm._id];
+  const items = [alarm];
   const eventData = {
     id: alarm._id,
     component: alarm.v.component,
@@ -122,14 +120,7 @@ describe('create-snooze-event', () => {
     duration: 60,
     output: '',
   };
-
-  const getEntitiesList = jest.fn().mockReturnValue([alarm]);
-  const entitiesModule = {
-    name: 'entities',
-    getters: {
-      getList: () => getEntitiesList,
-    },
-  };
+  const config = { items };
 
   const createEvent = jest.fn();
   const eventModule = {
@@ -138,7 +129,7 @@ describe('create-snooze-event', () => {
       create: createEvent,
     },
   };
-  const store = createMockedStoreModules([entitiesModule, eventModule]);
+  const store = createMockedStoreModules([eventModule]);
 
   afterEach(() => {
     createEvent.mockClear();
@@ -165,17 +156,15 @@ describe('create-snooze-event', () => {
 
   test('Form submitted after trigger submit button', async () => {
     const afterSubmit = jest.fn();
-    const config = {
-      itemsType,
-      itemsIds,
-      afterSubmit,
-    };
 
     const wrapper = factory({
-      store: createMockedStoreModules([entitiesModule, eventModule]),
+      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            items,
+            afterSubmit,
+          },
         },
       },
       mocks: {
@@ -204,6 +193,11 @@ describe('create-snooze-event', () => {
   test('Form didn\'t submitted after trigger submit button with error', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -241,6 +235,11 @@ describe('create-snooze-event', () => {
     createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -276,6 +275,11 @@ describe('create-snooze-event', () => {
 
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
         $popups,
@@ -308,6 +312,11 @@ describe('create-snooze-event', () => {
   test('Modal submitted with correct data after trigger form', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -349,6 +358,11 @@ describe('create-snooze-event', () => {
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -366,6 +380,11 @@ describe('create-snooze-event', () => {
   test('Renders `create-snooze-event` with empty modal', () => {
     const wrapper = snapshotFactory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -380,6 +399,7 @@ describe('create-snooze-event', () => {
       propsData: {
         modal: {
           config: {
+            items,
             isNoteRequired: true,
           },
         },

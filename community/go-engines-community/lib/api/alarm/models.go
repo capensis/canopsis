@@ -128,8 +128,13 @@ type DetailsRequest struct {
 	ID               string               `json:"_id" binding:"required"`
 	Opened           *bool                `json:"opened"`
 	WithInstructions bool                 `json:"with_instructions"`
-	Steps            *pagination.Query    `json:"steps"`
+	Steps            *StepsRequest        `json:"steps"`
 	Children         *ChildDetailsRequest `json:"children"`
+}
+
+type StepsRequest struct {
+	pagination.Query
+	Reversed bool `json:"reversed"`
 }
 
 type ChildDetailsRequest struct {
