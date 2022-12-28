@@ -1213,6 +1213,12 @@ Feature: create and update alarm by main event stream
     {
       "event_type": "assocticket",
       "ticket": "testticket",
+      "ticket_system_name": "test-system-name",
+      "ticket_url": "test-ticket-url",
+      "ticket_data": {
+        "ticket_param_1": "ticket_value_1",
+        "ticket_param_2": "ticket_value_2"
+      },
       "connector": "test-connector-axe-9",
       "connector_name": "test-connector-name-axe-9",
       "source_type": "resource",
@@ -1240,7 +1246,13 @@ Feature: create and update alarm by main event stream
                 "a": "test-author-axe-9",
                 "m": "testticket",
                 "t": {{ .ticketEventTimestamp }},
-                "ticket": "testticket"
+                "ticket": "testticket",
+                "ticket_system_name": "test-system-name",
+                "ticket_url": "test-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "ticket": {
@@ -1248,7 +1260,13 @@ Feature: create and update alarm by main event stream
               "a": "test-author-axe-9",
               "m": "testticket",
               "t": {{ .ticketEventTimestamp }},
-              "ticket": "testticket"
+              "ticket": "testticket",
+              "ticket_system_name": "test-system-name",
+              "ticket_url": "test-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1",
+                "ticket_param_2": "ticket_value_2"
+              }
             },
             "component": "test-component-axe-9",
             "connector": "test-connector-axe-9",
@@ -1306,7 +1324,14 @@ Feature: create and update alarm by main event stream
                 "user_id": "test-author-id-9",
                 "m": "testticket",
                 "t": {{ .ticketEventTimestamp }},
-                "val": 0
+                "val": 0,
+                "ticket": "testticket",
+                "ticket_system_name": "test-system-name",
+                "ticket_url": "test-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "meta": {

@@ -3,6 +3,9 @@ package idlerule
 import (
 	"context"
 	"errors"
+	"strconv"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -12,8 +15,6 @@ import (
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"strconv"
-	"strings"
 )
 
 type Validator struct {
@@ -173,8 +174,8 @@ func (v *Validator) validateDisableDuringPeriods(sl validator.StructLevel, disab
 func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel, t string, params idlerule.Parameters) {
 	switch t {
 	case types.ActionTypeAssocTicket:
-		if params.Ticket == "" {
-			sl.ReportError(params.Ticket, "Operation.Parameters.Ticket", "Ticket", "required", "")
+		if params.TicketInfo.Ticket == "" {
+			sl.ReportError(params.TicketInfo.Ticket, "Operation.Parameters.Ticket", "Ticket", "required", "")
 		}
 	case types.ActionTypeChangeState:
 		if params.State == nil {

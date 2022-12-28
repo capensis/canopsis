@@ -96,7 +96,7 @@ Feature: execute action on trigger
                 "_t": "declareticket",
                 "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
                 "ticket_data": {
-                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-1!!!test-resource-multiple-alarm-webhook-1-1|||2"
+                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2"
                 }
               }
             ],
@@ -120,7 +120,7 @@ Feature: execute action on trigger
                 "_t": "declareticket",
                 "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
                 "ticket_data": {
-                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!test-output-multiple-alarm-webhook-1-2!!!test-resource-multiple-alarm-webhook-1-2|||3"
+                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3"
                 }
               }
             ],
