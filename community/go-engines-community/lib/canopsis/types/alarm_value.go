@@ -28,7 +28,7 @@ type AlarmStep struct {
 	// Execution contains id if instruction execution for instruction steps only.
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 
-	TicketInfo TicketInfo `bson:",inline"`
+	TicketInfo `bson:",inline"`
 }
 
 type TicketInfo struct {
