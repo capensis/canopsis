@@ -135,18 +135,32 @@ Feature: Copy a view
     Then the response key "_id" should not be "test-view-to-copy-1"
     Then the response key "tabs.0._id" should not be "test-tab-to-view-copy-1"
     Then the response key "tabs.0.widgets.0._id" should not be "test-widget-to-view-copy-1"
-    When I do GET /api/v4/permissions?search={{ .lastResponse._id}}
+    Then I save response viewId={{ .lastResponse._id }}
+    When I do GET /api/v4/permissions?search={{ .viewId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
+          "_id": "{{ .viewId }}",
+          "name": "{{ .viewId }}",
           "description": "Rights on view : test-view-to-copy-1-title-updated",
+          "view": {
+            "_id": "{{ .viewId }}",
+            "title": "test-view-to-copy-1-title-updated"
+          },
+          "view_group": {
+            "_id": "test-viewgroup-to-view-copy",
+            "title": "test-viewgroup-to-view-copy-title"
+          },
           "type": "RW"
         }
       ],
       "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
         "total_count": 1
       }
     }
