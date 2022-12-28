@@ -12,18 +12,24 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected }")
-      c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+      c-action-btn(
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#auth_config.inactivity_interval="{ item }") {{ durationToString(item.auth_config.inactivity_interval) }}
     template(#auth_config.expiration_interval="{ item }") {{ durationToString(item.auth_config.expiration_interval) }}
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :disabled="!item.editable",
           type="edit",
           @click="$emit('edit', item)"
         )
         c-action-btn(
           v-if="removable",
+          :disabled="!item.deletable",
           type="delete",
           @click="$emit('remove', item._id)"
         )
