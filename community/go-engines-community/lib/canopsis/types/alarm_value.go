@@ -264,8 +264,10 @@ type PbehaviorInfo struct {
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
 	Name string `bson:"name" json:"name"`
-	// Reason is Name of pbehavior.Reason.
-	Reason string `bson:"reason" json:"reason"`
+	// ReasonName is Name of pbehavior.Reason.
+	ReasonName string `bson:"reason_name" json:"reason_name"`
+	// ReasonID is ID of pbehavior.Reason.
+	ReasonID string `bson:"reason" json:"reason"`
 	// TypeID is ID of pbehavior.Type.
 	TypeID string `bson:"type" json:"type"`
 	// TypeName is Name of pbehavior.Type.

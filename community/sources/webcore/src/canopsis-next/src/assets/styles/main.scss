@@ -257,6 +257,13 @@ $mobileBreakpoint: 450px;
   right: 10px;
 }
 
+.alarm-counters {
+  background-color: rgba(0, 0, 0, .2);
+  flex-basis: 60px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
 @keyframes blink {
   0% { opacity: 1 }
   50% { opacity: 0.3 }
@@ -264,4 +271,19 @@ $mobileBreakpoint: 450px;
 
 .blinking {
   animation: blink 2s linear infinite;
+}
+
+.v-list__tile__title.v-list-badge__tile__title {
+  overflow: visible;
+
+  .v-badge__badge {
+    top: -5px;
+    right: -11px;
+    height: 16px;
+    width: 16px;
+
+    .v-icon {
+      font-size: 11px;
+    }
+  }
 }

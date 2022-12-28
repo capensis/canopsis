@@ -24,7 +24,7 @@ import { authMixin } from '@/mixins/auth';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

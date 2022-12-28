@@ -446,7 +446,7 @@ url_tpl = "{{ .responseUrl }}/api/json"
 method = "GET"
 response_id_key = "id"
 response_status_key = "result"
-statuses = { SUCCESS = "succeeded", FAIL = "failed", ERROR = "failed", FIXED = "failed", PASSED = "failed", REGRESSION = "failed", ABORTED = "aborted" }
+statuses = { SUCCESS = "succeeded", FAIL = "failed", FAILURE = "failed", ERROR = "failed", FIXED = "failed", PASSED = "failed", REGRESSION = "failed", ABORTED = "aborted" }
 [Remediation.external_api.jenkins.output_endpoint]
 url_tpl = "{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText"
 method = "GET"

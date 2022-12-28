@@ -19,6 +19,9 @@ const stubs = {
   'alarm-header-cell': true,
   'alarms-list-row': true,
   'alarms-expand-panel': true,
+  'c-pagination': true,
+  'c-table-pagination': true,
+  'c-density-btn-toggle': true,
 };
 
 const factory = (options = {}) => shallowMount(AlarmsListTable, {
@@ -130,23 +133,23 @@ describe('alarms-list-table', () => {
     const wrapper = factory({
       store,
       propsData: {
+        pagination: {},
         alarms,
         columns,
         widget: defaultWidget,
       },
     });
 
-    const table = selectTable(wrapper);
+    selectTable(wrapper).vm.$emit('input', selectedAlarms);
 
-    table.vm.$emit('input', selectedAlarms);
-
-    expect(wrapper).toEmit('input', selectedAlarms);
+    expect(wrapper.vm.selected).toEqual(selectedAlarms);
   });
 
   it('Pagination update event emitted after trigger update pagination', () => {
     const wrapper = factory({
       store,
       propsData: {
+        pagination: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -179,6 +182,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -251,6 +255,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -290,6 +295,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -347,6 +353,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -379,6 +386,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -413,6 +421,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -443,8 +452,10 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: defaultWidget,
         alarms: [],
+        totalItems: 0,
         columns: [],
       },
     });
@@ -460,7 +471,10 @@ describe('alarms-list-table', () => {
         columns,
         totalItems,
         widget: defaultWidget,
-        pagination: {},
+        pagination: {
+          page: 1,
+          limit: 10,
+        },
         isTourEnabled: true,
         loading: true,
         selectable: true,
@@ -468,6 +482,9 @@ describe('alarms-list-table', () => {
         dense: true,
         expandable: true,
         stickyHeader: true,
+        densable: true,
+        hidePagination: true,
+        hideActions: true,
         parentAlarm: fakeAlarm(),
         refreshAlarmsList: jest.fn(),
         selectedTag: 'tag',
@@ -502,6 +519,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: {
           ...defaultWidget,
           parameters: {
@@ -522,8 +540,10 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: defaultWidget,
         alarms: [],
+        totalItems: 0,
         columns,
         selectable: true,
       },
@@ -540,8 +560,10 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        pagination: {},
         widget: defaultWidget,
         alarms: [],
+        totalItems: 0,
         columns,
         selectable: true,
       },

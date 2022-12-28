@@ -69,6 +69,7 @@ const (
 	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
+	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
 	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
 	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
@@ -325,7 +326,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
 	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
-		EventTypeEntityToggled, EventTypeEntityUpdated:
+		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -334,7 +335,7 @@ func (e *Event) IsContextable() bool {
 
 func (e *Event) IsOnlyServiceUpdate() bool {
 	switch e.EventType {
-	case EventTypeEntityToggled, EventTypeEntityUpdated:
+	case EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -617,6 +618,7 @@ func isValidEventType(t string) bool {
 		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
+		EventTypeResolveDeleted,
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,

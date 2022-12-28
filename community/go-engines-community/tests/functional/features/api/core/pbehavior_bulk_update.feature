@@ -24,7 +24,7 @@ Feature: Bulk update a pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -53,7 +53,7 @@ Feature: Bulk update a pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFA",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -82,7 +82,7 @@ Feature: Bulk update a pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -104,7 +104,7 @@ Feature: Bulk update a pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -126,7 +126,7 @@ Feature: Bulk update a pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -164,7 +164,7 @@ Feature: Bulk update a pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -197,7 +197,7 @@ Feature: Bulk update a pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFA",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -229,7 +229,7 @@ Feature: Bulk update a pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -267,7 +267,7 @@ Feature: Bulk update a pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -300,7 +300,7 @@ Feature: Bulk update a pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -341,7 +341,7 @@ Feature: Bulk update a pbehaviors
             "_id": "test-type-to-pbh-edit-1"
           },
           "reason": {
-            "_id": "test-reason-1"
+            "_id": "test-reason-to-pbh-edit"
           },
           "entity_pattern": [
             [
@@ -382,7 +382,7 @@ Feature: Bulk update a pbehaviors
             "_id": "test-type-to-pbh-edit-1"
           },
           "reason": {
-            "_id": "test-reason-1"
+            "_id": "test-reason-to-pbh-edit"
           },
           "entity_pattern": [
             [

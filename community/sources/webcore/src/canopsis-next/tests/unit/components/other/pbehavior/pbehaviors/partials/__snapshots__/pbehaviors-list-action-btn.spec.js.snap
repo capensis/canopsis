@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehaviors-list-action-btn Renders \`pbehaviors-list-action-btn\` with access 1`] = `
+<c-action-btn-stub
+  icon="list"
+  tooltip="List periodic behaviors"
+/>
+`;
+
+exports[`pbehaviors-list-action-btn Renders \`pbehaviors-list-action-btn\` without access 1`] = `<!---->`;

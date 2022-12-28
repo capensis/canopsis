@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
 import VueAsyncComputed from 'vue-async-computed';
+import VueResizeText from 'vue-resize-text';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 
 import { MqLayout } from '@unit/stubs/mq';
@@ -14,8 +15,9 @@ import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
 import i18n from '@/i18n';
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
+import { stringifyJsonFilter } from '@/helpers/json';
 
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
@@ -35,6 +37,7 @@ const mocks = {
 };
 
 Vue.use(VueAsyncComputed);
+Vue.use(VueResizeText);
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
@@ -46,6 +49,8 @@ Vue.use(ToursPlugin);
 
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);
+Vue.filter('timezone', convertDateToTimezoneDateString);
+Vue.filter('json', stringifyJsonFilter);
 
 const stubs = {
   'mq-layout': MqLayout,
@@ -121,6 +126,49 @@ export const mount = (component, options = {}) => {
 };
 
 /**
+ * Generate render function
+ *
+ * @param {Object} component
+ * @param {Object} baseOptions
+ * @param {Object} basePropsData
+ * @returns {Function}
+ */
+export const generateRenderer = (
+  component,
+  { propsData: basePropsData, ...baseOptions } = {},
+) => {
+  let wrapper;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    wrapper?.destroy?.();
+  });
+
+  return ({ propsData, ...options } = {}) => {
+    wrapper = testUtilsMount(
+      component,
+      merge(
+        {},
+        { mocks, stubs },
+        baseOptions,
+        options,
+        { i18n },
+        {
+          propsData: {
+            ...basePropsData,
+            ...propsData,
+          },
+        },
+      ),
+    );
+
+    enhanceWrapper(wrapper);
+
+    return wrapper;
+  };
+};
+
+/**
  * Function for shallow mount vue component with mocked i18n, constants and config.
  *
  * @param {Object} component
@@ -141,4 +189,46 @@ export const shallowMount = (component, options = {}) => {
   });
 
   return wrapper;
+};
+
+/**
+ * Generate render function
+ *
+ * @param {Object} component
+ * @param {Object} baseOptions
+ * @param {Object} basePropsData
+ * @returns {Function}
+ */
+export const generateShallowRenderer = (
+  component,
+  { propsData: basePropsData, ...baseOptions } = {},
+) => {
+  let wrapper;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    wrapper?.destroy?.();
+  });
+
+  return ({ propsData, ...options } = {}) => {
+    wrapper = testUtilsShallowMount(
+      component,
+      merge(
+        {},
+        baseOptions,
+        options,
+        { mocks, i18n, stubs },
+        {
+          propsData: {
+            ...basePropsData,
+            ...propsData,
+          },
+        },
+      ),
+    );
+
+    enhanceWrapper(wrapper);
+
+    return wrapper;
+  };
 };
