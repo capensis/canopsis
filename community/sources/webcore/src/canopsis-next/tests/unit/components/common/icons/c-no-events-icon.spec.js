@@ -10,11 +10,18 @@ const mockData = {
   secondTimestamp: 1600362123456, // Fri Sep 18 2020 00:02:03
 };
 
+const factory = (options = {}) => mount(CNoEventsIcon, {
+  localVue,
+  attachTo: document.body,
+
+  ...options,
+});
+
 describe('c-no-events-icon', () => {
   mockDateNow(mockData.secondTimestamp);
 
   it('Renders `c-no-events-icon` with default props correctly', () => {
-    const wrapper = mount(CNoEventsIcon, { localVue });
+    const wrapper = factory();
 
     const tooltipContent = wrapper.find('.v-tooltip__content');
 
@@ -23,8 +30,7 @@ describe('c-no-events-icon', () => {
   });
 
   it('Renders `c-no-events-icon` with value correctly', () => {
-    const wrapper = mount(CNoEventsIcon, {
-      localVue,
+    const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
       },
@@ -37,8 +43,7 @@ describe('c-no-events-icon', () => {
   });
 
   it('Renders `c-no-events-icon` with custom props correctly', () => {
-    const wrapper = mount(CNoEventsIcon, {
-      localVue,
+    const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
         color: 'secondary',

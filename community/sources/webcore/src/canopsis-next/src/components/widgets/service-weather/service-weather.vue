@@ -3,25 +3,31 @@
     v-layout.mx-1(wrap)
       v-flex(v-if="hasAccessToCategory", xs3)
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-      v-flex(v-if="hasAccessToUserFilter", xs4)
+      v-flex(xs5)
         v-layout(row, align-center)
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="userPreference.filters",
-            :locked-filters="widget.filters",
-            :locked-value="lockedFilter",
-            :value="mainFilter",
-            :disabled="!hasAccessToListFilters",
-            @input="updateSelectedFilter"
-          )
-          filters-list-btn(
-            :widget-id="widget._id",
-            :addable="hasAccessToAddFilter",
-            :editable="hasAccessToEditFilter",
-            :entity-types="[$constants.ENTITY_TYPES.service]",
-            with-entity,
-            with-service-weather,
-            private
+          template(v-if="hasAccessToUserFilter")
+            filter-selector(
+              :label="$t('settings.selectAFilter')",
+              :filters="userPreference.filters",
+              :locked-filters="widget.filters",
+              :locked-value="lockedFilter",
+              :value="mainFilter",
+              :disabled="!hasAccessToListFilters",
+              @input="updateSelectedFilter"
+            )
+            filters-list-btn(
+              :widget-id="widget._id",
+              :addable="hasAccessToAddFilter",
+              :editable="hasAccessToEditFilter",
+              :entity-types="[$constants.ENTITY_TYPES.service]",
+              with-entity,
+              with-service-weather,
+              private
+            )
+          c-enabled-field.ml-3(
+            :value="query.hide_grey",
+            :label="$t('serviceWeather.hideGrey')",
+            @input="updateHideGray"
           )
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
@@ -30,17 +36,18 @@
         v-layout(align-center)
           div.mr-4 {{ $t('errors.default') }}
           v-tooltip(top)
-            v-icon(slot="activator") help
+            template(#activator="{ on }")
+              v-icon(v-on="on") help
             div(v-if="servicesError.name") {{ $t('common.name') }}: {{ servicesError.name }}
             div(v-if="servicesError.description") {{ $t('common.description') }}: {{ servicesError.description }}
       v-alert(v-else-if="hasNoData", :value="true", type="info") {{ $t('tables.noData') }}
       template(v-else)
-        v-flex(v-for="service in services", :key="service._id", :class="flexSize")
-          service-weather-item.weather-item(
-            :service="service",
-            :widget="widget",
-            :template="widget.parameters.blockTemplate"
-          )
+        v-flex(
+          v-for="service in services",
+          :key="service._id",
+          :class="flexSize"
+        )
+          service-weather-item(:service="service", :widget="widget")
 </template>
 
 <script>
@@ -78,17 +85,33 @@ export default {
   },
   computed: {
     flexSize() {
-      return [
-        `xs${this.widget.parameters.columnSM}`,
-        `md${this.widget.parameters.columnMD}`,
-        `lg${this.widget.parameters.columnLG}`,
-      ];
+      const columnsCount = {
+        m: this.widget.parameters.columnMobile,
+        t: this.widget.parameters.columnTablet,
+        l: this.widget.parameters.columnDesktop,
+        xl: this.widget.parameters.columnDesktop,
+      }[this.$mq];
+
+      return `xs${12 / columnsCount}`;
     },
+
     hasNoData() {
       return this.services.length === 0;
     },
   },
   methods: {
+    updateHideGray(hideGrey) {
+      this.updateContentInUserPreference({
+        hide_grey: hideGrey,
+      });
+
+      this.query = {
+        ...this.query,
+
+        hide_grey: hideGrey,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 
@@ -112,9 +135,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .weather-item {
-    height: 100%;
-  }
-</style>

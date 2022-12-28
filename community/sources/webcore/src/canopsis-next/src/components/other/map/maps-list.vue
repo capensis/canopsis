@@ -13,7 +13,11 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected }")
-      c-action-btn.ml-3(v-show="removable", type="delete", @click="$emit('remove-selected', selected)")
+      c-action-btn(
+        v-show="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#type="{ item }")
       span {{ $t(`map.types.${item.type}`) }}
     template(#updated="{ item }") {{ item.updated | date }}
