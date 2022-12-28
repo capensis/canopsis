@@ -174,8 +174,8 @@ func (v *Validator) validateDisableDuringPeriods(sl validator.StructLevel, disab
 func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel, t string, params idlerule.Parameters) {
 	switch t {
 	case types.ActionTypeAssocTicket:
-		if params.TicketInfo.Ticket == "" {
-			sl.ReportError(params.TicketInfo.Ticket, "Operation.Parameters.Ticket", "Ticket", "required", "")
+		if params.Ticket == "" {
+			sl.ReportError(params.Ticket, "Operation.Parameters.Ticket", "Ticket", "required", "")
 		}
 	case types.ActionTypeChangeState:
 		if params.State == nil {

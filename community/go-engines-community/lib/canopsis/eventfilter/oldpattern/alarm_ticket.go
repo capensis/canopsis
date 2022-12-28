@@ -101,12 +101,12 @@ func (p AlarmTicketRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
 	}
 
 	if !p.Value.Empty() {
-		query[fmt.Sprintf("%s.val", prefix)] = p.Value.AsMongoDriverQuery()
+		query[fmt.Sprintf("%s.ticket", prefix)] = p.Value.AsMongoDriverQuery()
 	}
 
 	if len(p.Data) > 0 {
 		for k, v := range p.Data {
-			query[fmt.Sprintf("%s.data.%s", prefix, k)] = v.AsMongoDriverQuery()
+			query[fmt.Sprintf("%s.ticket_data.%s", prefix, k)] = v.AsMongoDriverQuery()
 		}
 	}
 }
