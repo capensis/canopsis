@@ -76,7 +76,7 @@ func (s *service) ListenScenarioFinish(parentCtx context.Context, channel <-chan
 					return
 				}
 
-				s.logger.Debug().Msgf("scenario for alarm_id = %s finished", result.Alarm.ID)
+				s.logger.Debug().Msgf("scenario for alarm = %s finished", result.Alarm.ID)
 				// Fetch updated alarm from storage since task manager returns
 				// updated alarm after one scenario and not after all scenarios.
 				alarm, err := s.alarmAdapter.GetAlarmByAlarmId(ctx, result.Alarm.ID)
@@ -208,8 +208,8 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 		alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(ctx, execution.AlarmID)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
-				s.logger.Warn().Str("execution_id", execution.ID).Msg("Alarm for scenario execution doesn't exist or resolved. Execution will be removed")
-				err = s.executionStorage.Del(ctx, execution.ID)
+				s.logger.Warn().Str("execution", execution.GetCacheKey()).Msg("Alarm for scenario execution doesn't exist or resolved. Execution will be removed")
+				err = s.executionStorage.Del(ctx, execution.GetCacheKey())
 				if err != nil {
 					return err
 				}
@@ -221,8 +221,8 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 		completed := execution.ActionExecutions[len(execution.ActionExecutions)-1].Executed
 
 		if completed {
-			s.logger.Debug().Str("execution_id", execution.ID).Msg("Execution was completed. Execution will be removed")
-			err = s.executionStorage.Del(ctx, execution.ID)
+			s.logger.Debug().Str("execution", execution.GetCacheKey()).Msg("Execution was completed. Execution will be removed")
+			err = s.executionStorage.Del(ctx, execution.GetCacheKey())
 			if err != nil {
 				return err
 			}
@@ -231,11 +231,12 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 		}
 
 		s.scenarioInputChannel <- ExecuteScenariosTask{
-			Alarm:                alarm,
-			Entity:               execution.Entity,
-			AbandonedExecutionID: execution.ID,
-			AdditionalData:       execution.AdditionalData,
-			FifoAckEvent:         execution.FifoAckEvent,
+			Alarm:          alarm,
+			Entity:         execution.Entity,
+			AdditionalData: execution.AdditionalData,
+			FifoAckEvent:   execution.FifoAckEvent,
+
+			AbandonedExecutionCacheKey: execution.GetCacheKey(),
 		}
 	}
 

@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with custom props 1`] = `
+<div
+  class="layout alarm-counters column"
+>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <div
+      class="layout row justify-space-around align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 18px;"
+      >
+        assignment_returned
+      </i>
+      <span
+        class="caption"
+      >
+        1
+      </span>
+    </div>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <div
+      class="layout row justify-space-around align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 18px;"
+      >
+        add_photo_alternate
+      </i>
+      <span
+        class="caption"
+      >
+        3
+      </span>
+    </div>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <div
+      class="layout row justify-space-around align-center"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 18px;"
+      >
+        more_horiz
+      </i>
+      <span
+        class="caption"
+      >
+        12
+      </span>
+    </div>
+  </span>
+</div>
+`;
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with custom props 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <span>
+    type-1-name
+  </span>
+</div>
+`;
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with default props 1`] = `
+<div
+  class="layout alarm-counters column"
+>
+  <!---->
+</div>
+`;
+
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with default props 2`] = `undefined`;

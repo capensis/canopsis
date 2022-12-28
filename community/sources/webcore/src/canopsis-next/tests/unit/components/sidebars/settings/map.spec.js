@@ -23,6 +23,9 @@ import MapSettings from '@/components/sidebars/settings/map.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': true,
   'field-periodic-refresh': true,
   'field-map': true,
@@ -35,6 +38,9 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': true,
   'field-periodic-refresh': true,
   'field-map': true,

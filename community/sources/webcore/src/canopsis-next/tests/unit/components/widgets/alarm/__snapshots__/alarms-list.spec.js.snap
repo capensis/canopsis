@@ -90,61 +90,20 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     </div>
     <!---->
   </div>
-  <div
-    class="layout alarms-list__top-pagination white px-4 position-relative row align-center"
-  >
-    <div
-      class="flex alarms-list__top-pagination--left xs6"
-    >
-      <div
-        class="layout row align-center justify-start"
-      >
-        <c-density-btn-toggle-stub />
-        <transition-stub
-          name="fade-transition"
-        >
-          <div
-            class="flex px-1"
-            style="display: none;"
-          >
-            <mass-actions-panel-stub
-              itemsids=""
-              refreshalarmslist="[Function]"
-              widget="[object Object]"
-            />
-          </div>
-        </transition-stub>
-      </div>
-    </div>
-    <div
-      class="flex alarms-list__top-pagination--center-absolute xs4"
-    >
-      <c-pagination-stub
-        limit="13"
-        total="10"
-        type="top"
-      />
-    </div>
-  </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    densable="true"
     expandable="true"
     hidechildren="true"
     istourenabled="true"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
     selectable="true"
-    selected=""
     selectedtag=""
     totalitems="10"
     widget="[object Object]"
-  >
-    <c-table-pagination-stub
-      rows-per-page="13"
-      total-items="10"
-    />
-  </alarms-list-table-stub>
+  />
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
@@ -223,61 +182,20 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     </div>
     <!---->
   </div>
-  <div
-    class="layout alarms-list__top-pagination white px-4 position-relative row align-center"
-  >
-    <div
-      class="flex alarms-list__top-pagination--left xs6"
-    >
-      <div
-        class="layout row align-center justify-start"
-      >
-        <c-density-btn-toggle-stub />
-        <transition-stub
-          name="fade-transition"
-        >
-          <div
-            class="flex px-1"
-            style="display: none;"
-          >
-            <mass-actions-panel-stub
-              itemsids=""
-              refreshalarmslist="[Function]"
-              widget="[object Object]"
-            />
-          </div>
-        </transition-stub>
-      </div>
-    </div>
-    <div
-      class="flex alarms-list__top-pagination--center-absolute xs4"
-    >
-      <c-pagination-stub
-        limit="13"
-        total="10"
-        type="top"
-      />
-    </div>
-  </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    densable="true"
     expandable="true"
     hidechildren="true"
     istourenabled="true"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
     selectable="true"
-    selected=""
     selectedtag=""
     totalitems="10"
     widget="[object Object]"
-  >
-    <c-table-pagination-stub
-      rows-per-page="13"
-      total-items="10"
-    />
-  </alarms-list-table-stub>
+  />
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
@@ -375,61 +293,20 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     </div>
     <!---->
   </div>
-  <div
-    class="layout alarms-list__top-pagination white px-4 position-relative row align-center"
-  >
-    <div
-      class="flex alarms-list__top-pagination--left xs6"
-    >
-      <div
-        class="layout row align-center justify-start"
-      >
-        <c-density-btn-toggle-stub />
-        <transition-stub
-          name="fade-transition"
-        >
-          <div
-            class="flex px-1"
-            style="display: none;"
-          >
-            <mass-actions-panel-stub
-              itemsids=""
-              refreshalarmslist="[Function]"
-              widget="[object Object]"
-            />
-          </div>
-        </transition-stub>
-      </div>
-    </div>
-    <div
-      class="flex alarms-list__top-pagination--center-absolute xs4"
-    >
-      <c-pagination-stub
-        limit="13"
-        total="10"
-        type="top"
-      />
-    </div>
-  </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    densable="true"
     expandable="true"
     hidechildren="true"
     istourenabled="true"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
     selectable="true"
-    selected=""
     selectedtag=""
     totalitems="10"
     widget="[object Object]"
-  >
-    <c-table-pagination-stub
-      rows-per-page="13"
-      total-items="10"
-    />
-  </alarms-list-table-stub>
+  />
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
