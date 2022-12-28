@@ -109,15 +109,19 @@ func TestAlarmTicketRefPatternMatchesMongoDriver(t *testing.T) {
 			matches := oldpattern.NewAlarmTicketRegexMatches()
 
 			alarmTicket1 := &types.AlarmStep{
-				TicketData: map[string]string{
-					"priority_id": "2 - Critical",
+				TicketInfo: types.TicketInfo{
+					TicketData: map[string]string{
+						"priority_id": "2 - Critical",
+					},
 				},
 			}
 			So(p.Matches(alarmTicket1, &matches), ShouldBeTrue)
 
 			alarmTicket2 := &types.AlarmStep{
-				TicketData: map[string]string{
-					"priority_id": "1 - Critical",
+				TicketInfo: types.TicketInfo{
+					TicketData: map[string]string{
+						"priority_id": "1 - Critical",
+					},
 				},
 			}
 			So(p.Matches(alarmTicket2, &matches), ShouldBeFalse)
