@@ -183,7 +183,6 @@ Feature: update meta alarm on action
                 "ticket": "test-ticket-action-correlation-1",
                 "ticket_system_name": "test-system-name-action-correlation-1",
                 "ticket_url": "test-ticket-url-action-correlation-1",
-                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1",
                   "ticket_param_2": "ticket_value_2"
