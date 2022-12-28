@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -850,9 +851,9 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 		return err
 	}
 
-	_, err = s.aclCollection.UpdateOne(ctx,
+	_, err = s.aclCollection.UpdateMany(ctx,
 		bson.M{
-			"_id":          user.Role,
+			"_id":          bson.M{"$in": bson.A{user.Role, security.RoleAdmin}},
 			"crecord_type": securitymodel.LineTypeRole,
 		},
 		bson.M{"$set": setRole},

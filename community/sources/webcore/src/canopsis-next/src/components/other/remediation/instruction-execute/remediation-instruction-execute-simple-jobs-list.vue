@@ -1,13 +1,13 @@
 <template lang="pug">
-    table.instruction-execute-jobs-table
-      thead
-        tr
-          th
-          th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.startedAt') }}
-          th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
-          th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.completedAt') }}
-      tbody
-        remediation-instruction-execute-simple-job(v-for="job in jobs", :key="job.job_id", :job="job")
+  table.instruction-execute-jobs-table
+    thead
+      tr
+        th
+        th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.startedAt') }}
+        th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
+        th.grey--text.lighten-3 {{ $t('remediationInstructionExecute.jobs.completedAt') }}
+    tbody
+      remediation-instruction-execute-simple-job(v-for="job in jobs", :key="job.job_id", :job="job")
 </template>
 
 <script>

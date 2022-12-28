@@ -1,13 +1,14 @@
 import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { TIME_UNITS } from '@/constants';
 
 import PeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
-import { TIME_UNITS } from '@/constants';
 
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings-item': true,
   'periodic-refresh-field': true,
 };
 

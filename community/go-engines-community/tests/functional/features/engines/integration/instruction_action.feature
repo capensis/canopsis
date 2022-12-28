@@ -40,6 +40,7 @@ Feature: run an auto instruction
     """json
     {
       "name": "test-scenario-instruction-action-1-name",
+      "priority": 10070,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
