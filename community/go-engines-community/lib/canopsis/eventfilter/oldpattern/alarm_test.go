@@ -184,15 +184,19 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					Tickets: []types.AlarmStep{
 						{
 							Type: "test7",
-							TicketData: map[string]string{
-								"priority_id": "2 - Critical",
+							TicketInfo: types.TicketInfo{
+								TicketData: map[string]string{
+									"priority_id": "2 - Critical",
+								},
 							},
 						},
 					},
 					Ticket: &types.AlarmStep{
 						Type: "test7",
-						TicketData: map[string]string{
-							"priority_id": "2 - Critical",
+						TicketInfo: types.TicketInfo{
+							TicketData: map[string]string{
+								"priority_id": "2 - Critical",
+							},
 						},
 					},
 					Component:                     "test8",
