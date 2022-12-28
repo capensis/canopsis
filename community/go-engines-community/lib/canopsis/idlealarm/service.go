@@ -239,7 +239,7 @@ func (s *baseService) applyAlarmRule(
 	event.SourceType = event.DetectSourceType()
 
 	event.Output = rule.Operation.Parameters.Output
-	event.Ticket = rule.Operation.Parameters.Ticket
+	event.TicketInfo = rule.Operation.Parameters.TicketInfo
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}

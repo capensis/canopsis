@@ -129,14 +129,14 @@ func (p AlarmTicketRefPattern) Matches(step *types.AlarmStep, matches *AlarmTick
 				p.Timestamp.Matches(step.Timestamp) &&
 				p.Author.Matches(step.Author, &matches.Author) &&
 				p.Message.Matches(step.Message, &matches.Message) &&
-				p.Value.Matches(step.Ticket, &matches.Value)
+				p.Value.Matches(step.TicketInfo.Ticket, &matches.Value)
 
 		dataMatch := true
 
 		for dataKey, stringPattern := range p.Data {
 			var regexMatches RegexMatches
 
-			if stringPattern.Matches(step.TicketData[dataKey], &regexMatches) {
+			if stringPattern.Matches(step.TicketInfo.TicketData[dataKey], &regexMatches) {
 				matches.Data[dataKey] = regexMatches
 			} else {
 				dataMatch = false

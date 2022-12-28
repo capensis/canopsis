@@ -176,13 +176,7 @@ type Event struct {
 	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
 
 	// Ticket related fields
-	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketUrl         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
-	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
-	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
-	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
-	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	TicketInfo `bson:",inline"`
 
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`

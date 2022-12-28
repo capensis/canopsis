@@ -28,12 +28,16 @@ type AlarmStep struct {
 	// Execution contains id if instruction execution for instruction steps only.
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 
-	// Ticket related fields
+	TicketInfo TicketInfo `bson:",inline"`
+}
+
+type TicketInfo struct {
 	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
 	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
 	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
 	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketRuleID      string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
 	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
 	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 }
@@ -398,16 +402,10 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator, value, url, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment string, data map[string]string) AlarmStep {
+func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
 	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 
-	s.Ticket = value
-	s.TicketURL = url
-	s.TicketMetaAlarmID = ticketMetaAlarmID
-	s.TicketSystemName = ticketSystemName
-	s.TicketComment = ticketComment
-	s.TicketRuleName = ticketRuleName
-	s.TicketData = data
+	s.TicketInfo = ticketInfo
 
 	return s
 }

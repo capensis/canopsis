@@ -228,11 +228,16 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	}
 
 	axeParams := rpc.AxeParameters{
-		Output:         params.Output,
-		Author:         additionalData.Author,
-		User:           additionalData.User,
-		State:          params.State,
-		Ticket:         params.Ticket,
+		Output: params.Output,
+		Author: additionalData.Author,
+		User:   additionalData.User,
+		State:  params.State,
+		TicketInfo: types.TicketInfo{
+			Ticket:           params.Ticket,
+			TicketURL:        params.TicketURL,
+			TicketSystemName: params.TicketSystemName,
+			TicketData:       params.TicketData,
+		},
 		Duration:       params.Duration,
 		Name:           params.Name,
 		Reason:         params.Reason,

@@ -12,13 +12,7 @@ type OperationParameters struct {
 	Author string `bson:"author,omitempty" json:"author,omitempty"`
 	User   string `bson:"user,omitempty" json:"user,omitempty"`
 	// AssocTicket and Webhook
-	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketUrl         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
-	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name"`
-	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id"`
-	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
-	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	TicketInfo `bson:",inline"`
 	// Webhook
 	DeclareTicket        bool `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
 	DeclareTicketRequest bool `bson:"declare_ticket_request,omitempty" json:"declare_ticket_request,omitempty"`

@@ -215,9 +215,7 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 			Resource:      alarm.Alarm.Value.Resource,
 			Component:     alarm.Alarm.Value.Component,
 			Timestamp:     event.Timestamp,
-			Ticket:        event.Ticket,
-			TicketUrl:     event.TicketUrl,
-			TicketData:    event.TicketData,
+			TicketInfo:    event.TicketInfo,
 			Output:        event.Output,
 			LongOutput:    event.LongOutput,
 			Author:        event.Author,
@@ -254,9 +252,7 @@ func (p *metaAlarmEventProcessor) processParent(ctx context.Context, event types
 		Initiator:  types.InitiatorSystem,
 		Status:     event.Status,
 		State:      event.State,
-		Ticket:     event.Ticket,
-		TicketUrl:  event.TicketUrl,
-		TicketData: event.TicketData,
+		TicketInfo: event.TicketInfo,
 		Duration:   event.Duration,
 	}
 	err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
@@ -273,23 +269,16 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 	}
 
 	childEvent := types.Event{
-		EventType: event.EventType,
-		Timestamp: types.NewCpsTime(),
-		Output:    event.Parameters.Output,
-		Author:    event.Parameters.Author,
-		UserID:    event.Parameters.User,
-		Initiator: types.InitiatorSystem,
-		Ticket:    event.Parameters.Ticket,
+		EventType:  event.EventType,
+		Timestamp:  types.NewCpsTime(),
+		Output:     event.Parameters.Output,
+		Author:     event.Parameters.Author,
+		UserID:     event.Parameters.User,
+		Initiator:  types.InitiatorSystem,
+		TicketInfo: eventRes.Alarm.Value.Ticket.TicketInfo,
 	}
 	if eventRes.AlarmChangeType == types.AlarmChangeTypeDeclareTicketWebhook {
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
-		childEvent.Ticket = eventRes.Alarm.Value.Ticket.Ticket
-		childEvent.TicketUrl = eventRes.Alarm.Value.Ticket.TicketURL
-		childEvent.TicketData = eventRes.Alarm.Value.Ticket.TicketData
-		childEvent.TicketComment = eventRes.Alarm.Value.Ticket.TicketComment
-		childEvent.TicketRuleName = eventRes.Alarm.Value.Ticket.TicketRuleName
-		childEvent.TicketSystemName = eventRes.Alarm.Value.Ticket.TicketSystemName
-		childEvent.TicketMetaAlarmID = eventRes.Alarm.ID
 	}
 
 	if event.Parameters.State != nil {
@@ -341,9 +330,7 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 			Component:     resource.Alarm.Value.Component,
 			Timestamp:     types.NewCpsTime(),
 			Output:        componentAlarm.Value.Ticket.Message,
-			Ticket:        componentAlarm.Value.Ticket.Ticket,
-			TicketUrl:     componentAlarm.Value.Ticket.TicketURL,
-			TicketData:    componentAlarm.Value.Ticket.TicketData,
+			TicketInfo:    componentAlarm.Value.Ticket.TicketInfo,
 			Author:        event.Parameters.Author,
 			UserID:        event.Parameters.User,
 			Initiator:     types.InitiatorSystem,
