@@ -39,16 +39,10 @@ func (e *declareTicketWebhookExecutor) Exec(
 		time,
 		params.Author,
 		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
-		params.Ticket,
-		params.TicketUrl,
-		params.TicketMetaAlarmID,
-		params.TicketRuleName,
-		params.TicketSystemName,
-		params.TicketComment,
-		params.TicketData,
 		userID,
 		role,
 		initiator,
+		params.TicketInfo,
 	)
 	if err != nil {
 		return "", err

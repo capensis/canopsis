@@ -30,7 +30,7 @@ func (e *webhookCompleteExecutor) Exec(
 		userID = params.User
 	}
 
-	if params.Ticket == "" {
+	if params.TicketInfo.Ticket == "" {
 		err := alarm.PartialUpdateAddStep(
 			types.AlarmStepWebhookComplete,
 			time,
@@ -51,16 +51,10 @@ func (e *webhookCompleteExecutor) Exec(
 		time,
 		params.Author,
 		params.Output,
-		params.Ticket,
-		params.TicketUrl,
-		params.TicketMetaAlarmID,
-		params.TicketRuleName,
-		params.TicketSystemName,
-		params.TicketComment,
-		params.TicketData,
 		userID,
 		role,
 		initiator,
+		params.TicketInfo,
 	)
 	if err != nil {
 		return "", err

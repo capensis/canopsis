@@ -49,9 +49,8 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, ro
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment, userID, role, initiator string) error {
-	// todo url
-	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, userID, role, initiator, ticketNumber, "", ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment, ticketData)
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, ticketInfo.Ticket, userID, role, initiator, ticketInfo)
 	err := a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
@@ -234,8 +233,8 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 }
 
 // PartialUpdateDeclareTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber, ticketUrl, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment string, data map[string]string, userID, role, initiator string) error {
-	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator, ticketNumber, ticketUrl, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment, data)
+func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator, ticketInfo)
 	err := a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
@@ -250,14 +249,14 @@ func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ti
 	return nil
 }
 
-func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, author, output, ticketNumber, ticketUrl, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment string, data map[string]string, userID, role, initiator string) error {
+func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
 	newStep := NewAlarmStep(AlarmStepWebhookComplete, timestamp, author, output, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
 	}
 
-	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator, ticketNumber, ticketUrl, ticketMetaAlarmID, ticketRuleName, ticketSystemName, ticketComment, data)
+	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator, ticketInfo)
 	err = a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
