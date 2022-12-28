@@ -28,7 +28,13 @@ Feature: execute action on trigger
             "forward_author": false,
             "author": "test-scenario-action-1-action-1-author {{ `{{ .Alarm.Value.Resource }}` }}",
             "output": "test-scenario-action-1-action-1-output {{ `{{ .Entity.Name }} {{ .Alarm.Value.State.Value }}` }}",
-            "ticket": "test-scenario-action-1-action-1-ticket"
+            "ticket": "test-scenario-action-1-action-1-ticket",
+            "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+            "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+            "ticket_data": {
+              "ticket_param_1": "ticket_value_1",
+              "ticket_param_2": "ticket_value_2"
+            }
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -120,14 +126,26 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
                 "m": "test-scenario-action-1-action-1-ticket",
-                "ticket": "test-scenario-action-1-action-1-ticket"
+                "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+                "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
               "m": "test-scenario-action-1-action-1-ticket",
-              "ticket": "test-scenario-action-1-action-1-ticket"
+              "ticket": "test-scenario-action-1-action-1-ticket",
+              "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+              "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1",
+                "ticket_param_2": "ticket_value_2"
+              }
             },
             "ack": {
               "_t": "ack",
@@ -148,14 +166,26 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
                 "m": "test-scenario-action-1-action-1-ticket",
-                "ticket": "test-scenario-action-1-action-1-ticket"
+                "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+                "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
               "m": "test-scenario-action-1-action-1-ticket",
-              "ticket": "test-scenario-action-1-action-1-ticket"
+              "ticket": "test-scenario-action-1-action-1-ticket",
+              "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+              "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1",
+                "ticket_param_2": "ticket_value_2"
+              }
             },
             "ack": {
               "_t": "ack",
@@ -214,7 +244,14 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
                 "user_id": "",
-                "m": "test-scenario-action-1-action-1-ticket"
+                "m": "test-scenario-action-1-action-1-ticket",
+                "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+                "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
@@ -254,7 +291,14 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
                 "user_id": "",
-                "m": "test-scenario-action-1-action-1-ticket"
+                "m": "test-scenario-action-1-action-1-ticket",
+                "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+                "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
@@ -447,7 +491,13 @@ Feature: execute action on trigger
             "forward_author": true,
             "author": "test-scenario-action-2-action-2-author {{ `{{ .Alarm.Value.Resource }}` }}",
             "output": "test-scenario-action-2-action-2-output {{ `{{ .Entity.Name }}` }}",
-            "ticket": "test-ticket-action-2"
+            "ticket": "test-scenario-action-2-action-1-ticket",
+            "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+            "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+            "ticket_data": {
+              "ticket_param_1": "ticket_value_1",
+              "ticket_param_2": "ticket_value_2"
+            }
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -503,15 +553,27 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "root",
-                "m": "test-ticket-action-2",
-                "ticket": "test-ticket-action-2"
+                "m": "test-scenario-action-2-action-1-ticket",
+                "ticket": "test-scenario-action-2-action-1-ticket",
+                "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+                "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "root",
-              "m": "test-ticket-action-2",
-              "ticket": "test-ticket-action-2"
+              "m": "test-scenario-action-2-action-1-ticket",
+              "ticket": "test-scenario-action-2-action-1-ticket",
+              "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+              "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1",
+                "ticket_param_2": "ticket_value_2"
+              }
             },
             "ack": {
               "_t": "ack",
@@ -564,7 +626,13 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "root",
                 "user_id": "root",
-                "m": "test-ticket-action-2"
+                "ticket": "test-scenario-action-2-action-1-ticket",
+                "ticket_system_name": "test-scenario-action-1-action-1-system-name",
+                "ticket_url": "test-scenario-action-1-action-1-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
@@ -610,7 +678,13 @@ Feature: execute action on trigger
           "type": "assocticket",
           "parameters": {
             "output": "test-output-action-3-{{ `{{ .Alarm.Value.Connector }}` }}",
-            "ticket": "test-ticket-action-3"
+            "ticket": "test-scenario-action-3-ticket",
+            "ticket_system_name": "test-scenario-action-3-system-name",
+            "ticket_url": "test-scenario-action-3-ticket-url",
+            "ticket_data": {
+              "ticket_param_1": "ticket_value_1",
+              "ticket_param_2": "ticket_value_2"
+            }
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": true
@@ -678,15 +752,27 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket-action-3",
-                "ticket": "test-ticket-action-3"
+                "m": "test-scenario-action-3-ticket",
+                "ticket": "test-scenario-action-3-ticket",
+                "ticket_system_name": "test-scenario-action-3-system-name",
+                "ticket_url": "test-scenario-action-3-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-ticket-action-3",
-              "ticket": "test-ticket-action-3"
+              "m": "test-scenario-action-3-ticket",
+              "ticket": "test-scenario-action-3-ticket",
+              "ticket_system_name": "test-scenario-action-3-system-name",
+              "ticket_url": "test-scenario-action-3-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1",
+                "ticket_param_2": "ticket_value_2"
+              }
             },
             "ack": {
               "_t": "ack",
@@ -739,7 +825,13 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-ticket-action-3"
+                "ticket": "test-scenario-action-3-ticket",
+                "ticket_system_name": "test-scenario-action-3-system-name",
+                "ticket_url": "test-scenario-action-3-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",

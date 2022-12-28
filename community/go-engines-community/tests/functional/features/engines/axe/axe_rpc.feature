@@ -361,15 +361,21 @@ Feature: update alarm by RPC stream
     }
     """
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-4/test-component-axe-rpc-4:
-	"""
-	{
-		"event_type": "assocticket",
-		"parameters": {
-		  "ticket": "testticket",
-          "output": "test-output-axe-rpc-4"
-        }
-	}
-	"""
+    """json
+    {
+      "event_type": "assocticket",
+      "parameters": {
+        "ticket": "test-ticket",
+        "ticket_url": "test-url",
+        "ticket_system_name": "test-system-name",
+        "ticket_data": {
+          "ticket_param_1": "ticket_value_1",
+          "ticket_param_2": "ticket_value_2"
+        },
+        "output": "test-output-axe-rpc-4"
+      }
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-rpc-4
     Then the response code should be 200
     Then the response body should contain:
@@ -382,15 +388,27 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "testticket",
-                "ticket": "testticket"
+                "m": "test-ticket",
+                "ticket": "test-ticket",
+                "ticket_url": "test-url",
+                "ticket_system_name": "test-system-name",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "testticket",
-              "ticket": "testticket"
+              "m": "test-ticket",
+              "ticket": "test-ticket",
+              "ticket_url": "test-url",
+              "ticket_system_name": "test-system-name",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1",
+                "ticket_param_2": "ticket_value_2"
+              }
             },
             "component": "test-component-axe-rpc-4",
             "connector": "test-connector-axe-rpc-4",
@@ -444,8 +462,15 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "testticket",
-                "val": 0
+                "m": "test-ticket",
+                "val": 0,
+                "ticket": "test-ticket",
+                "ticket_url": "test-url",
+                "ticket_system_name": "test-system-name",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               }
             ],
             "meta": {

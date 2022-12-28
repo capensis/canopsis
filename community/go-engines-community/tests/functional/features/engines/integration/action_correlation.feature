@@ -49,7 +49,13 @@ Feature: update meta alarm on action
           "type": "assocticket",
           "parameters": {
             "output": "test-output-action-correlation-1-{{ `{{ .Alarm.Value.Connector }}` }}",
-            "ticket": "test-ticket-action-correlation-1"
+            "ticket": "test-ticket-action-correlation-1",
+            "ticket_system_name": "test-system-name-action-correlation-1",
+            "ticket_url": "test-ticket-url-action-correlation-1",
+            "ticket_data": {
+              "ticket_param_1": "ticket_value_1",
+              "ticket_param_2": "ticket_value_2"
+            }
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -173,7 +179,15 @@ Feature: update meta alarm on action
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket-action-correlation-1"
+                "m": "test-ticket-action-correlation-1",
+                "ticket": "test-ticket-action-correlation-1",
+                "ticket_system_name": "test-system-name-action-correlation-1",
+                "ticket_url": "test-ticket-url-action-correlation-1",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
@@ -213,7 +227,15 @@ Feature: update meta alarm on action
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket-action-correlation-1"
+                "m": "test-ticket-action-correlation-1",
+                "ticket": "test-ticket-action-correlation-1",
+                "ticket_system_name": "test-system-name-action-correlation-1",
+                "ticket_url": "test-ticket-url-action-correlation-1",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
