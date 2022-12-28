@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"github.com/valyala/fastjson"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
+	"github.com/valyala/fastjson"
 )
 
 // SetAuthor middleware sets authorized user id to author field to request body. Use it for create and update model endpoints.
@@ -38,7 +37,7 @@ func SetAuthor() func(c *gin.Context) {
 			panic(err)
 		}
 
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(encodedStr))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(encodedStr))
 
 		c.Next()
 	}
@@ -78,7 +77,7 @@ func PreProcessBulk(cfg config.CanopsisConf, addAuthor bool) func(c *gin.Context
 			}
 		}
 
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonValue.MarshalTo(nil)))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonValue.MarshalTo(nil)))
 
 		c.Next()
 	}

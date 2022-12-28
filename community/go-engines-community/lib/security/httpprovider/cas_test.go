@@ -1,7 +1,7 @@
 package httpprovider
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -40,7 +40,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 </cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
@@ -125,7 +125,7 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 	</cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
@@ -186,7 +186,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 </cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
@@ -238,7 +238,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 </cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
