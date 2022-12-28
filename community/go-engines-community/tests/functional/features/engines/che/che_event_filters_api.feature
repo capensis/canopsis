@@ -461,7 +461,7 @@ Feature: modify event on event filter
               "password": "test"
             },
             "headers": {"Content-Type": "application/json"},
-            "payload": "{\"name\":\"{{ `{{ .Event.Component }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-eventfilter-assets-customer-6-pattern\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            "payload": "{\"priority\": 10039,\"name\":\"{{ `{{ .Event.Component }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-eventfilter-assets-customer-6-pattern\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
           }
         }
       },

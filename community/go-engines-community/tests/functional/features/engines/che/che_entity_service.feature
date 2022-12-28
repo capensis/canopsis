@@ -102,17 +102,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-first/test-component-che-service-first
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-first/test-connector-name-che-service-first"
-      ],
-      "impact": [
-        "test-component-che-service-first",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-first/test-connector-name-che-service-first"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-first",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service entity and new resource entity should add resource to service on resource creation
@@ -208,17 +209,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-2/test-component-che-service-2
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-2/test-connector-name-che-service-2"
-      ],
-      "impact": [
-        "test-component-che-service-2",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-2/test-connector-name-che-service-2"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-2",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service entity with updated pattern should remove now unmatched and add now matched entities on service update
@@ -288,17 +290,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-3-1/test-component-che-service-3
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-3/test-connector-name-che-service-3"
-      ],
-      "impact": [
-        "test-component-che-service-3",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-3/test-connector-name-che-service-3"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-3",
+      "{{ .serviceID }}"
+    ]
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
     """json
@@ -350,17 +353,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-3-2/test-component-che-service-3
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-3/test-connector-name-che-service-3"
-      ],
-      "impact": [
-        "test-component-che-service-3",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-3/test-connector-name-che-service-3"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-3",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service entity and resource entity and enrichment event filter should add resource to service on infos update
@@ -469,17 +473,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-6/test-component-che-service-6
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-6/test-connector-name-che-service-6"
-      ],
-      "impact": [
-        "test-component-che-service-6",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-6/test-connector-name-che-service-6"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-6",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service entity and resource entity and updated enrichment event filter should remove resource from service on infos update
@@ -589,17 +594,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-7/test-component-che-service-7
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-7/test-connector-name-che-service-7"
-      ],
-      "impact": [
-        "test-component-che-service-7",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-7/test-connector-name-che-service-7"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-7",
+      "{{ .serviceID }}"
+    ]
     """
     When I do PUT /api/v4/eventfilter/rules/{{ .ruleID }}:
     """json
@@ -732,17 +738,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-component-che-service-8
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-8/test-component-che-service-8"
-      ],
-      "impact": [
-        "test-connector-che-service-8/test-connector-name-che-service-8",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-resource-che-service-8/test-component-che-service-8"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-connector-che-service-8/test-connector-name-che-service-8",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service entity and new connector entity on resource event should add connector to service
@@ -798,17 +805,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-connector-che-service-9/test-connector-name-che-service-9
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-component-che-service-9"
-      ],
-      "impact": [
-        "test-resource-che-service-9/test-component-che-service-9",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-component-che-service-9"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-resource-che-service-9/test-component-che-service-9",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service entity and updated resource entity by api should add resource to service on infos update
@@ -888,17 +896,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-16/test-component-che-service-16
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-16/test-connector-name-che-service-16"
-      ],
-      "impact": [
-        "test-component-che-service-16",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-16/test-connector-name-che-service-16"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-16",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given deleted service entity should remove service from all links
@@ -991,17 +1000,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-17/test-component-che-service-17
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-17/test-connector-name-che-service-17"
-      ],
-      "impact": [
-        "test-component-che-service-17",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-17/test-connector-name-che-service-17"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-17",
+      "{{ .serviceID }}"
+    ]
     """
     When I do DELETE /api/v4/entityservices/{{ .serviceID }}
     Then the response code should be 204
@@ -1085,17 +1095,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-18-1/test-component-che-service-18
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-18/test-connector-name-che-service-18"
-      ],
-      "impact": [
-        "test-component-che-service-18",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-18/test-connector-name-che-service-18"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-18",
+      "{{ .serviceID }}"
+    ]
     """
     When I do PUT /api/v4/entityservices/{{ .serviceID }}:
     """json
@@ -1147,17 +1158,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-18-1/test-component-che-service-18
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-18/test-connector-name-che-service-18"
-      ],
-      "impact": [
-        "test-component-che-service-18",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-18/test-connector-name-che-service-18"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-18",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given service with old pattern should update service
@@ -1201,17 +1213,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-19/test-component-che-service-19
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-19/test-connector-name-che-service-19"
-      ],
-      "impact": [
-        "test-component-che-service-19",
-        "test-entityservice-che-service-19"
-      ]
-    }
+    [
+      "test-connector-che-service-19/test-connector-name-che-service-19"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-19",
+      "test-entityservice-che-service-19"
+    ]
     """
 
   Scenario: given service with corporate pattern should update service on pattern update
@@ -1290,17 +1303,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-1/test-component-che-service-20
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-20/test-connector-name-che-service-20"
-      ],
-      "impact": [
-        "test-component-che-service-20",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-20/test-connector-name-che-service-20"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-20",
+      "{{ .serviceID }}"
+    ]
     """
     When I do PUT /api/v4/patterns/{{ .patternID }}:
     """json
@@ -1328,43 +1342,42 @@ Feature: create service entity
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-20-1/test-component-che-service-20",
-        "test-resource-che-service-20-2/test-component-che-service-20"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-che-service-20-1/test-component-che-service-20",
+      "test-resource-che-service-20-2/test-component-che-service-20"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-1/test-component-che-service-20
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-20/test-connector-name-che-service-20"
-      ],
-      "impact": [
-        "test-component-che-service-20",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-20/test-connector-name-che-service-20"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-20",
+      "{{ .serviceID }}"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-2/test-component-che-service-20
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-20/test-connector-name-che-service-20"
-      ],
-      "impact": [
-        "test-component-che-service-20",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-che-service-20/test-connector-name-che-service-20"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-20",
+      "{{ .serviceID }}"
+    ]
     """
 
   Scenario: given resource entity and new service entity should update context graph on entity disable or enable
@@ -1420,17 +1433,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-21/test-component-che-service-21
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-21/test-connector-name-che-service-21"
-      ],
-      "impact": [
-        "test-component-che-service-21",
-        "test-entityservice-che-service-21"
-      ]
-    }
+    [
+      "test-connector-che-service-21/test-connector-name-che-service-21"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-21",
+      "test-entityservice-che-service-21"
+    ]
     """
     When I do PUT /api/v4/entitybasics?_id=test-resource-che-service-21/test-component-che-service-21:
     """json
@@ -1499,17 +1513,18 @@ Feature: create service entity
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-21/test-component-che-service-21
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-21/test-connector-name-che-service-21"
-      ],
-      "impact": [
-        "test-component-che-service-21",
-        "test-entityservice-che-service-21"
-      ]
-    }
+    [
+      "test-connector-che-service-21/test-connector-name-che-service-21"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-21",
+      "test-entityservice-che-service-21"
+    ]
     """
 
   Scenario: given resource entity and new service entity should update context graph on entity mass disable or enable
@@ -1571,43 +1586,42 @@ Feature: create service entity
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-22-1/test-component-che-service-22",
-        "test-resource-che-service-22-2/test-component-che-service-22"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-che-service-22-1/test-component-che-service-22",
+      "test-resource-che-service-22-2/test-component-che-service-22"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-22/test-connector-name-che-service-22"
-      ],
-      "impact": [
-        "test-component-che-service-22",
-        "test-entityservice-che-service-22"
-      ]
-    }
+    [
+      "test-connector-che-service-22/test-connector-name-che-service-22"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-22",
+      "test-entityservice-che-service-22"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-2/test-component-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-22/test-connector-name-che-service-22"
-      ],
-      "impact": [
-        "test-component-che-service-22",
-        "test-entityservice-che-service-22"
-      ]
-    }
+    [
+      "test-connector-che-service-22/test-connector-name-che-service-22"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-22",
+      "test-entityservice-che-service-22"
+    ]
     """
     When I do PUT /api/v4/bulk/entities/disable:
     """json
@@ -1672,41 +1686,40 @@ Feature: create service entity
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-22-1/test-component-che-service-22",
-        "test-resource-che-service-22-2/test-component-che-service-22"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-che-service-22-1/test-component-che-service-22",
+      "test-resource-che-service-22-2/test-component-che-service-22"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-22/test-connector-name-che-service-22"
-      ],
-      "impact": [
-        "test-component-che-service-22",
-        "test-entityservice-che-service-22"
-      ]
-    }
+    [
+      "test-connector-che-service-22/test-connector-name-che-service-22"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-22",
+      "test-entityservice-che-service-22"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-2/test-component-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-connector-che-service-22/test-connector-name-che-service-22"
-      ],
-      "impact": [
-        "test-component-che-service-22",
-        "test-entityservice-che-service-22"
-      ]
-    }
+    [
+      "test-connector-che-service-22/test-connector-name-che-service-22"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-component-che-service-22",
+      "test-entityservice-che-service-22"
+    ]
     """
