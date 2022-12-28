@@ -44,10 +44,10 @@ func TestAlarmTicketRefPatternToMongoDriverQuery(t *testing.T) {
 			"ticket.m": bson.M{
 				"$regex": "abc-.*-def",
 			},
-			"ticket.val": bson.M{
+			"ticket.ticket": bson.M{
 				"$eq": "a12",
 			},
-			"ticket.data.priority_id": bson.M{
+			"ticket.ticket_data.priority_id": bson.M{
 				"$regex": "^(?!1 - Critical).*$",
 			},
 		}
