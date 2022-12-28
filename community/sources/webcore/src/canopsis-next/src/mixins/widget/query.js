@@ -42,10 +42,10 @@ export const queryWidgetMixin = {
 
     pagination: {
       get() {
-        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
+        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, descending, multiSortBy };
+        return { page, limit, sortBy, descending, multiSortBy };
       },
 
       set(value) {

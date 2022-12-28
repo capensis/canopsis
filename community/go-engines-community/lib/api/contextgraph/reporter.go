@@ -2,12 +2,13 @@ package contextgraph
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type mongoReporter struct {
@@ -25,12 +26,12 @@ func (r *mongoReporter) ReportCreate(ctx context.Context, job *ImportJob) error 
 }
 
 func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) error {
-	job.Status = statusOngoing
+	job.Status = StatusOngoing
 	return r.update(ctx, job)
 }
 
 func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) error {
-	job.Status = statusDone
+	job.Status = StatusDone
 	t := time.Time{}
 	job.ExecTime = t.Add(stats.ExecTime).Format("15:04:05")
 	job.Stats = stats
@@ -39,7 +40,7 @@ func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats imp
 }
 
 func (r *mongoReporter) ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) error {
-	job.Status = statusFailed
+	job.Status = StatusFailed
 	t := time.Time{}
 	job.ExecTime = t.Add(execDuration).Format("15:04:05")
 	job.Info = err.Error()
