@@ -6,8 +6,9 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	OnlyDefault bool   `form:"default"`
-	SortBy      string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority"`
+	OnlyDefault bool     `form:"default"`
+	SortBy      string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority"`
+	Types       []string `form:"types[]" json:"types"`
 }
 
 type EditRequest struct {

@@ -30,6 +30,7 @@ Feature: update meta alarm on action
     """json
     {
       "name": "test-scenario-action-correlation-1-name",
+      "priority": 10045,
       "enabled": true,
       "triggers": ["comment"],
       "actions": [
@@ -276,6 +277,7 @@ Feature: update meta alarm on action
     """json
     {
       "name": "test-scenario-action-correlation-2-name",
+      "priority": 10046,
       "enabled": true,
       "triggers": ["comment"],
       "actions": [
@@ -652,6 +654,7 @@ Feature: update meta alarm on action
     """json
     {
       "name": "test-scenario-action-correlation-3-1-name",
+      "priority": 10047,
       "enabled": true,
       "triggers": ["comment"],
       "actions": [
@@ -681,6 +684,7 @@ Feature: update meta alarm on action
     """json
     {
       "name": "test-scenario-action-correlation-3-2-name",
+      "priority": 10048,
       "enabled": true,
       "triggers": ["comment"],
       "actions": [
@@ -895,6 +899,7 @@ Feature: update meta alarm on action
     """json
     {
       "name": "test-scenario-action-correlation-4-name",
+      "priority": 10049,
       "enabled": true,
       "triggers": ["comment"],
       "actions": [

@@ -33,14 +33,14 @@ import {
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
   PBEHAVIOR_TYPE_TYPES,
-  SCENARIO_TRIGGERS,
+  TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
-  SERVICE_STATES,
+  SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -186,7 +186,6 @@ export default merge({
     id: 'Id',
     reset: 'Reset',
     selectColor: 'Select color',
-    triggers: 'Triggers',
     disableDuringPeriods: 'Disable during periods',
     retryDelay: 'Delay',
     retryUnit: 'Unit',
@@ -243,6 +242,7 @@ export default merge({
     criteria: 'Criteria',
     ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
+    activePbehavior: 'Active pbehavior | Active pbehaviors',
     searchBy: 'Search by',
     dictionary: 'Dictionary',
     condition: 'Condition | Conditions',
@@ -263,6 +263,8 @@ export default merge({
     acked: 'Acked',
     ackedAt: 'Acked at',
     ackedBy: 'Acked by',
+    ackMessage: 'Ack message',
+    ackInitiator: 'Ack initiator',
     resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
@@ -289,7 +291,11 @@ export default merge({
     alarmId: 'Alarm ID',
     longOutput: 'Long output',
     initialOutput: 'Initial output',
+    longInitialOutput: 'Long initial output',
+    timestamp: 'Timestamp',
+    trigger: 'Trigger | Triggers',
     initialLongOutput: 'Long initial output',
+    totalStateChanges: 'Total state changes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -427,85 +433,85 @@ export default merge({
       [EVENT_ENTITY_TYPES.comment]: 'Comment',
       [EVENT_ENTITY_TYPES.snooze]: 'Snooze',
     },
-    scenarioTriggers: {
-      [SCENARIO_TRIGGERS.create]: {
+    triggers: {
+      [TRIGGERS.create]: {
         text: 'Alarm creation',
       },
-      [SCENARIO_TRIGGERS.statedec]: {
+      [TRIGGERS.statedec]: {
         text: 'Alarm state decrease',
       },
-      [SCENARIO_TRIGGERS.changestate]: {
+      [TRIGGERS.changestate]: {
         text: 'Alarm state has been changed by "change state" action',
       },
-      [SCENARIO_TRIGGERS.stateinc]: {
+      [TRIGGERS.stateinc]: {
         text: 'Alarm state increase',
       },
-      [SCENARIO_TRIGGERS.changestatus]: {
+      [TRIGGERS.changestatus]: {
         text: 'Alarm status changes eg. flapping',
       },
-      [SCENARIO_TRIGGERS.ack]: {
+      [TRIGGERS.ack]: {
         text: 'Alarm has been acked',
       },
-      [SCENARIO_TRIGGERS.ackremove]: {
+      [TRIGGERS.ackremove]: {
         text: 'Alarm has been unacked',
       },
-      [SCENARIO_TRIGGERS.cancel]: {
+      [TRIGGERS.cancel]: {
         text: 'Alarm has been cancelled',
       },
-      [SCENARIO_TRIGGERS.uncancel]: {
+      [TRIGGERS.uncancel]: {
         text: 'Alarm has been uncancelled',
         helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
       },
-      [SCENARIO_TRIGGERS.comment]: {
+      [TRIGGERS.comment]: {
         text: 'Alarm has been commented',
       },
-      [SCENARIO_TRIGGERS.done]: {
+      [TRIGGERS.done]: {
         text: 'Alarm is "done"',
         helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
       },
-      [SCENARIO_TRIGGERS.declareticket]: {
+      [TRIGGERS.declareticket]: {
         text: 'Ticket has been declared by the UI action',
       },
-      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+      [TRIGGERS.declareticketwebhook]: {
         text: 'Ticket has been declared by the webhook',
       },
-      [SCENARIO_TRIGGERS.assocticket]: {
+      [TRIGGERS.assocticket]: {
         text: 'Ticket has been associated with an alarm',
       },
-      [SCENARIO_TRIGGERS.snooze]: {
+      [TRIGGERS.snooze]: {
         text: 'Alarm has been snoozed',
       },
-      [SCENARIO_TRIGGERS.unsnooze]: {
+      [TRIGGERS.unsnooze]: {
         text: 'Alarm has been unsnoozed',
       },
-      [SCENARIO_TRIGGERS.resolve]: {
+      [TRIGGERS.resolve]: {
         text: 'Alarm has been resolved',
       },
-      [SCENARIO_TRIGGERS.activate]: {
+      [TRIGGERS.activate]: {
         text: 'Alarm has been activated',
       },
-      [SCENARIO_TRIGGERS.pbhenter]: {
+      [TRIGGERS.pbhenter]: {
         text: 'Alarm enters a periodic behavior',
       },
-      [SCENARIO_TRIGGERS.pbhleave]: {
+      [TRIGGERS.pbhleave]: {
         text: 'Alarm leaves a periodic behavior',
       },
-      [SCENARIO_TRIGGERS.instructionfail]: {
+      [TRIGGERS.instructionfail]: {
         text: 'Manual instruction has failed',
       },
-      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+      [TRIGGERS.autoinstructionfail]: {
         text: 'Auto instruction has failed',
       },
-      [SCENARIO_TRIGGERS.instructionjobfail]: {
+      [TRIGGERS.instructionjobfail]: {
         text: 'Manual or auto instruction\'s job is failed',
       },
-      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+      [TRIGGERS.instructionjobcomplete]: {
         text: 'Manual or auto instruction\'s job is completed',
       },
-      [SCENARIO_TRIGGERS.instructioncomplete]: {
+      [TRIGGERS.instructioncomplete]: {
         text: 'Manual instruction is completed',
       },
-      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+      [TRIGGERS.autoinstructioncomplete]: {
         text: 'Auto instruction is completed',
       },
     },
@@ -604,6 +610,8 @@ export default merge({
     },
   },
   alarmList: {
+    alarmCreationDate: 'Alarm creation date',
+    alarmDisplayName: 'Alarm display name',
     actions: {
       titles: {
         ack: 'Ack',
@@ -621,8 +629,6 @@ export default merge({
         manualMetaAlarmGroup: 'Manual meta alarm management',
         manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
-        executeInstruction: 'Execute {instructionName}',
-        resumeInstruction: 'Resume {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -733,17 +739,9 @@ export default merge({
     moreInfos: 'More info',
   },
   pbehaviors: {
-    connector: 'Connector Type',
-    connectorName: 'Connector name',
     isEnabled: 'Is enabled',
     begins: 'Begins',
     ends: 'Ends',
-    type: 'Type',
-    reason: 'Reason',
-    rrule: 'Recurrence',
-    status: 'Status',
-    created: 'Creation date',
-    updated: 'Last update date',
     lastAlarmDate: 'Last alarm date',
     massRemove: 'Remove pbehaviors',
     massEnable: 'Enable pbehaviors',
@@ -832,6 +830,7 @@ export default merge({
     activeAlarmsColumns: 'Column names for active alarms',
     entitiesColumns: 'Context explorer columns',
     entityInfoPopup: 'Entity info popup',
+    modal: '(Modal)',
     exportCsv: {
       title: 'Export CSV',
       fields: {
@@ -867,9 +866,9 @@ export default merge({
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',
     blockTemplate: 'Template - Tile',
-    columnSM: 'Columns - Small',
-    columnMD: 'Columns - Medium',
-    columnLG: 'Columns - Large',
+    columnMobile: 'Columns - Mobile',
+    columnTablet: 'Columns - Tablet',
+    columnDesktop: 'Columns - Desktop',
     limit: 'Limit',
     height: 'Height',
     margin: {
@@ -915,6 +914,8 @@ export default merge({
       },
     },
     counters: 'Counters',
+    pbehaviorCounters: 'Pbehavior counters',
+    entityStateCounters: 'Entity states counters',
     remediationInstructionsFilters: 'Instructions filters',
     colorIndicator: {
       title: 'Color indicator',
@@ -1154,8 +1155,6 @@ export default merge({
     },
     createPause: {
       title: 'Create Pause event',
-      comment: 'Comment',
-      reason: 'Reason',
     },
     createAckRemove: {
       title: 'Remove ack',
@@ -1198,7 +1197,6 @@ export default merge({
       copyToClipboard: 'Copy to clipboard',
     },
     service: {
-      actionPending: 'action pending | actions pending',
       refreshEntities: 'Refresh entities list',
       editPbehaviors: 'Edit pbehaviors',
       entity: {
@@ -2230,12 +2228,14 @@ export default merge({
   serviceWeather: {
     seeAlarms: 'See alarms',
     grey: 'Gray',
+    hideGrey: 'Hide gray',
     primaryIcon: 'Primary icon',
     secondaryIcon: 'Secondary icon',
     massActions: 'Mass actions',
     cannotBeApplied: 'This action cannot be applied',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acknowledge',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Cancel acknowledge',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
@@ -2247,14 +2247,35 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Declare ticket',
     },
     iconTypes: {
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-
-      [SERVICE_STATES.ok]: 'Ok',
-      [SERVICE_STATES.minor]: 'Minor',
-      [SERVICE_STATES.major]: 'Major',
-      [SERVICE_STATES.critical]: 'Critical',
+      ok: 'Ok',
+      minorOrMajor: 'Minor or Major',
+      critical: 'Critical',
+    },
+    stateCounters: {
+      [SERVICE_WEATHER_STATE_COUNTERS.all]: 'Number of alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.active]: 'Number of active alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'Number of dependencies',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'Ok',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'Minor',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'Major',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'Critical',
+      [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'Acknowledged',
+      [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Not acknowledged',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Under PBh',
+      [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acknowledged under PBh',
+    },
+    stateCountersTooltips: {
+      [SERVICE_WEATHER_STATE_COUNTERS.all]: 'alarms total',
+      [SERVICE_WEATHER_STATE_COUNTERS.active]: 'active alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'dependencies',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'OK state',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'minor alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'major alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'critical alarms',
+      [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'alarms acked',
+      [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'not acked',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'under PBh',
+      [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'acked under PBh',
     },
   },
   contextGeneralTable: {
@@ -2316,6 +2337,12 @@ export default merge({
 
   pbehavior: {
     periodsCalendar: 'Calendar with periods',
+    notEditable: 'Cannot be modified',
+    pbehaviorInfo: 'Pbehavior info',
+    pbehaviorType: 'Pbehavior type',
+    pbehaviorReason: 'Pbehavior reason',
+    pbehaviorName: 'Pbehavior name',
+    pbehaviorCanonicalType: 'Pbehavior canonical type',
     buttons: {
       addFilter: 'Add filter',
       editFilter: 'Edit filter',
@@ -2502,6 +2529,9 @@ export default merge({
     type: 'Instruction type',
     approvalPending: 'Approval pending',
     needApprove: 'Approval is needed',
+    executeInstruction: 'Execute {instructionName}',
+    resumeInstruction: 'Resume {instructionName}',
+    inProgressInstruction: '{instructionName} in progress...',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
@@ -2594,7 +2624,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
-    executedAt: 'Executed at',
+    executedAt: 'Completed at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
@@ -2658,7 +2688,6 @@ export default merge({
   },
 
   scenario: {
-    triggers: 'Triggers',
     emitTrigger: 'Emit trigger',
     withAuth: 'Do you need auth fields?',
     emptyResponse: 'Empty response',
@@ -2721,6 +2750,10 @@ export default merge({
     },
   },
 
+  alarm: {
+    eventsCount: 'Events count',
+  },
+
   entity: {
     manageInfos: 'Manage Infos',
     form: 'Form',
@@ -2729,6 +2762,8 @@ export default merge({
     addInformation: 'Add Information',
     emptyInfos: 'No information',
     availabilityState: 'Hi availability state',
+    okEvents: 'OK events',
+    koEvents: 'KO events',
     types: {
       [ENTITY_TYPES.component]: 'Component',
       [ENTITY_TYPES.connector]: 'Connector',
@@ -2959,7 +2994,7 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Flapping rules',
-      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.', 
+      message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
@@ -3138,6 +3173,7 @@ export default merge({
     noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
     noDataDisabled: 'No pattern set.',
     discard: 'Discard pattern',
+    oldPatternTooltip: 'Filter patterns are not migrated',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -3150,11 +3186,8 @@ export default merge({
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
       existExcluded: 'The rules include excluded rule.',
+      required: 'At least one pattern has to be defined. Please define filter patterns for rule',
     },
-  },
-
-  filter: {
-    oldPattern: 'Old pattern format',
   },
 
   map: {

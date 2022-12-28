@@ -224,7 +224,7 @@ export const isEndOfDay = (date, unit = 'seconds') => {
  *
  * @param {LocalDate} date
  * @param {!string} [format = DATETIME_FORMATS.long]
- * @param {string} [defaultValue = '']
+ * @param {string | null} [defaultValue = '']
  * @return {string}
  */
 export const convertDateToString = (date, format = DATETIME_FORMATS.long, defaultValue = '') => {

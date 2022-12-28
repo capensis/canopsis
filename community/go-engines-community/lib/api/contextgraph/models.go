@@ -1,15 +1,16 @@
 package contextgraph
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 )
 
 const (
-	statusPending = "pending"
-	statusOngoing = "ongoing"
-	statusFailed  = "failed"
-	statusDone    = "done"
+	StatusPending = "pending"
+	StatusOngoing = "ongoing"
+	StatusFailed  = "failed"
+	StatusDone    = "done"
 )
 
 type ImportJob struct {
@@ -23,6 +24,7 @@ type ImportJob struct {
 	Stats importcontextgraph.Stats `bson:"stats" json:"stats"`
 
 	IsPartial bool `bson:"is_partial" json:"-"`
+	IsOld     bool `bson:"is_old" json:"-"`
 }
 
 type ImportResponse struct {

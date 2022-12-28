@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with default custom props 1`] = `
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with custom props 1`] = `
 <div
   class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
@@ -62,7 +62,7 @@ exports[`c-entity-state-field Renders \`c-entity-state-field\` with default cust
 </div>
 `;
 
-exports[`c-entity-state-field Renders \`c-entity-state-field\` with default custom props 2`] = `
+exports[`c-entity-state-field Renders \`c-entity-state-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"

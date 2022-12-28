@@ -12,16 +12,17 @@ const (
 	RecomputeLockKey                = "pbehavior-recompute-lock-key"
 	RecomputeLockDuration           = 10 * time.Second
 
-	ActionPeriodicalLockKey = "action-periodical-lock-key"
-	DelayedScenarioKey      = "delayed-scenario"
-	ScenarioExecutionKey    = "scenario-execution"
+	ActionPeriodicalLockKey    = "action-periodical-lock-key"
+	ActionDelayedScenarioKey   = "action-delayed-scenario"
+	ActionScenarioExecutionKey = "action-scenario-execution"
 
 	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
 	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
 
 	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
 
-	ChePeriodicalLockKey = "che-periodical-lock-key"
+	ChePeriodicalLockKey           = "che-periodical-lock-key"
+	CheSoftDeletePeriodicalLockKey = "che-soft-delete-periodical-lock-key"
 
 	ServicePeriodicalLockKey          = "service-periodical-lock"
 	ServiceIdleSincePeriodicalLockKey = "service-periodical-idle-since-lock"

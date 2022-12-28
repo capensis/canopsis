@@ -1,23 +1,22 @@
 <template lang="pug">
-  v-layout
-    v-flex.pr-1(xs5)
+  v-layout.date-time-splitted-range-picker-field(row)
+    v-flex.date-time-splitted-range-picker-field__start
       date-time-splitted-picker-field(
         v-validate="startRules",
         :value="start",
-        :fullDay="fullDay",
+        :full-day="fullDay",
         :disabled="disabled",
         :label="startLabel",
         :name="`${name}_start`",
         @input="$emit('update:start', $event)"
       )
     template(v-if="!noEnding")
-      v-flex.pr-1(xs2)
-        div.time-dash –
-      v-flex(xs5)
+      div.date-time-splitted-range-picker-field__time-dash –
+      v-flex.date-time-splitted-range-picker-field__end
         date-time-splitted-picker-field(
           v-validate="endRules",
           :value="end",
-          :fullDay="fullDay",
+          :full-day="fullDay",
           :disabled="disabled",
           :label="endLabel",
           :name="`${name}_end`",
@@ -89,10 +88,19 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.time-dash {
-  line-height: 68px;
-  padding: 0 8px;
-  text-align: center;
+<style lang="scss">
+$dashWidth: 26px;
+
+.date-time-splitted-range-picker-field {
+  &__time-dash {
+    width: $dashWidth;
+    line-height: 68px;
+    text-align: center;
+  }
+
+  &__start, &__end {
+    width: calc(50% - #{$dashWidth / 2});
+    max-width: calc(50% - #{$dashWidth / 2});
+  }
 }
 </style>
