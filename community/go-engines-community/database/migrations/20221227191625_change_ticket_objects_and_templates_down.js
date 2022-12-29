@@ -8,7 +8,29 @@ db.periodical_alarm.find({"v.tickets": {$exists: true}}).forEach(function (doc) 
             $unset: {
                 "v.tickets": "",
                 "v.ticket.ticket": "",
-                "v.ticket.ticket_data": ""
+                "v.ticket.ticket_data": "",
+                "v.ticket.ticket_url": "",
+            },
+            $set: {
+                "v.ticket.val": ticket.ticket,
+                "v.ticket.data": ticket.ticket_data,
+            }
+        }
+    )
+});
+
+db.resolved_alarms.find({"v.tickets": {$exists: true}}).forEach(function (doc) {
+    var ticket = doc.v.ticket
+    db.periodical_alarm.updateOne(
+        {
+            _id: doc._id
+        },
+        {
+            $unset: {
+                "v.tickets": "",
+                "v.ticket.ticket": "",
+                "v.ticket.ticket_data": "",
+                "v.ticket.ticket_url": "",
             },
             $set: {
                 "v.ticket.val": ticket.ticket,
@@ -20,12 +42,22 @@ db.periodical_alarm.find({"v.tickets": {$exists: true}}).forEach(function (doc) 
 
 db.widgets.updateMany(
     {
-        "type": "AlarmsList",
-        "parameters.widgetColumns.value": "v.ticket.ticket"
+        "$and": [
+            {
+                "type": "AlarmsList"
+            },
+            {
+                "$or": [
+                    {"parameters.widgetColumns.value": "v.ticket.ticket"},
+                    {"parameters.widgetGroupColumns.$[column].value": "v.ticket.ticket"}
+                ]
+            }
+        ]
     },
     {
         $set: {
-            "parameters.widgetColumns.$[column].value": "v.ticket.val"
+            "parameters.widgetColumns.$[column].value": "v.ticket.val",
+            "parameters.widgetGroupColumns.$[column].value": "v.ticket.val"
         }
     },
     {
@@ -44,7 +76,8 @@ db.widgets.updateMany(
     },
     {
         $set: {
-            "parameters.widgetColumns.$[column].value": "v.ticket.val"
+            "parameters.widgetColumns.$[column].value": "v.ticket.val",
+            "parameters.widgetGroupColumns.$[column].value": "v.ticket.val"
         }
     },
     {
@@ -67,13 +100,7 @@ db.widgets.find({"type": "ServiceWeather"}).forEach(function (doc) {
         set["parameters.entityTemplate"] = doc.parameters.entityTemplate.replace(/entity.ticket.ticket/g,'entity.ticket.val')
     }
 
-    if (typeof doc.parameters.blockTemplate === 'string') {
-        set["parameters.blockTemplate"] = doc.parameters.blockTemplate.replace(/entity.ticket.ticket/g,'entity.ticket.val')
-    }
-
-    if (set === {}) {
-        return
-    }
+    set["parameters.alarmsList.widgetColumns.$[column].value"] = "v.ticket.val"
 
     db.widgets.updateOne(
         {
@@ -81,6 +108,13 @@ db.widgets.find({"type": "ServiceWeather"}).forEach(function (doc) {
         },
         {
             $set: set
+        },
+        {
+            arrayFilters: [
+                {
+                    "column.value": "v.ticket.ticket"
+                }
+            ]
         }
     )
 });
@@ -119,8 +153,56 @@ db.idle_rule.find({"operation.parameters.output": {$exists: true}}).forEach(func
         },
         {
             $set: {
-                "operation.parameters.output": output.replace(/{{.Alarm.Value.Ticket.Ticket}}/g,'{{.Alarm.Value.Ticket.Value}}'),
+                "operation.parameters.output": output.replace(/.Alarm.Value.Ticket.Ticket/g,'.Alarm.Value.Ticket.Value'),
             }
         }
     )
 });
+
+db.widgets.updateMany(
+    {
+        "$and": [
+            {
+                "type": "Context"
+            },
+            {
+                "$or": [
+                    {"parameters.activeAlarmsColumns.value": "v.ticket.ticket"},
+                    {"parameters.resolvedAlarmsColumns.value": "v.ticket.ticket"}
+                ]
+            }
+        ]
+    },
+    {
+        $set: {
+            "parameters.activeAlarmsColumns.$[column].value": "v.ticket.val",
+            "parameters.resolvedAlarmsColumns.$[column].value": "v.ticket.val"
+        }
+    },
+    {
+        arrayFilters: [
+            {
+                "column.value": "v.ticket.ticket"
+            }
+        ]
+    }
+);
+
+db.widgets.updateMany(
+    {
+        "type": "Map",
+        "parameters.alarms_columns.value": "v.ticket.ticket"
+    },
+    {
+        $set: {
+            "parameters.alarms_columns.$[column].value": "v.ticket.val"
+        }
+    },
+    {
+        arrayFilters: [
+            {
+                "column.value": "v.ticket.ticket"
+            }
+        ]
+    }
+);
