@@ -239,14 +239,6 @@ func (s *baseService) applyAlarmRule(
 	event.SourceType = event.DetectSourceType()
 
 	event.Output = rule.Operation.Parameters.Output
-	event.TicketInfo = types.TicketInfo{
-		Ticket:           rule.Operation.Parameters.Ticket,
-		TicketRuleID:     rule.ID,
-		TicketRuleName:   types.TicketRuleNameRulePrefix + rule.Name,
-		TicketURL:        rule.Operation.Parameters.TicketURL,
-		TicketSystemName: rule.Operation.Parameters.TicketSystemName,
-		TicketData:       rule.Operation.Parameters.TicketData,
-	}
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}
@@ -260,6 +252,14 @@ func (s *baseService) applyAlarmRule(
 		event.EventType = types.EventTypeCancel
 	case types.ActionTypeAssocTicket:
 		event.EventType = types.EventTypeAssocTicket
+		event.TicketInfo = types.TicketInfo{
+			Ticket:           rule.Operation.Parameters.Ticket,
+			TicketRuleID:     rule.ID,
+			TicketRuleName:   types.TicketRuleNameRulePrefix + rule.Name,
+			TicketURL:        rule.Operation.Parameters.TicketURL,
+			TicketSystemName: rule.Operation.Parameters.TicketSystemName,
+			TicketData:       rule.Operation.Parameters.TicketData,
+		}
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
