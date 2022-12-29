@@ -32,6 +32,7 @@ type Task struct {
 	Step              int
 	ExecutionCacheKey string
 	ScenarioID        string
+	ScenarioName      string
 	AckResources      bool
 	Header            map[string]string
 	Response          map[string]interface{}
@@ -236,6 +237,8 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 			Ticket:           params.Ticket,
 			TicketURL:        params.TicketURL,
 			TicketSystemName: params.TicketSystemName,
+			TicketRuleName:   types.TicketRuleNameScenarioPrefix + task.ScenarioName,
+			TicketRuleID:     task.ScenarioID,
 			TicketData:       params.TicketData,
 		},
 		Duration:       params.Duration,
@@ -302,7 +305,8 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	webhookParams := rpc.WebhookParameters{
 		Request:       request,
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
-		Scenario:      task.ScenarioID,
+		ScenarioID:    task.ScenarioID,
+		ScenarioName:  task.ScenarioName,
 		Author:        additionalData.Author,
 		User:          additionalData.User,
 	}

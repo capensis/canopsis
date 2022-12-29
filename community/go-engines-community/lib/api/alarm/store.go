@@ -601,7 +601,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 	}
 
 	totalTicketPipeline := []bson.M{
-		{"$match": bson.M{"v.tickets": bson.M{"$exists": true}}},
+		{"$match": bson.M{"v.ticket": bson.M{"$exists": true}}},
 		{"$count": "count"},
 	}
 

@@ -13,6 +13,9 @@ const (
 	AlarmStepsHardLimit    = 2000
 )
 
+const TicketRuleNameScenarioPrefix = "Scenario: "
+const TicketRuleNameRulePrefix = "Rule: "
+
 // AlarmStep represents a generic step used in an alarm.
 type AlarmStep struct {
 	Type                   string      `bson:"_t" json:"_t"`

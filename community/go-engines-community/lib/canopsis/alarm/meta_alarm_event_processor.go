@@ -272,18 +272,16 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 	}
 
 	childEvent := types.Event{
-		EventType: event.EventType,
-		Timestamp: types.NewCpsTime(),
-		Output:    event.Parameters.Output,
-		Author:    event.Parameters.Author,
-		UserID:    event.Parameters.User,
-		Initiator: types.InitiatorSystem,
+		EventType:  event.EventType,
+		Timestamp:  types.NewCpsTime(),
+		Output:     event.Parameters.Output,
+		Author:     event.Parameters.Author,
+		UserID:     event.Parameters.User,
+		Initiator:  types.InitiatorSystem,
+		TicketInfo: event.Parameters.TicketInfo,
 	}
 
-	if eventRes.Alarm.Value.Ticket != nil {
-		childEvent.TicketInfo = eventRes.Alarm.Value.Ticket.TicketInfo
-		childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
-	}
+	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
 
 	if eventRes.AlarmChangeType == types.AlarmChangeTypeDeclareTicketWebhook {
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
