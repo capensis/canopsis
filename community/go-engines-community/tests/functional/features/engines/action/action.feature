@@ -6,6 +6,7 @@ Feature: execute action on trigger
     When I do POST /api/v4/scenarios:
     """json
     {
+      "_id": "test-scenario-action-1",
       "name": "test-scenario-action-1-name",
       "priority": 10002,
       "enabled": true,
@@ -127,6 +128,8 @@ Feature: execute action on trigger
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
                 "m": "test-scenario-action-1-action-1-ticket",
                 "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_rule_id": "test-scenario-action-1",
+                "ticket_rule_name": "Scenario: test-scenario-action-1-name",
                 "ticket_system_name": "test-scenario-action-1-action-1-system-name",
                 "ticket_url": "test-scenario-action-1-action-1-ticket-url",
                 "ticket_data": {
@@ -140,6 +143,8 @@ Feature: execute action on trigger
               "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
               "m": "test-scenario-action-1-action-1-ticket",
               "ticket": "test-scenario-action-1-action-1-ticket",
+              "ticket_rule_id": "test-scenario-action-1",
+              "ticket_rule_name": "Scenario: test-scenario-action-1-name",
               "ticket_system_name": "test-scenario-action-1-action-1-system-name",
               "ticket_url": "test-scenario-action-1-action-1-ticket-url",
               "ticket_data": {
@@ -167,6 +172,8 @@ Feature: execute action on trigger
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
                 "m": "test-scenario-action-1-action-1-ticket",
                 "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_rule_id": "test-scenario-action-1",
+                "ticket_rule_name": "Scenario: test-scenario-action-1-name",
                 "ticket_system_name": "test-scenario-action-1-action-1-system-name",
                 "ticket_url": "test-scenario-action-1-action-1-ticket-url",
                 "ticket_data": {
@@ -180,6 +187,8 @@ Feature: execute action on trigger
               "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
               "m": "test-scenario-action-1-action-1-ticket",
               "ticket": "test-scenario-action-1-action-1-ticket",
+              "ticket_rule_id": "test-scenario-action-1",
+              "ticket_rule_name": "Scenario: test-scenario-action-1-name",
               "ticket_system_name": "test-scenario-action-1-action-1-system-name",
               "ticket_url": "test-scenario-action-1-action-1-ticket-url",
               "ticket_data": {
@@ -246,6 +255,8 @@ Feature: execute action on trigger
                 "user_id": "",
                 "m": "test-scenario-action-1-action-1-ticket",
                 "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_rule_id": "test-scenario-action-1",
+                "ticket_rule_name": "Scenario: test-scenario-action-1-name",
                 "ticket_system_name": "test-scenario-action-1-action-1-system-name",
                 "ticket_url": "test-scenario-action-1-action-1-ticket-url",
                 "ticket_data": {
@@ -293,6 +304,8 @@ Feature: execute action on trigger
                 "user_id": "",
                 "m": "test-scenario-action-1-action-1-ticket",
                 "ticket": "test-scenario-action-1-action-1-ticket",
+                "ticket_rule_id": "test-scenario-action-1",
+                "ticket_rule_name": "Scenario: test-scenario-action-1-name",
                 "ticket_system_name": "test-scenario-action-1-action-1-system-name",
                 "ticket_url": "test-scenario-action-1-action-1-ticket-url",
                 "ticket_data": {
@@ -465,6 +478,7 @@ Feature: execute action on trigger
     When I do POST /api/v4/scenarios:
     """json
     {
+      "_id": "test-scenario-action-2",
       "name": "test-scenario-action-2-name",
       "priority": 10004,
       "enabled": true,
@@ -555,6 +569,8 @@ Feature: execute action on trigger
                 "a": "root",
                 "m": "test-scenario-action-2-action-1-ticket",
                 "ticket": "test-scenario-action-2-action-1-ticket",
+                "ticket_rule_id": "test-scenario-action-2",
+                "ticket_rule_name": "Scenario: test-scenario-action-2-name",
                 "ticket_system_name": "test-scenario-action-1-action-1-system-name",
                 "ticket_url": "test-scenario-action-1-action-1-ticket-url",
                 "ticket_data": {
@@ -568,6 +584,8 @@ Feature: execute action on trigger
               "a": "root",
               "m": "test-scenario-action-2-action-1-ticket",
               "ticket": "test-scenario-action-2-action-1-ticket",
+              "ticket_rule_id": "test-scenario-action-2",
+              "ticket_rule_name": "Scenario: test-scenario-action-2-name",
               "ticket_system_name": "test-scenario-action-1-action-1-system-name",
               "ticket_url": "test-scenario-action-1-action-1-ticket-url",
               "ticket_data": {
@@ -627,6 +645,8 @@ Feature: execute action on trigger
                 "a": "root",
                 "user_id": "root",
                 "ticket": "test-scenario-action-2-action-1-ticket",
+                "ticket_rule_id": "test-scenario-action-2",
+                "ticket_rule_name": "Scenario: test-scenario-action-2-name",
                 "ticket_system_name": "test-scenario-action-1-action-1-system-name",
                 "ticket_url": "test-scenario-action-1-action-1-ticket-url",
                 "ticket_data": {
@@ -658,6 +678,7 @@ Feature: execute action on trigger
     When I do POST /api/v4/scenarios:
     """json
     {
+      "_id": "test-scenario-action-3",
       "name": "test-scenario-action-3-name-1",
       "priority": 10005,
       "enabled": true,
@@ -754,6 +775,8 @@ Feature: execute action on trigger
                 "a": "system",
                 "m": "test-scenario-action-3-ticket",
                 "ticket": "test-scenario-action-3-ticket",
+                "ticket_rule_id": "test-scenario-action-3",
+                "ticket_rule_name": "Scenario: test-scenario-action-3-name-1",
                 "ticket_system_name": "test-scenario-action-3-system-name",
                 "ticket_url": "test-scenario-action-3-ticket-url",
                 "ticket_data": {
@@ -767,6 +790,8 @@ Feature: execute action on trigger
               "a": "system",
               "m": "test-scenario-action-3-ticket",
               "ticket": "test-scenario-action-3-ticket",
+              "ticket_rule_id": "test-scenario-action-3",
+              "ticket_rule_name": "Scenario: test-scenario-action-3-name-1",
               "ticket_system_name": "test-scenario-action-3-system-name",
               "ticket_url": "test-scenario-action-3-ticket-url",
               "ticket_data": {
@@ -826,6 +851,8 @@ Feature: execute action on trigger
                 "a": "system",
                 "user_id": "",
                 "ticket": "test-scenario-action-3-ticket",
+                "ticket_rule_id": "test-scenario-action-3",
+                "ticket_rule_name": "Scenario: test-scenario-action-3-name-1",
                 "ticket_system_name": "test-scenario-action-3-system-name",
                 "ticket_url": "test-scenario-action-3-ticket-url",
                 "ticket_data": {

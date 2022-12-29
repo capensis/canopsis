@@ -290,9 +290,7 @@ func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp Cp
 	}
 
 	a.Value.Tickets = append(a.Value.Tickets, newTicketStep)
-	a.Value.Ticket = &newTicketStep
 
-	a.AddUpdate("$set", bson.M{"v.ticket": newTicketStep})
 	a.AddUpdate("$push", bson.M{"v.tickets": newTicketStep, "v.steps": bson.M{"$each": bson.A{newStep, newTicketStep}}})
 
 	return nil
