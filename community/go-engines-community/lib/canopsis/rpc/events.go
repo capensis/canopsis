@@ -64,7 +64,8 @@ type WebhookEvent struct {
 type WebhookParameters struct {
 	Request       request.Parameters            `json:"request"`
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty"`
-	Scenario      string                        `json:"scenario"`
+	ScenarioID    string                        `json:"scenario_id"`
+	ScenarioName  string                        `json:"scenario_name"`
 	Author        string                        `json:"author"`
 	User          string                        `json:"user"`
 }
