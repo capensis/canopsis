@@ -3,9 +3,19 @@ db.periodical_alarm.find({"v.ticket": {$exists: true}}).forEach(function (doc) {
     var ticketNumber = ticket.val
     var ticketData = ticket.data
 
+    var set = {
+        "v.ticket.val": 0,
+        "v.ticket.ticket": ticketNumber,
+        "v.ticket.ticket_data": ticketData,
+    }
+
     ticket.val = 0
     ticket.ticket = ticketNumber
     ticket.ticket_data = ticketData
+    if (ticketData !== null && ticketData !== undefined && ticketData.url !== null && ticketData.url !== undefined) {
+        set["v.ticket.ticket_url"] = ticketData.url
+        ticket.ticket_url = ticketData.url
+    }
 
     delete ticket.data
 
@@ -17,11 +27,44 @@ db.periodical_alarm.find({"v.ticket": {$exists: true}}).forEach(function (doc) {
             $push: {
                 "v.tickets": ticket
             },
-            $set: {
-                "v.ticket.val": 0,
-                "v.ticket.ticket": ticketNumber,
-                "v.ticket.ticket_data": ticketData,
+            $set: set,
+            $unset: {
+                "v.ticket.data": ""
+            }
+        }
+    )
+});
+
+db.resolved_alarms.find({"v.ticket": {$exists: true}}).forEach(function (doc) {
+    var ticket = doc.v.ticket
+    var ticketNumber = ticket.val
+    var ticketData = ticket.data
+
+    var set = {
+        "v.ticket.val": 0,
+        "v.ticket.ticket": ticketNumber,
+        "v.ticket.ticket_data": ticketData,
+    }
+
+    ticket.val = 0
+    ticket.ticket = ticketNumber
+    ticket.ticket_data = ticketData
+    if (ticketData !== null && ticketData !== undefined && ticketData.url !== null && ticketData.url !== undefined) {
+        set["v.ticket.ticket_url"] = ticketData.url
+        ticket.ticket_url = ticketData.url
+    }
+
+    delete ticket.data
+
+    db.periodical_alarm.updateOne(
+        {
+            _id: doc._id
+        },
+        {
+            $push: {
+                "v.tickets": ticket
             },
+            $set: set,
             $unset: {
                 "v.ticket.data": ""
             }
@@ -31,12 +74,22 @@ db.periodical_alarm.find({"v.ticket": {$exists: true}}).forEach(function (doc) {
 
 db.widgets.updateMany(
     {
-        "type": "AlarmsList",
-        "parameters.widgetColumns.value": "v.ticket.val"
+        "$and": [
+            {
+                "type": "AlarmsList"
+            },
+            {
+                "$or": [
+                    {"parameters.widgetColumns.value": "v.ticket.val"},
+                    {"parameters.widgetGroupColumns.value": "v.ticket.val"}
+                ]
+            }
+        ]
     },
     {
         $set: {
-            "parameters.widgetColumns.$[column].value": "v.ticket.ticket"
+            "parameters.widgetColumns.$[column].value": "v.ticket.ticket",
+            "parameters.widgetGroupColumns.$[column].value": "v.ticket.ticket"
         }
     },
     {
@@ -59,13 +112,7 @@ db.widgets.find({"type": "ServiceWeather"}).forEach(function (doc) {
         set["parameters.entityTemplate"] = doc.parameters.entityTemplate.replace(/entity.ticket.val/g,'entity.ticket.ticket')
     }
 
-    if (typeof doc.parameters.blockTemplate === 'string') {
-        set["parameters.blockTemplate"] = doc.parameters.blockTemplate.replace(/entity.ticket.val/g,'entity.ticket.ticket')
-    }
-
-    if (set === {}) {
-        return
-    }
+    set["parameters.alarmsList.widgetColumns.$[column].value"] = "v.ticket.ticket"
 
     db.widgets.updateOne(
         {
@@ -73,6 +120,13 @@ db.widgets.find({"type": "ServiceWeather"}).forEach(function (doc) {
         },
         {
             $set: set
+        },
+        {
+            arrayFilters: [
+                {
+                    "column.value": "v.ticket.val"
+                }
+            ]
         }
     )
 });
@@ -111,8 +165,56 @@ db.idle_rule.find({"operation.parameters.output": {$exists: true}}).forEach(func
         },
         {
             $set: {
-                "operation.parameters.output": output.replace(/{{.Alarm.Value.Ticket.Value}}/g,'{{.Alarm.Value.Ticket.Ticket}}'),
+                "operation.parameters.output": output.replace(/.Alarm.Value.Ticket.Value/g,'.Alarm.Value.Ticket.Ticket'),
             }
         }
     )
 });
+
+db.widgets.updateMany(
+    {
+        "$and": [
+            {
+                "type": "Context"
+            },
+            {
+                "$or": [
+                    {"parameters.activeAlarmsColumns.value": "v.ticket.val"},
+                    {"parameters.resolvedAlarmsColumns.value": "v.ticket.val"}
+                ]
+            }
+        ]
+    },
+    {
+        $set: {
+            "parameters.activeAlarmsColumns.$[column].value": "v.ticket.ticket",
+            "parameters.resolvedAlarmsColumns.$[column].value": "v.ticket.ticket"
+        }
+    },
+    {
+        arrayFilters: [
+            {
+                "column.value": "v.ticket.val"
+            }
+        ]
+    }
+);
+
+db.widgets.updateMany(
+    {
+        "type": "Map",
+        "parameters.alarms_columns.value": "v.ticket.val"
+    },
+    {
+        $set: {
+            "parameters.alarms_columns.$[column].value": "v.ticket.ticket"
+        }
+    },
+    {
+        arrayFilters: [
+            {
+                "column.value": "v.ticket.val"
+            }
+        ]
+    }
+);
