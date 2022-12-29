@@ -241,6 +241,8 @@ func (s *baseService) applyAlarmRule(
 	event.Output = rule.Operation.Parameters.Output
 	event.TicketInfo = types.TicketInfo{
 		Ticket:           rule.Operation.Parameters.Ticket,
+		TicketRuleID:     rule.ID,
+		TicketRuleName:   types.TicketRuleNameRulePrefix + rule.Name,
 		TicketURL:        rule.Operation.Parameters.TicketURL,
 		TicketSystemName: rule.Operation.Parameters.TicketSystemName,
 		TicketData:       rule.Operation.Parameters.TicketData,
