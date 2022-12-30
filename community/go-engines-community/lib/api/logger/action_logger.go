@@ -63,6 +63,9 @@ const (
 	ValueTypeMap = "map"
 
 	ValueTypeShareToken = "sharetoken"
+
+	ValueTypeSnmpRule = "snmprule"
+	ValueTypeSnmpMib  = "snmpmib"
 )
 
 type ActionLogger interface {
