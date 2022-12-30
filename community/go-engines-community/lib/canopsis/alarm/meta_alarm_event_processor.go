@@ -215,9 +215,7 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 			Resource:      alarm.Alarm.Value.Resource,
 			Component:     alarm.Alarm.Value.Component,
 			Timestamp:     event.Timestamp,
-			Ticket:        event.Ticket,
-			TicketUrl:     event.TicketUrl,
-			TicketData:    event.TicketData,
+			TicketInfo:    event.TicketInfo,
 			Output:        event.Output,
 			LongOutput:    event.LongOutput,
 			Author:        event.Author,
@@ -254,11 +252,12 @@ func (p *metaAlarmEventProcessor) processParent(ctx context.Context, event types
 		Initiator:  types.InitiatorSystem,
 		Status:     event.Status,
 		State:      event.State,
-		Ticket:     event.Ticket,
-		TicketUrl:  event.TicketUrl,
-		TicketData: event.TicketData,
+		TicketInfo: event.TicketInfo,
 		Duration:   event.Duration,
 	}
+
+	childEvent.TicketInfo.TicketMetaAlarmID = event.Alarm.ID
+
 	err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
 	if err != nil {
 		return err
@@ -273,19 +272,19 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 	}
 
 	childEvent := types.Event{
-		EventType: event.EventType,
-		Timestamp: types.NewCpsTime(),
-		Output:    event.Parameters.Output,
-		Author:    event.Parameters.Author,
-		UserID:    event.Parameters.User,
-		Initiator: types.InitiatorSystem,
-		Ticket:    event.Parameters.Ticket,
+		EventType:  event.EventType,
+		Timestamp:  types.NewCpsTime(),
+		Output:     event.Parameters.Output,
+		Author:     event.Parameters.Author,
+		UserID:     event.Parameters.User,
+		Initiator:  types.InitiatorSystem,
+		TicketInfo: event.Parameters.TicketInfo,
 	}
+
+	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
+
 	if eventRes.AlarmChangeType == types.AlarmChangeTypeDeclareTicketWebhook {
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
-		childEvent.Ticket = eventRes.Alarm.Value.Ticket.Value
-		childEvent.TicketUrl = eventRes.Alarm.Value.Ticket.URL
-		childEvent.TicketData = eventRes.Alarm.Value.Ticket.Data
 	}
 
 	if event.Parameters.State != nil {
@@ -319,16 +318,6 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 		return nil
 	}
 
-	// todo retrieve output in better way
-	output := ""
-	for i := len(componentAlarm.Value.Steps) - 1; i >= 0; i-- {
-		step := componentAlarm.Value.Steps[i]
-		if step.Type == componentAlarm.Value.Ticket.Type {
-			output = step.Message
-			break
-		}
-	}
-
 	resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Alarm.Value.Component)
 	if err != nil {
 		return fmt.Errorf("cannot fetch alarms: %w", err)
@@ -346,10 +335,8 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 			Resource:      resource.Alarm.Value.Resource,
 			Component:     resource.Alarm.Value.Component,
 			Timestamp:     types.NewCpsTime(),
-			Output:        output,
-			Ticket:        componentAlarm.Value.Ticket.Value,
-			TicketUrl:     componentAlarm.Value.Ticket.URL,
-			TicketData:    componentAlarm.Value.Ticket.Data,
+			Output:        componentAlarm.Value.Ticket.Message,
+			TicketInfo:    componentAlarm.Value.Ticket.TicketInfo,
 			Author:        event.Parameters.Author,
 			UserID:        event.Parameters.User,
 			Initiator:     types.InitiatorSystem,

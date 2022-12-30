@@ -64,6 +64,7 @@ Feature: update meta alarm on action
     When I do POST /api/v4/scenarios:
     """json
     {
+      "_id": "test-scenario-action-correlation-1",
       "name": "test-scenario-action-correlation-1-name",
       "priority": 10045,
       "enabled": true,
@@ -84,7 +85,13 @@ Feature: update meta alarm on action
           "type": "assocticket",
           "parameters": {
             "output": "test-output-action-correlation-1-{{ `{{ .Alarm.Value.Connector }}` }}",
-            "ticket": "test-ticket-action-correlation-1"
+            "ticket": "test-ticket-action-correlation-1",
+            "ticket_system_name": "test-system-name-action-correlation-1",
+            "ticket_url": "test-ticket-url-action-correlation-1",
+            "ticket_data": {
+              "ticket_param_1": "ticket_value_1",
+              "ticket_param_2": "ticket_value_2"
+            }
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -244,7 +251,16 @@ Feature: update meta alarm on action
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket-action-correlation-1"
+                "m": "test-ticket-action-correlation-1",
+                "ticket": "test-ticket-action-correlation-1",
+                "ticket_rule_id": "test-scenario-action-correlation-1",
+                "ticket_rule_name": "Scenario: test-scenario-action-correlation-1-name",
+                "ticket_system_name": "test-system-name-action-correlation-1",
+                "ticket_url": "test-ticket-url-action-correlation-1",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
@@ -284,7 +300,17 @@ Feature: update meta alarm on action
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket-action-correlation-1"
+                "m": "test-ticket-action-correlation-1",
+                "ticket": "test-ticket-action-correlation-1",
+                "ticket_rule_id": "test-scenario-action-correlation-1",
+                "ticket_rule_name": "Scenario: test-scenario-action-correlation-1-name",
+                "ticket_system_name": "test-system-name-action-correlation-1",
+                "ticket_url": "test-ticket-url-action-correlation-1",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1",
+                  "ticket_param_2": "ticket_value_2"
+                }
               },
               {
                 "_t": "ack",
@@ -381,6 +407,7 @@ Feature: update meta alarm on action
     When I do POST /api/v4/scenarios:
     """json
     {
+      "_id": "test-scenario-action-correlation-2",
       "name": "test-scenario-action-correlation-2-name",
       "priority": 10046,
       "enabled": true,
@@ -526,10 +553,25 @@ Feature: update meta alarm on action
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
                   "resource": "test-resource-action-correlation-2-1",
+                  "tickets": [
+                    {
+                      "_t": "declareticket",
+                      "ticket": "testticket",
+                      "ticket_rule_id": "test-scenario-action-correlation-2",
+                      "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
+                      "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                      "ticket_data": {
+                        "ticket_data": "testdata"
+                      }
+                    }
+                  ],
                   "ticket": {
                     "_t": "declareticket",
-                    "val": "testticket",
-                    "data": {
+                    "ticket": "testticket",
+                    "ticket_rule_id": "test-scenario-action-correlation-2",
+                    "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
+                    "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                    "ticket_data": {
                       "ticket_data": "testdata"
                     }
                   }
@@ -541,10 +583,25 @@ Feature: update meta alarm on action
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
                   "resource": "test-resource-action-correlation-2-2",
+                  "tickets": [
+                    {
+                      "_t": "declareticket",
+                      "ticket": "testticket",
+                      "ticket_rule_id": "test-scenario-action-correlation-2",
+                      "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
+                      "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                      "ticket_data": {
+                        "ticket_data": "testdata"
+                      }
+                    }
+                  ],
                   "ticket": {
                     "_t": "declareticket",
-                    "val": "testticket",
-                    "data": {
+                    "ticket": "testticket",
+                    "ticket_rule_id": "test-scenario-action-correlation-2",
+                    "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
+                    "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                    "ticket_data": {
                       "ticket_data": "testdata"
                     }
                   }
@@ -556,10 +613,25 @@ Feature: update meta alarm on action
                   "connector": "test-connector-action-correlation-2",
                   "connector_name": "test-connector-name-action-correlation-2",
                   "resource": "test-resource-action-correlation-2-3",
+                  "tickets": [
+                    {
+                      "_t": "declareticket",
+                      "ticket": "testticket",
+                      "ticket_rule_id": "test-scenario-action-correlation-2",
+                      "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
+                      "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                      "ticket_data": {
+                        "ticket_data": "testdata"
+                      }
+                    }
+                  ],
                   "ticket": {
                     "_t": "declareticket",
-                    "val": "testticket",
-                    "data": {
+                    "ticket": "testticket",
+                    "ticket_rule_id": "test-scenario-action-correlation-2",
+                    "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
+                    "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                    "ticket_data": {
                       "ticket_data": "testdata"
                     }
                   }

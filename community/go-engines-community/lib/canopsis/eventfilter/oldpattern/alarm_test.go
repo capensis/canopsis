@@ -1,13 +1,14 @@
 package oldpattern_test
 
 import (
+	"reflect"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
-	"reflect"
-	"testing"
 )
 
 type alarmPatternWrapper struct {
@@ -180,10 +181,22 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					Status: &types.AlarmStep{
 						Type: "test6",
 					},
-					Ticket: &types.AlarmTicket{
+					Tickets: []types.AlarmStep{
+						{
+							Type: "test7",
+							TicketInfo: types.TicketInfo{
+								TicketData: map[string]string{
+									"priority_id": "2 - Critical",
+								},
+							},
+						},
+					},
+					Ticket: &types.AlarmStep{
 						Type: "test7",
-						Data: map[string]string{
-							"priority_id": "2 - Critical",
+						TicketInfo: types.TicketInfo{
+							TicketData: map[string]string{
+								"priority_id": "2 - Critical",
+							},
 						},
 					},
 					Component:                     "test8",
@@ -229,7 +242,12 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					Status: &types.AlarmStep{
 						Type: "test6",
 					},
-					Ticket: &types.AlarmTicket{
+					Tickets: []types.AlarmStep{
+						{
+							Type: "test7",
+						},
+					},
+					Ticket: &types.AlarmStep{
 						Type: "test7",
 					},
 					Component:                     "test8",
