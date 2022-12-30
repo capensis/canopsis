@@ -1,61 +1,65 @@
 # Currently, both Core and CAT required Python modules must be maintained
 # in this file.
 #
-# Use '==' whenever possible. Only Python 2.7 compatible modules are
-# allowed. Put indirect dependencies whenever possible, too.
+# Use '==' whenever possible. Python 3 compatible modules are introduced
+# since Canopsis 22.10. Put indirect dependencies whenever possible, too.
 #
 
 #
 # Direct dependencies.
 #
 amqp==2.4.2
-Beaker==1.5.4
+autopep8==1.7.0
+# 22.10 pip3 can't find Beaker==1.5.4
 bottle==0.12.18
 bottle-swagger-2==2.0.9
 configparser==3.5.3
 coverage==4.5.4
+dnspython==2.2.1
 durationpy==0.5
 enum34==1.1.10
 Flask==1.0.2
 Flask-RESTful==0.3.6
-functools32==3.2.3-2
-gevent==1.2.2
-# XXX: try this small update?
-#gevent==1.3.7
+# 22.10 pip3 installation error functools32==3.2.3-2
+gevent==22.10.2
 # "development of grako has stopped"
 grako==3.99.9
 # Python 2 support dropped with 20.0
-gunicorn==19.7.1
-# XXX: try this small update?
-#gunicorn==19.10.0
+gunicorn==20.1.0
 icalendar==4.0.7
 ijson==2.3
 jsonschema==2.6.0
 kombu==4.1.0
-lxml==4.2.6
+# 22.10 remove lxml==4.2.6
 mock==2.0.0
 montydb==2.1.1
-pika==0.11.2
+pika==1.3.1
 # kpi engine (CAT)
 psycopg2==2.8.4
+pycodestyle==2.9.1
 # patched for CentOS 7 compatibility. See canopsis#1791
-pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
+# pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
+# TODO: test pybars3 with centos 7 according with mentioned above
+pybars3==0.9.7
+PyMeta3==0.5.1
 # MongoDB supported versions 2.6, 3.0, 3.2, 3.4, 3.6, 4.0, 4.2, and 4.4
-pymongo==3.11.4
+pymongo==4.3.2
 # math_parser.py
 pyparsing==2.2.2
-python-ldap==2.5.2
+# 22.10 pip3 installation error python-ldap==2.5.2
 # saml2 auth (CAT)
-python3-saml==1.4.1
+# 22.10 python3-saml==1.4.1
 # CentOS doesn't have it by default, and it shouldn't be too outdated
-pytz==2020.1
+pytz==2022.4
 redis==2.10.6
 redlock-py==1.0.8
 requests==2.18.4
 Routes==2.4.1
 setuptools_cython==0.2.1
 six==1.11.0
+toml==0.10.2
 unittest-xml-reporting==2.1.1
+urlparse3==1.1
 # deprecated since 2018, code should use jsonschema
 validictory==1.1.2
 
@@ -78,7 +82,8 @@ Cython==0.29.21
 defusedxml==0.5.0
 funcsigs==1.0.2
 future==0.18.2
-greenlet==0.4.17
+# 22.10 incompativle version greenlet==0.4.17
+greenlet==2.0.1
 # requests 2.18.4 wants 2.5 or 2.6
 idna==2.6
 ipaddress==1.0.23
