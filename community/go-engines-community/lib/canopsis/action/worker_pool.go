@@ -241,7 +241,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	var err error
 	params.Output, err = s.templateExecutor.Execute(params.Output, tplData)
 	if err != nil {
-		return nil, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+		return nil, fmt.Errorf("cannot render output template scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	additionalData, err := s.resolveAuthor(task)
@@ -320,18 +320,18 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	request := *task.Action.Parameters.Request
 	request.URL, err = s.templateExecutor.Execute(request.URL, tplData)
 	if err != nil {
-		return nil, false, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+		return nil, false, fmt.Errorf("cannot render request url template scenario=%s: %w", task.ScenarioID, err)
 	}
 	request.Payload, err = s.templateExecutor.Execute(request.Payload, tplData)
 	if err != nil {
-		return nil, false, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+		return nil, false, fmt.Errorf("cannot render request payload template scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	headers := make(map[string]string, len(request.Headers))
 	for k, v := range request.Headers {
 		headers[k], err = s.templateExecutor.Execute(v, tplData)
 		if err != nil {
-			return nil, false, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+			return nil, false, fmt.Errorf("cannot render request header %q template scenario=%s: %w", k, task.ScenarioID, err)
 		}
 	}
 	request.Headers = headers
@@ -391,7 +391,7 @@ func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {
 		Entity: task.Entity,
 	})
 	if err != nil {
-		return additionalData, fmt.Errorf("cannot render template scenario=%s: %w", task.ScenarioID, err)
+		return additionalData, fmt.Errorf("cannot render author template scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	return additionalData, nil
