@@ -72,10 +72,19 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "data": {
+              "ticket_data": {
                 "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
               }
             },
@@ -94,7 +103,7 @@ Feature: execute action on trigger
       }
     }
     """
-    When I save response ticketID={{ (index .lastResponse.data 0).v.ticket.val }}
+    When I save response ticketID={{ (index (index .lastResponse.data 0).v.tickets 0).ticket }}
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -238,10 +247,19 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-webhook-2 test-resource-action-webhook-2"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "data": {
+              "ticket_data": {
                 "scenario_name": "test-scenario-action-webhook-2 test-resource-action-webhook-2"
               }
             },
@@ -263,7 +281,7 @@ Feature: execute action on trigger
       }
     }
     """
-    When I save response ticketID={{ (index .lastResponse.data 0).v.ticket.val }}
+    When I save response ticketID={{ (index (index .lastResponse.data 0).v.tickets 0).ticket }}
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -643,32 +661,28 @@ Feature: execute action on trigger
     """
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-6
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response array key "data.0.v.tickets" should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket",
-              "data": {
-                "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
-              }
-            },
-            "connector": "test-connector-action-webhook-6",
-            "connector_name": "test-connector-name-action-webhook-6",
-            "component": "test-component-action-webhook-6",
-            "resource": "test-resource-action-webhook-6"
-          }
+    [
+      {
+        "_t": "declareticket",
+        "ticket_data": {
+          "scenario_name": "test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root]"
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
+      },
+      {
+        "_t": "declareticket",
+        "ticket_data": {
+          "scenario_name_2": "test-scenario-action-webhook-6-1-action-2 [declareticketwebhook] [system] [user] []"
+        }
+      },
+      {
+        "_t": "declareticket",
+        "ticket_data": {
+          "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
+        }
       }
-    }
+    ]
     """
     When I do POST /api/v4/alarm-details:
     """json
@@ -1280,11 +1294,21 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "ticket": "test3",
+                "ticket_data": {
+                  "test_val": "test1"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "val": "test3",
-              "data": {
+              "ticket": "test3",
+              "ticket_data": {
                 "test_val": "test1"
               }
             },
@@ -1507,11 +1531,21 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "ticket": "test3",
+                "ticket_data": {
+                  "test_val": "test1"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "val": "test3",
-              "data": {
+              "ticket": "test3",
+              "ticket_data": {
                 "test_val": "test1"
               }
             },

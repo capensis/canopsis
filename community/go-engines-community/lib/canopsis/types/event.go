@@ -167,18 +167,16 @@ type Event struct {
 	// AckResources is used to ack all resource alarms on ack component alarm.
 	// It also adds declare ticket to all resource alarms on ack webhook.
 	// It's still used by some old users but meta alarms must be used instead.
-	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
+	AckResources bool                   `json:"ack_resources"`
+	Duration     CpsNumber              `json:"duration"`
+	StatName     string                 `bson:"stat_name" json:"stat_name"`
+	Debug        bool                   `bson:"debug" json:"debug"`
+	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
+	ExtraInfos   map[string]interface{} `json:"extra"`
+	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
 
-	Ticket     string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketUrl  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
-
-	Duration    CpsNumber              `json:"duration"`
-	StatName    string                 `bson:"stat_name" json:"stat_name"`
-	Debug       bool                   `bson:"debug" json:"debug"`
-	Role        string                 `bson:"role,omitempty" json:"role,omitempty"`
-	ExtraInfos  map[string]interface{} `json:"extra"`
-	AlarmChange *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+	// Ticket related fields
+	TicketInfo `bson:",inline"`
 
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`

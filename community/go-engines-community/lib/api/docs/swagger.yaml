@@ -4086,7 +4086,13 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "ticket": ""
+                  "ticket": "ENV-116",
+                  "ticket_url": "https://%ticket_url%",
+                  "ticket_system_name": "Jira Helpdesk",
+                  "ticket_data": {
+                    "key_1": "value_1",
+                    "key_2": "value_2"
+                  }
                 }
               declareticket:
                 summary: Declare ticket
@@ -7838,7 +7844,13 @@ paths:
                       "type": "assocticket",
                       "parameters": {
                         "output": "The ticket is added to the alarm by scenario",
-                        "ticket": "ENV-116"
+                        "ticket": "ENV-116",
+                        "ticket_url": "https://%ticket_url%",
+                        "ticket_system_name": "Jira Helpdesk",
+                        "ticket_data": {
+                          "key_1": "value_1",
+                          "key_2": "value_2"
+                        }
                       },
                       "alarm_pattern": [
                         [
@@ -8330,7 +8342,13 @@ paths:
                       "type": "assocticket",
                       "parameters": {
                         "output": "The ticket is added to the alarm by scenario",
-                        "ticket": "ENV-116"
+                        "ticket": "ENV-116",
+                        "ticket_url": "https://%ticket_url%",
+                        "ticket_system_name": "Jira Helpdesk",
+                        "ticket_data": {
+                          "key_1": "value_1",
+                          "key_2": "value_2"
+                        }
                       },
                       "alarm_pattern": [
                         [
