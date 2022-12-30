@@ -264,4 +264,7 @@ type AlarmStep struct {
 	Initiator    string             `bson:"initiator" json:"initiator"`
 	Execution    string             `bson:"exec,omitempty" json:"-"`
 	StateCounter *types.CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
+
+	// Ticket related fields
+	types.TicketInfo `bson:",inline"`
 }

@@ -94,10 +94,21 @@ definitions:
             * `2` - Major
             * `3` - Critical
         type: integer
-      system_name:
-        type: string
       ticket:
         description: Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        description: TicketData is used in assocticket action.
+        type: object
+      ticket_system_name:
+        description: TicketSystemName is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url:
+        description: TicketURL is used in assocticket action.
         maxLength: 255
         type: string
       tstart:
@@ -187,25 +198,6 @@ definitions:
       v:
         $ref: '#/definitions/alarm.AlarmValue'
     type: object
-  alarm.AlarmTicket:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      data:
-        additionalProperties:
-          type: string
-        type: object
-      m:
-        type: string
-      t:
-        type: integer
-      user_id:
-        type: string
-      val:
-        type: string
-    type: object
   alarm.AlarmValue:
     properties:
       ack:
@@ -294,7 +286,11 @@ definitions:
           $ref: '#/definitions/common.AlarmStep'
         type: array
       ticket:
-        $ref: '#/definitions/alarm.AlarmTicket'
+        $ref: '#/definitions/common.AlarmStep'
+      tickets:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
       total_state_changes:
         type: integer
     type: object
@@ -706,6 +702,24 @@ definitions:
         $ref: '#/definitions/types.CropCounter'
       t:
         type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
       user_id:
         type: string
       val:
@@ -3777,7 +3791,11 @@ definitions:
           type: string
         type: array
       ticket:
-        $ref: '#/definitions/alarm.AlarmTicket'
+        $ref: '#/definitions/common.AlarmStep'
+      tickets:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
     type: object
   serviceweather.Info:
     properties:
