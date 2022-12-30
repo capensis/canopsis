@@ -12,9 +12,7 @@ type OperationParameters struct {
 	Author string `bson:"author,omitempty" json:"author,omitempty"`
 	User   string `bson:"user,omitempty" json:"user,omitempty"`
 	// AssocTicket and Webhook
-	Ticket     string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	TicketUrl  string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
-	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+	TicketInfo `bson:",inline"`
 	// Webhook
 	DeclareTicket        bool `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
 	DeclareTicketRequest bool `bson:"declare_ticket_request,omitempty" json:"declare_ticket_request,omitempty"`

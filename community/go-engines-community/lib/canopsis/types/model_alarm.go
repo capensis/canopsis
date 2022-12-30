@@ -142,29 +142,20 @@ func (a *Alarm) CropSteps() bool {
 
 // GetAppliedActions fetches applied to alarm actions: ACK, Snooze, AssocTicket, DeclareTicket
 // Result is in a sorted by timestamp AlarmSteps, ticket data when defined
-func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
+func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	steps = make([]AlarmStep, 0, 3)
 
 	if a.Value.ACK != nil {
 		steps = append(steps, *a.Value.ACK)
 	}
-	if ticket = a.Value.Ticket; ticket != nil {
-		// todo find better way to retrieve output
-		output := ""
-		for i := len(a.Value.Steps) - 1; i >= 0; i-- {
-			step := a.Value.Steps[i]
-			if step.Type == ticket.Type {
-				output = step.Message
-				break
-			}
-		}
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, output, ticket.UserID, ticket.Role, ""))
+	if len(a.Value.Tickets) > 0 {
+		steps = append(steps, a.Value.Tickets...)
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
 	}
 	sort.Sort(ByTimestamp{steps})
-	return steps, ticket
+	return steps
 }
 
 // CurrentState returns the Current State of the Alarm

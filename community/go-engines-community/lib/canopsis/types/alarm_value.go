@@ -13,6 +13,9 @@ const (
 	AlarmStepsHardLimit    = 2000
 )
 
+const TicketRuleNameScenarioPrefix = "Scenario: "
+const TicketRuleNameRulePrefix = "Rule: "
+
 // AlarmStep represents a generic step used in an alarm.
 type AlarmStep struct {
 	Type                   string      `bson:"_t" json:"_t"`
@@ -27,6 +30,19 @@ type AlarmStep struct {
 	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
 	// Execution contains id if instruction execution for instruction steps only.
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
+
+	TicketInfo `bson:",inline"`
+}
+
+type TicketInfo struct {
+	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
+	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
+	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketRuleID      string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
+	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
+	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 }
 
 // NewAlarmStep returns an AlarmStep.
@@ -154,7 +170,7 @@ func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, boo
 		if step.Type == AlarmStepStateIncrease || step.Type == AlarmStepStateDecrease {
 			nbStepsToCrop += 1
 		}
-		if step == *currentStatus {
+		if step.Type == currentStatus.Type && step.Timestamp.Time.Equal(currentStatus.Timestamp.Time) {
 			currentStatusIdx = i
 		}
 	}
@@ -318,15 +334,17 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
-	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
-	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
-	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
-	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps       AlarmSteps   `bson:"steps" json:"steps"`
+	ACK         *AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Done        *AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
+	Snooze      *AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
+	// Ticket contains the last created ticket
+	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps  AlarmSteps `bson:"steps" json:"steps"`
 
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
@@ -387,32 +405,10 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-// AlarmTicket step is distinct from generic alarm step because value is a string
-// TODO: move string value to message (and in py and js too)
-type AlarmTicket struct {
-	Type      string  `bson:"_t" json:"_t"`
-	Timestamp CpsTime `bson:"t" json:"t"`
-	Author    string  `bson:"a" json:"a"`
-	UserID    string  `bson:"user_id" json:"user_id"`
-	Message   string  `bson:"m" json:"m"`
-	Role      string  `bson:"role,omitempty" json:"role,omitempty"`
-	Value     string  `bson:"val" json:"val"`
-	URL       string  `bson:"url" json:"url"`
-	Data      map[string]string
-}
+func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
+	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 
-// NewTicket creates a Ticket Step from a normal step
-// TODO: annihilate this heresy (Ticket has a distinct format from other classical steps !)
-func (s AlarmStep) NewTicket(value, url string, data map[string]string) AlarmTicket {
-	return AlarmTicket{
-		Author:    s.Author,
-		Message:   value,
-		Timestamp: s.Timestamp,
-		Type:      s.Type,
-		UserID:    s.UserID,
-		Value:     value,
-		Data:      data,
-		Role:      s.Role,
-		URL:       url,
-	}
+	s.TicketInfo = ticketInfo
+
+	return s
 }
