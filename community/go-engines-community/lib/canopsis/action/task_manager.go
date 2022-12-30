@@ -150,6 +150,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						Step:              step,
 						ExecutionCacheKey: execution.GetCacheKey(),
 						ScenarioID:        execution.ScenarioID,
+						ScenarioName:      execution.ScenarioName,
 						AckResources:      execution.AckResources,
 						Header:            execution.Header,
 						Response:          execution.Response,
@@ -416,6 +417,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Step:              nextStep,
 			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
 			ScenarioID:        scenarioExecution.ScenarioID,
+			ScenarioName:      scenarioExecution.ScenarioName,
 			AckResources:      scenarioExecution.AckResources,
 			Header:            scenarioExecution.Header,
 			Response:          scenarioExecution.Response,
@@ -529,6 +531,7 @@ func (e *redisBasedManager) startExecution(
 	execution := ScenarioExecution{
 		ID:               utils.NewID(),
 		ScenarioID:       scenario.ID,
+		ScenarioName:     scenario.Name,
 		AlarmID:          alarm.ID,
 		Entity:           entity,
 		ActionExecutions: executions,
@@ -555,6 +558,7 @@ func (e *redisBasedManager) startExecution(
 		Step:              0,
 		ExecutionCacheKey: execution.GetCacheKey(),
 		ScenarioID:        scenario.ID,
+		ScenarioName:      scenario.Name,
 		AckResources:      ackResources,
 		AdditionalData:    data,
 	}
