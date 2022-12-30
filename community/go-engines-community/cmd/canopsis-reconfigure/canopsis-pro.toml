@@ -259,6 +259,8 @@ UploadMaxSize = 314572800 # 300Mb
 Junit = "/opt/canopsis/var/lib/junit-files"
 # Temporary local storage for Junit data which are uploaded by API.
 JunitApi = "/tmp/canopsis/junit"
+# Paths to SNMP MIB modules fetched by API
+SnmpMib = ["/usr/share/snmp/mibs", "/usr/share/snmp/mibs/ietf", "/usr/share/snmp/mibs/iana"]
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]

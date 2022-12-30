@@ -21,11 +21,11 @@ apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install \
     libxmlsec1-openssl \
     libldap2-dev \
     pkg-config \
-    python2.7-dev \
-    python-pip \
+    python3-dev \
+    python3-pip \
     python-pkg-resources \
-    python-virtualenv \
-    python-wheel \
+    python3-virtualenv \
+    python-pip-whl \
     virtualenv \
     net-tools \
     procps

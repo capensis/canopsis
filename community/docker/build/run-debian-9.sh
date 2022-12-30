@@ -54,7 +54,7 @@ apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install \
     libxmlsec1-openssl \
     libldap-2.4-2 \
     python \
-    python2.7 \
+    python3 \
     procps \
     rsync \
     snmp \
