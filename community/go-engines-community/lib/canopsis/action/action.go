@@ -71,6 +71,12 @@ type Parameters struct {
 	State *types.CpsNumber `json:"state,omitempty" bson:"state,omitempty"`
 	// Ticket is used in assocticket action.
 	Ticket string `json:"ticket,omitempty" binding:"max=255" bson:"ticket,omitempty"`
+	// TicketURL is used in assocticket action.
+	TicketURL string `json:"ticket_url,omitempty" binding:"max=255" bson:"ticket_url,omitempty"`
+	// TicketSystemName is used in assocticket action.
+	TicketSystemName string `json:"ticket_system_name,omitempty" binding:"max=255" bson:"ticket_system_name,omitempty"`
+	// TicketData is used in assocticket action.
+	TicketData map[string]string `json:"ticket_data,omitempty" bson:"ticket_data,omitempty"`
 	// Duration is used in snooze and pbehavior actions.
 	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration,omitempty"`
 	// Name is used in pbehavior action.
@@ -92,5 +98,4 @@ type Parameters struct {
 	SkipForChild *bool               `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
 	// DeclareTicket is used in webhook action.
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
-	SystemName    string                        `json:"system_name,omitempty" bson:"system_name,omitempty"`
 }

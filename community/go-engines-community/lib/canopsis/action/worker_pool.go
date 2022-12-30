@@ -38,6 +38,7 @@ type Task struct {
 	ExecutionCacheKey string
 	ExecutionID       string
 	ScenarioID        string
+	ScenarioName      string
 	SkipForChild      bool
 	Header            map[string]string
 	Response          map[string]interface{}
@@ -250,11 +251,18 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	}
 
 	axeParams := rpc.AxeParameters{
-		Output:         params.Output,
-		Author:         additionalData.Author,
-		User:           additionalData.User,
-		State:          params.State,
-		Ticket:         params.Ticket,
+		Output: params.Output,
+		Author: additionalData.Author,
+		User:   additionalData.User,
+		State:  params.State,
+		TicketInfo: types.TicketInfo{
+			Ticket:           params.Ticket,
+			TicketURL:        params.TicketURL,
+			TicketSystemName: params.TicketSystemName,
+			TicketRuleName:   types.TicketRuleNameScenarioPrefix + task.ScenarioName,
+			TicketRuleID:     task.ScenarioID,
+			TicketData:       params.TicketData,
+		},
 		Duration:       params.Duration,
 		Name:           params.Name,
 		Reason:         params.Reason,
