@@ -2,48 +2,18 @@ package bdd
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
 func RunDummyHttpServer(ctx context.Context, addr string) error {
 	mux := http.NewServeMux()
 	dummyRoutes := getDummyRoutes(addr)
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		response, ok := dummyRoutes[r.URL.Path]
-		if !ok {
-			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
-			return
-		}
-
-		if response.Timeout > 0 {
-			time.Sleep(response.Timeout)
-		}
-
-		if response.Method != r.Method {
-			http.Error(w, r.Method, http.StatusNotFound)
-			return
-		}
-
-		if response.Code != http.StatusOK && response.Code != http.StatusNoContent {
-			http.Error(w, response.Body, response.Code)
-			return
-		}
-
-		for k, v := range response.Headers {
-			w.Header().Set(k, v)
-		}
-
-		w.WriteHeader(response.Code)
-
-		if response.Body != "" {
-			_, err := fmt.Fprintf(w, response.Body)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-		}
-	})
+	mux.HandleFunc("/", dummyHandler(dummyRoutes))
 
 	server := &http.Server{
 		Addr:    addr,
@@ -70,12 +40,84 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 	return nil
 }
 
+func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		response, ok := dummyRoutes[r.URL.Path]
+		if !ok {
+			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
+			return
+		}
+
+		if response.Method != r.Method {
+			http.Error(w, r.Method, http.StatusNotFound)
+			return
+		}
+
+		if response.Code != http.StatusOK && response.Code != http.StatusNoContent {
+			http.Error(w, response.Body, response.Code)
+			return
+		}
+
+		if response.Username != "" && response.Password != "" {
+			header := r.Header.Get(headerAuthorization)
+			if len(header) <= len(basicPrefix) {
+				http.Error(w, r.Method, http.StatusUnauthorized)
+				return
+			}
+			header = strings.TrimSpace(header[len(basicPrefix):])
+			base, err := base64.StdEncoding.DecodeString(header)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			username, password, _ := strings.Cut(string(base), ":")
+			if username != response.Username || password != response.Password {
+				http.Error(w, r.Method, http.StatusUnauthorized)
+				return
+			}
+		}
+
+		if response.Timeout > 0 {
+			time.Sleep(response.Timeout)
+		}
+
+		w.WriteHeader(response.Code)
+
+		for k, v := range response.Headers {
+			w.Header().Set(k, v)
+		}
+
+		if response.Body != "" {
+			_, err := fmt.Fprintf(w, response.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else if response.Request {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			_, err = w.Write(body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+	}
+}
+
 type dummyResponse struct {
-	Code    int
-	Method  string
-	Body    string
-	Headers map[string]string
-	Timeout time.Duration
+	Code     int
+	Method   string
+	Body     string
+	Headers  map[string]string
+	Timeout  time.Duration
+	Request  bool
+	Username string
+	Password string
 }
 
 func getDummyRoutes(addr string) map[string]dummyResponse {
@@ -280,6 +322,18 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]",
+		},
+		"/webhook/request": {
+			Code:    http.StatusOK,
+			Method:  http.MethodPost,
+			Request: true,
+		},
+		"/webhook/auth-request": {
+			Code:     http.StatusOK,
+			Method:   http.MethodPost,
+			Request:  true,
+			Username: "test",
+			Password: "test",
 		},
 	}
 }
