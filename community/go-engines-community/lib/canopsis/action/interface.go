@@ -61,6 +61,7 @@ type TaskManager interface {
 type ScenarioExecution struct {
 	ID               string                 `json:"_id"`
 	ScenarioID       string                 `json:"sid"`
+	ScenarioName     string                 `json:"sn"`
 	AlarmID          string                 `json:"aid"`
 	Entity           types.Entity           `json:"e"`
 	ActionExecutions []Execution            `json:"ae"`

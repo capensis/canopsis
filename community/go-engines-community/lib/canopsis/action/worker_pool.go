@@ -38,6 +38,7 @@ type Task struct {
 	ExecutionCacheKey string
 	ExecutionID       string
 	ScenarioID        string
+	ScenarioName      string
 	SkipForChild      bool
 	Header            map[string]string
 	Response          map[string]interface{}
@@ -337,13 +338,15 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	request.Headers = headers
 
 	history := libwebhook.History{
-		ID:            utils.NewID(),
-		Alarms:        []string{task.Alarm.ID},
-		Scenario:      task.ScenarioID,
-		Action:        int64(task.Step),
-		Execution:     task.ExecutionID,
+		ID:        utils.NewID(),
+		Alarms:    []string{task.Alarm.ID},
+		Scenario:  task.ScenarioID,
+		Index:     int64(task.Step),
+		Execution: task.ExecutionID,
+		Name:      "Scenario " + task.ScenarioName,
+
 		SystemName:    task.Action.Parameters.SystemName,
-		Status:        libwebhook.StatusRunning,
+		Status:        libwebhook.StatusCreated,
 		Comment:       task.Action.Comment,
 		Request:       request,
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
@@ -356,7 +359,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		bson.M{
 			"execution": history.Execution,
 			"scenario":  history.Scenario,
-			"action":    history.Action,
+			"index":     history.Index,
 		},
 		bson.M{
 			"$setOnInsert": history,
