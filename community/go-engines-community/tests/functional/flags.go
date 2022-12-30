@@ -14,6 +14,7 @@ import (
 const (
 	dirMongoFixtures     = "testdata/fixtures/mongo"
 	dirTimescaleFixtures = "testdata/fixtures/timescale"
+	dirScenarioData      = "testdata/scenariodata"
 )
 
 type Flags struct {
@@ -31,6 +32,7 @@ type Flags struct {
 	concurrency         int
 	tags                string
 	clearOnScenario     bool
+	scenarioData        string
 }
 
 type arrayFlag []string
@@ -59,6 +61,7 @@ func (f *Flags) ParseArgs() {
 	flag.IntVar(&f.concurrency, "godog.concurrency", 0, "Concurrency rate.")
 	flag.StringVar(&f.tags, "godog.tags", "", "Filter scenarios.")
 	flag.BoolVar(&f.clearOnScenario, "clearOnScenario", false, "Clear stores on each scenario.")
+	flag.StringVar(&f.scenarioData, "scenarioData", dirScenarioData, "Scenario test data dir")
 	flag.Parse()
 
 	if !f.onlyFixtures && len(f.paths) == 0 {

@@ -68,8 +68,8 @@ RUN apt-get update && apt-get install sudo -y && \
 # Ansible
 COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
 
-ADD sources/canopsis/canopsis ./lib/python2.7/site-packages/canopsis
-ADD sources/canopsis/test ./lib/python2.7/site-packages/canopsis_test
+ADD sources/canopsis/canopsis ./lib/python3/site-packages/canopsis
+ADD sources/canopsis/test ./lib/python3/site-packages/canopsis_test
 
 USER ${CPS_USER}:${CPS_GROUP}
 
