@@ -51,12 +51,10 @@ func (e *autoWebhookCompleteExecutor) Exec(
 		time,
 		params.Author,
 		params.Output,
-		params.Ticket,
-		params.TicketUrl,
-		params.TicketData,
 		userID,
 		role,
 		initiator,
+		params.TicketInfo,
 	)
 	if err != nil {
 		return "", err
