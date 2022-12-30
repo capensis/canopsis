@@ -60,6 +60,9 @@ const (
 	EventTypeWebhookStarted       = "webhookstarted"
 	EventTypeWebhookCompleted     = "webhookcompleted"
 	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeAutoWebhookStarted   = "autowebhookstarted"
+	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
+	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"

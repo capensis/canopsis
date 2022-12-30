@@ -1081,6 +1081,11 @@ default_rights:
     _id: api_declare_ticket_rule
     crecord_name: <Current()._id>
     desc: Declare ticket rule
+  permission_api_declare_ticket_execution:
+    <<: *permission
+    _id: api_declare_ticket_execution
+    crecord_name: <Current()._id>
+    desc: Run declare ticket rules
 
   # Views permissions
   permission_view_open_alarms:
@@ -1471,6 +1476,9 @@ default_rights:
         crecord_type: right
       "@permission_api_declare_ticket_rule":
         checksum: 15
+        crecord_type: right
+      "@permission_api_declare_ticket_execution":
+        checksum: 1
         crecord_type: right
       # Views permissions
       "@permission_view_open_alarms":
