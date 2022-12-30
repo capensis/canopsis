@@ -55,6 +55,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -135,6 +136,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"name": bson.M{"$eq": "test-resource"}},
 		}}}}},
@@ -231,6 +233,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"category": bson.M{"$eq": "test-category"}},
 		}}}}},
@@ -324,7 +327,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"pbehavior_info_type": 0,
 		},
 	})
-	expected := getAlarmLookup()
+	expected := []bson.M{{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}}}
+	expected = append(expected, getAlarmLookup()...)
 	expected = append(expected, []bson.M{
 		{"$addFields": bson.M{"alarm.v.duration": getDurationField(now)}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
@@ -406,7 +410,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"pbehavior_info_type": 0,
 		},
 	})
-	expected := getAlarmLookup()
+	expected := []bson.M{{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}}}
+	expected = append(expected, getAlarmLookup()...)
 	expected = append(expected, []bson.M{
 		{"$addFields": bson.M{"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
@@ -481,6 +486,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"type": "resource"},
 			{"category": "test-category"},
@@ -562,7 +568,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 			"pbehavior_info_type": 0,
 		},
 	})
-	expected := getAlarmLookup()
+	expected := []bson.M{{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}}}
+	expected = append(expected, getAlarmLookup()...)
 	expected = append(expected, []bson.M{
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"alarm.v.component": bson.M{"$eq": "test-component"}},
@@ -630,6 +637,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"$or": []bson.M{
 				{"_id": searchRegexp},
@@ -694,6 +702,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$match": bson.M{"$and": []bson.M{{"infos.test1.value": bson.M{"$regex": "test val"}}}}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -818,6 +827,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"category": bson.M{"$eq": "test-category"}},
 		}}}}},

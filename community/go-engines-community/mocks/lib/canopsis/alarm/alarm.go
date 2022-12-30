@@ -808,7 +808,7 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAckResources(arg0, arg
 }
 
 // ProcessAxeRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 types.RPCAxeEvent, arg2 types.RPCAxeResultEvent) error {
+func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 rpc.AxeEvent, arg2 rpc.AxeResultEvent) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessAxeRpc", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -819,18 +819,4 @@ func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 t
 func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAxeRpc(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAxeRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessAxeRpc), arg0, arg1, arg2)
-}
-
-// ProcessWebhookRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessWebhookRpc(arg0 context.Context, arg1 rpc.WebhookEvent, arg2 string, arg3 map[string]string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessWebhookRpc", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ProcessWebhookRpc indicates an expected call of ProcessWebhookRpc.
-func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessWebhookRpc(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessWebhookRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessWebhookRpc), arg0, arg1, arg2, arg3)
 }

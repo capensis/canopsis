@@ -39,11 +39,11 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
+
 	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
 	// to trigger webhook with declare ticket parameter.
+	// todo remove
 	EventTypeDeclareTicket = "declareticket"
-	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
 	EventTypeDone              = "done"
 	EventTypeChangestate       = "changestate"
@@ -56,6 +56,11 @@ const (
 	EventTypeStatStateInterval = "statstateinterval"
 	EventTypeUncancel          = "uncancel"
 
+	EventTypeDeclareTicketWebhook = "declareticketwebhook"
+	EventTypeWebhookStarted       = "webhookstarted"
+	EventTypeWebhookCompleted     = "webhookcompleted"
+	EventTypeWebhookFailed        = "webhookfailed"
+
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
 	EventTypePbhEnter           = "pbhenter"
@@ -64,6 +69,7 @@ const (
 	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
+	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
 	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
 	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
@@ -163,13 +169,14 @@ type Event struct {
 	// It's still used by some old users but meta alarms must be used instead.
 	AckResources bool                   `json:"ack_resources"`
 	Duration     CpsNumber              `json:"duration"`
-	Ticket       string                 `bson:"ticket" json:"ticket"`
-	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	StatName     string                 `bson:"stat_name" json:"stat_name"`
 	Debug        bool                   `bson:"debug" json:"debug"`
 	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
 	ExtraInfos   map[string]interface{} `json:"extra"`
 	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+
+	// Ticket related fields
+	TicketInfo `bson:",inline"`
 
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`
@@ -317,7 +324,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
 	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
-		EventTypeEntityToggled, EventTypeEntityUpdated:
+		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -326,7 +333,7 @@ func (e *Event) IsContextable() bool {
 
 func (e *Event) IsOnlyServiceUpdate() bool {
 	switch e.EventType {
-	case EventTypeEntityToggled, EventTypeEntityUpdated:
+	case EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -609,6 +616,7 @@ func isValidEventType(t string) bool {
 		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
+		EventTypeResolveDeleted,
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,

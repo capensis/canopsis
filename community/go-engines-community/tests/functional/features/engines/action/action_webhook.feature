@@ -1,12 +1,14 @@
 Feature: execute action on trigger
   I need to be able to trigger action on event
 
+  @concurrent
   Scenario: given scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-1-name",
+      "priority": 10008,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -32,7 +34,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-1 {{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-1\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10009,\"name\":\"test-scenario-action-webhook-1 {{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-1\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -49,7 +51,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-1",
@@ -62,7 +64,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-1
     Then the response code should be 200
     Then the response body should contain:
@@ -71,10 +72,19 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "data": {
+              "ticket_data": {
                 "scenario_name": "test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1"
               }
             },
@@ -93,6 +103,7 @@ Feature: execute action on trigger
       }
     }
     """
+    When I save response ticketID={{ (index (index .lastResponse.data 0).v.tickets 0).ticket }}
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -105,44 +116,44 @@ Feature: execute action on trigger
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": ""
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-1-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-1-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1."
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-1-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-1 test-resource-action-webhook-1/test-component-action-webhook-1."
       }
     ]
     """
 
+  @concurrent
   Scenario: given scenario and check event should emit declare ticket trigger
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-2-1-name",
+      "priority": 10010,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -170,7 +181,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-2 {{ `{{ .Alarm.Value.Resource }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-2\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10011, \"name\":\"test-scenario-action-webhook-2 {{ `{{ .Alarm.Value.Resource }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-2\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -190,6 +201,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-webhook-2-2-name",
+      "priority": 10012,
       "enabled": true,
       "triggers": ["declareticketwebhook"],
       "actions": [
@@ -214,7 +226,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-2",
@@ -227,7 +239,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-2
     Then the response code should be 200
     Then the response body should contain:
@@ -236,10 +247,19 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-webhook-2 test-resource-action-webhook-2"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "data": {
+              "ticket_data": {
                 "scenario_name": "test-scenario-action-webhook-2 test-resource-action-webhook-2"
               }
             },
@@ -261,6 +281,7 @@ Feature: execute action on trigger
       }
     }
     """
+    When I save response ticketID={{ (index (index .lastResponse.data 0).v.tickets 0).ticket }}
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -273,255 +294,60 @@ Feature: execute action on trigger
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "root",
-                "user_id": "root"
-              },
-              {
-                "_t": "ack"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 4
-            }
-          }
-        }
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Scenario test-scenario-action-webhook-2-1-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Scenario: test-scenario-action-webhook-2-1-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-2 test-resource-action-webhook-2."
+      },
+      {
+        "_t": "declareticket",
+        "a": "root",
+        "user_id": "root",
+        "m": "Scenario: test-scenario-action-webhook-2-1-name. Ticket ID: {{ .ticketID }}. Ticket scenario_name: test-scenario-action-webhook-2 test-resource-action-webhook-2."
+      },
+      {
+        "_t": "ack",
+        "a": "system",
+        "user_id": ""
+      }
+    ]
+    """
+    Then the response array key "0.data.steps.data" should contain in order:
+    """json
+    [
+      {
+        "_t": "declareticket"
+      },
+      {
+        "_t": "ack"
       }
     ]
     """
 
-  Scenario: given scenario and ack resources event should update resource alarms
-    Given I am admin
-    When I do POST /api/v4/scenarios:
-    """json
-    {
-      "name": "test-scenario-action-webhook-3-name",
-      "enabled": true,
-      "triggers": ["ack"],
-      "actions": [
-        {
-          "entity_pattern": [
-            [
-              {
-                "field": "_id",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-component-action-webhook-3"
-                }
-              }
-            ]
-          ],
-          "type": "webhook",
-          "parameters": {
-            "request": {
-              "method": "POST",
-              "url": "{{ .apiURL }}/api/v4/scenarios",
-              "auth": {
-                "username": "root",
-                "password": "test"
-              },
-              "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-3\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-3\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
-            },
-            "declare_ticket": {
-              "empty_response": false,
-              "is_regexp": false,
-              "ticket_id": "_id",
-              "scenario_name": "name"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-3",
-      "connector_name" : "test-connector-name-action-webhook-3",
-      "source_type" : "component",
-      "event_type" : "check",
-      "component" :  "test-component-action-webhook-3",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-3",
-      "connector_name" : "test-connector-name-action-webhook-3",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" :  "test-component-action-webhook-3",
-      "resource" : "test-resource-action-webhook-3",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-3",
-      "connector_name" : "test-connector-name-action-webhook-3",
-      "source_type" : "component",
-      "event_type" : "ack",
-      "component" :  "test-component-action-webhook-3",
-      "ack_resources": true,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?search=test-component-action-webhook-3&sort_by=v.resource&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket"
-            },
-            "ack": {
-              "_t": "ack"
-            },
-            "connector": "test-connector-action-webhook-3",
-            "connector_name": "test-connector-name-action-webhook-3",
-            "component": "test-component-action-webhook-3"
-          }
-        },
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket"
-            },
-            "ack": {
-              "_t": "ack"
-            },
-            "connector": "test-connector-action-webhook-3",
-            "connector_name": "test-connector-name-action-webhook-3",
-            "component": "test-component-action-webhook-3",
-            "resource": "test-resource-action-webhook-3"
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      },
-      {
-        "_id": "{{ (index .lastResponse.data 1)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "ack"
-              },
-              {
-                "_t": "declareticket"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 4
-            }
-          }
-        }
-      },
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "ack"
-              },
-              {
-                "_t": "declareticket"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 4
-            }
-          }
-        }
-      }
-    ]
-    """
-
+  @concurrent
   Scenario: given webhook scenario to test response and header templates
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-4-name",
+      "priority": 10015,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -574,7 +400,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "{{ `{{index .Header \"Content-Type\"}}` }}"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-4-webhook {{ `{{index .Response \"icon_name\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{index .Response \"_id\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10016,\"name\":\"test-scenario-action-webhook-4-webhook {{ `{{.Response.icon_name}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{.Response._id}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -585,7 +411,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-4",
@@ -598,7 +424,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-4-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -633,162 +458,14 @@ Feature: execute action on trigger
     }
     """
 
-  Scenario: given scenario and declareticket event should update alarm
-    Given I am admin
-    When I do POST /api/v4/scenarios:
-    """json
-    {
-      "name": "test-scenario-action-webhook-5-name",
-      "enabled": true,
-      "triggers": ["declareticket"],
-      "actions": [
-        {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-component-action-webhook-5"
-                }
-              }
-            ]
-          ],
-          "type": "webhook",
-          "parameters": {
-            "forward_author": false,
-            "request": {
-              "method": "POST",
-              "url": "{{ .apiURL }}/api/v4/scenarios",
-              "auth": {
-                "username": "root",
-                "password": "test"
-              },
-              "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-5-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
-            },
-            "declare_ticket": {
-              "empty_response": false,
-              "is_regexp": false,
-              "ticket_id": "_id",
-              "scenario_name": "name"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-5",
-      "connector_name" : "test-connector-name-action-webhook-5",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" :  "test-component-action-webhook-5",
-      "resource" : "test-resource-action-webhook-5",
-      "state" : 2,
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector" : "test-connector-action-webhook-5",
-      "connector_name" : "test-connector-name-action-webhook-5",
-      "source_type" : "resource",
-      "event_type" : "declareticket",
-      "component" :  "test-component-action-webhook-5",
-      "resource" : "test-resource-action-webhook-5",
-      "output" : "noveo alarm"
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-resource-action-webhook-5
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket",
-              "a": "system",
-              "data": {
-                "scenario_name": "test-resource-action-webhook-5/test-component-action-webhook-5"
-              }
-            },
-            "connector": "test-connector-action-webhook-5",
-            "connector_name": "test-connector-name-action-webhook-5",
-            "component": "test-component-action-webhook-5",
-            "resource": "test-resource-action-webhook-5"
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": ""
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
-      }
-    ]
-    """
-
+  @concurrent
   Scenario: given scenarios with 2 actions and webhook should be able to use additional data in template
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-6-1-name",
+      "priority": 10019,
       "enabled": true,
       "triggers": [
         "create"
@@ -819,7 +496,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10020,\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -857,7 +534,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10021,\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -875,6 +552,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-webhook-6-2-name",
+      "priority": 10022,
       "enabled": true,
       "triggers": [
         "declareticketwebhook"
@@ -905,7 +583,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10023,\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -925,6 +603,7 @@ Feature: execute action on trigger
     """json
     {
       "name": "test-scenario-action-webhook-6-3-name",
+      "priority": 10024,
       "enabled": true,
       "triggers": [
         "create"
@@ -955,7 +634,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"name\": \"{{ `{{ $testVar := .AdditionalData.Output }}test-scenario-action-webhook-6-3-action-1 [{{$testVar}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10025,\"name\": \"{{ `{{ $testVar := .AdditionalData.Output }}test-scenario-action-webhook-6-3-action-1 [{{$testVar}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -966,7 +645,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-6",
@@ -980,35 +659,30 @@ Feature: execute action on trigger
       "initiator": "user"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-6
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response array key "data.0.v.tickets" should contain:
     """json
-    {
-      "data": [
-        {
-          "v": {
-            "ticket": {
-              "_t": "declareticket",
-              "data": {
-                "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
-              }
-            },
-            "connector": "test-connector-action-webhook-6",
-            "connector_name": "test-connector-name-action-webhook-6",
-            "component": "test-component-action-webhook-6",
-            "resource": "test-resource-action-webhook-6"
-          }
+    [
+      {
+        "_t": "declareticket",
+        "ticket_data": {
+          "scenario_name": "test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root]"
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
+      },
+      {
+        "_t": "declareticket",
+        "ticket_data": {
+          "scenario_name_2": "test-scenario-action-webhook-6-1-action-2 [declareticketwebhook] [system] [user] []"
+        }
+      },
+      {
+        "_t": "declareticket",
+        "ticket_data": {
+          "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
+        }
       }
-    }
+    ]
     """
     When I do POST /api/v4/alarm-details:
     """json
@@ -1016,50 +690,100 @@ Feature: execute action on trigger
       {
         "_id": "{{ (index .lastResponse.data 0)._id }}",
         "steps": {
-          "page": 1
+          "page": 1,
+          "limit": 20
         }
       }
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "root",
-                "user_id": "root"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": ""
-              },
-              {
-                "_t": "declareticket",
-                "a": "test-scenario-action-webhook-6-2-action-1-author",
-                "user_id": ""
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 5
-            }
-          }
-        }
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Scenario test-scenario-action-webhook-6-1-name"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "test-scenario-action-webhook-6-3-action-1-author",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-6-3-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "root",
+        "user_id": "root"
+      },
+      {
+        "_t": "declareticket",
+        "a": "root",
+        "user_id": "root"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "test-scenario-action-webhook-6-3-action-1-author",
+        "user_id": ""
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-6-1-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": ""
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": ""
+      },
+      {
+        "_t": "webhookstart",
+        "a": "test-scenario-action-webhook-6-2-action-1-author",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-6-2-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": ""
+      },
+      {
+        "_t": "declareticket",
+        "a": "test-scenario-action-webhook-6-2-action-1-author",
+        "user_id": ""
+      }
+    ]
+    """
+    Then the response array key "0.data.steps.data" should contain in order:
+    """json
+    [
+      {
+        "_t": "declareticket",
+        "a": "root",
+        "user_id": "root"
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": ""
+      },
+      {
+        "_t": "declareticket",
+        "a": "test-scenario-action-webhook-6-2-action-1-author",
+        "user_id": ""
       }
     ]
     """
@@ -1212,12 +936,14 @@ Feature: execute action on trigger
     }
     """
 
+  @concurrent
   Scenario: given webhook scenario to test multiple response templates
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-7-name",
+      "priority": 10026,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -1357,7 +1083,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "{{ `{{index .Header \"Content-Type\"}}` }}"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-7-webhook {{ `{{index .ResponseMap \"0._id\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"1._id\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10027,\"name\":\"test-scenario-action-webhook-7-webhook {{ `{{index .ResponseMap \"0._id\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"1._id\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -1368,7 +1094,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-7",
@@ -1381,7 +1107,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-7-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -1416,12 +1141,14 @@ Feature: execute action on trigger
     }
     """
 
+  @concurrent
   Scenario: given webhook scenario to test document with a document with arrays in response
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-8-name",
+      "priority": 10028,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -1502,7 +1229,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-8-webhook {{ `{{index .ResponseMap \"0.array.0.elem1\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"0.array.1.elem2\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10029,\"name\":\"test-scenario-action-webhook-8-webhook {{ `{{index .ResponseMap \"0.array.0.elem1\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"0.array.1.elem2\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -1513,7 +1240,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-8",
@@ -1526,7 +1253,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-8-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -1568,11 +1294,21 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "ticket": "test3",
+                "ticket_data": {
+                  "test_val": "test1"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "val": "test3",
-              "data": {
+              "ticket": "test3",
+              "ticket_data": {
                 "test_val": "test1"
               }
             },
@@ -1603,43 +1339,53 @@ Feature: execute action on trigger
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-8-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": ""
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": ""
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-8-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": ""
       }
     ]
     """
 
+  @concurrent
   Scenario: given webhook scenario where the webhook response is an array
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
       "name": "test-scenario-action-webhook-9-name",
+      "priority": 10030,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -1720,7 +1466,7 @@ Feature: execute action on trigger
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"test-scenario-action-webhook-9-webhook {{ `{{index .ResponseMap \"0.0.elem1\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"0.1.elem2\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10031,\"name\":\"test-scenario-action-webhook-9-webhook {{ `{{index .ResponseMap \"0.0.elem1\"}}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"_id\",\"cond\":{\"type\":\"eq\",\"value\":\"{{ `{{index .ResponseMap \"0.1.elem2\"}}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -1731,7 +1477,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-webhook-9",
@@ -1744,7 +1490,6 @@ Feature: execute action on trigger
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-scenario-action-webhook-9-webhook
     Then the response code should be 200
     Then the response body should contain:
@@ -1786,11 +1531,21 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "ticket": "test3",
+                "ticket_data": {
+                  "test_val": "test1"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "system",
-              "val": "test3",
-              "data": {
+              "ticket": "test3",
+              "ticket_data": {
                 "test_val": "test1"
               }
             },
@@ -1821,33 +1576,44 @@ Feature: execute action on trigger
     ]
     """
     Then the response code should be 207
-    Then the response body should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-9-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-9-name. Ticket ID: test3. Ticket test_val: test1."
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-9-name. Ticket ID: test3. Ticket test_val: test1."
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario test-scenario-action-webhook-9-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-9-name"
       }
     ]
     """

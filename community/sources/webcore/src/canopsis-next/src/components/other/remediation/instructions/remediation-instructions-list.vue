@@ -13,7 +13,11 @@
       @update:pagination="$emit('update:pagination', $event)"
     )
       template(#mass-actions="{ selected }")
-        c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+        c-action-btn(
+          v-if="removable",
+          type="delete",
+          @click="$emit('remove-selected', selected)"
+        )
       template(#headerCell="{ header }")
         span.c-table-header__text--multiline {{ header.text }}
       template(#author="{ item }")
@@ -46,6 +50,8 @@
           c-action-btn(
             v-if="updatable",
             :tooltip="$t('modals.patterns.title')",
+            :badge-value="isOldPattern(item)",
+            :badge-tooltip="$t('pattern.oldPatternTooltip')",
             icon="assignment",
             @click="$emit('assign-patterns', item)"
           )
@@ -64,6 +70,10 @@
 </template>
 
 <script>
+import { OLD_PATTERNS_FIELDS } from '@/constants';
+
+import { isOldPattern } from '@/helpers/pattern';
+
 import { authMixin } from '@/mixins/auth';
 
 export default {
@@ -150,6 +160,10 @@ export default {
 
     isDisabledInstruction({ deletable }) {
       return !deletable;
+    },
+
+    isOldPattern(item) {
+      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]);
     },
   },
 };

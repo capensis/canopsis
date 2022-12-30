@@ -111,9 +111,7 @@ type MetaAlarmEventProcessor interface {
 	// Process handles related meta alarm parents and children after alarm change.
 	Process(ctx context.Context, event types.Event) error
 	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
-	ProcessAxeRpc(ctx context.Context, event types.RPCAxeEvent, eventRes types.RPCAxeResultEvent) error
-	// ProcessWebhookRpc handles related meta alarm parents and children after alarm change.
-	ProcessWebhookRpc(ctx context.Context, event rpc.WebhookEvent, ticketId string, ticketData map[string]string) error
+	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
 	// CreateMetaAlarm creates meta alarm by event.
 	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
 	// ProcessAckResources ackes resource after component ack.

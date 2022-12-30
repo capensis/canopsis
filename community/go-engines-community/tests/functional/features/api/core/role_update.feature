@@ -123,3 +123,14 @@ Feature: Update a role
       "error": "Not found"
     }
     """
+
+  Scenario: given update request for admin should return validation error
+    When I am admin
+    When I do PUT /api/v4/roles/admin
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "error": "admin cannot be updated"
+    }
+    """

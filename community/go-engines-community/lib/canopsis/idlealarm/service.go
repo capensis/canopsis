@@ -179,7 +179,7 @@ func (s *baseService) applyRules(
 				Entity: entity,
 			}, now)
 			if err != nil {
-				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				s.logger.Error().Err(err).Str("idle_rule", rule.ID).Msg("match idle rule returned error, skip")
 				continue
 			}
 
@@ -189,7 +189,7 @@ func (s *baseService) applyRules(
 		case idlerule.RuleTypeEntity:
 			matched, err := rule.Matches(types.AlarmWithEntity{Entity: entity}, now)
 			if err != nil {
-				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				s.logger.Error().Err(err).Str("idle_rule", rule.ID).Msg("match idle rule returned error, skip")
 				continue
 			}
 
@@ -239,7 +239,6 @@ func (s *baseService) applyAlarmRule(
 	event.SourceType = event.DetectSourceType()
 
 	event.Output = rule.Operation.Parameters.Output
-	event.Ticket = rule.Operation.Parameters.Ticket
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}
@@ -253,6 +252,14 @@ func (s *baseService) applyAlarmRule(
 		event.EventType = types.EventTypeCancel
 	case types.ActionTypeAssocTicket:
 		event.EventType = types.EventTypeAssocTicket
+		event.TicketInfo = types.TicketInfo{
+			Ticket:           rule.Operation.Parameters.Ticket,
+			TicketRuleID:     rule.ID,
+			TicketRuleName:   types.TicketRuleNameRulePrefix + rule.Name,
+			TicketURL:        rule.Operation.Parameters.TicketURL,
+			TicketSystemName: rule.Operation.Parameters.TicketSystemName,
+			TicketData:       rule.Operation.Parameters.TicketData,
+		}
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:

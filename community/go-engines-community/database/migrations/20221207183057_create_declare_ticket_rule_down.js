@@ -26,6 +26,7 @@ db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
         }
 
         if (action.parameters && action.parameters.request) {
+            unset["actions." + index + ".parameters.skip_for_child"] = "";
             if (action.parameters.request.retry_count) {
                 set["actions." + index + ".parameters.retry_count"] = action.parameters.request.retry_count;
                 unset["actions." + index + ".parameters.request.retry_count"] = "";
@@ -37,10 +38,14 @@ db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
         }
     });
 
+    var update = {};
     if (Object.keys(set).length > 0) {
-        var update = {};
         update["$set"] = set;
+    }
+    if (Object.keys(unset).length > 0) {
         update["$unset"] = unset;
+    }
+    if (Object.keys(update).length > 0) {
         db.action_scenario.updateOne({_id: doc._id}, update);
     }
 });
