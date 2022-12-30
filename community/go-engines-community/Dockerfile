@@ -47,6 +47,7 @@ ARG CMD
 ENV CMD ${CMD}
 
 RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
+RUN if [ -f "/canopsis-api-pro" ] ; then apk add net-snmp-libs; fi
 RUN case "${CMD}" in canopsis-api*) ln -sf /canopsis-api-${CANOPSIS_EDITION} /canopsis-api && ( cd /opt/canopsis/bin && ln -sf canopsis-api-${CANOPSIS_EDITION} canopsis-api ) ;; esac
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 

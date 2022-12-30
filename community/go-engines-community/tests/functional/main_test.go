@@ -109,7 +109,7 @@ func TestMain(m *testing.M) {
 	}
 
 	templater := bdd.NewTemplater(map[string]interface{}{"apiURL": apiUrl})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, templater)
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
@@ -264,6 +264,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
+		scenarioCtx.Step(`^I read file (\w[-\w\.\/]*) as (\w+)$`, apiClient.IReadFile)
 	}
 }
 
