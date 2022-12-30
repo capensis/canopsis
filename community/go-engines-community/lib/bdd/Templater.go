@@ -3,6 +3,7 @@ package bdd
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"text/template"
@@ -52,6 +53,19 @@ func (t *Templater) Execute(ctx context.Context, text string) (*bytes.Buffer, er
 
 func getTplFuncs() template.FuncMap {
 	return template.FuncMap{
+		// json converts an item to an JSON-compatible element.
+		// For the strings it escapes newline and quote chars
+		"json": func(v any) string {
+			sv := struct {
+				V any
+			}{V: v}
+			b, err := json.Marshal(sv)
+			if err != nil {
+				return err.Error()
+			}
+
+			return string(b[6 : len(b)-2])
+		},
 		"now": func() int64 {
 			return time.Now().Unix()
 		},

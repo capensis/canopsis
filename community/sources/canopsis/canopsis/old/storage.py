@@ -830,7 +830,7 @@ class Storage(object):
             return
 
         if depth == 1:
-            print "|-> " + str(record.name)
+            print("|-> " + str(record.name))
 
         for child in childs:
 
@@ -840,7 +840,7 @@ class Storage(object):
             prefix += "|"
             for i in range(depth):
                 prefix += "--"
-            print prefix + "> " + str(child.name)
+            print(prefix + "> " + str(child.name))
 
             self.print_record_tree(child, depth)
 
