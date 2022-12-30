@@ -350,7 +350,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		Scenario:  task.ScenarioID,
 		Index:     int64(task.Step),
 		Execution: task.ExecutionID,
-		Name:      "Scenario " + task.ScenarioName,
+		Name:      types.TicketRuleNameScenarioPrefix + task.ScenarioName,
 
 		SystemName:    task.Action.Parameters.TicketSystemName,
 		Status:        libwebhook.StatusCreated,

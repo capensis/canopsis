@@ -23,7 +23,6 @@ type AxeParameters struct {
 	// AssocTicket and Webhook
 	types.TicketInfo
 	// Webhook
-	DeclareTicket        bool              `json:"declare_ticket,omitempty"`
 	DeclareTicketRequest bool              `json:"declare_ticket_request,omitempty"`
 	TicketResources      bool              `json:"ticket_resources,omitempty"`
 	WebhookHeader        map[string]string `json:"webhook_header,omitempty"`

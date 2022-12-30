@@ -179,7 +179,6 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 			Execution:            event.Parameters.Execution,
 			Instruction:          event.Parameters.Instruction,
 			TicketInfo:           event.Parameters.TicketInfo,
-			DeclareTicket:        event.Parameters.DeclareTicket,
 			DeclareTicketRequest: event.Parameters.DeclareTicketRequest,
 		},
 	}

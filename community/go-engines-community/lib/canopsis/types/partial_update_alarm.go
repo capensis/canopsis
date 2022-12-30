@@ -271,7 +271,7 @@ func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, author, out
 	return nil
 }
 
-func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp CpsTime, author, output, userID, role, initiator string) error {
+func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
 	stepType := AlarmStepWebhookFail
 	if request {
 		stepType = AlarmStepWebhookComplete
@@ -283,7 +283,7 @@ func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp Cp
 		return err
 	}
 
-	newTicketStep := NewAlarmStep(AlarmStepDeclareTicketFail, timestamp, author, output, userID, role, initiator)
+	newTicketStep := NewTicketStep(AlarmStepDeclareTicketFail, timestamp, author, output, userID, role, initiator, ticketInfo)
 	err = a.Value.Steps.Add(newTicketStep)
 	if err != nil {
 		return err
