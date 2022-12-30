@@ -81,6 +81,8 @@ definitions:
       rrule:
         description: RRule is used in pbehavior action.
         type: string
+      skip_for_child:
+        type: boolean
       start_on_trigger:
         description: StartOnTrigger is used in pbehavior action.
         type: boolean
