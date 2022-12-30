@@ -22,9 +22,7 @@ type AxeParameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
-	Ticket     string            `json:"ticket,omitempty"`
-	TicketUrl  string            `json:"ticket_url,omitempty"`
-	TicketData map[string]string `json:"ticket_data,omitempty"`
+	types.TicketInfo
 	// Webhook
 	DeclareTicket        bool              `json:"declare_ticket,omitempty"`
 	DeclareTicketRequest bool              `json:"declare_ticket_request,omitempty"`
@@ -66,7 +64,8 @@ type WebhookEvent struct {
 type WebhookParameters struct {
 	Request       request.Parameters            `json:"request"`
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty"`
-	Scenario      string                        `json:"scenario"`
+	ScenarioID    string                        `json:"scenario_id"`
+	ScenarioName  string                        `json:"scenario_name"`
 	Author        string                        `json:"author"`
 	User          string                        `json:"user"`
 }
