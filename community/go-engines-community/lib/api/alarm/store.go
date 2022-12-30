@@ -664,11 +664,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 }
 
 func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error) {
-	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds, types.NewCpsTime())
+	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	return m, err
 }
 
-func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {
+func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, bson.M, error) {
 	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
@@ -1144,7 +1144,7 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 		return nil, nil, nil
 	}
 
-	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds, now)
+	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	if err != nil {
 		return nil, nil, err
 	}
