@@ -11,10 +11,11 @@ type OperationParameters struct {
 	Output string `bson:"output,omitempty" json:"output,omitempty"`
 	Author string `bson:"author,omitempty" json:"author,omitempty"`
 	User   string `bson:"user,omitempty" json:"user,omitempty"`
-	// AssocTicket and DeclareTicket
-	Ticket string `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	// DeclareTicket
-	Data map[string]string `bson:"data,omitempty" json:"data,omitempty"`
+	// AssocTicket and Webhook
+	TicketInfo `bson:",inline"`
+	// Webhook
+	DeclareTicket        bool `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
+	DeclareTicketRequest bool `bson:"declare_ticket_request,omitempty" json:"declare_ticket_request,omitempty"`
 	// Snooze
 	Duration *DurationWithUnit `bson:"duration,omitempty" json:"duration,omitempty"`
 	// ChangeState

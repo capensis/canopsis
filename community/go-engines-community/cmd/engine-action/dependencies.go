@@ -48,10 +48,10 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	delayedScenarioManager := action.NewDelayedScenarioManager(actionAdapter, alarmAdapter,
-		action.NewRedisDelayedScenarioStorage(redis.DelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
+		action.NewRedisDelayedScenarioStorage(redis.ActionDelayedScenarioKey, actionRedisClient, json.NewEncoder(), json.NewDecoder()),
 		options.PeriodicalWaitTime, logger)
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
-	storage := action.NewRedisScenarioExecutionStorage(redis.ScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
+	storage := action.NewRedisScenarioExecutionStorage(redis.ActionScenarioExecutionKey, actionRedisClient, json.NewEncoder(),
 		json.NewDecoder(), options.LastRetryInterval, logger)
 	actionScenarioStorage := action.NewScenarioStorage(actionAdapter, delayedScenarioManager, logger)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan,
@@ -81,15 +81,10 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		webhookRpcClient = engine.NewRPCClient(
 			canopsis.ActionRPCConsumerName,
 			canopsis.WebhookRPCQueueServerName,
-			canopsis.ActionWebhookRPCClientQueueName,
+			"",
 			cfg.Global.PrefetchCount,
 			cfg.Global.PrefetchSize,
-			&webhookRpcClientMessageProcessor{
-				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-				Decoder:                  json.NewDecoder(),
-				Logger:                   logger,
-				ResultChannel:            rpcResultChannel,
-			},
+			nil,
 			amqpChannel,
 			logger,
 		)
@@ -110,7 +105,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, axeRpcClient, webhookRpcClient, alarmAdapter, json.NewEncoder(), logger, timezoneConfigProvider),
+				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, timezoneConfigProvider),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -209,9 +204,6 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
-	if webhookRpcClient != nil {
-		engineAction.AddConsumer(webhookRpcClient)
-	}
 	engineAction.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAction.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:    options.PeriodicalWaitTime,

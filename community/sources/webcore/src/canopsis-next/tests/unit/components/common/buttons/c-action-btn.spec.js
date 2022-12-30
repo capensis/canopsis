@@ -1,6 +1,8 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
 
@@ -17,11 +19,21 @@ const stubs = {
       </button>
     `,
   },
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const factory = (options = {}) => shallowMount(CActionBtn, {
   localVue,
   stubs,
+
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(CActionBtn, {
+  localVue,
+  stubs,
+  attachTo: document.body,
+
   ...options,
 });
 
@@ -110,51 +122,58 @@ describe('c-action-btn', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('Renders `c-action-btn` with default edit type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
-      localVue,
+  it('Renders `c-action-btn` with default edit type correctly.', async () => {
+    snapshotFactory({
       propsData: { type: 'edit' },
     });
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body).toMatchSnapshot();
   });
 
-  it('Renders `c-action-btn` with default duplicate type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
-      localVue,
+  it('Renders `c-action-btn` with default duplicate type correctly.', async () => {
+    snapshotFactory({
       propsData: { type: 'duplicate' },
     });
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body).toMatchSnapshot();
   });
 
-  it('Renders `c-action-btn` with default delete type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
-      localVue,
+  it('Renders `c-action-btn` with default delete type correctly.', async () => {
+    snapshotFactory({
       propsData: { type: 'delete' },
     });
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body).toMatchSnapshot();
   });
 
-  it('Renders `c-action-btn` with custom type correctly.', () => {
-    const wrapper = mount(CActionBtn, {
-      localVue,
+  it('Renders `c-action-btn` with custom type correctly.', async () => {
+    snapshotFactory({
       propsData: { icon: 'test_icon', color: 'color', tooltip: 'tooltip' },
     });
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body).toMatchSnapshot();
+  });
+
+  it('Renders `c-action-btn` with badge.', async () => {
+    snapshotFactory({
+      propsData: {
+        type: 'edit',
+        tooltip: 'TOOLTIP',
+        badgeValue: true,
+        badgeTooltip: 'BADGE TOOLTIP',
+      },
+    });
+
+    await flushPromises();
+
+    expect(document.body).toMatchSnapshot();
   });
 });

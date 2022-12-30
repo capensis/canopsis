@@ -33,10 +33,11 @@ type SectionAlarm struct {
 
 // SectionGlobal ...
 type SectionGlobal struct {
-	PrefetchCount                int `toml:"PrefetchCount"`
-	PrefetchSize                 int `toml:"PrefetchSize"`
-	ReconnectTimeoutMilliseconds int `toml:"ReconnectTimeoutMilliseconds"`
-	ReconnectRetries             int `toml:"ReconnectRetries"`
+	PrefetchCount                int   `toml:"PrefetchCount"`
+	PrefetchSize                 int   `toml:"PrefetchSize"`
+	ReconnectTimeoutMilliseconds int   `toml:"ReconnectTimeoutMilliseconds"`
+	ReconnectRetries             int   `toml:"ReconnectRetries"`
+	MaxExternalResponseSize      int64 `toml:"MaxExternalResponseSize"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {

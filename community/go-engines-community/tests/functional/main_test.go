@@ -232,7 +232,8 @@ func InitializeScenario(
 		scenarioCtx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		scenarioCtx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
 		scenarioCtx.Step(`^an entity (.+) should be in the db$`, mongoClient.EntityShouldBeInTheDb)
-		scenarioCtx.Step(`^I set header ([^"\-]+)=(.+)$`, apiClient.ISetRequestHeader)
+		scenarioCtx.Step(`^an entity (.+) should not be in the db$`, mongoClient.EntityShouldNotBeInTheDb)
+		scenarioCtx.Step(`^I set header ([\w\.\-]+)=(.+)$`, apiClient.ISetRequestHeader)
 		scenarioCtx.Step(`^I wait (\w+)$`, func(str string) error {
 			duration, err := time.ParseDuration(str)
 			if err != nil {
@@ -259,7 +260,6 @@ func InitializeScenario(
 			return ctx, amqpClient.IWaitTheEndOfSentEventProcessing(ctx, doc)
 		})
 		scenarioCtx.Step(`^I call RPC to engine-axe with alarm ([^:]+):$`, amqpClient.ICallRPCAxeRequest)
-		scenarioCtx.Step(`^I call RPC to engine-webhook with alarm ([^:]+):$`, amqpClient.ICallRPCWebhookRequest)
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
