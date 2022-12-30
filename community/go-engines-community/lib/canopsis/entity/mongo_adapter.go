@@ -125,7 +125,7 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 
 		insertModels = append(insertModels, mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": entity.ID}).
-			SetUpdate(bson.M{"$setOnInsert": insert}).
+			SetUpdate(bson.M{"$setOnInsert": insert, "$unset": bson.M{"soft_deleted": ""}}).
 			SetUpsert(true))
 	}
 	res, err := a.dbCollection.BulkWrite(ctx, insertModels)

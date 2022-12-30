@@ -61,10 +61,8 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
     </div>
   </div>
   <text-editor-field-stub
-    buttons=""
     config="[object Object]"
     errormessages=""
-    extrabuttons=""
     label=""
     name="template"
     value="template"
@@ -167,10 +165,8 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
     </div>
   </div>
   <text-editor-field-stub
-    buttons=""
     config="[object Object]"
     errormessages=""
-    extrabuttons=""
     label=""
     name="template"
     value=""

@@ -38,7 +38,7 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 	maintenancePbhInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-1",
 		Name:          "test-pbh-1-name",
-		Reason:        "test-pbh-reason-1",
+		ReasonID:      "test-pbh-reason-1",
 		TypeID:        "test-pbh-type-1",
 		TypeName:      "test-pbh-type-1-name",
 		CanonicalType: pbehavior.TypeMaintenance,
@@ -46,7 +46,7 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 	pausePbhInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-2",
 		Name:          "test-pbh-2-name",
-		Reason:        "test-pbh-reason-2",
+		ReasonID:      "test-pbh-reason-2",
 		TypeID:        "test-pbh-type-2",
 		TypeName:      "test-pbh-type-2-name",
 		CanonicalType: pbehavior.TypePause,
@@ -54,7 +54,7 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 	activePbhInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-3",
 		Name:          "test-pbh-3-name",
-		Reason:        "test-pbh-reason-3",
+		ReasonID:      "test-pbh-reason-3",
 		TypeID:        "test-pbh-type-3",
 		TypeName:      "test-pbh-type-3-name",
 		CanonicalType: pbehavior.TypeActive,
