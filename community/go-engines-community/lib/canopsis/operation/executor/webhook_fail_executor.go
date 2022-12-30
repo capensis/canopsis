@@ -28,7 +28,7 @@ func (e *webhookFailExecutor) Exec(
 		userID = params.User
 	}
 
-	if params.DeclareTicket {
+	if params.TicketInfo.TicketRuleID != "" {
 		err := alarm.PartialUpdateWebhookDeclareTicketFail(
 			params.DeclareTicketRequest,
 			time,
@@ -37,6 +37,7 @@ func (e *webhookFailExecutor) Exec(
 			userID,
 			role,
 			initiator,
+			params.TicketInfo,
 		)
 		if err != nil {
 			return "", err
