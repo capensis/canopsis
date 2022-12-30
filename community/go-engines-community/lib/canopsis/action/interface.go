@@ -66,7 +66,6 @@ type ScenarioExecution struct {
 	Entity           types.Entity           `json:"e"`
 	ActionExecutions []Execution            `json:"ae"`
 	LastUpdate       int64                  `json:"u"`
-	AckResources     bool                   `json:"ar"`
 	Tries            int64                  `json:"t"`
 	Header           map[string]string      `json:"h,omitempty"`
 	Response         map[string]interface{} `json:"r,omitempty"`
@@ -92,7 +91,6 @@ type ExecuteScenariosTask struct {
 	DelayedScenarioID string
 	Entity            types.Entity
 	Alarm             types.Alarm
-	AckResources      bool
 	AdditionalData    AdditionalData
 	FifoAckEvent      types.Event
 
@@ -116,7 +114,7 @@ type RpcResult struct {
 	CorrelationID   string
 	Alarm           *types.Alarm
 	AlarmChangeType types.AlarmChangeType
-	Header          map[string]string
-	Response        map[string]interface{}
+	WebhookHeader   map[string]string
+	WebhookResponse map[string]interface{}
 	Error           error
 }

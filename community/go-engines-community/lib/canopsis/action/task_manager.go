@@ -117,7 +117,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
 					return
 				}
 
@@ -142,16 +142,22 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						}
 					}
 
+					action := execution.ActionExecutions[step].Action
+					skipForChild := false
+					if action.Parameters.SkipForChild != nil {
+						skipForChild = *action.Parameters.SkipForChild
+					}
 					e.taskChannel <- Task{
 						Source:            "input listener",
-						Action:            execution.ActionExecutions[step].Action,
+						Action:            action,
 						Alarm:             task.Alarm,
 						Entity:            task.Entity,
 						Step:              step,
+						ExecutionID:       execution.ID,
 						ExecutionCacheKey: execution.GetCacheKey(),
 						ScenarioID:        execution.ScenarioID,
 						ScenarioName:      execution.ScenarioName,
-						AckResources:      execution.AckResources,
+						SkipForChild:      skipForChild,
 						Header:            execution.Header,
 						Response:          execution.Response,
 						ResponseMap:       execution.ResponseMap,
@@ -278,8 +284,8 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 				taskRes.Step = step
 				taskRes.AlarmChangeType = result.AlarmChangeType
 				taskRes.ExecutionCacheKey = executionCacheKey
-				taskRes.Header = result.Header
-				taskRes.Response = result.Response
+				taskRes.Header = result.WebhookHeader
+				taskRes.Response = result.WebhookResponse
 
 				if r.Error != nil {
 					taskRes.Status = TaskRpcError
@@ -409,16 +415,22 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	if len(scenarioExecution.ActionExecutions) > nextStep {
 		additionalData := scenarioExecution.AdditionalData
 		additionalData.AlarmChangeType = taskRes.AlarmChangeType
+		action := scenarioExecution.ActionExecutions[nextStep].Action
+		skipForChild := false
+		if action.Parameters.SkipForChild != nil {
+			skipForChild = *action.Parameters.SkipForChild
+		}
 		nextTask := Task{
 			Source:            "process task func",
-			Action:            scenarioExecution.ActionExecutions[nextStep].Action,
+			Action:            action,
 			Alarm:             taskRes.Alarm,
 			Entity:            scenarioExecution.Entity,
 			Step:              nextStep,
+			ExecutionID:       scenarioExecution.ID,
 			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
 			ScenarioID:        scenarioExecution.ScenarioID,
 			ScenarioName:      scenarioExecution.ScenarioName,
-			AckResources:      scenarioExecution.AckResources,
+			SkipForChild:      skipForChild,
 			Header:            scenarioExecution.Header,
 			Response:          scenarioExecution.Response,
 			ResponseMap:       scenarioExecution.ResponseMap,
@@ -463,7 +475,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
 	}
 
 	return true, nil
@@ -500,8 +512,8 @@ func (e *redisBasedManager) processEmittedTrigger(
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, prevScenarioExecution.AckResources,
-			additionalData, prevScenarioExecution.FifoAckEvent)
+		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
+			prevScenarioExecution.FifoAckEvent)
 	}
 
 	return nil
@@ -512,7 +524,6 @@ func (e *redisBasedManager) startExecution(
 	scenario Scenario,
 	alarm types.Alarm,
 	entity types.Entity,
-	ackResources bool,
 	data AdditionalData,
 	fifoAckEvent types.Event,
 ) {
@@ -536,7 +547,6 @@ func (e *redisBasedManager) startExecution(
 		Entity:           entity,
 		ActionExecutions: executions,
 		LastUpdate:       time.Now().Unix(),
-		AckResources:     ackResources,
 		AdditionalData:   data,
 		FifoAckEvent:     fifoAckEvent,
 	}
@@ -550,16 +560,22 @@ func (e *redisBasedManager) startExecution(
 		return
 	}
 
+	action := scenario.Actions[0]
+	skipForChild := false
+	if action.Parameters.SkipForChild != nil {
+		skipForChild = *action.Parameters.SkipForChild
+	}
 	e.taskChannel <- Task{
 		Source:            "input listener",
-		Action:            scenario.Actions[0],
+		Action:            action,
 		Alarm:             alarm,
 		Entity:            entity,
 		Step:              0,
+		ExecutionID:       execution.ID,
 		ExecutionCacheKey: execution.GetCacheKey(),
 		ScenarioID:        scenario.ID,
 		ScenarioName:      scenario.Name,
-		AckResources:      ackResources,
+		SkipForChild:      skipForChild,
 		AdditionalData:    data,
 	}
 }
