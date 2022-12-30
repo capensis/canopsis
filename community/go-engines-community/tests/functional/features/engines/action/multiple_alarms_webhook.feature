@@ -6,7 +6,8 @@ Feature: execute action on trigger
     When I do POST /api/v4/scenarios:
     """json
     {
-      "name": "test-scenario-multiple-alarm-webhook-1",
+      "_id": "test-scenario-multiple-alarm-webhook-1",
+      "name": "test-scenario-multiple-alarm-webhook-1-name",
       "priority": 10000,
       "enabled": true,
       "triggers": [
@@ -83,6 +84,37 @@ Feature: execute action on trigger
     }
     """
     When I wait the end of 2 events processing
+    When I do GET /api/v4/scenarios?search=test-scenario-action-multiple-alarm-webhook-1&sort_by=name
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ]
+        },
+        {
+          "name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3",
+          "enabled": true,
+          "triggers": [
+            "create"
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response ticket1={{ (index .lastResponse.data 0)._id }}
+    When I save response ticket2={{ (index .lastResponse.data 1)._id }}
     When I do GET /api/v4/alarms?search=test-component-multiple-alarm-webhook-1&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -91,10 +123,25 @@ Feature: execute action on trigger
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
+                "ticket": "{{ .ticket1 }}",
+                "ticket_rule_id": "test-scenario-multiple-alarm-webhook-1",
+                "ticket_rule_name": "Scenario: test-scenario-multiple-alarm-webhook-1-name",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
-              "data": {
+              "ticket": "{{ .ticket1 }}",
+              "ticket_rule_id": "test-scenario-multiple-alarm-webhook-1",
+              "ticket_rule_name": "Scenario: test-scenario-multiple-alarm-webhook-1-name",
+              "ticket_data": {
                 "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2"
               }
             },
@@ -106,10 +153,25 @@ Feature: execute action on trigger
         },
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
+                "ticket": "{{ .ticket2 }}",
+                "ticket_rule_id": "test-scenario-multiple-alarm-webhook-1",
+                "ticket_rule_name": "Scenario: test-scenario-multiple-alarm-webhook-1-name",
+                "ticket_data": {
+                  "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3"
+                }
+              }
+            ],
             "ticket": {
               "_t": "declareticket",
               "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
-              "data": {
+              "ticket": "{{ .ticket2 }}",
+              "ticket_rule_id": "test-scenario-multiple-alarm-webhook-1",
+              "ticket_rule_name": "Scenario: test-scenario-multiple-alarm-webhook-1-name",
+              "ticket_data": {
                 "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3"
               }
             },
@@ -159,7 +221,7 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
         "user_id": "",
-        "m": "Scenario test-scenario-multiple-alarm-webhook-1"
+        "m": "Scenario test-scenario-multiple-alarm-webhook-1-name"
       },
       {
         "_t": "webhookcomplete",
@@ -169,7 +231,12 @@ Feature: execute action on trigger
       {
         "_t": "declareticket",
         "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-1",
-        "user_id": ""
+        "user_id": "",
+        "ticket_rule_id": "test-scenario-multiple-alarm-webhook-1",
+        "ticket_rule_name": "Scenario: test-scenario-multiple-alarm-webhook-1-name",
+        "ticket_data": {
+          "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2"
+        }
       }
     ]
     """
@@ -186,7 +253,7 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
         "user_id": "",
-        "m": "Scenario test-scenario-multiple-alarm-webhook-1"
+        "m": "Scenario test-scenario-multiple-alarm-webhook-1-name"
       },
       {
         "_t": "webhookcomplete",
@@ -196,36 +263,13 @@ Feature: execute action on trigger
       {
         "_t": "declareticket",
         "a": "test-scenario-multiple-alarm-webhook-1-action-1-author test-resource-multiple-alarm-webhook-1-2",
-        "user_id": ""
+        "user_id": "",
+        "ticket": "{{ .ticket2 }}",
+        "ticket_rule_id": "test-scenario-multiple-alarm-webhook-1",
+        "ticket_rule_name": "Scenario: test-scenario-multiple-alarm-webhook-1-name",
+        "ticket_data": {
+          "scenario_name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3"
+        }
       }
     ]
-    """
-    When I do GET /api/v4/scenarios?search=test-scenario-action-multiple-alarm-webhook-1&sort_by=name
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "name": "test-scenario-action-multiple-alarm-webhook-1!!!10001!!!test-resource-multiple-alarm-webhook-1-1|||2",
-          "enabled": true,
-          "triggers": [
-            "create"
-          ]
-        },
-        {
-          "name": "test-scenario-action-multiple-alarm-webhook-1!!!100010!!!test-resource-multiple-alarm-webhook-1-2|||3",
-          "enabled": true,
-          "triggers": [
-            "create"
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "per_page": 10,
-        "page_count": 1,
-        "total_count": 2
-      }
-    }
     """
