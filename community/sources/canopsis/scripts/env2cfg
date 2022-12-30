@@ -27,7 +27,7 @@ import os
 import sys
 from configparser import ConfigParser
 from os.path import join as pjoin
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from pymongo import uri_parser
 from pymongo.errors import ConfigurationError
@@ -53,7 +53,7 @@ class Env2Cfg(object):
         undefined.
         """
         varval = os.environ.get(varname, '')
-        if varval is '':
+        if varval == '':
             raise ValueError('env var {} is empty'.format(varname))
 
     def __check_mongo_dsn(self):
@@ -112,7 +112,7 @@ class Env2Cfg(object):
         amqp.set('master', 'port', '5672' if pu.port is None else str(pu.port))
         amqp.set('master', 'userid', 'cpsrabbit' if pu.username is None else pu.username)
         amqp.set('master', 'password', 'canopsis' if pu.password is None else pu.password)
-        amqp.set('master', 'virtual_host', 'canopsis' if pu.path is '' else pu.path[1:])
+        amqp.set('master', 'virtual_host', 'canopsis' if pu.path == '' else pu.path[1:])
 
         if amqp.get('master', 'exchange_name', fallback=None) is None:
             amqp.set('master', 'exchange_name', 'canopsis')
@@ -184,7 +184,7 @@ class Env2Cfg(object):
 
         redis.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
         redis.set('DATABASE', 'port', '6379' if pu.port is None else str(pu.port))
-        redis.set('DATABASE', 'dbnum', '0' if pu.path is '' else pu.path[1:])
+        redis.set('DATABASE', 'dbnum', '0' if pu.path == '' else pu.path[1:])
         if pu.password:
             redis.set('DATABASE', 'pwd', pu.password)
 
