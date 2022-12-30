@@ -577,29 +577,6 @@ def merge_two_dicts(x, y):
     return z
 
 
-def dict_merge(dct, merge_dct):
-    """
-    Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
-    updating only top-level keys, dict_merge recurses down into dicts nested
-    to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
-    ``dct``.
-    => https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
-
-    NB: merge_dict always win
-
-    :param dict dct: dict onto which the merge is executed
-    :param dict merge_dct: dct merged into dct
-    :return: None
-    """
-    for k, v in merge_dct.iteritems():
-        if (k in dct
-                and isinstance(dct[k], dict)
-                and isinstance(merge_dct[k], Mapping)):
-            dict_merge(dct[k], merge_dct[k])
-        else:
-            dct[k] = merge_dct[k]
-
-
 def is_mongo_successfull(dico):
     """
     Check if a pymongo dict response report a success ({'ok': 1.0, 'n': 2})
