@@ -495,13 +495,9 @@ export default {
       }
     }
 
-    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row {
-      user-select: none;
-
-      &:after{
-        pointer-events: auto;
-        opacity: 1;
-      }
+    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
+      pointer-events: auto;
+      opacity: 1;
     }
 
     tbody {

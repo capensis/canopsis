@@ -306,6 +306,7 @@ export const EVENT_ENTITY_STYLE = {
 
 export const WEATHER_ACTIONS_TYPES = {
   entityAck: 'entityAck',
+  entityAckRemove: 'entityAckRemove',
   entityAssocTicket: 'entityAssocTicket',
   entityValidate: 'entityValidate',
   entityInvalidate: 'entityInvalidate',
@@ -320,7 +321,6 @@ export const WEATHER_ACTIONS_TYPES = {
   moreInfos: 'moreInfos',
   alarmsList: 'alarmsList',
   pbehaviorList: 'pbehaviorList',
-  variablesHelp: 'variablesHelp',
 
   executeInstruction: 'executeInstruction',
 };
@@ -394,6 +394,7 @@ export const ENTITY_EVENT_BY_ACTION_TYPE = {
   [WEATHER_ACTIONS_TYPES.pbehaviorList]: EVENT_ENTITY_TYPES.pbehaviorList,
   [WEATHER_ACTIONS_TYPES.executeInstruction]: EVENT_ENTITY_TYPES.executeInstruction,
   [WEATHER_ACTIONS_TYPES.declareTicket]: EVENT_ENTITY_TYPES.declareTicket,
+  [WEATHER_ACTIONS_TYPES.entityAckRemove]: EVENT_ENTITY_TYPES.ackRemove,
 };
 
 export const UNKNOWN_VALUE_STYLE = {
@@ -487,7 +488,7 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
 
-export const COUNTERS_LIMIT = 3;
+export const PBEHAVIOR_COUNTERS_LIMIT = 3;
 
 export const BASIC_ENTITY_TYPES = {
   connector: 'connector',
@@ -563,4 +564,29 @@ export const ENTITY_PATTERN_FIELDS = {
   category: 'category',
   impactLevel: 'impact_level',
   lastEventDate: 'last_event_date',
+};
+
+export const ENTITY_TEMPLATE_FIELDS = {
+  id: 'entity._id',
+  name: 'entity.name',
+  infos: 'entity.infos',
+  connector: 'entity.connector',
+  connectorName: 'entity.connector_name',
+  component: 'entity.component',
+  resource: 'entity.resource',
+  state: 'entity.state',
+  status: 'entity.status',
+  snooze: 'entity.snooze',
+  ack: 'entity.ack',
+  lastUpdateDate: 'entity.last_update_date',
+  impactLevel: 'entity.impact_level',
+  impactState: 'entity.impact_state',
+  categoryName: 'entity.category.name',
+  alarmDisplayName: 'entity.alarm_display_name',
+  pbehaviorInfo: 'entity.pbehavior_info',
+  alarmCreationDate: 'entity.alarm_creation_date',
+  ticket: 'entity.ticket',
+  statsOk: 'entity.stats.ok',
+  statsKo: 'entity.stats.ko',
+  links: 'entity.linklist',
 };
