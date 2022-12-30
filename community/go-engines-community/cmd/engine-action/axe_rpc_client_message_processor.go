@@ -34,6 +34,8 @@ func (p *axeRpcClientMessageProcessor) Process(_ context.Context, msg engine.RPC
 		CorrelationID:   msg.CorrelationID,
 		Alarm:           event.Alarm,
 		AlarmChangeType: event.AlarmChangeType,
+		WebhookHeader:   event.WebhookHeader,
+		WebhookResponse: event.WebhookResponse,
 		Error:           eventErr,
 	}
 

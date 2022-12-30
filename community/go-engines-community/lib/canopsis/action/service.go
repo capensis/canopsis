@@ -181,10 +181,9 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 	}
 
 	s.scenarioInputChannel <- ExecuteScenariosTask{
-		Triggers:     triggers,
-		Alarm:        alarm,
-		Entity:       entity,
-		AckResources: event.AckResources,
+		Triggers: triggers,
+		Alarm:    alarm,
+		Entity:   entity,
 		AdditionalData: AdditionalData{
 			AlarmChangeType: event.AlarmChange.Type,
 			Author:          event.Author,

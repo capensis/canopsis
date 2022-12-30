@@ -46,9 +46,34 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	alarm := event.Alarm
 
 	if alarm.IsResolved() {
-		p.logError(err, "RPC Message Processor: cannot update resolved alarm", msg)
+		switch event.EventType {
+		case types.EventTypeWebhookStarted:
+			/*do nothing*/
+		case types.EventTypeWebhookCompleted,
+			types.EventTypeWebhookFailed:
+			body, err := p.Encoder.Encode(rpc.AxeResultEvent{
+				Alarm:           alarm,
+				WebhookHeader:   event.Parameters.WebhookHeader,
+				WebhookResponse: event.Parameters.WebhookResponse,
+			})
+			if err != nil {
+				p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-action", msg)
+				return nil, nil
+			}
 
-		return p.getErrRpcEvent(errors.New("cannot update resolved alarm"), alarm), nil
+			err = p.ActionRpc.Call(ctx, engine.RPCMessage{
+				CorrelationID: d.CorrelationId,
+				Body:          body,
+			})
+			if err != nil {
+				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-action", msg)
+			}
+
+			return nil, nil
+		default:
+			p.logError(err, "RPC Message Processor: cannot update resolved alarm", msg)
+			return p.getErrRpcEvent(errors.New("cannot update resolved alarm"), alarm), nil
+		}
 	}
 
 	if event.EventType == types.ActionTypePbehavior {
@@ -191,6 +216,7 @@ func (p *rpcMessageProcessor) sendEventToService(
 	})
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-service", msg)
+		return
 	}
 
 	err = p.ServiceRpc.Call(ctx, engine.RPCMessage{
@@ -299,15 +325,16 @@ func (p *rpcMessageProcessor) sendEventToAction(
 		return
 	}
 
-	body, err := p.Encoder.Encode(rpc.WebhookResultEvent{
+	body, err := p.Encoder.Encode(rpc.AxeResultEvent{
 		Alarm:           &alarm,
 		AlarmChangeType: alarmChange.Type,
-		Header:          event.Parameters.WebhookHeader,
-		Response:        event.Parameters.WebhookResponse,
+		WebhookHeader:   event.Parameters.WebhookHeader,
+		WebhookResponse: event.Parameters.WebhookResponse,
 		Error:           event.Parameters.WebhookError,
 	})
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-action", msg)
+		return
 	}
 
 	err = p.ActionRpc.Call(ctx, engine.RPCMessage{
@@ -330,7 +357,7 @@ func (p *rpcMessageProcessor) logError(err error, errMsg string, msg []byte) {
 func (p *rpcMessageProcessor) getErrRpcEvent(err error, alarm *types.Alarm) []byte {
 	msg, _ := p.getRpcEvent(rpc.AxeResultEvent{
 		Alarm: alarm,
-		Error: &types.RPCError{Error: err}},
+		Error: &rpc.Error{Error: err}},
 	)
 	return msg
 }
