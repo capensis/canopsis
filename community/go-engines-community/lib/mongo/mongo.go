@@ -93,6 +93,9 @@ const (
 	MapMongoCollection = "map"
 
 	AlarmTagCollection = "alarm_tag"
+
+	MibCollection       = "default_mibs"
+	SnmpRulesCollection = "default_snmprules"
 )
 
 const (

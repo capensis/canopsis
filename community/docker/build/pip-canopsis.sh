@@ -2,9 +2,9 @@
 set -e
 set -o pipefail
 
+export PATH=/opt/python/3.8/bin:$PATH
 source ${CPS_HOME}/bin/activate
 
-pip --no-color install --no-use-pep517 -b /tmp/pipbuild --no-deps /sources/canopsis/
+pip3 --no-color install --no-use-pep517 --no-deps /sources/canopsis/
 
-rm -rf /tmp/pipbuild
 rm -rf ~/.cache
