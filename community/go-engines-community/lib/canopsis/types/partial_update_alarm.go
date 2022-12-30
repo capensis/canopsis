@@ -49,8 +49,8 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, ro
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, userID, role, initiator string, ticketInfo TicketInfo) error {
-	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, ticketInfo.Ticket, userID, role, initiator, ticketInfo)
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, output, userID, role, initiator, ticketInfo)
 	err := a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
