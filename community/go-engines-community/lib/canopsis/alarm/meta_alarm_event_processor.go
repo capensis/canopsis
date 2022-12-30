@@ -624,7 +624,8 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 		types.AlarmChangeTypeSnooze,
 		types.AlarmChangeTypeUncancel,
 		types.AlarmChangeTypeUpdateStatus,
-		types.AlarmChangeTypeDeclareTicketWebhook:
+		types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
 		return true
 	}
 

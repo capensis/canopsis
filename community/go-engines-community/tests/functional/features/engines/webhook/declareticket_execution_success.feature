@@ -83,13 +83,15 @@ Feature: run a declare ticket rule
         "_id": "{{ .ruleId }}",
         "alarms": [
           "{{ .alarmId1 }}"
-        ]
+        ],
+        "comment": "test-comment-declareticket-execution-1-1"
       },
       {
         "_id": "{{ .ruleId }}",
         "alarms": [
           "{{ .alarmId2 }}"
-        ]
+        ],
+        "comment": "test-comment-declareticket-execution-1-2"
       }
     ]
     """
@@ -103,7 +105,8 @@ Feature: run a declare ticket rule
           "_id": "{{ .ruleId }}",
           "alarms": [
             "{{ .alarmId1 }}"
-          ]
+          ],
+          "comment": "test-comment-declareticket-execution-1-1"
         }
       },
       {
@@ -112,7 +115,8 @@ Feature: run a declare ticket rule
           "_id": "{{ .ruleId }}",
           "alarms": [
             "{{ .alarmId2 }}"
-          ]
+          ],
+          "comment": "test-comment-declareticket-execution-1-2"
         }
       }
     ]
@@ -126,8 +130,33 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "m": "test-ticket-declareticket-execution-1"
+              "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1.",
+              "ticket": "test-ticket-declareticket-execution-1",
+              "ticket_url": "https://test/test-ticket-declareticket-execution-1",
+              "ticket_data": {
+                "name": "test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1"
+              },
+              "ticket_comment": "test-comment-declareticket-execution-1-1",
+              "ticket_rule_id": "{{ .ruleId }}",
+              "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name",
+              "ticket_system_name": "test-declareticketrule-declareticket-execution-1-system-name"
             },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1.",
+                "ticket": "test-ticket-declareticket-execution-1",
+                "ticket_url": "https://test/test-ticket-declareticket-execution-1",
+                "ticket_data": {
+                  "name": "test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1"
+                },
+                "ticket_comment": "test-comment-declareticket-execution-1-1",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-1-system-name"
+              }
+            ],
             "connector" : "test-connector-declareticket-execution-1",
             "connector_name" : "test-connector-name-declareticket-execution-1",
             "component" :  "test-component-declareticket-execution-1",
@@ -139,8 +168,33 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "m": "test-ticket-declareticket-execution-1"
+              "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-2.",
+              "ticket": "test-ticket-declareticket-execution-1",
+              "ticket_url": "https://test/test-ticket-declareticket-execution-1",
+              "ticket_data": {
+                "name": "test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-2"
+              },
+              "ticket_comment": "test-comment-declareticket-execution-1-2",
+              "ticket_rule_id": "{{ .ruleId }}",
+              "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name",
+              "ticket_system_name": "test-declareticketrule-declareticket-execution-1-system-name"
             },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-2.",
+                "ticket": "test-ticket-declareticket-execution-1",
+                "ticket_url": "https://test/test-ticket-declareticket-execution-1",
+                "ticket_data": {
+                  "name": "test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-2"
+                },
+                "ticket_comment": "test-comment-declareticket-execution-1-2",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-1-system-name"
+              }
+            ],
             "connector" : "test-connector-declareticket-execution-1",
             "connector_name" : "test-connector-name-declareticket-execution-1",
             "component" :  "test-component-declareticket-execution-1",
@@ -317,7 +371,8 @@ Feature: run a declare ticket rule
         "alarms": [
           "{{ .alarmId1 }}",
           "{{ .alarmId2 }}"
-        ]
+        ],
+        "comment": "test-comment-declareticket-execution-2"
       }
     ]
     """
@@ -332,7 +387,8 @@ Feature: run a declare ticket rule
           "alarms": [
             "{{ .alarmId1 }}",
             "{{ .alarmId2 }}"
-          ]
+          ],
+          "comment": "test-comment-declareticket-execution-2"
         }
       }
     ]
@@ -346,8 +402,33 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "m": "test-ticket-declareticket-execution-2"
+              "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name. Ticket ID: test-ticket-declareticket-execution-2. Ticket URL: https://test/test-ticket-declareticket-execution-2. Ticket name: test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 .",
+              "ticket": "test-ticket-declareticket-execution-2",
+              "ticket_url": "https://test/test-ticket-declareticket-execution-2",
+              "ticket_data": {
+                "name": "test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 "
+              },
+              "ticket_comment": "test-comment-declareticket-execution-2",
+              "ticket_rule_id": "{{ .ruleId }}",
+              "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name",
+              "ticket_system_name": "test-declareticketrule-declareticket-execution-2-system-name"
             },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name. Ticket ID: test-ticket-declareticket-execution-2. Ticket URL: https://test/test-ticket-declareticket-execution-2. Ticket name: test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 .",
+                "ticket": "test-ticket-declareticket-execution-2",
+                "ticket_url": "https://test/test-ticket-declareticket-execution-2",
+                "ticket_data": {
+                  "name": "test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 "
+                },
+                "ticket_comment": "test-comment-declareticket-execution-2",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-2-system-name"
+              }
+            ],
             "connector" : "test-connector-declareticket-execution-2",
             "connector_name" : "test-connector-name-declareticket-execution-2",
             "component" :  "test-component-declareticket-execution-2",
@@ -359,8 +440,33 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "m": "test-ticket-declareticket-execution-2"
+              "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name. Ticket ID: test-ticket-declareticket-execution-2. Ticket URL: https://test/test-ticket-declareticket-execution-2. Ticket name: test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 .",
+              "ticket": "test-ticket-declareticket-execution-2",
+              "ticket_url": "https://test/test-ticket-declareticket-execution-2",
+              "ticket_data": {
+                "name": "test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 "
+              },
+              "ticket_comment": "test-comment-declareticket-execution-2",
+              "ticket_rule_id": "{{ .ruleId }}",
+              "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name",
+              "ticket_system_name": "test-declareticketrule-declareticket-execution-2-system-name"
             },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name. Ticket ID: test-ticket-declareticket-execution-2. Ticket URL: https://test/test-ticket-declareticket-execution-2. Ticket name: test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 .",
+                "ticket": "test-ticket-declareticket-execution-2",
+                "ticket_url": "https://test/test-ticket-declareticket-execution-2",
+                "ticket_data": {
+                  "name": "test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 "
+                },
+                "ticket_comment": "test-comment-declareticket-execution-2",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-2-system-name"
+              }
+            ],
             "connector" : "test-connector-declareticket-execution-2",
             "connector_name" : "test-connector-name-declareticket-execution-2",
             "component" :  "test-component-declareticket-execution-2",
@@ -533,7 +639,8 @@ Feature: run a declare ticket rule
         "_id": "{{ .ruleId }}",
         "alarms": [
           "{{ .alarmId }}"
-        ]
+        ],
+        "comment": "test-comment-declareticket-execution-3"
       }
     ]
     """
@@ -547,7 +654,8 @@ Feature: run a declare ticket rule
           "_id": "{{ .ruleId }}",
           "alarms": [
             "{{ .alarmId }}"
-          ]
+          ],
+          "comment": "test-comment-declareticket-execution-3"
         }
       }
     ]
@@ -561,8 +669,33 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root",
-              "m": "test-ticket-declareticket-execution-3"
+              "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-3-name. Ticket ID: test-ticket-declareticket-execution-3. Ticket URL: https://test/test-ticket-declareticket-execution-3. Ticket name: test-ticket-declareticket-execution-3 test-resource-declareticket-execution-3.",
+              "ticket": "test-ticket-declareticket-execution-3",
+              "ticket_url": "https://test/test-ticket-declareticket-execution-3",
+              "ticket_data": {
+                "name": "test-ticket-declareticket-execution-3 test-resource-declareticket-execution-3"
+              },
+              "ticket_comment": "test-comment-declareticket-execution-3",
+              "ticket_rule_id": "{{ .ruleId }}",
+              "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-3-name",
+              "ticket_system_name": "test-declareticketrule-declareticket-execution-3-system-name"
             },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-3-name. Ticket ID: test-ticket-declareticket-execution-3. Ticket URL: https://test/test-ticket-declareticket-execution-3. Ticket name: test-ticket-declareticket-execution-3 test-resource-declareticket-execution-3.",
+                "ticket": "test-ticket-declareticket-execution-3",
+                "ticket_url": "https://test/test-ticket-declareticket-execution-3",
+                "ticket_data": {
+                  "name": "test-ticket-declareticket-execution-3 test-resource-declareticket-execution-3"
+                },
+                "ticket_comment": "test-comment-declareticket-execution-3",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-3-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-3-system-name"
+              }
+            ],
             "connector" : "test-connector-declareticket-execution-3",
             "connector_name" : "test-connector-name-declareticket-execution-3",
             "component" :  "test-component-declareticket-execution-3",
@@ -738,10 +871,13 @@ Feature: run a declare ticket rule
         {
           "v": {
             "ticket": {
-              "_t": "declareticket",
-              "a": "root",
-              "m": "test-ticket-declareticket-execution-4"
+              "_t": "declareticket"
             },
+            "tickets": [
+              {
+                "_t": "declareticket"
+              }
+            ],
             "connector" : "test-connector-declareticket-execution-4",
             "connector_name" : "test-connector-name-declareticket-execution-4",
             "component" :  "test-component-declareticket-execution-4",
@@ -891,7 +1027,8 @@ Feature: run a declare ticket rule
         "_id": "{{ .ruleId }}",
         "alarms": [
           "{{ .alarmId }}"
-        ]
+        ],
+        "comment": "test-comment-declareticket-execution-5"
       }
     ]
     """
@@ -905,7 +1042,8 @@ Feature: run a declare ticket rule
           "_id": "{{ .ruleId }}",
           "alarms": [
             "{{ .alarmId }}"
-          ]
+          ],
+          "comment": "test-comment-declareticket-execution-5"
         }
       }
     ]
@@ -950,6 +1088,44 @@ Feature: run a declare ticket rule
       }
     ]
     """
+    When I do GET /api/v4/alarms?search=test-resource-declareticket-execution-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "tickets": [
+              {
+                "_t": "declareticketfail",
+                "a": "root",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-5-name. Fail reason: url {{ .dummyApiURL }}/not-exist not found.",
+                "ticket_comment": "test-comment-declareticket-execution-5",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-5-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-5-system-name"
+              }
+            ],
+            "connector" : "test-connector-declareticket-execution-5",
+            "connector_name" : "test-connector-name-declareticket-execution-5",
+            "component" :  "test-component-declareticket-execution-5",
+            "resource" : "test-resource-declareticket-execution-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.ticket" should not exist
+    Then the response key "data.0.v.tickets.0.ticket" should not exist
+    Then the response key "data.0.v.tickets.0.ticket_url" should not exist
+    Then the response key "data.0.v.tickets.0.ticket_data" should not exist
 
   @concurrent
   Scenario: given failed webhook should add fail reason to step message
