@@ -81,7 +81,8 @@ db.widgets.updateMany(
             {
                 "$or": [
                     {"parameters.widgetColumns.value": "v.ticket.val"},
-                    {"parameters.widgetGroupColumns.value": "v.ticket.val"}
+                    {"parameters.widgetGroupColumns.value": "v.ticket.val"},
+                    {"parameters.widgetExportColumns.value": "v.ticket.val"}
                 ]
             }
         ]
@@ -89,7 +90,8 @@ db.widgets.updateMany(
     {
         $set: {
             "parameters.widgetColumns.$[column].value": "v.ticket.ticket",
-            "parameters.widgetGroupColumns.$[column].value": "v.ticket.ticket"
+            "parameters.widgetGroupColumns.$[column].value": "v.ticket.ticket",
+            "parameters.widgetExportColumns.$[column].value": "v.ticket.ticket"
         }
     },
     {
