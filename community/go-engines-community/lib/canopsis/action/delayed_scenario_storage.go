@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/go-redis/redis/v8"
-	"time"
 )
 
 type DelayedScenario struct {
@@ -57,7 +58,7 @@ func (s *redisDelayedScenarioStorage) GetAll(ctx context.Context) ([]DelayedScen
 	processedKeys := make(map[string]bool)
 
 	for {
-		res := s.client.Scan(ctx, cursor, fmt.Sprintf("%s*", s.key), 50)
+		res := s.client.Scan(ctx, cursor, s.key+"*", 50)
 		if err := res.Err(); err != nil {
 			return nil, err
 		}
@@ -168,5 +169,5 @@ func (s *redisDelayedScenarioStorage) Update(ctx context.Context, scenario Delay
 }
 
 func (s *redisDelayedScenarioStorage) getKey(id string) string {
-	return fmt.Sprintf("%s-%s", s.key, id)
+	return s.key + "-" + id
 }

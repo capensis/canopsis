@@ -81,6 +81,8 @@ definitions:
       rrule:
         description: RRule is used in pbehavior action.
         type: string
+      skip_for_child:
+        type: boolean
       start_on_trigger:
         description: StartOnTrigger is used in pbehavior action.
         type: boolean
@@ -92,10 +94,21 @@ definitions:
             * `2` - Major
             * `3` - Critical
         type: integer
-      system_name:
-        type: string
       ticket:
         description: Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        description: TicketData is used in assocticket action.
+        type: object
+      ticket_system_name:
+        description: TicketSystemName is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url:
+        description: TicketURL is used in assocticket action.
         maxLength: 255
         type: string
       tstart:
@@ -185,25 +198,6 @@ definitions:
       v:
         $ref: '#/definitions/alarm.AlarmValue'
     type: object
-  alarm.AlarmTicket:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      data:
-        additionalProperties:
-          type: string
-        type: object
-      m:
-        type: string
-      t:
-        type: integer
-      user_id:
-        type: string
-      val:
-        type: string
-    type: object
   alarm.AlarmValue:
     properties:
       ack:
@@ -292,7 +286,11 @@ definitions:
           $ref: '#/definitions/common.AlarmStep'
         type: array
       ticket:
-        $ref: '#/definitions/alarm.AlarmTicket'
+        $ref: '#/definitions/common.AlarmStep'
+      tickets:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
       total_state_changes:
         type: integer
     type: object
@@ -364,7 +362,7 @@ definitions:
       opened:
         type: boolean
       steps:
-        $ref: '#/definitions/pagination.Query'
+        $ref: '#/definitions/alarm.StepsRequest'
       with_instructions:
         type: boolean
     required:
@@ -498,6 +496,17 @@ definitions:
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  alarm.StepsRequest:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      reversed:
+        type: boolean
     type: object
   alarmtag.Response:
     properties:
@@ -693,6 +702,24 @@ definitions:
         $ref: '#/definitions/types.CropCounter'
       t:
         type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
       user_id:
         type: string
       val:
@@ -879,6 +906,10 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         description: Flags
         type: boolean
@@ -887,6 +918,12 @@ definitions:
         type: integer
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -911,6 +948,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -979,7 +1018,10 @@ definitions:
         description: Name is Name of pbehavior.PBehavior.
         type: string
       reason:
-        description: Reason is Name of pbehavior.Reason.
+        description: ReasonID is ID of pbehavior.Reason.
+        type: string
+      reason_name:
+        description: ReasonName is Name of pbehavior.Reason.
         type: string
       timestamp:
         description: |-
@@ -1058,6 +1100,10 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
         description: Flags
         type: boolean
@@ -1068,6 +1114,12 @@ definitions:
         type: string
       enabled:
         type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -1092,6 +1144,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -2155,6 +2209,38 @@ definitions:
         - service
         type: string
     type: object
+  importcontextgraph.EntityConfiguration:
+    properties:
+      action:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
   importcontextgraph.Link:
     properties:
       _id:
@@ -2221,15 +2307,6 @@ definitions:
   oldpattern.EntityPatternList:
     type: object
   oldpattern.EventPatternList:
-    type: object
-  pagination.Query:
-    properties:
-      limit:
-        type: integer
-      page:
-        type: integer
-      paginate:
-        type: boolean
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
@@ -2368,6 +2445,49 @@ definitions:
         type: string
     required:
     - _id
+    type: object
+  pbehavior.BulkEntityCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entity:
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - color
+    - entity
+    - name
+    - origin
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.BulkEntityDeleteRequestItem:
+    properties:
+      entity:
+        type: string
+      origin:
+        type: string
+    required:
+    - entity
+    - origin
     type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
@@ -2556,6 +2676,8 @@ definitions:
         type: string
       created:
         type: integer
+      editable:
+        type: boolean
       enabled:
         type: boolean
       entity_pattern:
@@ -2582,6 +2704,8 @@ definitions:
         type: string
       old_mongo_query:
         $ref: '#/definitions/pbehavior.OldMongoQuery'
+      origin:
+        type: string
       reason:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
@@ -2834,7 +2958,41 @@ definitions:
         type: string
       name:
         type: string
+      playlist:
+        $ref: '#/definitions/permission.Playlist'
+        description: Playlist is used only for playlist permissions.
       type:
+        type: string
+      view:
+        $ref: '#/definitions/permission.View'
+        description: View is used only for view permissions.
+      view_group:
+        $ref: '#/definitions/permission.ViewGroup'
+        description: ViewGroup is used only for view permissions.
+    type: object
+  permission.Playlist:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  permission.View:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
+        type: string
+    type: object
+  permission.ViewGroup:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
         type: string
     type: object
   playlist.EditRequest:
@@ -3111,8 +3269,12 @@ definitions:
         $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         $ref: '#/definitions/role.View'
+      deletable:
+        type: boolean
       description:
         type: string
+      editable:
+        type: boolean
       name:
         type: string
       permissions:
@@ -3502,12 +3664,37 @@ definitions:
       inactivity_interval:
         $ref: '#/definitions/types.DurationWithUnit'
     type: object
-  serviceweather.AlarmCounter:
+  serviceweather.Counters:
     properties:
-      count:
+      acked:
         type: integer
-      type:
-        $ref: '#/definitions/pbehaviortype.Type'
+      acked_under_pbh:
+        type: integer
+      active:
+        type: integer
+      all:
+        type: integer
+      depends:
+        type: integer
+      pbh_types:
+        items:
+          $ref: '#/definitions/serviceweather.PbhTypeCounter'
+        type: array
+      state:
+        properties:
+          critical:
+            type: integer
+          major:
+            type: integer
+          minor:
+            type: integer
+          ok:
+            type: integer
+        type: object
+      unacked:
+        type: integer
+      under_pbh:
+        type: integer
     type: object
   serviceweather.Entity:
     properties:
@@ -3573,6 +3760,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.Pbehavior'
         type: array
+      pbh_origin_icon:
+        type: string
       resource:
         type: string
       running_auto_instructions:
@@ -3602,7 +3791,11 @@ definitions:
           type: string
         type: array
       ticket:
-        $ref: '#/definitions/alarm.AlarmTicket'
+        $ref: '#/definitions/common.AlarmStep'
+      tickets:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
     type: object
   serviceweather.Info:
     properties:
@@ -3610,16 +3803,19 @@ definitions:
         type: string
       value: {}
     type: object
+  serviceweather.PbhTypeCounter:
+    properties:
+      count:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehaviortype.Type'
+    type: object
   serviceweather.Service:
     properties:
       _id:
         type: string
       ack:
         $ref: '#/definitions/common.AlarmStep'
-      alarm_counters:
-        items:
-          $ref: '#/definitions/serviceweather.AlarmCounter'
-        type: array
       category:
         $ref: '#/definitions/entitycategory.Category'
       component:
@@ -3628,8 +3824,8 @@ definitions:
         type: string
       connector_name:
         type: string
-      depends_count:
-        type: integer
+      counters:
+        $ref: '#/definitions/serviceweather.Counters'
       icon:
         type: string
       idle_since:
@@ -3863,6 +4059,14 @@ definitions:
         type: integer
       end:
         type: integer
+    type: object
+  types.Info:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      value: {}
     type: object
   user.BulkDeleteRequestItem:
     properties:

@@ -1,16 +1,7 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-flex.pr-1(v-if="reverse && !fullDay", xs4)
-        time-picker-field(
-          :value="value | date('timePicker', null)",
-          :label="label",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          hide-details,
-          @input="updateTime"
-        )
-      v-flex(:class="datePickerFlexClass")
+  v-layout.date-time-splitted-field(column)
+    v-layout(row, :reverse="reverse")
+      v-flex.date-time-splitted-field__date(:class="datePickerClass")
         c-date-picker-field(
           :value="value | date('vuetifyDatePicker', null)",
           :label="!reverse || fullDay ? label : ''",
@@ -21,21 +12,17 @@
           hide-details,
           @input="updateDate"
         )
-      v-flex.pr-1(v-if="!reverse && !fullDay", xs4)
-        time-picker-field(
-          :value="value | date('timePicker', null)",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          hide-details,
-          @input="updateTime"
-        )
+      time-picker-field.date-time-splitted-field__time(
+        v-if="!fullDay",
+        :value="value | date('timePicker', null)",
+        :label="reverse ? label : ''",
+        :error="errors.has(name)",
+        :disabled="disabled",
+        hide-details,
+        @input="updateTime"
+      )
     div.v-text-field__details.mt-2
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(
-            v-for="error in errors.collect(name)",
-            :key="error"
-          ) {{ error }}
+      v-messages(:value="errors.collect(name)", color="error")
 </template>
 
 <script>
@@ -100,12 +87,12 @@ export default {
     },
   },
   computed: {
-    datePickerFlexClass() {
-      return {
-        'pr-1': !this.reverse,
-        xs8: !this.fullDay,
-        xs12: this.fullDay,
-      };
+    datePickerClass() {
+      if (!this.fullDay) {
+        return this.reverse ? 'pl-1' : 'pr-1';
+      }
+
+      return '';
     },
   },
   methods: {
@@ -119,3 +106,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.date-time-splitted-field {
+  &__date {
+    flex: 1;
+  }
+
+  &__time {
+    width: 56px;
+    max-width: 56px;
+  }
+}
+</style>

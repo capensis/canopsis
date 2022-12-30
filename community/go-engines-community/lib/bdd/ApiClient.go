@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"go/types"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -803,7 +802,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 		return ctx, fmt.Errorf("cannot do login request: %w", err)
 	}
 
-	buf, err := ioutil.ReadAll(response.Body)
+	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch login response: %w", err)
 	}
@@ -1426,7 +1425,7 @@ func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.C
 	if err != nil {
 		return ctx, fmt.Errorf("cannot do request: %w", err)
 	}
-	buf, err := ioutil.ReadAll(response.Body)
+	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch response: %w", err)
 	}

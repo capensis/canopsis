@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`field-color-indicator Renders \`field-color-indicator\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Color indicator"
+>
+  <c-color-indicator-field-stub
+    value="impact_state"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`field-color-indicator Renders \`field-color-indicator\` with default props 1`] = `
+<widget-settings-item-stub
+  title="Color indicator"
+>
+  <c-color-indicator-field-stub
+    value="state"
+  />
+</widget-settings-item-stub>
+`;

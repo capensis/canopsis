@@ -68,7 +68,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 		}
 
 		if archived > 0 {
-			w.Logger.Info().Int64("alarm number", archived).Msg("resolved alarm archiving")
+			w.Logger.Info().Int64("alarm_number", archived).Msg("resolved alarm archiving")
 		}
 	}
 
@@ -82,7 +82,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 		}
 
 		if deleted > 0 {
-			w.Logger.Info().Int64("alarm number", deleted).Msg("resolved alarm removing")
+			w.Logger.Info().Int64("alarm_number", deleted).Msg("resolved alarm removing")
 		}
 	}
 
