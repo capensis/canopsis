@@ -12,7 +12,7 @@ user_home=$(su - canopsis -c 'echo -n ${HOME}')
 
 cps_edition=community
 # XXX: do a better check once Python2 is removed
-if [ -d "${user_home}/lib/python2.7/site-packages/canopsis_cat" ]; then
+if [ -d "${user_home}/lib/python3/site-packages/canopsis_cat" ]; then
 	cps_edition=pro
 fi
 
