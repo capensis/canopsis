@@ -3,6 +3,17 @@ Feature: Assigned declare tickets
   Only admin should be able get assigned declare ticket rules for alarms
 
   @concurrent
+  Scenario: given get unauth request should not allow access
+    When I do GET /api/v4/cat/declare-ticket-assigned
+    Then the response code should be 401
+
+  @concurrent
+  Scenario: given get request and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/cat/declare-ticket-assigned
+    Then the response code should be 403
+
+  @concurrent
   Scenario: given get assigned declare ticket rules request should return assigned rules for given alarms
     When I am admin
     When I send an event and wait the end of event processing:
