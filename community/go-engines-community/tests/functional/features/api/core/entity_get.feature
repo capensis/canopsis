@@ -19,6 +19,7 @@ Feature: Get entities
             "updated": 1592215337
           },
           "enabled": true,
+          "old_entity_patterns": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "impact_level": 2,
           "infos": {},
@@ -41,6 +42,7 @@ Feature: Get entities
             "updated": 1592215337
           },
           "enabled": true,
+          "old_entity_patterns": null,
           "impact_level": 1,
           "infos": {},
           "name": "test-connector-name-to-entity-get",
@@ -63,6 +65,7 @@ Feature: Get entities
           },
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,
+          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 3,
           "infos": {
@@ -120,6 +123,7 @@ Feature: Get entities
           "category": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,
+          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 1,
           "infos": {},

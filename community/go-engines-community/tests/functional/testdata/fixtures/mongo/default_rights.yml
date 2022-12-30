@@ -717,7 +717,7 @@ default_rights:
     _id: test-view-to-viewgroup-get-3
     crecord_name: <Current()._id>
 
-  permission_playlist_to_check_acess:
+  permission_playlist_to_check_access:
     <<: *permission_rw
     _id: test-playlist-to-check-access
     crecord_name: <Current()._id>
@@ -736,6 +736,7 @@ default_rights:
     <<: *permission_rw
     _id: test-playlist-to-update
     crecord_name: <Current()._id>
+    decription: "Rights on playlist : test-playlist-to-update-name"
 
   permission_playlist_to_delete:
     <<: *permission_rw
@@ -746,6 +747,25 @@ default_rights:
     <<: *permission_rw
     _id: test-view-to-playlist-edit
     crecord_name: <Current()._id>
+
+  role_to_playlist_edit:
+    <<: *role
+    _id: test-role-to-playlist-edit
+    crecord_name: <Current()._id>
+    description: test-role-to-playlist-edit-description
+    rights:
+      "@permission_api_playlist":
+        checksum: 15
+        crecord_type: right
+      "@permission_playlist_to_edit":
+        checksum: 4
+        crecord_type: right
+
+  user_to_playlist_edit:
+    <<: *user
+    _id: test-user-to-playlist-edit
+    crecord_name: <Current()._id>
+    role: "@role_to_playlist_edit"
 
   role_to_update_view_position:
     <<: *role
@@ -1043,6 +1063,22 @@ default_rights:
     <<: *permission_rw
     _id: test-view-to-weather-get
     crecord_name: <Current()._id>
+
+  role_to_view_edit:
+    <<: *role
+    _id: test-role-to-view-edit
+    crecord_name: <Current()._id>
+    description: test-role-to-view-edit-description
+    rights:
+      "@permission_api_view":
+        checksum: 15
+        crecord_type: right
+
+  user_to_view_edit:
+    <<: *user
+    _id: test-user-to-view-edit
+    crecord_name: <Current()._id>
+    role: "@role_to_view_edit"
 
   role_admin:
     <<: *role

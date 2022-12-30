@@ -1,12 +1,11 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{ title }}
-      .font-italic.caption.ml-1 ({{ $t('common.optional') }})
-    v-container
-      v-text-field(:value="value", type="number", @input="$emit('input', parseInt($event, 10))")
+  widget-settings-item(:title="title", optional)
+    c-number-field(v-field="value")
 </template>
 
 <script>
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 /**
  * Component to select a Number type setting
  *
@@ -14,6 +13,7 @@
  * @prop {String} [title=''] - Title
  */
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Number,
