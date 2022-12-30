@@ -71,7 +71,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 		for _, rule := range rules {
 			matched, err := rule.Matches(alarmWithEntity)
 			if err != nil {
-				s.logger.Error().Err(err).Str("resolve rule", rule.ID).Msg("match resolve rule returned error, skip")
+				s.logger.Error().Err(err).Str("resolve_rule", rule.ID).Msg("match resolve rule returned error, skip")
 				continue
 			}
 

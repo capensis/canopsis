@@ -21,6 +21,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-1-name",
+      "priority": 10050,
       "enabled": true,
       "triggers": ["instructionfail"],
       "actions": [
@@ -128,6 +129,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-2-name",
+      "priority": 10051,
       "enabled": true,
       "triggers": ["autoinstructionfail"],
       "actions": [
@@ -266,6 +268,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-3-name",
+      "priority": 10052,
       "enabled": true,
       "triggers": ["instructionjobfail"],
       "actions": [
@@ -418,6 +421,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-4-name",
+      "priority": 10053,
       "enabled": true,
       "triggers": ["instructionjobfail"],
       "actions": [
@@ -574,6 +578,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-5-name",
+      "priority": 10054,
       "enabled": true,
       "triggers": ["instructioncomplete"],
       "actions": [
@@ -676,6 +681,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-6-name",
+      "priority": 10055,
       "enabled": true,
       "triggers": ["autoinstructioncomplete"],
       "actions": [
@@ -828,6 +834,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-7-name",
+      "priority": 10056,
       "enabled": true,
       "triggers": ["instructionjobcomplete"],
       "actions": [
@@ -942,6 +949,7 @@ Feature: scenarios should be triggered by remediation triggers
     """json
     {
       "name": "test-scenario-action-remediation-triggers-8-name",
+      "priority": 10057,
       "enabled": true,
       "triggers": ["instructionjobcomplete"],
       "actions": [

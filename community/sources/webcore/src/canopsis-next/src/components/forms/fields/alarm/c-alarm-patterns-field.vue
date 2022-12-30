@@ -17,11 +17,13 @@ import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
+  ALARM_ACK_INITIATORS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   MAX_LIMIT,
+  PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
@@ -287,6 +289,25 @@ export default {
       };
     },
 
+    ackInitiatorOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: Object.values(ALARM_ACK_INITIATORS),
+          },
+        },
+      };
+    },
+
+    totalStateChangesOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.number,
+        operators: PATTERN_NUMBER_OPERATORS,
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -369,6 +390,16 @@ export default {
           options: this.ackByOptions,
         },
         {
+          text: this.$t('common.ackMessage'),
+          value: ALARM_PATTERN_FIELDS.ackMessage,
+          options: this.stringWithExistOptions,
+        },
+        {
+          text: this.$t('common.ackInitiator'),
+          value: ALARM_PATTERN_FIELDS.ackInitiator,
+          options: this.ackInitiatorOptions,
+        },
+        {
           text: this.$t('common.resolvedAt'),
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.dateOptions,
@@ -419,6 +450,11 @@ export default {
         {
           text: this.$t('common.initialLongOutput'),
           value: ALARM_PATTERN_FIELDS.initialLongOutput,
+        },
+        {
+          text: this.$t('common.totalStateChanges'),
+          value: ALARM_PATTERN_FIELDS.totalStateChanges,
+          options: this.totalStateChangesOptions,
         },
       ];
     },

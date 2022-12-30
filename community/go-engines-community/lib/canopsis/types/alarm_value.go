@@ -138,8 +138,9 @@ func (s *AlarmSteps) Add(step AlarmStep) error {
 
 // Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step
 // Returns :
-// 	- the updated alarm steps
-// 	- True if it was updated, false else
+//   - the updated alarm steps
+//   - True if it was updated, false else
+//
 // param currentStatus: the current status of the alarm. The steps will be cropped from this status
 // param cropNum: crop only if we have at least cropNum steps with type AlarmStepStateIncrease or AlarmStepStateDecrease
 func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, bool) {
@@ -263,8 +264,10 @@ type PbehaviorInfo struct {
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
 	Name string `bson:"name" json:"name"`
-	// Reason is Name of pbehavior.Reason.
-	Reason string `bson:"reason" json:"reason"`
+	// ReasonName is Name of pbehavior.Reason.
+	ReasonName string `bson:"reason_name" json:"reason_name"`
+	// ReasonID is ID of pbehavior.Reason.
+	ReasonID string `bson:"reason" json:"reason"`
 	// TypeID is ID of pbehavior.Type.
 	TypeID string `bson:"type" json:"type"`
 	// TypeName is Name of pbehavior.Type.
