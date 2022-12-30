@@ -208,6 +208,54 @@ Feature: Get a role
     }
     """
 
+  Scenario: given with flags request should return flags
+    When I am admin
+    When I do GET /api/v4/roles?search=test-role-to-get&with_flags=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-role-to-get-1",
+          "editable": true,
+          "deletable": true
+        },
+        {
+          "_id": "test-role-to-get-2",
+          "editable": true,
+          "deletable": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/roles?search=admin&with_flags=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "admin",
+          "editable": false,
+          "deletable": false
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given get all request and no auth user should not allow access
     When I do GET /api/v4/roles
     Then the response code should be 401

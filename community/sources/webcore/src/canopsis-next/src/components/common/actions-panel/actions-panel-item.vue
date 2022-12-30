@@ -9,13 +9,15 @@
             left,
             small
           ) {{ icon }}
-          span.body-1 {{ title }}
+          span.body-1(:class="cssClass") {{ title }}
     template(v-else)
       c-action-btn(
         :tooltip="title",
         :disabled="disabled",
         :icon="icon",
         :color="iconColor",
+        :badge-value="badgeValue",
+        :badge-tooltip="badgeTooltip",
         @click="method"
       )
 </template>
@@ -50,6 +52,10 @@ export default {
       type: String,
       default: '',
     },
+    cssClass: {
+      type: String,
+      default: '',
+    },
     isDropDown: {
       type: Boolean,
       default: false,
@@ -57,6 +63,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    badgeValue: {
+      type: Boolean,
+      required: false,
+    },
+    badgeTooltip: {
+      type: String,
+      required: false,
     },
   },
 };

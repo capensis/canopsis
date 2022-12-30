@@ -5,7 +5,7 @@
         span {{ $t('modals.createRrule.title') }}
       template(#text="")
         recurrence-rule-form(v-model="form.rrule")
-        pbehavior-exception-form(
+        pbehavior-exceptions-field(
           v-model="form.exdates",
           :exceptions.sync="form.exceptions",
           :with-exdate-type="config.withExdateType"
@@ -27,7 +27,7 @@
 import { MODALS } from '@/constants';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
-import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
+import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -42,7 +42,7 @@ export default {
   },
   inject: ['$system'],
   components: {
-    PbehaviorExceptionForm,
+    PbehaviorExceptionsField,
     RecurrenceRuleForm,
     ModalWrapper,
   },

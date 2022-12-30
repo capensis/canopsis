@@ -9,7 +9,6 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
 import {
-  ENTITIES_TYPES,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
@@ -92,8 +91,7 @@ describe('create-ack-event', () => {
       type: Faker.datatype.number(),
     },
   };
-  const itemsType = ENTITIES_TYPES.alarm;
-  const itemsIds = [alarm._id];
+  const items = [alarm];
   const eventData = {
     id: alarm._id,
     component: alarm.v.component,
@@ -117,14 +115,7 @@ describe('create-ack-event', () => {
     output: '',
     ticket: '',
   };
-
-  const getEntitiesList = jest.fn().mockReturnValue([alarm]);
-  const entitiesModule = {
-    name: 'entities',
-    getters: {
-      getList: () => getEntitiesList,
-    },
-  };
+  const config = { items };
 
   const createEvent = jest.fn();
   const eventModule = {
@@ -133,7 +124,7 @@ describe('create-ack-event', () => {
       create: createEvent,
     },
   };
-  const store = createMockedStoreModules([entitiesModule, eventModule]);
+  const store = createMockedStoreModules([eventModule]);
 
   afterEach(() => {
     createEvent.mockClear();
@@ -163,17 +154,15 @@ describe('create-ack-event', () => {
 
   test('Form submitted after trigger submit button', async () => {
     const afterSubmit = jest.fn();
-    const config = {
-      itemsType,
-      itemsIds,
-      afterSubmit,
-    };
 
     const wrapper = factory({
-      store: createMockedStoreModules([entitiesModule, eventModule]),
+      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            items,
+            afterSubmit,
+          },
         },
       },
       mocks: {
@@ -204,7 +193,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -248,7 +237,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -288,7 +277,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -325,7 +314,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -368,7 +357,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -400,9 +389,9 @@ describe('create-ack-event', () => {
       },
     });
 
-    const [{ config }] = $modals.show.mock.calls[0];
+    const [modal] = $modals.show.mock.calls[0];
 
-    config.continueAction();
+    modal.config.continueAction();
 
     expect(createEvent).toBeCalledTimes(1);
     expect(createEvent).toBeCalledWith(
@@ -426,7 +415,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -486,7 +475,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -549,7 +538,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -571,7 +560,7 @@ describe('create-ack-event', () => {
       store,
       propsData: {
         modal: {
-          config: {},
+          config,
         },
       },
       mocks: {
@@ -584,10 +573,11 @@ describe('create-ack-event', () => {
 
   test('Renders `create-ack-event` with config data', () => {
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([entitiesModule, eventModule]),
+      store,
       propsData: {
         modal: {
           config: {
+            items,
             isNoteRequired: true,
           },
         },
