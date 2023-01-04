@@ -4,10 +4,9 @@ set -o pipefail
 
 # Make sure that virtualenv doesn't auto-upgrade pip, because
 # recent versions have problems with our old Python 2 setup.
-export PATH=/opt/python/3.8/bin:$PATH
+export PATH=/opt/python/3.9/bin:$PATH
 virtualenv -p python3 --no-download --system-site-packages ${CPS_HOME}/venv-ansible
 
-pip3 --version
 source ${CPS_HOME}/venv-ansible/bin/activate
 
 pip3 install -U setuptools "pip==22.3.1"

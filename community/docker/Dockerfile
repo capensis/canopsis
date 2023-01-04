@@ -14,7 +14,9 @@ ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
 COPY docker/build/build-${CANOPSIS_DISTRIBUTION}.sh /build.sh
+COPY docker/build/build-python3-${CANOPSIS_DISTRIBUTION}.sh /build-python3.sh
 RUN /bin/bash /build.sh
+RUN /build-python3.sh
 
 WORKDIR ${CPS_HOME}
 
