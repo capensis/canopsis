@@ -88,6 +88,7 @@ export default {
         {
           text: this.$t('users.active'),
           value: 'active',
+          sortable: false,
         },
         {
           text: this.$t('common.enabled'),
