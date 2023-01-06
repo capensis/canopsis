@@ -1,7 +1,7 @@
 package pattern
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -9,7 +9,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author created updated"`
+	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author.name created updated"`
 	Corporate *bool  `json:"corporate" form:"corporate"`
 	Type      string `json:"type" form:"type"`
 }
@@ -37,7 +37,7 @@ type Response struct {
 	AlarmPattern     pattern.Alarm         `bson:"alarm_pattern" json:"alarm_pattern,omitempty"`
 	EntityPattern    pattern.Entity        `bson:"entity_pattern" json:"entity_pattern,omitempty"`
 	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
-	Author           common.User           `bson:"author" json:"author"`
+	Author           *author.Author        `bson:"author" json:"author"`
 	Created          types.CpsTime         `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated          types.CpsTime         `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }

@@ -12,17 +12,26 @@ Feature: get a PBehavior
       "data": [
         {
           "_id": "test-pbehavior-to-get-by-name-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "comments": [
             {
               "_id": "test-pbehavior-to-get-by-name-1-comment-1",
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "ts": 1592215337,
               "message": "test-pbehavior-to-get-by-name-1-comment-1-message"
             },
             {
               "_id": "test-pbehavior-to-get-by-name-1-comment-2",
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "ts": 1592215337,
               "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
             }
@@ -99,7 +108,10 @@ Feature: get a PBehavior
         },
         {
           "_id": "test-pbehavior-to-get-by-name-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "comments": [],
           "color": "#FFFFFF",
           "created": 1592215337,
@@ -286,17 +298,26 @@ Feature: get a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-get-by-name-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "comments": [
         {
           "_id": "test-pbehavior-to-get-by-name-1-comment-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-get-by-name-1-comment-1-message"
         },
         {
           "_id": "test-pbehavior-to-get-by-name-1-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
         }
