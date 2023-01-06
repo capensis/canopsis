@@ -368,7 +368,10 @@ Feature: Bulk update a pbehaviors
               "_id": "test-exception-to-pbh-edit"
             }
           ],
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1592215337
         },
         {
@@ -409,7 +412,10 @@ Feature: Bulk update a pbehaviors
               "_id": "test-exception-to-pbh-edit"
             }
           ],
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1592215337
         }
       ],

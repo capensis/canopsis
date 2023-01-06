@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -42,7 +43,7 @@ type Response struct {
 	Widget    string         `bson:"widget" json:"-"`
 	Title     string         `bson:"title" json:"title"`
 	IsPrivate *bool          `bson:"is_private" json:"is_private,omitempty"`
-	Author    string         `bson:"author" json:"author,omitempty"`
+	Author    *author.Author `bson:"author" json:"author,omitempty"`
 	Created   *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated   *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 

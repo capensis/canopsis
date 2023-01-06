@@ -13,23 +13,20 @@ type API interface {
 }
 
 type api struct {
-	transformer ModelTransformer
-	store       Store
+	store Store
 }
 
 func NewApi(
-	transformer ModelTransformer,
 	store Store,
 ) API {
 	return &api{
-		transformer: transformer,
-		store:       store,
+		store: store,
 	}
 }
 
 // Create
 // @Param body body Request true "body"
-// @Success 201 {object} pbehavior.Comment
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	var request Request
 
@@ -39,18 +36,17 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	model := a.transformer.TransformRequestToModel(&request)
-	ok, err := a.store.Insert(c.Request.Context(), request.Pbehavior, model)
+	response, err := a.store.Insert(c.Request.Context(), request)
 	if err != nil {
 		panic(err)
 	}
 
-	if !ok {
+	if response == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	c.JSON(http.StatusCreated, model)
+	c.JSON(http.StatusCreated, response)
 }
 
 func (a *api) Delete(c *gin.Context) {
