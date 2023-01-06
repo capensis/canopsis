@@ -5982,7 +5982,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Comment'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorcomment.Response'
         400:
           description: Bad Request
           content:
