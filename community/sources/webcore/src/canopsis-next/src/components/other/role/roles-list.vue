@@ -73,10 +73,12 @@ export default {
         {
           text: this.$t('role.inactivityInterval'),
           value: 'auth_config.inactivity_interval',
+          sortable: false,
         },
         {
           text: this.$t('role.expirationInterval'),
           value: 'auth_config.expiration_interval',
+          sortable: false,
         },
         {
           text: this.$t('common.actionsLabel'),
