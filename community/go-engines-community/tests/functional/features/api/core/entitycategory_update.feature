@@ -16,7 +16,10 @@ Feature: Update a entity category
     {
       "_id": "test-category-to-update",
       "name": "test-category-to-update-name-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337
     }
     """
