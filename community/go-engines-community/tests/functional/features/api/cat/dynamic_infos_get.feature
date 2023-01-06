@@ -36,7 +36,10 @@ Feature: Get a dynamic infos
           ],
           "old_alarm_patterns": null,
           "old_entity_patterns": null,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1581423405,
           "description": "test-dynamic-infos-to-get-1-description",
           "disable_during_periods": null,
@@ -63,7 +66,10 @@ Feature: Get a dynamic infos
               }
             }
           ],
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1581423405,
           "description": "test-dynamic-infos-to-get-2-description",
           "disable_during_periods": null,
@@ -135,7 +141,10 @@ Feature: Get a dynamic infos
           "_id": "test-dynamic-infos-to-get-2-entity-pattern"
         }
       ],
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1581423405,
       "description": "test-dynamic-infos-to-get-2-description",
       "disable_during_periods": null,
