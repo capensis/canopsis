@@ -1,7 +1,7 @@
 package sharetoken
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -10,7 +10,7 @@ type ListRequest struct {
 	pagination.Query
 	Search string `form:"search"`
 	Sort   string `form:"sort" binding:"oneoforempty=asc desc"`
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=user description created accessed expired"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=user.name description created accessed expired"`
 }
 
 type EditRequest struct {
@@ -21,8 +21,8 @@ type EditRequest struct {
 type Response struct {
 	ID          string         `bson:"_id" json:"_id"`
 	Value       string         `bson:"value" json:"value"`
-	User        common.User    `bson:"user" json:"user"`
-	Role        common.Role    `bson:"role" json:"role"`
+	User        *author.Author `bson:"user" json:"user"`
+	Role        *author.Role   `bson:"role" json:"role"`
 	Description string         `bson:"description" json:"description"`
 	Created     types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
 	Accessed    types.CpsTime  `bson:"accessed" json:"accessed" swaggertype:"integer"`

@@ -78,10 +78,7 @@ Feature: Get alarms
             "_id": "test-resource-to-alarm-get-2/test-component-to-alarm-get",
             "category": {
               "_id": "test-category-to-alarm-get-2",
-              "name": "test-category-to-alarm-get-2-name",
-              "author": "root",
-              "created": 1592215337,
-              "updated": 1592215337
+              "name": "test-category-to-alarm-get-2-name"
             },
             "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
@@ -145,10 +142,7 @@ Feature: Get alarms
             "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
             "category": {
               "_id": "test-category-to-alarm-get-1",
-              "name": "test-category-to-alarm-get-1-name",
-              "author": "root",
-              "created": 1592215337,
-              "updated": 1592215337
+              "name": "test-category-to-alarm-get-1-name"
             },
             "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
@@ -726,10 +720,7 @@ Feature: Get alarms
         "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
         "category": {
           "_id": "test-category-to-alarm-get-1",
-          "name": "test-category-to-alarm-get-1-name",
-          "author": "root",
-          "created": 1592215337,
-          "updated": 1592215337
+          "name": "test-category-to-alarm-get-1-name"
         },
         "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
@@ -1403,10 +1394,7 @@ Feature: Get alarms
         "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
         "category": {
           "_id": "test-category-to-alarm-get-1",
-          "name": "test-category-to-alarm-get-1-name",
-          "author": "root",
-          "created": 1592215337,
-          "updated": 1592215337
+          "name": "test-category-to-alarm-get-1-name"
         },
         "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
