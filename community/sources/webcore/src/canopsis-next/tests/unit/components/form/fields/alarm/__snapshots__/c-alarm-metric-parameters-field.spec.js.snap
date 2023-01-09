@@ -658,7 +658,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of active alarms with acks
+              Number of active alarms with tickets
             </div>
           </div>
         </a>
@@ -1919,7 +1919,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of active alarms with acks
+              Number of active alarms with tickets
             </div>
           </div>
         </a>
@@ -3173,7 +3173,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of active alarms with acks
+              Number of active alarms with tickets
             </div>
           </div>
         </a>
