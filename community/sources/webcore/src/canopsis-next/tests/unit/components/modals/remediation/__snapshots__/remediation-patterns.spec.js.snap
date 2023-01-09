@@ -26,14 +26,15 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         value="[object Object]"
         with-alarm="with-alarm"
         with-entity="with-entity"
-      />
-      <c-collapse-panel-stub
-        title="Pbehavior types"
       >
-        <remediation-patterns-pbehavior-types-form-stub
-          form="[object Object]"
-        />
-      </c-collapse-panel-stub>
+        <c-collapse-panel-stub
+          title="Pbehavior types"
+        >
+          <remediation-patterns-pbehavior-types-form-stub
+            form="[object Object]"
+          />
+        </c-collapse-panel-stub>
+      </c-patterns-field-stub>
     </div>
      
     <div
@@ -90,14 +91,15 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         value="[object Object]"
         with-alarm="with-alarm"
         with-entity="with-entity"
-      />
-      <c-collapse-panel-stub
-        title="Pbehavior types"
       >
-        <remediation-patterns-pbehavior-types-form-stub
-          form="[object Object]"
-        />
-      </c-collapse-panel-stub>
+        <c-collapse-panel-stub
+          title="Pbehavior types"
+        >
+          <remediation-patterns-pbehavior-types-form-stub
+            form="[object Object]"
+          />
+        </c-collapse-panel-stub>
+      </c-patterns-field-stub>
     </div>
      
     <div
@@ -154,14 +156,15 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         value="[object Object]"
         with-alarm="with-alarm"
         with-entity="with-entity"
-      />
-      <c-collapse-panel-stub
-        title="Pbehavior types"
       >
-        <remediation-patterns-pbehavior-types-form-stub
-          form="[object Object]"
-        />
-      </c-collapse-panel-stub>
+        <c-collapse-panel-stub
+          title="Pbehavior types"
+        >
+          <remediation-patterns-pbehavior-types-form-stub
+            form="[object Object]"
+          />
+        </c-collapse-panel-stub>
+      </c-patterns-field-stub>
     </div>
      
     <div
