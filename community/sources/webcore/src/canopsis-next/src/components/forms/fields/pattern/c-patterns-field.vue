@@ -94,6 +94,7 @@
       )
 
     v-messages(v-if="someRequired && !hasPatterns", :value="[$t('pattern.errors.required')]", color="error")
+    slot
 </template>
 
 <script>
