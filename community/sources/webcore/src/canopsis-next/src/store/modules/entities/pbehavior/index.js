@@ -111,8 +111,8 @@ export default {
       }
     },
 
-    fetchListByEntityIdWithoutStore(context, { id }) {
-      return request.get(API_ROUTES.pbehavior.entities, { params: { _id: id } });
+    fetchListByEntityIdWithoutStore(context, { id, params = {} }) {
+      return request.get(API_ROUTES.pbehavior.entities, { params: { _id: id, ...params } });
     },
 
     async create({ dispatch }, { data }) {
@@ -172,6 +172,14 @@ export default {
 
     fetchEntitiesPbehaviorsCalendarWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.pbehavior.entitiesCalendar, { params });
+    },
+
+    bulkCreateEntityPbehaviors(context, { data } = {}) {
+      return request.post(API_ROUTES.pbehavior.bulkEntityPbehaviors, data);
+    },
+
+    bulkRemoveEntityPbehaviors(context, { data }) {
+      return request.delete(API_ROUTES.pbehavior.bulkEntityPbehaviors, { data });
     },
   },
 };

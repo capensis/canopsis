@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"go/types"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -76,8 +75,10 @@ func GetApiURL() (string, error) {
 	return parsed.String(), nil
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response code should be 200
 */
 func (a *ApiClient) TheResponseCodeShouldBe(ctx context.Context, code int) error {
@@ -101,8 +102,10 @@ func (a *ApiClient) TheResponseCodeShouldBe(ctx context.Context, code int) error
 	return nil
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response body should be:
 	"""
 	{
@@ -138,8 +141,10 @@ func (a *ApiClient) TheResponseBodyShouldBe(ctx context.Context, doc string) err
 	return nil
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response raw body should be:
 	"""
 	Test
@@ -166,10 +171,12 @@ func (a *ApiClient) TheResponseRawBodyShouldBe(ctx context.Context, doc string) 
 	return nil
 }
 
-/**
+/*
+*
 If some fields are not defined in step content they are ignored.
 
 Step example:
+
 	Then the response body should contain:
 	"""
 	{
@@ -205,8 +212,10 @@ func (a *ApiClient) TheResponseBodyShouldContain(ctx context.Context, doc string
 	return nil
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response key "data.0.created_at" should not be "0"
 */
 func (a *ApiClient) TheResponseKeyShouldNotBe(ctx context.Context, path, value string) error {
@@ -262,8 +271,10 @@ func (a *ApiClient) TheResponseKeyShouldNotBe(ctx context.Context, path, value s
 	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response key "data.0.created_at" should not exist
 */
 func (a *ApiClient) TheResponseKeyShouldNotExist(ctx context.Context, path string) error {
@@ -283,8 +294,10 @@ func (a *ApiClient) TheResponseKeyShouldNotExist(ctx context.Context, path strin
 	return nil
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response key "data.0.created_at" should exist
 */
 func (a *ApiClient) TheResponseKeyShouldExist(ctx context.Context, path string) error {
@@ -305,6 +318,7 @@ func (a *ApiClient) TheResponseKeyShouldExist(ctx context.Context, path string) 
 
 /*
 Step example:
+
 	Then the difference between metaalarmLastEventDate createTimestamp is in range -2,2
 */
 func (a *ApiClient) TheDifferenceBetweenValues(ctx context.Context, var1, var2 string, left, right float64) error {
@@ -324,8 +338,10 @@ func (a *ApiClient) TheDifferenceBetweenValues(ctx context.Context, var1, var2 s
 	return nil
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response key "data.0.duration" should be greater or equal than 3
 */
 func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(ctx context.Context, path string, value float64) error {
@@ -364,8 +380,10 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterOrEqualThan(ctx context.Context
 	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
 }
 
-/**
+/*
+*
 Step example:
+
 	Then the response key "data.0.duration" should be greater than 3
 */
 func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(ctx context.Context, path string, value float64) error {
@@ -407,14 +425,15 @@ func (a *ApiClient) TheResponseKeyShouldBeGreaterThan(ctx context.Context, path 
 
 // TheResponseArrayKeyShouldContain
 // Step example:
-//   Then the response array key "data.0.v.steps" should contain:
-//   """
-//   [
-//     {
-//       "_t": "stateinc"
-//     }
-//   ]
-//   """
+//
+//	Then the response array key "data.0.v.steps" should contain:
+//	"""
+//	[
+//	  {
+//	    "_t": "stateinc"
+//	  }
+//	]
+//	"""
 func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path string, doc string) error {
 	responseBody, ok := getResponseBody(ctx)
 	if !ok {
@@ -494,13 +513,14 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 
 // TheResponseArrayKeyShouldContainOnly
 // Step example:
-//   Then the response array key "data.0.v.steps" should contain only:
-//   [
-//     {
-//       "_t": "stateinc"
-//     }
-//   ]
-//   """
+//
+//	Then the response array key "data.0.v.steps" should contain only:
+//	[
+//	  {
+//	    "_t": "stateinc"
+//	  }
+//	]
+//	"""
 func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(ctx context.Context, path string, doc string) error {
 	responseBody, ok := getResponseBody(ctx)
 	if !ok {
@@ -720,8 +740,10 @@ func getNestedJsonVal(v interface{}, path []string) (interface{}, bool) {
 	return nil, false
 }
 
-/**
+/*
+*
 Step example:
+
 	Given I am admin
 */
 func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, error) {
@@ -772,7 +794,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 		return ctx, fmt.Errorf("cannot do login request: %w", err)
 	}
 
-	buf, err := ioutil.ReadAll(response.Body)
+	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch login response: %w", err)
 	}
@@ -803,8 +825,10 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 	return ctx, nil
 }
 
-/**
+/*
+*
 Step example:
+
 	When I am authenticated with username "user" password "pass"
 */
 func (a *ApiClient) IAmAuthenticatedByBasicAuth(ctx context.Context, username, password string) (context.Context, error) {
@@ -818,8 +842,10 @@ func (a *ApiClient) IAmAuthenticatedByBasicAuth(ctx context.Context, username, p
 	return ctx, nil
 }
 
-/**
+/*
+*
 Step example:
+
 	When I send an event:
 	"""
 	  {
@@ -880,8 +906,10 @@ func (a *ApiClient) ISendAnEvent(ctx context.Context, doc string) (context.Conte
 	return ctx, err
 }
 
-/**
+/*
+*
 Step example:
+
 	When I do GET /api/v4/alarms
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}}
 */
@@ -903,8 +931,10 @@ func (a *ApiClient) IDoRequest(ctx context.Context, method, uri string) (context
 	return a.doRequest(ctx, req)
 }
 
-/**
+/*
+*
 Step example:
+
 	When I do POST /api/v4/event:
 	"""
 	  {
@@ -963,8 +993,10 @@ func (a *ApiClient) IDoRequestWithBody(ctx context.Context, method, uri string, 
 	return a.doRequest(ctx, req)
 }
 
-/**
+/*
+*
 Step example:
+
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}} until response code is 200
 */
 func (a *ApiClient) IDoRequestUntilResponseCode(ctx context.Context, method, uri string, code int) (context.Context, error) {
@@ -1010,14 +1042,16 @@ func (a *ApiClient) IDoRequestUntilResponseCode(ctx context.Context, method, uri
 	)
 }
 
-/**
+/*
+*
 Step example:
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body is:
-    """
-    {
-      "status": "done"
-    }
-    """
+
+	When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body is:
+	"""
+	{
+	  "status": "done"
+	}
+	"""
 */
 func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri string, code int, doc string) (context.Context, error) {
 	if doc == "" {
@@ -1084,14 +1118,16 @@ func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri str
 	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
-/**
+/*
+*
 Step example:
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
-    """
-    {
-      "status": "done"
-    }
-    """
+
+	When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+	"""
+	{
+	  "status": "done"
+	}
+	"""
 */
 func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method, uri string, code int, doc string) (context.Context, error) {
 	if doc == "" {
@@ -1160,10 +1196,12 @@ func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method,
 	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
-/**
+/*
+*
 Step example:
-    When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
-    """
+
+	When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
+	"""
 */
 func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.Context, method, uri string, code int, path string, value float64) (context.Context, error) {
 	uri, err := a.getRequestURL(ctx, uri)
@@ -1219,14 +1257,15 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.C
 
 // IDoRequestUntilResponseArrayKeyContains
 // Step example:
-//   When I do GET /api/v4/alarms until response code is 200 and response array key "data.0.v.steps" contains:
-//   """
-//   [
-//     {
-//       "_t": "stateinc"
-//     }
-//   ]
-//   """
+//
+//	When I do GET /api/v4/alarms until response code is 200 and response array key "data.0.v.steps" contains:
+//	"""
+//	[
+//	  {
+//	    "_t": "stateinc"
+//	  }
+//	]
+//	"""
 func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(ctx context.Context, method, uri string, code int, path string, doc string) (context.Context, error) {
 	uri, err := a.getRequestURL(ctx, uri)
 	if err != nil {
@@ -1279,9 +1318,11 @@ func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(ctx context.Context,
 	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
 }
 
-/**
+/*
+*
 Step example:
-    When I set header Content-Type=application/json
+
+	When I set header Content-Type=application/json
 */
 func (a *ApiClient) ISetRequestHeader(ctx context.Context, key, value string) (context.Context, error) {
 	b, err := a.templater.Execute(ctx, value)
@@ -1300,8 +1341,10 @@ func (a *ApiClient) ISetRequestHeader(ctx context.Context, key, value string) (c
 	return ctx, nil
 }
 
-/**
+/*
+*
 Step example:
+
 	When I save response id={{ .lastResponse._id }}
 */
 func (a *ApiClient) ISaveResponse(ctx context.Context, key, value string) (context.Context, error) {
@@ -1315,6 +1358,7 @@ func (a *ApiClient) ISaveResponse(ctx context.Context, key, value string) (conte
 
 // ValueShouldBeGteLteThan
 // Step example:
+//
 //	Then "value1" > "value2"
 //	Then "value1" <= "value2"
 func (a *ApiClient) ValueShouldBeGteLteThan(ctx context.Context, left, op, right string) error {
@@ -1373,7 +1417,7 @@ func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.C
 	if err != nil {
 		return ctx, fmt.Errorf("cannot do request: %w", err)
 	}
-	buf, err := ioutil.ReadAll(response.Body)
+	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch response: %w", err)
 	}

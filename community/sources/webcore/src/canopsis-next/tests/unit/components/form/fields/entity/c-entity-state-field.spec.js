@@ -53,7 +53,7 @@ describe('c-entity-state-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-entity-state-field` with default custom props', () => {
+  it('Renders `c-entity-state-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ENTITIES_STATES.major,

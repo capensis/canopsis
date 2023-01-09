@@ -76,11 +76,9 @@ export const getIdFromEntity = (entity, idField = '_id') => (isObject(entity) ? 
  * @param {AlarmEvent[]} steps
  * @return {Object.<string, AlarmEvent[]>}
  */
-export const groupAlarmSteps = (steps) => {
-  const orderedSteps = [...steps].reverse();
-
-  return groupBy(orderedSteps, step => convertDateToString(step.t, DATETIME_FORMATS.short));
-};
+export const groupAlarmSteps = steps => (
+  groupBy(steps, step => convertDateToString(step.t, DATETIME_FORMATS.short))
+);
 
 /**
  * Return entities ids
@@ -134,6 +132,17 @@ export const generateDefaultAlarmListWidget = () => ({
  */
 export const generateDefaultContextWidget = () => ({
   ...formToWidget(widgetToForm({ type: WIDGET_TYPES.context })),
+
+  _id: uuid(),
+});
+
+/**
+ * Generate service weather widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultServiceWeatherWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.serviceWeather })),
 
   _id: uuid(),
 });

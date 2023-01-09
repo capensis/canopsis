@@ -759,6 +759,53 @@ default_entities:
     enable_history: []
     infos: {}
     impact_level: 1
+    
+  entity_to_contextgraph_new_import_delete_conflict_1:
+    _id: test-entity-contextgraph-new-import-resource-to-delete-conflict-1/test-entity-contextgraph-new-import-component-to-delete-conflict
+    name: test-entity-contextgraph-new-import-resource-to-delete-conflict-1
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-conflict
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-delete-conflict
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_conflict_1:
+    _id: test-entity-contextgraph-new-import-component-to-disable-conflict-1
+    name: test-entity-contextgraph-new-import-component-to-disable-conflict-1
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-conflict-1
+    depends: []
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_conflict_2:
+    _id: test-entity-contextgraph-new-import-component-to-disable-conflict-2
+    name: test-entity-contextgraph-new-import-component-to-disable-conflict-2
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-conflict-2
+    depends: []
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_conflict_3:
+    _id: test-entity-contextgraph-new-import-component-to-disable-conflict-3
+    name: test-entity-contextgraph-new-import-component-to-disable-conflict-3
+    type: component
+    enabled: false
+    component: test-entity-contextgraph-new-import-component-to-disable-conflict-3
+    depends: []
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1
 
   entity_to_contextgraph_import_enable:
     _id: test-entity-contextgraph-import-component-to-enable
@@ -779,6 +826,162 @@ default_entities:
     depends: []
     impact: []
     impact_level: 1
+    
+  entity_to_contextgraph_new_import_update:
+    _id: test-entity-contextgraph-new-import-to-update
+    name: test-entity-contextgraph-new-import-to-update
+    component: test-entity-contextgraph-new-import-to-update
+    type: component
+    enabled: true
+    enable_history: []
+    depends: [ ]
+    impact: [ ]
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_new_import_set:
+    _id: test-entity-contextgraph-new-import-to-set
+    name: test-entity-contextgraph-new-import-to-set
+    component: test-entity-contextgraph-new-import-to-set
+    type: component
+    enabled: true
+    enable_history: []
+    depends: [ ]
+    impact: [ ]
+    impact_level: 1
+    infos:
+      old_info:
+        value: "1"
+
+  entity_to_contextgraph_new_import_delete_1_1:
+    _id: test-entity-contextgraph-new-import-resource-to-delete-1-1/test-entity-contextgraph-new-import-component-to-delete-1
+    name: test-entity-contextgraph-new-import-resource-to-delete-1-1
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-1
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-delete-1
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_delete_1_2:
+    _id: test-entity-contextgraph-new-import-resource-to-delete-1-2/test-entity-contextgraph-new-import-component-to-delete-1
+    name: test-entity-contextgraph-new-import-resource-to-delete-1-2
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-1
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-delete-1
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_delete_1_3:
+    _id: test-entity-contextgraph-new-import-component-to-delete-1
+    name: test-entity-contextgraph-new-import-component-to-delete-1
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-1
+    depends:
+      - test-entity-contextgraph-new-import-resource-to-delete-1-1/test-entity-contextgraph-new-import-component-to-delete-1
+      - test-entity-contextgraph-new-import-resource-to-delete-1-2/test-entity-contextgraph-new-import-component-to-delete-1
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_delete_2_1:
+    _id: test-entity-contextgraph-new-import-resource-to-delete-2-1/test-entity-contextgraph-new-import-component-to-delete-2
+    name: test-entity-contextgraph-new-import-resource-to-delete-2-1
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-2
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-delete-2
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_delete_2_2:
+    _id: test-entity-contextgraph-new-import-resource-to-delete-2-2/test-entity-contextgraph-new-import-component-to-delete-2
+    name: test-entity-contextgraph-new-import-resource-to-delete-2-2
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-2
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-delete-2
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_delete_2_3:
+    _id: test-entity-contextgraph-new-import-component-to-delete-2
+    name: test-entity-contextgraph-new-import-component-to-delete-2
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-delete-2
+    depends:
+      - test-entity-contextgraph-new-import-resource-to-delete-2-1/test-entity-contextgraph-new-import-component-to-delete-2
+      - test-entity-contextgraph-new-import-resource-to-delete-2-2/test-entity-contextgraph-new-import-component-to-delete-2
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_enable:
+    _id: test-entity-contextgraph-new-import-component-to-enable
+    name: test-entity-contextgraph-new-import-component-to-enable
+    type: component
+    enabled: false
+    component: test-entity-contextgraph-new-import-component-to-enable
+    depends: []
+    impact: []
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_1:
+    _id: test-entity-contextgraph-new-import-component-to-disable-1
+    name: test-entity-contextgraph-new-import-component-to-disable-1
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-1
+    depends: []
+    impact: []
+    impact_level: 1
+    
+  entity_to_contextgraph_new_import_disable_2_1:
+    _id: test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2
+    name: test-entity-contextgraph-new-import-resource-to-disable-2-1
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-2
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-disable-2
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_2_2:
+    _id: test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2
+    name: test-entity-contextgraph-new-import-resource-to-disable-2-2
+    type: resource
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-2
+    depends: [ ]
+    impact:
+      - test-entity-contextgraph-new-import-component-to-disable-2
+    impact_level: 1
+
+  entity_to_contextgraph_new_import_disable_2_3:
+    _id: test-entity-contextgraph-new-import-component-to-disable-2
+    name: test-entity-contextgraph-new-import-component-to-disable-2
+    type: component
+    enabled: true
+    component: test-entity-contextgraph-new-import-component-to-disable-2
+    depends:
+      - test-entity-contextgraph-new-import-resource-to-disable-2-1/test-entity-contextgraph-new-import-component-to-disable-2
+      - test-entity-contextgraph-new-import-resource-to-disable-2-2/test-entity-contextgraph-new-import-component-to-disable-2
+    impact: []
+    enable_history: []
+    infos: {}
+    impact_level: 1    
 
   entity_to_contextgraph_import_link_1:
     _id: test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link
@@ -4119,3 +4322,46 @@ default_entities:
     _id: test-entity-to-bulk-toggle-service
     impact_level: 1
     name: test-entity-to-bulk-toggle-service-name
+  connector_to_test_tag_filter:
+    <<: *connector
+    _id: test-connector-to-alarm-test-tag-filter/test-connector-to-alarm-test-tag-filter-name
+    name: test-connector-to-alarm-test-tag-filter-name
+    impact:
+      - test-resource-to-alarm-test-tag-filter-1
+      - test-resource-to-alarm-test-tag-filter-2
+      - test-resource-to-alarm-test-tag-filter-3
+    depends:
+      - test-component-to-alarm-test-tag-filter
+
+  component_to_test_tag_filter:
+    <<: *component
+    _id: test-component-to-alarm-test-tag-filter
+    name: <Current()._id>
+    component: <Current()._id>
+    depends:
+      - test-resource-to-alarm-test-tag-filter-1/test-component-to-alarm-test-tag-filter
+      - test-resource-to-alarm-test-tag-filter-2/test-component-to-alarm-test-tag-filter
+      - test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
+  resource_to_test_tag_filter_1:
+    <<: *resource
+    _id: test-resource-to-alarm-test-tag-filter-1/test-component-to-alarm-test-tag-filter
+    name: test-resource-to-alarm-test-tag-filter-1
+    category: test-category-to-alarm-test-tag-filter-1
+    impact:
+      - test-component-to-alarm-test-tag-filter
+    component: test-component-to-alarm-test-tag-filter
+  resource_to_test_tag_filter_2:
+    <<: *resource
+    _id: test-resource-to-alarm-test-tag-filter-2/test-component-to-alarm-test-tag-filter
+    name: test-resource-to-alarm-test-tag-filter-2
+    impact:
+      - test-component-to-alarm-test-tag-filter
+    component: test-component-to-alarm-test-tag-filter
+    category: test-category-to-alarm-test-tag-filter-2
+  resource_to_test_tag_filter_3:
+    <<: *resource
+    _id: test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
+    name: test-resource-to-alarm-test-tag-filter-3
+    impact:
+      - test-component-to-alarm-test-tag-filter
+    component: test-component-to-alarm-test-tag-filter

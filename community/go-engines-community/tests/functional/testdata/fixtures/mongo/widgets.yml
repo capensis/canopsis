@@ -18,7 +18,6 @@ widgets:
   widget_to_view_get_1:
     <<: *widget
     _id: test-widget-to-view-get-1
-    author: test-widget-to-view-get-1-author
     created: 1611229670
     grid_parameters:
       desktop:
@@ -37,7 +36,6 @@ widgets:
   widget_to_view_get_2:
     <<: *widget
     _id: test-widget-to-view-get-2
-    author: test-widget-to-view-get-2-author
     created: 1611229670
     grid_parameters:
       desktop:
@@ -56,7 +54,6 @@ widgets:
   widget_to_viewgroup_get_1:
     <<: *widget
     _id: test-widget-to-viewgroup-get-1
-    author: test-user-to-viewgroup-get
     created: 1611229670
     grid_parameters:
       desktop:
@@ -75,7 +72,6 @@ widgets:
   widget_to_viewgroup_get_2:
     <<: *widget
     _id: test-widget-to-viewgroup-get-2
-    author: test-user-to-viewgroup-get
     created: 1611229670
     grid_parameters:
       desktop:
@@ -90,7 +86,6 @@ widgets:
   widget_to_tab_get_1:
     <<: *widget
     _id: test-widget-to-tab-get-1
-    author: test-user-to-tab-get
     created: 1611229670
     grid_parameters:
       desktop:
@@ -109,7 +104,6 @@ widgets:
   widget_to_tab_get_2:
     <<: *widget
     _id: test-widget-to-tab-get-2
-    author: test-user-to-tab-get
     created: 1611229670
     grid_parameters:
       desktop:
@@ -175,7 +169,6 @@ widgets:
   widget_to_get:
     <<: *widget
     _id: test-widget-to-get
-    author: test-author-to-widget-edit
     created: 1611229670
     grid_parameters:
       desktop:
@@ -375,3 +368,8 @@ widgets:
     tab: test-tab-to-map-edit
     parameters:
       map: test-map-to-bulk-delete-2
+
+  widget_to_test_alarm_tags_filter:
+    <<: *widget
+    _id: test-widget-to-test-alarm-tags-filter
+    tab: test-tab-to-alarm-test-tags-filter

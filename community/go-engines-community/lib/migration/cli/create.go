@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -32,14 +32,14 @@ func (c *createCmd) Exec(_ context.Context) error {
 	filename := strings.Join([]string{now.Format(timeFormat), c.name}, fileNameDelimiter)
 	fileUp := fmt.Sprintf("%s%s", filename, fileNameSuffixUp)
 	fileDown := fmt.Sprintf("%s%s", filename, fileNameSuffixDown)
-	err := ioutil.WriteFile(filepath.Join(c.path, fileUp), nil, filePerm)
+	err := os.WriteFile(filepath.Join(c.path, fileUp), nil, filePerm)
 	if err != nil {
 		return fmt.Errorf("cannot create up migration file %q: %w", fileUp, err)
 	}
 
 	c.logger.Info().Str("filename", fileUp).Msg("up migration script created")
 
-	err = ioutil.WriteFile(filepath.Join(c.path, fileDown), nil, filePerm)
+	err = os.WriteFile(filepath.Join(c.path, fileDown), nil, filePerm)
 	if err != nil {
 		return fmt.Errorf("cannot create down migration file %q: %w", fileDown, err)
 	}

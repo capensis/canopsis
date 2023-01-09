@@ -10,7 +10,6 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
 import {
   ENTITIES_STATES,
-  ENTITIES_TYPES,
   EVENT_ENTITY_TYPES,
   MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
 } from '@/constants';
@@ -101,8 +100,7 @@ describe('create-manual-meta-alarm', () => {
       type: Faker.datatype.number(),
     },
   };
-  const itemsType = ENTITIES_TYPES.alarm;
-  const itemsIds = [alarm._id];
+  const items = [alarm];
   const manualMetaAlarmEventData = {
     ...MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
 
@@ -111,14 +109,7 @@ describe('create-manual-meta-alarm', () => {
 
     output: '',
   };
-
-  const getEntitiesList = jest.fn().mockReturnValue([alarm]);
-  const entitiesModule = {
-    name: 'entities',
-    getters: {
-      getList: () => getEntitiesList,
-    },
-  };
+  const config = { items };
 
   const createEvent = jest.fn();
   const eventModule = {
@@ -127,11 +118,10 @@ describe('create-manual-meta-alarm', () => {
       create: createEvent,
     },
   };
-  const store = createMockedStoreModules([entitiesModule, eventModule]);
+  const store = createMockedStoreModules([eventModule]);
 
   afterEach(() => {
     createEvent.mockClear();
-    getEntitiesList.mockClear();
   });
 
   test('Default parameters applied to form', () => {
@@ -152,16 +142,15 @@ describe('create-manual-meta-alarm', () => {
 
   test('Form submitted after trigger submit button', async () => {
     const afterSubmit = jest.fn();
-    const config = {
-      itemsType,
-      itemsIds,
-      afterSubmit,
-    };
+
     const wrapper = factory({
       store,
       propsData: {
         modal: {
-          config,
+          config: {
+            items,
+            afterSubmit,
+          },
         },
       },
       mocks: {
@@ -204,6 +193,11 @@ describe('create-manual-meta-alarm', () => {
   test('Form didn\'t submitted after trigger submit button with error', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -240,6 +234,11 @@ describe('create-manual-meta-alarm', () => {
     createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -290,8 +289,12 @@ describe('create-manual-meta-alarm', () => {
     createEvent.mockRejectedValueOnce(errors);
 
     const wrapper = factory({
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       store: createMockedStoreModules([
-        entitiesModule,
         eventModule,
       ]),
       mocks: {
@@ -340,6 +343,11 @@ describe('create-manual-meta-alarm', () => {
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },
@@ -357,6 +365,11 @@ describe('create-manual-meta-alarm', () => {
   test('Renders `create-manual-meta-alarm` with empty modal', () => {
     const wrapper = snapshotFactory({
       store,
+      propsData: {
+        modal: {
+          config,
+        },
+      },
       mocks: {
         $modals,
       },

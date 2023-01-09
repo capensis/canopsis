@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -19,7 +21,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
+	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author.name enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
 }
 
 type EntitiesListRequest struct {
@@ -82,13 +84,14 @@ type PatchRequest struct {
 }
 
 type FindByEntityIDRequest struct {
-	ID string `form:"_id" binding:"required"`
+	ID        string `form:"_id" binding:"required"`
+	WithFlags bool   `form:"with_flags"`
 }
 
 type Response struct {
 	ID            string                         `bson:"_id" json:"_id"`
-	Author        string                         `bson:"author" json:"author"`
-	Comments      pbehavior.Comments             `bson:"comments" json:"comments"`
+	Author        *author.Author                 `bson:"author" json:"author"`
+	Comments      []pbehaviorcomment.Response    `bson:"comments" json:"comments"`
 	Enabled       bool                           `bson:"enabled" json:"enabled"`
 	Name          string                         `bson:"name" json:"name"`
 	Reason        *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
@@ -106,6 +109,9 @@ type Response struct {
 	IsActiveStatus *bool `bson:"-" json:"is_active_status,omitempty"`
 
 	OldMongoQuery OldMongoQuery `bson:"old_mongo_query" json:"old_mongo_query,omitempty"`
+
+	Origin   string `bson:"origin" json:"origin"`
+	Editable *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 }
@@ -183,4 +189,23 @@ type CalendarResponse struct {
 	From  types.CpsTime  `json:"from" swaggertype:"integer"`
 	To    types.CpsTime  `json:"to" swaggertype:"integer"`
 	Type  pbehavior.Type `json:"type"`
+}
+
+type BulkEntityCreateRequestItem struct {
+	Author  string         `json:"author" swaggerignore:"true"`
+	Entity  string         `json:"entity" binding:"required"`
+	Origin  string         `json:"origin" binding:"required,max=255"`
+	Name    string         `json:"name" binding:"required,max=255"`
+	Reason  string         `json:"reason" binding:"required"`
+	RRule   string         `json:"rrule"`
+	Start   *types.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
+	Stop    *types.CpsTime `json:"tstop" swaggertype:"integer"`
+	Type    string         `json:"type" binding:"required"`
+	Color   string         `json:"color" binding:"required,iscolor"`
+	Comment string         `json:"comment"`
+}
+
+type BulkEntityDeleteRequestItem struct {
+	Entity string `json:"entity" binding:"required"`
+	Origin string `json:"origin" binding:"required"`
 }
