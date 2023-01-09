@@ -6,6 +6,7 @@ export const HEALTHCHECK_SERVICES_NAMES = {
   api: 'API',
   healthcheck: 'healthcheck',
   enginesChain: 'engines-chain',
+  timescaleDB: 'TimescaleDB',
 };
 
 export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
