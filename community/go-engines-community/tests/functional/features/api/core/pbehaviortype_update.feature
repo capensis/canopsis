@@ -20,7 +20,8 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 404
@@ -44,6 +45,7 @@ Feature: Update a pbehavior type
       "errors": {
         "description": "Description is missing.",
         "icon_name": "IconName is missing.",
+        "color": "Color is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
         "type": "Type is missing."
@@ -75,7 +77,8 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 200
@@ -87,7 +90,8 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
 
@@ -111,16 +115,44 @@ Feature: Update a pbehavior type
     }
     """
 
-  Scenario: given update request for default type should return error
+  Scenario: given update request for default type with color should return ok
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
     """json
     {
       "name": "Default Type Pause",
-      "description": "Maintenance state type",
+      "description": "Default Type Pause",
+      "type": "pause",
+      "priority": 3,
+      "icon_name": "test-pause-icon",
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-default-pause-type",
+      "name": "Default Type Pause",
+      "description": "Default Type Pause",
+      "type": "pause",
+      "priority": 3,
+      "icon_name": "test-pause-icon",
+      "color": "#FFFFFF"
+    }
+    """
+
+  Scenario: given update request for default type should return error
+    When I am admin
+    When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
+    """json
+    {
+      "name": "Default Type Pause updated",
+      "description": "Default Type Pause updated",
       "type": "maintenance",
       "priority": 3,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 400
