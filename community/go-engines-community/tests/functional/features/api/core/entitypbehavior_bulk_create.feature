@@ -58,7 +58,7 @@ Feature: Bulk create pbehaviors
         "comment": "test-pbehavior-to-bulk-entity-create-2-comment",
         "tstart": 1591172881,
         "tstop": 1591536400,
-        "color": "#FFFFFF",
+        "color": "",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-to-pbh-edit"
       }
@@ -107,7 +107,6 @@ Feature: Bulk create pbehaviors
           "origin": "Origin is missing.",
           "name": "Name is missing.",
           "tstart": "Start is missing.",
-          "color": "Color is missing.",
           "reason": "Reason is missing.",
           "type": "Type is missing."
         }
@@ -143,7 +142,7 @@ Feature: Bulk create pbehaviors
           "comment": "test-pbehavior-to-bulk-entity-create-2-comment",
           "tstart": 1591172881,
           "tstop": 1591536400,
-          "color": "#FFFFFF",
+          "color": "",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-to-pbh-edit"
         }
@@ -204,7 +203,7 @@ Feature: Bulk create pbehaviors
           "origin": "test-pbehavior-to-bulk-entity-create-2-origin",
           "tstart": 1591172881,
           "tstop": 1591536400,
-          "color": "#FFFFFF",
+          "color": "",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },

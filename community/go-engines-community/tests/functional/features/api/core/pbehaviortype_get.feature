@@ -21,6 +21,7 @@ Feature: Get a pbehavior type
       "_id": "test-type-to-get",
       "description": "Some State type",
       "icon_name": "test-to-get-icon",
+      "color": "#2FAB63",
       "name": "Some State",
       "priority": 9,
       "type": "active"
@@ -65,6 +66,7 @@ Feature: Get a pbehavior type
           "_id": "test-type-to-find",
           "description": "Find State type",
           "icon_name": "test-to-find-icon",
+          "color": "#2FAB63",
           "name": "Find State",
           "priority": 10,
           "type": "active"
@@ -94,37 +96,41 @@ Feature: Get a pbehavior type
           "name": "Default Type Active",
           "priority": 2,
           "type": "active",
-          "editable": false,
+          "color": "#2FAB63",
+          "default": true,
           "deletable": false
         },
         {
           "_id": "test-default-inactive-type",
           "description": "Default Type Inactive",
           "icon_name": "test-inactive-icon",
+          "color": "#979797",
           "name": "Default Type Inactive",
           "priority": 1,
           "type": "inactive",
-          "editable": false,
+          "default": true,
           "deletable": false
         },
         {
           "_id": "test-default-maintenance-type",
           "description": "Default Type Maintenance",
           "icon_name": "test-maintenance-icon",
+          "color": "#BF360C",
           "name": "Default Type Maintenance",
           "priority": 4,
           "type": "maintenance",
-          "editable": false,
+          "default": true,
           "deletable": false
         },
         {
           "_id": "test-default-pause-type",
           "description": "Default Type Pause",
           "icon_name": "test-pause-icon",
+          "color": "#5A6D80",
           "name": "Default Type Pause",
           "priority": 3,
           "type": "pause",
-          "editable": false,
+          "default": true,
           "deletable": false
         }
       ]
