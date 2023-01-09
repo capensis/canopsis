@@ -41,8 +41,8 @@
             v-card-text
               pbehaviors-simple-list(
                 :entity="alarm.entity",
-                :deletable="hasDeleteAnyPbehaviorAccess",
-                :editable="hasUpdateAnyPbehaviorAccess"
+                :removable="hasDeleteAnyPbehaviorAccess",
+                :updatable="hasUpdateAnyPbehaviorAccess"
               )
     template(v-if="hasChildren")
       v-tab {{ $t('alarmList.tabs.alarmsChildren') }}
@@ -109,13 +109,14 @@ import {
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
-import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/partials/pbehaviors-simple-list.vue';
+import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 
 import TimeLine from '../time-line/time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
@@ -266,7 +267,7 @@ export default {
       return this.fetchAlarmDetails({
         widgetId: this.widget._id,
         id: this.alarm._id,
-        query: this.query,
+        query: convertAlarmDetailsQueryToRequest(this.query),
       });
     },
   },

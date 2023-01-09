@@ -7,14 +7,15 @@
     :config="config",
     :extra-buttons="extraButtons",
     :error-messages="errorMessages",
-    :max-file-size="maxFileSize"
+    :max-file-size="maxFileSize",
+    :variables="variables"
   )
 </template>
 
 <script>
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import TextEditor from '@/components/common/text-editor/text-editor.vue';
+const TextEditor = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
 export default {
   $_veeValidate: {
@@ -54,11 +55,11 @@ export default {
     },
     buttons: {
       type: Array,
-      default: () => [],
+      required: false,
     },
     extraButtons: {
       type: Array,
-      default: () => [],
+      required: false,
     },
     config: {
       type: Object,
@@ -73,6 +74,10 @@ export default {
       default() {
         return this.fileUploadMaxSize;
       },
+    },
+    variables: {
+      type: Array,
+      required: false,
     },
   },
 };

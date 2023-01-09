@@ -58,7 +58,7 @@ func NewStore(db mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolo
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": id, "type": types.EntityTypeService}},
+		{"$match": bson.M{"_id": id, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,
 			"localField":   "category",
@@ -87,7 +87,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 func (s *store) GetDependencies(ctx context.Context, apiKey string, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService}).
+		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}).
 		Decode(&service)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -125,7 +125,7 @@ func (s *store) GetDependencies(ctx context.Context, apiKey string, r ContextGra
 func (s *store) GetImpacts(ctx context.Context, apiKey string, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
 	e := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID}, options.FindOne().SetProjection(bson.M{"impact": 1})).
+		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"impact": 1})).
 		Decode(&e)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {

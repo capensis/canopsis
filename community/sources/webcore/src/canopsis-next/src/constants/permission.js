@@ -217,8 +217,6 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
-
-        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
       },
     },
     counter: {
@@ -393,7 +391,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.moreInfos]: USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos,
     [WEATHER_ACTIONS_TYPES.alarmsList]: USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList,
     [WEATHER_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList,
-    [WEATHER_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp,
     [WEATHER_ACTIONS_TYPES.entityComment]: USERS_PERMISSIONS.business.serviceWeather.actions.entityComment,
   },
 
@@ -430,13 +427,15 @@ export const DOCUMENTATION_LINKS = {
   /**
    * Exploitation
    */
-  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-administration/moteurs/moteur-che-event_filter/',
+  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-utilisation/menu-exploitation/filtres-evenements/',
   [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
   [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
-  // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
-  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
-  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
-  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',
+  [USERS_PERMISSIONS.technical.exploitation.idleRules]: 'guide-utilisation/menu-exploitation/regles-inactivite/',
+  [USERS_PERMISSIONS.technical.exploitation.resolveRules]: 'guide-utilisation/menu-exploitation/regles-resolution/',
+  [USERS_PERMISSIONS.technical.exploitation.flappingRules]: 'guide-utilisation/menu-exploitation/regles-bagot/',
+  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-utilisation/menu-exploitation/informations-dynamiques/',
+  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-utilisation/menu-exploitation/regles-metaalarme/',
+  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-utilisation/menu-exploitation/scenarios/',
 
   /**
    * Admin

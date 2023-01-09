@@ -66,30 +66,8 @@
           color="black",
           @click="exportAlarmsList"
         )
-    v-layout.alarms-list__top-pagination.white.px-4.position-relative(row, align-center)
-      v-flex.alarms-list__top-pagination--left(xs6)
-        v-layout(row, align-center, justify-start)
-          c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
-          v-fade-transition
-            v-flex.px-1(v-show="selectedIds.length")
-              mass-actions-panel(
-                :items-ids="selectedIds",
-                :widget="widget",
-                :refresh-alarms-list="fetchList",
-                @clear:items="clearSelected"
-              )
-      v-flex.alarms-list__top-pagination--center-absolute(xs4)
-        c-pagination(
-          v-if="hasColumns",
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total_count",
-          type="top",
-          @input="updateQueryPage"
-        )
     alarms-list-table(
       ref="alarmsTable",
-      v-model="selected",
       :widget="widget",
       :alarms="alarms",
       :total-items="alarmsMeta.total_count",
@@ -104,27 +82,23 @@
       :selected-tag="query.tag",
       selectable,
       expandable,
+      densable,
       @select:tag="selectTag",
+      @update:dense="updateDense",
+      @update:page="updateQueryPage",
+      @update:rows-per-page="updateRecordsPerPage",
       @clear:tag="clearTag"
     )
-      c-table-pagination(
-        :total-items="alarmsMeta.total_count",
-        :rows-per-page="query.limit",
-        :page="query.page",
-        @update:page="updateQueryPage",
-        @update:rows-per-page="updateRecordsPerPage"
-      )
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
-import { omit, pick, isObject } from 'lodash';
+import { omit, pick, isObject, isEqual } from 'lodash';
 
 import { API_HOST, API_ROUTES } from '@/config';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
-import { isResolvedAlarm, mapIds } from '@/helpers/entities';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
@@ -201,14 +175,9 @@ export default {
   data() {
     return {
       downloading: false,
-      selected: [],
     };
   },
   computed: {
-    selectedIds() {
-      return mapIds(this.selected.filter(item => !isResolvedAlarm(item)));
-    },
-
     tourCallbacks() {
       return {
         onPreviousStep: this.onTourPreviousStep,
@@ -260,16 +229,17 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         tag,
       };
     },
 
     clearTag() {
-      this.query = omit(this.query, ['tag']);
-    },
+      const newQuery = omit(this.query, ['tag']);
 
-    clearSelected() {
-      this.selected = [];
+      newQuery.page = 1;
+
+      this.query = newQuery;
     },
 
     updateCorrelation(correlation) {
@@ -280,6 +250,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         correlation,
       };
     },
@@ -294,6 +265,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         category: categoryId,
       };
     },
@@ -337,7 +309,11 @@ export default {
     },
 
     removeHistoryFilter() {
-      this.query = omit(this.query, ['tstart', 'tstop']);
+      const newQuery = omit(this.query, ['tstart', 'tstop']);
+
+      newQuery.page = 1;
+
+      this.query = newQuery;
     },
 
     showEditLiveReportModal() {
@@ -345,7 +321,12 @@ export default {
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop', 'time_field']),
-          action: params => this.query = { ...this.query, ...params },
+          action: params => this.query = {
+            ...this.query,
+            ...params,
+
+            page: 1,
+          },
         },
       });
     },
@@ -360,7 +341,7 @@ export default {
           this.fetchAlarmTagsList({ params: { paginate: false } });
         }
 
-        if (!this.alarmsPending) {
+        if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
           await this.fetchAlarmsList({
             widgetId: this.widget._id,
             params,
@@ -415,20 +396,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.alarms-list__top-pagination {
-  position: relative;
-  min-height: 48px;
-
-  &--left {
-    padding-right: 80px;
-  }
-
-  &--center-absolute {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-}
-</style>

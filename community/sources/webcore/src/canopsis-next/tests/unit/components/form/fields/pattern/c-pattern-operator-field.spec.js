@@ -25,6 +25,7 @@ const factory = (options = {}) => shallowMount(CPatternOperatorField, {
 
 const snapshotFactory = (options = {}) => mount(CPatternOperatorField, {
   localVue,
+  attachTo: document.body,
   stubs: snapshotStubs,
 
   ...options,

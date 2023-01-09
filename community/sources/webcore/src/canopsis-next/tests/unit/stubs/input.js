@@ -75,6 +75,10 @@ export const createTextareaInputStub = className => ({
 
 export const createCheckboxInputStub = className => ({
   props: ['inputValue'],
+  model: {
+    prop: 'inputValue',
+    event: 'change',
+  },
   template: `
     <input
       :checked="inputValue"
