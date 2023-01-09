@@ -7,6 +7,7 @@ import (
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -663,11 +664,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 }
 
 func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error) {
-	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds, types.NewCpsTime())
+	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	return m, err
 }
 
-func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {
+func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, bson.M, error) {
 	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
@@ -713,8 +714,9 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 
 	defer instructionCursor.Close(ctx)
 
-	instructionMap := make(map[string]InstructionWithExecutions)
-	instructionFiltersPipeline := bson.M{}
+	instructionMap := make(map[string]InstructionWithExecutions, canopsis.FacetLimit)
+	instructionFiltersPipeline := make(bson.M, canopsis.FacetLimit)
+	assignedInstructionsMap := make(map[string][]AssignedInstruction)
 	allInstructionMatches := make([]bson.M, 0)
 
 	for instructionCursor.Next(ctx) {
@@ -729,6 +731,16 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 			return nil, nil, err
 		}
 
+		if len(instructionFiltersPipeline) > canopsis.FacetLimit {
+			err = s.processInstructionFiltersPipeline(ctx, alarmIds, instructionMap, instructionFiltersPipeline, assignedInstructionsMap)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			instructionMap = make(map[string]InstructionWithExecutions, canopsis.FacetLimit)
+			instructionFiltersPipeline = make(bson.M, canopsis.FacetLimit)
+		}
+
 		if q != nil {
 			instructionMap[instruction.ID] = instruction
 			instructionFiltersPipeline[instruction.ID] = []bson.M{{"$match": q}}
@@ -741,20 +753,26 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		anyInstructionMatch = bson.M{"$or": allInstructionMatches}
 	}
 
-	if len(instructionMap) == 0 {
-		return nil, anyInstructionMatch, nil
+	if len(instructionFiltersPipeline) > 0 {
+		err = s.processInstructionFiltersPipeline(ctx, alarmIds, instructionMap, instructionFiltersPipeline, assignedInstructionsMap)
 	}
 
+	return assignedInstructionsMap, anyInstructionMatch, err
+}
+
+func (s *store) processInstructionFiltersPipeline(
+	ctx context.Context,
+	alarmIds []string,
+	instructionMap map[string]InstructionWithExecutions,
+	instructionFiltersPipeline bson.M,
+	assignedInstructionsMap map[string][]AssignedInstruction,
+) error {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": alarmIds}}},
 		{"$addFields": bson.M{
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 			"v.duration": bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
-				}},
+				types.NewCpsTime(),
 				"$v.creation_date",
 			}},
 		}},
@@ -793,17 +811,16 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		pipeline,
 	)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
 	defer assignedInstructionsCursor.Close(ctx)
 
-	assignedInstructionsMap := make(map[string][]AssignedInstruction)
 	for assignedInstructionsCursor.Next(ctx) {
 		assignedInstructions := make(map[string][]string)
 		err = assignedInstructionsCursor.Decode(&assignedInstructions)
 		if err != nil {
-			return nil, nil, err
+			return err
 		}
 
 		for instructionId, alarmIds := range assignedInstructions {
@@ -819,7 +836,7 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		}
 	}
 
-	return assignedInstructionsMap, anyInstructionMatch, nil
+	return nil
 }
 
 func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error) {
@@ -1127,7 +1144,7 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 		return nil, nil, nil
 	}
 
-	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds, now)
+	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	if err != nil {
 		return nil, nil, err
 	}
