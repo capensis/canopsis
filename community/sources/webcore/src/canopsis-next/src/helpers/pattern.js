@@ -512,9 +512,11 @@ export const createEntityIdPatternByValue = value => [[{
  * @param {string[]} [oldFields = OLD_PATTERNS_FIELDS.mongoQuery]
  * @returns {boolean}
  */
-export const isOldPattern = (source, oldFields = [OLD_PATTERNS_FIELDS.mongoQuery]) => (
-  oldFields.every(field => (
-    source[field]
-    && OLD_PATTERN_FIELDS_TO_NEW_FIELDS[field].every(newField => !source[newField]?.length)
-  ))
-);
+export const isOldPattern = (source, oldFields = [OLD_PATTERNS_FIELDS.mongoQuery]) => {
+  const notEmptyOldFields = oldFields.filter(field => source[field]);
+
+  return !!notEmptyOldFields.length
+    && notEmptyOldFields.every(field => (
+      OLD_PATTERN_FIELDS_TO_NEW_FIELDS[field].every(newField => !source[newField]?.length)
+    ));
+};
