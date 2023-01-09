@@ -1122,7 +1122,10 @@ Feature: Bulk update a scenario
         {
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name-twice",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "priority": 7,
           "delay": null,
@@ -1159,7 +1162,10 @@ Feature: Bulk update a scenario
         {
           "_id": "test-scenario-to-bulk-update-2",
           "name": "test-scenario-to-bulk-update-2-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "priority": 8,
           "delay": null,
@@ -1196,7 +1202,10 @@ Feature: Bulk update a scenario
         {
           "_id": "test-scenario-to-bulk-update-3",
           "name": "test-scenario-to-bulk-update-3-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "delay": {
