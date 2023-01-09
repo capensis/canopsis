@@ -110,12 +110,13 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-1-2-name",
+      "job_id": "{{ .job2ID }}",
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "started_at": 0,
-      "launched_at": 0,
-      "completed_at": 0,
+      "started_at": null,
+      "launched_at": null,
+      "completed_at": null,
       "queue_number": 0
     }
     """
@@ -127,7 +128,7 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-1-step-1-operation-1",
-              "completed_at": 0,
+              "completed_at": null,
               "time_to_complete": {
                 "value": 1,
                 "unit": "s"
@@ -135,18 +136,23 @@ Feature: run a job
               "jobs": [
                 {
                   "_id": "",
+                  "job_id": "{{ .job1ID }}",
                   "name": "test-job-to-job-execution-start-1-1-name",
                   "status": null,
                   "fail_reason": "",
-                  "started_at": 0,
-                  "launched_at": 0,
-                  "completed_at": 0
+                  "output": "",
+                  "started_at": null,
+                  "launched_at": null,
+                  "completed_at": null,
+                  "queue_number": null
                 },
                 {
+                  "job_id": "{{ .job2ID }}",
                   "name": "test-job-to-job-execution-start-1-2-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output"
+                  "output": "test-job-execution-succeeded-output",
+                  "queue_number": null
                 }
               ]
             }
@@ -155,6 +161,13 @@ Feature: run a job
       ]
     }
     """
+    When I save response job2StartedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 1).started_at }}
+    When I save response job2LaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 1).launched_at }}
+    When I save response job2CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 1).completed_at }}
+    When I save response expectedStartedAt=1
+    Then "job2StartedAt" >= "expectedStartedAt"
+    Then "job2LaunchedAt" >= "job2StartedAt"
+    Then "job2CompletedAt" >= "job2LaunchedAt"
     When I do POST /api/v4/cat/job-executions:
     """json
     {
@@ -168,12 +181,13 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-1-1-name",
+      "job_id": "{{ .job1ID }}",
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "started_at": 0,
-      "launched_at": 0,
-      "completed_at": 0,
+      "started_at": null,
+      "launched_at": null,
+      "completed_at": null,
       "queue_number": 0
     }
     """
@@ -185,23 +199,27 @@ Feature: run a job
           "operations": [
             {
               "name": "test-instruction-to-job-execution-start-1-step-1-operation-1",
-              "completed_at": 0,
+              "completed_at": null,
               "time_to_complete": {
                 "value": 1,
                 "unit": "s"
               },
               "jobs": [
                 {
+                  "job_id": "{{ .job1ID }}",
                   "name": "test-job-to-job-execution-start-1-1-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output"
+                  "output": "test-job-execution-succeeded-output",
+                  "queue_number": null
                 },
                 {
+                  "job_id": "{{ .job2ID }}",
                   "name": "test-job-to-job-execution-start-1-2-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output"
+                  "output": "test-job-execution-succeeded-output",
+                  "queue_number": null
                 }
               ]
             }
@@ -210,7 +228,15 @@ Feature: run a job
       ]
     }
     """
+    When I save response job1StartedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).started_at }}
+    When I save response job1LaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).launched_at }}
+    When I save response job1CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).completed_at }}
+    When I save response expectedStartedAt=1
+    Then "job1StartedAt" >= "expectedStartedAt"
+    Then "job1LaunchedAt" >= "job1StartedAt"
+    Then "job1CompletedAt" >= "job1LaunchedAt"
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 3 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-1
     Then the response code should be 200
@@ -585,6 +611,7 @@ Feature: run a job
     ]
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of event processing
 
   Scenario: given job should not start job for operation of instruction multiple times
@@ -695,6 +722,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 2 events processing
 
   Scenario: given job should start job for operation of different instructions multiple times
@@ -868,7 +896,9 @@ Feature: run a job
     """
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
+    Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 4 events processing
 
   Scenario: given job should not start job for not running operation of instruction
@@ -970,7 +1000,9 @@ Feature: run a job
     """
     Then the response code should be 404
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next
+    Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of event processing
 
   Scenario: given job should not start job for not running instruction
@@ -1168,6 +1200,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of event processing
 
   Scenario: given jenkins job should start job for operation of instruction
@@ -1268,9 +1301,9 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "started_at": 0,
-      "launched_at": 0,
-      "completed_at": 0
+      "started_at": null,
+      "launched_at": null,
+      "completed_at": null
     }
     """
     When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
@@ -1295,6 +1328,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 2 events processing
 
   Scenario: given jenkins job with parameters should start job for operation of instruction
@@ -1399,9 +1433,9 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "started_at": 0,
-      "launched_at": 0,
-      "completed_at": 0
+      "started_at": null,
+      "launched_at": null,
+      "completed_at": null
     }
     """
     When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
@@ -1426,6 +1460,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 2 events processing
 
   Scenario: given awx job should start job for operation of instruction
@@ -1527,9 +1562,9 @@ Feature: run a job
       "status": 0,
       "fail_reason": "",
       "output": "",
-      "started_at": 0,
-      "launched_at": 0,
-      "completed_at": 0
+      "started_at": null,
+      "launched_at": null,
+      "completed_at": null
     }
     """
     When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
@@ -1554,6 +1589,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 2 events processing
 
   Scenario: given job should queue exclusive job for different executions
@@ -1807,7 +1843,7 @@ Feature: run a job
               "jobs": [
                 {
                   "status": 0,
-                  "queue_number": 0
+                  "queue_number": null
                 }
               ]
             }
@@ -1879,8 +1915,11 @@ Feature: run a job
     When I save response thirdJobLaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).launched_at }}
     Then "thirdJobLaunchedAt" >= "secondJobCompletedAt"
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
+    Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
+    Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .thirdExecutionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 6 events processing
 
   Scenario: given job should run job in parallel for different executions
@@ -2017,7 +2056,7 @@ Feature: run a job
     Then the response body should contain:
     """json
     {
-      "queue_number": 0
+      "queue_number": null
     }
     """
     When I do GET /api/v4/cat/executions/{{ .secondExecutionID }}
@@ -2032,7 +2071,7 @@ Feature: run a job
               "jobs": [
                 {
                   "status": 0,
-                  "queue_number": 0
+                  "queue_number": null
                 }
               ]
             }
@@ -2081,7 +2120,9 @@ Feature: run a job
     When I save response secondJobLaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).launched_at }}
     Then "secondJobLaunchedAt" < "firstJobCompletedAt"
     When I do PUT /api/v4/cat/executions/{{ .firstExecutionID }}/next-step
+    Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .secondExecutionID }}/next-step
+    Then the response code should be 200
     When I wait the end of 4 events processing
 
   Scenario: given unauth request should not allow access
@@ -2246,6 +2287,7 @@ Feature: run a job
     }
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
     When I wait 100ms
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-13&opened=false
     Then the response code should be 200
@@ -2334,6 +2376,529 @@ Feature: run a job
             }
           }
         }
+      }
+    ]
+    """
+
+  Scenario: given multiple job executions for one instruction execution should get only last one
+    When I am admin
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-14-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-long-succeeded",
+      "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobID={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-job-execution-start-14-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-14"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-job-execution-start-14-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-job-execution-start-14-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-14-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-job-execution-start-14-step-1-operation-1-description",
+              "jobs": ["{{ .jobID }}"]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-job-execution-start-14-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-job-execution-start-14",
+      "connector_name": "test-connector-name-to-job-execution-start-14",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-job-execution-start-14",
+      "resource": "test-resource-to-job-execution-start-14",
+      "state": 1,
+      "output": "test-output-to-job-execution-start-14"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-14
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "{{ .instructionID }}"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I save response executionID={{ .lastResponse._id }}
+    When I save response operationID={{ (index (index .lastResponse.steps 0).operations 0).operation_id }}
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobID }}"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-14-step-1-operation-1",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-14-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-long-succeeded-output"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I save response job1CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).completed_at }}
+    When I wait 1s
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobID }}"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-14-step-1-operation-1",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-14-name",
+                  "status": 0,
+                  "fail_reason": "",
+                  "completed_at": null,
+                  "output": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-14-step-1-operation-1",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-14-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-long-succeeded-output"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I save response job2StartedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).started_at }}
+    When I save response job2LaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).launched_at }}
+    When I save response job2CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).completed_at }}
+    Then "job2StartedAt" > "job1CompletedAt"
+    Then "job2LaunchedAt" >= "job2StartedAt"
+    Then "job2CompletedAt" >= "job2LaunchedAt"
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-14
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-14-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-14-name. Job test-job-to-job-execution-start-14-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-14-name. Job test-job-to-job-execution-start-14-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-14-name. Job test-job-to-job-execution-start-14-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-14-name. Job test-job-to-job-execution-start-14-name."
+      },
+      {
+        "_t": "instructioncomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-14-name."
+      }
+    ]
+    """
+
+  Scenario: given start previous operation should not return job
+    When I am admin
+    When I do POST /api/v4/cat/jobs:
+    """json
+    {
+      "name": "test-job-to-job-execution-start-15-name",
+      "config": "test-job-config-to-run-manual-job-1",
+      "job_id": "test-job-long-succeeded",
+      "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "multiple_executions": false
+    }
+    """
+    Then the response code should be 201
+    When I save response jobID={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-job-execution-start-15-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-job-execution-start-15"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-job-execution-start-15-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "s"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-job-execution-start-15-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-15-step-1-operation-1-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-job-execution-start-15-step-1-operation-1-1-description",
+              "jobs": []
+            },
+            {
+              "name": "test-instruction-to-job-execution-start-15-step-1-operation-1-2",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-job-execution-start-15-step-1-operation-1-2-description",
+              "jobs": ["{{ .jobID }}"]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-job-execution-start-15-step-1-endpoint"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-to-job-execution-start-15",
+      "connector_name": "test-connector-name-to-job-execution-start-15",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-job-execution-start-15",
+      "resource": "test-resource-to-job-execution-start-15",
+      "state": 1,
+      "output": "test-output-to-job-execution-start-15"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-15
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .alarmID }}",
+      "instruction": "{{ .instructionID }}"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of event processing
+    When I save response executionID={{ .lastResponse._id }}
+    When I save response operationID={{ (index (index .lastResponse.steps 0).operations 1).operation_id }}
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next
+    Then the response code should be 200
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobID }}"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {},
+            {
+              "name": "test-instruction-to-job-execution-start-15-step-1-operation-1-2",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-15-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-long-succeeded-output"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I save response job1CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0).completed_at }}
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/previous
+    Then the response code should be 200
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next
+    Then the response code should be 200
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {},
+            {
+              "name": "test-instruction-to-job-execution-start-15-step-1-operation-1-2",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-15-name",
+                  "status": null,
+                  "fail_reason": "",
+                  "output": "",
+                  "started_at": null,
+                  "launched_at": null,
+                  "completed_at": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I wait 1s
+    When I do POST /api/v4/cat/job-executions:
+    """json
+    {
+      "execution": "{{ .executionID }}",
+      "operation": "{{ .operationID }}",
+      "job": "{{ .jobID }}"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {},
+            {
+              "name": "test-instruction-to-job-execution-start-15-step-1-operation-1-2",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-15-name",
+                  "status": 1,
+                  "fail_reason": "",
+                  "output": "test-job-execution-long-succeeded-output"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I save response job2StartedAt={{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0).started_at }}
+    When I save response job2LaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0).launched_at }}
+    When I save response job2CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0).completed_at }}
+    Then "job2StartedAt" > "job1CompletedAt"
+    Then "job2LaunchedAt" >= "job2StartedAt"
+    Then "job2CompletedAt" >= "job2LaunchedAt"
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-15
+    Then the response code should be 200
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain:
+    """json
+    [
+      {
+        "_t": "instructionstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-15-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-15-name. Job test-job-to-job-execution-start-15-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-15-name. Job test-job-to-job-execution-start-15-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-15-name. Job test-job-to-job-execution-start-15-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-15-name. Job test-job-to-job-execution-start-15-name."
+      },
+      {
+        "_t": "instructioncomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Instruction test-instruction-to-job-execution-start-15-name."
       }
     ]
     """

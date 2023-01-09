@@ -158,7 +158,9 @@ describe('c-advanced-search-field', () => {
     const updateQueryEvents = wrapper.emitted('update:query');
 
     expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{}]);
+    expect(updateQueryEvents[0]).toEqual([{
+      page: 1,
+    }]);
   });
 
   it('Submit search with custom field name', () => {
@@ -200,7 +202,9 @@ describe('c-advanced-search-field', () => {
     const updateQueryEvents = wrapper.emitted('update:query');
 
     expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{}]);
+    expect(updateQueryEvents[0]).toEqual([{
+      page: 1,
+    }]);
   });
 
   it('Renders `c-advanced-search-field` correctly', () => {

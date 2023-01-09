@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -49,7 +49,7 @@ type InactiveConfig struct {
 // LoadConfig reads a file in configPath path and parses its YAML content.
 func LoadConfig(configPath string) (Config, error) {
 	config := Config{}
-	buf, err := ioutil.ReadFile(configPath)
+	buf, err := os.ReadFile(configPath)
 	if err != nil {
 		return config, err
 	}

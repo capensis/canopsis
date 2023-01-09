@@ -96,7 +96,7 @@ const (
 )
 
 const (
-	clientTimeout = 15 * time.Second
+	defaultClientTimeout = 15 * time.Second
 )
 
 type SingleResultHelper interface {
@@ -445,7 +445,7 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	if clientOptions.Timeout == nil {
-		clientOptions.SetTimeout(clientTimeout)
+		clientOptions.SetTimeout(defaultClientTimeout)
 	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -488,8 +488,15 @@ func NewClientWithOptions(
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
-	clientOptions.SetTimeout(clientTimeout)
+	if serverSelectionTimeout > 0 {
+		clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
+	}
+	if clientTimeout > 0 {
+		clientOptions.SetTimeout(clientTimeout)
+	}
+	if clientOptions.Timeout == nil {
+		clientOptions.SetTimeout(defaultClientTimeout)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err

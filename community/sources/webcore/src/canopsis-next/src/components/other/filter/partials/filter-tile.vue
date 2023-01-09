@@ -7,15 +7,18 @@
           v-list-tile-content {{ filter.title }}
       v-list-tile-action(v-if="editable")
         v-layout(row, align-center)
-          v-tooltip(v-if="filter.old_mongo_query", top)
-            template(#activator="{ on, attrs }")
-              v-icon.cursor-pointer.mr-2(v-on="on", v-bind="attrs", color="grey") error_outline
-            span {{ $t('filter.oldPattern') }}
-          c-action-btn(type="edit", @click="$emit('edit')")
+          c-action-btn(
+            type="edit",
+            :badge-value="isOldPattern",
+            :badge-tooltip="$t('pattern.oldPatternTooltip')",
+            @click="$emit('edit')"
+          )
           c-action-btn(type="delete", @click="$emit('delete')")
 </template>
 
 <script>
+import { isOldPattern } from '@/helpers/pattern';
+
 export default {
   props: {
     filter: {
@@ -25,6 +28,11 @@ export default {
     editable: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    isOldPattern() {
+      return isOldPattern(this.filter);
     },
   },
 };

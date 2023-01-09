@@ -82,7 +82,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
-	if !event.Entity.Enabled {
+	if !event.Entity.Enabled && event.EventType != types.EventTypeResolveDeleted {
 		var err error
 
 		if event.EventType == types.EventTypeEntityToggled ||
@@ -268,7 +268,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 			"Pbehavior %s. Type: %s. Reason: %s.",
 			pbehaviorInfo.Name,
 			pbehaviorInfo.TypeName,
-			pbehaviorInfo.Reason,
+			pbehaviorInfo.ReasonName,
 		)
 
 		err := alarm.PartialUpdatePbhEnter(event.Timestamp, pbehaviorInfo,
@@ -406,7 +406,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 				"Pbehavior %s. Type: %s. Reason: %s.",
 				pbehaviorInfo.Name,
 				pbehaviorInfo.TypeName,
-				pbehaviorInfo.Reason,
+				pbehaviorInfo.ReasonName,
 			)
 
 			err := alarm.PartialUpdatePbhEnter(event.Timestamp, pbehaviorInfo,

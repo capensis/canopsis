@@ -9,7 +9,7 @@ import {
 
 import { COLORS } from '@/config';
 
-import { PATTERNS_FIELDS } from '@/constants';
+import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -199,6 +199,7 @@ export const pbehaviorToForm = (
       ? { entity_pattern: entityPattern }
       : pbehavior,
     [PATTERNS_FIELDS.entity],
+    [OLD_PATTERNS_FIELDS.mongoQuery],
   );
 
   return {

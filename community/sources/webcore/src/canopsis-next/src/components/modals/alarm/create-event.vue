@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-form(data-test="createEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ config.title }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
@@ -18,9 +18,8 @@
               :error-messages="errors.collect('output')",
               name="output"
             )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="createEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -28,8 +27,7 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          type="submit",
-          data-test="createEventSubmitButton"
+          type="submit"
         ) {{ $t('common.saveChanges') }}
 </template>
 
