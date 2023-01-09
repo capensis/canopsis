@@ -11,10 +11,7 @@ Feature: Get entity basic
       "_id": "test-entitybasic-to-get-resource/test-entitybasic-to-get-component",
       "category": {
         "_id": "test-category-to-entitybasic-edit",
-        "author": "test-category-to-entitybasic-edit-author",
-        "created": 1592215337,
-        "name": "test-category-to-entitybasic-edit-name",
-        "updated": 1592215337
+        "name": "test-category-to-entitybasic-edit-name"
       },
       "component": "test-entitybasic-to-get-component",
       "connector": "test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name",

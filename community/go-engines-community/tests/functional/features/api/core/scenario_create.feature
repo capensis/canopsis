@@ -159,7 +159,10 @@ Feature: Create a scenario
     {
       "_id": "test-scenario-to-create-1",
       "name": "test-scenario-to-create-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -319,7 +322,10 @@ Feature: Create a scenario
     {
       "_id": "test-scenario-to-create-1",
       "name": "test-scenario-to-create-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -528,7 +534,10 @@ Feature: Create a scenario
     """json
     {
       "name": "test-scenario-to-create-2-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "delay": {
@@ -695,7 +704,10 @@ Feature: Create a scenario
     """json
     {
       "name": "test-scenario-to-create-3-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "delay": {

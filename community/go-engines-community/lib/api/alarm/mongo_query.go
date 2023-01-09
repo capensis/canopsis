@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -995,7 +996,7 @@ func getEntityCategoryLookup() []bson.M {
 }
 
 func getPbehaviorLookup() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
@@ -1007,13 +1008,6 @@ func getPbehaviorLookup() []bson.M {
 			"pbehavior.last_comment": bson.M{"$arrayElemAt": bson.A{"$pbehavior.comments", -1}},
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.author",
-			"as":           "pbehavior.author",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.reason",
@@ -1021,6 +1015,19 @@ func getPbehaviorLookup() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
+
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+		"pbehavior.last_comment": bson.M{
+			"$cond": bson.M{
+				"if":   "$pbehavior.last_comment._id",
+				"then": "$pbehavior.last_comment",
+				"else": "$$REMOVE",
+			},
+		},
+	}})
+	return pipeline
 }
 
 func getPbehaviorTypeLookup() []bson.M {
