@@ -162,7 +162,7 @@ action_scenario:
         parameters:
           author: root
           name: test
-          reason: test-reason-1
+          reason: test-reason-to-engine
           tstart: 1591172881
           tstop: 1591536400
           type: test-type-to-delete-linked-to-action
@@ -234,7 +234,7 @@ action_scenario:
           author: test-scenario-backward-compatibility-to-get-1-action-1-author
           output: test-scenario-backward-compatibility-to-get-1-action-1-output
         type: ack
-    author: test-scenario-backward-compatibility-to-get-1-author
+    author: root
     created: 1605263993
     enabled: true
     name: test-scenario-backward-compatibility-to-get-1

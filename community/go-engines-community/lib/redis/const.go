@@ -21,7 +21,8 @@ const (
 
 	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
 
-	ChePeriodicalLockKey = "che-periodical-lock-key"
+	ChePeriodicalLockKey           = "che-periodical-lock-key"
+	CheSoftDeletePeriodicalLockKey = "che-soft-delete-periodical-lock-key"
 
 	ServicePeriodicalLockKey          = "service-periodical-lock"
 	ServiceIdleSincePeriodicalLockKey = "service-periodical-idle-since-lock"

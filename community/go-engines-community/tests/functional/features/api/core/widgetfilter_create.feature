@@ -49,7 +49,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-1-title",
       "is_private": false,
       "alarm_pattern": [
@@ -92,7 +95,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-1-title",
       "is_private": false,
       "alarm_pattern": [
@@ -178,7 +184,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "test-user-to-widget-filter-edit",
+      "author": {
+        "_id": "test-user-to-widget-filter-edit",
+        "name": "test-user-to-widget-filter-edit"
+      },
       "title": "test-widgetfilter-to-create-4-title",
       "is_private": true,
       "alarm_pattern": [
@@ -221,7 +230,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "test-user-to-widget-filter-edit",
+      "author": {
+        "_id": "test-user-to-widget-filter-edit",
+        "name": "test-user-to-widget-filter-edit"
+      },
       "title": "test-widgetfilter-to-create-4-title",
       "is_private": true,
       "alarm_pattern": [
@@ -277,7 +289,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-2-title",
       "is_private": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -326,7 +341,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-2-title",
       "is_private": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -388,7 +406,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-3-title",
       "is_private": true,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-4",

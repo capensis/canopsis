@@ -130,7 +130,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -376,7 +379,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -706,7 +712,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -924,7 +933,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -1142,7 +1154,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     {
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "actions": [

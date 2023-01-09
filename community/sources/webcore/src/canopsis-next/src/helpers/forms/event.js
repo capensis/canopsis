@@ -66,6 +66,7 @@ import { getNowTimestamp } from '@/helpers/date/date';
  * @property {string} resource
  * @property {string} origin
  * @property {string} source_type
+ * @property {string} pbh_origin_icon
  * @property {string} connector_name
  * @property {string} component
  * @property {EventType} event_type
@@ -185,6 +186,19 @@ export const prepareEventByEntity = (entity, type, data = {}) => ({
 export const createAckEventByEntity = ({ entity, output }) => prepareEventByEntity(
   entity,
   EVENT_ENTITY_TYPES.ack,
+  { output },
+);
+
+/**
+ * Create remove acknowledge event by entity data
+ *
+ * @param {Entity} entity
+ * @param {string} output
+ * @return {Event}
+ */
+export const createRemoveAckEventByEntity = ({ entity, output }) => prepareEventByEntity(
+  entity,
+  EVENT_ENTITY_TYPES.ackRemove,
   { output },
 );
 

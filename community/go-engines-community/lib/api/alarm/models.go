@@ -1,10 +1,12 @@
 package alarm
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -128,8 +130,13 @@ type DetailsRequest struct {
 	ID               string               `json:"_id" binding:"required"`
 	Opened           *bool                `json:"opened"`
 	WithInstructions bool                 `json:"with_instructions"`
-	Steps            *pagination.Query    `json:"steps"`
+	Steps            *StepsRequest        `json:"steps"`
 	Children         *ChildDetailsRequest `json:"children"`
+}
+
+type StepsRequest struct {
+	pagination.Query
+	Reversed bool `json:"reversed"`
 }
 
 type ChildDetailsRequest struct {
@@ -284,7 +291,7 @@ type AlarmTicket struct {
 
 type Pbehavior struct {
 	ID     string            `bson:"_id" json:"_id"`
-	Author common.User       `bson:"author" json:"author"`
+	Author *author.Author    `bson:"author" json:"author"`
 	Name   string            `bson:"name" json:"name"`
 	RRule  string            `bson:"rrule" json:"rrule"`
 	Start  *types.CpsTime    `bson:"tstart" json:"tstart" swaggertype:"integer"`
@@ -292,7 +299,7 @@ type Pbehavior struct {
 	Type   *pbehavior.Type   `bson:"type" json:"type"`
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
 
-	LastComment *pbehavior.Comment `bson:"last_comment" json:"last_comment"`
+	LastComment *pbehaviorcomment.Response `bson:"last_comment" json:"last_comment"`
 }
 
 type Instruction struct {

@@ -83,7 +83,7 @@ Après avoir pris en compte toute éventuelle remarque des notes de version au s
     ```sh
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/canopsis-reconfigure -edition community -migrate-postgres=true 
-    systemctl enable restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
+    systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
     ```
 
 === "Canopsis Pro"

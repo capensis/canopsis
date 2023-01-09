@@ -33,14 +33,14 @@ import {
   PATTERN_TYPES,
   PATTERN_FIELD_TYPES,
   PBEHAVIOR_TYPE_TYPES,
-  SCENARIO_TRIGGERS,
+  TRIGGERS,
   WEATHER_ACTIONS_TYPES,
   MAP_TYPES,
   MERMAID_THEMES,
   EVENT_FILTER_EXTERNAL_DATA_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
-  SERVICE_STATES,
+  SERVICE_WEATHER_STATE_COUNTERS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -186,7 +186,6 @@ export default merge({
     id: 'Identifiant',
     reset: 'Réinitialiser',
     selectColor: 'Sélectionner la couleur',
-    triggers: 'Déclencheurs',
     disableDuringPeriods: 'Désactiver pendant les pauses',
     retryDelay: 'Délai entre les tentatives',
     retryUnit: 'Unité d\'essai',
@@ -243,6 +242,7 @@ export default merge({
     criteria: 'Critères',
     ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
+    activePbehavior: 'Activer le comportement périodique | Activer les comportements périodiques',
     searchBy: 'Recherché par',
     dictionary: 'Dictionnaire',
     condition: 'Condition | Conditions',
@@ -263,6 +263,8 @@ export default merge({
     acked: 'Acquitté',
     ackedAt: 'Acquitté à',
     ackedBy: 'Acquitté par',
+    ackMessage: 'Message de l\'acquittement',
+    ackInitiator: 'Origine de l\'acquittement',
     resolvedAt: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
@@ -289,7 +291,11 @@ export default merge({
     alarmId: 'Identifiant de l\'alarme',
     longOutput: 'Sortie longue',
     initialOutput: 'Sortie initiale',
+    longInitialOutput: 'Sortie initiale longue',
+    timestamp: 'Horodatage',
+    trigger: 'Déclencheur | Déclencheurs',
     initialLongOutput: 'Sortie initiale longue',
+    totalStateChanges: 'Changements d\'état totaux',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -427,85 +433,85 @@ export default merge({
       [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
       [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
     },
-    scenarioTriggers: {
-      [SCENARIO_TRIGGERS.create]: {
+    triggers: {
+      [TRIGGERS.create]: {
         text: 'Création d\'alarme',
       },
-      [SCENARIO_TRIGGERS.statedec]: {
+      [TRIGGERS.statedec]: {
         text: 'Diminution de la criticité',
       },
-      [SCENARIO_TRIGGERS.changestate]: {
+      [TRIGGERS.changestate]: {
         text: 'Changement et verrouillage de la criticité',
       },
-      [SCENARIO_TRIGGERS.stateinc]: {
+      [TRIGGERS.stateinc]: {
         text: 'Augmentation de la criticité',
       },
-      [SCENARIO_TRIGGERS.changestatus]: {
+      [TRIGGERS.changestatus]: {
         text: 'Changement de statut (flapping, bagot, ...)',
       },
-      [SCENARIO_TRIGGERS.ack]: {
+      [TRIGGERS.ack]: {
         text: 'Acquittement d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.ackremove]: {
+      [TRIGGERS.ackremove]: {
         text: 'Suppression de l\'acquittement d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.cancel]: {
+      [TRIGGERS.cancel]: {
         text: 'Annulation d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.uncancel]: {
+      [TRIGGERS.uncancel]: {
         text: 'Annulation de l\'annulation d\'une alarme',
         helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
       },
-      [SCENARIO_TRIGGERS.comment]: {
+      [TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
       },
-      [SCENARIO_TRIGGERS.done]: {
+      [TRIGGERS.done]: {
         text: 'Alarme en statut "done"',
         helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
       },
-      [SCENARIO_TRIGGERS.declareticket]: {
+      [TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
       },
-      [SCENARIO_TRIGGERS.declareticketwebhook]: {
+      [TRIGGERS.declareticketwebhook]: {
         text: 'Déclaration de ticket depuis un webhook',
       },
-      [SCENARIO_TRIGGERS.assocticket]: {
+      [TRIGGERS.assocticket]: {
         text: 'Association de ticket sur une alarme',
       },
-      [SCENARIO_TRIGGERS.snooze]: {
+      [TRIGGERS.snooze]: {
         text: 'Mise en veille d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.unsnooze]: {
+      [TRIGGERS.unsnooze]: {
         text: 'Sortie de veille d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.resolve]: {
+      [TRIGGERS.resolve]: {
         text: 'Résolution d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.activate]: {
+      [TRIGGERS.activate]: {
         text: 'Activation d\'une alarme',
       },
-      [SCENARIO_TRIGGERS.pbhenter]: {
+      [TRIGGERS.pbhenter]: {
         text: 'Comportement périodique démarré',
       },
-      [SCENARIO_TRIGGERS.pbhleave]: {
+      [TRIGGERS.pbhleave]: {
         text: 'Comportement périodique terminé',
       },
-      [SCENARIO_TRIGGERS.instructionfail]: {
+      [TRIGGERS.instructionfail]: {
         text: 'Consigne manuelle en erreur',
       },
-      [SCENARIO_TRIGGERS.autoinstructionfail]: {
+      [TRIGGERS.autoinstructionfail]: {
         text: 'Consigne automatique en erreur',
       },
-      [SCENARIO_TRIGGERS.instructionjobfail]: {
+      [TRIGGERS.instructionjobfail]: {
         text: 'Job de remédiation en erreur',
       },
-      [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+      [TRIGGERS.instructionjobcomplete]: {
         text: 'Job de remédiation terminé',
       },
-      [SCENARIO_TRIGGERS.instructioncomplete]: {
+      [TRIGGERS.instructioncomplete]: {
         text: 'Consigne manuelle terminée',
       },
-      [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+      [TRIGGERS.autoinstructioncomplete]: {
         text: 'Consigne automatique terminée',
       },
     },
@@ -604,6 +610,8 @@ export default merge({
     },
   },
   alarmList: {
+    alarmCreationDate: 'Date de création de l\'alarme',
+    alarmDisplayName: 'Nom d\'affichage de l\'alarme',
     actions: {
       titles: {
         ack: 'Acquitter',
@@ -621,8 +629,6 @@ export default merge({
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
-        executeInstruction: 'Exécuter la consigne "{instructionName}"',
-        resumeInstruction: 'Reprendre la consigne "{instructionName}"',
       },
       iconsTitles: {
         ack: 'Acquitter',
@@ -733,17 +739,9 @@ export default merge({
     moreInfos: 'Plus d\'infos',
   },
   pbehaviors: {
-    connector: 'Type de connecteur',
-    connectorName: 'Nom du connecteur',
     isEnabled: 'Est actif',
     begins: 'Débute',
     ends: 'Se termine',
-    type: 'Type',
-    reason: 'Raison',
-    rrule: 'Récurrence',
-    status: 'Statut',
-    created: 'Date de création',
-    updated: 'Date de dernière modification',
     lastAlarmDate: 'Date de la dernière alarme',
     massRemove: 'Supprimer les comportements périodiques',
     massEnable: 'Activer les comportements périodiques',
@@ -832,6 +830,7 @@ export default merge({
     activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',
     entitiesColumns: 'Colonnes de l\'explorateur de contexte',
     entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
+    modal: '(Modal)',
     exportCsv: {
       title: 'Exporter CSV',
       fields: {
@@ -867,9 +866,9 @@ export default merge({
     modalTemplate: 'Template - Modale',
     entityTemplate: 'Template - Entités',
     blockTemplate: 'Template - Tuiles',
-    columnSM: 'Colonnes - Petit',
-    columnMD: 'Colonnes - Moyen',
-    columnLG: 'Colonnes - Large',
+    columnMobile: 'Colonnes - Mobiles',
+    columnTablet: 'Colonnes - Tablette',
+    columnDesktop: 'Colonnes - Bureau',
     limit: 'Limite',
     height: 'Hauteur',
     margin: {
@@ -915,6 +914,8 @@ export default merge({
       },
     },
     counters: 'Compteurs',
+    pbehaviorCounters: 'Compteurs de pbehavior',
+    entityStateCounters: 'Compteurs d\'états d\'entité',
     remediationInstructionsFilters: 'Filtres de consignes',
     colorIndicator: {
       title: 'Indicateur de couleur',
@@ -1154,8 +1155,6 @@ export default merge({
     },
     createPause: {
       title: 'Mettre en pause',
-      comment: 'Commentaire',
-      reason: 'Raison',
     },
     createAckRemove: {
       title: 'Annuler l\'acquittement',
@@ -1198,7 +1197,6 @@ export default merge({
       copyToClipboard: 'Copier dans le presse-papier',
     },
     service: {
-      actionPending: 'action en attente | actions en attente',
       refreshEntities: 'Rafraîchir la liste des entités',
       editPbehaviors: 'Éditer les comportements périodiques',
       entity: {
@@ -2230,12 +2228,14 @@ export default merge({
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
     grey: 'Gris',
+    hideGrey: 'Cacher le gris',
     primaryIcon: 'Icône principale',
     secondaryIcon: 'Icône secondaire',
     massActions: 'Actions de masse',
     cannotBeApplied: 'Cette action ne peut pas être appliquée',
     actions: {
       [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
+      [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Annuler l\'accusé de acquitter',
       [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
       [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
       [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
@@ -2247,14 +2247,35 @@ export default merge({
       [WEATHER_ACTIONS_TYPES.declareTicket]: 'Déclarer un incident',
     },
     iconTypes: {
-      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
-      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
-
-      [SERVICE_STATES.ok]: 'Ok',
-      [SERVICE_STATES.minor]: 'Mineur',
-      [SERVICE_STATES.major]: 'Majeur',
-      [SERVICE_STATES.critical]: 'Critique',
+      ok: 'Ok',
+      minorOrMajor: 'Mineure ou Majeure',
+      critical: 'Critique',
+    },
+    stateCounters: {
+      [SERVICE_WEATHER_STATE_COUNTERS.all]: 'Nombre d\'alarmes',
+      [SERVICE_WEATHER_STATE_COUNTERS.active]: 'Nombre d\'alarmes actives',
+      [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'Nombre de dépendances',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'Ok',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'Mineure',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'Majeur',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'Critique',
+      [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'Acquitter',
+      [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Non acquitter',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Sous PBh',
+      [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acquitter sous PBh',
+    },
+    stateCountersTooltips: {
+      [SERVICE_WEATHER_STATE_COUNTERS.all]: 'alarmes au total',
+      [SERVICE_WEATHER_STATE_COUNTERS.active]: 'alarmes actives',
+      [SERVICE_WEATHER_STATE_COUNTERS.depends]: 'dépendances',
+      [SERVICE_WEATHER_STATE_COUNTERS.ok]: 'état OK',
+      [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'alarmes mineures',
+      [SERVICE_WEATHER_STATE_COUNTERS.major]: 'alarmes majeures',
+      [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'alarmes critiques',
+      [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'alarmes acquittées',
+      [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'non confirmé',
+      [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'sous PBh',
+      [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'accusé de réception sous PBh',
     },
   },
   contextGeneralTable: {
@@ -2316,6 +2337,12 @@ export default merge({
 
   pbehavior: {
     periodsCalendar: 'Calendrier avec périodes',
+    notEditable: 'Ne peut pas être modifié',
+    pbehaviorInfo: 'PBehavior infos',
+    pbehaviorType: 'Type PBehavior',
+    pbehaviorReason: 'Raison PBehavior',
+    pbehaviorName: 'Nom PBehavior',
+    pbehaviorCanonicalType: 'Type canonique de PBehavior',
     buttons: {
       addFilter: 'Ajouter un filtre',
       editFilter: 'Modifier le filtre',
@@ -2502,6 +2529,9 @@ export default merge({
     type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
     needApprove: 'Une approbation est nécessaire',
+    executeInstruction: 'Exécuter la consigne "{instructionName}"',
+    resumeInstruction: 'Reprendre la consigne "{instructionName}"',
+    inProgressInstruction: '{instructionName} en cours...',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manuel simplifié',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manuel',
@@ -2594,7 +2624,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
-    executedAt: 'Exécuté à',
+    executedAt: 'Terminé à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
@@ -2658,7 +2688,6 @@ export default merge({
   },
 
   scenario: {
-    triggers: 'Déclencheurs',
     emitTrigger: 'Émettre un déclencheur',
     withAuth: 'Avez-vous besoin de champs d\'authentification ?',
     emptyResponse: 'Réponse vide',
@@ -2721,6 +2750,10 @@ export default merge({
     },
   },
 
+  alarm: {
+    eventsCount: 'Les événements comptent',
+  },
+
   entity: {
     manageInfos: 'Gérer les informations',
     form: 'Formulaire',
@@ -2729,6 +2762,8 @@ export default merge({
     addInformation: 'Ajouter une information',
     emptyInfos: 'Aucune information',
     availabilityState: 'État de disponibilité',
+    okEvents: 'OK événements',
+    koEvents: 'KO événements',
     types: {
       [ENTITY_TYPES.component]: 'Composant',
       [ENTITY_TYPES.connector]: 'Connecteur',
@@ -2959,12 +2994,12 @@ export default merge({
 
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
       title: 'Règles de bagot',
-      // message: '', // TODO: need to put description
+      message: 'Une alarme hérite du statut bagot lorsqu\'elle oscille d\'une criticité d\'alerte à un état stable un certain nombre de fois sur une période donnée.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
       title: 'Règles de résolution',
-      // message: '', // TODO: need to put description
+      message: 'Lorsqu\'une alarme reçoit un événement de type contre alarme, elle passe dans le statut fermée.\nAvant de considérer cette alarme comme définitivement résolue, Canopsis peut attendre un délai.\nCe délai peut être utile si l\'alarme bagotte ou si l\'utilisateur souhaite conserver l\'alarme ouverte en cas d\'erreur.',
     },
 
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
@@ -3138,6 +3173,7 @@ export default merge({
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
     discard: 'Effacer le motif',
+    oldPatternTooltip: 'Les modèles de filtre ne sont pas migrés',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -3150,11 +3186,8 @@ export default merge({
       countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
       oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
       existExcluded: 'Les règles incluent la règle exclue.',
+      required: 'Au moins un modèle doit être défini. Veuillez définir des modèles de filtre pour la règle',
     },
-  },
-
-  filter: {
-    oldPattern: 'Ancien format de filtre',
   },
 
   map: {
