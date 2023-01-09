@@ -14,7 +14,6 @@
               :roles="preparedRoles",
               :changed-roles="changedRoles",
               :disabled="!hasUpdateAnyPermissionAccess",
-              :sort-by="getSortBy(groupKey)",
               @change="changeCheckboxValue"
             )
     v-layout.submit-button.mt-3(v-show="hasChanges")
@@ -34,8 +33,6 @@ import { roleToForm, formToRole } from '@/helpers/forms/role';
 import { authMixin } from '@/mixins/auth';
 import { entitiesPermissionsMixin } from '@/mixins/entities/permission';
 import { entitiesRoleMixin } from '@/mixins/entities/role';
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { entitiesPlaylistMixin } from '@/mixins/entities/playlist';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { permissionsTechnicalPermissionMixin } from '@/mixins/permissions/technical/permission';
 
@@ -51,8 +48,6 @@ export default {
     authMixin,
     entitiesPermissionsMixin,
     entitiesRoleMixin,
-    entitiesViewGroupMixin,
-    entitiesPlaylistMixin,
     permissionsTechnicalRoleMixin,
     permissionsTechnicalPermissionMixin,
   ],
@@ -74,54 +69,19 @@ export default {
     },
 
     preparedRoles() {
-      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]).map(roleToForm);
-    },
+      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()])
+        .map(role => ({
+          ...roleToForm(role),
 
-    allViews() {
-      return this.groups.reduce((acc, { views }) => acc.concat(views), []);
-    },
-
-    groupsPriorityByTitle() {
-      return this.groups.reduce((acc, group, index) => {
-        acc[group.title] = index;
-
-        return acc;
-      }, {});
-    },
-
-    viewsPriorityById() {
-      return this.allViews.reduce((acc, view, index) => {
-        acc[view._id] = index;
-
-        return acc;
-      }, {});
-    },
-
-    playlistPriorityById() {
-      return this.playlists.reduce((acc, playlist, index) => {
-        acc[playlist._id] = index;
-
-        return acc;
-      }, {});
+          editable: role.editable,
+          deletable: role.deletable,
+        }));
     },
   },
   mounted() {
     this.fetchList();
   },
   methods: {
-    getViewSort(permission) {
-      return this.groupsPriorityByTitle[permission.name]
-        ?? this.viewsPriorityById[permission._id]
-        ?? this.playlistPriorityById[permission._id];
-    },
-
-    // eslint-disable-next-line consistent-return
-    getSortBy(key) {
-      if (key === 'view') {
-        return this.getViewSort;
-      }
-    },
-
     /**
      * Clear changed roles
      *
@@ -190,7 +150,7 @@ export default {
           await this.fetchCurrentUser();
         }
 
-        await this.fetchRolesList({ params: { limit: MAX_LIMIT } });
+        await this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } });
 
         this.$popups.success({ text: this.$t('success.default') });
 
@@ -273,10 +233,10 @@ export default {
 
       const [{ data: permissions }] = await Promise.all([
         this.fetchPermissionsListWithoutStore({ params: { limit: MAX_LIMIT } }),
-        this.fetchRolesList({ params: { limit: MAX_LIMIT } }),
+        this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } }),
       ]);
 
-      this.groupedPermissions = getGroupedPermissions(permissions, this.allViews, this.playlists);
+      this.groupedPermissions = getGroupedPermissions(permissions);
 
       this.pending = false;
     },

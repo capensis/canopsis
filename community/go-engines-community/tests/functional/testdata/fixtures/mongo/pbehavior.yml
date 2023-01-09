@@ -573,6 +573,31 @@ pbehavior:
           cond:
             type: eq
             value: test-entity-to-entity-pbehavior-update-1/test-component-default
+  pbehavior_to_entity_update_2:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entity-update-2
+    origin: test-pbehavior-to-entity-update-2-origin
+    entity: test-entity-to-entity-pbehavior-update-2/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-entity-pbehavior-update-2/test-component-default
+  pbehavior_to_entity_update_3:
+    <<: *pbehavior
+    _id: test-pbehavior-to-entity-update-3
+    origin: test-pbehavior-to-entity-update-3-origin
+    entity: test-entity-to-entity-pbehavior-update-3/test-component-default
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: test-entity-to-entity-pbehavior-update-3/test-component-default
+    comments:
+      - _id: test-pbehavior-to-entity-update-3-comment
+        author: root
+        message: <LoremIpsumSentence(3)>
+        ts: <NowUnix()>
   pbehavior_to_entity_patch_1:
     <<: *pbehavior
     _id: test-pbehavior-to-entity-patch-1

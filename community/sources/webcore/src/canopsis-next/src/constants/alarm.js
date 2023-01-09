@@ -223,6 +223,8 @@ export const ALARM_PATTERN_FIELDS = {
   ack: 'v.ack',
   ackAt: 'v.ack.t',
   ackBy: 'v.ack.a',
+  ackMessage: 'v.ack.m',
+  ackInitiator: 'v.ack.initiator',
   resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
@@ -230,7 +232,41 @@ export const ALARM_PATTERN_FIELDS = {
   lastComment: 'v.last_comment.m',
   longOutput: 'v.long_output',
   initialOutput: 'v.initial_output',
-  longInitialOutput: 'v.long_initial_output',
+  initialLongOutput: 'v.initial_long_output',
+  totalStateChanges: 'v.total_state_changes',
   tags: 'tags',
   activated: 'activated',
+};
+
+export const ALARM_ACK_INITIATORS = {
+  user: 'user',
+  system: 'system',
+  external: 'external',
+};
+
+export const ALARM_STEP_FIELDS = {
+  timestamp: 't',
+  value: 'val',
+  message: 'm',
+  author: 'a',
+};
+
+export const ALARM_TEMPLATE_FIELDS = {
+  id: 'alarm._id',
+  ack: 'alarm.v.ack',
+  state: 'alarm.v.state',
+  status: 'alarm.v.status',
+  ticket: 'alarm.v.ticket',
+  component: 'alarm.v.component',
+  connector: 'alarm.v.connector',
+  connectorName: 'alarm.v.connector_name',
+  resource: 'alarm.v.resource',
+  creationDate: 'alarm.v.creation_date',
+  displayName: 'alarm.v.display_name',
+  output: 'alarm.v.output',
+  lastUpdateDate: 'alarm.v.last_update_date',
+  lastEventDate: 'alarm.v.last_event_date',
+  pbehaviorInfo: 'alarm.v.pbehavior_info',
+  duration: 'alarm.v.duration',
+  eventsCount: 'alarm.v.events_count',
 };

@@ -5,7 +5,7 @@
       :pending="pbehaviorTypesPending",
       :totalItems="pbehaviorTypesMeta.total_count",
       :pagination.sync="pagination",
-      :deletable="hasDeleteAnyPbehaviorTypeAccess",
+      :removable="hasDeleteAnyPbehaviorTypeAccess",
       @remove-selected="showRemoveSelectedPbehaviorTypeModal",
       @remove="showRemovePbehaviorTypeModal",
       @edit="showEditPbehaviorTypeModal"

@@ -56,7 +56,7 @@ import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
-import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
+import PbehaviorsListExpandItem from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-expand-item.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -75,19 +75,19 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author' },
+        { text: this.$t('common.author'), value: 'author.name' },
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehaviors.begins'), value: 'tstart' },
         { text: this.$t('pbehaviors.ends'), value: 'tstop' },
-        { text: this.$t('pbehaviors.type'), value: 'type.name' },
-        { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
-        { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.type'), value: 'type.name' },
+        { text: this.$t('common.reason'), value: 'reason.name' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },
     availableActions() {
-      return this.modal.config.availableActions || [];
+      return this.modal.config.availableActions ?? [];
     },
 
     hasAccessToEditPbehavior() {

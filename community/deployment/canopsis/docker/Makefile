@@ -16,9 +16,11 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 # Either community or pro
 CANOPSIS_EDITION = community
 
-VERSION:=$(shell git -C "$(MONOREPO_ROOT)" for-each-ref refs/tags --sort=-authordate --format='%(refname:short)' --count=1 2>/dev/null || echo "0.0.0")
+VERSION:=$(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
+VERSION_TIME:=$(shell git for-each-ref --format="%(taggerdate:unix)" refs/tags/$(VERSION) 2> /dev/null || stat -c %Y .env)
 
-TARBALL_FILE = $(CURRENT_BUILD_OUTPUT_DIR)/canopsis-$(CANOPSIS_EDITION)-docker-compose-$(VERSION).tar
+TARBALL_NAME = canopsis-$(CANOPSIS_EDITION)-docker-compose-$(VERSION)
+TARBALL_FILE = $(CURRENT_BUILD_OUTPUT_DIR)/$(TARBALL_NAME).tar.gz
 
 .PHONY: all
 all: tarball
@@ -27,16 +29,20 @@ all: tarball
 .PHONY: tarball
 tarball: $(CURRENT_BUILD_OUTPUT_DIR) $(CURRENT_ROOT_DIR)
 	echo $(CANOPSIS_EDITION)
-	sed -i 's/^CPS_EDITION=.*//g' "$(CURRENT_ROOT_DIR)/.env"
-	sed -i '1iCPS_EDITION=$(CANOPSIS_EDITION)' "$(CURRENT_ROOT_DIR)/.env"
-	tar -C $(dir $(CURRENT_ROOT_DIR)) \
+	sed 's/^CPS_EDITION=.*//g' "$(CURRENT_ROOT_DIR)/.env" > env
+	sed -i '1iCPS_EDITION=$(CANOPSIS_EDITION)' "$(CURRENT_ROOT_DIR)/env"
+	tar -z -C $(dir $(CURRENT_ROOT_DIR)) \
 		--create \
 		--verbose \
-		--file $(TARBALL_FILE)\
+		--file $(TARBALL_FILE) \
 		--dereference \
-		--exclude-vcs --exclude-vcs-ignores \
-		--exclude=Makefile --exclude=build \
-		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))/;;' \
+		--mtime @$(VERSION_TIME) \
+		--sort=name \
+		--owner=0 --group=0 --numeric-owner \
+		--exclude-vcs \
+		--exclude=Makefile --exclude=build --exclude=.env \
+		--transform='s;^$(notdir $(CURRENT_ROOT_DIR))\(/\|$$\);$(TARBALL_NAME)\1;' \
+		--transform='s;/env$$;/.env;' \
 		$(notdir $(CURRENT_ROOT_DIR))
 
 $(CURRENT_BUILD_OUTPUT_DIR):
@@ -47,6 +53,7 @@ $(CURRENT_BUILD_OUTPUT_DIR):
 
 clean:
 	rm -rf $(CURRENT_BUILD_OUTPUT_DIR)
+	rm -f env
 
 .PHONY: help
 help:
