@@ -1,0 +1,210 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-entity-header Renders \`service-entity-header\` with custom props 1`] = `
+<div
+  class="layout justify-space-between align-center"
+>
+  <div
+    class="flex"
+  >
+    <div
+      class="v-input ma-0 pa-0 v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="true"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple white--text"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              check_box
+            </i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex pa-2"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light white--text"
+      style="font-size: 16px;"
+    />
+  </div>
+  <div
+    class="flex pl-1 white--text subheading xs12"
+  >
+    <div
+      class="layout align-center"
+    >
+      <div
+        class="mr-1 entity-name"
+        style="font-size: 16px;"
+      >
+        entity_name_field
+      </div>
+      <button
+        class="mx-1 v-btn v-btn--icon v-btn--small theme--dark purple"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--dark"
+            style="font-size: 16px;"
+          >
+            check
+          </i>
+        </div>
+      </button>
+      <button
+        class="mx-1 v-btn v-btn--icon v-btn--small theme--dark blue"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--dark"
+            style="font-size: 16px;"
+          >
+            local_play
+          </i>
+        </div>
+      </button>
+      <button
+        class="mx-1 v-btn v-btn--icon v-btn--small theme--dark grey darken-1"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--dark"
+            style="font-size: 16px;"
+          >
+            delete
+          </i>
+        </div>
+      </button>
+      <c-no-events-icon-stub
+        color="white"
+        top="top"
+      />
+      <div>
+        <div
+          class="v-alert entity-alert ma-0 px-2 py-1 black"
+        >
+          <div>
+            This action cannot be applied
+          </div>
+          <a
+            class="v-alert__dismissible"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--right material-icons theme--light"
+            >
+              cancel
+            </i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-entity-header Renders \`service-entity-header\` with default props 1`] = `
+<div
+  class="layout justify-space-between align-center"
+>
+  <div
+    class="flex"
+  >
+    <div
+      class="v-input ma-0 pa-0 v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              disabled="disabled"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex pa-2"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light white--text"
+      style="font-size: 16px;"
+    />
+  </div>
+  <div
+    class="flex pl-1 white--text subheading xs12"
+  >
+    <div
+      class="layout align-center"
+    >
+      <div
+        class="mr-1 entity-name"
+        style="font-size: 16px;"
+      >
+        name
+      </div>
+      <c-no-events-icon-stub
+        color="white"
+        top="top"
+      />
+      <div>
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;

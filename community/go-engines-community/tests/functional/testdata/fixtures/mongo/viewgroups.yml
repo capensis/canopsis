@@ -26,7 +26,6 @@ viewgroups:
   viewgroup_to_get_1:
     <<: *group
     _id: test-viewgroup-to-get-1
-    author: test-viewgroup-to-get-1-author
     created: 1611229670
     title: test-viewgroup-to-get-1-title
     updated: 1611229670
@@ -34,7 +33,6 @@ viewgroups:
   viewgroup_to_get_2:
     <<: *group
     _id: test-viewgroup-to-get-2
-    author: test-viewgroup-to-get-2-author
     created: 1611229670
     title: test-viewgroup-to-get-2-title
     updated: 1611229670
@@ -42,7 +40,6 @@ viewgroups:
   viewgroup_to_view_edit:
     <<: *group
     _id: test-viewgroup-to-view-edit
-    author: test-viewgroup-to-view-edit-author
     created: 1611229670
     title: test-viewgroup-to-view-edit-title
     updated: 1611229670
@@ -82,7 +79,6 @@ viewgroups:
   viewgroup_to_view_copy:
     <<: *group
     _id: test-viewgroup-to-view-copy
-    author: test-author-to-view-copy
     created: 1611229670
     title: test-viewgroup-to-view-copy-title
     updated: 1611229670

@@ -1,25 +1,22 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile {{ $t('settings.filters') }}
-    v-container
-      v-layout(column)
-        filter-selector(
-          v-if="!hideSelector",
-          v-field="value",
-          :label="$t('filterSelector.defaultFilter')",
-          :filters="filters",
-          hide-multiply
-        )
-        filters-list(
-          :filters="filters",
-          :addable="addable",
-          :editable="editable",
-          @input="$emit('update:filters', $event)",
-          @add="showCreateFilterModal",
-          @edit="showEditFilterModal",
-          @delete="showDeleteFilterModal"
-        )
+  widget-settings-item(:title="$t('settings.filters')")
+    v-layout(column)
+      filter-selector(
+        v-if="!hideSelector",
+        v-field="value",
+        :label="$t('filterSelector.defaultFilter')",
+        :filters="filters",
+        hide-multiply
+      )
+      filters-list(
+        :filters="filters",
+        :addable="addable",
+        :editable="editable",
+        @input="$emit('update:filters', $event)",
+        @add="showCreateFilterModal",
+        @edit="showEditFilterModal",
+        @delete="showDeleteFilterModal"
+      )
 </template>
 
 <script>
@@ -33,9 +30,10 @@ import { authMixin } from '@/mixins/auth';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersList from '@/components/other/filter/filters-list.vue';
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
-  components: { FilterSelector, FiltersList },
+  components: { WidgetSettingsItem, FilterSelector, FiltersList },
   mixins: [authMixin],
   props: {
     widgetId: {
