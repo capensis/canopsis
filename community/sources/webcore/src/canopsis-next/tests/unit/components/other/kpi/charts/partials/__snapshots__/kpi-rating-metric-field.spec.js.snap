@@ -85,7 +85,7 @@ exports[`kpi-rating-metric-field Renders \`kpi-rating-metric-field\` without pro
             <div
               class="v-list__tile__title"
             >
-              Number of active alarms with acks
+              Number of active alarms with tickets
             </div>
           </div>
         </a>
