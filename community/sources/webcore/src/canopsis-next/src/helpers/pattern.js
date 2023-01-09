@@ -17,6 +17,9 @@ import {
   ENTITY_PATTERN_FIELDS,
   EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_OPERATORS,
+  SERVICE_WEATHER_PATTERN_FIELDS,
+  OLD_PATTERNS_FIELDS,
+  OLD_PATTERN_FIELDS_TO_NEW_FIELDS,
 } from '@/constants';
 
 import { isValidDateInterval } from '@/helpers/date/date';
@@ -191,7 +194,9 @@ export const isDatePatternRuleField = value => [
 export const isNumberPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.state,
   ALARM_PATTERN_FIELDS.status,
+  EVENT_FILTER_PATTERN_FIELDS.state,
   ENTITY_PATTERN_FIELDS.impactLevel,
+  SERVICE_WEATHER_PATTERN_FIELDS.state,
 ].includes(value);
 
 /**
@@ -499,3 +504,17 @@ export const createEntityIdPatternByValue = value => [[{
     value,
   },
 }]];
+
+/**
+ * Check if pattern for source is old (was not migrated)
+ *
+ * @param {Object} source
+ * @param {string[]} [oldFields = OLD_PATTERNS_FIELDS.mongoQuery]
+ * @returns {boolean}
+ */
+export const isOldPattern = (source, oldFields = [OLD_PATTERNS_FIELDS.mongoQuery]) => (
+  oldFields.every(field => (
+    source[field]
+    && OLD_PATTERN_FIELDS_TO_NEW_FIELDS[field].every(newField => !source[newField]?.length)
+  ))
+);

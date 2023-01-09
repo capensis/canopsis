@@ -4,7 +4,7 @@
  * @param {Wrapper} wrapper
  * @return {Wrapper}
  */
-export const selectTable = wrapper => wrapper.find('.c-advanced-data-table');
+export const selectTable = wrapper => wrapper.find('.c-advanced-data-table, .v-datatable');
 
 /**
  * Select an advanced table rows
