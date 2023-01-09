@@ -49,7 +49,10 @@ Feature: Update a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-update-1-title",
       "is_private": false,
       "created": 1605263992,
@@ -106,7 +109,10 @@ Feature: Update a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-update-2-title",
       "is_private": true,
       "created": 1605263992,
@@ -166,7 +172,10 @@ Feature: Update a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-update-6-title",
       "is_private": false,
       "created": 1605263992,
@@ -198,7 +207,10 @@ Feature: Update a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-update-6-title",
       "is_private": false,
       "created": 1605263992,
