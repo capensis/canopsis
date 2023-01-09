@@ -10,10 +10,11 @@ export const HEALTHCHECK_SERVICES_NAMES = {
 };
 
 export const HEALTHCHECK_SERVICES_RENDERED_POSITIONS_DIFF_FACTORS = {
-  [HEALTHCHECK_SERVICES_NAMES.events]: { x: -3, y: 1 },
+  [HEALTHCHECK_SERVICES_NAMES.events]: { x: -1, y: 2 },
   [HEALTHCHECK_SERVICES_NAMES.mongo]: { x: -3, y: 0 },
+  [HEALTHCHECK_SERVICES_NAMES.timescaleDB]: { x: -3, y: 1 },
   [HEALTHCHECK_SERVICES_NAMES.api]: { x: -2, y: 0 },
-  [HEALTHCHECK_SERVICES_NAMES.rabbit]: { x: -2, y: 1 },
+  [HEALTHCHECK_SERVICES_NAMES.rabbit]: { x: -1, y: 1 },
   [HEALTHCHECK_SERVICES_NAMES.healthcheck]: { x: -2, y: -0.5 },
   [HEALTHCHECK_SERVICES_NAMES.redis]: { x: -1, y: 0 },
   [HEALTHCHECK_SERVICES_NAMES.enginesChain]: { x: 0, y: -0.5 },
