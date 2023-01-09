@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
@@ -48,7 +49,7 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 		groupCollection:       dbClient.Collection(mongo.ViewGroupMongoCollection),
 		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		defaultSearchByFields: []string{"_id", "title", "description", "author"},
+		defaultSearchByFields: []string{"_id", "title", "description"},
 		defaultSortBy:         "position",
 
 		tabStore: tabStore,
@@ -82,7 +83,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, []bson.M{
+	project := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.ViewGroupMongoCollection,
 			"localField":   "group_id",
@@ -90,11 +91,14 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 			"as":           "group",
 		}},
 		{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
-	}...)
+	}
+	project = append(project, author.PipelineForField("group.author")...)
+	project = append(project, author.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		common.GetSortQuery("position", common.SortAsc),
+		project,
 	))
 
 	if err != nil {
@@ -1105,7 +1109,7 @@ func (s *store) getNextGroupPosition(ctx context.Context) (int64, error) {
 }
 
 func getNestedObjectsPipeline() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.ViewTabMongoCollection,
 			"localField":   "_id",
@@ -1113,22 +1117,31 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "tabs",
 		}},
 		{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
+	}
+	pipeline = append(pipeline, author.PipelineForField("tabs.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$lookup": bson.M{
 			"from":         mongo.WidgetMongoCollection,
 			"localField":   "tabs._id",
 			"foreignField": "tab",
 			"as":           "widgets",
 		}},
-		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
+		bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+	)
+	pipeline = append(pipeline, author.PipelineForField("widgets.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$lookup": bson.M{
 			"from":         mongo.WidgetFiltersMongoCollection,
 			"localField":   "widgets._id",
 			"foreignField": "widget",
 			"as":           "filters",
 		}},
-		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.position": 1}},
-		{"$group": bson.M{
+		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+	)
+	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$sort": bson.M{"filters.position": 1}},
+		bson.M{"$group": bson.M{
 			"_id": bson.M{
 				"_id":    "$_id",
 				"tab":    "$tabs._id",
@@ -1139,18 +1152,18 @@ func getNestedObjectsPipeline() []bson.M {
 			"widgets": bson.M{"$first": "$widgets"},
 			"filters": bson.M{"$push": "$filters"},
 		}},
-		{"$addFields": bson.M{
+		bson.M{"$addFields": bson.M{
 			"_id": "$_id._id",
 			"widgets.filters": bson.M{"$filter": bson.M{
 				"input": "$filters",
 				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
 			}},
 		}},
-		{"$sort": bson.D{
+		bson.M{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
 			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
 		}},
-		{"$group": bson.M{
+		bson.M{"$group": bson.M{
 			"_id": bson.M{
 				"_id": "$_id",
 				"tab": "$tabs._id",
@@ -1159,33 +1172,36 @@ func getNestedObjectsPipeline() []bson.M {
 			"tabs":    bson.M{"$first": "$tabs"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},
-		{"$addFields": bson.M{
+		bson.M{"$addFields": bson.M{
 			"tabs.widgets": bson.M{"$filter": bson.M{
 				"input": "$widgets",
 				"cond":  "$$this._id",
 			}},
 		}},
-		{"$sort": bson.M{"tabs.position": 1}},
-		{"$group": bson.M{
+		bson.M{"$sort": bson.M{"tabs.position": 1}},
+		bson.M{"$group": bson.M{
 			"_id":  "$_id._id",
 			"data": bson.M{"$first": "$data"},
 			"tabs": bson.M{"$push": "$tabs"},
 		}},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"tabs": bson.M{"$filter": bson.M{
 				"input": "$tabs",
 				"cond":  "$$this._id",
 			}}},
 		}}}},
-		{"$lookup": bson.M{
+		bson.M{"$lookup": bson.M{
 			"from":         mongo.ViewGroupMongoCollection,
 			"localField":   "group_id",
 			"foreignField": "_id",
 			"as":           "group",
 		}},
-		{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
-	}
+		bson.M{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
+	)
+	pipeline = append(pipeline, author.PipelineForField("group.author")...)
+	pipeline = append(pipeline, author.Pipeline()...)
+	return pipeline
 }
 
 func computePositions(

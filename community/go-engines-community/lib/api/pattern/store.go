@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -56,7 +57,7 @@ func NewStore(
 		client:     dbClient,
 		collection: dbClient.Collection(mongo.PatternMongoCollection),
 
-		defaultSearchByFields: []string{"_id", "author", "title"},
+		defaultSearchByFields: []string{"_id", "author.name", "title"},
 		defaultSortBy:         "created",
 
 		linkedCollections: []string{
@@ -112,7 +113,7 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 			{"is_corporate": true},
 		},
 	}}}
-	pipeline = append(pipeline, getAuthorPipeline()...)
+	pipeline = append(pipeline, author.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -155,6 +156,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
+	pipeline = append(pipeline, author.Pipeline()...)
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -169,7 +171,6 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 		request.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
-		getAuthorPipeline(),
 	))
 
 	if err != nil {
@@ -593,18 +594,6 @@ func (s *store) findEntityServices(ctx context.Context, pattern Response) ([]str
 	}
 
 	return ids, nil
-}
-
-func getAuthorPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "author",
-			"foreignField": "_id",
-			"as":           "author",
-		}},
-		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
-	}
 }
 
 func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {

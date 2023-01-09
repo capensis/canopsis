@@ -24,13 +24,19 @@ Feature: Update a view
     """json
     {
       "_id": "test-view-to-update",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670,
       "description": "test-view-to-update-1-description-updated",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
-        "author": "test-viewgroup-to-view-edit-author",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
         "updated": 1611229670

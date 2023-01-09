@@ -49,7 +49,10 @@ Feature: create a PBehavior
     """json
     {
       "enabled": true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "name": "test-pbehavior-to-create-1",
       "tstart": 1591172881,
       "tstop": 1591536400,
@@ -92,8 +95,11 @@ Feature: create a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
-      "comments": null,
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "comments": [],
       "color": "#FFFFFF",
       "enabled": true,
       "exceptions": [
@@ -191,7 +197,10 @@ Feature: create a PBehavior
     """json
     {
       "enabled": true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "name": "test-pbehavior-to-create-2",
       "tstart": 1591172881,
       "tstop": 1591536400,
@@ -394,7 +403,10 @@ Feature: create a PBehavior
     """json
     {
       "enabled":true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "name": "test-pbehavior-to-create-5",
       "tstart": 1591172881,
       "tstop": null,

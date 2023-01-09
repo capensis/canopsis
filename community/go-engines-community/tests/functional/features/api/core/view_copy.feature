@@ -25,12 +25,18 @@ Feature: Copy a view
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-view-to-copy-1-description-updated",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-copy",
-        "author": "test-author-to-view-copy",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-copy-title",
         "updated": 1611229670
@@ -51,12 +57,18 @@ Feature: Copy a view
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-view-to-copy-1-description-updated",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-copy",
-        "author": "test-author-to-view-copy",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-copy-title",
         "updated": 1611229670
@@ -73,7 +85,10 @@ Feature: Copy a view
       "tabs": [
         {
           "title": "test-tab-to-view-copy-1-title",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "widgets": [
             {
               "title": "test-widget-to-view-copy-1-title",
@@ -95,7 +110,10 @@ Feature: Copy a view
                 {
                   "title": "test-widgetfilter-to-view-copy-1-title",
                   "is_private": false,
-                  "author": "root",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "alarm_pattern": [
                     [
                       {
@@ -111,7 +129,10 @@ Feature: Copy a view
                 {
                   "title": "test-widgetfilter-to-view-copy-2-title",
                   "is_private": false,
-                  "author": "root",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "alarm_pattern": [
                     [
                       {
@@ -125,7 +146,10 @@ Feature: Copy a view
                   ]
                 }
               ],
-              "author": "root"
+              "author": {
+                "_id": "root",
+                "name": "root"
+              }
             }
           ]
         }

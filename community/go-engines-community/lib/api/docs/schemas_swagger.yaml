@@ -472,9 +472,9 @@ definitions:
       _id:
         type: string
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       last_comment:
-        $ref: '#/definitions/pbehavior.Comment'
+        $ref: '#/definitions/pbehaviorcomment.Response'
       name:
         type: string
       reason:
@@ -646,6 +646,20 @@ definitions:
       access_token:
         type: string
     type: object
+  author.Author:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  author.Role:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   broadcastmessage.BroadcastMessage:
     properties:
       _id:
@@ -746,20 +760,6 @@ definitions:
         type: integer
       total_count:
         type: integer
-    type: object
-  common.Role:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-    type: object
-  common.User:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
     type: object
   common.ValidationErrorResponse:
     properties:
@@ -874,6 +874,13 @@ definitions:
     required:
     - _id
     type: object
+  entity.Category:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   entity.ContextGraphResponse:
     properties:
       depends:
@@ -894,7 +901,7 @@ definitions:
       alarm_last_update_date:
         type: integer
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       component_infos:
@@ -1080,7 +1087,7 @@ definitions:
       alarm_last_update_date:
         type: integer
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       changeable_depends:
         items:
           type: string
@@ -1301,7 +1308,7 @@ definitions:
       alarm_last_update_date:
         type: integer
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       component_infos:
@@ -1838,7 +1845,7 @@ definitions:
           type: array
         type: array
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -2120,7 +2127,7 @@ definitions:
           type: array
         type: array
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -2415,7 +2422,7 @@ definitions:
           type: array
         type: array
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       entity_pattern:
@@ -2550,17 +2557,6 @@ definitions:
       type:
         $ref: '#/definitions/pbehavior.Type'
     type: object
-  pbehavior.Comment:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      message:
-        type: string
-      ts:
-        type: integer
-    type: object
   pbehavior.CreateRequest:
     properties:
       _id:
@@ -2663,12 +2659,12 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       color:
         type: string
       comments:
         items:
-          $ref: '#/definitions/pbehavior.Comment'
+          $ref: '#/definitions/pbehaviorcomment.Response'
         type: array
       corporate_entity_pattern:
         type: string
@@ -2787,6 +2783,17 @@ definitions:
     required:
     - message
     - pbehavior
+    type: object
+  pbehaviorcomment.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      message:
+        type: string
+      ts:
+        type: integer
     type: object
   pbehaviorexception.Exception:
     properties:
@@ -3024,7 +3031,7 @@ definitions:
       author:
         type: string
       created:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
       enabled:
         type: boolean
       fullscreen:
@@ -3038,7 +3045,7 @@ definitions:
           type: string
         type: array
       updated:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
     type: object
   request.BasicAuth:
     properties:
@@ -3144,7 +3151,7 @@ definitions:
           type: array
         type: array
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -3635,7 +3642,7 @@ definitions:
           $ref: '#/definitions/scenario.Action'
         type: array
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       delay:
@@ -3713,7 +3720,7 @@ definitions:
           $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       connector:
@@ -3817,7 +3824,7 @@ definitions:
       ack:
         $ref: '#/definitions/common.AlarmStep'
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       connector:
@@ -3896,9 +3903,9 @@ definitions:
       expired:
         type: integer
       role:
-        $ref: '#/definitions/common.Role'
+        $ref: '#/definitions/author.Role'
       user:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       value:
         type: string
     type: object
@@ -4312,7 +4319,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       title:
@@ -4329,7 +4336,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       title:
@@ -4373,7 +4380,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       description:
@@ -4402,7 +4409,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       title:
@@ -4423,7 +4430,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       deletable:
@@ -4453,7 +4460,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         $ref: '#/definitions/types.CpsTime'
       title:
@@ -4541,7 +4548,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       filters:
@@ -4618,7 +4625,7 @@ definitions:
           type: array
         type: array
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
