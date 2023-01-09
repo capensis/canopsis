@@ -161,6 +161,22 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
 
     A venir
 
+
+### Remise à 0 du cache Redis
+
+Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
+
+=== "Docker Compose"
+
+    ```sh
+    docker-compose up -d redis
+    docker-compose exec redis /usr/local/bin/redis-cli flushall
+    ```
+
+=== "Paquets CentOS 7"
+
+    A venir
+
 ### Suppression d'options de lancement de certains moteurs
 
 #### Suppression des options `-featureHideResources`, `-postProcessorsDirectory`, `-ignoreDefaultTomlConfig` dans **engine-axe**
