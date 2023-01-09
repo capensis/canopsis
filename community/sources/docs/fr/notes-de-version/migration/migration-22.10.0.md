@@ -327,7 +327,13 @@ Vous devez simplement définir la variable d'environnement `CPS_OLD_API` dans `/
 
 !!! warning "Avertissement"
 
-    Les configurations `docker-compose` livrées ne doivent absolument pas être modifiées, notamment les versions d'images utilisées.
+    Les configurations `docker-compose` livrées ne doivent absolument pas être modifiées, notamment les versions d'images utilisées.  
+    Par ailleurs, si vous utilisiez déjà la partie SNMP dans votre installation alors la collection `schema` existe très certainement dans mongoDB.  
+    Si ce n'était pas le cas, vous allez devoir la créer avec ces instructions.  
+    ```
+    docker-compose exec snmp /bin/bash
+    schema2db
+    ```
 
 ```sh
 cd ../../../mock/external-services/snmp/docker
