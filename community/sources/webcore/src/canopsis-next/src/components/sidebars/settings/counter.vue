@@ -1,67 +1,60 @@
 <template lang="pug">
-  div
-    v-list.pt-0(expand)
-      field-title(v-model="form.title", :title="$t('common.title')")
-      v-divider
-      field-filters(
-        :filters.sync="form.filters",
-        addable,
-        editable,
-        with-alarm,
-        with-entity,
-        with-pbehavior,
-        hide-selector
+  widget-settings(:submitting="submitting", @submit="submit")
+    field-title(v-model="form.title")
+    v-divider
+    field-filters(
+      :filters.sync="form.filters",
+      addable,
+      editable,
+      with-alarm,
+      with-entity,
+      with-pbehavior,
+      hide-selector
+    )
+    v-divider
+    field-opened-resolved-filter(v-model="form.parameters.opened")
+    v-divider
+    alarms-list-modal-form(v-model="form.parameters.alarmsList")
+    v-divider
+    widget-settings-group(:title="$t('settings.advancedSettings')")
+      field-template(
+        v-model="form.parameters.blockTemplate",
+        :title="$t('settings.blockTemplate')"
       )
       v-divider
-      field-opened-resolved-filter(v-model="form.parameters.opened")
+      field-grid-size(
+        v-model="form.parameters.columnMobile",
+        :title="$t('settings.columnMobile')",
+        mobile
+      )
       v-divider
-      alarms-list-modal-form(v-model="form.parameters.alarmsList")
+      field-grid-size(
+        v-model="form.parameters.columnTablet",
+        :title="$t('settings.columnTablet')",
+        tablet
+      )
       v-divider
-      v-list-group
-        template(#activator="")
-          v-list-tile {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-template(
-            v-model="form.parameters.blockTemplate",
-            :title="$t('settings.blockTemplate')"
-          )
-          v-divider
-          field-grid-size(
-            v-model="form.parameters.columnSM",
-            :title="$t('settings.columnSM')"
-          )
-          v-divider
-          field-grid-size(
-            v-model="form.parameters.columnMD",
-            :title="$t('settings.columnMD')"
-          )
-          v-divider
-          field-grid-size(
-            v-model="form.parameters.columnLG",
-            :title="$t('settings.columnLG')"
-          )
-          v-divider
-          margins-form(v-model="form.parameters.margin")
-          v-divider
-          field-slider(
-            v-model="form.parameters.heightFactor",
-            :title="$t('settings.height')",
-            :min="1",
-            :max="20"
-          )
-          v-divider
-          counter-levels-form(v-model="form.parameters.levels")
-          v-divider
-          field-switcher(
-            v-model="form.parameters.isCorrelationEnabled",
-            :title="$t('settings.isCorrelationEnabled')"
-          )
+      field-grid-size(
+        v-model="form.parameters.columnDesktop",
+        :title="$t('settings.columnDesktop')"
+      )
       v-divider
-    v-btn.primary(
-      :loading="submitting",
-      :disabled="submitting",
-      @click="submit"
-    ) {{ $t('common.save') }}
+      margins-form(v-model="form.parameters.margin")
+      v-divider
+      field-slider(
+        v-model="form.parameters.heightFactor",
+        :title="$t('settings.height')",
+        :min="1",
+        :max="20"
+      )
+      v-divider
+      counter-levels-form(v-model="form.parameters.levels")
+      v-divider
+      field-switcher(
+        v-model="form.parameters.isCorrelationEnabled",
+        :title="$t('settings.isCorrelationEnabled')"
+      )
+    v-divider
 </template>
 
 <script>
@@ -69,16 +62,18 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
-import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
-import FieldOpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
-import FieldTemplate from '@/components/sidebars/settings/fields/common/template.vue';
-import FieldGridSize from '@/components/sidebars/settings/fields/common/grid-size.vue';
-import FieldFilters from '@/components/sidebars/settings/fields/common/filters.vue';
-import FieldSlider from '@/components/sidebars/settings/fields/common/slider.vue';
-import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
-import AlarmsListModalForm from '@/components/sidebars/settings/forms/alarms-list-modal.vue';
-import MarginsForm from '@/components/sidebars/settings/forms/margins.vue';
-import CounterLevelsForm from '@/components/sidebars/settings/forms/counter-levels.vue';
+import FieldTitle from './fields/common/title.vue';
+import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
+import FieldTemplate from './fields/common/template.vue';
+import FieldGridSize from './fields/common/grid-size.vue';
+import FieldFilters from './fields/common/filters.vue';
+import FieldSlider from './fields/common/slider.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
+import AlarmsListModalForm from './forms/alarms-list-modal.vue';
+import MarginsForm from './forms/margins.vue';
+import CounterLevelsForm from './forms/counter-levels.vue';
+import WidgetSettings from './partials/widget-settings.vue';
+import WidgetSettingsGroup from './partials/widget-settings-group.vue';
 
 export default {
   name: SIDE_BARS.counterSettings,
@@ -93,6 +88,8 @@ export default {
     AlarmsListModalForm,
     MarginsForm,
     CounterLevelsForm,
+    WidgetSettings,
+    WidgetSettingsGroup,
   },
   mixins: [widgetSettingsMixin],
 };

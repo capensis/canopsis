@@ -186,7 +186,7 @@ func getPbehaviorInfoStringField(pbhInfo types.PbehaviorInfo, f string) (string,
 		}
 		return pbhInfo.CanonicalType, true
 	case "pbehavior_info.reason":
-		return pbhInfo.Reason, true
+		return pbhInfo.ReasonID, true
 	default:
 		return "", false
 	}

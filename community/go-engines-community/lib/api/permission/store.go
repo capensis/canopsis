@@ -48,10 +48,35 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		sortBy = r.SortBy
 	}
 
+	project := []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.ViewMongoCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "view",
+		}},
+		{"$unwind": bson.M{"path": "$view", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.ViewGroupMongoCollection,
+			"localField":   "view.group_id",
+			"foreignField": "_id",
+			"as":           "view_group",
+		}},
+		{"$unwind": bson.M{"path": "$view_group", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PlaylistMongoCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "playlist",
+		}},
+		{"$unwind": bson.M{"path": "$playlist", "preserveNullAndEmptyArrays": true}},
+	}
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
+		project,
 	))
 
 	if err != nil {

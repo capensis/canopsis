@@ -38,3 +38,35 @@ Feature: update a pbehavior
       }
     }
     """
+
+  Scenario: given add comment to entity pbehavior request should return error
+    When I am admin
+    When I do POST /api/v4/pbehavior-comments:
+    """json
+    {
+      "pbehavior": "test-pbehavior-to-entity-update-2",
+      "message": "Test message"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "_id": "Cannot update a pbehavior with origin."
+      }
+    }
+    """
+
+  Scenario: given remove comment from entity pbehavior request should return error
+    When I am admin
+    When I do DELETE /api/v4/pbehavior-comments/test-pbehavior-to-entity-update-3-comment
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "_id": "Cannot update a pbehavior with origin."
+      }
+    }
+    """

@@ -141,16 +141,12 @@ Feature: Import entities
     """
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-2
-    Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "impact" should contain:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "test-connector-import-partial-2/test-connector-name-import-partial-2",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-import-partial-2/test-connector-name-import-partial-2",
+      "{{ .serviceID }}"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-connector-import-partial-2/test-connector-name-import-partial-2
     Then the response code should be 200

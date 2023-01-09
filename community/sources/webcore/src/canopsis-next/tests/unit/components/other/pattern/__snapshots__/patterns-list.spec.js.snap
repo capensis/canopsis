@@ -18,14 +18,15 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
       />
     </div>
     <div
-      class="flex xs4"
-      style="display: none;"
+      class="flex xs12"
     >
-      <c-action-btn-stub
-        type="delete"
-      />
+      <transition-stub
+        mode="in-out"
+        name="expand-transition"
+      >
+        <!---->
+      </transition-stub>
     </div>
-    <!---->
   </div>
   <div>
     <div
@@ -769,14 +770,15 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
       <c-search-field-stub />
     </div>
     <div
-      class="flex xs4"
-      style="display: none;"
+      class="flex xs12"
     >
-      <c-action-btn-stub
-        type="delete"
-      />
+      <transition-stub
+        mode="in-out"
+        name="expand-transition"
+      >
+        <!---->
+      </transition-stub>
     </div>
-    <!---->
   </div>
   <div>
     <div

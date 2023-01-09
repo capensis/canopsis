@@ -1,3 +1,7 @@
+function isInt(value) {
+    return typeof value === "number" || value instanceof NumberLong;
+}
+
 function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
     if (!oldEntityPatterns) {
         return null;
@@ -116,7 +120,7 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
 
                         switch (vField) {
                             case "ack":
-                                var ackCond = migrateOldAlarmStepPattern(vValue, newField, true)
+                                var ackCond = migrateOldAlarmStepPattern(vValue, newField, {t: true, a: true, m: true, initiator: true});
                                 if (!ackCond) {
                                     return null;
                                 }
@@ -126,7 +130,7 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                             case "canceled":
                             case "ticket":
                             case "snooze":
-                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, false)
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {});
                                 if (!stepCond) {
                                     return null;
                                 }
@@ -153,6 +157,26 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     cond: timeCond,
                                 });
                                 break;
+                            case "activation_date":
+                                if (vValue === null) {
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: {
+                                            type: "exist",
+                                            value: false,
+                                        },
+                                    });
+                                } else {
+                                    var timeCond = migrateOldTimePattern(vValue)
+                                    if (!timeCond) {
+                                        return null;
+                                    }
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: timeCond,
+                                    });
+                                }
+                                break;
                             case "last_update_date":
                             case "last_event_date":
                             case "resolved":
@@ -167,6 +191,16 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                             case "initial_output":
                             case "initial_long_output":
                                 var cond = migrateOldStringPattern(vValue);
+                                if (!cond) {
+                                    return null;
+                                }
+                                newGroup.push({
+                                    field: newField,
+                                    cond: cond,
+                                });
+                                break;
+                            case "total_state_changes":
+                                var cond = migrateOldIntPattern(vValue);
                                 if (!cond) {
                                     return null;
                                 }
@@ -270,7 +304,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                                 value: false,
                             },
                         });
-                    } else if (typeof value === "number" || value instanceof NumberLong) {
+                    } else if (isInt(value)) {
                         newGroup.push({
                             field: newField,
                             field_type: "int",
@@ -428,13 +462,13 @@ function migrateOldTimePattern(oldTimePattern) {
     return null;
 }
 
-function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
+function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowedFields) {
     if (oldAlarmStepPattern === null) {
         return {
             field: stepField,
             cond: {
                 type: "exist",
-                value: "false"
+                value: false
             }
         };
     }
@@ -445,11 +479,27 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
 
         switch (field) {
             case "t":
-                if (!allowTime) {
+                if (!allowedFields || !allowedFields[field]) {
                     return null;
                 }
 
                 var cond = migrateOldTimePattern(value);
+                if (!cond) {
+                    return null;
+                }
+                res = {
+                    field: stepField + "." + field,
+                    cond: cond,
+                };
+                break;
+            case "a":
+            case "m":
+            case "initiator":
+                if (!allowedFields || !allowedFields[field]) {
+                    return null;
+                }
+
+                var cond = migrateOldStringPattern(value);
                 if (!cond) {
                     return null;
                 }
@@ -518,7 +568,7 @@ function migrateOldIntPattern(oldIntPattern) {
         };
     }
 
-    if (typeof oldIntPattern === "number" || oldIntPattern instanceof NumberLong) {
+    if (isInt(oldIntPattern)) {
         return {
             type: "eq",
             value: oldIntPattern,

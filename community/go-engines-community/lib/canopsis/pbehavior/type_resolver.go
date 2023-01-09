@@ -59,11 +59,12 @@ func NewTypeResolver(
 
 // ResolveResult represents current state of entity.
 type ResolveResult struct {
-	ResolvedType      Type
-	ResolvedPbhID     string
-	ResolvedPbhName   string
-	ResolvedPbhReason string
-	ResolvedCreated   int64
+	ResolvedType          Type
+	ResolvedPbhID         string
+	ResolvedPbhName       string
+	ResolvedPbhReasonID   string
+	ResolvedPbhReasonName string
+	ResolvedCreated       int64
 }
 
 // Resolve checks entity for each pbehavior concurrently. It uses "workerPoolSize" goroutines.
@@ -233,11 +234,12 @@ func (r *typeResolver) getPbehaviorIntervals(
 					}
 
 					resCh <- ResolveResult{
-						ResolvedType:      resolvedType,
-						ResolvedPbhID:     d.id,
-						ResolvedPbhName:   d.computed.Name,
-						ResolvedPbhReason: d.computed.Reason,
-						ResolvedCreated:   d.computed.Created,
+						ResolvedType:          resolvedType,
+						ResolvedPbhID:         d.id,
+						ResolvedPbhName:       d.computed.Name,
+						ResolvedPbhReasonName: d.computed.ReasonName,
+						ResolvedPbhReasonID:   d.computed.ReasonID,
+						ResolvedCreated:       d.computed.Created,
 					}
 					break
 				}

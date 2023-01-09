@@ -1,36 +1,53 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{ title }}
-    v-container
-      v-slider(
-        :value="value",
-        :max="max",
-        :min="min",
-        ticks="always",
-        @input="$emit('input', $event)",
-        always-dirty,
-        thumb-label
-      )
+  widget-settings-item
+    template(#title="")
+      v-layout(align-center)
+        span {{ title }}
+        v-icon.ml-2 {{ sizeIcon }}
+    c-column-size-field(v-field="value", :mobile="mobile", :tablet="tablet")
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Number,
+      required: false,
     },
     title: {
       type: String,
       required: true,
     },
-    max: {
-      type: Number,
-      default: 12,
+    mobile: {
+      type: Boolean,
+      default: false,
     },
-    min: {
-      type: Number,
-      default: 0,
+    tablet: {
+      type: Boolean,
+      default: false,
     },
+  },
+  setup(props) {
+    const sizeIcon = computed(() => {
+      if (props.mobile) {
+        return 'phone_android';
+      }
+
+      if (props.tablet) {
+        return 'tablet';
+      }
+
+      return 'laptop';
+    });
+
+    return {
+      sizeIcon,
+    };
   },
 };
 </script>
