@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -55,8 +56,14 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 					}
 				}
 
-				if err != nil && (errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)) {
-					logger.Warn().Err(err).Msgf("panic recovered")
+				if err != nil && errors.Is(err, context.Canceled) {
+					logger.Warn().Err(err).Msg("panic recovered")
+					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
+					return
+				}
+
+				if err != nil && (errors.Is(err, context.DeadlineExceeded) || mongodriver.IsTimeout(err)) {
+					logger.Err(err).Msg("panic recovered")
 					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
 					return
 				}
