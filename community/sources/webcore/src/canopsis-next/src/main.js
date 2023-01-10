@@ -106,6 +106,7 @@ import CRequestUrlField from '@/components/forms/fields/c-request-url-field.vue'
 import CTextPairsField from '@/components/forms/fields/text-pairs/c-text-pairs-field.vue';
 import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-field.vue';
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
+import CPayloadField from '@/components/forms/fields/c-payload-field.vue';
 import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
@@ -372,6 +373,7 @@ Vue.component('c-request-url-field', CRequestUrlField);
 Vue.component('c-text-pair-field', CTextPairField);
 Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
+Vue.component('c-payload-field', CPayloadField);
 Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
 Vue.component('c-mixed-input-field', CMixedInputField);
