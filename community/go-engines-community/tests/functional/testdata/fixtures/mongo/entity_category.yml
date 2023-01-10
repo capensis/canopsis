@@ -11,14 +11,14 @@ entity_category:
   category_to_get_1:
     <<: *category
     _id: test-category-to-get-1
-    author: test-category-to-get-1-author
+    author: root
     created: 1592215337
     name: test-category-to-get-1-name
     updated: 1592215337
   category_to_get_2:
     <<: *category
     _id: test-category-to-get-2
-    author: test-category-to-get-2-author
+    author: root
     created: 1592215337
     name: test-category-to-get-2-name
     updated: 1592215337
