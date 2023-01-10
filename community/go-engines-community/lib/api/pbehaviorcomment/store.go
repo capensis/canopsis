@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -15,7 +16,7 @@ import (
 )
 
 type Store interface {
-	Insert(ctx context.Context, pbehaviorID string, model *pbehavior.Comment) (bool, error)
+	Insert(ctx context.Context, r Request) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -31,15 +32,19 @@ func NewStore(dbClient mongo.DbClient) Store {
 	}
 }
 
-func (s *store) Insert(ctx context.Context, pbehaviorID string, model *pbehavior.Comment) (bool, error) {
-	model.ID = utils.NewID()
-	model.Timestamp = &types.CpsTime{Time: time.Now()}
-	updated := false
+func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
+	doc := pbehavior.Comment{
+		ID:        utils.NewID(),
+		Author:    r.Author,
+		Timestamp: &types.CpsTime{Time: time.Now()},
+		Message:   r.Message,
+	}
+	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updated = false
+		response = nil
 
 		err := s.dbCollection.FindOne(ctx, bson.M{
-			"_id":    pbehaviorID,
+			"_id":    r.Pbehavior,
 			"origin": bson.M{"$ne": nil},
 		}).Err()
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -51,20 +56,36 @@ func (s *store) Insert(ctx context.Context, pbehaviorID string, model *pbehavior
 
 		res, err := s.dbCollection.UpdateOne(
 			ctx,
-			bson.M{"_id": pbehaviorID},
+			bson.M{"_id": r.Pbehavior},
 			bson.M{"$push": bson.M{
-				"comments": model,
+				"comments": doc,
 			}},
 		)
-		if err != nil {
+		if err != nil || res.ModifiedCount == 0 {
 			return err
 		}
 
-		updated = res.ModifiedCount > 0
+		pipeline := []bson.M{
+			{"$match": bson.M{"_id": r.Pbehavior}},
+			{"$unwind": "$comments"},
+			{"$match": bson.M{"comments._id": doc.ID}},
+			{"$replaceRoot": bson.M{"newRoot": "$comments"}},
+		}
+		pipeline = append(pipeline, author.Pipeline()...)
+		cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
+		if err != nil {
+			return err
+		}
+		defer cursor.Close(ctx)
+		if cursor.Next(ctx) {
+			response = &Response{}
+			err = cursor.Decode(response)
+			return err
+		}
 		return nil
 	})
 
-	return updated, err
+	return response, err
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {

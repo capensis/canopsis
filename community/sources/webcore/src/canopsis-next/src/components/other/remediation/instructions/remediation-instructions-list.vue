@@ -20,8 +20,6 @@
         )
       template(#headerCell="{ header }")
         span.c-table-header__text--multiline {{ header.text }}
-      template(#author="{ item }")
-        span {{ item.author.name }}
       template(#enabled="{ item }")
         c-enabled(:value="item.enabled")
       template(#status="{ item }")
@@ -117,7 +115,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author',
+          value: 'author.name',
         },
         {
           text: this.$t('common.enabled'),
