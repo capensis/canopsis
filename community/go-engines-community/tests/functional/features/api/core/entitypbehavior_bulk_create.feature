@@ -158,7 +158,10 @@ Feature: Bulk create pbehaviors
       "data": [
         {
           "enabled": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "name": "test-pbehavior-to-bulk-entity-create-1-name",
           "origin": "test-pbehavior-to-bulk-entity-create-1-origin",
           "tstart": 1591172881,
@@ -183,14 +186,20 @@ Feature: Bulk create pbehaviors
           ],
           "comments": [
             {
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "message": "test-pbehavior-to-bulk-entity-create-1-comment"
             }
           ]
         },
         {
           "enabled": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "name": "test-pbehavior-to-bulk-entity-create-2-name",
           "origin": "test-pbehavior-to-bulk-entity-create-2-origin",
           "tstart": 1591172881,
@@ -215,7 +224,10 @@ Feature: Bulk create pbehaviors
           ],
           "comments": [
             {
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "message": "test-pbehavior-to-bulk-entity-create-2-comment"
             }
           ]

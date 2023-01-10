@@ -444,7 +444,14 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 		return fmt.Errorf("response is nil")
 	}
 
-	b, err := a.templater.Execute(ctx, doc)
+	b, err := a.templater.Execute(ctx, path)
+	if err != nil {
+		return err
+	}
+
+	path = b.String()
+
+	b, err = a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
@@ -479,8 +486,8 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 				return nil
 			}
 
-			if len(expected) == 0 {
-				return fmt.Errorf("%s is empty", doc)
+			if len(expected) == 0 && len(received) != 0 {
+				return fmt.Errorf("%s is not empty", path)
 			}
 
 			for _, ev := range expected {

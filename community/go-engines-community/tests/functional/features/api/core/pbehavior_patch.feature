@@ -77,18 +77,27 @@ Feature: update a PBehavior
     """json
     {
       "name": "test-pbehavior-to-patch-1-name-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "_id": "test-pbehavior-to-patch-1",
       "comments": [
         {
           "_id": "test-pbehavior-to-patch-1-comment-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-patch-1-comment-1-message"
         },
         {
           "_id": "test-pbehavior-to-patch-1-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-patch-1-comment-2-message"
         }
@@ -150,18 +159,27 @@ Feature: update a PBehavior
     """json
     {
       "name": "test-pbehavior-to-patch-1-name-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "_id": "test-pbehavior-to-patch-1",
       "comments": [
         {
           "_id": "test-pbehavior-to-patch-1-comment-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-patch-1-comment-1-message"
         },
         {
           "_id": "test-pbehavior-to-patch-1-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-patch-1-comment-2-message"
         }
@@ -285,7 +303,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
       "entity_pattern": [
@@ -306,7 +327,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
       "entity_pattern": [
@@ -400,7 +424,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "entity_pattern": [
         [
           {
@@ -421,7 +448,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "entity_pattern": [
         [
           {
@@ -480,7 +510,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": 1591173981
     }
     """
@@ -489,7 +522,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": 1591173981
     }
     """
@@ -521,7 +557,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": 1591173982
     }
     """
@@ -530,7 +569,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": 1591173982
     }
     """
@@ -544,7 +586,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": null
     }
     """
@@ -553,7 +598,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": null
     }
     """
@@ -603,7 +651,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": 1591173981
     }
     """
@@ -612,7 +663,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": 1591173981
     }
     """
@@ -646,7 +700,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": null
     }
     """
@@ -655,7 +712,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstop": null
     }
     """
@@ -700,7 +760,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681
     }
     """
@@ -709,7 +772,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681
     }
     """
@@ -726,7 +792,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681
     }
     """
@@ -735,7 +804,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681
     }
     """
@@ -805,7 +877,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681,
       "tstop": 1591172881,
       "type": {
@@ -818,7 +893,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681,
       "tstop": 1591172881,
       "type": {
@@ -855,7 +933,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681,
       "tstop": null,
       "type": {
@@ -868,7 +949,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tstart": 1591172681,
       "tstop": null,
       "type": {
@@ -919,7 +1003,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": {
         "_id": "test-type-to-pbh-edit-2"
       }
@@ -930,7 +1017,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": {
         "_id": "test-type-to-pbh-edit-2"
       }
@@ -964,7 +1054,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": {
         "_id": "test-type-to-pbh-edit-2"
       }
@@ -975,7 +1068,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": {
         "_id": "test-type-to-pbh-edit-2"
       }
@@ -1024,7 +1120,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "reason": {
         "_id": "test-reason-to-pbh-edit"
       }
@@ -1035,7 +1134,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "reason": {
         "_id": "test-reason-to-pbh-edit"
       }
@@ -1067,7 +1169,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": false
     }
     """
@@ -1076,7 +1181,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": false
     }
     """
@@ -1121,7 +1229,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "rrule": "FREQ=WEEKLY"
     }
     """
@@ -1130,7 +1241,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "rrule": "FREQ=WEEKLY"
     }
     """
@@ -1144,7 +1258,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "rrule": ""
     }
     """
@@ -1153,7 +1270,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "rrule": ""
     }
     """
@@ -1256,7 +1376,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exdates": [
         {
           "begin": 1591164002,
@@ -1273,7 +1396,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exdates": [
         {
           "begin": 1591164002,
@@ -1295,7 +1421,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exdates": []
     }
     """
@@ -1304,7 +1433,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exdates": []
     }
     """
@@ -1368,7 +1500,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exceptions": []
     }
     """
@@ -1377,7 +1512,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exceptions": []
     }
     """
@@ -1391,7 +1529,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exceptions": [
         {
           "_id": "test-exception-to-pbh-edit"
@@ -1404,7 +1545,10 @@ Feature: update a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "exceptions": [
         {
           "_id": "test-exception-to-pbh-edit"
