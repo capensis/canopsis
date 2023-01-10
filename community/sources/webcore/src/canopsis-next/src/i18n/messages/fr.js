@@ -2597,7 +2597,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
-    executedAt: 'Terminé à',
+    executedAt: 'Fin execution à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
