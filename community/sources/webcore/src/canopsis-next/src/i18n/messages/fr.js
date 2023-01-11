@@ -2890,7 +2890,7 @@ export default merge({
     timeField: 'Champ de temps',
     intervalFields: {
       [ALARM_INTERVAL_FIELDS.timestamp]: 'Date de création',
-      [ALARM_INTERVAL_FIELDS.resolved]: 'Résolu à',
+      [ALARM_INTERVAL_FIELDS.resolved]: 'Date de résolution',
       [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Date de la dernière mise à jour',
       [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Date du dernier événement',
     },
