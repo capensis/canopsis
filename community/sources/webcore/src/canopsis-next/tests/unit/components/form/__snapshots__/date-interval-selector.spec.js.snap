@@ -60,7 +60,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
                 <div
                   class="v-select__selection v-select__selection--comma"
                 >
-                  v.creation_date
+                  Creation date
                 </div>
                 <input
                   aria-label="Time field"
@@ -179,7 +179,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
                 <div
                   class="v-select__selection v-select__selection--comma"
                 >
-                  v.creation_date
+                  Creation date
                 </div>
                 <input
                   aria-label="Time field"
