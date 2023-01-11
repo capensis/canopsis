@@ -9,7 +9,7 @@
                 slot(name="badgeIcon", :on="badgeTooltipOn")
                   v-icon(v-on="badgeTooltipOn", color="white") {{ badgeIcon }}
               span {{ badgeTooltip }}
-          div(v-on="tooltipOn")
+          span(v-on="tooltipOn")
             v-btn.ma-0(
               :disabled="disabled",
               :loading="loading",
@@ -18,7 +18,7 @@
               @click.stop.prevent="$listeners.click"
             )
               v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-        div.mx-1(v-else, v-on="tooltipOn")
+        span.mx-1(v-else, v-on="tooltipOn")
           v-btn.ma-0(
             :disabled="disabled",
             :loading="loading",
