@@ -8,11 +8,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
-        style="font-size: 16px;"
+        class="v-icon icon icon-name theme--light white--text"
+        style="font-size: 16px; background-color: rgb(43, 62, 79);"
       />
     </span>
   </span>
@@ -73,11 +76,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text material-icons theme--light"
-        style="font-size: 16px;"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px; background-color: rgb(43, 62, 79);"
       />
     </span>
   </span>
@@ -136,11 +142,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
-        style="font-size: 16px;"
+        class="v-icon icon icon-name theme--light white--text"
+        style="font-size: 16px; background-color: rgb(43, 62, 79);"
       />
     </span>
   </span>
@@ -201,11 +210,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
-        style="font-size: 16px;"
+        class="v-icon icon icon-name theme--light white--text"
+        style="font-size: 16px; background-color: rgb(43, 62, 79);"
       />
     </span>
   </span>
@@ -264,11 +276,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
-        style="font-size: 16px;"
+        class="v-icon icon icon-name theme--light white--text"
+        style="font-size: 16px; background-color: rgb(43, 62, 79);"
       />
     </span>
   </span>
@@ -327,11 +342,14 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
-        style="font-size: 16px;"
+        class="v-icon icon icon-name theme--light white--text"
+        style="font-size: 16px; background-color: rgb(43, 62, 79);"
       />
     </span>
   </span>
