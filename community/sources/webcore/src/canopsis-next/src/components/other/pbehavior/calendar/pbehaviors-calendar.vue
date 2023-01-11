@@ -17,13 +17,13 @@ import { Calendar } from 'dayspan';
 
 import { DATETIME_FORMATS } from '@/constants';
 
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
-import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
-import { getMostReadableTextColor } from '@/helpers/color';
 
 export default {
   inject: ['$system'],
