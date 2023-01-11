@@ -1,6 +1,6 @@
 export const validationAttachRequiredMixin = {
   methods: {
-    attachRequiredRule(getter = () => this.value) {
+    attachRequiredRule(getter = () => this[this.$options?.model?.prop ?? 'value']) {
       const oldField = this.$validator.fields.find({ name: this.name });
 
       if (!oldField) {
