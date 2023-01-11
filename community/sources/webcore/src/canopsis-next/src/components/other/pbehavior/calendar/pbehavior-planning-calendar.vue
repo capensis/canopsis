@@ -333,6 +333,8 @@ export default {
       }
 
       this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
+
+      return this.applyEvents();
     },
 
     /**
