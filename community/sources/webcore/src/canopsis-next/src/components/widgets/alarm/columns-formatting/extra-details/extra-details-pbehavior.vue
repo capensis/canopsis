@@ -3,11 +3,7 @@
     v-tooltip.c-extra-details(top)
       template(#activator="{ on }")
         span.c-extra-details__badge(v-on="on", :style="{ backgroundColor: color }")
-          v-icon(
-            :color="iconColor",
-            :style="{ backgroundColor: color }",
-            small
-          ) {{ pbehaviorInfo.icon_name }}
+          v-icon(:color="iconColor", small) {{ pbehaviorInfo.icon_name }}
       div
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
