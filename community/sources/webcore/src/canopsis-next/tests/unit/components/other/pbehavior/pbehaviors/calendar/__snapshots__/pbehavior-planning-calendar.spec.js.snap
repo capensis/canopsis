@@ -55,131 +55,9 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
           name="slide-y-transition"
         />
       </span>
-      <span
-        class="ds-calendar-app-period-picker"
-      >
-        <!---->
-        <div
-          class="v-input ds-calendar-app-period-picker__month v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    common.months.december
-                  </div>
-                  <input
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-input ds-calendar-app-period-picker__year v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    2013
-                  </div>
-                  <input
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </span>
+      <calendar-app-period-picker-stub
+        calendar="[object Object]"
+      />
       <button
         class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
         type="button"
@@ -231,7 +109,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
       </div>
     </div>
     <pbehavior-planning-calendar-legend-stub
-      colorstotypes="[object Object]"
       exceptiontypes="[object Object],[object Object],[object Object]"
     />
   </div>
@@ -243,6 +120,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     >
       <c-progress-overlay-stub
         class="calendar-progress"
+        pending="true"
       />
       <div
         class="ds-gesture-container"
@@ -1126,131 +1004,9 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
           name="slide-y-transition"
         />
       </span>
-      <span
-        class="ds-calendar-app-period-picker"
-      >
-        <!---->
-        <div
-          class="v-input ds-calendar-app-period-picker__month v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    common.months.december
-                  </div>
-                  <input
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-input ds-calendar-app-period-picker__year v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    2013
-                  </div>
-                  <input
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </span>
+      <calendar-app-period-picker-stub
+        calendar="[object Object]"
+      />
       <button
         class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
         type="button"
@@ -1302,7 +1058,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
       </div>
     </div>
     <pbehavior-planning-calendar-legend-stub
-      colorstotypes="[object Object]"
       exceptiontypes=""
     />
   </div>
