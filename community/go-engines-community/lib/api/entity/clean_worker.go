@@ -65,7 +65,7 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 					w.metricMetaUpdater.UpdateAll(ctx)
 				}
 
-				w.logger.Info().Int64("alarm_number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
+				w.logger.Info().Int64("entities_number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
 				continue
 			}
 
