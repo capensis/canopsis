@@ -115,7 +115,7 @@ export const USERS_PERMISSIONS = {
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
-      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
