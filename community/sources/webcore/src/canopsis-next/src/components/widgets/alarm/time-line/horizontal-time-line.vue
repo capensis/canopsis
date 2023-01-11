@@ -29,9 +29,7 @@ export default {
   },
   computed: {
     groupedSteps() {
-      const orderedSteps = [...this.alarm.v.steps].reverse();
-
-      return Object.entries(groupAlarmSteps(orderedSteps)).map(([day, steps]) => ({
+      return Object.entries(groupAlarmSteps(this.alarm.v.steps)).map(([day, steps]) => ({
         day,
         steps,
       }));
