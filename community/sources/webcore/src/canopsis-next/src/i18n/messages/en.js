@@ -41,6 +41,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
+  ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2919,6 +2920,12 @@ export default merge({
   quickRanges: {
     title: 'Quick ranges',
     timeField: 'Time field',
+    intervalFields: {
+      [ALARM_INTERVAL_FIELDS.timestamp]: 'Creation date',
+      [ALARM_INTERVAL_FIELDS.resolved]: 'Resolved at',
+      [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Last update date',
+      [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Last event date',
+    },
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',
