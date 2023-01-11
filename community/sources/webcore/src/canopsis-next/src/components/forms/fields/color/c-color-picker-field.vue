@@ -86,8 +86,8 @@ export default {
     required: {
       immediate: true,
       handler(required) {
-        if (required) {
-          this.attachRequiredRule(() => this.color);
+        if (required && !this.disabled) {
+          this.attachRequiredRule();
 
           return;
         }
