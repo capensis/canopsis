@@ -15,8 +15,6 @@
 <script>
 import { Calendar } from 'dayspan';
 
-import { COLORS } from '@/config';
-
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
@@ -24,6 +22,8 @@ import { convertDateToString, convertDateToTimestampByTimezone } from '@/helpers
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
+import { getMostReadableTextColor } from '@/helpers/color';
 
 export default {
   inject: ['$system'],
@@ -79,13 +79,17 @@ export default {
         });
         const fromString = convertDateToString(pbehavior.from, DATETIME_FORMATS.medium);
         const toString = convertDateToString(pbehavior.to, DATETIME_FORMATS.medium);
+        const color = getPbehaviorColor(pbehavior);
+        const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         return {
           id: index,
           data: {
             ...defaultEvent,
+
+            color,
+            forecolor,
             title: `${fromString} - ${toString} ${pbehavior.title}`,
-            color: pbehavior.color || COLORS.secondary,
             icon: pbehavior.type.icon_name,
           },
           schedule: getScheduleForSpan(daySpan),
