@@ -84,9 +84,11 @@ export default {
     },
 
     intervalFields() {
+      const messages = this.$t('quickRanges.intervalFields');
+
       return Object.values(ALARM_INTERVAL_FIELDS).map(value => ({
         value,
-        text: value,
+        text: messages[value],
       }));
     },
 

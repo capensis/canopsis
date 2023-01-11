@@ -199,7 +199,6 @@ export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;
 
 export const ALARM_INTERVAL_FIELDS = {
   timestamp: 't',
-  creationDate: 'v.creation_date',
   resolved: 'v.resolved',
   lastUpdateDate: 'v.last_update_date',
   lastEventDate: 'v.last_event_date',

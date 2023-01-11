@@ -41,6 +41,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_STATES,
+  ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -2887,6 +2888,12 @@ export default merge({
   quickRanges: {
     title: 'Valeurs usuelles',
     timeField: 'Champ de temps',
+    intervalFields: {
+      [ALARM_INTERVAL_FIELDS.timestamp]: 'Date de création',
+      [ALARM_INTERVAL_FIELDS.resolved]: 'Résolu à',
+      [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Date de la dernière mise à jour',
+      [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Date du dernier événement',
+    },
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
       [QUICK_RANGES.last15Minutes.value]: '15 dernières minutes',
