@@ -7,8 +7,9 @@
     :group="draggableGroup"
   )
     template(v-for="(item, index) in data")
-      div.lighten-2(:key="item[itemKey]")
-        slot(name="item", :item="item", :index="index")
+      v-card.lighten-2(:key="item[itemKey]")
+        v-card-text
+          slot(name="item", :item="item", :index="index")
 </template>
 
 <script>
