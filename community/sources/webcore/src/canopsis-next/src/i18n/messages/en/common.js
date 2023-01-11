@@ -255,6 +255,7 @@ export default {
   clearSearch: 'Clear search input',
   noData: 'No data',
   noColumns: 'You have to select at least 1 column',
+  systemName: 'System name',
   variableTypes: {
     string: 'String',
     number: 'Number',

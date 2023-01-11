@@ -255,6 +255,7 @@ export default {
   clearSearch: 'Ne plus appliquer cette recherche',
   noData: 'Aucune donnée',
   noColumns: 'Veuillez sélectionner au moins une colonne',
+  systemName: 'Nom du système',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

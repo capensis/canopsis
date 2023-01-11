@@ -1,5 +1,37 @@
 <template lang="pug">
-  p DECLARE TICKET RULES LIST
+  c-advanced-data-table(
+    :headers="headers",
+    :items="declareTicketRules",
+    :loading="pending",
+    :total-items="totalItems",
+    :pagination="pagination",
+    :select-all="removable",
+    search,
+    advanced-pagination,
+    @update:pagination="$emit('update:pagination', $event)"
+  )
+    template(#toolbar="{ selected }")
+      v-flex(v-show="removable && selected.length", xs4)
+        c-action-btn(type="delete", @click="$emit('remove-selected', selected)")
+    template(#enabled="{ item }")
+      c-enabled(:value="item.enabled")
+    template(#actions="{ item }")
+      v-layout(row)
+        c-action-btn(
+          v-if="updatable",
+          type="edit",
+          @click="$emit('edit', item)"
+        )
+        c-action-btn(
+          v-if="duplicable",
+          type="duplicate",
+          @click="$emit('duplicate', item)"
+        )
+        c-action-btn(
+          v-if="removable",
+          type="delete",
+          @click="$emit('remove', item._id)"
+        )
 </template>
 
 <script>
@@ -32,6 +64,22 @@ export default {
     duplicable: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    headers() {
+      return [
+        { text: this.$t('common.name'), value: 'name' },
+        { text: this.$t('common.systemName'), value: 'system_name' },
+        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
+        { text: this.$t('common.lastModifiedOn'), value: 'updated' },
+        { text: this.$t('common.lastModifiedBy'), value: 'author.name' },
+        {
+          text: this.$t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+        },
+      ];
     },
   },
 };
