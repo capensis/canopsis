@@ -80,22 +80,6 @@ describe('pbehavior-planning-calendar', () => {
     },
   });
 
-  test('Renders `pbehavior-planning-calendar` with required props', async () => {
-    const wrapper = snapshotFactory({
-      store,
-      propsData: {
-        pbehaviorsById: {},
-        addedPbehaviorsById: {},
-        removedPbehaviorsById: {},
-        changedPbehaviorsById: {},
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
   test('Renders `pbehavior-planning-calendar` with custom props', async () => {
     fetchTimespansListWithoutStore.mockResolvedValue(timespans);
     const wrapper = snapshotFactory({
@@ -105,6 +89,22 @@ describe('pbehavior-planning-calendar', () => {
         addedPbehaviorsById,
         removedPbehaviorsById,
         changedPbehaviorsById,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `pbehavior-planning-calendar` with required props', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        pbehaviorsById: {},
+        addedPbehaviorsById: {},
+        removedPbehaviorsById: {},
+        changedPbehaviorsById: {},
       },
     });
 
