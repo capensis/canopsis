@@ -46,6 +46,7 @@ export const EXPLOITATION_PAGES_RULES = {
   dynamicInfo: { edition: CANOPSIS_EDITION.pro },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
+  declareTicketRule: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
@@ -417,6 +418,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
   /**
    * Notifications pages
