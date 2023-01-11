@@ -8,7 +8,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -22,7 +22,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
           edit
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Edit
@@ -32,7 +32,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -46,7 +46,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
           file_copy
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Duplicate
@@ -56,7 +56,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -70,7 +70,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
           delete
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Delete
@@ -80,7 +80,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -94,7 +94,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
           test_icon
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       tooltip
@@ -107,7 +107,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     <span
       class="v-badge c-action-btn__badge v-badge--overlap"
     >
-      <div>
+      <span>
         <button
           class="v-btn ma-0"
           icon="icon"
@@ -119,7 +119,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
             edit
           </i>
         </button>
-      </div>
+      </span>
       <transition-stub
         name="fab-transition"
       >
@@ -160,7 +160,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -174,7 +174,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
           edit
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Edit
@@ -184,7 +184,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -198,7 +198,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
           file_copy
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Duplicate
@@ -208,7 +208,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -222,7 +222,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
           delete
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Delete
@@ -232,7 +232,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -246,7 +246,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
           test_icon
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       tooltip
@@ -263,7 +263,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -277,7 +277,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
           edit
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Edit
@@ -287,7 +287,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -301,7 +301,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
           file_copy
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Duplicate
@@ -311,7 +311,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -325,7 +325,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
           delete
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Delete
@@ -342,7 +342,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -356,7 +356,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
           edit
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Edit
@@ -366,7 +366,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -380,7 +380,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
           file_copy
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Duplicate
@@ -397,7 +397,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
     bottom="true"
     class="v-tooltip"
   >
-    <div
+    <span
       class="mx-1"
     >
       <button
@@ -411,7 +411,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
           edit
         </i>
       </button>
-    </div>
+    </span>
      
     <span>
       Edit
