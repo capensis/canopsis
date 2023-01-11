@@ -112,6 +112,7 @@ import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue'
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
 import CColorPickerField from '@/components/forms/fields/color/c-color-picker-field.vue';
+import CEnabledColorPickerField from '@/components/forms/fields/color/c-enabled-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/entity/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/entity/c-impact-level-field.vue';
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
@@ -379,6 +380,7 @@ Vue.component('c-mixed-input-field', CMixedInputField);
 Vue.component('c-input-type-field', CInputTypeField);
 Vue.component('c-array-text-field', CArrayTextField);
 Vue.component('c-color-picker-field', CColorPickerField);
+Vue.component('c-enabled-color-picker-field', CEnabledColorPickerField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);

@@ -36,10 +36,7 @@
             @remove="removePbehavior"
           )
     template(#menuRight="")
-      pbehavior-planning-calendar-legend(
-        :exception-types="exceptionTypes",
-        :colors-to-types="colorsToPbehaviors"
-      )
+      pbehavior-planning-calendar-legend(:exception-types="exceptionTypes")
 </template>
 
 <script>
@@ -50,7 +47,8 @@ import { Calendar, Op } from 'dayspan';
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
+import { getMostReadableTextColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
@@ -115,7 +113,6 @@ export default {
       exceptionTypes: [],
       events: [],
       defaultTypes: [],
-      colorsToPbehaviors: {},
     };
   },
   computed: {
@@ -200,21 +197,6 @@ export default {
     },
 
     /**
-     * Get color for pbehavior and save that into data for correct displaying
-     *
-     * @param {Object} [type = {}]
-     * @param {string} [color = getRandomHexColor()]
-     * @returns {string}
-     */
-    getColorForPbehavior(pbehavior = {}, color = getRandomHexColor()) {
-      if (!this.colorsToPbehaviors[pbehavior._id]) {
-        this.colorsToPbehaviors[pbehavior._id] = color;
-      }
-
-      return this.colorsToPbehaviors[pbehavior._id];
-    },
-
-    /**
      * Fetch timespans and convert that into events for every pbehavior from data
      *
      * @returns {Promise<void>}
@@ -260,12 +242,12 @@ export default {
       timespans,
     }) {
       return timespans.map((timespan, index) => {
-        const type = timespan.type || pbehavior.type;
+        const type = timespan.type ?? pbehavior.type;
 
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = pbehavior.color || this.getColorForPbehavior(pbehavior);
+        const color = getPbehaviorColor(pbehavior);
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({
