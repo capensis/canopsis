@@ -52,6 +52,11 @@ export default {
     message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
   },
 
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: {
+    title: 'Ticket declaration rules',
+    // message: '', // TODO: need to put description
+  },
+
   /**
    * Admin access
    */
