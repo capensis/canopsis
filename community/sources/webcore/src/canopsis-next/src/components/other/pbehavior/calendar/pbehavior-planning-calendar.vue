@@ -47,7 +47,6 @@ import { Calendar, Op } from 'dayspan';
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
@@ -58,6 +57,7 @@ import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/tim
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
+import { COLORS } from '@/config';
 
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
@@ -247,7 +247,7 @@ export default {
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = getPbehaviorColor(pbehavior);
+        const color = pbehavior.color || type.color || pbehavior.type?.color || COLORS.secondary;
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({
