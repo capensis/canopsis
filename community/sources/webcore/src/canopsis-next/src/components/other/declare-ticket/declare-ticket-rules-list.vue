@@ -10,11 +10,12 @@
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(#toolbar="{ selected }")
-      v-flex(v-show="removable && selected.length", xs4)
-        c-action-btn(type="delete", @click="$emit('remove-selected', selected)")
+    template(#mass-actions="{ selected }")
+      c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
     template(#enabled="{ item }")
       c-enabled(:value="item.enabled")
+    template(#created="{ item }") {{ item.created | date }}
+    template(#updated="{ item }") {{ item.updated | date }}
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
@@ -71,7 +72,8 @@ export default {
       return [
         { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.systemName'), value: 'system_name' },
-        { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
+        { text: this.$t('common.enabled'), value: 'enabled' },
+        { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
         { text: this.$t('common.lastModifiedBy'), value: 'author.name' },
         {

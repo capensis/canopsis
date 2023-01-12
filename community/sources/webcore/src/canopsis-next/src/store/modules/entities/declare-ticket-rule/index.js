@@ -13,7 +13,7 @@ export default createEntityModule({
 }, {
   actions: {
     bulkRemove(context, { data }) {
-      return request.delete(API_ROUTES.declareTicketRules, { data });
+      return request.delete(API_ROUTES.bulkDeclareTicketRules, { data });
     },
   },
 });
