@@ -437,6 +437,11 @@ definitions:
       _id:
         type: string
       status:
+        description: |-
+          Possible values.
+            * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
         type: integer
     type: object
   alarm.InstructionFilterRequest:
@@ -986,6 +991,11 @@ definitions:
       _id:
         type: string
       status:
+        description: |-
+          Possible values.
+            * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
         type: integer
     type: object
   entity.Info:
@@ -3942,6 +3952,13 @@ definitions:
       duration:
         type: integer
       status:
+        description: |-
+          Possible values.
+            * `0` - None
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
+            * `4` - Disabled
         type: integer
     type: object
   types.Coordinates:
