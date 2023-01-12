@@ -1765,6 +1765,7 @@ definitions:
             * `view_tab` - export viewtabs collection
             * `widget` - export widgets collection
             * `widget_filter` - export widget_filters collection
+            * `widget_template` - export widget_templates collection
             * `view_group` - export viewgroups collection
             * `instruction` - export instruction collection
             * `job_config` - export job_config collection
@@ -4414,6 +4415,22 @@ definitions:
       updated:
         type: integer
     type: object
+  view.WidgetColumn:
+    properties:
+      colorIndicator:
+        type: string
+      isHtml:
+        type: boolean
+      label:
+        maxLength: 255
+        type: string
+      template:
+        type: string
+      value:
+        type: string
+    required:
+    - value
+    type: object
   viewgroup.EditRequest:
     properties:
       title:
@@ -4663,6 +4680,44 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  widgettemplate.EditRequest:
+    properties:
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      title:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - alarm
+        - entity
+        type: string
+    required:
+    - columns
+    - title
+    - type
+    type: object
+  widgettemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      created:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}

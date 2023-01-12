@@ -1,0 +1,115 @@
+template:
+  - &tpl_alarm {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: alarm,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    columns: [
+      {
+        value: "v.component"
+      },
+      {
+        value: "v.resource"
+      }
+    ]
+  }
+  - &tpl_entity {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: entity,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    columns: [
+      {
+        value: "_id"
+      },
+      {
+        value: "type"
+      }
+    ]
+  }
+
+widget_templates:
+  tpl_to_update_1:
+    <<: *tpl_alarm
+    _id: test-widgettemplate-to-update-1
+    created: 1605263992
+
+  tpl_to_delete_1:
+    <<: *tpl_alarm
+    _id: test-widgettemplate-to-delete-1
+
+  tpl_to_get_1:
+    <<: *tpl_alarm
+    _id: test-widgettemplate-to-get-1
+    title: test-widgettemplate-to-get-1-title
+    created: 1605263992
+    updated: 1605263992
+    columns:
+      - value: v.resource
+      - value: v.component
+      - value: extra_details
+
+  tpl_to_get_2:
+    <<: *tpl_entity
+    _id: test-widgettemplate-to-get-2
+    title: test-widgettemplate-to-get-2-title
+    created: 1605263992
+    updated: 1605263992
+    columns:
+      - value: _id
+      - value: type
+
+  tpl_to_widget_edit_1:
+    <<: *tpl_alarm
+    _id: test-widgettemplate-to-widget-edit-1
+    title: test-widgettemplate-to-widget-edit-1-title
+    columns:
+      - value: v.resource
+      - value: v.component
+      - value: extra_details
+
+  tpl_to_widget_edit_2:
+    <<: *tpl_entity
+    _id: test-widgettemplate-to-widget-edit-2
+    title: test-widgettemplate-to-widget-edit-2-title
+    columns:
+      - value: _id
+      - value: type
+
+  tpl_to_widget_widgettemplate_1:
+    <<: *tpl_alarm
+    _id: test-widgettemplate-to-widget-widgettemplate-1
+    title: test-widgettemplate-to-widget-widgettemplate-1-title
+    columns:
+      - value: v.resource
+      - value: v.component
+      - value: extra_details
+
+  tpl_to_widget_widgettemplate_2:
+    <<: *tpl_entity
+    _id: test-widgettemplate-to-widget-widgettemplate-2
+    title: test-widgettemplate-to-widget-widgettemplate-2-title
+    columns:
+      - value: _id
+      - value: type
+
+  tpl_to_widget_widgettemplate_3:
+    <<: *tpl_alarm
+    _id: test-widgettemplate-to-widget-widgettemplate-3
+    title: test-widgettemplate-to-widget-widgettemplate-3-title
+    columns:
+      - value: v.resource
+      - value: v.component
+      - value: extra_details
+
+  tpl_to_widget_widgettemplate_4:
+    <<: *tpl_entity
+    _id: test-widgettemplate-to-widget-widgettemplate-4
+    title: test-widgettemplate-to-widget-widgettemplate-4-title
+    columns:
+      - value: _id
+      - value: type

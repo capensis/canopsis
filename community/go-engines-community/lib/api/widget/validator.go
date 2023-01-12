@@ -2,7 +2,9 @@ package widget
 
 import (
 	"context"
+	"fmt"
 	"regexp"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -35,6 +37,7 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 	case view.WidgetTypeMap:
 		validateMapParametersRequest(sl, r.Parameters)
 	}
+	validateColumnParametersRequest(sl, r)
 }
 
 func (v *baseValidator) ValidateFilterRequest(ctx context.Context, sl validator.StructLevel) {
@@ -86,5 +89,51 @@ func validateJunitParametersRequest(sl validator.StructLevel, r view.Parameters)
 func validateMapParametersRequest(sl validator.StructLevel, r view.Parameters) {
 	if r.Map == "" {
 		sl.ReportError(r.Map, "parameters.map", "Map", "required", "")
+	}
+}
+
+func validateColumnParametersRequest(sl validator.StructLevel, r EditRequest) {
+	columnParametersByType := view.GetWidgetColumnParameters()[r.Type]
+	for tplType, columnParameters := range columnParametersByType {
+		for _, parameter := range columnParameters {
+			parameters := r.Parameters.RemainParameters
+			key := parameter
+			parts := strings.Split(parameter, ".")
+			if len(parts) > 1 {
+				key = parts[len(parts)-1]
+				var ok bool
+				for i := 0; i < len(parts)-1; i++ {
+					parameters, ok = parameters[parts[i]].(map[string]any)
+					if !ok {
+						break
+					}
+				}
+				if !ok {
+					continue
+				}
+			}
+
+			tplId, ok := parameters[key+"Template"].(string)
+			if ok && tplId != "" {
+				continue
+			}
+
+			columns, ok := parameters[key].([]any)
+			if !ok {
+				continue
+			}
+
+			for i, column := range columns {
+				if m, ok := column.(map[string]any); ok {
+					val, _ := m["value"].(string)
+					fieldName := fmt.Sprintf("Parameters.%s.%d.value", parameter, i)
+					if val == "" {
+						sl.ReportError(column, fieldName, "Value", "required", "")
+					} else if !view.IsValidWidgetColumn(tplType, val) {
+						sl.ReportError(column, fieldName, "Value", "invalid", "")
+					}
+				}
+			}
+		}
 	}
 }
