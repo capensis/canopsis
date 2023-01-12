@@ -119,7 +119,7 @@ func (s *store) archiveEntitiesByType(ctx context.Context, eType string, archive
 func (s *store) processCursor(ctx context.Context, cursor mongo.Cursor, archiveDeps bool) (int64, error) {
 	archiveModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize/2) // per 1 archive model there are 2 context graph update models
 	contextGraphModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
-	ids := make([]string, 0, canopsis.DefaultBulkSize)
+	ids := make([]string, 0, canopsis.DefaultBulkSize/2)
 
 	archiveBulkBytesSize := 0
 	contextGraphBulkBytesSize := 0
