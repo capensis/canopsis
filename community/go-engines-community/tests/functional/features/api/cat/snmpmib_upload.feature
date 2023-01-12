@@ -16,15 +16,6 @@ Feature: Upload a MIB file
     When I set header Content-Type=application/x-www-form-urlencoded
     When I do POST /api/v4/cat/snmpmibs:
     """
-    filecontent=%5B%7B%22filename%22%3A%20%22concatenatedMibFiles%22%2C%22data%22%3A%20%22WRONGMIBDARLING%22%7D%5D
-    """
-    Then the response code should be 400
-
-  Scenario: given upload request with valid MIB should return OK result
-    When I am admin
-    When I set header Content-Type=application/x-www-form-urlencoded
-    When I do POST /api/v4/cat/snmpmibs:
-    """
     filecontent=%5B%7B%22filename%22%3A%20%22MibFile%22%2C%22data%22%3A%20%22WRONGMIBDARLING%22%7D%5D
     """
-    Then the response code should be 200
+    Then the response code should be 400
