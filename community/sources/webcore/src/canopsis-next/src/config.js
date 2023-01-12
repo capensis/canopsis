@@ -244,6 +244,7 @@ export const API_ROUTES = {
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
   declareTicketRules: '/api/v4/cat/declare-ticket-rules',
+  bulkDeclareTicketRules: '/api/v4/cat/bulk/declare-ticket-rules',
 };
 
 export const COLORS = {
