@@ -1,6 +1,5 @@
 <script>
 import VTooltip from 'vuetify/es5/components/VTooltip';
-import { getSlotType } from 'vuetify/es5/util/helpers';
 
 export default {
   extends: VTooltip,
@@ -10,6 +9,7 @@ export default {
       default: false,
     },
   },
+  mounted() {},
   methods: {
     mouseEnterHandler(e) {
       this.getActivator(e);
@@ -39,15 +39,10 @@ export default {
         mouseleave: this.mouseLeaveHandler,
       };
 
-      if (getSlotType(this, 'activator') === 'scoped') {
-        const activator = this.$scopedSlots.activator({ on: listeners });
-        this.activatorNode = activator;
-        return activator;
-      }
       return this.$createElement('span', {
         on: listeners,
         ref: 'activator',
-      }, this.$slots.activator);
+      }, this.$slots.activator ?? this.$scopedSlots.activator());
     },
   },
 
