@@ -1399,7 +1399,7 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-7-webhook test-default-pause-type",
+          "name": "test-scenario-action-webhook-7-webhook test-default-active-type",
           "actions": [
             {
               "entity_pattern": [
