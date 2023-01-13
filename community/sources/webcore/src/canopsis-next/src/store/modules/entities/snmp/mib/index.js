@@ -14,15 +14,15 @@ export default {
   namespaced: true,
   actions: {
     fetchList(context, { params = {} } = {}) {
-      return request.post(API_ROUTES.snmpMib.list, params);
+      return request.get(API_ROUTES.snmpMib, params);
     },
 
     fetchDistinctList(context, { params = {} } = {}) {
-      return request.post(API_ROUTES.snmpMib.distinct, params);
+      return request.get(API_ROUTES.snmpMib, params);
     },
 
     upload(context, { data } = {}) {
-      return request.post(API_ROUTES.snmpMib.upload, qs.stringify({
+      return request.post(API_ROUTES.snmpMib, qs.stringify({
         filecontent: JSON.stringify([{
           filename: 'concatenatedMibFiles',
           data,
