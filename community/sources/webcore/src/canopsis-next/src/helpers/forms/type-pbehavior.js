@@ -1,4 +1,3 @@
-import { COLORS } from '@/config';
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 /**
@@ -28,5 +27,5 @@ export const pbehaviorTypeToForm = (type = {}) => ({
   type: type.type ?? PBEHAVIOR_TYPE_TYPES.active,
   priority: type.priority ?? '',
   icon_name: type.icon_name ?? '',
-  color: type.color ?? COLORS.secondary,
+  color: type.color ?? '',
 });
