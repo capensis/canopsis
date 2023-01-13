@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -78,7 +78,7 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 			bson.M{"$set": bson.M{"enabled": enabled}},
 			options.
 				FindOneAndUpdate().
-				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1}).
+				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1, "depends": 1}).
 				SetReturnDocument(options.Before),
 		).Decode(&oldSimplifiedEntity)
 		if err != nil {
@@ -88,6 +88,35 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		isToggled = oldSimplifiedEntity.Enabled != enabled
 		return nil
 	})
+
+	if isToggled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
+		depLen := len(oldSimplifiedEntity.Depends)
+		from := 0
+
+		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
+			_, err = s.mainCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:to]}},
+				bson.M{"$set": bson.M{"enabled": enabled}},
+			)
+			if err != nil {
+				return isToggled, oldSimplifiedEntity, err
+			}
+
+			from = to
+		}
+
+		if from < depLen {
+			_, err = s.mainCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:depLen]}},
+				bson.M{"$set": bson.M{"enabled": enabled}},
+			)
+			if err != nil {
+				return isToggled, oldSimplifiedEntity, err
+			}
+		}
+	}
 
 	return isToggled, oldSimplifiedEntity, err
 }

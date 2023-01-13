@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -94,11 +95,17 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if entity.Enabled || isToggled {
-		a.sendChangeMessage(entityservice.ChangeEntityMessage{
+		msg := entityservice.ChangeEntityMessage{
 			ID:         entity.ID,
 			EntityType: entity.Type,
 			IsToggled:  isToggled,
-		})
+		}
+
+		if entity.Type == types.EntityTypeComponent {
+			msg.Resources = entity.Depends
+		}
+
+		a.sendChangeMessage(msg)
 	}
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
@@ -111,6 +118,9 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	a.metricMetaUpdater.UpdateById(c, entity.ID)
+	if isToggled && entity.Type == types.EntityTypeComponent {
+		a.metricMetaUpdater.UpdateById(c, entity.Depends...)
+	}
 
 	c.JSON(http.StatusOK, entity)
 }
