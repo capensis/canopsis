@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     request-form(v-field="form.request", :name="`${name}.request`")
-    declare-ticket-rule-ticket-mapping-field(v-field="form.declare_ticket", :name="`${name}.declare_ticket`")
+    declare-ticket-rule-ticket-mapping-field.mb-2(v-field="form.declare_ticket", :name="`${name}.declare_ticket`")
     c-workflow-field(
       v-field="form.stop_on_fail",
       :disabled="disabled",

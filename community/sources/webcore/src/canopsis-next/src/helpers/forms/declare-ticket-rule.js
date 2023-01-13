@@ -1,8 +1,5 @@
-import { pick } from 'lodash';
-
-import { enabledToForm } from '@/helpers/forms/shared/common';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 /**
@@ -34,9 +31,7 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  */
 
 /**
- * @typedef {Object} DeclareTicketRuleWebhookDeclareTicketForm
- * @property {string} empty_response
- * @property {string} is_regexp
+ * @typedef {DeclareTicketRuleWebhookDeclareTicket} DeclareTicketRuleWebhookDeclareTicketForm
  * @property {TextPairObject[]} mapping
  */
 
@@ -57,11 +52,19 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  */
 
 export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket = {}) => {
-  const { empty_response: emptyResponse, is_regexp: isRegexp, ...fields } = declareTicket;
+  const {
+    empty_response: emptyResponse,
+    is_regexp: isRegexp,
+    ticket_id: ticketId,
+    ticket_url: ticketUrl,
+    ...fields
+  } = declareTicket;
 
   return {
     empty_response: declareTicket.empty_response ?? true,
     is_regexp: declareTicket.is_regexp ?? false,
+    ticket_id: ticketId ?? '',
+    ticket_url: ticketUrl ?? '',
     mapping: objectToTextPairs(fields),
   };
 };
@@ -75,7 +78,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket = {}) 
 export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(webhook.declare_ticket),
   request: requestToForm(webhook.request),
-  stop_on_fail: webhook.stop_on_fail ?? true,
+  stop_on_fail: webhook.stop_on_fail ?? false,
 });
 
 /**
@@ -93,8 +96,8 @@ export const declareTicketRuleWebhooksToForm = (webhooks = []) => webhooks.map(d
  * @return {DeclareTicketRuleForm}
  */
 export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
-  enabled: enabledToForm(declareTicketRule.enabled),
-  emit_trigger: enabledToForm(declareTicketRule.emit_trigger),
+  enabled: declareTicketRule.enabled ?? true,
+  emit_trigger: declareTicketRule.emit_trigger ?? true,
   name: declareTicketRule.name ?? '',
   system_name: declareTicketRule.system_name ?? '',
   webhooks: declareTicketRuleWebhooksToForm(declareTicketRule.webhooks),
@@ -107,10 +110,14 @@ export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
  * @param {DeclareTicketRuleWebhookDeclareTicketForm} form
  * @returns {DeclareTicketRuleWebhookDeclareTicket}
  */
-export const formToDeclareTicketRuleWebhookDeclareTicket = form => ({
-  ...pick(form, ['empty_response', 'is_regexp']),
-  ...textPairsToObject(form.mapping),
-});
+export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
+  const { mapping, ...declareTicket } = form;
+
+  return {
+    ...declareTicket,
+    ...textPairsToObject(mapping),
+  };
+};
 
 /**
  * Convert declare ticket rule webhook form to API compatible object

@@ -5,7 +5,7 @@
         component(
           :is="itemTextComponent.is",
           v-field="item[itemText]",
-          v-validate="'required'",
+          v-validate="textValidationRules",
           v-bind="itemTextComponent.props",
           :error-messages="errors.collect(textFieldName)"
         )
@@ -13,10 +13,12 @@
         component(
           :is="itemValueComponent.is",
           v-field="item[itemValue]",
-          v-validate="",
+          v-validate="valueValidationRules",
           v-bind="itemValueComponent.props",
           :error-messages="errors.collect(valueFieldName)"
         )
+          template(#append="")
+            slot(name="append-response")
     c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
@@ -56,12 +58,32 @@ export default {
       type: Boolean,
       default: false,
     },
+    textRequired: {
+      type: Boolean,
+      default: false,
+    },
+    valueRequired: {
+      type: Boolean,
+      default: false,
+    },
     hints: {
       type: Array,
       default: () => [],
     },
   },
   computed: {
+    textValidationRules() {
+      return {
+        required: this.textRequired,
+      };
+    },
+
+    valueValidationRules() {
+      return {
+        required: this.valueRequired,
+      };
+    },
+
     textFieldName() {
       return `${this.name}.${this.itemText}`;
     },
@@ -83,6 +105,7 @@ export default {
         label: this.textLabel,
         disabled: this.disabled,
         name: this.textFieldName,
+        autofocus: true,
       };
 
       if (this.textHints.length) {

@@ -146,6 +146,7 @@ import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-f
 import CIconField from '@/components/forms/fields/c-icon-field.vue';
 import CIdField from '@/components/forms/fields/c-id-field.vue';
 import CNameField from '@/components/forms/fields/c-name-field.vue';
+import CPasswordField from '@/components/forms/fields/c-password-field.vue';
 import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
 import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
@@ -420,6 +421,7 @@ Vue.component('c-records-per-page-field', CRecordsPerPageField);
 Vue.component('c-icon-field', CIconField);
 Vue.component('c-id-field', CIdField);
 Vue.component('c-name-field', CNameField);
+Vue.component('c-password-field', CPasswordField);
 Vue.component('c-description-field', CDescriptionField);
 Vue.component('c-event-filter-type-field', CEventFilterTypeField);
 Vue.component('c-draggable-list-field', CDraggableListField);

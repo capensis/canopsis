@@ -1,7 +1,5 @@
 import { isNumber, pick } from 'lodash';
 
-import { TIME_UNITS } from '@/constants';
-
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { durationToForm } from '@/helpers/date/duration';
 
@@ -53,11 +51,11 @@ export const requestToForm = (request = {}) => ({
   skip_verify: !!request.skip_verify,
   timeout: request.timeout
     ? durationToForm(request.timeout)
-    : { value: 1, unit: TIME_UNITS.minute },
-  retry_count: request.retry_count ?? 0,
+    : { value: undefined, unit: undefined },
+  retry_count: request.retry_count,
   retry_delay: request.retry_delay
     ? durationToForm(request.retry_delay)
-    : { value: 10, unit: TIME_UNITS.second },
+    : { value: undefined, unit: undefined },
   auth: request.auth
     ? { enabled: true, ...request.auth }
     : { enabled: false, username: '', password: '' },

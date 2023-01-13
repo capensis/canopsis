@@ -8,16 +8,16 @@
       )
     template(v-if="value.enabled")
       v-flex.mr-3(xs4)
-        v-text-field(
+        c-name-field(
           v-field="value.username",
           :label="$t('common.username')",
           :name="`${name}.username`",
-          :disabled="disabled"
+          :disabled="disabled",
+          autofocus
         )
       v-flex(xs4)
-        v-text-field(
+        c-password-field(
           v-field="value.password",
-          :label="$t('common.password')",
           :name="`${name}.password`",
           :disabled="disabled"
         )

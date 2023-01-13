@@ -5,7 +5,8 @@
     :value-label="$t('common.headerValue')",
     :name="name",
     :disabled="disabled",
-    :hints="headersHints"
+    :hints="headersHints",
+    text-required
   )
 </template>
 
