@@ -9,6 +9,8 @@
         v-field="items[index]",
         :key="item[itemKey]",
         :disabled="disabled",
+        :value-required="valueRequired",
+        :text-required="textRequired",
         :text-label="textLabel",
         :value-label="valueLabel",
         :item-text="itemText",
@@ -16,6 +18,8 @@
         :hints="hints",
         @remove="removeItemFromArray(index)"
       )
+        template(#append-response="")
+          slot(name="append-response", :item="item")
     v-flex(v-if="!disabled", xs12)
       v-layout
         v-btn.ml-0(color="primary", outline, @click="addItem") {{ addButtonLabel || $t('common.add') }}
@@ -65,6 +69,14 @@ export default {
     name: {
       type: String,
       default: 'items',
+    },
+    textRequired: {
+      type: Boolean,
+      default: false,
+    },
+    valueRequired: {
+      type: Boolean,
+      default: false,
     },
     addButtonLabel: {
       type: String,

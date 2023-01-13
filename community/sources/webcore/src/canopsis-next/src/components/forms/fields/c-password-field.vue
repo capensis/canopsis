@@ -3,9 +3,10 @@
     v-field="value",
     v-validate="rules",
     v-bind="$attrs",
-    :label="label || $t('common.name')",
+    :label="$t('common.password')",
     :error-messages="errors.collect(name)",
-    :name="name"
+    :name="name",
+    type="password"
   )
 </template>
 
@@ -28,7 +29,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'name',
+      default: 'password',
     },
     required: {
       type: Boolean,

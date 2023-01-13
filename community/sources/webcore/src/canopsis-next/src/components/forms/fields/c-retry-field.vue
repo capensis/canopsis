@@ -11,20 +11,24 @@
       )
     v-flex(xs8)
       c-duration-field(
-        v-field="value.retry_delay",
+        :duration="value.retry_delay",
         :units-label="$t('common.unit')",
         :required="isRequired",
         :name="name",
         :disabled="isDurationDisabled",
-        clearable
+        clearable,
+        @input="updateDelay"
       )
 </template>
 
 <script>
 import { isNumber } from 'lodash';
 
+import { formMixin } from '@/mixins/form';
+
 export default {
   inject: ['$validator'],
+  mixins: [formMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -63,6 +67,19 @@ export default {
         || isNumber(retryCount)
         || isNumber(retryDelay?.value)
         || Boolean(retryDelay?.unit);
+    },
+  },
+  methods: {
+    updateDelay(duration) {
+      if (duration.unit || duration.value) {
+        this.updateField('retry_delay', duration);
+      } else {
+        this.updateModel({
+          ...this.value,
+          retry_delay: duration,
+          retry_count: undefined,
+        });
+      }
     },
   },
 };

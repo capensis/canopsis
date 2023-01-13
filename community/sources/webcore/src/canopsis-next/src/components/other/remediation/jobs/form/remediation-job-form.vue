@@ -50,7 +50,8 @@
       :title="$t('remediation.job.query')",
       :text-label="$t('common.field')",
       :value-label="$t('common.value')",
-      name="query"
+      name="query",
+      text-required
     )
 </template>
 

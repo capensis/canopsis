@@ -24,7 +24,12 @@
     )
     request-auth-field(v-field="form.auth", :name="`${name}.auth`", :disabled="disabled")
 
-    c-information-block.mb-2(:title="$tc('common.header', 2)", :help-text="$t('common.request.headersHelpText')")
+    c-information-block.mb-2(
+      :title="$tc('common.header', 2)",
+      :help-text="$t('common.request.headersHelpText')",
+      help-icon="help",
+      help-icon-color="grey darken-1"
+    )
       v-flex(v-if="!form.headers.length", xs12)
         v-alert(:value="true", type="info") {{ $t('common.request.emptyHeaders') }}
       request-headers-field(v-field="form.headers", :name="`${name}.headers`", :disabled="disabled")

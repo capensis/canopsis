@@ -3,8 +3,6 @@ import { ACTION_TYPES } from '@/constants';
 export default {
   triggers: 'Triggers',
   withAuth: 'Do you need auth fields?',
-  emptyResponse: 'Empty response',
-  isRegexp: 'The value can be a RegExp',
   key: 'Key',
   declareTicket: 'Declare ticket',
   workflow: 'Workflow if this action didn’t match:',

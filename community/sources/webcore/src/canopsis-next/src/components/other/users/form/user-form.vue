@@ -37,15 +37,10 @@
         data-test="email"
       )
     v-layout(row)
-      v-text-field(
+      c-password-field(
         v-field="form.password",
-        v-validate="passwordRules",
-        :label="$t('common.password')",
-        :error-messages="errors.collect('password')",
-        type="password",
-        name="password",
-        browser-autocomplete="new-password",
-        data-test="password"
+        :required="isNew",
+        browser-autocomplete="new-password"
       )
     v-layout(data-test="roleLayout", row)
       v-select(
@@ -136,12 +131,6 @@ export default {
     };
   },
   computed: {
-    passwordRules() {
-      return {
-        required: this.isNew,
-      };
-    },
-
     groupsNavigationItems() {
       return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
         text: this.$t(`user.navigationTypes.${type}`),
