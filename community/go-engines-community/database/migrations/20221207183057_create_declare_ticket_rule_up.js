@@ -35,6 +35,24 @@ if (!db.default_rights.findOne({_id: "api_declare_ticket_execution"})) {
     });
 }
 
+if (!db.default_rights.findOne({_id: "models_exploitation_declareTicketRule"})) {
+    db.default_rights.insertOne({
+        _id: "models_exploitation_declareTicketRule",
+        crecord_name: "models_exploitation_declareTicketRule",
+        crecord_type: "action",
+        desc: "Exploitation: Declare ticket rule",
+        type: "CRUD"
+    });
+    db.default_rights.updateOne({_id: "admin"}, {
+        $set: {
+            "rights.models_exploitation_declareTicketRule": {
+                checksum: 15,
+                crecord_type: "right"
+            }
+        }
+    });
+}
+
 db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
     if (!doc.actions) {
         return;
