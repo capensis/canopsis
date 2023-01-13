@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         snmp-rule-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { MODALS } from '@/constants';
 
-import { MODALS, SNMP_STATE_TYPES } from '@/constants';
+import { snmpRuleToForm } from '@/helpers/forms/snmp-rule';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -36,29 +36,10 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const defaultModuleMibObjectForm = {
-      value: '',
-      regex: '',
-      formatter: '',
-    };
-
-    const defaultSnmpRule = {
-      oid: {
-        oid: '',
-        mibName: '',
-        moduleName: '',
-      },
-      component: { ...defaultModuleMibObjectForm },
-      connector_name: { ...defaultModuleMibObjectForm },
-      output: { ...defaultModuleMibObjectForm },
-      resource: { ...defaultModuleMibObjectForm },
-      state: {
-        type: SNMP_STATE_TYPES.simple,
-      },
-    };
+    const { snmpRule } = this.modal.config;
 
     return {
-      form: this.modal.config.snmpRule ? cloneDeep(this.modal.config.snmpRule) : defaultSnmpRule,
+      form: snmpRuleToForm(snmpRule),
     };
   },
   computed: {
@@ -73,15 +54,7 @@ export default {
   methods: {
     async submit() {
       if (this.config.action) {
-        const preparedData = this.form;
-
-        if (preparedData._id) {
-          preparedData.id = preparedData._id;
-        }
-
-        await this.config.action({
-          document: preparedData,
-        });
+        await this.config.action(this.form);
       }
 
       this.$modals.hide();

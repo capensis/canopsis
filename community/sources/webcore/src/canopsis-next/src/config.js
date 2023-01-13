@@ -137,15 +137,6 @@ export const API_ROUTES = {
   },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
-  snmpRule: {
-    list: '/api/snmprule',
-    create: '/api/snmprule/put',
-  },
-  snmpMib: {
-    list: '/api/snmpmib',
-    distinct: '/api/snmpmibdistinct',
-    upload: '/api/uploadmib',
-  },
   infos: {
     app: '/api/v4/app-info',
     userInterface: '/api/v4/internal/user_interface',
@@ -243,6 +234,8 @@ export const API_ROUTES = {
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
+  snmpRule: '/api/v4/cat/snmprules',
+  snmpMib: '/api/v4/cat/snmpmibs',
 };
 
 export const COLORS = {

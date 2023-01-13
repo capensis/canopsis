@@ -1,5 +1,5 @@
 <template lang="pug">
-  .fab
+  div.fab
     v-layout(column)
       c-refresh-btn(@click="$emit('refresh')")
       v-speed-dial(
@@ -8,10 +8,11 @@
         direction="left",
         :transition="transition"
       )
-        v-btn(slot="activator", v-model="fab", color="primary", fab)
-          slot(name="icons")
-            v-icon add
-            v-icon close
+        template(#activator="")
+          v-btn(v-model="fab", color="primary", fab)
+            slot(name="icons")
+              v-icon add
+              v-icon close
         slot
 </template>
 
