@@ -4,7 +4,7 @@
       template(#title="")
         span {{ $t('modals.createPbehaviorType.title') }}
       template(#text="")
-        create-type-form(v-model="form", :only-color="config.pbehaviorType.default")
+        create-type-form(v-model="form", :only-color="onlyColor")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
@@ -39,6 +39,11 @@ export default {
     return {
       form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
     };
+  },
+  computed: {
+    onlyColor() {
+      return this.config.pbehaviorType?.default;
+    },
   },
   methods: {
     async submit() {
