@@ -5,6 +5,7 @@ db.default_rights.deleteMany({
         $in: [
             "api_declare_ticket_rule",
             "api_declare_ticket_execution",
+            "models_exploitation_declareTicketRule",
         ]
     }
 });
@@ -12,6 +13,7 @@ db.default_rights.updateMany({crecord_type: "role"}, {
     $unset: {
         "rights.api_declare_ticket_rule": "",
         "rights.api_declare_ticket_execution": "",
+        "rights.models_exploitation_declareTicketRule": "",
     }
 });
 
