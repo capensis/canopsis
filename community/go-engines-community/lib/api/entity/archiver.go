@@ -228,7 +228,46 @@ func (a *archiver) bulkArchive(ctx context.Context, models, contextGraphModels [
 }
 
 func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {
-	deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{})
+	var totalDeleted int64
+	ids := make([]string, 0, canopsis.DefaultBulkSize)
 
-	return deleted, err
+	cursor, err := a.archivedCollection.Find(ctx, bson.M{})
+	if err != nil {
+		return 0, err
+	}
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return 0, err
+		}
+
+		ids = append(ids, doc.ID)
+
+		if len(ids) == canopsis.DefaultBulkSize {
+			deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+			if err != nil {
+				return 0, err
+			}
+
+			ids = ids[:0]
+
+			totalDeleted += deleted
+		}
+	}
+
+	if len(ids) > 0 {
+		deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return 0, err
+		}
+
+		totalDeleted += deleted
+	}
+
+	return totalDeleted, nil
 }

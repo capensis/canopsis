@@ -106,6 +106,8 @@ type Entity struct {
 
 	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	Depends []string `bson:"depends,omitempty" json:"-"`
 }
 
 func (e *Entity) fillConnectorType() {
@@ -170,9 +172,10 @@ type BulkToggleRequestItem struct {
 }
 
 type SimplifiedEntity struct {
-	ID      string `bson:"_id"`
-	Type    string `bson:"type"`
-	Enabled bool   `bson:"enabled"`
+	ID      string   `bson:"_id"`
+	Type    string   `bson:"type"`
+	Enabled bool     `bson:"enabled"`
+	Depends []string `bson:"depends"`
 }
 
 type ContextGraphRequest struct {
