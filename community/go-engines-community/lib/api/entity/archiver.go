@@ -134,8 +134,11 @@ func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archi
 
 		newArchiveModelLen := len(b)
 
-		if contextGraphBulkBytesSize+newContextGraphModelsLen > canopsis.DefaultBulkBytesSize ||
-			archiveBulkBytesSize+newArchiveModelLen > canopsis.DefaultBulkBytesSize {
+		contextGraphBulkBytesSize += newContextGraphModelsLen
+		archiveBulkBytesSize += newArchiveModelLen
+
+		if contextGraphBulkBytesSize > canopsis.DefaultBulkBytesSize ||
+			archiveBulkBytesSize > canopsis.DefaultBulkBytesSize {
 			archived, err := a.bulkArchive(ctx, archiveModels, contextGraphModels, ids)
 			if err != nil {
 				return 0, err
@@ -147,16 +150,13 @@ func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archi
 			archiveModels = archiveModels[:0]
 			ids = ids[:0]
 
-			contextGraphBulkBytesSize = 0
-			archiveBulkBytesSize = 0
+			contextGraphBulkBytesSize = newContextGraphModelsLen
+			archiveBulkBytesSize = newArchiveModelLen
 		}
 
 		archiveModels = append(archiveModels, newArchiveModel)
 		contextGraphModels = append(contextGraphModels, newContextGraphModels...)
 		ids = append(ids, entity.ID)
-
-		contextGraphBulkBytesSize += newContextGraphModelsLen
-		archiveBulkBytesSize += newArchiveModelLen
 
 		if len(contextGraphModels) == canopsis.DefaultBulkSize {
 			archived, err := a.bulkArchive(ctx, archiveModels, contextGraphModels, ids)
@@ -198,7 +198,7 @@ func (a *archiver) archiveComponentDependencies(ctx context.Context, depIds []st
 
 	archived, err := a.processCursor(ctx, cursor, false)
 	if err != nil {
-		return 0, err
+		return 0, cursor.Close(ctx)
 	}
 
 	return archived, cursor.Close(ctx)
