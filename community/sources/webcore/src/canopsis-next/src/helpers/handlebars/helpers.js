@@ -5,7 +5,7 @@ import axios from 'axios';
 import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
-import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
 
 import i18n from '@/i18n';
 
@@ -25,19 +25,22 @@ function prepareAttributes(attributes) {
 /**
  * Convert date to long format
  *
- * Example: {{date 1000000}} -> 12/01/1970 20:46:40
+ * Example: {{timestamp 1000000 today='true'}} -> 12/01/1970 20:46:40
  *
  * @param {string|number} date
+ * @param {Object} options
  * @returns {string}
  */
-export function timestampHelper(date) {
-  let result = '';
+export function timestampHelper(date, options = {}) {
+  const { today } = options.hash;
 
-  if (date) {
-    result = convertDateToStringWithFormatForToday(date);
+  if (!date) {
+    return '';
   }
 
-  return result;
+  return today === 'true'
+    ? convertDateToStringWithFormatForToday(date)
+    : convertDateToString(date);
 }
 
 /**
