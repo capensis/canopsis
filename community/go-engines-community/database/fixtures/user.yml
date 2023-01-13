@@ -429,6 +429,11 @@ default_rights:
     _id: models_exploitation_resolveRules
     crecord_name: <Current()._id>
     desc: "Exploitation: Resolve rules"
+  permission_models_exploitation_declareTicketRule:
+    <<: *permission_crud
+    _id: models_exploitation_declareTicketRule
+    crecord_name: <Current()._id>
+    desc: "Exploitation: Declare ticket rule"
   permission_models_healthcheck:
     <<: *permission
     _id: models_healthcheck
@@ -1165,6 +1170,8 @@ default_rights:
       "@permission_models_exploitation_flappingRules":
         checksum: 15
       "@permission_models_exploitation_resolveRules":
+        checksum: 15
+      "@permission_models_exploitation_declareTicketRule":
         checksum: 15
       "@permission_models_healthcheck":
         checksum: 1
