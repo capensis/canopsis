@@ -92,7 +92,7 @@ Feature: Get a pbehavior type
         {
           "_id": "test-default-active-type",
           "description": "Default Type Active",
-          "icon_name": "test-active-icon",
+          "icon_name": "",
           "name": "Default Type Active",
           "priority": 2,
           "type": "active",
