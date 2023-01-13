@@ -198,7 +198,8 @@ func (a *archiver) archiveComponentDependencies(ctx context.Context, depIds []st
 
 	archived, err := a.processCursor(ctx, cursor, false)
 	if err != nil {
-		return 0, cursor.Close(ctx)
+		_ = cursor.Close(ctx)
+		return 0, err
 	}
 
 	return archived, cursor.Close(ctx)
