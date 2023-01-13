@@ -6,7 +6,7 @@
         v-field="form.multiple_executions",
         :label="$t('remediation.job.multipleExecutions')"
       )
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     remediation-job-configuration-field(v-field="form.config")
     c-id-field(
       v-field="form.job_id",

@@ -1,32 +1,22 @@
 <template lang="pug">
-  v-layout.text-pair(justify-space-between, align-center)
-    v-flex.pa-1(xs6)
-      v-text-field(
-        v-field="item[itemText]",
-        v-validate="textValidationRules",
-        :label="textLabel",
-        :disabled="disabled",
-        :name="textFieldName",
-        :error-messages="errors.collect(textFieldName)"
-      )
-    v-flex.pa-1(xs6)
-      v-text-field(
-        v-if="!mixed",
-        v-field="item[itemValue]",
-        v-validate="valueValidationRules",
-        :label="valueLabel",
-        :disabled="disabled",
-        :name="valueFieldName",
-        :error-messages="errors.collect(valueFieldName)"
-      )
-      c-mixed-field(
-        v-else,
-        v-field="item[itemValue]",
-        v-validate="valueValidationRules",
-        :name="valueFieldName",
-        :disabled="disabled",
-        :error-messages="errors.collect(valueFieldName)"
-      )
+  v-layout(align-center)
+    v-layout(row)
+      v-flex.mr-3(xs6)
+        component(
+          :is="itemTextComponent.is",
+          v-field="item[itemText]",
+          v-validate="'required'",
+          v-bind="itemTextComponent.props",
+          :error-messages="errors.collect(textFieldName)"
+        )
+      v-flex(xs6)
+        component(
+          :is="itemValueComponent.is",
+          v-field="item[itemValue]",
+          v-validate="",
+          v-bind="itemValueComponent.props",
+          :error-messages="errors.collect(valueFieldName)"
+        )
     c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
@@ -62,21 +52,13 @@ export default {
       type: String,
       default: 'item',
     },
-    textValidationRules: {
-      type: String,
-      default: 'required',
-    },
-    valueValidationRules: {
-      type: String,
-      default: null,
-    },
     disabled: {
       type: Boolean,
       default: false,
     },
-    mixed: {
-      type: Boolean,
-      default: false,
+    hints: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -86,6 +68,48 @@ export default {
 
     valueFieldName() {
       return `${this.name}.${this.itemValue}`;
+    },
+
+    textHints() {
+      return this.hints.map(({ text }) => text);
+    },
+
+    valueHints() {
+      return this.hints.find(({ text }) => text === this.item[this.itemText])?.value ?? [];
+    },
+
+    itemTextComponent() {
+      const props = {
+        label: this.textLabel,
+        disabled: this.disabled,
+        name: this.textFieldName,
+      };
+
+      if (this.textHints.length) {
+        props.items = this.textHints;
+      }
+
+      return {
+        is: this.textHints.length ? 'v-combobox' : 'v-text-field',
+        props,
+      };
+    },
+
+    itemValueComponent() {
+      const props = {
+        label: this.valueLabel,
+        disabled: this.disabled,
+        name: this.valueFieldName,
+      };
+
+      if (this.valueHints.length) {
+        props.items = this.valueHints;
+      }
+
+      return {
+        is: this.valueHints.length ? 'v-combobox' : 'v-text-field',
+        props,
+      };
     },
   },
 };

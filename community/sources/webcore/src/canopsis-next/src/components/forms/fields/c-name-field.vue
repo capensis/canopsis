@@ -1,7 +1,7 @@
 <template lang="pug">
   v-text-field(
     v-field="value",
-    v-validate="'required'",
+    v-validate="rules",
     :label="label || $t('common.name')",
     :error-messages="errors.collect(name)",
     :name="name",
@@ -34,9 +34,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     browserAutocomplete: {
       type: String,
       required: false,
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };

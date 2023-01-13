@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip(:max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
     template(#activator="{ bind, on }")
-      v-icon(v-bind="bind", v-on="on", :color="color", :size="size") {{ icon }}
+      v-icon(v-bind="bind", v-on="on", :color="color", :size="size", :class="iconClass") {{ icon }}
     slot
       div(v-html="text")
 </template>
@@ -15,7 +15,7 @@ export default {
     },
     color: {
       type: String,
-      default: '',
+      default: 'info',
     },
     text: {
       type: String,
@@ -42,6 +42,10 @@ export default {
       required: false,
     },
     size: {
+      type: String,
+      required: false,
+    },
+    iconClass: {
       type: String,
       required: false,
     },

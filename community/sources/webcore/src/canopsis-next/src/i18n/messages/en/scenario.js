@@ -2,15 +2,10 @@ import { ACTION_TYPES } from '@/constants';
 
 export default {
   triggers: 'Triggers',
-  emitTrigger: 'Emit trigger',
   withAuth: 'Do you need auth fields?',
   emptyResponse: 'Empty response',
   isRegexp: 'The value can be a RegExp',
-  headerKey: 'Header key',
-  headerValue: 'Header value',
   key: 'Key',
-  skipVerify: 'Ignore HTTPS certificate verification',
-  headers: 'Headers',
   declareTicket: 'Declare ticket',
   workflow: 'Workflow if this action didn’t match:',
   remainingAction: 'Continue with remaining actions',
@@ -18,12 +13,6 @@ export default {
   emptyActions: 'No actions added yet',
   output: 'Output Action Format',
   forwardAuthor: 'Forward author to the next step',
-  urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
-    + '<i>For example:</i>'
-    + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
-    + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
-    + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
-    + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
     + '<i>For example:</i>'
     + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',

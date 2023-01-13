@@ -48,7 +48,7 @@ import { formMixin } from '@/mixins/form';
 
 import { eventFilterExternalDataItemToForm } from '@/helpers/forms/event-filter';
 
-import RequestForm from '@/components/forms/request-form.vue';
+import RequestForm from '@/components/forms/request/request-form.vue';
 
 import EventFilterEnrichmentExternalDataMongoForm from './event-filter-enrichment-external-data-mongo-form.vue';
 

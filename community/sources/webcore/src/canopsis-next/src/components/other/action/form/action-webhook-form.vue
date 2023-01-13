@@ -14,7 +14,7 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
-import RequestForm from '@/components/forms/request-form.vue';
+import RequestForm from '@/components/forms/request/request-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -32,16 +32,6 @@ export default {
     name: {
       type: String,
       required: true,
-    },
-  },
-  computed: {
-    withAuth: {
-      set(value) {
-        this.updateField('request.auth', value ? { username: '', password: '' } : undefined);
-      },
-      get() {
-        return !!this.webhook.request.auth;
-      },
     },
   },
 };

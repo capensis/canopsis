@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     cluster-graph-editor(v-field="form.parameters")
 </template>
 

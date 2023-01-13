@@ -9,13 +9,11 @@
         v-field="items[index]",
         :key="item[itemKey]",
         :disabled="disabled",
-        :value-validation-rules="valueValidationRules",
-        :text-validation-rules="textValidationRules",
         :text-label="textLabel",
         :value-label="valueLabel",
         :item-text="itemText",
         :item-value="itemValue",
-        :mixed="mixed",
+        :hints="hints",
         @remove="removeItemFromArray(index)"
       )
     v-flex(v-if="!disabled", xs12)
@@ -68,14 +66,6 @@ export default {
       type: String,
       default: 'items',
     },
-    textValidationRules: {
-      type: String,
-      required: false,
-    },
-    valueValidationRules: {
-      type: String,
-      required: false,
-    },
     addButtonLabel: {
       type: String,
       required: false,
@@ -84,18 +74,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    mixed: {
-      type: Boolean,
-      default: false,
-    },
-    itemCreator: {
-      type: Function,
-      default: textPairToForm,
+    hints: {
+      type: Array,
+      required: false,
     },
   },
   methods: {
     addItem() {
-      this.addItemIntoArray(this.itemCreator());
+      this.addItemIntoArray(textPairToForm());
     },
   },
 };

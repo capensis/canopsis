@@ -1,21 +1,21 @@
 <template lang="pug">
-  v-layout
+  v-layout(row)
     v-flex.pr-3(xs4)
       c-number-field(
-        v-field="retry.count",
+        v-field="value.retry_count",
         :label="$t('common.retryCount')",
-        :min="1",
+        :min="0",
         :name="countFieldName",
         :required="isRequired",
         :disabled="disabled"
       )
     v-flex(xs8)
       c-duration-field(
-        v-field="retry",
+        v-field="value.retry_delay",
         :units-label="$t('common.unit')",
         :required="isRequired",
         :name="name",
-        :disabled="disabled",
+        :disabled="isDurationDisabled",
         clearable
       )
 </template>
@@ -26,11 +26,11 @@ import { isNumber } from 'lodash';
 export default {
   inject: ['$validator'],
   model: {
-    prop: 'retry',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    retry: {
+    value: {
       type: Object,
       default: () => ({}),
     },
@@ -52,8 +52,17 @@ export default {
       return `${this.name}.count`;
     },
 
+    isDurationDisabled() {
+      return this.disabled || this.value.retry_count === 0;
+    },
+
     isRequired() {
-      return this.required || isNumber(this.retry.count) || isNumber(this.retry.value) || Boolean(this.retry.unit);
+      const { retry_delay: retryDelay, retry_count: retryCount } = this.value;
+
+      return this.required
+        || isNumber(retryCount)
+        || isNumber(retryDelay?.value)
+        || Boolean(retryDelay?.unit);
     },
   },
 };
