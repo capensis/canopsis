@@ -60,7 +60,7 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 
 		if response.Username != "" && response.Password != "" {
 			header := r.Header.Get(headerAuthorization)
-			if len(header) <= len(basicPrefix) {
+			if len(header) <= len(basicPrefix) || header[0:len(basicPrefix)] != basicPrefix {
 				http.Error(w, r.Method, http.StatusUnauthorized)
 				return
 			}
