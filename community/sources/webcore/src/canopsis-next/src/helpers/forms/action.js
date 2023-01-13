@@ -49,7 +49,7 @@ import { requestToForm, retryToForm, formToRequest, formToRetry } from './shared
 
 /**
  * @typedef {Object} ActionWebhookParameters
- * @property {RequestParameter} request
+ * @property {Request} request
  * @property {?Object} [declare_ticket]
  * @property {boolean} declare_ticket.empty_response
  * @property {boolean} declare_ticket.is_regexp
@@ -61,8 +61,7 @@ import { requestToForm, retryToForm, formToRequest, formToRetry } from './shared
 
 /**
  * @typedef {ActionWebhookParameters} ActionWebhookFormParameters
- * @property {RequestFormParameter} request
- * @property {RetryDuration} retry
+ * @property {RequestForm} request
  * @property {boolean} empty_response
  * @property {boolean} is_regexp
  * @property {TextPairObject[]} declare_ticket

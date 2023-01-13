@@ -1,24 +1,38 @@
+import { isNumber, pick } from 'lodash';
+
+import { TIME_UNITS } from '@/constants';
+
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { durationToForm } from '@/helpers/date/duration';
 
 /**
- * @typedef {Duration} RetryDuration
- * @property {number} count
+ * @typedef {Object} RequestAuth
+ * @property {string} username
+ * @property {string} password
  */
 
 /**
- * @typedef {Object} RequestParameter
+ * @typedef {Object} Request
  * @property {string} method
  * @property {string} url
- * @property {{ username: string, password: string }} auth
+ * @property {RequestAuth} auth
  * @property {Object} headers
- * @property {string} payload
  * @property {boolean} skip_verify
+ * @property {Duration} timeout
+ * @property {number} retry_count
+ * @property {?Duration} retry_delay
+ * @property {string} payload
  */
 
 /**
- * @typedef {RequestParameter} RequestFormParameter
+ * @typedef {RequestAuth} RequestAuthForm
+ * @property {boolean} enabled
+ */
+
+/**
+ * @typedef {Request} RequestForm
  * @property {TextPairObject[]} headers
+ * @property {RequestAuthForm} auth
  */
 
 /**
@@ -30,16 +44,25 @@ import { durationToForm } from '@/helpers/date/duration';
 /**
  * Convert request field to form object
  *
- * @param {RequestParameter} request
- * @returns {RequestFormParameter}
+ * @param {Request} request
+ * @returns {RequestForm}
  */
 export const requestToForm = (request = {}) => ({
   method: request.method ?? '',
   url: request.url ?? '',
-  auth: request.auth,
-  headers: request.headers ? objectToTextPairs(request.headers) : [],
-  payload: request.payload ?? '{}',
   skip_verify: !!request.skip_verify,
+  timeout: request.timeout
+    ? durationToForm(request.timeout)
+    : { value: 1, unit: TIME_UNITS.minute },
+  retry_count: request.retry_count ?? 0,
+  retry_delay: request.retry_delay
+    ? durationToForm(request.retry_delay)
+    : { value: 10, unit: TIME_UNITS.second },
+  auth: request.auth
+    ? { enabled: true, ...request.auth }
+    : { enabled: false, username: '', password: '' },
+  headers: request.headers ? objectToTextPairs(request.headers) : [],
+  payload: request.payload ?? '',
 });
 
 /**
@@ -57,12 +80,14 @@ export const retryToForm = (parameters = {}) => (
 /**
  * Convert form object to request field
  *
- * @param {RequestFormParameter} form
- * @returns {RequestParameter}
+ * @param {RequestForm} form
+ * @returns {Request}
  */
 export const formToRequest = form => ({
   ...form,
 
+  timeout: isNumber(form.timeout.value) ? form.timeout : null,
+  auth: form.auth.enabled ? pick(form.auth, ['username', 'password']) : null,
   headers: textPairsToObject(form.headers),
 });
 
