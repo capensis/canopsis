@@ -2,12 +2,13 @@
   v-layout(column)
     request-form(v-field="webhook", :name="name")
     h4.ml-1 {{ $t('scenario.declareTicket') }}
-    c-enabled-field(v-model="webhook.empty_response", :label="$t('scenario.emptyResponse')")
-    c-enabled-field(v-model="webhook.is_regexp", :label="$t('scenario.isRegexp')")
+    c-enabled-field(v-model="webhook.empty_response", :label="$t('declareTicket.emptyResponse')")
+    c-enabled-field(v-model="webhook.is_regexp", :label="$t('declareTicket.isRegexp')")
     c-text-pairs-field(
       v-field="webhook.declare_ticket",
       :text-label="$t('scenario.key')",
-      :name="name"
+      :name="name",
+      text-required
     )
 </template>
 

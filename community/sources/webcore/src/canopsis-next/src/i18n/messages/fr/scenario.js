@@ -3,8 +3,6 @@ import { ACTION_TYPES } from '@/constants';
 export default {
   triggers: 'Déclencheurs',
   withAuth: 'Avez-vous besoin de champs d\'authentification ?',
-  emptyResponse: 'Réponse vide',
-  isRegexp: 'La valeur peut être une expression régulière',
   key: 'Clé',
   declareTicket: 'Déclarer un ticket',
   workflow: 'Comportement si cette action ne correspond pas :',

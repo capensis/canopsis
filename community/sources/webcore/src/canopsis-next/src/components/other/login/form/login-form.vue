@@ -14,15 +14,9 @@
         outline
       )
     v-flex
-      v-text-field(
+      c-password-field(
         v-field.mutate="form.password",
-        v-validate="'required'",
-        :label="$t('common.password')",
-        :error-messages="errors.collect('password')",
-        color="primary",
-        name="password",
-        type="password",
-        data-test="password",
+        required,
         clearable,
         outline
       )
