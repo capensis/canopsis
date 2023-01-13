@@ -546,7 +546,7 @@ Feature: execute action on trigger
           "parameters": {
             "request": {
               "method": "GET",
-              "url": "{{ .apiURL }}/api/v4/pbehavior-types/test-default-active-type",
+              "url": "{{ .apiURL }}/api/v4/pbehavior-types/test-default-pause-type",
               "auth": {
                 "username": "root",
                 "password": "test"
@@ -611,7 +611,7 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-4-webhook test-active-icon",
+          "name": "test-scenario-action-webhook-4-webhook test-pause-icon",
           "actions": [
             {
               "alarm_pattern": [
@@ -620,7 +620,7 @@ Feature: execute action on trigger
                     "field": "v.resource",
                     "cond": {
                       "type": "eq",
-                      "value": "test-default-active-type"
+                      "value": "test-default-pause-type"
                     }
                   }
                 ]
@@ -1399,7 +1399,7 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-7-webhook test-default-active-type",
+          "name": "test-scenario-action-webhook-7-webhook test-default-pause-type",
           "actions": [
             {
               "entity_pattern": [

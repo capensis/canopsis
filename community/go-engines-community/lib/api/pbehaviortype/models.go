@@ -16,18 +16,19 @@ type EditRequest struct {
 	Description string `json:"description" binding:"required,max=255"`
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
 	Priority    *int   `json:"priority" binding:"required"`
-	IconName    string `json:"icon_name" binding:"required,max=255"`
 	Color       string `json:"color" binding:"required,iscolor"`
 }
 
 type CreateRequest struct {
 	EditRequest
-	ID string `json:"_id" binding:"id"`
+	ID       string `json:"_id" binding:"id"`
+	IconName string `json:"icon_name" binding:"required,max=255"`
 }
 
 type UpdateRequest struct {
 	EditRequest
-	ID string `json:"-"`
+	ID       string `json:"-"`
+	IconName string `json:"icon_name" binding:"max=255"`
 }
 
 type Type struct {

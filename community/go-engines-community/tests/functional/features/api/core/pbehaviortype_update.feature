@@ -44,11 +44,29 @@ Feature: Update a pbehavior type
     {
       "errors": {
         "description": "Description is missing.",
-        "icon_name": "IconName is missing.",
         "color": "Color is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
         "type": "Type is missing."
+      }
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-type-to-update:
+    """json
+    {
+      "name": "test-type-to-update-name",
+      "description": "test-type-to-update-description",
+      "type": "active",
+      "priority": 399,
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "icon_name": "IconName is missing."
       }
     }
     """
@@ -115,7 +133,7 @@ Feature: Update a pbehavior type
     }
     """
 
-  Scenario: given update request for default type with color should return ok
+  Scenario: given update request for default pause type with color should return ok
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
     """json
@@ -142,6 +160,33 @@ Feature: Update a pbehavior type
     }
     """
 
+  Scenario: given update request for default active type with color should return ok
+    When I am admin
+    When I do PUT /api/v4/pbehavior-types/test-default-active-type:
+    """json
+    {
+      "name": "Default Type Active",
+      "description": "Default Type Active",
+      "type": "active",
+      "priority": 2,
+      "icon_name": "",
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-default-active-type",
+      "name": "Default Type Active",
+      "description": "Default Type Active",
+      "type": "active",
+      "priority": 2,
+      "icon_name": "",
+      "color": "#FFFFFF"
+    }
+    """
+
   Scenario: given update request for default type should return error
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
@@ -160,5 +205,24 @@ Feature: Update a pbehavior type
     """json
     {
       "error": "type is default"
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
+    """json
+    {
+      "name": "Default Type Pause",
+      "description": "Default Type Pause",
+      "type": "pause",
+      "priority": 3,
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "icon_name": "IconName is missing."
+      }
     }
     """
