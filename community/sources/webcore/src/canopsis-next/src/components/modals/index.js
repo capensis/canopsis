@@ -349,3 +349,8 @@ export const CreateShareToken = () => ({
   component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateDeclareTicketRule = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-rule.vue'),
+  loading: LoaderOverlay,
+});

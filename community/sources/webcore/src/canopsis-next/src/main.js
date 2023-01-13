@@ -102,7 +102,6 @@ import CActionTypeField from '@/components/forms/fields/c-action-type-field.vue'
 import CPatternsField from '@/components/forms/fields/pattern/c-patterns-field.vue';
 import CWorkflowField from '@/components/forms/fields/c-workflow-field.vue';
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
-import CRequestUrlField from '@/components/forms/fields/c-request-url-field.vue';
 import CTextPairsField from '@/components/forms/fields/text-pairs/c-text-pairs-field.vue';
 import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-field.vue';
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
@@ -369,7 +368,6 @@ Vue.component('c-action-type-field', CActionTypeField);
 Vue.component('c-workflow-field', CWorkflowField);
 Vue.component('c-draggable-step-number', CDraggableStepNumber);
 Vue.component('c-change-state-field', CChangeStateField);
-Vue.component('c-request-url-field', CRequestUrlField);
 Vue.component('c-text-pair-field', CTextPairField);
 Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
@@ -519,6 +517,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createGeoMap]: { maxWidth: 1280 },
     [MODALS.createFlowchartMap]: { maxWidth: 1600 },
     [MODALS.entityDependenciesList]: { maxWidth: 1600 },
+    [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

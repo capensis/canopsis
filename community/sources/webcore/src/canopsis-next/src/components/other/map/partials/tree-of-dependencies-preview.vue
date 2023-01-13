@@ -7,7 +7,7 @@
         :node-html-label-options="nodeHtmlLabelsOptions",
         ctrl-wheel-zoom
       )
-    c-help-icon.map-preview__help-icon(size="32", color="secondary", icon="help", top)
+    c-help-icon(size="32", icon-class="map-preview__help-icon", color="secondary", icon="help", top)
       div.pre-wrap(v-html="$t('treeOfDependencies.panzoom.helpText')")
 </template>
 

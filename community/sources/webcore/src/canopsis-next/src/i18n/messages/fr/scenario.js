@@ -2,15 +2,10 @@ import { ACTION_TYPES } from '@/constants';
 
 export default {
   triggers: 'Déclencheurs',
-  emitTrigger: 'Émettre un déclencheur',
   withAuth: 'Avez-vous besoin de champs d\'authentification ?',
   emptyResponse: 'Réponse vide',
   isRegexp: 'La valeur peut être une expression régulière',
-  headerKey: 'Clé d\'en-tête',
-  headerValue: 'Valeur d\'en-tête',
   key: 'Clé',
-  skipVerify: 'Ne pas vérifier les certificats HTTPS',
-  headers: 'En-têtes',
   declareTicket: 'Déclarer un ticket',
   workflow: 'Comportement si cette action ne correspond pas :',
   remainingAction: 'Continuer avec les actions restantes',
@@ -18,12 +13,6 @@ export default {
   emptyActions: 'Aucune action ajoutée pour le moment',
   output: 'Format d\'action de sortie',
   forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
-  urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
-    + '<i>Quelques exemples :</i>'
-    + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
-    + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
-    + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
-    + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
     + '<i>Quelques exemples:</i>'
     + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',

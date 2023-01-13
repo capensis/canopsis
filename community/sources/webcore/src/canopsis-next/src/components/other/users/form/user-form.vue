@@ -8,6 +8,7 @@
         v-field="form.name",
         :label="$t('common.username')",
         :disabled="onlyUserPrefs",
+        required,
         browser-autocomplete="new-password"
       )
     v-layout(row)
