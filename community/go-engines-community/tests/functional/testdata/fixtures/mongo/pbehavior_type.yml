@@ -48,7 +48,7 @@ pbehavior_type:
     <<: *type_active
     _id: test-default-active-type
     description: Default Type Active
-    icon_name: test-active-icon
+    icon_name:
     name: Default Type Active
 
   type_default_pause_type:

@@ -2,10 +2,12 @@ package pbehaviortype
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -116,7 +118,6 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 
 // Insert creates new pbehavior type.
 func (s *store) Insert(ctx context.Context, pt *Type) error {
-
 	if pt.ID == "" {
 		pt.ID = utils.NewID()
 	}
@@ -139,15 +140,22 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	if pt.IconName == "" && (!isDefault || pt.Type != pbehavior.TypeActive) {
+		return false, common.NewValidationError("icon_name", errors.New("IconName is missing."))
+	}
 	if isDefault {
-		result, err := s.dbCollection.UpdateOne(ctx, bson.M{
+		filter := bson.M{
 			"_id":         id,
 			"name":        pt.Name,
 			"description": pt.Description,
 			"type":        pt.Type,
 			"priority":    pt.Priority,
 			"icon_name":   pt.IconName,
-		}, bson.M{"$set": bson.M{
+		}
+		if pt.IconName == "" {
+			filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
+		}
+		result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{
 			"color": pt.Color,
 		}})
 		if err != nil {
