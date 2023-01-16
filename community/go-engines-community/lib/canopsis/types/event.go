@@ -60,6 +60,9 @@ const (
 	EventTypeWebhookStarted       = "webhookstarted"
 	EventTypeWebhookCompleted     = "webhookcompleted"
 	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeAutoWebhookStarted   = "autowebhookstarted"
+	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
+	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
@@ -165,15 +168,16 @@ type Event struct {
 
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
-	// It also adds declare ticket to all resource alarms on ack webhook.
-	// It's still used by some old users but meta alarms must be used instead.
-	AckResources bool                   `json:"ack_resources"`
-	Duration     CpsNumber              `json:"duration"`
-	StatName     string                 `bson:"stat_name" json:"stat_name"`
-	Debug        bool                   `bson:"debug" json:"debug"`
-	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
-	ExtraInfos   map[string]interface{} `json:"extra"`
-	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
+	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
+	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
+
+	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
+	StatName    string                 `bson:"stat_name" json:"stat_name"`
+	Debug       bool                   `bson:"debug" json:"debug"`
+	Role        string                 `bson:"role,omitempty" json:"role,omitempty"`
+	ExtraInfos  map[string]interface{} `bson:"extra_infos" json:"extra"`
+	AlarmChange *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
 
 	// Ticket related fields
 	TicketInfo `bson:",inline"`

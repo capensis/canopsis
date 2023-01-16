@@ -820,3 +820,17 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAxeRpc(arg0, arg1, arg
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAxeRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessAxeRpc), arg0, arg1, arg2)
 }
+
+// ProcessTicketResources mocks base method.
+func (m *MockMetaAlarmEventProcessor) ProcessTicketResources(arg0 context.Context, arg1 types.Event) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ProcessTicketResources", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ProcessTicketResources indicates an expected call of ProcessTicketResources.
+func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessTicketResources(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTicketResources", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessTicketResources), arg0, arg1)
+}
