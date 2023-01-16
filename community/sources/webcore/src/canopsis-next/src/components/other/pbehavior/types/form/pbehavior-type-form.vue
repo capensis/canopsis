@@ -71,11 +71,6 @@ export default {
       colorWasChanged: false,
     };
   },
-  computed: {
-    canUpdateColor() {
-      return !this.colorWasChanged || !this.form.color;
-    },
-  },
   methods: {
     setColorWasChanged() {
       this.colorWasChanged = true;
@@ -88,7 +83,7 @@ export default {
         type,
       };
 
-      if (this.canUpdateColor) {
+      if (!this.colorWasChanged) {
         newForm.color = color;
       }
 
@@ -96,8 +91,15 @@ export default {
     },
 
     updateColor(color) {
-      if (!this.canUpdateColor) {
-        return;
+      if (this.form.color) {
+        if (this.colorWasChanged) {
+          return;
+        }
+
+        if (this.form.color !== color) {
+          this.colorWasChanged = true;
+          return;
+        }
       }
 
       this.updateField('color', color);
