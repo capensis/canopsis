@@ -1227,7 +1227,7 @@ func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *Aggregat
 
 	ruleMap := make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
 	rulePipeline := make(bson.M, canopsis.FacetLimit)
-	assignedInstructionsMap := make(map[string][]AssignedDeclareTicketRule)
+	assignedRulesMap := make(map[string][]AssignedDeclareTicketRule)
 
 	for declareTicketCursor.Next(ctx) {
 		var rule DeclareTicketRule
@@ -1241,8 +1241,8 @@ func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *Aggregat
 			return err
 		}
 
-		if len(rulePipeline) > canopsis.FacetLimit {
-			err = s.processPipeline(ctx, alarmIDs, ruleMap, rulePipeline, assignedInstructionsMap)
+		if len(rulePipeline) == canopsis.FacetLimit {
+			err = s.processPipeline(ctx, alarmIDs, ruleMap, rulePipeline, assignedRulesMap)
 			if err != nil {
 				return err
 			}
@@ -1258,18 +1258,18 @@ func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *Aggregat
 	}
 
 	if len(rulePipeline) > 0 {
-		err = s.processPipeline(ctx, alarmIDs, ruleMap, rulePipeline, assignedInstructionsMap)
+		err = s.processPipeline(ctx, alarmIDs, ruleMap, rulePipeline, assignedRulesMap)
 		if err != nil {
 			return err
 		}
 	}
 
 	for idx, v := range result.Data {
-		sort.Slice(assignedInstructionsMap[v.ID], func(i, j int) bool {
-			return assignedInstructionsMap[v.ID][i].Name < assignedInstructionsMap[v.ID][j].Name
+		sort.Slice(assignedRulesMap[v.ID], func(i, j int) bool {
+			return assignedRulesMap[v.ID][i].Name < assignedRulesMap[v.ID][j].Name
 		})
 
-		result.Data[idx].AssignedDeclareTicketRules = assignedInstructionsMap[v.ID]
+		result.Data[idx].AssignedDeclareTicketRules = assignedRulesMap[v.ID]
 	}
 
 	return nil

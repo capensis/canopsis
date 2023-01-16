@@ -1254,6 +1254,11 @@ func RegisterRoutes(
 			middleware.OnlyAuth(),
 			patternAPI.Count,
 		)
+		protected.POST(
+			"/patterns-alarms",
+			middleware.OnlyAuth(),
+			patternAPI.GetAlarms,
+		)
 
 		bulkRouter := protected.Group("/bulk")
 		{
