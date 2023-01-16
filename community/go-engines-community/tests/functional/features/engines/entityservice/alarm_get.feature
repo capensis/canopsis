@@ -361,7 +361,7 @@ Feature: Get alarms
     }
     """
     
-  Scenario: given service should return alarms of dependencies
+  Scenario: given get services dependencies alarms should return assigned_declare_ticket_rules for dependencies
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json

@@ -1577,7 +1577,7 @@ Feature: Get alarms
     ]
     """
 
-  Scenario: given get correlation request should return has_declare_ticket_rule for children
+  Scenario: given get correlation request should return assigned_declare_ticket_rules for children
     When I am admin
     When I send an event:
     """json
