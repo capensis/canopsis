@@ -13,6 +13,7 @@ const (
 	contextKeyScenarioName contextKey = iota
 	contextKeyScenarioUri
 	contextKeyApiAuthToken
+	contextKeyRequestBody
 	contextKeyResponseStatusCode
 	contextKeyResponseBody
 	contextKeyResponseBodyOutput
@@ -48,6 +49,15 @@ func getApiAuthToken(ctx context.Context) (string, bool) {
 
 func setApiAuthToken(ctx context.Context, v string) context.Context {
 	return context.WithValue(ctx, contextKeyApiAuthToken, v)
+}
+
+func getRequestBody(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(contextKeyRequestBody).(string)
+	return v, ok
+}
+
+func setRequestBody(ctx context.Context, v string) context.Context {
+	return context.WithValue(ctx, contextKeyRequestBody, v)
 }
 
 func getResponseStatusCode(ctx context.Context) (int, bool) {

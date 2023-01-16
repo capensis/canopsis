@@ -235,6 +235,49 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 	return nil
 }
 
+func (p *metaAlarmEventProcessor) ProcessTicketResources(ctx context.Context, event types.Event) error {
+	if !event.TicketResources || event.Alarm == nil || event.AlarmChange == nil ||
+		event.AlarmChange.Type != types.AlarmChangeTypeAssocTicket || event.SourceType != types.SourceTypeComponent {
+		return nil
+	}
+
+	alarms, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Component)
+	if err != nil {
+		return fmt.Errorf("cannot fetch alarms: %w", err)
+	}
+
+	for _, alarm := range alarms {
+		if alarm.Entity.Type != types.EntityTypeResource {
+			continue
+		}
+
+		resourceEvent := types.Event{
+			EventType:     event.EventType,
+			Connector:     alarm.Alarm.Value.Connector,
+			ConnectorName: alarm.Alarm.Value.ConnectorName,
+			Resource:      alarm.Alarm.Value.Resource,
+			Component:     alarm.Alarm.Value.Component,
+			Timestamp:     event.Timestamp,
+			TicketInfo:    event.TicketInfo,
+			Output:        event.Output,
+			LongOutput:    event.LongOutput,
+			Author:        event.Author,
+			UserID:        event.UserID,
+			Debug:         event.Debug,
+			Role:          event.Role,
+			Initiator:     types.InitiatorSystem,
+		}
+		resourceEvent.SourceType = resourceEvent.DetectSourceType()
+
+		err = p.sendToFifo(ctx, resourceEvent)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (p *metaAlarmEventProcessor) processParent(ctx context.Context, event types.Event) error {
 	if !applyOnChild(event.AlarmChange.Type) {
 		return nil
@@ -283,7 +326,9 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 
 	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
 
-	if eventRes.AlarmChangeType == types.AlarmChangeTypeDeclareTicketWebhook {
+	switch eventRes.AlarmChangeType {
+	case types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
 		childEvent.EventType = types.EventTypeDeclareTicketWebhook
 	}
 
@@ -308,7 +353,7 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 
 func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
 	if !event.Parameters.TicketResources ||
-		eventRes.AlarmChangeType != types.AlarmChangeTypeDeclareTicketWebhook ||
+		(eventRes.AlarmChangeType != types.AlarmChangeTypeDeclareTicketWebhook && eventRes.AlarmChangeType != types.AlarmChangeTypeAutoDeclareTicketWebhook) ||
 		event.Entity.Type != types.EntityTypeComponent {
 		return nil
 	}
@@ -624,7 +669,8 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 		types.AlarmChangeTypeSnooze,
 		types.AlarmChangeTypeUncancel,
 		types.AlarmChangeTypeUpdateStatus,
-		types.AlarmChangeTypeDeclareTicketWebhook:
+		types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
 		return true
 	}
 
