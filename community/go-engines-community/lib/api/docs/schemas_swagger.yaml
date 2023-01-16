@@ -125,6 +125,10 @@ definitions:
     properties:
       _id:
         type: string
+      assigned_declare_ticket_rules:
+        items:
+          $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
+        type: array
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
@@ -293,6 +297,13 @@ definitions:
         type: array
       total_state_changes:
         type: integer
+    type: object
+  alarm.AssignedDeclareTicketRule:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
     type: object
   alarm.AssignedInstruction:
     properties:

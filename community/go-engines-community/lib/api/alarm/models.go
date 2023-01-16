@@ -226,6 +226,8 @@ type Alarm struct {
 
 	Links       map[string]interface{} `bson:"-" json:"links,omitempty"`
 	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
+
+	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }
 
 type MetaAlarmRule struct {
@@ -375,4 +377,18 @@ type Count struct {
 
 type GetOpenRequest struct {
 	ID string `form:"_id" json:"_id" binding:"required"`
+}
+
+type AssignedDeclareTicketRule struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
+}
+
+type DeclareTicketRule struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
+
+	savedpattern.AlarmPatternFields     `bson:",inline"`
+	savedpattern.EntityPatternFields    `bson:",inline"`
+	savedpattern.PbehaviorPatternFields `bson:",inline"`
 }
