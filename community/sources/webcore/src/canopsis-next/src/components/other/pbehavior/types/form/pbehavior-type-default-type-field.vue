@@ -52,23 +52,22 @@ export default {
         params: { default: true },
       });
 
-      this.defaultTypes = data;
+      this.defaultTypes = data.map(type => ({
+        ...type,
+        name: this.$t(`modals.createPbehaviorType.canonicalTypes.${type.type}`),
+      }));
+
       this.pending = false;
 
       const activeType = find(data, { type: this.value });
 
       if (activeType) {
-        this.updateColor(activeType.color);
+        this.$emit('update:color', activeType.color);
       }
     },
 
     updateValue(value = {}) {
-      this.updateModel(value.type);
-      this.updateColor(value.color);
-    },
-
-    updateColor(color) {
-      this.$emit('update:color', color);
+      this.$emit('input', value.type, value.color);
     },
   },
 };
