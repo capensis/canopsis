@@ -4,22 +4,31 @@
     v-layout(row, wrap)
       v-flex.pr-1(xs6)
         v-autocomplete.pt-0(
+          v-validate="'required'",
           :value="form.moduleName",
           :items="modules",
           :search-input.sync="searchInput",
           :loading="modulesPending",
           :placeholder="$t('snmpRule.module')",
+          :error-messages="errors.collect('moduleName')",
+          item-text="moduleName",
+          item-value="_id",
+          name="moduleName",
           hide-no-data,
           hide-details,
           @change="selectModule"
         )
       v-flex.pl-1(xs6)
         v-select.pt-0(
-          :value="form.mibName",
+          v-validate="'required'",
+          :value="form.mib",
           :items="moduleMibs",
           :loading="moduleMibsPending",
           :menu-props="{ offsetY: true }",
+          :error-messages="errors.collect('mib')",
           item-text="name",
+          item-value="_id",
+          name="mib",
           hide-details,
           return-object,
           @input="selectMib"
@@ -27,14 +36,21 @@
 </template>
 
 <script>
+import { find } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MAX_LIMIT } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
-import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
 import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
 
+const { mapActions } = createNamespacedHelpers('snmpMib');
+
 export default {
+  inject: ['$validator'],
   components: { SnmpRuleFormFieldTitle },
-  mixins: [formMixin, entitiesSnmpMibMixin],
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -44,16 +60,13 @@ export default {
       type: Object,
       required: true,
     },
-    moduleMibs: {
-      type: Array,
-      default: () => [],
-    },
   },
   data() {
     return {
       modules: [],
       searchInput: '',
       modulesPending: false,
+      moduleMibs: [],
       moduleMibsPending: false,
     };
   },
@@ -68,17 +81,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      fetchSnmpMibList: 'fetchList',
+    }),
+
     async fetchModulesList(searchInput) {
       this.modulesPending = true;
 
-      const { data } = await this.fetchSnmpMibDistinctList({
+      const { data } = await this.fetchSnmpMibList({
         params: {
-          limit: 10,
+          limit: MAX_LIMIT,
+          nodetype: 'notification',
+          search: searchInput,
           projection: 'moduleName',
-          query: {
-            nodetype: 'notification',
-            moduleName: { $regex: `.*${searchInput || ''}.*`, $options: 'i' },
-          },
+          distinct: true,
         },
       });
 
@@ -93,21 +109,22 @@ export default {
 
       const { data } = await this.fetchSnmpMibList({
         params: {
-          limit: 0,
-          query: {
-            nodetype: 'notification',
-            moduleName: module,
-          },
+          limit: MAX_LIMIT,
+          nodetype: 'notification',
+          moduleName: module,
         },
       });
 
-      this.$emit('update:moduleMibs', data);
-
+      this.moduleMibs = data;
       this.moduleMibsPending = false;
+
+      if (this.form.mib?.name) {
+        this.updateField('mib', find(data, { name: this.form.mib.name }));
+      }
     },
 
     selectMib(mib) {
-      this.$emit('input', { ...this.form, mibName: mib.name, oid: mib.oid });
+      this.updateField('mib', mib);
     },
   },
 };

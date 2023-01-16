@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { snmpRuleToForm } from '@/helpers/forms/snmp-rule';
+import { snmpRuleToForm, formToSnmpRule } from '@/helpers/forms/snmp-rule';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -29,6 +29,10 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createSnmpRule,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: { SnmpRuleForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -44,17 +48,13 @@ export default {
   },
   computed: {
     title() {
-      if (this.config.snmpRule) {
-        return this.$t('modals.createSnmpRule.edit.title');
-      }
-
-      return this.$t('modals.createSnmpRule.create.title');
+      return this.config.title ?? this.$t('modals.createSnmpRule.create.title');
     },
   },
   methods: {
     async submit() {
       if (this.config.action) {
-        await this.config.action(this.form);
+        await this.config.action(formToSnmpRule(this.form));
       }
 
       this.$modals.hide();
