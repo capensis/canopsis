@@ -1487,6 +1487,12 @@ export default merge({
         priority: 'Priority',
         iconName: 'Icon name',
       },
+      canonicalTypes: {
+        [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+        [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+        [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
+      },
     },
     pbehaviorRecurrentChangesConfirmation: {
       title: 'Modify',
