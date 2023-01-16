@@ -264,6 +264,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
+		scenarioCtx.Step(`^I read file (\w[-\w\.\/]*) as (\w+)$`, apiClient.IReadFile)
 	}
 }
 
