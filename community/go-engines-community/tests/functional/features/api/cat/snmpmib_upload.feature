@@ -13,9 +13,53 @@ Feature: Upload a MIB file
 
   Scenario: given upload request with wrong MIB should return Bad Request
     When I am admin
-    When I set header Content-Type=application/x-www-form-urlencoded
     When I do POST /api/v4/cat/snmpmibs:
     """
-    filecontent=%5B%7B%22filename%22%3A%20%22MibFile%22%2C%22data%22%3A%20%22WRONGMIBDARLING%22%7D%5D
+    {
+      "filecontent": [
+        {
+          "filename": "MibFile",
+          "data": "WRONGMIBDARLING"
+        }
+      ]
+    }
     """
     Then the response code should be 400
+
+  Scenario: given upload request with valid MIB should return OK result
+    When I am admin
+    When I read file TEST-MIB as testMIB
+    When I do POST /api/v4/cat/snmpmibs:
+    """
+    {
+      "filecontent": [
+        {
+          "filename": "MibFile",
+          "data": "{{ .testMIB | json }}"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """
+    {
+      "counts": {
+        "notification": 1,
+        "object": 6
+      }
+    }
+    """
+    When I do GET /api/v4/cat/snmpmibs
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "nodetype": "notification",
+          "moduleName": "TESTOBJECT-NOTIFY-MIB"
+        }
+      ]
+    }
+    """

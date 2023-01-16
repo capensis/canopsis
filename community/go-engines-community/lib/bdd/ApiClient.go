@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -1354,6 +1355,22 @@ func (a *ApiClient) ISaveResponse(ctx context.Context, key, value string) (conte
 	}
 
 	return setVar(ctx, key, b.String()), nil
+}
+
+/*
+*
+IReadFile reads text file specified by "name" under testdata/scenariodata
+Step example:
+
+	When I read file TEST-MIB as testMIB
+*/
+func (a *ApiClient) IReadFile(ctx context.Context, name, key string) (context.Context, error) {
+	b, err := os.ReadFile(filepath.Join("testdata", "scenariodata", name))
+	if err != nil {
+		return ctx, err
+	}
+
+	return setVar(ctx, key, string(b)), nil
 }
 
 // ValueShouldBeGteLteThan
