@@ -148,8 +148,11 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	if a.Value.ACK != nil {
 		steps = append(steps, *a.Value.ACK)
 	}
-	if len(a.Value.Tickets) > 0 {
-		steps = append(steps, a.Value.Tickets...)
+
+	for _, ticketStep := range a.Value.Tickets {
+		if ticketStep.Type == AlarmStepDeclareTicket {
+			steps = append(steps, ticketStep)
+		}
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)

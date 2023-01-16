@@ -47,10 +47,10 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 
 	if alarm.IsResolved() {
 		switch event.EventType {
-		case types.EventTypeWebhookStarted:
+		case types.EventTypeAutoWebhookStarted:
 			/*do nothing*/
-		case types.EventTypeWebhookCompleted,
-			types.EventTypeWebhookFailed:
+		case types.EventTypeAutoWebhookCompleted,
+			types.EventTypeAutoWebhookFailed:
 			body, err := p.Encoder.Encode(rpc.AxeResultEvent{
 				Alarm:           alarm,
 				WebhookHeader:   event.Parameters.WebhookHeader,
@@ -91,7 +91,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	p.sendEventToService(ctx, *alarm, *event.Entity, alarmChange, msg)
-	p.sendRemediationTriggerEvent(ctx, *alarm, *event.Entity, alarmChange, msg)
+	p.sendTriggerEvent(ctx, *alarm, *event.Entity, alarmChange, msg)
 	p.sendEventToRemediation(ctx, *alarm, *event.Entity, alarmChange, msg)
 	p.sendEventToAction(ctx, *alarm, d.CorrelationId, event, alarmChange, msg)
 
@@ -179,7 +179,6 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 			Execution:            event.Parameters.Execution,
 			Instruction:          event.Parameters.Instruction,
 			TicketInfo:           event.Parameters.TicketInfo,
-			DeclareTicket:        event.Parameters.DeclareTicket,
 			DeclareTicketRequest: event.Parameters.DeclareTicketRequest,
 		},
 	}
@@ -261,7 +260,7 @@ func (p *rpcMessageProcessor) sendEventToRemediation(
 	}
 }
 
-func (p *rpcMessageProcessor) sendRemediationTriggerEvent(
+func (p *rpcMessageProcessor) sendTriggerEvent(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
@@ -272,7 +271,8 @@ func (p *rpcMessageProcessor) sendRemediationTriggerEvent(
 	case types.AlarmChangeTypeAutoInstructionFail,
 		types.AlarmChangeTypeAutoInstructionComplete,
 		types.AlarmChangeTypeInstructionJobFail,
-		types.AlarmChangeTypeInstructionJobComplete:
+		types.AlarmChangeTypeInstructionJobComplete,
+		types.AlarmChangeTypeDeclareTicketWebhook:
 	default:
 		return
 	}
@@ -317,10 +317,10 @@ func (p *rpcMessageProcessor) sendEventToAction(
 	msg []byte,
 ) {
 	switch alarmChange.Type {
-	case types.AlarmChangeTypeWebhookComplete,
-		types.AlarmChangeTypeWebhookFail,
-		types.AlarmChangeTypeDeclareTicketWebhook,
-		types.AlarmChangeTypeDeclareTicketWebhookFail:
+	case types.AlarmChangeTypeAutoWebhookComplete,
+		types.AlarmChangeTypeAutoWebhookFail,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhookFail:
 	default:
 		return
 	}

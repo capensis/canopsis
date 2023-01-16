@@ -60,7 +60,9 @@ func TestMain(m *testing.M) {
 			Logger()
 	}
 
-	err = bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
+	dummyApiUrl := fmt.Sprintf("localhost:%d", flags.dummyHttpPort)
+	err = bdd.RunDummyHttpServer(ctx, dummyApiUrl)
+	dummyApiUrl = "http://" + dummyApiUrl
 	if err != nil {
 		logger.Fatal().Err(err).Msg("")
 	}
@@ -108,7 +110,10 @@ func TestMain(m *testing.M) {
 		return
 	}
 
-	templater := bdd.NewTemplater(map[string]interface{}{"apiURL": apiUrl})
+	templater := bdd.NewTemplater(map[string]interface{}{
+		"apiURL":      apiUrl,
+		"dummyApiURL": dummyApiUrl,
+	})
 	apiClient := bdd.NewApiClient(dbClient, apiUrl, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
@@ -208,10 +213,12 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		scenarioCtx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
 		scenarioCtx.Step(`^I send an event:$`, apiClient.ISendAnEvent)
+		scenarioCtx.Step(`^I save request:$`, apiClient.ISaveRequest)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and body is:$`, apiClient.IDoRequestUntilResponse)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and body contains:$`, apiClient.IDoRequestUntilResponseContains)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response key \"([^"]+)\" is greater or equal than (\d+)$`, apiClient.IDoRequestUntilResponseKeyIsGreaterOrEqualThan)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([^"]+)\" contains:$`, apiClient.IDoRequestUntilResponseArrayKeyContains)
+		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([^"]+)\" contains only:$`, apiClient.IDoRequestUntilResponseArrayKeyContainsOnly)
 		scenarioCtx.Step(`^I do (\w+) (.+):$`, apiClient.IDoRequestWithBody)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+)$`, apiClient.IDoRequestUntilResponseCode)
 		scenarioCtx.Step(`^I do (\w+) (.+)$`, apiClient.IDoRequest)

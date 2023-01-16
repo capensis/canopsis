@@ -18,6 +18,23 @@ if (!db.default_rights.findOne({_id: "api_declare_ticket_rule"})) {
     });
 }
 
+if (!db.default_rights.findOne({_id: "api_declare_ticket_execution"})) {
+    db.default_rights.insertOne({
+        _id: "api_declare_ticket_execution",
+        crecord_name: "api_declare_ticket_execution",
+        crecord_type: "action",
+        desc: "Run declare ticket rules"
+    });
+    db.default_rights.updateOne({_id: "admin"}, {
+        $set: {
+            "rights.api_declare_ticket_execution": {
+                checksum: 1,
+                crecord_type: "right"
+            }
+        }
+    });
+}
+
 if (!db.default_rights.findOne({_id: "models_exploitation_declareTicketRule"})) {
     db.default_rights.insertOne({
         _id: "models_exploitation_declareTicketRule",

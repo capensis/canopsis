@@ -13,8 +13,11 @@ const (
 	AlarmStepsHardLimit    = 2000
 )
 
-const TicketRuleNameScenarioPrefix = "Scenario: "
-const TicketRuleNameRulePrefix = "Rule: "
+const (
+	TicketRuleNameScenarioPrefix          = "Scenario: "
+	TicketRuleNameIdleRulePrefix          = "Idle rule: "
+	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
+)
 
 // AlarmStep represents a generic step used in an alarm.
 type AlarmStep struct {

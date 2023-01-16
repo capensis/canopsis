@@ -116,6 +116,8 @@ type MetaAlarmEventProcessor interface {
 	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
 	// ProcessAckResources ackes resource after component ack.
 	ProcessAckResources(ctx context.Context, event types.Event) error
+	// ProcessTicketResources add ticket to resource after component assoc ticket.
+	ProcessTicketResources(ctx context.Context, event types.Event) error
 }
 
 type Service interface {
