@@ -12,8 +12,9 @@
     v-layout(row, justify-space-between)
       v-flex(xs6)
         pbehavior-type-default-type-field.mr-2(
-          v-field="form.type",
+          :value="form.type",
           :disabled="onlyColor",
+          @input="updateDefaultType",
           @update:color="updateColor"
         )
       v-flex.ml-2(xs6)
@@ -43,8 +44,6 @@
 </template>
 
 <script>
-import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
-
 import { formMixin } from '@/mixins/form';
 
 import PbehaviorTypeDefaultTypeField from './pbehavior-type-default-type-field.vue';
@@ -73,8 +72,8 @@ export default {
     };
   },
   computed: {
-    types() {
-      return Object.values(PBEHAVIOR_TYPE_TYPES);
+    canUpdateColor() {
+      return !this.colorWasChanged || !this.form.color;
     },
   },
   methods: {
@@ -82,8 +81,22 @@ export default {
       this.colorWasChanged = true;
     },
 
+    updateDefaultType(type, color) {
+      const newForm = {
+        ...this.form,
+
+        type,
+      };
+
+      if (this.canUpdateColor) {
+        newForm.color = color;
+      }
+
+      this.updateModel(newForm);
+    },
+
     updateColor(color) {
-      if (this.colorWasChanged && this.form.color) {
+      if (!this.canUpdateColor) {
         return;
       }
 
