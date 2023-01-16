@@ -7,14 +7,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func NewWebhookFailExecutor() operationlib.Executor {
-	return &webhookFailExecutor{}
+func NewAutoWebhookFailExecutor() operationlib.Executor {
+	return &autoWebhookFailExecutor{}
 }
 
-type webhookFailExecutor struct {
+type autoWebhookFailExecutor struct {
 }
 
-func (e *webhookFailExecutor) Exec(
+func (e *autoWebhookFailExecutor) Exec(
 	_ context.Context,
 	operation types.Operation,
 	alarm *types.Alarm,
@@ -43,7 +43,7 @@ func (e *webhookFailExecutor) Exec(
 			return "", err
 		}
 
-		return types.AlarmChangeTypeDeclareTicketWebhookFail, nil
+		return types.AlarmChangeTypeAutoDeclareTicketWebhookFail, nil
 	}
 
 	err := alarm.PartialUpdateAddStep(
@@ -59,5 +59,5 @@ func (e *webhookFailExecutor) Exec(
 		return "", err
 	}
 
-	return types.AlarmChangeTypeWebhookFail, nil
+	return types.AlarmChangeTypeAutoWebhookFail, nil
 }

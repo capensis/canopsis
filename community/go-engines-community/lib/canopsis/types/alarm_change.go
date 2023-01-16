@@ -37,11 +37,16 @@ const (
 	// todo remove
 	AlarmChangeTypeDeclareTicket AlarmChangeType = "declareticket"
 
-	AlarmChangeTypeWebhookStart             AlarmChangeType = "webhookstart"
-	AlarmChangeTypeWebhookComplete          AlarmChangeType = "webhookcomplete"
-	AlarmChangeTypeWebhookFail              AlarmChangeType = "webhookfail"
-	AlarmChangeTypeDeclareTicketWebhook     AlarmChangeType = "declareticketwebhook"
-	AlarmChangeTypeDeclareTicketWebhookFail AlarmChangeType = "declareticketwebhookfail"
+	AlarmChangeTypeWebhookStart                 AlarmChangeType = "webhookstart"
+	AlarmChangeTypeWebhookComplete              AlarmChangeType = "webhookcomplete"
+	AlarmChangeTypeWebhookFail                  AlarmChangeType = "webhookfail"
+	AlarmChangeTypeDeclareTicketWebhook         AlarmChangeType = "declareticketwebhook"
+	AlarmChangeTypeDeclareTicketWebhookFail     AlarmChangeType = "declareticketwebhookfail"
+	AlarmChangeTypeAutoWebhookStart             AlarmChangeType = "autowebhookstart"
+	AlarmChangeTypeAutoWebhookComplete          AlarmChangeType = "autowebhookcomplete"
+	AlarmChangeTypeAutoWebhookFail              AlarmChangeType = "autowebhookfail"
+	AlarmChangeTypeAutoDeclareTicketWebhook     AlarmChangeType = "autodeclareticketwebhook"
+	AlarmChangeTypeAutoDeclareTicketWebhookFail AlarmChangeType = "autodeclareticketwebhookfail"
 
 	// Following change types are used for manual instruction execution.
 	AlarmChangeTypeInstructionStart    AlarmChangeType = "instructionstart"
@@ -106,8 +111,16 @@ func GetTriggers(t AlarmChangeType) []string {
 		triggers = append(triggers, string(AlarmChangeTypeAck))
 	case AlarmChangeTypeWebhookStart,
 		AlarmChangeTypeWebhookComplete,
-		AlarmChangeTypeWebhookFail:
+		AlarmChangeTypeWebhookFail,
+		AlarmChangeTypeDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoWebhookStart,
+		AlarmChangeTypeAutoWebhookComplete,
+		AlarmChangeTypeAutoWebhookFail,
+		AlarmChangeTypeAutoDeclareTicketWebhookFail:
 		// not a trigger
+	case AlarmChangeTypeDeclareTicketWebhook,
+		AlarmChangeTypeAutoDeclareTicketWebhook:
+		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhook))
 	default:
 		trigger := string(t)
 		if trigger != "" {
