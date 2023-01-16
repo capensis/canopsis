@@ -14,11 +14,7 @@ export default {
   namespaced: true,
   actions: {
     fetchList(context, { params = {} } = {}) {
-      return request.get(API_ROUTES.snmpMib, params);
-    },
-
-    fetchDistinctList(context, { params = {} } = {}) {
-      return request.get(API_ROUTES.snmpMib, params);
+      return request.get(API_ROUTES.snmpMib, { params });
     },
 
     upload(context, { data } = {}) {
