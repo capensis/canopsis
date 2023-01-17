@@ -374,6 +374,8 @@ definitions:
         type: boolean
       steps:
         $ref: '#/definitions/alarm.StepsRequest'
+      with_declare_tickets:
+        type: boolean
       with_instructions:
         type: boolean
     required:
@@ -3763,6 +3765,10 @@ definitions:
         type: string
       alarm_id:
         type: string
+      assigned_declare_ticket_rules:
+        items:
+          $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
+        type: array
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'

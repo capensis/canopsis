@@ -21,10 +21,11 @@ type ListRequest struct {
 
 type EntitiesListRequest struct {
 	pagination.Query
-	WithInstructions bool   `form:"with_instructions"`
-	Sort             string `form:"sort"`
-	SortBy           string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
-	PbhOrigin        string `form:"pbh_origin" json:"pbh_origin"`
+	WithInstructions   bool   `form:"with_instructions"`
+	WithDeclareTickets bool   `form:"with_declare_tickets"`
+	Sort               string `form:"sort"`
+	SortBy             string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+	PbhOrigin          string `form:"pbh_origin" json:"pbh_origin"`
 }
 
 type Service struct {
@@ -139,6 +140,8 @@ type Entity struct {
 	Links []WeatherLink `json:"linklist" bson:"-"`
 
 	DependsCount int `bson:"depends_count" json:"depends_count"`
+
+	AssignedDeclareTicketRules []alarm.AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }
 
 type WeatherLink struct {
