@@ -147,7 +147,7 @@ Feature: get a job
 
   Scenario: given job with linked instruction should return corresponding flags
     When I am admin
-    When I do GET /api/v4/cat/jobs?search=test-job-to-check-linked-to-manual-instruction&with_flags=true&sort_by=name&sort=asc
+    When I do GET /api/v4/cat/jobs?search=test-job-to-check-linked-to-manual-instruction&with_flags=true&sort_by=_id&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json

@@ -261,7 +261,6 @@ action_scenario:
         emit_trigger: false
         parameters:
           author: test-scenario-backward-compatibility-actions-1-author
-          output: test-scenario-backward-compatibility-actions-1-output
           ticket: test-scenario-backward-compatibility-actions-1-ticket
         type: assocticket
       - old_alarm_patterns:
@@ -308,5 +307,6 @@ action_scenario:
             ticket_id: ticket_id
           request:
             method: POST
-            url: http://localhost:3000/webhook/ticket
+            url: http://localhost:3000/webhook/request
+            payload: "{\"ticket_id\":\"testticket\"}"
         type: webhook

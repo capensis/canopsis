@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"go.mongodb.org/mongo-driver/bson"
@@ -49,8 +50,8 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, ro
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
-	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, output, userID, role, initiator, ticketInfo)
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, ticketInfo.GetStepMessage(), userID, role, initiator, ticketInfo)
 	err := a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
@@ -233,8 +234,8 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 }
 
 // PartialUpdateDeclareTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
-	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator, ticketInfo)
+func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, ticketInfo.GetStepMessage(), userID, role, initiator, ticketInfo)
 	err := a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
@@ -256,7 +257,7 @@ func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, author, out
 		return err
 	}
 
-	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator, ticketInfo)
+	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, ticketInfo.GetStepMessage(), userID, role, initiator, ticketInfo)
 	err = a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
@@ -271,19 +272,30 @@ func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, author, out
 	return nil
 }
 
-func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp CpsTime, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
+func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp CpsTime, author, output, failReason, userID, role, initiator string, ticketInfo TicketInfo) error {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(output)
+	if failReason != "" {
+		outputBuilder.WriteString(". Fail reason: ")
+		outputBuilder.WriteString(failReason)
+		outputBuilder.WriteRune('.')
+	}
+
+	ticketOutput := outputBuilder.String()
+	requestOutput := ticketOutput
 	stepType := AlarmStepWebhookFail
 	if request {
+		requestOutput = output
 		stepType = AlarmStepWebhookComplete
 	}
 
-	newStep := NewAlarmStep(stepType, timestamp, author, output, userID, role, initiator)
+	newStep := NewAlarmStep(stepType, timestamp, author, requestOutput, userID, role, initiator)
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
 	}
 
-	newTicketStep := NewTicketStep(AlarmStepDeclareTicketFail, timestamp, author, output, userID, role, initiator, ticketInfo)
+	newTicketStep := NewTicketStep(AlarmStepDeclareTicketFail, timestamp, author, ticketOutput, userID, role, initiator, ticketInfo)
 	err = a.Value.Steps.Add(newTicketStep)
 	if err != nil {
 		return err
@@ -292,6 +304,26 @@ func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp Cp
 	a.Value.Tickets = append(a.Value.Tickets, newTicketStep)
 
 	a.AddUpdate("$push", bson.M{"v.tickets": newTicketStep, "v.steps": bson.M{"$each": bson.A{newStep, newTicketStep}}})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookFail(timestamp CpsTime, author, output, failReason, userID, role, initiator string) error {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(output)
+	if failReason != "" {
+		outputBuilder.WriteString(". Fail reason: ")
+		outputBuilder.WriteString(failReason)
+		outputBuilder.WriteRune('.')
+	}
+
+	newStep := NewAlarmStep(AlarmStepWebhookFail, timestamp, author, outputBuilder.String(), userID, role, initiator)
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	a.AddUpdate("$push", bson.M{"v.steps": newStep})
 
 	return nil
 }

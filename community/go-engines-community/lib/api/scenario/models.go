@@ -137,7 +137,11 @@ type Parameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty" bson:"state"`
 	// AssocTicket
-	Ticket string `json:"ticket,omitempty" bson:"ticket"`
+	Ticket     string            `json:"ticket,omitempty" bson:"ticket"`
+	TicketURL  string            `json:"ticket_url,omitempty" bson:"ticket_url"`
+	TicketData map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
+	// AssocTicket and Webhook
+	TicketSystemName string `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
 	// Pbehavior
@@ -150,8 +154,8 @@ type Parameters struct {
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 	// Webhook
 	Request       *request.Parameters           `json:"request,omitempty" bson:"request"`
+	SkipForChild  *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
-	SystemName    string                        `json:"system_name,omitempty" bson:"system_name"`
 }
 
 type AggregationResult struct {

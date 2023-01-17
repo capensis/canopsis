@@ -30,10 +30,11 @@ func (e *autoWebhookFailExecutor) Exec(
 
 	if params.TicketInfo.TicketRuleID != "" {
 		err := alarm.PartialUpdateWebhookDeclareTicketFail(
-			params.DeclareTicketRequest,
+			params.WebhookRequest,
 			time,
 			params.Author,
 			params.Output,
+			params.WebhookFailReason,
 			userID,
 			role,
 			initiator,
@@ -46,11 +47,11 @@ func (e *autoWebhookFailExecutor) Exec(
 		return types.AlarmChangeTypeAutoDeclareTicketWebhookFail, nil
 	}
 
-	err := alarm.PartialUpdateAddStep(
-		types.AlarmStepWebhookFail,
+	err := alarm.PartialUpdateWebhookFail(
 		time,
 		params.Author,
 		params.Output,
+		params.WebhookFailReason,
 		userID,
 		role,
 		initiator,
