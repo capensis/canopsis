@@ -101,7 +101,7 @@ func (a *api) Update(c *gin.Context) {
 			IsToggled:  isToggled,
 		}
 
-		if entity.Type == types.EntityTypeComponent {
+		if !entity.Enabled && entity.Type == types.EntityTypeComponent {
 			msg.Resources = entity.Depends
 		}
 
