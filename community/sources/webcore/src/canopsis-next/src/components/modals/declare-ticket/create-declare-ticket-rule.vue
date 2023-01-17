@@ -21,7 +21,11 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { declareTicketRuleToForm, formToDeclareTicketRule } from '@/helpers/forms/declare-ticket-rule';
+import {
+  declareTicketRuleErrorsToForm,
+  declareTicketRuleToForm,
+  formToDeclareTicketRule,
+} from '@/helpers/forms/declare-ticket-rule';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -58,11 +62,19 @@ export default {
       const isFormValid = await this.$validator.validate();
 
       if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToDeclareTicketRule(this.form));
-        }
+        try {
+          if (this.config.action) {
+            await this.config.action(formToDeclareTicketRule(this.form));
+          }
 
-        this.$modals.hide();
+          this.$modals.hide();
+        } catch (err) {
+          if (err.error) {
+            this.$popups.error({ text: err.error });
+          } else {
+            this.setFormErrors(declareTicketRuleErrorsToForm(err, this.form));
+          }
+        }
       }
     },
   },

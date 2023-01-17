@@ -1,7 +1,7 @@
 import { isNumber, pick } from 'lodash';
 
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
-import { durationToForm } from '@/helpers/date/duration';
+import { durationToForm, isValidDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} RequestAuth
@@ -16,9 +16,9 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {RequestAuth} auth
  * @property {Object} headers
  * @property {boolean} skip_verify
- * @property {Duration} timeout
- * @property {number} retry_count
- * @property {?Duration} retry_delay
+ * @property {Duration} [timeout]
+ * @property {number} [retry_count]
+ * @property {?Duration} [retry_delay]
  * @property {string} payload
  */
 
@@ -84,6 +84,9 @@ export const retryToForm = (parameters = {}) => (
 export const formToRequest = form => ({
   ...form,
 
+  retry_delay: isValidDuration(form.retry_delay)
+    ? form.retry_delay
+    : undefined,
   timeout: isNumber(form.timeout.value) ? form.timeout : null,
   auth: form.auth.enabled ? pick(form.auth, ['username', 'password']) : null,
   headers: textPairsToObject(form.headers),

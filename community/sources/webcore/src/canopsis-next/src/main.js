@@ -50,6 +50,7 @@ import CInformationBlockRow from '@/components/common/block/c-information-block-
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CAlert from '@/components/common/alert/c-alert.vue';
 
 /**
  * Overlays
@@ -335,6 +336,7 @@ Vue.use(DaySpanVuetifyPlugin, {
 Vue.component('alarms-list-table', AlarmsListTable);
 
 /* Global custom canopsis components */
+Vue.component('c-alert', CAlert);
 Vue.component('c-alarm-chip', CAlarmChip);
 Vue.component('c-alarm-tag-chip', CAlarmTagChip);
 Vue.component('c-alarm-tags-chips', CAlarmTagsChips);

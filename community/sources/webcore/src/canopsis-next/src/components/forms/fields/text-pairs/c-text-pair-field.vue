@@ -18,7 +18,7 @@
           :error-messages="errors.collect(valueFieldName)"
         )
           template(#append="")
-            slot(name="append-response")
+            slot(name="append-value")
     c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 

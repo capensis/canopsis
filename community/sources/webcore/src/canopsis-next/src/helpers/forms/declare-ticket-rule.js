@@ -1,6 +1,8 @@
 import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 
 /**
  * @typedef {Object} DeclareTicketRuleWebhookDeclareTicket
@@ -13,7 +15,7 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 /**
  * @typedef {Object} DeclareTicketRuleWebhook
  * @property {Request} request
- * @property {DeclareTicketRuleWebhookDeclareTicket} declare_ticket
+ * @property {?DeclareTicketRuleWebhookDeclareTicket} declare_ticket
  * @property {boolean} stop_on_fail
  */
 
@@ -32,6 +34,7 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 /**
  * @typedef {DeclareTicketRuleWebhookDeclareTicket} DeclareTicketRuleWebhookDeclareTicketForm
+ * @property {boolean} enabled
  * @property {TextPairObject[]} mapping
  */
 
@@ -51,18 +54,25 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @property {FilterPatternsForm} patterns
  */
 
-export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket = {}) => {
+/**
+ * Convert declare ticket object to form compatible object
+ *
+ * @param {DeclareTicketRuleWebhookDeclareTicket} declareTicket
+ * @returns {DeclareTicketRuleWebhookDeclareTicketForm}
+ */
+export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
   const {
     empty_response: emptyResponse,
     is_regexp: isRegexp,
     ticket_id: ticketId,
     ticket_url: ticketUrl,
     ...fields
-  } = declareTicket;
+  } = declareTicket ?? {};
 
   return {
-    empty_response: declareTicket.empty_response ?? true,
-    is_regexp: declareTicket.is_regexp ?? false,
+    enabled: !!declareTicket,
+    empty_response: emptyResponse ?? true,
+    is_regexp: isRegexp ?? false,
     ticket_id: ticketId ?? '',
     ticket_url: ticketUrl ?? '',
     mapping: objectToTextPairs(fields),
@@ -87,7 +97,9 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = []) => webhooks.map(declareTicketRuleWebhookToForm);
+export const declareTicketRuleWebhooksToForm = (webhooks = []) => addKeyInEntities(
+  webhooks.map(declareTicketRuleWebhookToForm),
+);
 
 /**
  * Convert declare ticket rule object to form compatible object
@@ -108,10 +120,14 @@ export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
  * Convert declare ticket rule webhook form to API compatible object
  *
  * @param {DeclareTicketRuleWebhookDeclareTicketForm} form
- * @returns {DeclareTicketRuleWebhookDeclareTicket}
+ * @returns {DeclareTicketRuleWebhookDeclareTicket | null}
  */
 export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
-  const { mapping, ...declareTicket } = form;
+  const { enabled, mapping, ...declareTicket } = form;
+
+  if (!enabled) {
+    return null;
+  }
 
   return {
     ...declareTicket,
@@ -137,7 +153,9 @@ export const formToDeclareTicketRuleWebhook = webhook => ({
  * @param {DeclareTicketRuleWebhooksForm} webhooks
  * @returns {DeclareTicketRuleWebhooks}
  */
-export const formToDeclareTicketRuleWebhooks = (webhooks = []) => webhooks.map(formToDeclareTicketRuleWebhook);
+export const formToDeclareTicketRuleWebhooks = (webhooks = []) => removeKeyFromEntities(
+  webhooks.map(formToDeclareTicketRuleWebhook),
+);
 
 /**
  * Convert form object to declare ticket API compatible object
@@ -153,4 +171,30 @@ export const formToDeclareTicketRule = (form) => {
     webhooks: formToDeclareTicketRuleWebhooks(webhooks),
     ...formFilterToPatterns(patterns),
   };
+};
+
+/**
+ * Convert error structure to form structure
+ *
+ * @param {FlattenErrors} errors
+ * @param {DeclareTicketRuleForm} form
+ * @return {FlattenErrors}
+ */
+export const declareTicketRuleErrorsToForm = (errors, form) => {
+  const prepareWebhooksErrors = (errorsObject) => {
+    const { webhooks, ...errorMessages } = errorsObject;
+
+    if (webhooks) {
+      errorMessages.webhooks = webhooks.reduce((acc, messages, index) => {
+        const webhook = form.webhooks[index];
+        acc[webhook.key] = messages;
+
+        return acc;
+      }, {});
+    }
+
+    return errorMessages;
+  };
+
+  return flattenErrorMap(errors, prepareWebhooksErrors);
 };

@@ -1,9 +1,11 @@
 <template lang="pug">
   v-switch(
     v-field="value",
+    v-on="$listeners",
     :label="label || $t('common.enabled')",
     :color="color",
     :disabled="disabled",
+    :readonly="readonly",
     :hide-details="hideDetails"
   )
 </template>
@@ -28,6 +30,10 @@ export default {
       default: 'primary',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },
