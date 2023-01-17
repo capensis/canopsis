@@ -25,22 +25,23 @@ function prepareAttributes(attributes) {
 /**
  * Convert date to long format
  *
- * Example: {{timestamp 1000000 today='true'}} -> 12/01/1970 20:46:40
+ * First example: {{timestamp 1673932037}} -> 07:07:17 (it's today time)
+ * Second example: {{timestamp 1673932037 format='long'}} -> 17/01/2023 07:07:17
  *
  * @param {string|number} date
  * @param {Object} options
  * @returns {string}
  */
 export function timestampHelper(date, options = {}) {
-  const { today } = options.hash;
+  const { format } = options.hash;
 
   if (!date) {
     return '';
   }
 
-  return today === 'true'
-    ? convertDateToStringWithFormatForToday(date)
-    : convertDateToString(date);
+  return format === 'long'
+    ? convertDateToString(date)
+    : convertDateToStringWithFormatForToday(date);
 }
 
 /**
