@@ -169,6 +169,49 @@ Feature: Create a SNMP rule
             "formatter": "",
             "value": "{{`{{ nSvcDesc }}`}}"
         },
+        "component": {
+            "regex": "",
+            "formatter": "",
+            "value": "{{`{{ nHostname }}`}}"
+        },
+        "state": {
+            "state": 3,
+            "type": "simple"
+        },
+        "connector_name": {
+            "regex": "",
+            "formatter": "",
+            "value": "test-snmprule-to-create-invalid-connector"
+        },
+        "output": {
+            "regex": "",
+            "formatter": "",
+            "value": "{{`{{ nSvcOutput }}`}}"
+        },
+        "oid": {
+            "mibName": "nSvcEvent",
+            "moduleName": "TEST-NOTIFY-MIB",
+            "oid": "test-snmprule-to-create-invalid-connector-test-snmprule-to-create-invalid-connector-test-snmprule-to-create-invalid-connector-test-snmprule-to-create-invalid-connector-test-snmprule-to-create-invalid-connector-test-snmprule-to-create-invalid-connector-123456789"
+        }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "oid.oid": "oid should be 255 or less."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/snmprules:
+    """json
+    {
+        "resource": {
+            "regex": "",
+            "formatter": "",
+            "value": "{{`{{ nSvcDesc }}`}}"
+        },
         "oid": {
             "oid": "1.3.6.1.4.1.20006.1.7",
             "mibName": "nSvcEvent",
