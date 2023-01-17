@@ -50,7 +50,7 @@ Feature: Upload a MIB file
       }
     }
     """
-    When I do GET /api/v4/cat/snmpmibs?nodetype=node
+    When I do GET /api/v4/cat/snmpmibs?nodetype=node&moduleName=TESTOBJECT-NOTIFY-MIB
     Then the response code should be 200
     Then the response body should contain:
     """
@@ -62,6 +62,34 @@ Feature: Upload a MIB file
           "moduleName": "TESTOBJECT-NOTIFY-MIB",
           "oid": "1.3.6.1.4.1.8072.9999.9999",
           "status": "current"
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/snmpmibs?nodetype=notification&moduleName=TESTOBJECT-NOTIFY-MIB
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "_id" : "1.3.6.1.4.1.8072.9999.9999.2",
+          "oid" : "1.3.6.1.4.1.8072.9999.9999.2",
+          "name" : "tObjectEvent",
+          "description" : "The SNMP trap that is generated as a result of an event with object data",
+          "objects" : {
+            "tObjectname" : {
+              "nodetype" : "object",
+              "module" : "TESTOBJECT-NOTIFY-MIB"
+            },
+            "tObjectDurationSec" : {
+              "nodetype" : "object",
+              "module" : "TESTOBJECT-NOTIFY-MIB"
+            }
+          },
+          "status" : "current",
+          "nodetype" : "notification",
+          "moduleName" : "TESTOBJECT-NOTIFY-MIB"
         }
       ]
     }
