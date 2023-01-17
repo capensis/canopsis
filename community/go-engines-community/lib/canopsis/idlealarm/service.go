@@ -259,6 +259,7 @@ func (s *baseService) applyAlarmRule(
 			TicketURL:        rule.Operation.Parameters.TicketURL,
 			TicketSystemName: rule.Operation.Parameters.TicketSystemName,
 			TicketData:       rule.Operation.Parameters.TicketData,
+			TicketComment:    rule.Comment,
 		}
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate

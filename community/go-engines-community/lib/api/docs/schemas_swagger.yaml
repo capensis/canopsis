@@ -104,7 +104,7 @@ definitions:
         description: TicketData is used in assocticket action.
         type: object
       ticket_system_name:
-        description: TicketSystemName is used in assocticket action.
+        description: TicketSystemName is used in assocticket and webhook action.
         maxLength: 255
         type: string
       ticket_url:
@@ -1934,6 +1934,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_entity_pattern:
@@ -1984,6 +1986,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_entity_pattern:
@@ -2031,6 +2035,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_entity_pattern:
@@ -2128,6 +2134,8 @@ definitions:
         type: array
       author:
         $ref: '#/definitions/author.Author'
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -3616,15 +3624,24 @@ definitions:
         description: Webhook
       rrule:
         type: string
+      skip_for_child:
+        type: boolean
       start_on_trigger:
         type: boolean
       state:
         description: ChangeState
         type: integer
-      system_name:
-        type: string
       ticket:
         description: AssocTicket
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_system_name:
+        description: AssocTicket and Webhook
+        type: string
+      ticket_url:
         type: string
       tstart:
         type: integer

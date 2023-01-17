@@ -23,11 +23,12 @@ type AxeParameters struct {
 	// AssocTicket and Webhook
 	types.TicketInfo
 	// Webhook
-	DeclareTicketRequest bool              `json:"declare_ticket_request,omitempty"`
-	TicketResources      bool              `json:"ticket_resources,omitempty"`
-	WebhookHeader        map[string]string `json:"webhook_header,omitempty"`
-	WebhookResponse      map[string]any    `json:"webhook_response,omitempty"`
-	WebhookError         *Error            `json:"webhook_error,omitempty"`
+	TicketResources   bool              `json:"ticket_resources,omitempty"`
+	WebhookRequest    bool              `json:"webhook_request,omitempty"`
+	WebhookHeader     map[string]string `json:"webhook_header,omitempty"`
+	WebhookResponse   map[string]any    `json:"webhook_response,omitempty"`
+	WebhookFailReason string            `json:"webhook_fail_reason,omitempty"`
+	WebhookError      *Error            `json:"webhook_error,omitempty"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior

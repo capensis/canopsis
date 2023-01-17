@@ -369,10 +369,9 @@ Feature: update alarm by RPC stream
         "ticket_url": "test-url",
         "ticket_system_name": "test-system-name",
         "ticket_data": {
-          "ticket_param_1": "ticket_value_1",
-          "ticket_param_2": "ticket_value_2"
+          "ticket_param_1": "ticket_value_1"
         },
-        "output": "test-output-axe-rpc-4"
+        "ticket_comment": "test-comment"
       }
     }
     """
@@ -388,27 +387,27 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket",
+                "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket",
                 "ticket_url": "test-url",
                 "ticket_system_name": "test-system-name",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-ticket",
+              "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-ticket",
               "ticket_url": "test-url",
               "ticket_system_name": "test-system-name",
               "ticket_data": {
-                "ticket_param_1": "ticket_value_1",
-                "ticket_param_2": "ticket_value_2"
-              }
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-comment"
             },
             "component": "test-component-axe-rpc-4",
             "connector": "test-connector-axe-rpc-4",
@@ -462,15 +461,15 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket",
                 "val": 0,
+                "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket",
                 "ticket_url": "test-url",
                 "ticket_system_name": "test-system-name",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment"
               }
             ],
             "meta": {
