@@ -479,6 +479,11 @@ default_rights:
     _id: models_techmetrics
     crecord_name: <Current()._id>
     desc: "Tech metrics"
+  permission_models_widgetTemplate:
+    <<: *permission_crud
+    _id: models_widgetTemplate
+    crecord_name: <Current()._id>
+    desc: "Widget templates"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -1181,6 +1186,8 @@ default_rights:
         checksum: 15
       "@permission_models_techmetrics":
         checksum: 1
+      "@permission_models_widgetTemplate":
+        checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
       "@permission_listalarm_fastAck":
