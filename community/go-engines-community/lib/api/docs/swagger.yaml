@@ -263,6 +263,7 @@ paths:
                   {
                     "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
                     "with_instructions": true,
+                    "with_declare_tickets": true,
                     "opened": true,
                     "steps": {
                       "page": 1,
@@ -398,6 +399,12 @@ paths:
             type: boolean
         - name: with_instructions
           in: query
+          description: show assigned instructions and execution flags
+          schema:
+            type: boolean
+        - name: with_declare_tickets
+          in: query
+          description: show assigned declare ticket rules
           schema:
             type: boolean
         - $ref: '#/components/parameters/limit'
@@ -10278,6 +10285,11 @@ paths:
           description: show assigned instructions and execution flags
           schema:
             type: boolean
+        - name: with_declare_tickets
+          in: query
+          description: show assigned declare ticket rules
+          schema:
+            type: boolean            
       responses:
         200:
           description: OK

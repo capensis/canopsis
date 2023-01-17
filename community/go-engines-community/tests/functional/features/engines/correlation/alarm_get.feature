@@ -1749,7 +1749,7 @@ Feature: Get alarms
     [
       {
         "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "with_instructions": true,
+        "with_declare_tickets": true,
         "children": {
           "page": 1,
           "sort_by": "v.resource",
@@ -1758,7 +1758,7 @@ Feature: Get alarms
       },
       {
         "_id": "{{ (index .lastResponse.data 1)._id }}",
-        "with_instructions": true,
+        "with_declare_tickets": true,
         "children": {
           "page": 1,
           "sort_by": "v.resource",
