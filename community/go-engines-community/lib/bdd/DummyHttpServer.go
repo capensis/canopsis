@@ -82,11 +82,19 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 			time.Sleep(response.Timeout)
 		}
 
-		w.WriteHeader(response.Code)
-
-		for k, v := range response.Headers {
-			w.Header().Set(k, v)
+		if len(response.Headers) > 0 {
+			for k, v := range response.Headers {
+				w.Header().Set(k, v)
+			}
+		} else if response.ForwardRequestHeader {
+			for k, v := range r.Header {
+				if len(v) > 0 {
+					w.Header().Set(k, v[0])
+				}
+			}
 		}
+
+		w.WriteHeader(response.Code)
 
 		if response.Body != "" {
 			_, err := fmt.Fprintf(w, response.Body)
@@ -94,7 +102,7 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-		} else if response.Request {
+		} else if response.ForwardRequestBody {
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -110,12 +118,15 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 }
 
 type dummyResponse struct {
-	Code     int
-	Method   string
-	Body     string
-	Headers  map[string]string
-	Timeout  time.Duration
-	Request  bool
+	Code    int
+	Method  string
+	Body    string
+	Headers map[string]string
+	Timeout time.Duration
+
+	ForwardRequestBody   bool
+	ForwardRequestHeader bool
+
 	Username string
 	Password string
 }
@@ -308,32 +319,19 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Body:   "{\"objects\":{\"server\":{\"code\":200,\"message\":\"test message\",\"fields\":{\"name\":\"test name\"}}},\"code\":400,\"message\":\"test message\"}",
 		},
 		// Webhook
-		"/webhook/ticket": {
-			Code:   http.StatusOK,
-			Method: http.MethodPost,
-			Body:   "{\"ticket_id\":\"testticket\",\"ticket_data\":\"testdata\"}",
-		},
-		"/webhook/document_with_array": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "{\"array\":[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]}",
-		},
-		"/webhook/response_is_array": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]",
-		},
 		"/webhook/request": {
-			Code:    http.StatusOK,
-			Method:  http.MethodPost,
-			Request: true,
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
 		},
 		"/webhook/auth-request": {
-			Code:     http.StatusOK,
-			Method:   http.MethodPost,
-			Request:  true,
-			Username: "test",
-			Password: "test",
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+			Username:             "test",
+			Password:             "test",
 		},
 	}
 }

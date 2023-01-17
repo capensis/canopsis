@@ -24,6 +24,7 @@ type EditRequest struct {
 	Type                 string                 `json:"type" binding:"required"`
 	Priority             *int64                 `json:"priority" binding:"required"`
 	Duration             types.DurationWithUnit `json:"duration" binding:"required"`
+	Comment              string                 `json:"comment"`
 	DisableDuringPeriods []string               `json:"disable_during_periods"`
 	AlarmCondition       string                 `json:"alarm_condition"`
 	Operation            *OperationRequest      `json:"operation,omitempty"`
@@ -65,6 +66,7 @@ type Rule struct {
 	Type              string                       `bson:"type" json:"type"`
 	Priority          int64                        `bson:"priority" json:"priority"`
 	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
+	Comment           string                       `bson:"comment" json:"comment"`
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
