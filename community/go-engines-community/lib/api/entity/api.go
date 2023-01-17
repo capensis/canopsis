@@ -309,7 +309,7 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 				IsToggled:  isToggled,
 			}
 
-			if simplifiedEntity.Type == types.EntityTypeComponent {
+			if !enabled && simplifiedEntity.Type == types.EntityTypeComponent {
 				msg.Resources = simplifiedEntity.Depends
 			}
 
