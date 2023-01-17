@@ -58,7 +58,7 @@ type SectionFile struct {
 	UploadMaxSize int64    `toml:"UploadMaxSize"`
 	Junit         string   `toml:"Junit"`
 	JunitApi      string   `toml:"JunitApi"`
-	MibPath       []string `toml:"MibPath"`
+	SnmpMib       []string `toml:"SnmpMib"`
 }
 
 type SectionDataStorage struct {

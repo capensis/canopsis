@@ -238,3 +238,138 @@ Feature: Create a SNMP rule
       }
     }
     """
+
+  Scenario: given create request with template state and stateoid should return ok
+    When I am admin
+    When I do POST /api/v4/cat/snmprules:
+    """json
+    {
+        "oid": {
+            "oid": "1.3.6.1.4.1.20006.1.6",
+            "mibName": "nHostNotify",
+            "moduleName": "NAGIOS-NOTIFY-MIB"
+        },
+        "component": {
+            "value": "prefix-1{{`{{ nHostAckAuthor }}`}}",
+            "regex": "rx",
+            "formatter": "gdsf"
+        },
+        "connector_name": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "output": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "resource": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "state": {
+            "type": "template",
+            "state": 0,
+            "stateoid": {
+                "value": "prefix2{{`{{ nHostAckAuthor }}`}}",
+                "regex": "",
+                "formatter": ""
+            },
+            "info": "fsad",
+            "minor":"fds",
+            "major":"asd",
+            "critical":"asd"
+        }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+        "oid": {
+            "oid": "1.3.6.1.4.1.20006.1.6",
+            "mibName": "nHostNotify",
+            "moduleName": "NAGIOS-NOTIFY-MIB"
+        },
+        "component": {
+            "value": "prefix-1{{`{{ nHostAckAuthor }}`}}",
+            "regex": "rx",
+            "formatter": "gdsf"
+        },
+        "connector_name": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "output": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "resource": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "state": {
+            "type": "template",
+            "state": 0,
+            "stateoid": {
+                "value": "prefix2{{`{{ nHostAckAuthor }}`}}",
+                "regex": "",
+                "formatter": ""
+            },
+            "info": "fsad",
+            "minor":"fds",
+            "major":"asd",
+            "critical":"asd"
+        }
+    }
+    """
+    When I do GET /api/v4/cat/snmprules/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+        "oid": {
+            "oid": "1.3.6.1.4.1.20006.1.6",
+            "mibName": "nHostNotify",
+            "moduleName": "NAGIOS-NOTIFY-MIB"
+        },
+        "component": {
+            "value": "prefix-1{{`{{ nHostAckAuthor }}`}}",
+            "regex": "rx",
+            "formatter": "gdsf"
+        },
+        "connector_name": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "output": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "resource": {
+            "value": "{{`{{ nHostAckComment }}`}}",
+            "regex": "",
+            "formatter": ""
+        },
+        "state": {
+            "type": "template",
+            "state": 0,
+            "stateoid": {
+                "value": "prefix2{{`{{ nHostAckAuthor }}`}}",
+                "regex": "",
+                "formatter": ""
+            },
+            "info": "fsad",
+            "minor":"fds",
+            "major":"asd",
+            "critical":"asd"
+        }
+    }
+    """
