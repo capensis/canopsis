@@ -15,11 +15,12 @@
         :value-label="valueLabel",
         :item-text="itemText",
         :item-value="itemValue",
+        :name="item[itemKey]",
         :hints="hints",
         @remove="removeItemFromArray(index)"
       )
-        template(#append-response="")
-          slot(name="append-response", :item="item")
+        template(#append-value="")
+          slot(name="append-value", :item="item")
     v-flex(v-if="!disabled", xs12)
       v-layout
         v-btn.ml-0(color="primary", outline, @click="addItem") {{ addButtonLabel || $t('common.add') }}

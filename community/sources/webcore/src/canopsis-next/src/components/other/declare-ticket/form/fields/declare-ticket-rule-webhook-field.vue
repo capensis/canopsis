@@ -1,9 +1,13 @@
 <template lang="pug">
   v-layout(column)
-    request-form(v-field="form.request", :name="`${name}.request`")
-    declare-ticket-rule-ticket-mapping-field.mb-2(v-field="form.declare_ticket", :name="`${name}.declare_ticket`")
+    request-form(v-field="value.request", :name="`${name}.request`")
+    declare-ticket-rule-ticket-mapping-field.mb-2(
+      v-field="value.declare_ticket",
+      :name="`${name}.declare_ticket`",
+      :is-declare-ticket-exist="isDeclareTicketExist"
+    )
     c-workflow-field(
-      v-field="form.stop_on_fail",
+      v-field="value.stop_on_fail",
       :disabled="disabled",
       :label="$t('declareTicket.workflowIfStepFails')",
       :continue-label="$t('declareTicket.continueWithNextStep')"
@@ -18,11 +22,11 @@ import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-ma
 export default {
   components: { DeclareTicketRuleTicketMappingField, RequestForm },
   model: {
-    prop: 'form',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    form: {
+    value: {
       type: Object,
       required: true,
     },
@@ -31,6 +35,10 @@ export default {
       default: 'webhook',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    isDeclareTicketExist: {
       type: Boolean,
       default: false,
     },

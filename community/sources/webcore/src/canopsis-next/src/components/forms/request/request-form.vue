@@ -5,7 +5,7 @@
       request-url-field(
         v-field="form",
         :help-text="$t('common.request.urlHelp')",
-        :name="`${name}.request`",
+        :name="name",
         :disabled="disabled"
       )
       slot(name="append-url")
@@ -30,8 +30,7 @@
       help-icon="help",
       help-icon-color="grey darken-1"
     )
-      v-flex(v-if="!form.headers.length", xs12)
-        v-alert(:value="true", type="info") {{ $t('common.request.emptyHeaders') }}
+      c-alert(v-if="!form.headers.length", type="info") {{ $t('common.request.emptyHeaders') }}
       request-headers-field(v-field="form.headers", :name="`${name}.headers`", :disabled="disabled")
 
     c-payload-field(

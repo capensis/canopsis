@@ -1,11 +1,14 @@
 <template lang="pug">
   v-layout(column)
-    v-flex(v-if="!webhooks.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('declareTicket.emptyWebhooks') }}
+    c-alert(v-if="!webhooks.length", type="info") {{ $t('declareTicket.emptyWebhooks') }}
     draggable(v-field="webhooks", :options="draggableOptions")
       v-card.my-2(v-for="(webhook, index) in webhooks", :key="webhook.key")
         v-card-text
-          declare-ticket-rule-webhook-field(v-field="webhooks[index]", :name="webhook.key")
+          declare-ticket-rule-webhook-field(
+            v-field="webhooks[index]",
+            :name="`${name}.${webhook.key}`",
+            :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled"
+          )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasWebhooksErrors ? 'error' : 'primary'",
@@ -53,6 +56,14 @@ export default {
     },
   },
   computed: {
+    isTicketIdExist() {
+      return this.webhooks.some(webhook => webhook.declare_ticket.ticket_id);
+    },
+
+    isSomeOneDeclareTicketEnabled() {
+      return this.webhooks.some(webhook => webhook.declare_ticket.enabled);
+    },
+
     hasWebhooksErrors() {
       return this.errors.has(this.name);
     },
@@ -75,17 +86,25 @@ export default {
     },
   },
   created() {
-    this.$validator.attach({
-      name: this.name,
-      rules: 'min_value:1',
-      getter: () => this.webhooks.length,
-      vm: this,
-    });
+    this.attachMinValueRule();
   },
   beforeDestroy() {
-    this.$validator.detach(this.name);
+    this.detachRules(this.name);
   },
   methods: {
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'min_value:1',
+        getter: () => this.webhooks.length,
+        vm: this,
+      });
+    },
+
+    detachRules() {
+      this.$validator.detach(this.name);
+    },
+
     addWebhook() {
       this.addItemIntoArray(declareTicketRuleWebhookToForm());
     },
