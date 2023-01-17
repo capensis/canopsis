@@ -16,6 +16,24 @@ if (!db.default_rights.findOne({_id: "api_widgettemplate"})) {
     });
 }
 
+if (!db.default_rights.findOne({_id: "models_widgetTemplate"})) {
+    db.default_rights.insertOne({
+        _id: "models_widgetTemplate",
+        crecord_name: "models_widgetTemplate",
+        crecord_type: "action",
+        desc: "Widget templates",
+        type: "CRUD"
+    });
+    db.default_rights.updateOne({_id: "admin"}, {
+        $set: {
+            "rights.models_widgetTemplate": {
+                checksum: 15,
+                crecord_type: "right"
+            }
+        }
+    });
+}
+
 function migrateAlarmColumns(columns) {
     if (!columns) {
         return false;

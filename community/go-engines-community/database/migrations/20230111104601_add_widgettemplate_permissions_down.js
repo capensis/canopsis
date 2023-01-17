@@ -1,11 +1,12 @@
 db.default_rights.deleteMany({
     _id: {
-        $in: ["api_widgettemplate"]
+        $in: ["api_widgettemplate", "models_widgetTemplate"]
     }
 });
 db.default_rights.updateMany({crecord_type: "role"}, {
     $unset: {
         "rights.api_widgettemplate": "",
+        "rights.models_widgetTemplate": "",
     }
 });
 
