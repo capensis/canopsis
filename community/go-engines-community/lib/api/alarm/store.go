@@ -50,6 +50,7 @@ type Store interface {
 	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
 	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
 	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
+	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 }
 
 type store struct {
@@ -108,7 +109,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, apiKey, r.WithInstructions, r.WithLinks, r.OnlyParents)
+	return &result, s.postProcessResult(ctx, &result, apiKey, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
 }
 
 func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) {
@@ -150,7 +151,7 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 		return nil, nil
 	}
 
-	return &result.Data[0], s.postProcessResult(ctx, &result, apiKey, true, true, false)
+	return &result.Data[0], s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) (*Alarm, bool, error) {
@@ -191,7 +192,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 		return nil, true, nil
 	}
 
-	return &result.Data[0], true, s.postProcessResult(ctx, &result, apiKey, true, true, false)
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse, error) {
@@ -283,7 +284,7 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error) {
@@ -323,7 +324,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error) {
@@ -459,7 +460,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 				}
 			}
 
-			err = s.postProcessResult(ctx, &children, apiKey, r.WithInstructions, true, false)
+			err = s.postProcessResult(ctx, &children, apiKey, r.WithDeclareTickets, r.WithInstructions, true, false)
 			if err != nil {
 				return nil, err
 			}
@@ -1218,50 +1219,9 @@ func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *Aggregat
 		return nil
 	}
 
-	declareTicketCursor, err := s.dbDeclareTicketCollection.Find(ctx, bson.M{"enabled": true})
+	assignedRulesMap, err := s.GetAssignedDeclareTicketsMap(ctx, alarmIDs)
 	if err != nil {
 		return err
-	}
-
-	defer declareTicketCursor.Close(ctx)
-
-	ruleMap := make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
-	rulePipeline := make(bson.M, canopsis.FacetLimit)
-	assignedRulesMap := make(map[string][]AssignedDeclareTicketRule)
-
-	for declareTicketCursor.Next(ctx) {
-		var rule DeclareTicketRule
-		err = declareTicketCursor.Decode(&rule)
-		if err != nil {
-			return err
-		}
-
-		q, err := getDeclareTicketQuery(rule)
-		if err != nil {
-			return err
-		}
-
-		if len(rulePipeline) == canopsis.FacetLimit {
-			err = s.processPipeline(ctx, alarmIDs, ruleMap, rulePipeline, assignedRulesMap)
-			if err != nil {
-				return err
-			}
-
-			ruleMap = make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
-			rulePipeline = make(bson.M, canopsis.FacetLimit)
-		}
-
-		if q != nil {
-			ruleMap[rule.ID] = AssignedDeclareTicketRule{ID: rule.ID, Name: rule.Name}
-			rulePipeline[rule.ID] = []bson.M{{"$match": q}}
-		}
-	}
-
-	if len(rulePipeline) > 0 {
-		err = s.processPipeline(ctx, alarmIDs, ruleMap, rulePipeline, assignedRulesMap)
-		if err != nil {
-			return err
-		}
 	}
 
 	for idx, v := range result.Data {
@@ -1275,40 +1235,51 @@ func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *Aggregat
 	return nil
 }
 
-func getDeclareTicketQuery(rule DeclareTicketRule) (bson.M, error) {
-	alarmPatternQuery, err := rule.AlarmPattern.ToMongoQuery("")
+func (s *store) GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error) {
+	declareTicketCursor, err := s.dbDeclareTicketCollection.Find(ctx, bson.M{"enabled": true})
 	if err != nil {
-		return nil, fmt.Errorf("invalid alarm pattern in declare ticket rule id=%q: %w", rule.ID, err)
+		return nil, err
 	}
 
-	entityPatternQuery, err := rule.EntityPattern.ToMongoQuery("entity")
-	if err != nil {
-		return nil, fmt.Errorf("invalid entity pattern in declare ticket rule id=%q: %w", rule.ID, err)
+	defer declareTicketCursor.Close(ctx)
+
+	ruleMap := make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
+	rulePipeline := make(bson.M, canopsis.FacetLimit)
+	assignedRulesMap := make(map[string][]AssignedDeclareTicketRule)
+
+	for declareTicketCursor.Next(ctx) {
+		var rule DeclareTicketRule
+		err = declareTicketCursor.Decode(&rule)
+		if err != nil {
+			return nil, err
+		}
+
+		q, err := rule.getDeclareTicketQuery()
+		if err != nil {
+			return nil, err
+		}
+
+		if len(rulePipeline) == canopsis.FacetLimit {
+			err = s.processPipeline(ctx, alarmIds, ruleMap, rulePipeline, assignedRulesMap)
+			if err != nil {
+				return nil, err
+			}
+
+			ruleMap = make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
+			rulePipeline = make(bson.M, canopsis.FacetLimit)
+		}
+
+		if q != nil {
+			ruleMap[rule.ID] = AssignedDeclareTicketRule{ID: rule.ID, Name: rule.Name}
+			rulePipeline[rule.ID] = []bson.M{{"$match": q}}
+		}
 	}
 
-	pbhPatternQuery, err := rule.PbehaviorPattern.ToMongoQuery("v")
-	if err != nil {
-		return nil, fmt.Errorf("invalid pbehavior pattern in declare ticket rule id=%q: %w", rule.ID, err)
+	if len(rulePipeline) > 0 {
+		err = s.processPipeline(ctx, alarmIds, ruleMap, rulePipeline, assignedRulesMap)
 	}
 
-	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 {
-		return nil, nil
-	}
-
-	var and []bson.M
-	if len(alarmPatternQuery) > 0 {
-		and = append(and, alarmPatternQuery)
-	}
-
-	if len(entityPatternQuery) > 0 {
-		and = append(and, entityPatternQuery)
-	}
-
-	if len(pbhPatternQuery) > 0 {
-		and = append(and, pbhPatternQuery)
-	}
-
-	return bson.M{"$and": and}, nil
+	return assignedRulesMap, err
 }
 
 func (s *store) processPipeline(
@@ -1384,10 +1355,12 @@ func (s *store) processPipeline(
 	return nil
 }
 
-func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, apiKey string, withInstructions, withLinks, onlyParents bool) error {
-	err := s.fillAssignedDeclareTickets(ctx, result)
-	if err != nil {
-		return err
+func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, apiKey string, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
+	if withDeclareTicket {
+		err := s.fillAssignedDeclareTickets(ctx, result)
+		if err != nil {
+			return err
+		}
 	}
 
 	if withInstructions {
@@ -1408,7 +1381,7 @@ func (s *store) postProcessResult(ctx context.Context, result *AggregationResult
 	}
 
 	if withLinks {
-		err = s.fillLinks(ctx, apiKey, result)
+		err := s.fillLinks(ctx, apiKey, result)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot fill links")
 		}

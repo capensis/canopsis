@@ -114,14 +114,32 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 		}
 	}
 
-	if r.WithInstructions {
-		alarmIds := make([]string, 0, len(res.Data))
+	var alarmIds []string
+	if r.WithDeclareTickets || r.WithInstructions {
+		alarmIds = make([]string, 0, len(res.Data))
 		for _, v := range res.Data {
 			if v.AlarmID != "" {
 				alarmIds = append(alarmIds, v.AlarmID)
 			}
 		}
+	}
 
+	if r.WithDeclareTickets {
+		assignedDeclareTicketsMap, err := s.alarmStore.GetAssignedDeclareTicketsMap(ctx, alarmIds)
+		if err != nil {
+			return nil, err
+		}
+
+		for idx, v := range res.Data {
+			sort.Slice(assignedDeclareTicketsMap[v.AlarmID], func(i, j int) bool {
+				return assignedDeclareTicketsMap[v.AlarmID][i].Name < assignedDeclareTicketsMap[v.AlarmID][j].Name
+			})
+
+			res.Data[idx].AssignedDeclareTicketRules = assignedDeclareTicketsMap[v.AlarmID]
+		}
+	}
+
+	if r.WithInstructions {
 		assignedInstructionsMap, err := s.alarmStore.GetAssignedInstructionsMap(ctx, alarmIds)
 		if err != nil {
 			return nil, err
