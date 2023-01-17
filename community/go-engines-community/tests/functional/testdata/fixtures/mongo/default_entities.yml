@@ -574,6 +574,18 @@ default_entities:
             type: regexp
             value: test-resource-service-weather-entity-7
 
+  service_weather_entity_8:
+    <<: *service
+    _id: test-service-weather-entity-8
+    name: test-service-weather-entity-8
+    depends:
+      - test-resource-service-weather-entity-8/test-component-service-weather-entity-8
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-service-weather-entity-8
+
   service_to_emit_resource_entityupdated_events_on_component_infos_update:
     <<: *service
     entity_pattern:

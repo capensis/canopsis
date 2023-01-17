@@ -1,6 +1,8 @@
 package alarm
 
 import (
+	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
@@ -11,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -46,8 +49,9 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	FilterRequest
 	SortRequest
-	WithInstructions bool `form:"with_instructions" json:"with_instructions"`
-	WithLinks        bool `form:"with_links" json:"with_links"`
+	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
+	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
+	WithLinks          bool `form:"with_links" json:"with_links"`
 }
 
 type FilterRequest struct {
@@ -127,11 +131,12 @@ type ManualResponse struct {
 }
 
 type DetailsRequest struct {
-	ID               string               `json:"_id" binding:"required"`
-	Opened           *bool                `json:"opened"`
-	WithInstructions bool                 `json:"with_instructions"`
-	Steps            *StepsRequest        `json:"steps"`
-	Children         *ChildDetailsRequest `json:"children"`
+	ID                 string               `json:"_id" binding:"required"`
+	Opened             *bool                `json:"opened"`
+	WithInstructions   bool                 `json:"with_instructions"`
+	WithDeclareTickets bool                 `json:"with_declare_tickets"`
+	Steps              *StepsRequest        `json:"steps"`
+	Children           *ChildDetailsRequest `json:"children"`
 }
 
 type StepsRequest struct {
@@ -391,4 +396,40 @@ type DeclareTicketRule struct {
 	savedpattern.AlarmPatternFields     `bson:",inline"`
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
+}
+
+func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
+	alarmPatternQuery, err := r.AlarmPattern.ToMongoQuery("")
+	if err != nil {
+		return nil, fmt.Errorf("invalid alarm pattern in declare ticket rule id=%q: %w", r.ID, err)
+	}
+
+	entityPatternQuery, err := r.EntityPattern.ToMongoQuery("entity")
+	if err != nil {
+		return nil, fmt.Errorf("invalid entity pattern in declare ticket rule id=%q: %w", r.ID, err)
+	}
+
+	pbhPatternQuery, err := r.PbehaviorPattern.ToMongoQuery("v")
+	if err != nil {
+		return nil, fmt.Errorf("invalid pbehavior pattern in declare ticket rule id=%q: %w", r.ID, err)
+	}
+
+	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 {
+		return nil, nil
+	}
+
+	var and []bson.M
+	if len(alarmPatternQuery) > 0 {
+		and = append(and, alarmPatternQuery)
+	}
+
+	if len(entityPatternQuery) > 0 {
+		and = append(and, entityPatternQuery)
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		and = append(and, pbhPatternQuery)
+	}
+
+	return bson.M{"$and": and}, nil
 }
