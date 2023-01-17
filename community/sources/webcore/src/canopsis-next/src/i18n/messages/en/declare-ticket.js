@@ -15,6 +15,8 @@ export default {
   emptyWebhooks: 'No webhooks added yet',
   workflowIfStepFails: 'If this step fails:',
   continueWithNextStep: 'Continue with next steps',
+  testQuery: 'Test query',
+  webhookTicketDeclarationExist: 'Webhook ticket declaration already exist in another step',
   errors: {
     webhookRequired: 'The webhooks must be added',
   },
