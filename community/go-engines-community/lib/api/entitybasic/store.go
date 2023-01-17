@@ -159,7 +159,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	}
 
 	isToggled := updatedEntity.Enabled != entity.Enabled
-	if isToggled && updatedEntity.Type == types.EntityTypeComponent {
+	if isToggled && !updatedEntity.Enabled && updatedEntity.Type == types.EntityTypeComponent {
 		depLen := len(updatedEntity.Depends)
 		from := 0
 

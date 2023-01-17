@@ -89,7 +89,7 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		return nil
 	})
 
-	if isToggled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
+	if isToggled && !enabled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
 		depLen := len(oldSimplifiedEntity.Depends)
 		from := 0
 
