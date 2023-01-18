@@ -149,6 +149,10 @@ export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
   loading: LoaderOverlay,
 });
+export const CreateWidgetTemplate = () => ({
+  component: import(/* webpackChunkName: "Widget" */ './view/create-widget-template.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateService = () => ({
   component: import(/* webpackChunkName: "Context" */ './service/create-service.vue'),
   loading: LoaderOverlay,

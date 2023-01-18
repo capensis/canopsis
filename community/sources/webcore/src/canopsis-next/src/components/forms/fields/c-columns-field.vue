@@ -1,78 +1,92 @@
 <template lang="pug">
-  v-container
+  div
     v-card.my-2(
       v-for="(column, index) in columns",
-      :key="`settings-column-${index}`"
+      :key="column.key"
     )
       v-layout.pt-2(justify-space-between)
         v-flex(xs3)
           v-layout.text-xs-center.pl-2(justify-space-between)
-            v-flex(xs1)
-              v-btn(icon, @click.prevent="up(index)")
-                v-icon arrow_upward
-            v-flex(xs5)
-              v-btn(icon, @click.prevent="down(index)")
-                v-icon arrow_downward
-        v-flex.d-flex(xs3)
-          div.text-xs-right.pr-2
-            v-btn(icon, @click.prevent="removeItemFromArray(index)")
-              v-icon(color="red") close
-      v-layout(justify-center, wrap)
-        v-flex(xs11)
-          v-text-field(
-            v-validate="'required'",
-            :placeholder="$t('common.label')",
-            :error-messages="errors.collect(`label[${index}]`)",
-            :name="`label[${index}]`",
-            :value="column.label",
-            @input="updateFieldInArrayItem(index, 'label', $event)"
-          )
-        v-flex(xs11)
-          v-text-field(
-            v-validate="'required'",
-            :placeholder="$t('common.value')",
-            :error-messages="errors.collect(`value[${index}]`)",
-            :value="column.value",
-            :name="`value[${index}]`",
-            @input="updateFieldInArrayItem(index, 'value', $event)"
-          )
-        v-flex(v-if="withTemplate", xs11)
-          v-layout(row)
-            v-switch(
-              :label="$t('settings.columns.withTemplate')",
-              :input-value="!!column.template",
-              color="primary",
-              @change="enableTemplate(index, $event)"
+            v-btn(
+              :disabled="index === 0",
+              icon,
+              @click.prevent="up(index)"
             )
-            v-btn.primary(v-if="column.template", small, @click="showEditTemplateModal(index)")
-              span {{ $t('common.edit') }}
-        v-flex(v-if="withHtml", xs11)
-          v-switch(
-            :label="$t('settings.columns.isHtml')",
-            :input-value="column.isHtml",
-            :disabled="!!column.template",
-            color="primary",
-            @change="updateFieldInArrayItem(index, 'isHtml', $event)"
-          )
-        v-flex(v-if="withColorIndicator", xs11)
-          v-switch(
-            :label="$t('settings.colorIndicator.title')",
-            :input-value="!!column.colorIndicator",
-            :disabled="!!column.template",
-            color="primary",
-            @change="switchChangeColorIndicator(index, $event)"
-          )
-          v-layout(v-if="column.colorIndicator", row)
-            c-color-indicator-field(
-              :value="column.colorIndicator",
-              :disabled="!!column.template",
-              @input="updateFieldInArrayItem(index, 'colorIndicator', $event)"
+              v-icon arrow_upward
+            v-btn(
+              :disabled="index === columns.length - 1",
+              icon,
+              @click.prevent="down(index)"
             )
+              v-icon arrow_downward
+        v-flex.text-xs-right.pr-2(xs3)
+          v-btn(icon, @click.prevent="removeItemFromArray(index)")
+            v-icon(color="red") close
+      v-layout.px-3.pb-3(justify-center, column)
+        v-select(
+          v-field="columns[index].column",
+          v-validate="'required'",
+          :items="availableColumns",
+          :label="$t('common.column')",
+          :error-messages="errors.collect(`${column.key}.column`)",
+          :name="`${column.key}.column`",
+          :return-object="false"
+        )
+        c-infos-attribute-field(
+          v-if="hasDictionary(column.column)",
+          v-field="columns[index]",
+          :name="`${column.key}.column`",
+          combobox,
+          column
+        )
+        v-text-field(
+          v-if="hasField(column.column)",
+          v-field="columns[index].field",
+          :label="$t('common.field')"
+        )
+        v-layout(v-if="withTemplate", row)
+          v-switch(
+            :label="$t('settings.columns.withTemplate')",
+            :input-value="!!column.template",
+            color="primary",
+            @change="enableTemplate(index, $event)"
+          )
+          v-btn.primary(v-if="column.template", small, @click="showEditTemplateModal(index)")
+            span {{ $t('common.edit') }}
+        v-switch(
+          v-if="withHtml",
+          v-field="columns[index].isHtml",
+          :label="$t('settings.columns.isHtml')",
+          :disabled="!!column.template",
+          color="primary"
+        )
+        v-switch(
+          v-if="withColorIndicator",
+          :label="$t('settings.colorIndicator.title')",
+          :input-value="!!column.colorIndicator",
+          :disabled="!!column.template",
+          color="primary",
+          @change="switchChangeColorIndicator(index, $event)"
+        )
+        v-layout(v-if="column.colorIndicator", row)
+          c-color-indicator-field(
+            v-field="columns[index].colorIndicator",
+            :disabled="!!column.template"
+          )
     v-btn.ml-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>
-import { COLOR_INDICATOR_TYPES, DEFAULT_COLUMN_TEMPLATE_VALUE, MODALS } from '@/constants';
+import {
+  MODALS,
+  COLOR_INDICATOR_TYPES,
+  DEFAULT_COLUMN_TEMPLATE_VALUE,
+  WIDGET_TYPES,
+  ALARM_LIST_WIDGET_COLUMNS,
+  CONTEXT_WIDGET_COLUMNS,
+  ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS,
+  CONTEXT_WIDGET_COLUMNS_TO_LABELS_KEYS,
+} from '@/constants';
 
 import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
 
@@ -87,6 +101,10 @@ export default {
     event: 'input',
   },
   props: {
+    type: {
+      type: String,
+      default: WIDGET_TYPES.alarmList,
+    },
     columns: {
       type: [Array, Object],
       default: () => [],
@@ -103,8 +121,60 @@ export default {
       type: Boolean,
       default: false,
     },
+    infosDictionary: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  computed: {
+    alarmListAvailableColumns() {
+      return Object.values(ALARM_LIST_WIDGET_COLUMNS).map(value => ({
+        value,
+        text: this.$t(ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS[value]),
+      }));
+    },
+
+    contextAvailableColumns() {
+      return Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
+        value,
+        text: this.$t(CONTEXT_WIDGET_COLUMNS_TO_LABELS_KEYS[value]),
+      }));
+    },
+
+    availableColumns() {
+      return this.type === WIDGET_TYPES.alarmList
+        ? this.alarmListAvailableColumns
+        : this.contextAvailableColumns;
+    },
+  },
+  watch: {
+    type() {
+      const columns = this.columns.map(({ key }) => ({
+        key,
+        column: '',
+      }));
+
+      this.updateModel(columns);
+    },
   },
   methods: {
+    hasField(column) {
+      return [
+        ALARM_LIST_WIDGET_COLUMNS.links,
+        CONTEXT_WIDGET_COLUMNS.links,
+      ].includes(column);
+    },
+
+    hasDictionary(column) {
+      return [
+        ALARM_LIST_WIDGET_COLUMNS.infos,
+        ALARM_LIST_WIDGET_COLUMNS.entityInfos,
+        ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
+        CONTEXT_WIDGET_COLUMNS.infos,
+        CONTEXT_WIDGET_COLUMNS.componentInfos,
+      ].includes(column);
+    },
+
     enableTemplate(index, checked) {
       const value = checked
         ? DEFAULT_COLUMN_TEMPLATE_VALUE
@@ -151,7 +221,7 @@ export default {
         columns[index] = columns[index - 1];
         columns[index - 1] = temp;
 
-        this.$emit('input', columns);
+        this.updateModel(columns);
       }
     },
     down(index) {
@@ -162,7 +232,7 @@ export default {
         columns[index] = columns[index + 1];
         columns[index + 1] = temp;
 
-        this.$emit('input', columns);
+        this.updateModel(columns);
       }
     },
   },

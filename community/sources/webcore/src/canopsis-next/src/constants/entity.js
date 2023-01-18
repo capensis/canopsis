@@ -428,15 +428,9 @@ export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
   },
 ];
 
-export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
-  {
-    labelKey: 'common.name',
-    value: 'entity.name',
-  },
-  {
-    labelKey: 'common.type',
-    value: 'entity.type',
-  },
+export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [ // TODO: add fields
+  { value: 'entity.name' },
+  { value: 'entity.type' },
 ];
 
 export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
@@ -589,4 +583,48 @@ export const ENTITY_TEMPLATE_FIELDS = {
   statsOk: 'entity.stats.ok',
   statsKo: 'entity.stats.ko',
   links: 'entity.linklist',
+};
+
+export const CONTEXT_WIDGET_COLUMNS = {
+  id: '_id',
+  name: 'name',
+  categoryName: 'category.name',
+  type: 'type',
+  component: 'component',
+  connector: 'connector',
+  impactLevel: 'impact_level',
+  lastEventDate: 'last_event_date',
+  koEvents: 'ko_events',
+  okEvents: 'ok_events',
+  pbehaviorInfo: 'pbehavior_info',
+  state: 'state',
+  impactState: 'impact_state',
+  status: 'status',
+  idleSince: 'idle_since',
+  enabled: 'enabled',
+  infos: 'infos',
+  componentInfos: 'component_infos',
+  links: 'links',
+};
+
+export const CONTEXT_WIDGET_COLUMNS_TO_LABELS_KEYS = {
+  [CONTEXT_WIDGET_COLUMNS.id]: 'common.id',
+  [CONTEXT_WIDGET_COLUMNS.name]: 'common.name',
+  [CONTEXT_WIDGET_COLUMNS.categoryName]: 'common.categoryName',
+  [CONTEXT_WIDGET_COLUMNS.type]: 'common.type',
+  [CONTEXT_WIDGET_COLUMNS.component]: 'common.component',
+  [CONTEXT_WIDGET_COLUMNS.connector]: 'common.connector',
+  [CONTEXT_WIDGET_COLUMNS.impactLevel]: 'common.impactLevel',
+  [CONTEXT_WIDGET_COLUMNS.lastEventDate]: 'common.lastEventDate',
+  [CONTEXT_WIDGET_COLUMNS.koEvents]: 'common.koEvents',
+  [CONTEXT_WIDGET_COLUMNS.okEvents]: 'common.okEvents',
+  [CONTEXT_WIDGET_COLUMNS.pbehaviorInfo]: 'common.pbehaviorInfo',
+  [CONTEXT_WIDGET_COLUMNS.state]: 'common.state',
+  [CONTEXT_WIDGET_COLUMNS.impactState]: 'common.impactState',
+  [CONTEXT_WIDGET_COLUMNS.status]: 'common.status',
+  [CONTEXT_WIDGET_COLUMNS.idleSince]: 'common.idleSince',
+  [CONTEXT_WIDGET_COLUMNS.enabled]: 'common.enabled',
+  [CONTEXT_WIDGET_COLUMNS.infos]: 'common.infos',
+  [CONTEXT_WIDGET_COLUMNS.componentInfos]: 'common.componentInfos',
+  [CONTEXT_WIDGET_COLUMNS.links]: 'common.links',
 };
