@@ -72,5 +72,21 @@ export default {
     updateWidgetFiltersPositions(context, { data } = {}) {
       return request.put(API_ROUTES.widget.filterPositions, data);
     },
+
+    fetchWidgetTemplatesWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.widget.template, { params });
+    },
+
+    createWidgetTemplate(context, { data } = {}) {
+      return request.post(API_ROUTES.widget.template, data);
+    },
+
+    updateWidgetTemplate(context, { id, data } = {}) {
+      return request.put(`${API_ROUTES.widget.template}/${id}`, data);
+    },
+
+    removeWidgetTemplate(context, { id, data } = {}) {
+      return request.delete(`${API_ROUTES.widget.template}/${id}`, data);
+    },
   },
 };

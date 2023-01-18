@@ -4,10 +4,17 @@
     v-menu(
       v-else,
       :disabled="isDisabled",
+      lazy,
       @input="$emit('activate', $event)",
       @click.native.stop=""
     )
-      v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $tc('common.link', 2) }}
+      template(#activator="{ on }")
+        v-btn(
+          v-on="on",
+          :disabled="isDisabled",
+          depressed,
+          small
+        ) {{ $tc('common.link', 2) }}
       v-list(dark, dense)
         categories-list(:categories="filteredCategories")
 </template>

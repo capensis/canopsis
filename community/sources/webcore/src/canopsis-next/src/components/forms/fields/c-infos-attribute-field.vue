@@ -13,7 +13,7 @@
         :error-messages="errors.collect(dictionaryName)",
         item-text="value",
         item-value="value",
-        hide-details
+        :hide-details="row"
       )
       v-text-field(
         v-else,
@@ -23,9 +23,9 @@
         :label="label || $t('common.dictionary')",
         :error-messages="errors.collect(dictionaryName)",
         :name="dictionaryName",
-        hide-details
+        :hide-details="row"
       )
-    v-flex.pl-3(:xs6="row")
+    v-flex(:class="{ 'pl-3': row }", :xs6="row")
       v-select(
         v-field="value.field",
         v-validate="'required'",
@@ -34,7 +34,7 @@
         :label="label || $t('common.field')",
         :name="fieldName",
         :error-messages="errors.collect(fieldName)",
-        hide-details
+        :hide-details="row"
       )
 </template>
 

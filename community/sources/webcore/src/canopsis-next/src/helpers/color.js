@@ -21,6 +21,22 @@ export const getMostReadableTextColor = (color, options = {}) => {
 };
 
 /**
+ * Get color by entity impact state
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getImpactStateColor = value => COLORS.impactState[value];
+
+/**
+ * Get color by entity impact state
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getEntityStateColor = value => get(ENTITIES_STATES_STYLES, [value, 'color']);
+
+/**
  * Get color for a entity by colorIndicator and isGrey parameters
  *
  * @param {Service | Entity | {}} [entity = {}]

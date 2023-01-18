@@ -62,7 +62,7 @@ export const META_ALARMS_RULE_TYPES = {
   corel: 'corel',
 
   /**
-   * Manual group type doesn't using in the form
+   * Manual group type doesn't use in the form
    * We are using it only inside alarms list widget
    */
   manualgroup: 'manualgroup',
@@ -75,7 +75,7 @@ export const META_ALARMS_THRESHOLD_TYPES = {
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
-export const ALARM_ENTITY_FIELDS = {
+export const ALARM_ENTITY_FIELDS = { // TODO: update fields
   connector: 'v.connector',
   connectorName: 'v.connector_name',
   component: 'v.component',
@@ -90,69 +90,24 @@ export const ALARM_ENTITY_FIELDS = {
 };
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
-  {
-    labelKey: 'common.connector',
-    value: ALARM_ENTITY_FIELDS.connector,
-  },
-  {
-    labelKey: 'common.connectorName',
-    value: ALARM_ENTITY_FIELDS.connectorName,
-  },
-  {
-    labelKey: 'common.component',
-    value: ALARM_ENTITY_FIELDS.component,
-  },
-  {
-    labelKey: 'common.resource',
-    value: ALARM_ENTITY_FIELDS.resource,
-  },
-  {
-    labelKey: 'common.output',
-    value: ALARM_ENTITY_FIELDS.output,
-  },
-  {
-    labelKey: 'common.extraDetail',
-    value: ALARM_ENTITY_FIELDS.extraDetails,
-  },
-  {
-    labelKey: 'common.state',
-    value: ALARM_ENTITY_FIELDS.state,
-  },
-  {
-    labelKey: 'common.status',
-    value: ALARM_ENTITY_FIELDS.status,
-  },
+  { value: ALARM_ENTITY_FIELDS.connector },
+  { value: ALARM_ENTITY_FIELDS.connectorName },
+  { value: ALARM_ENTITY_FIELDS.component },
+  { value: ALARM_ENTITY_FIELDS.resource },
+  { value: ALARM_ENTITY_FIELDS.output },
+  { value: ALARM_ENTITY_FIELDS.extraDetails },
+  { value: ALARM_ENTITY_FIELDS.state },
+  { value: ALARM_ENTITY_FIELDS.status },
 ];
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
-  {
-    labelKey: 'common.connector',
-    value: ALARM_ENTITY_FIELDS.connector,
-  },
-  {
-    labelKey: 'common.connectorName',
-    value: ALARM_ENTITY_FIELDS.connectorName,
-  },
-  {
-    labelKey: 'common.resource',
-    value: ALARM_ENTITY_FIELDS.resource,
-  },
-  {
-    labelKey: 'common.output',
-    value: ALARM_ENTITY_FIELDS.output,
-  },
-  {
-    labelKey: 'common.extraDetail',
-    value: ALARM_ENTITY_FIELDS.extraDetails,
-  },
-  {
-    labelKey: 'common.state',
-    value: ALARM_ENTITY_FIELDS.state,
-  },
-  {
-    labelKey: 'common.status',
-    value: ALARM_ENTITY_FIELDS.status,
-  },
+  { value: ALARM_ENTITY_FIELDS.connector },
+  { value: ALARM_ENTITY_FIELDS.connectorName },
+  { value: ALARM_ENTITY_FIELDS.resource },
+  { value: ALARM_ENTITY_FIELDS.output },
+  { value: ALARM_ENTITY_FIELDS.extraDetails },
+  { value: ALARM_ENTITY_FIELDS.state },
+  { value: ALARM_ENTITY_FIELDS.status },
 ];
 
 export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
@@ -268,4 +223,108 @@ export const ALARM_TEMPLATE_FIELDS = {
   pbehaviorInfo: 'alarm.v.pbehavior_info',
   duration: 'alarm.v.duration',
   eventsCount: 'alarm.v.events_count',
+};
+
+export const ALARM_LIST_WIDGET_COLUMNS = {
+  id: '_id',
+  displayName: 'v.display_name',
+  output: 'v.output',
+  longOutput: 'v.long_output',
+  initialOutput: 'v.initial_output',
+  initialLongOutput: 'v.initial_long_output',
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  lastComment: 'v.last_comment.m',
+  ackBy: 'v.ack.a',
+  ackMessage: 'v.ack.m',
+  ackInitiator: 'v.ack.initiator',
+  stateMessage: 'v.state.m',
+  statusMessage: 'v.status.m',
+  state: 'v.state.val',
+  status: 'v.status.val',
+  totalStateChanges: 'v.total_state_changes',
+  timestamp: 't',
+  creationDate: 'v.creation_date',
+  lastEventDate: 'v.last_event_date',
+  lastUpdateDate: 'v.last_update_date',
+  ackAt: 'v.ack.t',
+  stateAt: 'v.state.t',
+  statusAt: 'v.status.t',
+  resolved: 'v.resolved',
+  activationDate: 'v.activation_date',
+  duration: 'v.duration',
+  currentStateDuration: 'v.current_state_duration',
+  snoozeDuration: 'v.snooze_duration',
+  pbhInactiveDuration: 'v.pbh_inactive_duration',
+  activeDuration: 'v.active_duration',
+  tags: 'tags',
+  extraDetails: 'extra_details',
+  impactState: 'impact_state',
+  infos: 'v.infos',
+  links: 'links',
+  entityId: 'entity._id',
+  entityName: 'entity.name',
+  entityCategoryName: 'entity.category.name',
+  entityType: 'entity.type',
+  entityComponent: 'entity.component',
+  entityConnector: 'entity.connector',
+  entityImpactLevel: 'entity.impact_level',
+  entityKoEvents: 'entity.ko_events',
+  entityOkEvents: 'entity.ok_events',
+  entityInfos: 'entity.infos',
+  entityComponentInfos: 'entity.component_infos',
+};
+
+export const ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS = {
+  [ALARM_LIST_WIDGET_COLUMNS.id]: 'common.id',
+  [ALARM_LIST_WIDGET_COLUMNS.displayName]: 'common.displayName',
+  [ALARM_LIST_WIDGET_COLUMNS.output]: 'common.output',
+  [ALARM_LIST_WIDGET_COLUMNS.longOutput]: 'common.longOutput',
+  [ALARM_LIST_WIDGET_COLUMNS.initialOutput]: 'common.initialOutput',
+  [ALARM_LIST_WIDGET_COLUMNS.initialLongOutput]: 'common.initialLongOutput',
+  [ALARM_LIST_WIDGET_COLUMNS.connector]: 'common.connector',
+  [ALARM_LIST_WIDGET_COLUMNS.connectorName]: 'common.connectorName',
+  [ALARM_LIST_WIDGET_COLUMNS.component]: 'common.component',
+  [ALARM_LIST_WIDGET_COLUMNS.resource]: 'common.resource',
+  [ALARM_LIST_WIDGET_COLUMNS.lastComment]: 'common.lastComment',
+  [ALARM_LIST_WIDGET_COLUMNS.ackBy]: 'common.ackBy',
+  [ALARM_LIST_WIDGET_COLUMNS.ackMessage]: 'common.ackMessage',
+  [ALARM_LIST_WIDGET_COLUMNS.ackInitiator]: 'common.ackInitiator',
+  [ALARM_LIST_WIDGET_COLUMNS.stateMessage]: 'common.stateMessage',
+  [ALARM_LIST_WIDGET_COLUMNS.statusMessage]: 'common.statusMessage',
+  [ALARM_LIST_WIDGET_COLUMNS.state]: 'common.state',
+  [ALARM_LIST_WIDGET_COLUMNS.status]: 'common.status',
+  [ALARM_LIST_WIDGET_COLUMNS.totalStateChanges]: 'common.totalStateChanges',
+  [ALARM_LIST_WIDGET_COLUMNS.timestamp]: 'common.timestamp',
+  [ALARM_LIST_WIDGET_COLUMNS.creationDate]: 'common.creationDate',
+  [ALARM_LIST_WIDGET_COLUMNS.lastEventDate]: 'common.lastEventDate',
+  [ALARM_LIST_WIDGET_COLUMNS.lastUpdateDate]: 'common.lastUpdateDate',
+  [ALARM_LIST_WIDGET_COLUMNS.ackAt]: 'common.ackAt',
+  [ALARM_LIST_WIDGET_COLUMNS.stateAt]: 'common.stateAt',
+  [ALARM_LIST_WIDGET_COLUMNS.statusAt]: 'common.statusAt',
+  [ALARM_LIST_WIDGET_COLUMNS.resolved]: 'common.resolved',
+  [ALARM_LIST_WIDGET_COLUMNS.activationDate]: 'common.activationDate',
+  [ALARM_LIST_WIDGET_COLUMNS.duration]: 'common.duration',
+  [ALARM_LIST_WIDGET_COLUMNS.currentStateDuration]: 'common.currentStateDuration',
+  [ALARM_LIST_WIDGET_COLUMNS.snoozeDuration]: 'common.snoozeDuration',
+  [ALARM_LIST_WIDGET_COLUMNS.pbhInactiveDuration]: 'common.pbhInactiveDuration',
+  [ALARM_LIST_WIDGET_COLUMNS.activeDuration]: 'common.activeDuration',
+  [ALARM_LIST_WIDGET_COLUMNS.tags]: 'common.tags',
+  [ALARM_LIST_WIDGET_COLUMNS.extraDetails]: 'common.extraDetails',
+  [ALARM_LIST_WIDGET_COLUMNS.impactState]: 'common.impactState',
+  [ALARM_LIST_WIDGET_COLUMNS.infos]: 'common.infos',
+  [ALARM_LIST_WIDGET_COLUMNS.links]: 'common.links',
+  [ALARM_LIST_WIDGET_COLUMNS.entityId]: 'common.entityId',
+  [ALARM_LIST_WIDGET_COLUMNS.entityName]: 'common.entityName',
+  [ALARM_LIST_WIDGET_COLUMNS.entityCategoryName]: 'common.entityCategoryName',
+  [ALARM_LIST_WIDGET_COLUMNS.entityType]: 'common.entityType',
+  [ALARM_LIST_WIDGET_COLUMNS.entityComponent]: 'common.entityComponent',
+  [ALARM_LIST_WIDGET_COLUMNS.entityConnector]: 'common.entityConnector',
+  [ALARM_LIST_WIDGET_COLUMNS.entityImpactLevel]: 'common.entityImpactLevel',
+  [ALARM_LIST_WIDGET_COLUMNS.entityKoEvents]: 'common.entityKoEvents',
+  [ALARM_LIST_WIDGET_COLUMNS.entityOkEvents]: 'common.entityOkEvents',
+  [ALARM_LIST_WIDGET_COLUMNS.entityInfos]: 'common.entityInfos',
+  [ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos]: 'common.entityComponentInfos',
 };

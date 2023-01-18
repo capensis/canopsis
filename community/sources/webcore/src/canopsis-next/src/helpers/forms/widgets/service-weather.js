@@ -27,10 +27,6 @@ import {
  */
 
 /**
- * @typedef {'impact-state' | 'state'} ServiceWeatherWidgetColorIndicator
- */
-
-/**
  * @typedef {Object} ServiceWeatherWidgetCounters
  * @property {boolean} enabled
  * @property {string[]} types
@@ -48,7 +44,7 @@ import {
  * @property {number} columnTablet
  * @property {number} columnDesktop
  * @property {number} limit
- * @property {ServiceWeatherWidgetColorIndicator} colorIndicator
+ * @property {ColorIndicator} colorIndicator
  * @property {ServiceWeatherWidgetModalType} modalType
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {WidgetMargin} margin
