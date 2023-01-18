@@ -125,6 +125,10 @@ definitions:
     properties:
       _id:
         type: string
+      assigned_declare_ticket_rules:
+        items:
+          $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
+        type: array
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
@@ -294,6 +298,13 @@ definitions:
       total_state_changes:
         type: integer
     type: object
+  alarm.AssignedDeclareTicketRule:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   alarm.AssignedInstruction:
     properties:
       _id:
@@ -363,6 +374,8 @@ definitions:
         type: boolean
       steps:
         $ref: '#/definitions/alarm.StepsRequest'
+      with_declare_tickets:
+        type: boolean
       with_instructions:
         type: boolean
     required:
@@ -2411,6 +2424,43 @@ definitions:
         description: 'FieldType is only defined for custom fields, ex: infos.'
         type: string
     type: object
+  pattern.GetAlarmsRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      search:
+        type: string
+    type: object
+  pattern.GetAlarmsResponse:
+    properties:
+      alarms:
+        items:
+          $ref: '#/definitions/pattern.MatchedAlarm'
+        type: array
+    type: object
+  pattern.MatchedAlarm:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   pattern.Response:
     properties:
       _id:
@@ -3715,6 +3765,10 @@ definitions:
         type: string
       alarm_id:
         type: string
+      assigned_declare_ticket_rules:
+        items:
+          $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
+        type: array
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
