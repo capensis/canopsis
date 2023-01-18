@@ -1434,10 +1434,10 @@ Feature: run a declare ticket rule
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name"
       },
       {
-        "_t": "webhookfail",
+        "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name. Fail reason: ticket_id is emtpy, response has nothing in not_exist_field."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name"
       },
       {
         "_t": "declareticketfail",
@@ -1558,10 +1558,10 @@ Feature: run a declare ticket rule
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-8-name"
       },
       {
-        "_t": "webhookfail",
+        "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-8-name. Fail reason: response of POST {{ .dummyApiURL }}/webhook/request is not valid JSON."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-8-name"
       },
       {
         "_t": "declareticketfail",
