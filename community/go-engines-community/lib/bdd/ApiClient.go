@@ -47,17 +47,20 @@ type ApiClient struct {
 	// db is db client.
 	db        mongo.DbClient
 	templater *Templater
+	// directory with scenario's test data, which IReadFile can access
+	dirScenarioData string
 }
 
 // NewApiClient creates new API client.
-func NewApiClient(db mongo.DbClient, url string, templater *Templater) *ApiClient {
+func NewApiClient(db mongo.DbClient, url, dirScenarioData string, templater *Templater) *ApiClient {
 	return &ApiClient{
 		url: url,
 		client: &http.Client{
 			Timeout: requestTimeout,
 		},
-		db:        db,
-		templater: templater,
+		db:              db,
+		templater:       templater,
+		dirScenarioData: dirScenarioData,
 	}
 }
 
@@ -1365,7 +1368,7 @@ Step example:
 	When I read file TEST-MIB as testMIB
 */
 func (a *ApiClient) IReadFile(ctx context.Context, name, key string) (context.Context, error) {
-	b, err := os.ReadFile(filepath.Join("testdata", "scenariodata", name))
+	b, err := os.ReadFile(filepath.Join(a.dirScenarioData, name))
 	if err != nil {
 		return ctx, err
 	}
