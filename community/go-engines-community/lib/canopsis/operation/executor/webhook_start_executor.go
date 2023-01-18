@@ -28,9 +28,9 @@ func (e *webhookStartExecutor) Exec(
 		userID = params.User
 	}
 
-	err := alarm.PartialUpdateAddStep(
-		types.AlarmStepWebhookStart,
+	err := alarm.PartialUpdateWebhookStart(
 		time,
+		params.Execution,
 		params.Author,
 		params.Output,
 		userID,
