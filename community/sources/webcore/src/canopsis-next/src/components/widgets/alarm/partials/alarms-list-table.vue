@@ -62,8 +62,7 @@
             :expandable="expandable",
             :row="props",
             :widget="widget",
-            :columns="columns",
-            :columns-filters="columnsFilters",
+            :columns="preparedColumns",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
@@ -96,13 +95,14 @@
 
 <script>
 import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+import { ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -125,6 +125,7 @@ export default {
     ...featuresService.get('components.alarmListTable.components', {}),
   },
   mixins: [
+    widgetColumnsFiltersMixin,
     entitiesAlarmColumnsFiltersMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
@@ -236,14 +237,20 @@ export default {
     },
 
     headers() {
-      const headers = [...this.columns];
+      const headers = this.columns.map(column => ({
+        ...column,
+
+        text: this.$t(ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS[column.value]),
+      }));
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
       }
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
-        // We need it for the expand panel open button
+        /**
+         * We need it for the expand panel open button
+         */
         headers.unshift({ sortable: false });
       }
 

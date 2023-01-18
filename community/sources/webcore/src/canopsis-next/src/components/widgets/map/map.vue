@@ -200,7 +200,7 @@ export default {
     showAlarmListModal(point) {
       const widget = generateDefaultAlarmListWidget();
 
-      widget.parameters.widgetColumns = this.widget.parameters.alarms_columns;
+      widget.parameters.widgetColumns = this.widget.parameters.alarmsColumns;
 
       this.$modals.show({
         name: MODALS.alarmsList,
