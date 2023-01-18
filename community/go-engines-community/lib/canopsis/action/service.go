@@ -229,6 +229,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 			continue
 		}
 
+		s.logger.Debug().Str("execution", execution.GetCacheKey()).Msg("continue abandoned scenario")
 		s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:          alarm,
 			Entity:         execution.Entity,

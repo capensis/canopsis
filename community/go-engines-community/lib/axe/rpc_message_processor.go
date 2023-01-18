@@ -317,11 +317,9 @@ func (p *rpcMessageProcessor) sendEventToAction(
 	alarmChange types.AlarmChange,
 	msg []byte,
 ) {
-	switch alarmChange.Type {
-	case types.AlarmChangeTypeAutoWebhookComplete,
-		types.AlarmChangeTypeAutoWebhookFail,
-		types.AlarmChangeTypeAutoDeclareTicketWebhook,
-		types.AlarmChangeTypeAutoDeclareTicketWebhookFail:
+	switch event.EventType {
+	case types.EventTypeAutoWebhookCompleted,
+		types.EventTypeAutoWebhookFailed:
 	default:
 		return
 	}
