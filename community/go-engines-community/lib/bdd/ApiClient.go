@@ -10,6 +10,7 @@ import (
 	"go/types"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"reflect"
@@ -21,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/kylelemons/godebug/pretty"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -44,19 +46,21 @@ type ApiClient struct {
 	// client is http client to make API requests.
 	client *http.Client
 	// db is db client.
-	db        mongo.DbClient
-	templater *Templater
+	db            mongo.DbClient
+	requestLogger zerolog.Logger
+	templater     *Templater
 }
 
 // NewApiClient creates new API client.
-func NewApiClient(db mongo.DbClient, url string, templater *Templater) *ApiClient {
+func NewApiClient(db mongo.DbClient, url string, requestLogger zerolog.Logger, templater *Templater) *ApiClient {
 	return &ApiClient{
 		url: url,
 		client: &http.Client{
 			Timeout: requestTimeout,
 		},
-		db:        db,
-		templater: templater,
+		db:            db,
+		requestLogger: requestLogger,
+		templater:     templater,
 	}
 }
 
@@ -1471,6 +1475,9 @@ func (a *ApiClient) createRequestWithSavedRequest(ctx context.Context, method, u
 
 // doRequest adds auth credentials and makes request.
 func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.Context, error) {
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
+
 	if headers, ok := getHeaders(ctx); ok {
 		for k, v := range headers {
 			req.Header.Set(k, v)
@@ -1487,11 +1494,26 @@ func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.C
 	var err error
 	var responseBody interface{}
 	var responseBodyOutput string
+	dumpReq, _ := httputil.DumpRequest(req, true)
 	response, err := a.client.Do(req)
 	// Read response
 	if err != nil {
+		a.requestLogger.Err(err).
+			Str("file", scUri).
+			Str("scenario", scName).
+			Str("request", string(dumpReq)).
+			Msg("invalid called request")
 		return ctx, fmt.Errorf("cannot do request: %w", err)
 	}
+
+	dumpRes, _ := httputil.DumpResponse(response, true)
+	a.requestLogger.Info().
+		Str("file", scUri).
+		Str("scenario", scName).
+		Str("request", string(dumpReq)).
+		Str("response", string(dumpRes)).
+		Msg("called request")
+
 	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch response: %w", err)
