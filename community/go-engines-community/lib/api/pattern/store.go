@@ -17,10 +17,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
+
+const matchedAlarmsLimit = 100
 
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
@@ -29,6 +32,7 @@ type Store interface {
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, pattern Response) (bool, error)
 	Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error)
+	GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error)
 }
 
 type store struct {
@@ -614,4 +618,115 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	}
 
 	return model
+}
+
+func (s *store) GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error) {
+	res := GetAlarmsResponse{
+		Alarms: make([]MatchedAlarm, 0),
+	}
+
+	alarmPatternQuery, err := r.AlarmPattern.ToMongoQuery("")
+	if err != nil {
+		return res, fmt.Errorf("invalid alarm pattern: %w", err)
+	}
+
+	entityPatternQuery, err := r.EntityPattern.ToMongoQuery("")
+	if err != nil {
+		return res, fmt.Errorf("invalid entity pattern: %w", err)
+	}
+
+	pbhPatternQuery, err := r.PbehaviorPattern.ToMongoQuery("v")
+	if err != nil {
+		return res, fmt.Errorf("invalid pbehavior pattern: %w", err)
+	}
+
+	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 {
+		return res, nil
+	}
+
+	var pipeline []bson.M
+
+	if r.Search != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{
+			"v.display_name": primitive.Regex{
+				Pattern: fmt.Sprintf(".*%s.*", r.Search),
+				Options: "i",
+			},
+		}})
+	}
+
+	pipeline = append(
+		pipeline,
+		bson.M{
+			"$project": bson.M{
+				"v.steps": 0,
+			},
+		},
+		bson.M{
+			"$addFields": bson.M{
+				"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
+				"v.duration": bson.M{"$subtract": bson.A{
+					types.NewCpsTime(),
+					"$v.creation_date",
+				}},
+			},
+		},
+	)
+
+	if len(alarmPatternQuery) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": alarmPatternQuery})
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": pbhPatternQuery})
+	}
+
+	if len(entityPatternQuery) > 0 {
+		pipeline = append(
+			pipeline,
+			bson.M{
+				"$lookup": bson.M{
+					"from": mongo.EntityMongoCollection,
+					"let":  bson.M{"entity_id": "$d"},
+					"pipeline": []bson.M{
+						{
+							"$match": bson.M{
+								"$and": []bson.M{
+									{"$expr": bson.M{"$eq": bson.A{"$$entity_id", "$_id"}}},
+									entityPatternQuery,
+								},
+							},
+						},
+						{
+							"$project": bson.M{
+								"_id": 1,
+							},
+						},
+					},
+					"as": "entity",
+				},
+			},
+			bson.M{
+				"$match": bson.M{
+					"$expr": bson.M{"$gt": bson.A{bson.M{"$size": "$entity"}, 0}},
+				},
+			},
+		)
+	}
+
+	pipeline = append(
+		pipeline,
+		common.GetSortQuery("v.display_name", common.SortAsc),
+		bson.M{"$limit": matchedAlarmsLimit},
+		bson.M{"$project": bson.M{
+			"name": "$v.display_name",
+		}},
+	)
+
+	cursor, err := s.client.Collection(mongo.AlarmMongoCollection).Aggregate(ctx, pipeline)
+	if err != nil {
+		return res, err
+	}
+
+	return res, cursor.All(ctx, &res.Alarms)
 }
