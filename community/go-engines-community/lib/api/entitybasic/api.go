@@ -102,7 +102,8 @@ func (a *api) Update(c *gin.Context) {
 		}
 
 		if !entity.Enabled && entity.Type == types.EntityTypeComponent {
-			msg.Resources = entity.Depends
+			msg.Resources = make([]string, len(entity.Depends))
+			copy(msg.Resources, entity.Depends)
 		}
 
 		a.sendChangeMessage(msg)
