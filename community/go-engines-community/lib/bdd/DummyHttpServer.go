@@ -12,7 +12,7 @@ import (
 
 func RunDummyHttpServer(ctx context.Context, addr string) error {
 	mux := http.NewServeMux()
-	dummyRoutes := getDummyRoutes(addr)
+	dummyRoutes := getDummyRoutes("http://" + addr)
 	mux.HandleFunc("/", dummyHandler(dummyRoutes))
 
 	server := &http.Server{
