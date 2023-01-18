@@ -310,7 +310,8 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			}
 
 			if !enabled && simplifiedEntity.Type == types.EntityTypeComponent {
-				msg.Resources = simplifiedEntity.Depends
+				msg.Resources = make([]string, len(simplifiedEntity.Depends))
+				copy(msg.Resources, simplifiedEntity.Depends)
 			}
 
 			a.sendChangeMessage(msg)
