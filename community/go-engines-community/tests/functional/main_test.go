@@ -109,7 +109,7 @@ func TestMain(m *testing.M) {
 	}
 
 	templater := bdd.NewTemplater(map[string]interface{}{"apiURL": apiUrl})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, templater)
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
