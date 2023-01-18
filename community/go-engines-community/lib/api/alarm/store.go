@@ -50,6 +50,7 @@ type Store interface {
 	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
 	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
 	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
+	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 }
 
 type store struct {
@@ -59,6 +60,7 @@ type store struct {
 	dbInstructionCollection          mongo.DbCollection
 	dbInstructionExecutionCollection mongo.DbCollection
 	dbEntityCollection               mongo.DbCollection
+	dbDeclareTicketCollection        mongo.DbCollection
 
 	linksFetcher common.LinksFetcher
 
@@ -73,6 +75,7 @@ func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger 
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
+		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
 
 		linksFetcher: linksFetcher,
 
@@ -106,31 +109,7 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		}
 	}
 
-	if r.WithInstructions {
-		assignedInstructionMap, anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
-		if err != nil {
-			return nil, err
-		}
-		err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionMap)
-		if err != nil {
-			return nil, err
-		}
-		if r.OnlyParents {
-			err = s.fillChildrenInstructionsFlag(ctx, &result, anyInstructionMatch)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	if r.WithLinks {
-		err = s.fillLinks(ctx, apiKey, &result)
-		if err != nil {
-			s.logger.Err(err).Msg("cannot fill links")
-		}
-	}
-
-	return &result, nil
+	return &result, s.postProcessResult(ctx, &result, apiKey, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
 }
 
 func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) {
@@ -172,21 +151,7 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 		return nil, nil
 	}
 
-	assignedInstructionMap, _, err := s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionMap)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result.Data[0], nil
+	return &result.Data[0], s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) (*Alarm, bool, error) {
@@ -227,21 +192,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 		return nil, true, nil
 	}
 
-	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
-	if err != nil {
-		return nil, false, err
-	}
-	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
-	if err != nil {
-		return nil, false, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result.Data[0], true, nil
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse, error) {
@@ -333,21 +284,7 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		}
 	}
 
-	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, now)
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result, nil
+	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error) {
@@ -387,21 +324,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		}
 	}
 
-	assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &result, now)
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionExecutionStatusesAndIcon(ctx, &result, assignedInstructionsMap)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result, nil
+	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
 }
 
 func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error) {
@@ -537,20 +460,9 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 				}
 			}
 
-			if r.WithInstructions {
-				assignedInstructionsMap, _, err := s.fillAssignedInstructions(ctx, &children, now)
-				if err != nil {
-					return nil, err
-				}
-				err = s.fillInstructionExecutionStatusesAndIcon(ctx, &children, assignedInstructionsMap)
-				if err != nil {
-					return nil, err
-				}
-			}
-
-			err = s.fillLinks(ctx, apiKey, &children)
+			err = s.postProcessResult(ctx, &children, apiKey, r.WithDeclareTickets, r.WithInstructions, true, false)
 			if err != nil {
-				s.logger.Err(err).Msg("cannot fill links")
+				return nil, err
 			}
 		}
 
@@ -1132,7 +1044,7 @@ func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap
 	return NoIcon
 }
 
-func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {
+func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult) (map[string][]AssignedInstruction, bson.M, error) {
 	var alarmIds []string
 	for _, item := range result.Data {
 		if item.Value.Resolved == nil {
@@ -1293,4 +1205,187 @@ func (s *store) fillLinks(ctx context.Context, apiKey string, result *Aggregatio
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
 	return NewMongoQueryBuilder(s.dbClient)
+}
+
+func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {
+	var alarmIDs []string
+	for _, item := range result.Data {
+		if item.Value.Resolved == nil {
+			alarmIDs = append(alarmIDs, item.ID)
+		}
+	}
+
+	if len(alarmIDs) == 0 {
+		return nil
+	}
+
+	assignedRulesMap, err := s.GetAssignedDeclareTicketsMap(ctx, alarmIDs)
+	if err != nil {
+		return err
+	}
+
+	for idx, v := range result.Data {
+		sort.Slice(assignedRulesMap[v.ID], func(i, j int) bool {
+			return assignedRulesMap[v.ID][i].Name < assignedRulesMap[v.ID][j].Name
+		})
+
+		result.Data[idx].AssignedDeclareTicketRules = assignedRulesMap[v.ID]
+	}
+
+	return nil
+}
+
+func (s *store) GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error) {
+	declareTicketCursor, err := s.dbDeclareTicketCollection.Find(ctx, bson.M{"enabled": true})
+	if err != nil {
+		return nil, err
+	}
+
+	defer declareTicketCursor.Close(ctx)
+
+	ruleMap := make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
+	rulePipeline := make(bson.M, canopsis.FacetLimit)
+	assignedRulesMap := make(map[string][]AssignedDeclareTicketRule)
+
+	for declareTicketCursor.Next(ctx) {
+		var rule DeclareTicketRule
+		err = declareTicketCursor.Decode(&rule)
+		if err != nil {
+			return nil, err
+		}
+
+		q, err := rule.getDeclareTicketQuery()
+		if err != nil {
+			return nil, err
+		}
+
+		if len(rulePipeline) == canopsis.FacetLimit {
+			err = s.processPipeline(ctx, alarmIds, ruleMap, rulePipeline, assignedRulesMap)
+			if err != nil {
+				return nil, err
+			}
+
+			ruleMap = make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
+			rulePipeline = make(bson.M, canopsis.FacetLimit)
+		}
+
+		if q != nil {
+			ruleMap[rule.ID] = AssignedDeclareTicketRule{ID: rule.ID, Name: rule.Name}
+			rulePipeline[rule.ID] = []bson.M{{"$match": q}}
+		}
+	}
+
+	if len(rulePipeline) > 0 {
+		err = s.processPipeline(ctx, alarmIds, ruleMap, rulePipeline, assignedRulesMap)
+	}
+
+	return assignedRulesMap, err
+}
+
+func (s *store) processPipeline(
+	ctx context.Context,
+	alarmIDs []string,
+	ruleMap map[string]AssignedDeclareTicketRule,
+	rulePipeline bson.M,
+	assignedRulesMap map[string][]AssignedDeclareTicketRule,
+) error {
+	pipeline := []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": alarmIDs}}},
+		{"$addFields": bson.M{
+			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
+			"v.duration": bson.M{"$subtract": bson.A{
+				types.NewCpsTime(),
+				"$v.creation_date",
+			}},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+		{"$facet": rulePipeline},
+		{"$addFields": bson.M{
+			"ids": bson.M{
+				"$arrayToObject": bson.M{
+					"$map": bson.M{
+						"input": bson.M{"$objectToArray": "$$ROOT"},
+						"as":    "each",
+						"in": bson.M{
+							"k": "$$each.k",
+							"v": bson.M{"$map": bson.M{
+								"input": "$$each.v",
+								"as":    "e",
+								"in":    "$$e._id",
+							}},
+						},
+					},
+				},
+			},
+		}},
+		{"$unwind": "$ids"},
+		{"$replaceRoot": bson.M{"newRoot": "$ids"}},
+	}
+
+	assignedRulesCursor, err := s.mainDbCollection.Aggregate(
+		ctx,
+		pipeline,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer assignedRulesCursor.Close(ctx)
+
+	for assignedRulesCursor.Next(ctx) {
+		assignedRules := make(map[string][]string)
+		err = assignedRulesCursor.Decode(&assignedRules)
+		if err != nil {
+			return err
+		}
+
+		for ruleID, alarmIds := range assignedRules {
+			for _, alarmId := range alarmIds {
+				assignedRulesMap[alarmId] = append(assignedRulesMap[alarmId], ruleMap[ruleID])
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, apiKey string, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
+	if withDeclareTicket {
+		err := s.fillAssignedDeclareTickets(ctx, result)
+		if err != nil {
+			return err
+		}
+	}
+
+	if withInstructions {
+		assignedInstructionMap, anyInstructionMatch, err := s.fillAssignedInstructions(ctx, result)
+		if err != nil {
+			return err
+		}
+		err = s.fillInstructionExecutionStatusesAndIcon(ctx, result, assignedInstructionMap)
+		if err != nil {
+			return err
+		}
+		if onlyParents {
+			err = s.fillChildrenInstructionsFlag(ctx, result, anyInstructionMatch)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if withLinks {
+		err := s.fillLinks(ctx, apiKey, result)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot fill links")
+		}
+	}
+
+	return nil
 }

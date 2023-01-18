@@ -46,7 +46,7 @@ Feature: Assigned declare tickets
       "author": "test-assigned-declare-ticket-author"
     }
     """
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-1-1
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-1-1&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -66,8 +66,9 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-1-2
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-1-2&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -87,6 +88,7 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID2={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/declare-ticket-rules:
     """json
@@ -192,6 +194,62 @@ Feature: Assigned declare tickets
     """
     Then the response code should be 201
     Then I save response ruleID2={{ .lastResponse._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-1-1&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-1-1"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-assigned-declare-ticket-rule-1-1"
+            },
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-assigned-declare-ticket-rule-1-2"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-1-2&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-1-2"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-assigned-declare-ticket-rule-1-2"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
     When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
@@ -263,7 +321,7 @@ Feature: Assigned declare tickets
       "author": "test-assigned-declare-ticket-author"
     }
     """
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-2-1
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-2-1&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -283,8 +341,9 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-2-2
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-2-2&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -304,6 +363,7 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID2={{ (index .lastResponse.data 0)._id }}
     When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
@@ -351,7 +411,7 @@ Feature: Assigned declare tickets
       "author": "test-assigned-declare-ticket-author"
     }
     """
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-1
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-1&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -371,8 +431,9 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-2
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-2&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -392,6 +453,7 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID2={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/declare-ticket-rules:
     """json
@@ -497,6 +559,63 @@ Feature: Assigned declare tickets
     """
     Then the response code should be 201
     Then I save response ruleID2={{ .lastResponse._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-1&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-3-1"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-assigned-declare-ticket-rule-3-1"
+            },
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-assigned-declare-ticket-rule-3-2"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-2&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-3-2"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-assigned-declare-ticket-rule-3-2"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
     When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
@@ -585,6 +704,54 @@ Feature: Assigned declare tickets
     }
     """
     Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-1&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-3-1"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-assigned-declare-ticket-rule-3-1"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-3-2&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-3-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
@@ -640,7 +807,7 @@ Feature: Assigned declare tickets
       "author": "test-assigned-declare-ticket-author"
     }
     """
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-1
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-1&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -660,8 +827,9 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
-    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-2
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-2&with_declare_tickets=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -681,6 +849,7 @@ Feature: Assigned declare tickets
       }
     }
     """
+    Then the response key "assigned_declare_ticket_rules" should not exist
     When I save response alarmID2={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/pbehaviors:
     """json
@@ -848,6 +1017,63 @@ Feature: Assigned declare tickets
     """
     Then the response code should be 201
     Then I save response ruleID2={{ .lastResponse._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-1&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-4-1"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-assigned-declare-ticket-rule-4-1"
+            },
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-assigned-declare-ticket-rule-4-2"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID1={{ (index .lastResponse.data 0)._id }}
+    When I do GET /api/v4/alarms?search=test-assigned-declare-ticket-resource-4-2&with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-assigned-declare-ticket-resource-4-2"
+          },
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-assigned-declare-ticket-rule-4-2"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
     When I do GET /api/v4/cat/declare-ticket-assigned?alarms[]={{ .alarmID1 }}&alarms[]={{ .alarmID2 }}
     Then the response code should be 200
     Then the response array key "by_alarms.{{ .alarmID1 }}" should contain:
