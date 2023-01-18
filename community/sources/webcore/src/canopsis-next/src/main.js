@@ -165,6 +165,7 @@ import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
+import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
 
 /**
  * Patterns
@@ -433,6 +434,7 @@ Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
 Vue.component('c-contextmenu', CContextmenu);
 Vue.component('c-column-size-field', CColumnSizeField);
+Vue.component('c-infos-attribute-field', CInfosAttributeField);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
 Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
@@ -483,6 +485,7 @@ Vue.use(ModalsPlugin, {
   dialogPropsMap: {
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
+    [MODALS.createWidgetTemplate]: { maxWidth: 500, lazy: true },
     [MODALS.alarmsList]: { maxWidth: '95%', lazy: true },
     [MODALS.createFilter]: { maxWidth: 1100, lazy: true },
     [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },

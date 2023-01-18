@@ -35,7 +35,7 @@
       v-divider
 
       field-columns(
-        v-model="form.parameters.alarms_columns",
+        v-model="form.parameters.alarmsColumns",
         :label="$t('settings.alarmsColumns')",
         with-template,
         with-html,
@@ -43,7 +43,7 @@
       )
       v-divider
       field-columns(
-        v-model="form.parameters.entities_columns",
+        v-model="form.parameters.entitiesColumns",
         :label="$t('settings.entitiesColumns')",
         with-html,
         with-color-indicator

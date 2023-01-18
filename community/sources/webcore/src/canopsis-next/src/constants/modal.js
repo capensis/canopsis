@@ -22,6 +22,7 @@ export const MODALS = {
   confirmationPhrase: 'confirmation-phrase',
   clickOutsideConfirmation: 'click-outside-confirmation',
   createWidget: 'create-widget',
+  createWidgetTemplate: 'create-widget-template',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
   colorPicker: 'color-picker',
