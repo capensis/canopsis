@@ -263,6 +263,7 @@ paths:
                   {
                     "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
                     "with_instructions": true,
+                    "with_declare_tickets": true,
                     "opened": true,
                     "steps": {
                       "page": 1,
@@ -398,6 +399,12 @@ paths:
             type: boolean
         - name: with_instructions
           in: query
+          description: show assigned instructions and execution flags
+          schema:
+            type: boolean
+        - name: with_declare_tickets
+          in: query
+          description: show assigned declare ticket rules
           schema:
             type: boolean
         - $ref: '#/components/parameters/limit'
@@ -5580,6 +5587,111 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /patterns-alarms:
+    post:
+      tags:
+        - saved-patterns
+      summary: Get matched alarms
+      description: Get matched alarms by patterns
+      operationId: get-matched-alarms-by-patterns
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsRequest'
+            examples:
+              getMatchedAlarms:
+                summary: Get matched alarms
+                description: Get matched alarms by patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              getMatchedAlarmsWithSearch:
+                summary: Get matched alarms with search
+                description: Get matched alarms by patterns with search.
+                value: {
+                  "search": "AAA-BBB-CCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /patterns-count:
     post:
       tags:
@@ -10173,6 +10285,11 @@ paths:
           description: show assigned instructions and execution flags
           schema:
             type: boolean
+        - name: with_declare_tickets
+          in: query
+          description: show assigned declare ticket rules
+          schema:
+            type: boolean            
       responses:
         200:
           description: OK
