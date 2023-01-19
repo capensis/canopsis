@@ -1,8 +1,9 @@
 import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
-import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+import { removeKeyFromEntities } from '@/helpers/entities';
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
+import uid from '@/helpers/uid';
 
 /**
  * @typedef {Object} DeclareTicketRuleWebhookDeclareTicket
@@ -86,6 +87,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
  * @returns {DeclareTicketRuleWebhookForm}
  */
 export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
+  key: uid(),
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(webhook.declare_ticket),
   request: requestToForm(webhook.request),
   stop_on_fail: webhook.stop_on_fail ?? false,
@@ -97,9 +99,7 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = []) => addKeyInEntities(
-  webhooks.map(declareTicketRuleWebhookToForm),
-);
+export const declareTicketRuleWebhooksToForm = (webhooks = []) => webhooks.map(declareTicketRuleWebhookToForm);
 
 /**
  * Convert declare ticket rule object to form compatible object

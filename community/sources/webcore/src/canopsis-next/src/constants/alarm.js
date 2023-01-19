@@ -238,3 +238,19 @@ export const ALARM_STEP_FIELDS = {
   message: 'm',
   author: 'a',
 };
+
+export const ALARM_PAYLOADS_VARIABLES = {
+  alarms: '.Alarms',
+  component: '.Value.Component',
+  resource: '.Value.Resource',
+  stateMessage: '.Value.State.Message',
+  stateValue: '.Value.State.Value',
+  statusValue: '.Value.Status.Value',
+  ticketAuthor: '.Value.Ticket.Author',
+  ticketValue: '.Value.Ticket.Value',
+  ticketMessage: '.Value.Ticket.Message',
+  ackAuthor: '.Value.ACK.Author',
+  ackMessage: '.Value.ACK.Message',
+  lastCommentAuthor: '.Value.LastComment.Author',
+  lastCommentMessage: '.Value.LastComment.Message',
+};
