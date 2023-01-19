@@ -32,7 +32,9 @@ type AlarmStep struct {
 	StateCounter           CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
 	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
-	// Execution contains id if instruction execution for instruction steps only.
+	// Execution contains id
+	// - of instruction execution for instruction steps
+	// - of webhook execution for webhook steps
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
 
 	TicketInfo `bson:",inline"`
