@@ -69,10 +69,7 @@ func NewAmqpClient(
 	}
 }
 
-func (c *AmqpClient) BeforeScenario(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-	ctx = setScenarioName(ctx, sc.Name)
-	ctx = setScenarioUri(ctx, sc.Uri)
-
+func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	c.ackConsumersMx.Lock()
 	defer c.ackConsumersMx.Unlock()
 
@@ -175,8 +172,8 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expected
 	defer timer.Stop()
 	caughtCount := 0
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
@@ -300,8 +297,8 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 		return err
 	}
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
@@ -396,8 +393,8 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 		return err
 	}
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
@@ -622,8 +619,8 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 		return err
 	}
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
