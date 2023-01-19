@@ -1,16 +1,26 @@
 <template lang="pug">
-  v-layout(column)
+  c-card-iterator-item(:item-number="webhookNumber", @remove="removeAction")
+    template(#header="")
+      request-url-field(
+        v-field="value",
+        :help-text="$t('common.request.urlHelp')",
+        :name="requestFormName",
+        :disabled="disabled",
+        :url-variables="payloadVariables"
+      )
+
     request-form(
       v-field="value.request",
-      :name="`${name}.request`",
-      :url-variables="payloadVariables",
+      :name="requestFormName",
       :headers-variables="payloadVariables",
-      :payload-variables="payloadVariables"
+      :payload-variables="payloadVariables",
+      hide-url
     )
     declare-ticket-rule-ticket-mapping-field.mb-2(
       v-field="value.declare_ticket",
       :name="`${name}.declare_ticket`",
-      :is-declare-ticket-exist="isDeclareTicketExist"
+      :is-declare-ticket-exist="isDeclareTicketExist",
+      hide-empty-response
     )
     c-workflow-field(
       v-field="value.stop_on_fail",
@@ -29,11 +39,12 @@ import {
 } from '@/constants';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
+import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
 
 import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
-  components: { DeclareTicketRuleTicketMappingField, RequestForm },
+  components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestForm },
   model: {
     prop: 'value',
     event: 'input',
@@ -59,8 +70,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    webhookNumber: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
+    requestFormName() {
+      return `${this.name}.request`;
+    },
+
     alarmPayloadVariables() {
       return [{
         value: ALARM_PAYLOADS_VARIABLES.alarms,

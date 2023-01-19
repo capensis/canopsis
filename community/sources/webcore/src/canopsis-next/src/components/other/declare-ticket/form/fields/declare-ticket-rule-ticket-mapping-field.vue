@@ -13,7 +13,12 @@
         v-flex(v-if="value.enabled", xs6)
           c-enabled-field(v-field="value.is_regexp", :label="$t('declareTicket.isRegexp')")
       template(v-if="value.enabled")
-        v-layout.mr-5
+        c-enabled-field(
+          v-if="!hideEmptyResponse",
+          v-field="value.empty_response",
+          :label="$t('declareTicket.emptyResponse')"
+        )
+        v-layout
           v-flex.mr-3(xs6)
             declare-ticket-rule-ticket-id-field(
               v-field="value.ticket_id",
@@ -80,6 +85,10 @@ export default {
       default: false,
     },
     isDeclareTicketExist: {
+      type: Boolean,
+      default: false,
+    },
+    hideEmptyResponse: {
       type: Boolean,
       default: false,
     },

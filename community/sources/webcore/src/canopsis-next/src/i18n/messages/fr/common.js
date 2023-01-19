@@ -494,6 +494,7 @@ export default {
     },
   },
   request: {
+    timeout: 'Temps libre',
     timeoutSettings: 'Paramètres de délai d\'attente',
     repeatRequest: 'Répéter la demande',
     skipVerify: 'Ne pas vérifier les certificats HTTPS',
