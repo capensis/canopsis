@@ -24,6 +24,13 @@ func (e *autoWebhookFailExecutor) Exec(
 ) (types.AlarmChangeType, error) {
 	params := operation.Parameters
 
+	for i := len(alarm.Value.Steps) - 1; i >= 0; i-- {
+		step := alarm.Value.Steps[i]
+		if step.Execution == params.Execution && (step.Type == types.AlarmStepWebhookComplete || step.Type == types.AlarmStepWebhookFail) {
+			return types.AlarmChangeTypeNone, nil
+		}
+	}
+
 	if userID == "" {
 		userID = params.User
 	}
@@ -32,6 +39,7 @@ func (e *autoWebhookFailExecutor) Exec(
 		err := alarm.PartialUpdateWebhookDeclareTicketFail(
 			params.WebhookRequest,
 			time,
+			params.Execution,
 			params.Author,
 			params.Output,
 			params.WebhookFailReason,
@@ -49,6 +57,7 @@ func (e *autoWebhookFailExecutor) Exec(
 
 	err := alarm.PartialUpdateWebhookFail(
 		time,
+		params.Execution,
 		params.Author,
 		params.Output,
 		params.WebhookFailReason,
