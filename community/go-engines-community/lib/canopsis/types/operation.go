@@ -22,7 +22,7 @@ type OperationParameters struct {
 	State *CpsNumber `bson:"state,omitempty" json:"state,omitempty"`
 	// Pbehavior
 	PbehaviorInfo *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	// Instruction
+	// Instruction and Webhook
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 	// Instruction is used only for manual instructions kpi metrics
 	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
