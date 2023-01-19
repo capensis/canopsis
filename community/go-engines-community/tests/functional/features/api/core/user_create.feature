@@ -246,3 +246,52 @@ Feature: Create a user
       }
     }
     """
+
+  Scenario: given create request should create user with source and external_id
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "name": "test-user-to-create-5-name",
+      "firstname": "test-user-to-create-5-firstname",
+      "lastname": "test-user-to-create-5-lastname",
+      "email": "test-user-to-create-5-email@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "password": "test-password",
+      "source": "saml",
+      "external_id": "saml_id"
+    }
+    """
+    When I do GET /api/v4/users/{{ .lastResponse._id}}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-user-to-create-5-name",
+      "defaultview": {
+        "_id": "test-view-to-edit-user",
+        "title": "test-view-to-edit-user-title"
+      },
+      "email": "test-user-to-create-5-email@canopsis.net",
+      "enable": true,
+      "firstname": "test-user-to-create-5-firstname",
+      "lastname": "test-user-to-create-5-lastname",
+      "name": "test-user-to-create-5-name",
+      "role": {
+        "_id": "test-role-to-edit-user",
+        "name": "test-role-to-edit-user",
+        "defaultview": {
+          "_id": "test-view-to-edit-user",
+          "title": "test-view-to-edit-user-title"
+        }
+      },
+      "ui_groups_navigation_type": "top-bar",
+      "ui_language": "fr",
+      "source": "saml",
+      "external_id": "saml_id"
+    }
+    """
