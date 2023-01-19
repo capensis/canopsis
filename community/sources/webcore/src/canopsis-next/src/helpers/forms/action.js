@@ -1,16 +1,19 @@
-import { omit, isEmpty } from 'lodash';
+import { omit } from 'lodash';
 
 import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS, OLD_PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+import {
+  declareTicketRuleWebhookDeclareTicketToForm,
+  formToDeclareTicketRuleWebhookDeclareTicket,
+} from '@/helpers/forms/declare-ticket-rule';
 
-import { objectToTextPairs, textPairsToObject } from '../text-pairs';
 import uid from '../uid';
 import { durationToForm } from '../date/duration';
 import { getLocaleTimezone } from '../date/date';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
-import { requestToForm, retryToForm, formToRequest, formToRetry } from './shared/request';
+import { requestToForm, formToRequest } from './shared/request';
 
 /**
  * @typedef {
@@ -50,11 +53,7 @@ import { requestToForm, retryToForm, formToRequest, formToRetry } from './shared
 /**
  * @typedef {Object} ActionWebhookParameters
  * @property {Request} request
- * @property {?Object} [declare_ticket]
- * @property {boolean} declare_ticket.empty_response
- * @property {boolean} declare_ticket.is_regexp
- * @property {number} retry_count
- * @property {Duration} retry_delay
+ * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
  * @property {string} [author]
  */
@@ -62,9 +61,7 @@ import { requestToForm, retryToForm, formToRequest, formToRetry } from './shared
 /**
  * @typedef {ActionWebhookParameters} ActionWebhookFormParameters
  * @property {RequestForm} request
- * @property {boolean} empty_response
- * @property {boolean} is_regexp
- * @property {TextPairObject[]} declare_ticket
+ * @property {DeclareTicketRuleWebhookDeclareTicketForm} declare_ticket
  */
 
 /**
@@ -130,19 +127,12 @@ const defaultActionParametersToForm = (parameters = {}) => ({
  * @param {ActionWebhookParameters} [parameters = {}]
  * @returns {ActionWebhookFormParameters}
  */
-const webhookActionParametersToForm = (parameters = {}) => {
-  const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket ?? {};
-
-  return {
-    forward_author: parameters.forward_author ?? true,
-    author: parameters.author ?? '',
-    declare_ticket: objectToTextPairs(variables),
-    empty_response: !!emptyResponse,
-    is_regexp: !!isRegexp,
-    retry: retryToForm(parameters),
-    request: requestToForm(parameters.request),
-  };
-};
+const webhookActionParametersToForm = (parameters = {}) => ({
+  forward_author: parameters.forward_author ?? true,
+  author: parameters.author ?? '',
+  declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
+  request: requestToForm(parameters.request),
+});
 
 /**
  * Convert action snooze parameters to form
@@ -265,25 +255,10 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
  * @param {ActionWebhookFormParameters | {}} [parameters = {}]
  * @return {ActionWebhookParameters}
  */
-export const formToWebhookActionParameters = (parameters = {}) => {
-  const webhook = {
-    declare_ticket: null,
-    request: formToRequest(parameters.request),
-
-    ...formToRetry(parameters.retry),
-  };
-
-  if (parameters.empty_response || parameters.is_regexp || !isEmpty(parameters.declare_ticket)) {
-    webhook.declare_ticket = {
-      empty_response: parameters.empty_response,
-      is_regexp: parameters.is_regexp,
-
-      ...textPairsToObject(parameters.declare_ticket),
-    };
-  }
-
-  return webhook;
-};
+export const formToWebhookActionParameters = (parameters = {}) => ({
+  declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
+  request: formToRequest(parameters.request),
+});
 
 /**
  * Convert pbehavior parameters to action
