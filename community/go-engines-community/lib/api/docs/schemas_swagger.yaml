@@ -4106,6 +4106,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -4118,6 +4120,8 @@ definitions:
       password:
         type: string
       role:
+        type: string
+      source:
         type: string
       ui_groups_navigation_type:
         type: string
@@ -4138,6 +4142,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -4150,6 +4156,8 @@ definitions:
       password:
         type: string
       role:
+        type: string
+      source:
         type: string
       ui_groups_navigation_type:
         type: string
@@ -4169,6 +4177,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -4181,6 +4191,8 @@ definitions:
       password:
         type: string
       role:
+        type: string
+      source:
         type: string
       ui_groups_navigation_type:
         type: string
