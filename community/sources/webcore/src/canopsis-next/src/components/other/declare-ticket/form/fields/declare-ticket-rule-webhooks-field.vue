@@ -13,7 +13,8 @@
           :name="`${name}.${webhook.key}`",
           :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled",
           :has-previous="!!index",
-          :webhook-number="index + 1"
+          :webhook-number="index + 1",
+          @remove="removeItemFromArray(index)"
         )
     v-layout(row, align-center)
       v-btn.ml-0(
