@@ -266,7 +266,7 @@ export default merge({
     ackedBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',
     ackInitiator: 'Origine de l\'acquittement',
-    resolvedAt: 'Résolue à',
+    resolved: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',

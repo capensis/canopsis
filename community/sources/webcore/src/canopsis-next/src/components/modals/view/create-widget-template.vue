@@ -60,7 +60,7 @@ export default {
       }
 
       if (this.config.action) {
-        this.this.config.action(formToWidgetTemplate(this.form));
+        await this.config.action(formToWidgetTemplate(this.form));
       }
 
       this.$modals.hide();

@@ -48,12 +48,13 @@ export const isInfosWidgetColumn = column => [
 export const isLinksWidgetColumn = column => column.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
- * Convert widget columns to form
+ * Convert widget column to form
  *
- * @param {WidgetColumn[]} columns
- * @returns {WidgetColumnForm[]}
+ * @param {string} [value]
+ * @param {WidgetColumn & { value: undefined }} [rest]
+ * @returns {WidgetColumnForm}
  */
-export const widgetColumnsToForm = (columns = []) => columns.map(({ value, ...rest }) => {
+export const widgetColumnToForm = ({ value = '', ...rest } = {}) => {
   const result = {
     ...rest,
 
@@ -75,10 +76,18 @@ export const widgetColumnsToForm = (columns = []) => columns.map(({ value, ...re
   }
 
   return result;
-});
+};
 
 /**
- * Convert form to widget columns
+ * Convert widget columns array to form array
+ *
+ * @param {WidgetColumn[]} columns
+ * @returns {WidgetColumnForm[]}
+ */
+export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToForm);
+
+/**
+ * Convert form array to widget columns array
  *
  * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}

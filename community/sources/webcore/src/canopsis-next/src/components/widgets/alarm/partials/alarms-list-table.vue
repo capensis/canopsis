@@ -95,7 +95,7 @@
 
 <script>
 import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+import { ALARM_FIELDS_TO_LABELS_KEYS, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
@@ -240,7 +240,7 @@ export default {
       const headers = this.columns.map(column => ({
         ...column,
 
-        text: this.$t(ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS[column.value]),
+        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[column.value], 2),
       }));
 
       if (!this.hideActions) {

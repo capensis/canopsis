@@ -5,8 +5,13 @@ import request from '@/services/request';
 
 import { widgetSchema } from '@/store/schemas';
 
+import widgetTemplateModule from './template';
+
 export default {
   namespaced: true,
+  modules: {
+    template: widgetTemplateModule,
+  },
   getters: {
     getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
       ENTITIES_TYPES.widget,
@@ -71,22 +76,6 @@ export default {
 
     updateWidgetFiltersPositions(context, { data } = {}) {
       return request.put(API_ROUTES.widget.filterPositions, data);
-    },
-
-    fetchWidgetTemplatesWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.widget.template, { params });
-    },
-
-    createWidgetTemplate(context, { data } = {}) {
-      return request.post(API_ROUTES.widget.template, data);
-    },
-
-    updateWidgetTemplate(context, { id, data } = {}) {
-      return request.put(`${API_ROUTES.widget.template}/${id}`, data);
-    },
-
-    removeWidgetTemplate(context, { id, data } = {}) {
-      return request.delete(`${API_ROUTES.widget.template}/${id}`, data);
     },
   },
 };

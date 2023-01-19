@@ -14,6 +14,10 @@
       field-columns(
         v-model="form.parameters.widgetColumns",
         :label="$t('settings.columnNames')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
         with-template,
         with-html,
         with-color-indicator
@@ -22,6 +26,10 @@
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
         :label="$t('settings.groupColumnNames')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
         with-html,
         with-color-indicator
       )
@@ -29,6 +37,10 @@
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
         :label="$t('settings.trackColumnNames')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
         with-color-indicator
       )
       v-divider
@@ -128,6 +140,7 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
+import { widgetColumnsInfos } from '@/mixins/widget/columns/infos';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -181,6 +194,7 @@ export default {
   mixins: [
     widgetSettingsMixin,
     alarmVariablesMixin,
+    widgetColumnsInfos,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
