@@ -19,7 +19,7 @@
             v-tab(:href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`") {{ $t('parameters.tabs.widgetTemplates') }}
             v-tab-item(:value="$constants.PARAMETERS_TABS.widgetTemplates", lazy)
               v-card-text
-                templates-list
+                widget-templates
             template(v-if="isProVersion")
               v-tab(:href="`#${$constants.PARAMETERS_TABS.notificationSettings}`")
                 | {{ $t('parameters.tabs.notificationsSettings') }}
@@ -34,8 +34,8 @@
     v-fade-transition
       c-fab-btn(
         v-if="hasFabButton",
-        :has-access="true",
-        @refresh="fetchList",
+        :has-access="hasCreateAnyWidgetTemplateAccess",
+        @refresh="refresh",
         @create="create"
       )
         span {{ $t('modals.createWidgetTemplate.create.title') }}
@@ -45,14 +45,16 @@
 import { MODALS, PARAMETERS_TABS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/view/widget/template';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
+import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
 
 import UserInterface from '@/components/other/user-interface/user-interface.vue';
 import ViewsImportExport from '@/components/other/view/views-import-export.vue';
 import StateSettings from '@/components/other/state-setting/state-settings.vue';
 import NotificationsSettings from '@/components/other/notification/notifications-settings.vue';
 import StorageSettings from '@/components/other/storage-setting/storage-settings.vue';
-import TemplatesList from '@/components/other/template/templates-list.vue';
+import WidgetTemplates from '@/components/other/widget-template/widget-templates.vue';
 
 export default {
   components: {
@@ -61,11 +63,13 @@ export default {
     StateSettings,
     NotificationsSettings,
     StorageSettings,
-    TemplatesList,
+    WidgetTemplates,
   },
   mixins: [
     entitiesInfoMixin,
+    entitiesWidgetTemplatesMixin,
     permissionsTechnicalParametersMixin,
+    permissionsTechnicalWidgetTemplateMixin,
   ],
   data() {
     return {
@@ -78,13 +82,20 @@ export default {
     },
   },
   methods: {
-    fetchList() {
-
+    refresh() {
+      this.fetchWidgetTemplatesListWithPreviousParams();
     },
 
     create() {
       this.$modals.show({
         name: MODALS.createWidgetTemplate,
+        config: {
+          action: async (newWidgetTemplate) => {
+            await this.createWidgetTemplate({ data: newWidgetTemplate });
+
+            return this.refresh();
+          },
+        },
       });
     },
   },

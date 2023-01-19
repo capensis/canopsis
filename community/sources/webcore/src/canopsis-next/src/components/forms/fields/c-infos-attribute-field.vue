@@ -11,9 +11,10 @@
         :return-object="false",
         :name="dictionaryName",
         :error-messages="errors.collect(dictionaryName)",
+        :loading="pending",
+        :hide-details="row",
         item-text="value",
-        item-value="value",
-        :hide-details="row"
+        item-value="value"
       )
       v-text-field(
         v-else,
@@ -81,6 +82,10 @@ export default {
       required: false,
     },
     column: {
+      type: Boolean,
+      required: false,
+    },
+    pending: {
       type: Boolean,
       required: false,
     },
