@@ -1,18 +1,20 @@
-import { WIDGET_TYPES } from '@/constants';
+import { ENTITIES_TYPES } from '@/constants';
 
 import { widgetColumnsToForm, formToWidgetColumns } from './shared/widget-column';
 
 /**
+ * @typedef {'alarm' | 'entity'} WidgetTemplateType
+ */
+
+/**
  * @typedef {Object} WidgetTemplate
- * @property {string} name
- * @property {WidgetType} type
+ * @property {string} title
+ * @property {WidgetTemplateType} type
  * @property {WidgetColumn[]} columns
  */
 
 /**
- * @typedef {Object} WidgetTemplateForm
- * @property {string} name
- * @property {WidgetType} type
+ * @typedef {WidgetTemplate} WidgetTemplateForm
  * @property {WidgetColumnForm[]} columns
  */
 
@@ -23,8 +25,8 @@ import { widgetColumnsToForm, formToWidgetColumns } from './shared/widget-column
  * @returns {WidgetTemplateForm}
  */
 export const widgetTemplateToForm = (widgetTemplate = {}) => ({
-  name: widgetTemplate.name ?? '',
-  type: widgetTemplate.type ?? WIDGET_TYPES.alarmList,
+  title: widgetTemplate.title ?? '',
+  type: widgetTemplate.type ?? ENTITIES_TYPES.alarm,
   columns: widgetColumnsToForm(widgetTemplate.columns),
 });
 

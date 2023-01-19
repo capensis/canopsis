@@ -9,24 +9,30 @@
       name="type"
     )
     v-text-field(
-      v-field="form.name",
+      v-field="form.title",
       v-validate="'required'",
       :label="$t('common.templateName')",
-      :error-messages="errors.collect('name')",
-      name="name"
+      :error-messages="errors.collect('title')",
+      name="title"
     )
-    span.body-2.mb-2 {{ $tc('common.column', 2) }}
+    span.body-2.my-2 {{ $tc('common.column', 2) }}
     c-columns-field(
       v-field="form.columns",
-      :type="form.type"
+      :type="form.type",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending"
     )
 </template>
 
 <script>
-import { WIDGET_TYPES } from '@/constants';
+import { ENTITIES_TYPES } from '@/constants';
+
+import { widgetColumnsInfos } from '@/mixins/widget/columns/infos';
 
 export default {
   inject: ['$validator'],
+  mixins: [widgetColumnsInfos],
   model: {
     prop: 'form',
     event: 'input',
@@ -39,16 +45,10 @@ export default {
   },
   computed: {
     availableTypes() {
-      return [
-        {
-          value: WIDGET_TYPES.alarmList,
-          text: this.$t(`modals.createWidget.types.${WIDGET_TYPES.alarmList}.title`),
-        },
-        {
-          value: WIDGET_TYPES.context,
-          text: this.$t(`modals.createWidget.types.${WIDGET_TYPES.context}.title`),
-        },
-      ];
+      return [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].map(value => ({
+        value: ENTITIES_TYPES.alarm,
+        text: this.$t(`modals.createWidgetTemplate.types.${value}`),
+      }));
     },
   },
 };

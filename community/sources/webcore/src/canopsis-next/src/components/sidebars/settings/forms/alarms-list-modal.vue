@@ -3,6 +3,9 @@
     field-columns(
       v-field="form.widgetColumns",
       :label="$t('settings.columnNames')",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending",
       with-html,
       with-state
     )
@@ -43,6 +46,18 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    alarmInfos: {
+      type: Array,
+      default: () => [],
+    },
+    entityInfos: {
+      type: Array,
+      default: () => [],
+    },
+    infosPending: {
+      type: Boolean,
+      default: false,
     },
   },
 };
