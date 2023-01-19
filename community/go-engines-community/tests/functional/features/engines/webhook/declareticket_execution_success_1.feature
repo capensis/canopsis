@@ -247,7 +247,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name"
       },
       {
         "_t": "declareticket",
@@ -276,7 +276,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-2."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name"
       },
       {
         "_t": "declareticket",
@@ -519,7 +519,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name. Ticket ID: test-ticket-declareticket-execution-2. Ticket URL: https://test/test-ticket-declareticket-execution-2. Ticket name: test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 ."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name"
       },
       {
         "_t": "declareticket",
@@ -548,7 +548,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name. Ticket ID: test-ticket-declareticket-execution-2. Ticket URL: https://test/test-ticket-declareticket-execution-2. Ticket name: test-ticket-declareticket-execution-2 test-resource-declareticket-execution-2-2 test-resource-declareticket-execution-2-1 ."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-2-name"
       },
       {
         "_t": "declareticket",
@@ -754,7 +754,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-3-name. Ticket ID: test-ticket-declareticket-execution-3. Ticket URL: https://test/test-ticket-declareticket-execution-3. Ticket name: test-ticket-declareticket-execution-3 test-resource-declareticket-execution-3."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-3-name"
       },
       {
         "_t": "declareticket",
@@ -936,7 +936,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-4-name. Ticket ID: test-ticket-declareticket-execution-4. Ticket URL: https://test/test-ticket-declareticket-execution-4. Ticket name: test-ticket-declareticket-execution-4 test-resource-declareticket-execution-4."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-4-name"
       },
       {
         "_t": "declareticket",
@@ -1434,10 +1434,10 @@ Feature: run a declare ticket rule
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name"
       },
       {
-        "_t": "webhookfail",
+        "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name. Fail reason: ticket_id is emtpy, response has nothing in not_exist_field."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name"
       },
       {
         "_t": "declareticketfail",
@@ -1558,10 +1558,10 @@ Feature: run a declare ticket rule
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-8-name"
       },
       {
-        "_t": "webhookfail",
+        "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-8-name. Fail reason: response of POST {{ .dummyApiURL }}/webhook/request is not valid JSON."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-8-name"
       },
       {
         "_t": "declareticketfail",
@@ -1730,7 +1730,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-9-name. Ticket ID: test-ticket-declareticket-execution-9. Ticket URL: https://test/test-ticket-declareticket-execution-9. Ticket name: test-ticket-declareticket-execution-9 test-resource-declareticket-execution-9."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-9-name"
       },
       {
         "_t": "declareticket",

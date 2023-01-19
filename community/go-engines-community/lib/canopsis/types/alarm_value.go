@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -46,6 +47,42 @@ type TicketInfo struct {
 	TicketRuleID      string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
 	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
 	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+}
+
+func (t TicketInfo) GetStepMessage() string {
+	builder := strings.Builder{}
+	builder.WriteString(t.TicketRuleName)
+	extraData := false
+	if t.Ticket != "" {
+		if t.TicketRuleName != "" {
+			builder.WriteString(". ")
+		}
+		builder.WriteString("Ticket ID: ")
+		builder.WriteString(t.Ticket)
+		extraData = true
+	}
+	if t.TicketURL != "" {
+		if t.TicketRuleName != "" || extraData {
+			builder.WriteString(". ")
+		}
+		builder.WriteString("Ticket URL: ")
+		builder.WriteString(t.TicketURL)
+		extraData = true
+	}
+	for k, v := range t.TicketData {
+		if t.TicketRuleName != "" || extraData {
+			builder.WriteString(". ")
+		}
+		builder.WriteString("Ticket ")
+		builder.WriteString(k)
+		builder.WriteString(": ")
+		builder.WriteString(v)
+		extraData = true
+	}
+	if extraData {
+		builder.WriteRune('.')
+	}
+	return builder.String()
 }
 
 // NewAlarmStep returns an AlarmStep.
