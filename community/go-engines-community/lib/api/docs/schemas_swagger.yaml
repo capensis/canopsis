@@ -1804,6 +1804,7 @@ definitions:
             * `user_preferences` - export userpreferences collection
             * `kpi_filter` - export kpi_filter collection
             * `pattern` - export pattern collection
+            * `declare_ticket_rule` - export declare_ticket_rule collection
         items:
           type: string
         type: array
