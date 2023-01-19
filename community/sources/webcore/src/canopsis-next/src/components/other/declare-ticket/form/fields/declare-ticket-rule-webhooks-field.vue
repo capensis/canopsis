@@ -7,7 +7,8 @@
           declare-ticket-rule-webhook-field(
             v-field="webhooks[index]",
             :name="`${name}.${webhook.key}`",
-            :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled"
+            :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled",
+            :has-previous="!!index"
           )
     v-layout(row, align-center)
       v-btn.ml-0(

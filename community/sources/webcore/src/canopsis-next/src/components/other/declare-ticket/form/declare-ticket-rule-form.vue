@@ -8,7 +8,9 @@
       declare-ticket-rule-patterns-form.mt-2(ref="patterns", v-field="form.patterns")
     v-tab {{ $t('declareTicket.testQuery') }}
     v-tab-item
-      declare-ticket-rule-test-query.mt-2(v-field="form.patterns")
+      v-layout(row)
+        v-flex(offset-xs1, xs10)
+          declare-ticket-rule-test-query.mt-2(v-field="form.patterns")
 </template>
 
 <script>

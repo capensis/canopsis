@@ -264,3 +264,14 @@ export const ASSOCIATIVE_TABLES_NAMES = {
 export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
 
 export const VALIDATION_DELAY = 300;
+
+export const HEADERS = {
+  authorization: 'Authorization',
+  contentType: 'Content-Type',
+};
+
+export const CONTENT_TYPES = {
+  json: 'application/json',
+  javascript: 'application/javascript',
+  xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
+};
