@@ -60,6 +60,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"user_preferences":    mongo.UserPreferencesMongoCollection,
 			"kpi_filter":          mongo.KpiFilterMongoCollection,
 			"pattern":             mongo.PatternMongoCollection,
+			"declare_ticket_rule": mongo.DeclareTicketRuleMongoCollection,
 		},
 	}
 }
