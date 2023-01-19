@@ -1,55 +1,41 @@
 <template lang="pug">
-  .step-field
-    v-layout
-      v-flex.mt-3(xs1)
-        c-draggable-step-number(
-          :disabled="disabled",
-          :color="hasChildrenError ? 'error' : 'primary'",
-          drag-class="step-drag-handler"
-        ) {{ stepNumber }}
-      v-flex(xs11)
-        v-layout(row)
-          v-layout
-            c-expand-btn.step-expand(
-              v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
-            )
-            v-layout(column)
-              v-layout(row)
-                v-flex(xs8)
-                  v-text-field(
-                    v-field="step.name",
-                    v-validate="'required'",
-                    :label="$t('common.name')",
-                    :error-messages="errors.collect(nameFieldName)",
-                    :name="nameFieldName",
-                    :disabled="disabled",
-                    box
-                  )
-                v-flex.pl-2(xs3)
-                  v-text-field.step-time-complete-unit(
-                    :value="timeToComplete | duration('refreshFieldFormat')",
-                    :label="$t('remediation.instruction.timeToComplete')",
-                    readonly
-                  )
-                v-flex.mt-1(xs1)
-                  v-layout(justify-center)
-                    c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
-              v-expand-transition(mode="out-in")
-                v-layout(v-if="expanded", column)
-                  c-workflow-field(
-                    v-field="step.stop_on_fail",
-                    :label="$t('remediation.instruction.workflow')",
-                    :continue-label="$t('remediation.instruction.remainingStep')",
-                    :disabled="disabled"
-                  )
-                  remediation-instruction-step-endpoint-field(v-field="step.endpoint", :disabled="disabled")
-                  remediation-instruction-operations-form(
-                    v-field="step.operations",
-                    :name="operationFieldName",
-                    :step-number="stepNumber",
-                    :disabled="disabled"
-                  )
+  c-card-iterator-item.remediation-instruction-step-field(
+    :item-number="stepNumber",
+    offset-left,
+    @remove="remove"
+  )
+    template(#header="")
+      v-layout.mt-3(row)
+        v-flex(xs9)
+          v-text-field(
+            v-field="step.name",
+            v-validate="'required'",
+            :label="$t('common.name')",
+            :error-messages="errors.collect(nameFieldName)",
+            :name="nameFieldName",
+            :disabled="disabled",
+            box
+          )
+        v-flex.pl-2(xs3)
+          v-text-field.remediation-instruction-step-field__time-to-complete(
+            :value="timeToComplete | duration('refreshFieldFormat')",
+            :label="$t('remediation.instruction.timeToComplete')",
+            readonly
+          )
+
+    c-workflow-field(
+      v-field="step.stop_on_fail",
+      :label="$t('remediation.instruction.workflow')",
+      :continue-label="$t('remediation.instruction.remainingStep')",
+      :disabled="disabled"
+    )
+    remediation-instruction-step-endpoint-field(v-field="step.endpoint", :disabled="disabled")
+    remediation-instruction-operations-form(
+      v-field="step.operations",
+      :name="operationFieldName",
+      :step-number="stepNumber",
+      :disabled="disabled"
+    )
 </template>
 
 <script>
@@ -140,18 +126,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-  .step-field {
-    & /deep/ .step-expand {
-      margin: 24px 2px 0 2px !important;
-      width: 20px !important;
-      height: 20px !important;
-    }
-
-    & /deep/ .step-time-complete-unit .v-input__slot {
-      &:before, &:after {
-        content: none !important;
-      }
+<style lang="scss">
+.remediation-instruction-step-field {
+  &__time-to-complete .v-input__slot {
+    &:before, &:after {
+      content: none !important;
     }
   }
+}
 </style>
