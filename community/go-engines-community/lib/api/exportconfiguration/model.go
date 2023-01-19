@@ -33,5 +33,6 @@ type Request struct {
 	//   * `user_preferences` - export userpreferences collection
 	//   * `kpi_filter` - export kpi_filter collection
 	//   * `pattern` - export pattern collection
+	//   * `declare_ticket_rule` - export declare_ticket_rule collection
 	Exports []string `json:"export"`
 }
