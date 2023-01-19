@@ -167,6 +167,8 @@ import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
+import CCardIterator from '@/components/common/card-iterator/c-card-iterator.vue';
+import CCardIteratorItem from '@/components/common/card-iterator/c-card-iterator-item.vue';
 
 /**
  * Patterns
@@ -364,6 +366,8 @@ Vue.component('c-table-pagination', CTablePagination);
 Vue.component('c-alert-overlay', CAlertOverlay);
 Vue.component('c-progress-overlay', CProgressOverlay);
 Vue.component('c-zoom-overlay', CZoomOverlay);
+Vue.component('c-card-iterator', CCardIterator);
+Vue.component('c-card-iterator-item', CCardIteratorItem);
 Vue.component('c-enabled-field', CEnabledField);
 Vue.component('c-duration-field', CDurationField);
 Vue.component('c-disable-during-periods-field', CDisableDuringPeriodsField);
