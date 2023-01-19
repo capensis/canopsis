@@ -2,7 +2,7 @@
 
 exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 <div
-  class="v-list pa-0 v-list--dense theme--light"
+  class="v-list pa-0 variables-list v-list--dense theme--light"
   role="list"
 >
   <div
@@ -43,7 +43,7 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 
 exports[`variables-list Renders \`variables-list\` with default props 1`] = `
 <div
-  class="v-list pa-0 v-list--dense theme--light"
+  class="v-list pa-0 variables-list v-list--dense theme--light"
   role="list"
 />
 `;
