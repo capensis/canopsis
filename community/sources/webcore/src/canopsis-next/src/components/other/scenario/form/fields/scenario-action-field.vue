@@ -1,7 +1,7 @@
 <template lang="pug">
   c-card-iterator-item(:item-number="actionNumber", @remove="removeAction")
     template(#header="")
-      c-action-type-field.px-2(v-field="action.type", :name="`${name}.type`")
+      c-action-type-field(v-field="action.type", :name="`${name}.type`")
 
     c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
     action-author-field(v-if="!isPbehaviorAction", v-model="parameters")

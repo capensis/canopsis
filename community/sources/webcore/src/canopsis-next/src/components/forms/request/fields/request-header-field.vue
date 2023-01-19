@@ -8,6 +8,7 @@
         :error-messages="errors.collect(textFieldName)",
         :disabled="disabled",
         :items="textHints",
+        :name="textFieldName",
         autofocus
       )
     v-flex(xs6)

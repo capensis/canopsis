@@ -1,15 +1,20 @@
 <template lang="pug">
   v-layout(column)
     c-alert(v-if="!webhooks.length", type="info") {{ $t('declareTicket.emptyWebhooks') }}
-    draggable(v-field="webhooks", :options="draggableOptions")
-      v-card.my-2(v-for="(webhook, index) in webhooks", :key="webhook.key")
-        v-card-text
-          declare-ticket-rule-webhook-field(
-            v-field="webhooks[index]",
-            :name="`${name}.${webhook.key}`",
-            :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled",
-            :has-previous="!!index"
-          )
+    c-card-iterator.mb-2(
+      v-field="webhooks",
+      item-key="key",
+      :disabled="disabled",
+      :draggable-group="draggableGroup"
+    )
+      template(#item="{ index, item: webhook }")
+        declare-ticket-rule-webhook-field(
+          v-field="webhooks[index]",
+          :name="`${name}.${webhook.key}`",
+          :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled",
+          :has-previous="!!index",
+          :webhook-number="index + 1"
+        )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasWebhooksErrors ? 'error' : 'primary'",
@@ -21,10 +26,6 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
 import { declareTicketRuleWebhookToForm } from '@/helpers/forms/declare-ticket-rule';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -35,7 +36,6 @@ export default {
   inject: ['$validator'],
   components: {
     DeclareTicketRuleWebhookField,
-    Draggable,
   },
   mixins: [formArrayMixin],
   model: {
@@ -69,15 +69,9 @@ export default {
       return this.errors.has(this.name);
     },
 
-    draggableOptions() {
+    draggableGroup() {
       return {
-        disabled: this.disabled,
-        animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.step-drag-handler',
-        ghostClass: 'white',
-        group: {
-          name: 'remediation-instruction-steps',
-        },
+        name: 'declare-ticket-steps',
       };
     },
   },

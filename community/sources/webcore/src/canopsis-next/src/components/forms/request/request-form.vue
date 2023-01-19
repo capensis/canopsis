@@ -1,19 +1,22 @@
 <template lang="pug">
   v-layout(column)
-    v-layout(row)
-      slot(name="prepend-url")
-      request-url-field(
-        v-field="form",
-        :help-text="$t('common.request.urlHelp')",
-        :name="name",
-        :disabled="disabled",
-        :url-variables="urlVariables"
-      )
-      slot(name="append-url")
+    request-url-field(
+      v-if="!hideUrl",
+      v-field="form",
+      :help-text="$t('common.request.urlHelp')",
+      :name="name",
+      :disabled="disabled",
+      :url-variables="urlVariables"
+    )
     v-layout(row)
       v-flex.mr-3(xs6)
         c-information-block(:title="$t('common.request.timeoutSettings')")
-          c-duration-field(v-field="form.timeout", :disabled="disabled", clearable)
+          c-duration-field(
+            v-field="form.timeout",
+            :disabled="disabled",
+            :units-label="$t('common.unit')",
+            clearable
+          )
       v-flex(xs6)
         c-information-block(:title="$t('common.request.repeatRequest')")
           c-retry-field(v-field="form", :disabled="disabled")
@@ -72,6 +75,10 @@ export default {
       default: 'request',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    hideUrl: {
       type: Boolean,
       default: false,
     },

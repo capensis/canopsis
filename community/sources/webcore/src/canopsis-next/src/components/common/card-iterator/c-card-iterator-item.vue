@@ -1,7 +1,7 @@
 <template lang="pug">
   div.c-card-iterator-item
     v-layout(row, align-center, justify-space-between)
-      v-layout.c-card-iterator-item__actions
+      v-layout.c-card-iterator-item__actions.pr-2
         c-draggable-step-number(
           :color="!expanded && hasChildrenError ? 'error' : 'primary'",
           drag-class="item-drag-handler"

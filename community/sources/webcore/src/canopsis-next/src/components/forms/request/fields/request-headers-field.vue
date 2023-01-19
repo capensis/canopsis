@@ -43,7 +43,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'items',
+      default: 'headers',
     },
     disabled: {
       type: Boolean,
