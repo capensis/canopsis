@@ -3,10 +3,8 @@ package functional
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"testing"
@@ -48,13 +46,26 @@ func TestMain(m *testing.M) {
 	flags.ParseArgs()
 
 	var eventLogger zerolog.Logger
-	if flags.eventLogs != "" {
-		f, err := os.OpenFile(flags.eventLogs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	if flags.eventsLog != "" {
+		f, err := os.OpenFile(flags.eventsLog, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("")
 		}
 		defer f.Close()
-		eventLogger = zerolog.New(&eventLogWriter{writer: f}).
+		eventLogger = zerolog.New(&logWriter{writer: f}).
+			Level(zerolog.DebugLevel).
+			With().Timestamp().
+			Logger()
+	}
+
+	var requestLogger zerolog.Logger
+	if flags.requestsLog != "" {
+		f, err := os.OpenFile(flags.requestsLog, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("")
+		}
+		defer f.Close()
+		requestLogger = zerolog.New(&logWriter{writer: f}).
 			Level(zerolog.DebugLevel).
 			With().Timestamp().
 			Logger()
@@ -114,7 +125,7 @@ func TestMain(m *testing.M) {
 		"apiURL":      apiUrl,
 		"dummyApiURL": dummyApiUrl,
 	})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, templater)
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, requestLogger, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
@@ -194,6 +205,11 @@ func InitializeScenario(
 			})
 		}
 
+		scenarioCtx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+			ctx = bdd.SetScenarioName(ctx, sc.Name)
+			ctx = bdd.SetScenarioUri(ctx, sc.Uri)
+			return ctx, nil
+		})
 		scenarioCtx.Before(amqpClient.BeforeScenario)
 		scenarioCtx.After(amqpClient.AfterScenario)
 		scenarioCtx.After(websocketClient.AfterScenario)
@@ -322,34 +338,4 @@ func clearStores(
 	logger.Info().Msg("Redis is flushed")
 
 	return nil
-}
-
-type eventLogWriter struct {
-	writer io.Writer
-}
-
-func (w *eventLogWriter) Write(p []byte) (int, error) {
-	var msg map[string]interface{}
-	err := json.Unmarshal(p, &msg)
-	if err != nil {
-		return 0, err
-	}
-
-	fieldsStr := ""
-	for k, v := range msg {
-		switch k {
-		case zerolog.TimestampFieldName, zerolog.LevelFieldName, zerolog.MessageFieldName:
-		default:
-			s, err := json.Marshal(v)
-			if err != nil {
-				return 0, err
-			}
-			fieldsStr += fmt.Sprintf("%s=%s ", k, s)
-		}
-	}
-
-	formattedMsg := fmt.Sprintf("%s %s > %s %s\n", msg[zerolog.TimestampFieldName],
-		msg[zerolog.LevelFieldName], msg[zerolog.MessageFieldName], fieldsStr)
-
-	return w.writer.Write([]byte(formattedMsg))
 }

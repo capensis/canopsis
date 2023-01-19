@@ -3078,14 +3078,15 @@ Feature: create and update meta alarm
       "event_type": "assocticket",
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
-      "output": "test-output-axe-correlation-18",
+      "author": "test-author-axe-correlation-18",
+      "initiator": "user",
       "ticket": "test-ticket-axe-correlation-18",
       "ticket_url": "test-url-axe-correlation-18",
       "ticket_system_name": "test-system-name-axe-correlation-18",
       "ticket_data": {
-        "ticket_param_1": "ticket_value_1",
-        "ticket_param_2": "ticket_value_2"
-      }
+        "ticket_param_1": "ticket_value_1"
+      },
+      "ticket_comment": "test-comment-axe-correlation-18"
     }
     """
     When I wait the end of 3 events processing
@@ -3100,26 +3101,34 @@ Feature: create and update meta alarm
             "tickets": [
               {
                 "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-18",
                 "ticket_url": "test-url-axe-correlation-18",
                 "ticket_system_name": "test-system-name-axe-correlation-18",
                 "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
               }
             ],
             "ticket": {
               "_t": "assocticket",
+              "a": "test-author-axe-correlation-18",
+              "user_id": "root",
+              "initiator": "system",
+              "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-ticket-axe-correlation-18",
               "ticket_url": "test-url-axe-correlation-18",
               "ticket_system_name": "test-system-name-axe-correlation-18",
               "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
               "ticket_data": {
-                "ticket_param_1": "ticket_value_1",
-                "ticket_param_2": "ticket_value_2"
-              }
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-comment-axe-correlation-18"
             },
             "children": [],
             "component": "test-component-axe-correlation-18",
@@ -3179,14 +3188,18 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-18",
                 "ticket_url": "test-url-axe-correlation-18",
                 "ticket_system_name": "test-system-name-axe-correlation-18",
                 "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
               }
             ],
             "meta": {
@@ -3211,26 +3224,34 @@ Feature: create and update meta alarm
             "tickets": [
               {
                 "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-18",
                 "ticket_url": "test-url-axe-correlation-18",
                 "ticket_system_name": "test-system-name-axe-correlation-18",
                 "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
               }
             ],
             "ticket": {
               "_t": "assocticket",
+              "a": "test-author-axe-correlation-18",
+              "user_id": "root",
+              "initiator": "system",
+              "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-ticket-axe-correlation-18",
               "ticket_url": "test-url-axe-correlation-18",
               "ticket_system_name": "test-system-name-axe-correlation-18",
               "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
               "ticket_data": {
-                "ticket_param_1": "ticket_value_1",
-                "ticket_param_2": "ticket_value_2"
-              }
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-comment-axe-correlation-18"
             },
             "children": [],
             "component": "test-component-axe-correlation-18",
@@ -3290,14 +3311,18 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-18",
                 "ticket_url": "test-url-axe-correlation-18",
                 "ticket_system_name": "test-system-name-axe-correlation-18",
                 "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
               }
             ],
             "meta": {

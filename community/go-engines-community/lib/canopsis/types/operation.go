@@ -14,7 +14,8 @@ type OperationParameters struct {
 	// AssocTicket and Webhook
 	TicketInfo `bson:",inline"`
 	// Webhook
-	DeclareTicketRequest bool `bson:"declare_ticket_request,omitempty" json:"declare_ticket_request,omitempty"`
+	WebhookRequest    bool   `bson:"webhook_request,omitempty" json:"webhook_request,omitempty"`
+	WebhookFailReason string `bson:"webhook_fail_reason,omitempty" json:"webhook_fail_reason,omitempty"`
 	// Snooze
 	Duration *DurationWithUnit `bson:"duration,omitempty" json:"duration,omitempty"`
 	// ChangeState

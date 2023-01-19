@@ -35,7 +35,6 @@ func (e *assocTicketExecutor) Exec(
 	err := alarm.PartialUpdateAssocTicket(
 		time,
 		params.Author,
-		params.Output,
 		userID,
 		role,
 		initiator,
