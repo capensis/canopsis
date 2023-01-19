@@ -30,6 +30,8 @@ type EditRequest struct {
 	UIGroupsNavigationType string `json:"ui_groups_navigation_type"`
 	IsEnabled              *bool  `json:"enable" binding:"required"`
 	DefaultView            string `json:"defaultview"`
+	Source                 string `json:"source" binding:"oneoforempty=ldap cas saml"`
+	ExternalID             string `json:"external_id"`
 }
 
 func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
@@ -47,6 +49,8 @@ func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
 		"enable":               r.IsEnabled,
 		"defaultview":          r.DefaultView,
 		"authkey":              utils.NewID(),
+		"source":               r.Source,
+		"external_id":          r.ExternalID,
 	}
 
 	return bsonModel
