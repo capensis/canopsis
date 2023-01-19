@@ -62,6 +62,20 @@ Feature: Bulk create users
         "enable": true,
         "defaultview": "test-view-to-edit-user",
         "password": "test-password"
+      },
+      {
+        "name": "test-user-to-bulk-create-3-name",
+        "firstname": "test-user-to-bulk-create-3-firstname",
+        "lastname": "test-user-to-bulk-create-3-lastname",
+        "email": "test-user-to-bulk-create-3-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
+        "password": "test-password",
+        "source": "saml",
+        "external_id": "test-id"
       }
     ]
     """
@@ -156,6 +170,24 @@ Feature: Bulk create users
           "defaultview": "test-view-to-edit-user",
           "password": "test-password"
         }
+      },
+      {
+        "id": "test-user-to-bulk-create-3-name",
+        "status": 200,
+        "item": {
+          "name": "test-user-to-bulk-create-3-name",
+          "firstname": "test-user-to-bulk-create-3-firstname",
+          "lastname": "test-user-to-bulk-create-3-lastname",
+          "email": "test-user-to-bulk-create-3-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "password": "test-password",
+          "source": "saml",
+          "external_id": "test-id"
+        }
       }
     ]
     """
@@ -212,13 +244,37 @@ Feature: Bulk create users
           "source": "",
           "ui_groups_navigation_type": "top-bar",
           "ui_language": "fr"
-        }
+        },
+        {
+          "_id": "test-user-to-bulk-create-3-name",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          },
+          "email": "test-user-to-bulk-create-3-email@canopsis.net",
+          "enable": true,
+          "firstname": "test-user-to-bulk-create-3-firstname",
+          "lastname": "test-user-to-bulk-create-3-lastname",
+          "name": "test-user-to-bulk-create-3-name",
+          "role": {
+            "_id": "test-role-to-edit-user",
+            "name": "test-role-to-edit-user",
+            "defaultview": {
+              "_id": "test-view-to-edit-user",
+              "title": "test-view-to-edit-user-title"
+            }
+          },
+          "ui_groups_navigation_type": "top-bar",
+          "ui_language": "fr",
+          "source": "saml",
+          "external_id": "test-id"
+        }        
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
