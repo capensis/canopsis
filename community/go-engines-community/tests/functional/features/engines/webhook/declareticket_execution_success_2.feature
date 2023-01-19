@@ -240,7 +240,7 @@ Feature: run a declare ticket rule
         "_t": "webhookcomplete",
         "a": "root",
         "user_id": "root",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name"
       },
       {
         "_t": "declareticket",
@@ -264,6 +264,217 @@ Feature: run a declare ticket rule
         "a": "root",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1."
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given declare ticket rule should run scenario
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-declareticket-execution-second-2-name",
+      "priority": 10080,
+      "enabled": true,
+      "triggers": ["declareticketwebhook"],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.resource",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-declareticket-execution-second-2"
+                }
+              }
+            ]
+          ],
+          "type": "ack",
+          "parameters": {
+            "output": "test-scenario-declareticket-execution-second-2-output"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type" : "check",
+      "state" : 2,
+      "connector" : "test-connector-declareticket-execution-second-2",
+      "connector_name" : "test-connector-name-declareticket-execution-second-2",
+      "component" :  "test-component-declareticket-execution-second-2",
+      "resource" : "test-resource-declareticket-execution-second-2",
+      "source_type" : "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-component-declareticket-execution-second-2
+    Then the response code should be 200
+    When I save response alarmId={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-declareticketrule-declareticket-execution-second-2-name",
+      "system_name": "test-declareticketrule-declareticket-execution-second-2-system-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "payload": "{\"_id\":\"test-ticket-declareticket-execution-second-2\"}",
+            "method": "POST"
+          },
+          "declare_ticket": {
+            "ticket_id": "_id"
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-declareticket-execution-second-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleId={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    """json
+    [
+      {
+        "_id": "{{ .ruleId }}",
+        "alarms": [
+          "{{ .alarmId }}"
+        ],
+        "comment": "test-comment-declareticket-execution-second-2"
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200
+      }
+    ]
+    """
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "trigger",
+      "connector" : "test-connector-declareticket-execution-second-2",
+      "connector_name" : "test-connector-name-declareticket-execution-second-2",
+      "component" :  "test-component-declareticket-execution-second-2",
+      "resource" : "test-resource-declareticket-execution-second-2",
+      "source_type" : "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-component-declareticket-execution-second-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ticket": {
+              "_t": "declareticket",
+              "a": "root",
+              "ticket": "test-ticket-declareticket-execution-second-2"
+            },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root",
+                "ticket": "test-ticket-declareticket-execution-second-2"
+              }
+            ],
+            "connector" : "test-connector-declareticket-execution-second-2",
+            "connector_name" : "test-connector-name-declareticket-execution-second-2",
+            "component" :  "test-component-declareticket-execution-second-2",
+            "resource" : "test-resource-declareticket-execution-second-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmId }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "root",
+        "user_id": "root",
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "root",
+        "user_id": "root",
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name"
+      },
+      {
+        "_t": "declareticket",
+        "a": "root",
+        "user_id": "root",
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name. Ticket ID: test-ticket-declareticket-execution-second-2."
+      },
+      {
+        "_t": "ack",
+        "a": "system",
+        "user_id": "",
+        "m": "test-scenario-declareticket-execution-second-2-output"
+      }
+    ]
+    """
+    Then the response array key "0.data.steps.data" should contain in order:
+    """json
+    [
+     {
+        "_t": "declareticket"
+      },
+      {
+        "_t": "ack"
       }
     ]
     """

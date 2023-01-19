@@ -1212,22 +1212,19 @@ Feature: create and update alarm by main event stream
     """json
     {
       "event_type": "assocticket",
-      "ticket": "testticket",
+      "ticket": "test-ticket",
       "ticket_system_name": "test-system-name",
       "ticket_url": "test-ticket-url",
       "ticket_data": {
-        "ticket_param_1": "ticket_value_1",
-        "ticket_param_2": "ticket_value_2"
+        "ticket_param_1": "ticket_value_1"
       },
+      "ticket_comment": "test-ticket-comment",
       "connector": "test-connector-axe-9",
       "connector_name": "test-connector-name-axe-9",
       "source_type": "resource",
       "component":  "test-component-axe-9",
       "resource": "test-resource-axe-9",
-      "output": "test-output-axe-9",
-      "long_output": "test-long-output-axe-9",
       "author": "test-author-axe-9",
-      "user_id": "test-author-id-9",
       "timestamp": {{ nowAdd "-5s" }}
     }
     """
@@ -1244,29 +1241,29 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-9",
-                "m": "test-output-axe-9",
+                "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "t": {{ .ticketEventTimestamp }},
-                "ticket": "testticket",
+                "ticket": "test-ticket",
                 "ticket_system_name": "test-system-name",
                 "ticket_url": "test-ticket-url",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-ticket-comment"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "test-author-axe-9",
-              "m": "test-output-axe-9",
+              "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
               "t": {{ .ticketEventTimestamp }},
-              "ticket": "testticket",
+              "ticket": "test-ticket",
               "ticket_system_name": "test-system-name",
               "ticket_url": "test-ticket-url",
               "ticket_data": {
-                "ticket_param_1": "ticket_value_1",
-                "ticket_param_2": "ticket_value_2"
-              }
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-ticket-comment"
             },
             "component": "test-component-axe-9",
             "connector": "test-connector-axe-9",
@@ -1321,17 +1318,15 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-9",
-                "user_id": "test-author-id-9",
-                "m": "test-output-axe-9",
+                "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "t": {{ .ticketEventTimestamp }},
-                "val": 0,
-                "ticket": "testticket",
+                "ticket": "test-ticket",
                 "ticket_system_name": "test-system-name",
                 "ticket_url": "test-ticket-url",
                 "ticket_data": {
-                  "ticket_param_1": "ticket_value_1",
-                  "ticket_param_2": "ticket_value_2"
-                }
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-ticket-comment"
               }
             ],
             "meta": {
@@ -3106,11 +3101,9 @@ Feature: create and update alarm by main event stream
       "ticket_system_name": "test-system-name-axe-22",
       "ticket_url": "test-ticket-url-axe-22",
       "ticket_data": {
-        "param1": "test-value-param-1-axe-22",
-        "param2": "test-value-param-2-axe-22"
+        "param1": "test-value-param-1-axe-22"
       },
-      "output": "test-output-axe-22",
-      "long_output": "test-long-output-axe-22",
+      "ticket_comment": "test-ticket-comment-axe-22",
       "author": "test-author-axe-22",
       "timestamp": {{ nowAdd "-5s" }},
       "connector": "test-connector-axe-22",
@@ -3151,14 +3144,14 @@ Feature: create and update alarm by main event stream
             "ticket": {
               "_t": "assocticket",
               "a": "test-author-axe-22",
-              "m": "test-output-axe-22",
+              "m": "Ticket ID: test-ticket-axe-22. Ticket URL: test-ticket-url-axe-22. Ticket param1: test-value-param-1-axe-22.",
               "ticket": "test-ticket-axe-22",
               "ticket_system_name": "test-system-name-axe-22",
               "ticket_url": "test-ticket-url-axe-22",
               "ticket_data": {
-                "param1": "test-value-param-1-axe-22",
-                "param2": "test-value-param-2-axe-22"
+                "param1": "test-value-param-1-axe-22"
               },
+              "ticket_comment": "test-ticket-comment-axe-22",
               "t": {{ .ackEventTimestamp }},
               "val": 0
             },
@@ -3166,14 +3159,14 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-22",
-                "m": "test-output-axe-22",
+                "m": "Ticket ID: test-ticket-axe-22. Ticket URL: test-ticket-url-axe-22. Ticket param1: test-value-param-1-axe-22.",
                 "ticket": "test-ticket-axe-22",
                 "ticket_system_name": "test-system-name-axe-22",
                 "ticket_url": "test-ticket-url-axe-22",
                 "ticket_data": {
-                  "param1": "test-value-param-1-axe-22",
-                  "param2": "test-value-param-2-axe-22"
+                  "param1": "test-value-param-1-axe-22"
                 },
+                "ticket_comment": "test-ticket-comment-axe-22",
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
               }
@@ -3231,7 +3224,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-22",
-                "m": "test-output-axe-22",
+                "m": "Ticket ID: test-ticket-axe-22. Ticket URL: test-ticket-url-axe-22. Ticket param1: test-value-param-1-axe-22.",
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
               }
