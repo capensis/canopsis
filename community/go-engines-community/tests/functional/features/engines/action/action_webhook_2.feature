@@ -621,7 +621,6 @@ Feature: execute action on trigger
     """
     When I do GET /api/v4/alarms?search=test-resource-action-webhook-second-4
     Then the response code should be 200
-    Then the response code should be 200
     Then the response body should contain:
     """json
     {
