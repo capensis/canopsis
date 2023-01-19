@@ -27,20 +27,21 @@
           v-field="columns[index].column",
           v-validate="'required'",
           :items="availableColumns",
-          :label="$t('common.column')",
+          :label="$tc('common.column', 1)",
           :error-messages="errors.collect(`${column.key}.column`)",
-          :name="`${column.key}.column`",
-          :return-object="false"
+          :name="`${column.key}.column`"
         )
         c-infos-attribute-field(
-          v-if="hasDictionary(column.column)",
+          v-if="isInfos(column.column)",
           v-field="columns[index]",
+          :items="getInfosByColumn(column.column)",
+          :pending="infosPending",
           :name="`${column.key}.column`",
           combobox,
           column
         )
         v-text-field(
-          v-if="hasField(column.column)",
+          v-if="isLinks(column.column)",
           v-field="columns[index].field",
           :label="$t('common.field')"
         )
@@ -79,14 +80,18 @@
 <script>
 import {
   MODALS,
+  ENTITIES_TYPES,
   COLOR_INDICATOR_TYPES,
   DEFAULT_COLUMN_TEMPLATE_VALUE,
-  WIDGET_TYPES,
+  ALARM_INFOS_FIELDS,
+  ENTITY_INFOS_FIELDS,
   ALARM_LIST_WIDGET_COLUMNS,
   CONTEXT_WIDGET_COLUMNS,
-  ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS,
-  CONTEXT_WIDGET_COLUMNS_TO_LABELS_KEYS,
+  ALARM_FIELDS_TO_LABELS_KEYS,
+  ENTITY_FIELDS_TO_LABELS_KEYS,
 } from '@/constants';
+
+import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
 
@@ -103,7 +108,7 @@ export default {
   props: {
     type: {
       type: String,
-      default: WIDGET_TYPES.alarmList,
+      default: ENTITIES_TYPES.alarm,
     },
     columns: {
       type: [Array, Object],
@@ -121,30 +126,49 @@ export default {
       type: Boolean,
       default: false,
     },
-    infosDictionary: {
+    alarmInfos: {
       type: Array,
       default: () => [],
     },
+    entityInfos: {
+      type: Array,
+      default: () => [],
+    },
+    infosPending: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    isAlarmType() {
+      return this.type === ENTITIES_TYPES.alarm;
+    },
+
     alarmListAvailableColumns() {
       return Object.values(ALARM_LIST_WIDGET_COLUMNS).map(value => ({
         value,
-        text: this.$t(ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS[value]),
+        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
       }));
     },
 
     contextAvailableColumns() {
       return Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
         value,
-        text: this.$t(CONTEXT_WIDGET_COLUMNS_TO_LABELS_KEYS[value]),
+        text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
       }));
     },
 
     availableColumns() {
-      return this.type === WIDGET_TYPES.alarmList
+      return this.isAlarmType
         ? this.alarmListAvailableColumns
         : this.contextAvailableColumns;
+    },
+
+    infosFields() {
+      return [
+        ...ALARM_INFOS_FIELDS,
+        ...ENTITY_INFOS_FIELDS,
+      ];
     },
   },
   watch: {
@@ -158,21 +182,24 @@ export default {
     },
   },
   methods: {
-    hasField(column) {
+    isLinks(column) {
       return [
         ALARM_LIST_WIDGET_COLUMNS.links,
         CONTEXT_WIDGET_COLUMNS.links,
       ].includes(column);
     },
 
-    hasDictionary(column) {
+    isInfos(column) {
+      return this.infosFields.includes(column);
+    },
+
+    getInfosByColumn(column) {
       return [
-        ALARM_LIST_WIDGET_COLUMNS.infos,
         ALARM_LIST_WIDGET_COLUMNS.entityInfos,
         ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
         CONTEXT_WIDGET_COLUMNS.infos,
         CONTEXT_WIDGET_COLUMNS.componentInfos,
-      ].includes(column);
+      ].includes(column) ? this.entityInfos : this.alarmInfos;
     },
 
     enableTemplate(index, checked) {
@@ -205,14 +232,9 @@ export default {
     },
 
     add() {
-      const column = { label: '', value: '' };
-
-      if (this.withHtml) {
-        column.isHtml = false;
-      }
-
-      this.addItemIntoArray(column);
+      this.addItemIntoArray(widgetColumnToForm());
     },
+
     up(index) {
       if (index > 0) {
         const columns = [...this.columns];
@@ -224,6 +246,7 @@ export default {
         this.updateModel(columns);
       }
     },
+
     down(index) {
       if (index < this.columns.length - 1) {
         const columns = [...this.columns];

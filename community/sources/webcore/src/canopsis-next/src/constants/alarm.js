@@ -159,73 +159,7 @@ export const ALARM_INTERVAL_FIELDS = {
   lastEventDate: 'v.last_event_date',
 };
 
-export const ALARM_PATTERN_FIELDS = {
-  displayName: 'v.display_name',
-  state: 'v.state.val',
-  status: 'v.status.val',
-  component: 'v.component',
-  resource: 'v.resource',
-  connector: 'v.connector',
-  connectorName: 'v.connector_name',
-  creationDate: 'v.creation_date',
-  duration: 'v.duration',
-  infos: 'v.infos',
-  output: 'v.output',
-  lastEventDate: 'v.last_event_date',
-  lastUpdateDate: 'v.last_update_date',
-  activationDate: 'v.activation_date',
-  ack: 'v.ack',
-  ackAt: 'v.ack.t',
-  ackBy: 'v.ack.a',
-  ackMessage: 'v.ack.m',
-  ackInitiator: 'v.ack.initiator',
-  resolvedAt: 'v.resolved',
-  ticket: 'v.ticket',
-  canceled: 'v.canceled',
-  snooze: 'v.snooze',
-  lastComment: 'v.last_comment.m',
-  longOutput: 'v.long_output',
-  initialOutput: 'v.initial_output',
-  initialLongOutput: 'v.initial_long_output',
-  totalStateChanges: 'v.total_state_changes',
-  tags: 'tags',
-  activated: 'activated',
-};
-
-export const ALARM_ACK_INITIATORS = {
-  user: 'user',
-  system: 'system',
-  external: 'external',
-};
-
-export const ALARM_STEP_FIELDS = {
-  timestamp: 't',
-  value: 'val',
-  message: 'm',
-  author: 'a',
-};
-
-export const ALARM_TEMPLATE_FIELDS = {
-  id: 'alarm._id',
-  ack: 'alarm.v.ack',
-  state: 'alarm.v.state',
-  status: 'alarm.v.status',
-  ticket: 'alarm.v.ticket',
-  component: 'alarm.v.component',
-  connector: 'alarm.v.connector',
-  connectorName: 'alarm.v.connector_name',
-  resource: 'alarm.v.resource',
-  creationDate: 'alarm.v.creation_date',
-  displayName: 'alarm.v.display_name',
-  output: 'alarm.v.output',
-  lastUpdateDate: 'alarm.v.last_update_date',
-  lastEventDate: 'alarm.v.last_event_date',
-  pbehaviorInfo: 'alarm.v.pbehavior_info',
-  duration: 'alarm.v.duration',
-  eventsCount: 'alarm.v.events_count',
-};
-
-export const ALARM_LIST_WIDGET_COLUMNS = {
+export const ALARM_FIELDS = {
   id: '_id',
   displayName: 'v.display_name',
   output: 'v.output',
@@ -247,8 +181,8 @@ export const ALARM_LIST_WIDGET_COLUMNS = {
   totalStateChanges: 'v.total_state_changes',
   timestamp: 't',
   creationDate: 'v.creation_date',
-  lastEventDate: 'v.last_event_date',
   lastUpdateDate: 'v.last_update_date',
+  lastEventDate: 'v.last_event_date',
   ackAt: 'v.ack.t',
   stateAt: 'v.state.t',
   statusAt: 'v.status.t',
@@ -259,6 +193,7 @@ export const ALARM_LIST_WIDGET_COLUMNS = {
   snoozeDuration: 'v.snooze_duration',
   pbhInactiveDuration: 'v.pbh_inactive_duration',
   activeDuration: 'v.active_duration',
+  eventsCount: 'v.events_count',
   tags: 'tags',
   extraDetails: 'extra_details',
   impactState: 'impact_state',
@@ -275,56 +210,170 @@ export const ALARM_LIST_WIDGET_COLUMNS = {
   entityOkEvents: 'entity.ok_events',
   entityInfos: 'entity.infos',
   entityComponentInfos: 'entity.component_infos',
+
+  /**
+   * OBJECTS
+   */
+  ack: 'v.ack',
+  ticket: 'v.ticket',
+  canceled: 'v.canceled',
+  snooze: 'v.snooze',
+  pbehaviorInfo: 'v.pbehavior_info',
+
+  /**
+   * VIRTUAL
+   */
+  activated: 'activated',
 };
 
-export const ALARM_LIST_WIDGET_COLUMNS_TO_LABELS_KEYS = {
-  [ALARM_LIST_WIDGET_COLUMNS.id]: 'common.id',
-  [ALARM_LIST_WIDGET_COLUMNS.displayName]: 'common.displayName',
-  [ALARM_LIST_WIDGET_COLUMNS.output]: 'common.output',
-  [ALARM_LIST_WIDGET_COLUMNS.longOutput]: 'common.longOutput',
-  [ALARM_LIST_WIDGET_COLUMNS.initialOutput]: 'common.initialOutput',
-  [ALARM_LIST_WIDGET_COLUMNS.initialLongOutput]: 'common.initialLongOutput',
-  [ALARM_LIST_WIDGET_COLUMNS.connector]: 'common.connector',
-  [ALARM_LIST_WIDGET_COLUMNS.connectorName]: 'common.connectorName',
-  [ALARM_LIST_WIDGET_COLUMNS.component]: 'common.component',
-  [ALARM_LIST_WIDGET_COLUMNS.resource]: 'common.resource',
-  [ALARM_LIST_WIDGET_COLUMNS.lastComment]: 'common.lastComment',
-  [ALARM_LIST_WIDGET_COLUMNS.ackBy]: 'common.ackBy',
-  [ALARM_LIST_WIDGET_COLUMNS.ackMessage]: 'common.ackMessage',
-  [ALARM_LIST_WIDGET_COLUMNS.ackInitiator]: 'common.ackInitiator',
-  [ALARM_LIST_WIDGET_COLUMNS.stateMessage]: 'common.stateMessage',
-  [ALARM_LIST_WIDGET_COLUMNS.statusMessage]: 'common.statusMessage',
-  [ALARM_LIST_WIDGET_COLUMNS.state]: 'common.state',
-  [ALARM_LIST_WIDGET_COLUMNS.status]: 'common.status',
-  [ALARM_LIST_WIDGET_COLUMNS.totalStateChanges]: 'common.totalStateChanges',
-  [ALARM_LIST_WIDGET_COLUMNS.timestamp]: 'common.timestamp',
-  [ALARM_LIST_WIDGET_COLUMNS.creationDate]: 'common.creationDate',
-  [ALARM_LIST_WIDGET_COLUMNS.lastEventDate]: 'common.lastEventDate',
-  [ALARM_LIST_WIDGET_COLUMNS.lastUpdateDate]: 'common.lastUpdateDate',
-  [ALARM_LIST_WIDGET_COLUMNS.ackAt]: 'common.ackAt',
-  [ALARM_LIST_WIDGET_COLUMNS.stateAt]: 'common.stateAt',
-  [ALARM_LIST_WIDGET_COLUMNS.statusAt]: 'common.statusAt',
-  [ALARM_LIST_WIDGET_COLUMNS.resolved]: 'common.resolved',
-  [ALARM_LIST_WIDGET_COLUMNS.activationDate]: 'common.activationDate',
-  [ALARM_LIST_WIDGET_COLUMNS.duration]: 'common.duration',
-  [ALARM_LIST_WIDGET_COLUMNS.currentStateDuration]: 'common.currentStateDuration',
-  [ALARM_LIST_WIDGET_COLUMNS.snoozeDuration]: 'common.snoozeDuration',
-  [ALARM_LIST_WIDGET_COLUMNS.pbhInactiveDuration]: 'common.pbhInactiveDuration',
-  [ALARM_LIST_WIDGET_COLUMNS.activeDuration]: 'common.activeDuration',
-  [ALARM_LIST_WIDGET_COLUMNS.tags]: 'common.tags',
-  [ALARM_LIST_WIDGET_COLUMNS.extraDetails]: 'common.extraDetails',
-  [ALARM_LIST_WIDGET_COLUMNS.impactState]: 'common.impactState',
-  [ALARM_LIST_WIDGET_COLUMNS.infos]: 'common.infos',
-  [ALARM_LIST_WIDGET_COLUMNS.links]: 'common.links',
-  [ALARM_LIST_WIDGET_COLUMNS.entityId]: 'common.entityId',
-  [ALARM_LIST_WIDGET_COLUMNS.entityName]: 'common.entityName',
-  [ALARM_LIST_WIDGET_COLUMNS.entityCategoryName]: 'common.entityCategoryName',
-  [ALARM_LIST_WIDGET_COLUMNS.entityType]: 'common.entityType',
-  [ALARM_LIST_WIDGET_COLUMNS.entityComponent]: 'common.entityComponent',
-  [ALARM_LIST_WIDGET_COLUMNS.entityConnector]: 'common.entityConnector',
-  [ALARM_LIST_WIDGET_COLUMNS.entityImpactLevel]: 'common.entityImpactLevel',
-  [ALARM_LIST_WIDGET_COLUMNS.entityKoEvents]: 'common.entityKoEvents',
-  [ALARM_LIST_WIDGET_COLUMNS.entityOkEvents]: 'common.entityOkEvents',
-  [ALARM_LIST_WIDGET_COLUMNS.entityInfos]: 'common.entityInfos',
-  [ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos]: 'common.entityComponentInfos',
+export const ALARM_INFOS_FIELDS = [
+  ALARM_FIELDS.infos,
+  ALARM_FIELDS.entityInfos,
+  ALARM_FIELDS.entityComponentInfos,
+];
+
+const {
+  ack,
+  ticket,
+  canceled,
+  snooze,
+  pbehaviorInfo,
+  activated,
+
+  ...alarmListWidgetColumns
+} = ALARM_FIELDS;
+
+export const ALARM_LIST_WIDGET_COLUMNS = alarmListWidgetColumns;
+
+export const ALARM_PATTERN_FIELDS = {
+  displayName: ALARM_FIELDS.displayName,
+  state: ALARM_FIELDS.state,
+  status: ALARM_FIELDS.status,
+  component: ALARM_FIELDS.component,
+  resource: ALARM_FIELDS.resource,
+  connector: ALARM_FIELDS.connector,
+  connectorName: ALARM_FIELDS.connectorName,
+  creationDate: ALARM_FIELDS.creationDate,
+  duration: ALARM_FIELDS.duration,
+  infos: ALARM_FIELDS.infos,
+  output: ALARM_FIELDS.output,
+  lastEventDate: ALARM_FIELDS.lastEventDate,
+  lastUpdateDate: ALARM_FIELDS.lastUpdateDate,
+  activationDate: ALARM_FIELDS.activationDate,
+  ack: ALARM_FIELDS.ack,
+  ackAt: ALARM_FIELDS.ackAt,
+  ackBy: ALARM_FIELDS.ackBy,
+  ackMessage: ALARM_FIELDS.ackMessage,
+  ackInitiator: ALARM_FIELDS.ackInitiator,
+  resolved: ALARM_FIELDS.resolved,
+  ticket: ALARM_FIELDS.ticket,
+  canceled: ALARM_FIELDS.canceled,
+  snooze: ALARM_FIELDS.snooze,
+  lastComment: ALARM_FIELDS.lastComment,
+  longOutput: ALARM_FIELDS.longOutput,
+  initialOutput: ALARM_FIELDS.initialOutput,
+  initialLongOutput: ALARM_FIELDS.initialLongOutput,
+  totalStateChanges: ALARM_FIELDS.totalStateChanges,
+  tags: ALARM_FIELDS.tags,
+  activated: ALARM_FIELDS.activated,
+};
+
+export const ALARM_ACK_INITIATORS = {
+  user: 'user',
+  system: 'system',
+  external: 'external',
+};
+
+export const ALARM_STEP_FIELDS = {
+  timestamp: 't',
+  value: 'val',
+  message: 'm',
+  author: 'a',
+};
+
+export const ALARM_TEMPLATE_FIELDS = {
+  id: `alarm.${ALARM_FIELDS.id}`,
+  ack: `alarm.${ALARM_FIELDS.ack}`,
+  state: `alarm.${ALARM_FIELDS.state}`,
+  status: `alarm.${ALARM_FIELDS.status}`,
+  ticket: `alarm.${ALARM_FIELDS.ticket}`,
+  component: `alarm.${ALARM_FIELDS.component}`,
+  connector: `alarm.${ALARM_FIELDS.connector}`,
+  connectorName: `alarm.${ALARM_FIELDS.connectorName}`,
+  resource: `alarm.${ALARM_FIELDS.resource}`,
+  creationDate: `alarm.${ALARM_FIELDS.creationDate}`,
+  displayName: `alarm.${ALARM_FIELDS.displayName}`,
+  output: `alarm.${ALARM_FIELDS.output}`,
+  lastUpdateDate: `alarm.${ALARM_FIELDS.lastUpdateDate}`,
+  lastEventDate: `alarm.${ALARM_FIELDS.lastEventDate}`,
+  pbehaviorInfo: `alarm.${ALARM_FIELDS.pbehaviorInfo}`,
+  duration: `alarm.${ALARM_FIELDS.duration}`,
+  eventsCount: `alarm.${ALARM_FIELDS.eventsCount}`,
+};
+
+export const ALARM_FIELDS_TO_LABELS_KEYS = {
+  [ALARM_FIELDS.id]: 'common.id',
+  [ALARM_FIELDS.displayName]: 'alarm.fields.displayName',
+  [ALARM_FIELDS.output]: 'common.output',
+  [ALARM_FIELDS.longOutput]: 'common.longOutput',
+  [ALARM_FIELDS.initialOutput]: 'alarm.fields.initialOutput',
+  [ALARM_FIELDS.initialLongOutput]: 'alarm.fields.initialLongOutput',
+  [ALARM_FIELDS.connector]: 'common.connector',
+  [ALARM_FIELDS.connectorName]: 'common.connectorName',
+  [ALARM_FIELDS.component]: 'common.component',
+  [ALARM_FIELDS.resource]: 'common.resource',
+  [ALARM_FIELDS.lastComment]: 'alarm.fields.lastComment',
+  [ALARM_FIELDS.ackBy]: 'alarm.fields.ackBy',
+  [ALARM_FIELDS.ackMessage]: 'alarm.fields.ackMessage',
+  [ALARM_FIELDS.ackInitiator]: 'alarm.fields.ackInitiator',
+  [ALARM_FIELDS.stateMessage]: 'alarm.fields.stateMessage',
+  [ALARM_FIELDS.statusMessage]: 'alarm.fields.statusMessage',
+  [ALARM_FIELDS.state]: 'common.state',
+  [ALARM_FIELDS.status]: 'common.status',
+  [ALARM_FIELDS.totalStateChanges]: 'alarm.fields.totalStateChanges',
+  [ALARM_FIELDS.timestamp]: 'common.timestamp',
+  [ALARM_FIELDS.creationDate]: 'common.created',
+  [ALARM_FIELDS.lastUpdateDate]: 'common.updated',
+  [ALARM_FIELDS.lastEventDate]: 'common.lastEventDate',
+  [ALARM_FIELDS.ackAt]: 'alarm.fields.ackAt',
+  [ALARM_FIELDS.stateAt]: 'alarm.fields.stateAt',
+  [ALARM_FIELDS.statusAt]: 'alarm.fields.statusAt',
+  [ALARM_FIELDS.resolved]: 'alarm.fields.resolved',
+  [ALARM_FIELDS.activationDate]: 'alarm.fields.activationDate',
+  [ALARM_FIELDS.duration]: 'common.duration',
+  [ALARM_FIELDS.currentStateDuration]: 'alarm.fields.currentStateDuration',
+  [ALARM_FIELDS.snoozeDuration]: 'alarm.fields.snoozeDuration',
+  [ALARM_FIELDS.pbhInactiveDuration]: 'alarm.fields.pbhInactiveDuration',
+  [ALARM_FIELDS.activeDuration]: 'alarm.fields.activeDuration',
+  [ALARM_FIELDS.eventsCount]: 'alarm.fields.eventsCount',
+  [ALARM_FIELDS.tags]: 'common.tag',
+  [ALARM_FIELDS.extraDetails]: 'alarm.fields.extraDetails',
+  [ALARM_FIELDS.impactState]: 'common.impactState',
+  [ALARM_FIELDS.infos]: 'common.infos',
+  [ALARM_FIELDS.links]: 'common.link',
+  [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
+  [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
+  [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',
+  [ALARM_FIELDS.entityType]: 'alarm.fields.entityType',
+  [ALARM_FIELDS.entityComponent]: 'alarm.fields.entityComponent',
+  [ALARM_FIELDS.entityConnector]: 'alarm.fields.entityConnector',
+  [ALARM_FIELDS.entityImpactLevel]: 'alarm.fields.entityImpactLevel',
+  [ALARM_FIELDS.entityKoEvents]: 'alarm.fields.entityKoEvents',
+  [ALARM_FIELDS.entityOkEvents]: 'alarm.fields.entityOkEvents',
+  [ALARM_FIELDS.entityInfos]: 'alarm.fields.entityInfos',
+  [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
+
+  /**
+   * OBJECTS
+   */
+  [ALARM_FIELDS.ack]: 'common.ack',
+  [ALARM_FIELDS.ticket]: 'common.ticket',
+  [ALARM_FIELDS.canceled]: 'common.canceled',
+  [ALARM_FIELDS.snooze]: 'common.snooze',
+  [ALARM_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
+
+  /**
+   * VIRTUAL
+   */
+  [ALARM_FIELDS.activated]: 'common.activated',
 };

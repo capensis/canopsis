@@ -172,7 +172,6 @@ import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-fi
  */
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
-import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
 import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-field.vue';
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
@@ -437,7 +436,6 @@ Vue.component('c-column-size-field', CColumnSizeField);
 Vue.component('c-infos-attribute-field', CInfosAttributeField);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
-Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
 Vue.component('c-pattern-operator-field', CPatternOperatorField);
 Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
