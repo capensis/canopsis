@@ -146,7 +146,7 @@ export default {
   id: 'Id',
   reset: 'Reset',
   selectColor: 'Select color',
-  triggers: 'Triggers',
+  trigger: 'Trigger | Triggers',
   disableDuringPeriods: 'Disable during periods',
   retryDelay: 'Delay',
   retryUnit: 'Unit',

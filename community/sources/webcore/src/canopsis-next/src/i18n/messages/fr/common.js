@@ -146,7 +146,7 @@ export default {
   id: 'Identifiant',
   reset: 'Réinitialiser',
   selectColor: 'Sélectionner la couleur',
-  triggers: 'Déclencheurs',
+  trigger: 'Déclencheurs | Déclencheurs',
   disableDuringPeriods: 'Désactiver pendant les pauses',
   retryDelay: 'Délai entre les tentatives',
   retryUnit: 'Unité d\'essai',

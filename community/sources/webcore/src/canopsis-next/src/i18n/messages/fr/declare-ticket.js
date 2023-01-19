@@ -17,6 +17,13 @@ export default {
   continueWithNextStep: 'Continuer avec les étapes suivantes',
   testQuery: 'Tester la requête',
   webhookTicketDeclarationExist: 'La déclaration de ticket Webhook existe déjà dans une autre étape',
+  runTest: 'Exécuter le test',
+  headerFieldFromPreviousSteps: 'Champ d\'en-tête des étapes précédentes',
+  headerFieldFromStep: 'Champ d\'en-tête de l\'étape #N',
+  responseFieldFromPreviousSteps: 'Champ de réponse des étapes précédentes',
+  userId: 'Identifiant d\'utilisateur',
+  actionInitiator: 'Initiateur d\'actions',
+  triggerEventMessage: 'Déclencher un message d\'événement',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
   },

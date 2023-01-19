@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list.pa-0(dense)
+  v-list.pa-0.variables-list(dense)
     v-list-tile(
       v-for="variable in variables",
       :key="variable.value",
@@ -101,3 +101,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.variables-list {
+  max-height: 400px;
+  overflow: auto;
+}
+</style>

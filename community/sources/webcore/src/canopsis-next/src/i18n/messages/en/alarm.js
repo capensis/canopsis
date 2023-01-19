@@ -4,6 +4,15 @@ export default {
   alarmCreationDate: 'Alarm creation date',
   alarmDisplayName: 'Alarm display name',
   liveReporting: 'Set a custom date range',
+  stateMessage: 'State message',
+  stateValue: 'State value',
+  ticketAuthor: 'Ticket submitter',
+  ticketId: 'Ticket id',
+  ticketMessage: 'Ticket message',
+  ackAuthor: 'Ack author',
+  ackMessage: 'Ack message',
+  lastCommentAuthor: 'Last comment author',
+  lastCommentMessage: 'Last comment message',
   advancedSearch: '<span>Help on the advanced research :</span>\n'
     + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
     + '<p>The "-" before the research is required</p>\n'

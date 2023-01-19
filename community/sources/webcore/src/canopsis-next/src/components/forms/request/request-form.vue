@@ -6,7 +6,8 @@
         v-field="form",
         :help-text="$t('common.request.urlHelp')",
         :name="name",
-        :disabled="disabled"
+        :disabled="disabled",
+        :url-variables="urlVariables"
       )
       slot(name="append-url")
     v-layout(row)
@@ -30,14 +31,19 @@
       help-icon="help",
       help-icon-color="grey darken-1"
     )
-      c-alert(v-if="!form.headers.length", type="info") {{ $t('common.request.emptyHeaders') }}
-      request-headers-field(v-field="form.headers", :name="`${name}.headers`", :disabled="disabled")
+      request-headers-field(
+        v-field="form.headers",
+        :name="`${name}.headers`",
+        :disabled="disabled",
+        :headers-variables="headersVariables"
+      )
 
-    c-payload-field(
+    c-payload-textarea-field(
       v-field="form.payload",
       :label="$t('common.payload')",
       :line-height="16",
-      :disabled="disabled"
+      :disabled="disabled",
+      :variables="payloadVariables"
     )
 </template>
 
@@ -68,6 +74,18 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    urlVariables: {
+      type: Array,
+      default: () => [],
+    },
+    headersVariables: {
+      type: Array,
+      default: () => [],
+    },
+    payloadVariables: {
+      type: Array,
+      default: () => [],
     },
   },
 };

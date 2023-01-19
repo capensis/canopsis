@@ -17,6 +17,13 @@ export default {
   continueWithNextStep: 'Continue with next steps',
   testQuery: 'Test query',
   webhookTicketDeclarationExist: 'Webhook ticket declaration already exist in another step',
+  runTest: 'Run test',
+  headerFieldFromPreviousSteps: 'Header field from previous steps',
+  headerFieldFromStep: 'Header field from the step #N',
+  responseFieldFromPreviousSteps: 'Response field from previous steps',
+  userId: 'User ID',
+  actionInitiator: 'Action initiator',
+  triggerEventMessage: 'Trigger event message',
   errors: {
     webhookRequired: 'The webhooks must be added',
   },

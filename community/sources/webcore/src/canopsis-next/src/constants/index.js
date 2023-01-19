@@ -24,3 +24,4 @@ export * from './user';
 export * from './service-weather';
 export * from './map';
 export * from './flowchart';
+export * from './declare-ticket';
