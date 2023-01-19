@@ -1,8 +1,8 @@
 <template lang="pug">
-  c-card-iterator-item(:item-number="webhookNumber", @remove="removeAction")
+  c-card-iterator-item(:item-number="webhookNumber", @remove="removeWebhook")
     template(#header="")
       request-url-field(
-        v-field="value",
+        v-field="value.request",
         :help-text="$t('common.request.urlHelp')",
         :name="requestFormName",
         :disabled="disabled",
@@ -38,6 +38,8 @@ import {
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
 } from '@/constants';
 
+import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
+
 import RequestForm from '@/components/forms/request/request-form.vue';
 import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
 
@@ -45,6 +47,13 @@ import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-ma
 
 export default {
   components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestForm },
+  mixins: [
+    confirmableFormMixinCreator({
+      field: 'value',
+      method: 'removeWebhook',
+      cloning: true,
+    }),
+  ],
   model: {
     prop: 'value',
     event: 'input',
@@ -201,6 +210,11 @@ export default {
       }
 
       return variables;
+    },
+  },
+  methods: {
+    removeWebhook() {
+      this.$emit('remove');
     },
   },
 };

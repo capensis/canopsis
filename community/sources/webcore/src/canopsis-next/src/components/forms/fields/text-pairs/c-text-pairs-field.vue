@@ -16,7 +16,6 @@
         :item-text="itemText",
         :item-value="itemValue",
         :name="item[itemKey]",
-        :hints="hints",
         @remove="removeItemFromArray(index)"
       )
         template(#append-value="")
@@ -86,10 +85,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-    hints: {
-      type: Array,
-      required: false,
     },
   },
   methods: {

@@ -26,5 +26,6 @@ export default {
   triggerEventMessage: 'Déclencher un message d\'événement',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
+    webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
   },
 };

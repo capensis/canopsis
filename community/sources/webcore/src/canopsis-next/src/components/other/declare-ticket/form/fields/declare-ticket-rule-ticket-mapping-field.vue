@@ -7,6 +7,7 @@
       help-icon-color="grey darken-1"
     )
       c-alert(v-if="isDeclareTicketExist", type="info") {{ $t('declareTicket.webhookTicketDeclarationExist') }}
+      c-alert(v-if="errors.has(name)", type="error") {{ $t('declareTicket.errors.webhookTicketDeclarationRequired') }}
       v-layout
         v-flex(xs6)
           c-enabled-field(v-field="value.enabled", :disabled="isDeclareTicketExist")
@@ -96,6 +97,26 @@ export default {
   computed: {
     ticketIdFieldName() {
       return `${this.name}.ticket_id`;
+    },
+  },
+  created() {
+    this.attachRequiredRule();
+  },
+  beforeDestroy() {
+    this.detachRules();
+  },
+  methods: {
+    attachRequiredRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'required:true',
+        getter: () => this.isDeclareTicketExist || this.value.enabled,
+        vm: this,
+      });
+    },
+
+    detachRules() {
+      this.$validator.detach(this.name);
     },
   },
 };
