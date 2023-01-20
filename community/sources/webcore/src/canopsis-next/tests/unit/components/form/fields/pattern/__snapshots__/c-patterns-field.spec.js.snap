@@ -2,10 +2,10 @@
 
 exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout c-patterns-field column"
 >
   <c-collapse-panel-stub
-    class="mb-2"
+    outline-color="#ff5252"
     title="Alarm patterns"
   >
     <c-alarm-patterns-field-stub
@@ -19,7 +19,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    class="mb-2"
+    outline-color="#ff5252"
     title="Entity patterns"
   >
     <c-entity-patterns-field-stub
@@ -33,7 +33,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    class="mb-2"
+    outline-color="#ff5252"
     title="Pbehavior patterns"
   >
     <c-pbehavior-patterns-field-stub
@@ -47,7 +47,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    class="mb-2"
+    outline-color="#ff5252"
     title="Event patterns"
   >
     <c-event-filter-patterns-field-stub
@@ -58,7 +58,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    class="mb-2"
+    outline-color="#ff5252"
     title="Total entity patterns"
   >
     <c-entity-patterns-field-stub
@@ -70,7 +70,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    class="mb-2"
+    outline-color="#ff5252"
     title="Service weather patterns"
   >
     <c-service-weather-patterns-field-stub
@@ -79,13 +79,29 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       required="true"
     />
   </c-collapse-panel-stub>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    >
+      <div
+        class="v-messages__message"
+      >
+        At least one pattern has to be defined. Please define filter patterns for rule
+      </div>
+    </transition-group-stub>
+  </div>
 </div>
 `;
 
 exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = `
 <div
-  class="layout column"
+  class="layout c-patterns-field column"
 >
+  <!---->
   <!---->
   <!---->
   <!---->

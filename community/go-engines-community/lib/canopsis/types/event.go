@@ -14,14 +14,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
-//event initiators
+// event initiators
 const (
 	InitiatorUser     = "user"
 	InitiatorSystem   = "system"
 	InitiatorExternal = "external"
 )
 
-//Source types
+// Source types
 const (
 	SourceTypeResource  = "resource"
 	SourceTypeComponent = "component"
@@ -64,6 +64,7 @@ const (
 	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
+	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
 	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
 	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
@@ -124,7 +125,7 @@ const (
 
 const MaxEventTimestampVariation = 24 * time.Hour
 
-//PerfData represents a perf data array
+// PerfData represents a perf data array
 type PerfData struct {
 	Metric string  `bson:"metric" json:"metric"`
 	Unit   string  `bson:"unit" json:"unit"`
@@ -132,6 +133,7 @@ type PerfData struct {
 }
 
 // Event represents a canopsis event.
+//
 //easyjson:json
 type Event struct {
 	ID            *string    `bson:"_id" json:"_id"`
@@ -143,7 +145,6 @@ type Event struct {
 	PerfData      *string    `bson:"perf_data" json:"perf_data"`
 	PerfDataArray []PerfData `bson:"perf_data_array" json:"perf_data_array"`
 	Status        *CpsNumber `bson:"status" json:"status"`
-	StateType     *CpsNumber `bson:"state_type" json:"state_type"`
 	SourceType    string     `bson:"source_type" json:"source_type"`
 	LongOutput    string     `bson:"long_output" json:"long_output"`
 	State         CpsNumber  `bson:"state" json:"state"`
@@ -248,9 +249,10 @@ func NewEventFromAlarm(alarm Alarm) Event {
 }
 
 // Format an event
-//  "timestamp" is fill with time.Now()
-//  "event_type" is fill with EventTypeCheck
-//  if "entity" is not null, "impacts" and "depends" are ensured to be initialized
+//
+//	"timestamp" is fill with time.Now()
+//	"event_type" is fill with EventTypeCheck
+//	if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
 	now := NewCpsTime()
@@ -260,10 +262,6 @@ func (e *Event) Format() {
 	e.ReceivedTimestamp = NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
-	}
-	if e.StateType == nil {
-		statetype := CpsNumber(1)
-		e.StateType = &statetype
 	}
 	if e.Initiator == "" {
 		e.Initiator = InitiatorExternal
@@ -320,7 +318,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
 	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
-		EventTypeEntityToggled, EventTypeEntityUpdated:
+		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -329,7 +327,7 @@ func (e *Event) IsContextable() bool {
 
 func (e *Event) IsOnlyServiceUpdate() bool {
 	switch e.EventType {
-	case EventTypeEntityToggled, EventTypeEntityUpdated:
+	case EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -612,6 +610,7 @@ func isValidEventType(t string) bool {
 		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
+		EventTypeResolveDeleted,
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,

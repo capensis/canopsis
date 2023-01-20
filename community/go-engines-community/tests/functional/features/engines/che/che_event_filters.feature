@@ -736,6 +736,7 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-6",
           "connector": "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6",
           "enabled": false,
+          "old_entity_patterns": null,
           "impact_level": 1,
           "impact_state": 0,
           "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
@@ -2007,7 +2008,7 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-24"
     }
     """
-    When I wait the next periodical process
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=che-event-filters-24
     Then the response code should be 200
     Then the response body should contain:

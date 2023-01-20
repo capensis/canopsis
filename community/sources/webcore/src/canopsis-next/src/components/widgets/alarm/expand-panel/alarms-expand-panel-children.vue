@@ -63,8 +63,10 @@ export default {
     },
 
     columns() {
-      const columns = this.widget.parameters.widgetGroupColumns
-        || defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+      const { widgetGroupColumns = [] } = this.widget.parameters;
+      const columns = widgetGroupColumns.length
+        ? widgetGroupColumns
+        : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
 
       return columns.map(({ value, label, ...column }) => ({
         ...column,
