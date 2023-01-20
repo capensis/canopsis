@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -33,15 +34,16 @@ func CreateMongoQuery(client mongo.DbClient) MongoQuery {
 	return MongoQuery{
 		typeCollection:        client.Collection(mongo.PbehaviorTypeMongoCollection),
 		reasonCollection:      client.Collection(mongo.PbehaviorReasonMongoCollection),
-		defaultSearchByFields: []string{"_id", "name", "author", "comments.author", "comments.message", "filter", "author"},
+		defaultSearchByFields: []string{"_id", "name", "author.name", "comments.author.name", "comments.message", "filter"},
 		defaultSortBy:         "created",
 		lookupBeforeMatch:     map[string][]bson.M{},
 		lookupBeforeLimit:     map[string][]bson.M{},
 		lookupAfterLimit: map[string][]bson.M{
-			"type":   GetNestedTypePipeline(),
-			"reason": GetNestedReasonPipeline(),
-			"exdate": GetNestedExdatesPipeline(),
-			"author": GetNestedAuthorPipeline(),
+			"type":            GetNestedTypePipeline(),
+			"reason":          GetNestedReasonPipeline(),
+			"exdate":          GetNestedExdatesPipeline(),
+			"author":          author.Pipeline(),
+			"comments.author": getCommentAuthorPipeline(),
 		},
 		project: []bson.M{
 			{"$addFields": bson.M{
@@ -63,6 +65,15 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 	err = q.handleSort(ctx, r)
 	if err != nil {
 		return nil, err
+	}
+	if r.WithFlags {
+		q.project = append(q.project, bson.M{"$addFields": bson.M{
+			"editable": bson.M{"$cond": bson.M{
+				"if":   "$origin",
+				"then": false,
+				"else": true,
+			}},
+		}})
 	}
 
 	beforeLimit := make([]bson.M, 0)
@@ -162,12 +173,9 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 		return nil, err
 	}
 
-	conditions := []bson.M{
-		{"name": searchRegexp},
-		{"author": searchRegexp},
-		{"comments.author": searchRegexp},
-		{"comments.message": searchRegexp},
-		{"filter": searchRegexp},
+	conditions := make([]bson.M, len(q.defaultSearchByFields))
+	for i, field := range q.defaultSearchByFields {
+		conditions[i] = bson.M{field: searchRegexp}
 	}
 
 	if len(types) > 0 {
@@ -185,6 +193,8 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 		}
 		conditions = append(conditions, bson.M{"reason": bson.M{"$in": ids}})
 	}
+
+	q.adjustLookupsForFilter([]string{"author", "comments.author"})
 
 	return bson.M{"$or": conditions}, nil
 }
@@ -220,6 +230,8 @@ func (q *MongoQuery) adjustLookupsForSort(sortBy string) {
 func GetNestedObjectsPipeline() []bson.M {
 	pipeline := append(GetNestedReasonPipeline(), GetNestedTypePipeline()...)
 	pipeline = append(pipeline, GetNestedExdatesPipeline()...)
+	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, getCommentAuthorPipeline()...)
 
 	return pipeline
 }
@@ -239,7 +251,7 @@ func GetNestedReasonPipeline() []bson.M {
 func GetNestedTypePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "type_",
 			"foreignField": "_id",
 			"as":           "type",
@@ -257,7 +269,7 @@ func GetNestedExdatesPipeline() []bson.M {
 			"includeArrayIndex":          "exdate_index",
 		}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "exdates.type",
 			"foreignField": "_id",
 			"as":           "exdates.type",
@@ -296,7 +308,7 @@ func GetNestedExdatesPipeline() []bson.M {
 			"includeArrayIndex":          "exdate_index",
 		}},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "exceptions.exdates.type",
 			"foreignField": "_id",
 			"as":           "exceptions.exdates.type",
@@ -344,19 +356,30 @@ func GetNestedExdatesPipeline() []bson.M {
 	}
 }
 
-func GetNestedAuthorPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         "default_rights",
-			"localField":   "author",
-			"foreignField": "_id",
-			"as":           "user",
-		}},
-		{"$unwind": bson.M{"path": "$user", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"author": bson.M{"$cond": bson.M{
-				"if": "$user.crecord_name", "then": "$user.crecord_name", "else": "$author",
-			}},
+func getCommentAuthorPipeline() []bson.M {
+	pipeline := []bson.M{
+		{"$unwind": bson.M{
+			"path":                       "$comments",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "comment_index",
 		}},
 	}
+
+	pipeline = append(pipeline, author.PipelineForField("comments.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			"comments": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comments._id",
+				"then": "$comments",
+				"else": "$$REMOVE",
+			}}},
+		}},
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"comments": "$comments"},
+		}}}},
+	)
+	return pipeline
 }

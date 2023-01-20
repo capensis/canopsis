@@ -1,4 +1,4 @@
-import { cloneDeep, pick, isEmpty } from 'lodash';
+import { cloneDeep, pick, isEmpty, omit } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -84,6 +84,8 @@ import { formToRequest, requestToForm } from './shared/request';
  * @property {string} reference
  * @property {EventFilterEnrichmentExternalDataType} type
  * @property {string} collection
+ * @property {string} sort_by
+ * @property {string} sort
  * @property {EventFilterEnrichmentExternalDataConditionForm[]} conditions
  */
 
@@ -211,6 +213,8 @@ export const eventFilterExternalDataItemToForm = (
   type: item.type,
 
   request: requestToForm(item.request),
+  sort_by: item.sort_by,
+  sort: item.sort,
   collection: item.collection ?? '',
   conditions: eventFilterExternalDataConditionsToForm(
     Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES),
@@ -253,13 +257,15 @@ export const formToEventFilterEnrichmentExternalDataConditions = (form = []) => 
  * @returns {EventFilterEnrichmentExternalData}
  */
 export const formToEventFilterEnrichmentExternalData = (form = []) => (
-  form.reduce((acc, { type, reference, collection, conditions, request }) => {
+  form.reduce((acc, externalData) => {
+    const { type, reference } = externalData;
+
     const additionalFields = type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
       ? {
-        request: formToRequest(request),
+        request: formToRequest(externalData.request),
       } : {
-        collection,
-        ...formToEventFilterEnrichmentExternalDataConditions(conditions),
+        ...pick(externalData, ['sort', 'sort_by', 'collection']),
+        ...formToEventFilterEnrichmentExternalDataConditions(externalData.conditions),
       };
 
     acc[reference] = {
@@ -271,6 +277,27 @@ export const formToEventFilterEnrichmentExternalData = (form = []) => (
     return acc;
   }, {})
 );
+
+/**
+ * Remove old, if some patterns exist
+ *
+ * @param {EventFilter} eventFilter
+ * @returns {FilterPatterns}
+ */
+export const eventFilterPatternToForm = (eventFilter) => {
+  const entityPattern = eventFilter[PATTERNS_FIELDS.entity];
+  const eventPattern = eventFilter[PATTERNS_FIELDS.event];
+
+  const eventFilterWithPatterns = entityPattern?.length || eventPattern?.length
+    ? omit(eventFilter, [OLD_PATTERNS_FIELDS.patterns])
+    : eventFilter;
+
+  return filterPatternsToForm(
+    eventFilterWithPatterns,
+    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
+    [OLD_PATTERNS_FIELDS.patterns, OLD_PATTERNS_FIELDS.patterns],
+  );
+};
 
 /**
  * Convert event filter to form
@@ -294,11 +321,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   external_data: !isEmpty(eventFilter.external_data)
     ? eventFilterEnrichmentExternalDataToForm(eventFilter.external_data)
     : [],
-  patterns: filterPatternsToForm(
-    eventFilter,
-    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
-    [OLD_PATTERNS_FIELDS.patterns],
-  ),
+  patterns: eventFilterPatternToForm(eventFilter),
 });
 
 /**

@@ -439,10 +439,10 @@ export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
   },
 ];
 
-export const DEFAULT_CONTEXT_ALARMS_COLUMNS = [
+export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
   {
     labelKey: 'common.alarmId',
-    value: 'v.display_name',
+    value: '_id',
   },
   {
     labelKey: 'common.created',
@@ -451,6 +451,25 @@ export const DEFAULT_CONTEXT_ALARMS_COLUMNS = [
   {
     labelKey: 'common.updated',
     value: 'v.last_update_date',
+  },
+];
+
+export const DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS = [
+  {
+    labelKey: 'common.displayName',
+    value: 'v.display_name',
+  },
+  {
+    labelKey: 'common.output',
+    value: 'v.output',
+  },
+  {
+    labelKey: 'common.state',
+    value: 'v.state.val',
+  },
+  {
+    labelKey: 'common.status',
+    value: 'v.status.val',
   },
 ];
 

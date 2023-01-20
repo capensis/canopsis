@@ -15,7 +15,7 @@
 <script>
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import TextEditor from '@/components/common/text-editor/text-editor.vue';
+const TextEditor = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
 export default {
   $_veeValidate: {

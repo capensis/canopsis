@@ -1,8 +1,14 @@
-import { QUICK_RANGES } from '@/constants';
+import { ALARM_INTERVAL_FIELDS, QUICK_RANGES } from '@/constants';
 
 export default {
   title: 'Quick ranges',
   timeField: 'Time field',
+  intervalFields: {
+    [ALARM_INTERVAL_FIELDS.timestamp]: 'Creation date',
+    [ALARM_INTERVAL_FIELDS.resolved]: 'Resolved at',
+    [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Last update date',
+    [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Last event date',
+  },
   types: {
     [QUICK_RANGES.custom.value]: 'Custom',
     [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',

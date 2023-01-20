@@ -2,8 +2,17 @@
   v-layout(row)
     template(v-if="value")
       v-text-field.mt-0.pt-0(:value="value", :disabled="disabled", readonly, hide-details)
-      c-action-btn.ml-2(:disabled="disabled", type="edit", @click="$emit('edit', value)")
-      c-action-btn(:disabled="disabled", type="delete", @click="$emit('remove')")
+      c-action-btn(
+        :disabled="disabled",
+        type="edit",
+        btn-class="ml-2",
+        @click="$emit('edit', value)"
+      )
+      c-action-btn(
+        :disabled="disabled",
+        type="delete",
+        @click="$emit('remove')"
+      )
     v-btn.ml-0(
       v-else,
       :disabled="disabled",

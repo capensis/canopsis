@@ -20,7 +20,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarmes avec ack',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} alarmes actives avec acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarmes avec acquittement annulé',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec consigne',

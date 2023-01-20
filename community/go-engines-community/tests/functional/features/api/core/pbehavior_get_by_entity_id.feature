@@ -11,7 +11,10 @@ Feature: get a pbehavior by entity id
     [
       {
         "_id": "test-pbehavior-to-get-by-entity-id-1",
-        "author": "root",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "comments": [],
         "color": "#FFFFFF",
         "created": 1592215337,
@@ -59,7 +62,10 @@ Feature: get a pbehavior by entity id
     [
       {
         "_id": "test-pbehavior-to-get-by-entity-id-2",
-        "author": "root",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "comments": [],
         "color": "#FFFFFF",
         "created": 1592215337,

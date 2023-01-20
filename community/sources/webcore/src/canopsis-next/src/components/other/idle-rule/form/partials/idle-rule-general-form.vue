@@ -16,7 +16,6 @@
     c-disable-during-periods-field(v-field="form.disable_during_periods")
     template(v-if="!isEntityType")
       c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
-      action-author-field(v-if="!isPbehaviorOperation", v-model="parameters")
       action-parameters-form(v-model="parameters", :type="form.operation.type", name="operation.parameters")
 </template>
 
@@ -28,13 +27,12 @@ import { isPbehaviorActionType } from '@/helpers/forms/action';
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
-import ActionAuthorField from '@/components/other/action/form/partials/action-author-field.vue';
 
 import IdleRuleAlarmTypeField from './idle-rule-alarm-type-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ActionAuthorField, IdleRuleAlarmTypeField, ActionParametersForm },
+  components: { IdleRuleAlarmTypeField, ActionParametersForm },
   mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',

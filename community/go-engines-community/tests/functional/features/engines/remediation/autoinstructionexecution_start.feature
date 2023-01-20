@@ -16,7 +16,7 @@ Feature: run an auto instruction
       "output": "test-output-to-run-auto-instruction-1"
     }
     """
-    When I wait the end of 6 events processing
+    When I wait the end of 8 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -40,10 +40,18 @@ Feature: run an auto instruction
     ]
     """
     Then the response code should be 207
-    Then the response array key "0.data.steps.data" should contain:
+    Then the response array key "0.data.steps.data" should contain only:
     """json
     [
       {
+        "_t": "stateinc",
+        "val": 1
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
         "_t": "autoinstructionstart",
         "a": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-1-1-name."
@@ -92,6 +100,65 @@ Feature: run an auto instruction
         "_t": "autoinstructioncomplete",
         "a": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-1-2-name."
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-3-name."
+      },
+      {
+        "_t": "instructionjobstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-3-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "instructionjobcomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-3-name. Job test-job-to-run-auto-instruction-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-3-name."
+      }
+    ]
+    """
+    Then the response array key "0.data.steps.data" should contain in order:
+    """json
+    [
+      {
+        "_t": "stateinc",
+        "val": 1
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-1-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-1-name."
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-2-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-2-name."
+      },
+      {
+        "_t": "autoinstructionstart",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-3-name."
+      },
+      {
+        "_t": "autoinstructioncomplete",
+        "a": "system",
+        "m": "Instruction test-instruction-to-run-auto-instruction-1-3-name."
       }
     ]
     """
