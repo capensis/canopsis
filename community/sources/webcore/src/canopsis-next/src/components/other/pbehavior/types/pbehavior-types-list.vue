@@ -12,9 +12,12 @@
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(#toolbar="{ selected }")
-      v-flex(v-show="deletable && selected.length", xs4)
-        c-action-btn(type="delete", @click="$emit('remove-selected', selected)")
+    template(#mass-actions="{ selected }")
+      c-action-btn(
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#icon_name="{ item }")
       span.pbehavior-type-icon.secondary(v-if="item.icon_name")
         v-icon(color="white", size="18") {{ item.icon_name }}
@@ -33,7 +36,7 @@
           @click="$emit('remove', item._id)"
         )
     template(#expand="{ item }")
-      pbehavior-types-list-expand-panel(:pbehaviorType="item")
+      pbehavior-types-list-expand-panel(:pbehavior-type="item")
 </template>
 
 <script>
@@ -60,7 +63,7 @@ export default {
       type: Object,
       required: true,
     },
-    deletable: {
+    removable: {
       type: Boolean,
       required: true,
     },

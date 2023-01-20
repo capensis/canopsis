@@ -49,6 +49,7 @@ describe('filter-selector', () => {
       filter: { _id: 2 },
     },
   ];
+
   const filters = [
     {
       _id: '3',
@@ -101,7 +102,6 @@ describe('filter-selector', () => {
         long: true,
         value: filters[0]._id,
         label: 'Custom label',
-        hideIcon: true,
       },
     });
 
@@ -118,7 +118,6 @@ describe('filter-selector', () => {
         lockedFilters,
         hideMultiply: true,
         value: filters[0]._id,
-        hideIcon: false,
         clearable: false,
       },
     });
@@ -135,6 +134,20 @@ describe('filter-selector', () => {
         filters,
         lockedFilters,
         value: [filters[0]._id],
+      },
+    });
+
+    const menuContent = wrapper.find('.v-menu__content');
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `filter-selector` with badges', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters: filters.map(filter => ({ ...filter, old_mongo_query: true })),
+        lockedFilters: lockedFilters.map(filter => ({ ...filter, old_mongo_query: true })),
       },
     });
 

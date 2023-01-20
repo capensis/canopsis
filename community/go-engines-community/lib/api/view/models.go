@@ -2,6 +2,8 @@ package view
 
 import (
 	"encoding/json"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -51,7 +53,7 @@ type Response struct {
 	Tags            []string                   `bson:"tags" json:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
 	Group           *ViewGroup                 `bson:"group" json:"group,omitempty"`
-	Author          string                     `bson:"author" json:"author,omitempty"`
+	Author          *author.Author             `bson:"author" json:"author,omitempty"`
 	Created         *types.CpsTime             `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated         *types.CpsTime             `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }
@@ -59,7 +61,7 @@ type Response struct {
 type ViewGroup struct {
 	ID      string         `bson:"_id" json:"_id,omitempty"`
 	Title   string         `bson:"title" json:"title"`
-	Author  string         `bson:"author" json:"author,omitempty"`
+	Author  *author.Author `bson:"author" json:"author,omitempty"`
 	Created *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }

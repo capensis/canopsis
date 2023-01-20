@@ -7,6 +7,7 @@ db.periodical_alarm.dropIndex("v.resolved_1");
 db.periodical_alarm.dropIndex("v.creation_date_1");
 db.periodical_alarm.dropIndex("v.last_event_date_1");
 db.periodical_alarm.dropIndex("v.last_update_date_1");
+db.periodical_alarm.dropIndex("v.parents_1");
 
 db.resolved_alarms.dropIndex("t_1");
 db.resolved_alarms.dropIndex("d_1");
@@ -14,7 +15,6 @@ db.resolved_alarms.dropIndex("v.meta_1_v.creation_date_1");
 db.resolved_alarms.dropIndex("v.creation_date_1");
 db.resolved_alarms.dropIndex("v.last_event_date_1");
 db.resolved_alarms.dropIndex("v.last_update_date_1");
-db.resolved_alarms.dropIndex("v.parents_1");
 
 db.pbehavior.dropIndex("name_1");
 

@@ -5,6 +5,7 @@
       service-entity-actions(
         v-if="selectedEntities.length",
         :actions="actions",
+        :entity="service",
         @apply="applyActionForSelected"
       )
     div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")

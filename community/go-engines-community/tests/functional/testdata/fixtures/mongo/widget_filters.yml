@@ -950,3 +950,15 @@ widget_filters:
               - test-entityservice-service-api-map-8-3-name
     alarm_pattern:
     pbehavior_pattern:
+
+  filter_to_alarm_test_tag_filter:
+    <<: *filter
+    _id: test-widgetfilter-to-alarm-test-tag-filter
+    widget: test-widget-to-alarm-test-tag-filter
+    alarm_pattern:
+      - - field: tags
+          cond:
+            type: has_not
+            value: ["test-tag-filter-2"]
+    entity_pattern:
+    pbehavior_pattern:

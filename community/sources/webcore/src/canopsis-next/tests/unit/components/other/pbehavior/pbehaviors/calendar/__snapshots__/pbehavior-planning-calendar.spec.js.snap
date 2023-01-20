@@ -55,11 +55,9 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
           name="slide-y-transition"
         />
       </span>
-      <span
-        class="subheading"
-      >
-        December 2013
-      </span>
+      <calendar-app-period-picker-stub
+        calendar="[object Object]"
+      />
       <button
         class="mx-2 ds-light-forecolor ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
         type="button"
@@ -1006,11 +1004,9 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
           name="slide-y-transition"
         />
       </span>
-      <span
-        class="subheading"
-      >
-        December 2013
-      </span>
+      <calendar-app-period-picker-stub
+        calendar="[object Object]"
+      />
       <button
         class="mx-2 ds-light-forecolor ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
         type="button"

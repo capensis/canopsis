@@ -62,21 +62,21 @@ describe('alarms-list-remediation-instructions-filters', () => {
   const lockedFilters = [
     {
       title: 'Locked filter 1',
-      filter: { _id: 1 },
+      _id: 'ID locked filter 1',
     },
     {
       title: 'Locked filter 2',
-      filter: { _id: 2 },
+      _id: 'ID locked filter 2',
     },
   ];
   const filters = [
     {
       title: 'Filter 1',
-      filter: { _id: 1 },
+      _id: 'ID filter 1',
     },
     {
       title: 'Filter 2',
-      filter: { _id: 2 },
+      _id: 'ID filter 2',
     },
   ];
 
