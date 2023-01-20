@@ -123,6 +123,7 @@ import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
 import CColumnField from '@/components/forms/fields/c-column-field.vue';
 import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
+import CColumnsWithTemplateField from '@/components/forms/fields/c-columns-with-template-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
@@ -392,6 +393,7 @@ Vue.component('c-percents-field', CPercentsField);
 Vue.component('c-color-indicator-field', CColorIndicatorField);
 Vue.component('c-column-field', CColumnField);
 Vue.component('c-columns-field', CColumnsField);
+Vue.component('c-columns-with-template-field', CColumnsWithTemplateField);
 Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);

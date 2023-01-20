@@ -13,7 +13,7 @@
       v-divider
       field-columns(
         v-model="form.parameters.widgetColumns",
-        :template.sync="form.parameters.widgetColumnsTemplate",
+        :template="form.parameters.widgetColumnsTemplate",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
         :alarm-infos="alarmInfos",
@@ -23,7 +23,8 @@
         :templates-pending="widgetTemplatesPending",
         with-template,
         with-html,
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
       field-columns(
@@ -37,20 +38,22 @@
         :templates="alarmWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         with-html,
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateWidgetGroupColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
         :template.sync="form.parameters.serviceDependenciesColumnsTemplate",
         :label="$t('settings.trackColumnNames')",
-        :type="$constants.ENTITIES_TYPES.alarm",
+        :type="$constants.ENTITIES_TYPES.entity",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="alarmWidgetTemplates",
+        :templates="entityWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateServiceDependenciesColumnsTemplate"
       )
       v-divider
       field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
@@ -135,7 +138,16 @@
         :label="$t('settings.linksCategoriesLimit')"
       )
       v-divider
-      export-csv-form(v-model="form.parameters", datetime-format)
+      export-csv-form(
+        v-model="form.parameters",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        :templates="alarmWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
+        datetime-format
+      )
       v-divider
       field-switcher(
         v-model="form.parameters.sticky_header",
@@ -224,6 +236,22 @@ export default {
 
     sortablePreparedWidgetColumns() {
       return this.preparedWidgetColumns.filter(column => this.getSortable(column, ALARM_UNSORTABLE_FIELDS));
+    },
+  },
+  methods: {
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
+
+    updateWidgetGroupColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetGroupColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetGroupColumns', columns);
+    },
+
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
     },
   },
 };

@@ -6,17 +6,13 @@
     :alarms="alarms",
     :meta="meta",
     :query="query",
-    :columns="columns",
+    :columns="widget.parameters.widgetGroupColumns",
     :editing="editing",
     :loading="pending"
   )
 </template>
 
 <script>
-import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_FIELDS } from '@/constants';
-
-import { defaultColumnsToColumns } from '@/helpers/entities';
-
 import AlarmsListTableWithPagination from '../partials/alarms-list-table-with-pagination.vue';
 
 /**
@@ -60,20 +56,6 @@ export default {
 
     meta() {
       return this.children?.meta ?? {};
-    },
-
-    columns() {
-      const { widgetGroupColumns = [] } = this.widget.parameters;
-      const columns = widgetGroupColumns.length
-        ? widgetGroupColumns
-        : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
-
-      return columns.map(({ value, label, ...column }) => ({
-        ...column,
-        value,
-        text: label,
-        sortable: value !== ALARM_FIELDS.extraDetails,
-      }));
     },
   },
 };

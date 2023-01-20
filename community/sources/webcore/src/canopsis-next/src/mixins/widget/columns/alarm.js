@@ -2,8 +2,6 @@ import { get } from 'lodash';
 
 import {
   ALARM_FIELDS,
-  ALARM_FIELDS_TO_LABELS_KEYS,
-  ALARM_UNSORTABLE_FIELDS,
   COLOR_INDICATOR_TYPES,
 } from '@/constants';
 
@@ -115,13 +113,11 @@ export const widgetColumnsAlarmMixin = {
       };
     },
 
-    columns() {
+    preparedColumns() {
       return (this.widget.parameters?.widgetColumns ?? []).map(column => ({
         ...column,
 
         popupTemplate: this.infoPopupsMap[column.value],
-        text: this.getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-        sortable: this.getSortable(column, ALARM_UNSORTABLE_FIELDS),
         filter: this.$i18n.locale && this.columnPropertiesFiltersMap[column.value],
         getComponent: this.getComponentGetter(column),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
