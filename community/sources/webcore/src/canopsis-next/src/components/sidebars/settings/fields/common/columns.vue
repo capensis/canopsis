@@ -1,34 +1,37 @@
 <template lang="pug">
   widget-settings-item(:title="label")
     v-select(
-      v-model="selectedTemplate",
-      :items="availableTemplates",
+      :value="template",
+      :items="templatesWithCustom",
       :label="$t('common.template')",
-      :loading="pending"
+      :loading="templatesPending",
+      return-object,
+      @input="updateTemplate"
     )
+    span.body-2.my-2 {{ $tc('common.column', 2) }}
     c-columns-field(
-      v-field="columns",
+      :columns="columns",
       :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
       :type="type",
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",
-      :infos-pending="infosPending"
+      :infos-pending="infosPending",
+      @input="updateColumns"
     )
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { CUSTOM_WIDGET_COLUMN_TEMPLATE } from '@/constants';
 
-import { MAX_LIMIT } from '@/constants';
+import { formBaseMixin } from '@/mixins/form';
 
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
-const { mapActions } = createNamespacedHelpers('view/widget/template');
-
 export default {
   components: { WidgetSettingsItem },
+  mixins: [formBaseMixin],
   model: {
     prop: 'columns',
     event: 'input',
@@ -47,8 +50,16 @@ export default {
       default: () => [],
     },
     template: {
-      type: String,
+      type: [String, Symbol],
       required: false,
+    },
+    templates: {
+      type: Array,
+      default: () => [],
+    },
+    templatesPending: {
+      type: Boolean,
+      default: false,
     },
     withTemplate: {
       type: Boolean,
@@ -75,47 +86,32 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      widgetTemplates: [],
-      pending: false,
-    };
-  },
   computed: {
-    availableTemplates() {
+    templatesWithCustom() {
       return [
-        ...this.widgetTemplates.map(template => ({ value: template._id, text: template.title })),
+        { value: CUSTOM_WIDGET_COLUMN_TEMPLATE, text: this.$t('common.custom'), columns: [] },
 
-        { value: 'custom', text: this.$t('common.custom') },
+        ...this.templates.map(template => ({
+          ...template,
+
+          value: template._id,
+          text: template.title,
+        })),
       ];
-    },
-
-    selectedTemplate: {
-      get() {
-        return this.template;
-      },
-      set(value) {
-        this.$emit('update:widgetColumnsTemplate', value);
-      },
     },
   },
   methods: {
-    ...mapActions({
-      fetchWidgetTemplatesListWithoutStore: 'fetchListWithoutStore',
-    }),
+    updateColumns(columns) {
+      if (this.template !== CUSTOM_WIDGET_COLUMN_TEMPLATE) {
+        this.$emit('update:template', CUSTOM_WIDGET_COLUMN_TEMPLATE);
+      }
 
-    async fetchList() {
-      this.pending = true;
+      this.updateModel(columns);
+    },
 
-      const { data } = await this.fetchWidgetTemplatesListWithoutStore({
-        params: {
-          type: this.type,
-          limit: MAX_LIMIT,
-        },
-      });
-
-      this.widgetTemplates = data;
-      this.pending = false;
+    updateTemplate({ value, columns }) {
+      this.$emit('update:template', value);
+      this.updateModel(columns);
     },
   },
 };

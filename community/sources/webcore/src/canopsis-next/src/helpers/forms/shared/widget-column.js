@@ -1,4 +1,8 @@
-import { ALARM_LIST_WIDGET_COLUMNS, CONTEXT_WIDGET_COLUMNS } from '@/constants';
+import {
+  ALARM_INFOS_FIELDS,
+  ALARM_LIST_WIDGET_COLUMNS,
+  ENTITY_INFOS_FIELDS,
+} from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -9,6 +13,7 @@ import uid from '@/helpers/uid';
 /**
  * @typedef {Object} WidgetColumn
  * @property {string} value
+ * @property {boolean} [label]
  * @property {boolean} [isHtml]
  * @property {string} [template]
  * @property {ColorIndicator} [colorIndicator]
@@ -20,6 +25,7 @@ import uid from '@/helpers/uid';
  * @property {string} column
  * @property {string} [dictionary]
  * @property {string} [field]
+ * @property {string} [label]
  * @property {boolean} [isHtml]
  * @property {string} [template]
  * @property {ColorIndicator} [colorIndicator]
@@ -29,15 +35,12 @@ import uid from '@/helpers/uid';
  * Check if column is infos
  *
  * @param {string} column
- * @returns {boolean}
+ * @returns {string}
  */
-export const isInfosWidgetColumn = column => [
-  ALARM_LIST_WIDGET_COLUMNS.infos,
-  ALARM_LIST_WIDGET_COLUMNS.entityInfos,
-  ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
-  CONTEXT_WIDGET_COLUMNS.infos,
-  CONTEXT_WIDGET_COLUMNS.componentInfos,
-].some(constantField => column.startsWith(constantField));
+export const getInfosWidgetColumn = column => [
+  ...ALARM_INFOS_FIELDS,
+  ...ENTITY_INFOS_FIELDS,
+].find(constantField => column.startsWith(constantField));
 
 /**
  * Check if column is links
@@ -51,21 +54,25 @@ export const isLinksWidgetColumn = column => column.startsWith(ALARM_LIST_WIDGET
  * Convert widget column to form
  *
  * @param {string} [value]
- * @param {WidgetColumn & { value: undefined }} [rest]
+ * @param {string} [label]
+ * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
  * @returns {WidgetColumnForm}
  */
-export const widgetColumnToForm = ({ value = '', ...rest } = {}) => {
+export const widgetColumnToForm = ({ value = '', label = '', ...rest } = {}) => {
   const result = {
     ...rest,
 
+    label,
     key: uid(),
     column: value,
   };
 
-  if (isInfosWidgetColumn(value)) {
-    const [column, dictionary, field] = value.split('.');
+  const infosColumn = getInfosWidgetColumn(value) ?? '';
 
-    result.column = column;
+  if (infosColumn) {
+    const [dictionary, field] = value.replace(`${infosColumn}.`, '').split('.');
+
+    result.column = infosColumn;
     result.dictionary = dictionary;
     result.field = field;
   } else if (isLinksWidgetColumn(value)) {
@@ -95,7 +102,7 @@ export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToF
 export const formToWidgetColumns = (form = []) => form.map(({ key, column, dictionary, field, ...rest }) => {
   let value = column;
 
-  if (isInfosWidgetColumn(column)) {
+  if (getInfosWidgetColumn(column)) {
     value = `${column}.${dictionary}.${field}`;
   } else if (isLinksWidgetColumn(column) && field) {
     value = `${column}.${field}`;

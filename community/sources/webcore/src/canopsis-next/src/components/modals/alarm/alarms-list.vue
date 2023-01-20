@@ -7,7 +7,6 @@
         :widget="widget",
         :alarms="alarms",
         :meta="meta",
-        :columns="columns",
         :loading="pending",
         :query.sync="query",
         :refresh-alarms-list="fetchList",

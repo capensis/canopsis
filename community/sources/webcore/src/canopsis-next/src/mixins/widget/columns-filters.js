@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-import { ALARM_ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
+import { ALARM_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
@@ -8,7 +8,7 @@ import { convertDurationToString } from '@/helpers/date/duration';
 export const widgetColumnsFiltersMixin = { // TODO: rename for alarm
   computed: {
     columnsFiltersMap() {
-      return this.columnsFilters.reduce((acc, { column, filter, attributes = [] }) => {
+      return (this.columnsFilters ?? []).reduce((acc, { column, filter, attributes = [] }) => {
         acc[column] = this.getFilter(filter, attributes);
 
         return acc;
@@ -17,19 +17,19 @@ export const widgetColumnsFiltersMixin = { // TODO: rename for alarm
 
     componentGettersMap() {
       return {
-        [ALARM_ENTITY_FIELDS.state]: context => ({
+        [ALARM_FIELDS.state]: context => ({
           bind: {
             is: 'alarm-column-value-state',
             alarm: context.alarm,
           },
         }),
-        [ALARM_ENTITY_FIELDS.status]: context => ({
+        [ALARM_FIELDS.status]: context => ({
           bind: {
             is: 'alarm-column-value-status',
             alarm: context.alarm,
           },
         }),
-        [ALARM_ENTITY_FIELDS.priority]: context => ({
+        [ALARM_FIELDS.impactState]: context => ({
           bind: {
             is: 'color-indicator-wrapper',
             type: COLOR_INDICATOR_TYPES.impactState,
@@ -37,15 +37,7 @@ export const widgetColumnsFiltersMixin = { // TODO: rename for alarm
             alarm: context.alarm,
           },
         }),
-        [ALARM_ENTITY_FIELDS.impactState]: context => ({
-          bind: {
-            is: 'color-indicator-wrapper',
-            type: COLOR_INDICATOR_TYPES.impactState,
-            entity: context.alarm.entity,
-            alarm: context.alarm,
-          },
-        }),
-        links: context => ({
+        [ALARM_FIELDS.links]: context => ({
           bind: {
             is: 'alarm-column-value-categories',
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
@@ -56,13 +48,13 @@ export const widgetColumnsFiltersMixin = { // TODO: rename for alarm
             activate: context.$listeners.activate,
           },
         }),
-        [ALARM_ENTITY_FIELDS.extraDetails]: context => ({
+        [ALARM_FIELDS.extraDetails]: context => ({
           bind: {
             is: 'alarm-column-value-extra-details',
             alarm: context.alarm,
           },
         }),
-        [ALARM_ENTITY_FIELDS.tags]: context => ({
+        [ALARM_FIELDS.tags]: context => ({
           bind: {
             is: 'c-alarm-tags-chips',
             alarm: context.alarm,

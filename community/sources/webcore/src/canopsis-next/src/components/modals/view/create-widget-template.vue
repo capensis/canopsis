@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(#title="")
-        span TITLE
+        span {{ title }}
       template(#text="")
         widget-template-form(v-model="form")
       template(#actions="")
@@ -50,6 +50,11 @@ export default {
     return {
       form: widgetTemplateToForm(this.modal.config.widgetTemplate),
     };
+  },
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createWidgetTemplate.create.title');
+    },
   },
   methods: {
     async submit() {

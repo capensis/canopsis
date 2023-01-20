@@ -417,7 +417,7 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
   validateCancel: 'MDS_VALIDATECANCEL',
 };
 
-export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
+export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [ // TODO: update or remove
   {
     labelKey: 'common.name',
     value: 'name',
@@ -428,12 +428,12 @@ export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
   },
 ];
 
-export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [ // TODO: add fields
+export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [ // TODO: update or remove
   { value: 'entity.name' },
   { value: 'entity.type' },
 ];
 
-export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
+export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [ // TODO: update or remove
   {
     labelKey: 'common.alarmId',
     value: '_id',
@@ -448,7 +448,7 @@ export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
   },
 ];
 
-export const DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS = [
+export const DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS = [ // TODO: update or remove
   {
     labelKey: 'alarm.fields.displayName',
     value: 'v.display_name',
