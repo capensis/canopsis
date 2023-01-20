@@ -1,3 +1,5 @@
+db.widget_templates.drop();
+
 db.default_rights.deleteMany({
     _id: {
         $in: ["api_widgettemplate", "models_widgetTemplate"]

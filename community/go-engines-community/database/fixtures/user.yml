@@ -27,6 +27,36 @@ template:
     updated: <Current().created>,
     author: root
   }
+  - &widget_alarm_columns [
+    { value: connector },
+    { value: connector_name },
+    { value: component },
+    { value: resource },
+    { value: v.output },
+    { value: extra_details },
+    { value: v.state.val },
+    { value: v.status.val }
+  ]
+  - &widget_entity_columns [
+    { value: name },
+    { value: type }
+  ]
+  - &widget_tpl_alarm {
+    _id: <UUID()>,
+    type: alarm,
+    columns: *widget_alarm_columns,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    author: root
+  }
+  - &widget_tpl_entity {
+    _id: <UUID()>,
+    type: entity,
+    columns: *widget_entity_columns,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    author: root
+  }
   - &filter {
     _id: <UUID()>,
     is_private: false,
@@ -115,6 +145,14 @@ viewtabs:
     view: "@view_context_explorer"
     position: 0
 
+widget_templates:
+  tpl_alarm:
+    <<: *widget_tpl_alarm
+    title: Default
+  tpl_entity:
+    <<: *widget_tpl_entity
+    title: Default
+
 widgets:
   widget_open_alarms:
     <<: *widget
@@ -122,23 +160,9 @@ widgets:
     type: AlarmsList
     tab: "@tab_open_alarms"
     parameters:
-      widgetColumns:
-        - value: v.connector
-          label: Connector
-        - value: v.connector_name
-          label: Connector name
-        - value: v.component
-          label: Component
-        - value: v.resource
-          label: Resource
-        - value: v.output
-          label: Output
-        - value: extra_details
-          label: Extra details
-        - value: v.state.val
-          label: State
-        - value: v.status.val
-          label: Status
+      widgetColumnsTemplate: "@tpl_alarm"
+      widgetColumnsTemplateTitle: Default
+      widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -175,23 +199,9 @@ widgets:
     type: AlarmsList
     tab: "@tab_resolved_alarms"
     parameters:
-      widgetColumns:
-        - value: v.connector
-          label: Connector
-        - value: v.connector_name
-          label: Connector name
-        - value: v.component
-          label: Component
-        - value: v.resource
-          label: Resource
-        - value: v.output
-          label: Output
-        - value: extra_details
-          label: Extra details
-        - value: v.state.val
-          label: State
-        - value: v.status.val
-          label: Status
+      widgetColumnsTemplate: "@tpl_alarm"
+      widgetColumnsTemplateTitle: Default
+      widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -228,11 +238,9 @@ widgets:
     type: Context
     tab: "@tab_context_explorer"
     parameters:
-      widgetColumns:
-        - value: name
-          label: Name
-        - value: type
-          label: Type
+      widgetColumnsTemplate: "@tpl_entity"
+      widgetColumnsTemplateTitle: Default
+      widgetColumns: *widget_entity_columns
       sort:
         order: ASC
       itemsPerPage: 10
