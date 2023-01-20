@@ -15,8 +15,20 @@
           :items="formats",
           :label="$t('settings.exportCsv.fields.datetimeFormat')"
         )
-    h4.subheading.ml-4 {{ $t('settings.exportColumnNames') }}
-    c-columns-field.subheading(v-field="form.widgetExportColumns")
+      v-layout(column)
+        h4.subheading {{ $t('settings.exportColumnNames') }}
+        c-columns-with-template-field(
+          v-field="form.widgetExportColumns",
+          :template="form.widgetExportColumnsTemplate",
+          :label="$t('settings.exportColumnNames')",
+          :type="type",
+          :alarm-infos="alarmInfos",
+          :entity-infos="entityInfos",
+          :infos-pending="infosPending",
+          :templates="templates",
+          :templates-pending="templatesPending",
+          @update:template="updateTemplate"
+        )
 </template>
 
 <script>
@@ -25,7 +37,13 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
 } from '@/constants';
 
+import { formBaseMixin } from '@/mixins/form';
+
+import FieldColumns from '../fields/common/columns.vue';
+
 export default {
+  components: { FieldColumns },
+  mixins: [formBaseMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -34,6 +52,30 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    templates: {
+      type: Array,
+      default: () => [],
+    },
+    templatesPending: {
+      type: Boolean,
+      default: false,
+    },
+    alarmInfos: {
+      type: Array,
+      default: () => [],
+    },
+    entityInfos: {
+      type: Array,
+      default: () => [],
+    },
+    infosPending: {
+      type: Boolean,
+      default: false,
     },
     datetimeFormat: {
       type: Boolean,
@@ -47,6 +89,16 @@ export default {
 
     formats() {
       return Object.values(EXPORT_CSV_DATETIME_FORMATS);
+    },
+  },
+  methods: {
+    updateTemplate(template, columns) {
+      this.updateModel({
+        ...this.form,
+
+        widgetExportColumnsTemplate: template,
+        widgetExportColumns: columns,
+      });
     },
   },
 };

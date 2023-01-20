@@ -102,7 +102,6 @@ import { isResolvedAlarm } from '@/helpers/entities';
 import featuresService from '@/services/features';
 
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
-import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -126,7 +125,6 @@ export default {
   },
   mixins: [
     widgetColumnsAlarmMixin,
-    widgetColumnsFiltersMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -146,6 +144,10 @@ export default {
     pagination: {
       type: Object,
       default: () => ({}),
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
     isTourEnabled: {
       type: Boolean,
@@ -227,7 +229,7 @@ export default {
     },
 
     headers() {
-      const headers = [...this.columns];
+      const headers = [...this.preparedColumns];
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });

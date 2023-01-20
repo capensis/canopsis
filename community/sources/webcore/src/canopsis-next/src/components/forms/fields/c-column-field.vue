@@ -59,7 +59,7 @@
           :label="$t('settings.columns.withTemplate')",
           :input-value="!!column.template",
           color="primary",
-          @change="enableTemplate(index, $event)"
+          @change="enableTemplate($event)"
         )
         v-btn.primary(
           v-if="column.template",
