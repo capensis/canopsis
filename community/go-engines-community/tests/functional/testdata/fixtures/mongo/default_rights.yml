@@ -613,6 +613,34 @@ default_rights:
     crecord_name: <Current()._id>
     role: "@role_to_edit_user"
 
+  role_to_account_update_1:
+    <<: *role
+    _id: test-role-to-account-update-1
+    crecord_name: <Current()._id>
+    rights: {}
+
+  role_to_account_update_2:
+    <<: *role
+    _id: test-role-to-account-update-2
+    crecord_name: <Current()._id>
+    rights: {}
+
+  user_to_account_update_1:
+    <<: *user
+    _id: test-user-to-account-update-1
+    crecord_name: <Current()._id>
+    mail: test-user-to-account-update-1-email@canopsis.net
+    firstname: test-user-to-account-update-1-firstname
+    lastname: test-user-to-account-update-1-lastname
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6425
+    role: "@role_to_account_update_1"
+
+  user_to_account_update_2:
+    <<: *user
+    _id: test-user-to-account-update-2
+    crecord_name: <Current()._id>
+    role: "@role_to_account_update_2"
+
   user_to_bulk_update_1:
     <<: *user
     _id: test-user-to-bulk-update-1
@@ -689,7 +717,7 @@ default_rights:
     _id: test-view-to-viewgroup-get-3
     crecord_name: <Current()._id>
 
-  permission_playlist_to_check_acess:
+  permission_playlist_to_check_access:
     <<: *permission_rw
     _id: test-playlist-to-check-access
     crecord_name: <Current()._id>
@@ -708,6 +736,7 @@ default_rights:
     <<: *permission_rw
     _id: test-playlist-to-update
     crecord_name: <Current()._id>
+    decription: "Rights on playlist : test-playlist-to-update-name"
 
   permission_playlist_to_delete:
     <<: *permission_rw
@@ -718,6 +747,25 @@ default_rights:
     <<: *permission_rw
     _id: test-view-to-playlist-edit
     crecord_name: <Current()._id>
+
+  role_to_playlist_edit:
+    <<: *role
+    _id: test-role-to-playlist-edit
+    crecord_name: <Current()._id>
+    description: test-role-to-playlist-edit-description
+    rights:
+      "@permission_api_playlist":
+        checksum: 15
+        crecord_type: right
+      "@permission_playlist_to_edit":
+        checksum: 4
+        crecord_type: right
+
+  user_to_playlist_edit:
+    <<: *user
+    _id: test-user-to-playlist-edit
+    crecord_name: <Current()._id>
+    role: "@role_to_playlist_edit"
 
   role_to_update_view_position:
     <<: *role
@@ -1016,10 +1064,27 @@ default_rights:
     _id: test-view-to-weather-get
     crecord_name: <Current()._id>
 
+  role_to_view_edit:
+    <<: *role
+    _id: test-role-to-view-edit
+    crecord_name: <Current()._id>
+    description: test-role-to-view-edit-description
+    rights:
+      "@permission_api_view":
+        checksum: 15
+        crecord_type: right
+
+  user_to_view_edit:
+    <<: *user
+    _id: test-user-to-view-edit
+    crecord_name: <Current()._id>
+    role: "@role_to_view_edit"
+
   role_admin:
     <<: *role
     _id: admin
     crecord_name: <Current()._id>
+    description: Superuser
     rights:
       "@permission_api_alarm_read":
         checksum: 1
@@ -1266,3 +1331,21 @@ default_rights:
       name: John Doe
     mail: admin@canopsis.net
     role: "@role_admin"
+
+  role_to_widget_filter_edit:
+    <<: *role
+    _id: test-role-to-widget-filter-edit
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_view":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_filter_edit":
+        checksum: 4
+        crecord_type: right
+
+  user_to_widget_filter_edit:
+    <<: *user
+    _id: test-user-to-widget-filter-edit
+    crecord_name: <Current()._id>
+    role: "@role_to_widget_filter_edit"

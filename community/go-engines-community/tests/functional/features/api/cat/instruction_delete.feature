@@ -14,11 +14,6 @@ Feature: delete an instruction
     When I do DELETE /api/v4/cat/instructions/test-instruction-to-delete
     Then the response code should be 204
 
-  Scenario: given instruction should not delete instruction with running executions
-    When I am admin
-    When I do DELETE /api/v4/cat/instructions/test-instruction-delete-execution-running
-    Then the response code should be 400
-
   Scenario: DELETE an instruction with not found response
     When I am admin
     When I do DELETE /api/v4/cat/instructions/test-instruction-not-found

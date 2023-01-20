@@ -432,7 +432,10 @@ Feature: Bulk update idlerules
           "_id": "test-idle-rule-to-bulk-update-1",
           "name": "test-idle-rule-to-bulk-update-1-name-twice",
           "description": "test-idle-rule-to-bulk-update-1-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
@@ -478,7 +481,10 @@ Feature: Bulk update idlerules
           "_id": "test-idle-rule-to-bulk-update-2",
           "name": "test-idle-rule-to-bulk-update-2-name",
           "description": "test-idle-rule-to-bulk-update-2-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
@@ -524,7 +530,10 @@ Feature: Bulk update idlerules
           "_id": "test-idle-rule-to-bulk-update-3",
           "name": "test-idle-rule-to-bulk-update-3-name",
           "description": "test-idle-rule-to-bulk-update-3-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,

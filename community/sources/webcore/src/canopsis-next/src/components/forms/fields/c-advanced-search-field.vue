@@ -55,9 +55,12 @@ export default {
     },
 
     clear() {
-      this.searchingText = '';
+      const newQuery = omit(this.query, [this.field]);
 
-      this.$emit('update:query', omit(this.query, [this.field]));
+      newQuery.page = 1;
+
+      this.searchingText = '';
+      this.$emit('update:query', newQuery);
     },
 
     submit() {

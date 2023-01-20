@@ -12,7 +12,11 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected }")
-      c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+      c-action-btn(
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#actions="{ item, disabled }")
       c-action-btn(
         v-if="updatable",
@@ -79,6 +83,7 @@ export default {
         {
           text: this.$t('remediation.job.configuration'),
           value: 'config.name',
+          sortable: false,
         },
         {
           text: this.$t('remediation.job.jobId'),

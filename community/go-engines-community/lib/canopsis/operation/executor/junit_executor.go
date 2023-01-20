@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -26,24 +27,24 @@ func NewJunitExecutor() operation.Executor {
 
 func (e *junitExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	if userID == "" {
 		userID = params.User
 	}
 
-	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]
+	alarmStepType, ok := e.alarmStepTypeMap[op.Type]
 	if !ok {
 		return "", nil
 	}
 
-	alarmChangeType, ok := e.alarmChangeTypeMap[operation.Type]
+	alarmChangeType, ok := e.alarmChangeTypeMap[op.Type]
 	if !ok {
 		return "", nil
 	}

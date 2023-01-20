@@ -64,8 +64,8 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 
 	if recomputedCount >= 0 {
 		w.Logger.Info().
-			Time("interval from", newSpan.From()).
-			Time("interval to", newSpan.To()).
+			Time("interval_from", newSpan.From()).
+			Time("interval_to", newSpan.To()).
 			Int("count", recomputedCount).
 			Msg("pbehaviors are recomputed")
 	}
@@ -249,8 +249,8 @@ func (w *periodicalWorker) publishToFifoChan(idTitle string, msgs <-chan Publish
 			w.Logger.Err(err).Str(idTitle, ms.id).Msgf("failed to send %s event", ms.event.EventType)
 		} else {
 			w.Logger.Debug().
-				Str("resolve pbehavior", ms.pbhID).
-				Str("resolve type", fmt.Sprintf("%+v", ms.pbhType)).
+				Str("resolve_pbehavior", ms.pbhID).
+				Str("resolve_type", fmt.Sprintf("%+v", ms.pbhType)).
 				Str(idTitle, ms.id).
 				Msgf("send %s event", ms.event.EventType)
 		}

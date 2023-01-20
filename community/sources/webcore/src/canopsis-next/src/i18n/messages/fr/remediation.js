@@ -29,6 +29,9 @@ export default {
     type: 'Type de consigne',
     approvalPending: 'En attente d\'approbation',
     needApprove: 'Une approbation est nécessaire',
+    executeInstruction: 'Exécuter la consigne "{instructionName}"',
+    resumeInstruction: 'Reprendre la consigne "{instructionName}"',
+    inProgressInstruction: '{instructionName} en cours...',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manuel simplifié',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manuel',
@@ -110,7 +113,7 @@ export default {
 
   instructionStat: {
     alarmsTimeline: 'Chronologie des alarmes',
-    executedAt: 'Exécuté à',
+    executedAt: 'Fin execution à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',

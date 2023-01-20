@@ -107,7 +107,11 @@ describe('service-weather', () => {
       expect.any(Object),
       {
         id: widget._id,
-        query: defaultQuery,
+        query: {
+          ...defaultQuery,
+
+          search: '',
+        },
       },
       undefined,
     );

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -39,7 +40,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 		Content: map[string]interface{}{},
 		Filters: make([]widgetfilter.Response, 0),
 	}
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"user":   userId,
 			"widget": widgetId,
@@ -51,24 +52,28 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.position": 1}},
-		{"$group": bson.M{
+	}
+	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$sort": bson.M{"filters.position": 1}},
+		bson.M{"$group": bson.M{
 			"_id":     nil,
 			"user":    bson.M{"$first": "$user"},
 			"widget":  bson.M{"$first": "$widget"},
 			"content": bson.M{"$first": "$content"},
 			"filters": bson.M{"$push": "$filters"},
 		}},
-		{"$addFields": bson.M{
+		bson.M{"$addFields": bson.M{
 			"filters": bson.M{"$filter": bson.M{
 				"input": "$filters",
 				"cond": bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$$this.author", "$user"}},
+					{"$eq": bson.A{"$$this.author._id", "$user"}},
 					{"$eq": bson.A{"$$this.is_private", true}},
 				}},
 			}},
 		}},
-	})
+	)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -80,11 +85,16 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			return nil, err
 		}
 	} else {
-		filterCursor, err := s.filterCollection.Find(ctx, bson.M{
-			"author":     userId,
-			"widget":     widgetId,
-			"is_private": true,
-		}, options.Find().SetSort(bson.M{"position": 1}))
+		pipeline := []bson.M{
+			{"$match": bson.M{
+				"author":     userId,
+				"widget":     widgetId,
+				"is_private": true,
+			}},
+			{"$sort": bson.M{"position": 1}},
+		}
+		pipeline = append(pipeline, author.Pipeline()...)
+		filterCursor, err := s.filterCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return nil, err
 		}

@@ -43,7 +43,9 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            await this.updateUserWithPopup({ data, id: this.currentUser._id });
+            await this.updateCurrentUser({ data });
+
+            this.$popups.success({ text: this.$t('success.default', data.ui_language) });
 
             await this.fetchCurrentUser();
           },
@@ -53,16 +55,6 @@ export default {
 
     logoutHandler() {
       return this.logout({ redirectTo: { name: ROUTES_NAMES.login } });
-    },
-
-    async updateUserWithPopup({ data, id }) {
-      try {
-        await this.updateUser({ data, id });
-
-        this.$popups.success({ text: this.$t('success.default', data.ui_language) });
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
     },
   },
 };
