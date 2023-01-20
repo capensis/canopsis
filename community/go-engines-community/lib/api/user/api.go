@@ -80,10 +80,10 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Create
-// @Param body body EditRequest true "body"
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} User
 func (a *api) Create(c *gin.Context) {
-	var request Request
+	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -113,10 +113,10 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // Update
-// @Param body body EditRequest true "body"
+// @Param body body UpdateRequest true "body"
 // @Success 200 {object} User
 func (a *api) Update(c *gin.Context) {
-	request := Request{
+	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
 
@@ -177,7 +177,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 // BulkCreate
-// @Param body body []Request true "body"
+// @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	contextUserId := c.MustGet(auth.UserKey).(string)
 
@@ -211,7 +211,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		var request Request
+		var request CreateRequest
 		err = json.Unmarshal(object.MarshalTo(nil), &request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
@@ -298,7 +298,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		user, err := a.store.Update(ctx, Request(request))
+		user, err := a.store.Update(ctx, UpdateRequest(request))
 		if err != nil {
 			a.logger.Err(err).Msg("cannot update user")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
