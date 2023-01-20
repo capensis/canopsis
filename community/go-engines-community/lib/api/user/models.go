@@ -14,7 +14,13 @@ type ListRequest struct {
 	Permission string `form:"permission"`
 }
 
-type Request struct {
+type CreateRequest struct {
+	EditRequest
+	Source     string `json:"source" binding:"oneoforempty=ldap cas saml"`
+	ExternalID string `json:"external_id"`
+}
+
+type UpdateRequest struct {
 	ID string `json:"-"`
 	EditRequest
 }
@@ -30,11 +36,9 @@ type EditRequest struct {
 	UIGroupsNavigationType string `json:"ui_groups_navigation_type"`
 	IsEnabled              *bool  `json:"enable" binding:"required"`
 	DefaultView            string `json:"defaultview"`
-	Source                 string `json:"source" binding:"oneoforempty=ldap cas saml"`
-	ExternalID             string `json:"external_id"`
 }
 
-func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
+func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
 		"_id":                  r.Name,
 		"crecord_name":         r.Name,
@@ -56,7 +60,7 @@ func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
 	return bsonModel
 }
 
-func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
+func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
 		"crecord_name":         r.Name,
 		"lastname":             r.Lastname,
