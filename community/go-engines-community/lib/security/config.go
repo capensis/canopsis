@@ -2,7 +2,7 @@ package security
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -84,7 +84,7 @@ type SamlConfig struct {
 
 // LoadConfig creates Config by config file.
 func LoadConfig(configDir string) (Config, error) {
-	buf, err := ioutil.ReadFile(filepath.Join(configDir, configPath))
+	buf, err := os.ReadFile(filepath.Join(configDir, configPath))
 	if err != nil {
 		return Config{}, err
 	}

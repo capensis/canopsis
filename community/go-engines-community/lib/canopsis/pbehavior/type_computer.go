@@ -37,14 +37,16 @@ type typeComputer struct {
 // For example, for active daily periodical behavior at 10:00-12:00 and date 2020-06-01:
 // [2020-06-01T10:00, 2020-06-01T12:00] ActiveTypeID
 // [2020-06-01T00:00, 2020-06-02T00:00] InactiveTypeID
+//
 //easyjson:json
 type ComputedPbehavior struct {
-	Name    string         `json:"n"`
-	Reason  string         `json:"r"`
-	Filter  string         `json:"f"`
-	Types   []ComputedType `json:"t"`
-	Created int64          `json:"c"`
-	Color   string         `json:"-"`
+	Name       string         `json:"n"`
+	ReasonName string         `json:"rn"`
+	ReasonID   string         `json:"r"`
+	Filter     string         `json:"f"`
+	Types      []ComputedType `json:"t"`
+	Created    int64          `json:"c"`
+	Color      string         `json:"-"`
 
 	Pattern       pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
@@ -321,11 +323,12 @@ func (c *typeComputer) computePbehavior(
 		}
 
 		return ComputedPbehavior{
-			Name:    pbehavior.Name,
-			Reason:  reasonName,
-			Types:   compitedTypes,
-			Created: pbehavior.Created.Unix(),
-			Color:   pbehavior.Color,
+			Name:       pbehavior.Name,
+			ReasonName: reasonName,
+			ReasonID:   reason.ID,
+			Types:      compitedTypes,
+			Created:    pbehavior.Created.Unix(),
+			Color:      pbehavior.Color,
 
 			Pattern:       pbehavior.EntityPattern,
 			OldMongoQuery: oldMongoQuery,

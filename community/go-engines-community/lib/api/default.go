@@ -31,6 +31,8 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v1"
+	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -123,11 +125,10 @@ func Default(
 	cookieOptions := CookieOptions{
 		FileAccessName: "token",
 		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-		Secure:         flags.SecureSession,
 	}
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
-	sessionStore.Options.Secure = cookieOptions.Secure
+	sessionStore.Options.Secure = flags.SecureSession
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
@@ -161,7 +162,12 @@ func Default(
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
 		jobQueue,
-		importcontextgraph.NewWorker(
+		libcontextgraphV1.NewWorker(
+			dbClient,
+			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			metricsEntityMetaUpdater,
+		),
+		libcontextgraphV2.NewWorker(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,

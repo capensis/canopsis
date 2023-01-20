@@ -14,7 +14,10 @@ Feature: Get a widget filter
           "_id": "test-widgetfilter-to-get-1",
           "title": "test-widgetfilter-to-get-1-title",
           "is_private": false,
-          "author": "nopermsuser",
+          "author": {
+            "_id": "nopermsuser",
+            "name": "nopermsuser"
+          },
           "created": 1605263992,
           "updated": 1605263992,
           "alarm_pattern": [
@@ -55,7 +58,10 @@ Feature: Get a widget filter
           "_id": "test-widgetfilter-to-get-5",
           "title": "test-widgetfilter-to-get-5-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1605263992,
           "updated": 1605263992,
           "old_mongo_query": {
@@ -66,7 +72,10 @@ Feature: Get a widget filter
           "_id": "test-widgetfilter-to-get-2",
           "title": "test-widgetfilter-to-get-2-title",
           "is_private": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1605263992,
           "updated": 1605263992,
           "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -131,7 +140,10 @@ Feature: Get a widget filter
           "_id": "test-widgetfilter-to-get-1",
           "title": "test-widgetfilter-to-get-1-title",
           "is_private": false,
-          "author": "nopermsuser",
+          "author": {
+            "_id": "nopermsuser",
+            "name": "nopermsuser"
+          },
           "created": 1605263992,
           "updated": 1605263992,
           "alarm_pattern": [
@@ -172,7 +184,10 @@ Feature: Get a widget filter
           "_id": "test-widgetfilter-to-get-5",
           "title": "test-widgetfilter-to-get-5-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1605263992,
           "updated": 1605263992,
           "old_mongo_query": {
@@ -201,7 +216,10 @@ Feature: Get a widget filter
           "_id": "test-widgetfilter-to-get-2",
           "title": "test-widgetfilter-to-get-2-title",
           "is_private": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1605263992,
           "updated": 1605263992,
           "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -296,7 +314,10 @@ Feature: Get a widget filter
       "_id": "test-widgetfilter-to-get-1",
       "title": "test-widgetfilter-to-get-1-title",
       "is_private": false,
-      "author": "nopermsuser",
+      "author": {
+        "_id": "nopermsuser",
+        "name": "nopermsuser"
+      },
       "created": 1605263992,
       "updated": 1605263992,
       "alarm_pattern": [
@@ -345,7 +366,10 @@ Feature: Get a widget filter
       "_id": "test-widgetfilter-to-get-2",
       "title": "test-widgetfilter-to-get-2-title",
       "is_private": true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1605263992,
       "updated": 1605263992,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -424,7 +448,10 @@ Feature: Get a widget filter
       "_id": "test-widgetfilter-to-get-5",
       "title": "test-widgetfilter-to-get-5-title",
       "is_private": false,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1605263992,
       "updated": 1605263992,
       "old_mongo_query": {

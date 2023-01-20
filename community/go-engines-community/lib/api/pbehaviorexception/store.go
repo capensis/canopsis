@@ -27,7 +27,7 @@ type Store interface {
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
 		dbCollection:          dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
-		pbehaviorDbCollection: dbClient.Collection(pbehavior.PBehaviorCollectionName),
+		pbehaviorDbCollection: dbClient.Collection(mongo.PbehaviorMongoCollection),
 		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "created",
 	}
@@ -204,7 +204,7 @@ func getNestedObjectsPipeline() []bson.M {
 		// Lookup exdate type
 		{"$unwind": "$exdates"},
 		{"$lookup": bson.M{
-			"from":         pbehavior.TypeCollectionName,
+			"from":         mongo.PbehaviorTypeMongoCollection,
 			"localField":   "exdates.type",
 			"foreignField": "_id",
 			"as":           "exdates.type",
@@ -224,7 +224,7 @@ func getNestedObjectsPipeline() []bson.M {
 func getDeletablePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
+			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "_id",
 			"foreignField": "exceptions",
 			"as":           "pbh",

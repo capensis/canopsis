@@ -1,9 +1,10 @@
 Feature: create and update alarm by main event stream
   I need to be able to create and update alarm on event
 
+  @concurrent
   Scenario: given a new alarm with a new connector should update an alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-change-connector-1",
@@ -16,7 +17,6 @@ Feature: create and update alarm by main event stream
       "output": "test-output-axe-change-connector-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -87,7 +87,7 @@ Feature: create and update alarm by main event stream
       }
     ]
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-change-connector-1",
@@ -100,7 +100,6 @@ Feature: create and update alarm by main event stream
       "output": "test-output-axe-change-connector-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -171,7 +170,7 @@ Feature: create and update alarm by main event stream
       }
     ]
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-change-connector-1",
@@ -184,7 +183,6 @@ Feature: create and update alarm by main event stream
       "output": "test-output-axe-change-connector-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-change-connector-1&opened=true
     Then the response code should be 200
     Then the response body should contain:
