@@ -27,16 +27,16 @@ type Scenario struct {
 	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
 }
 
-func (s Scenario) IsTriggered(triggers []string) bool {
+func (s Scenario) IsTriggered(triggers []string) string {
 	for _, expectedTrigger := range s.Triggers {
 		for _, trigger := range triggers {
 			if expectedTrigger == trigger {
-				return true
+				return trigger
 			}
 		}
 	}
 
-	return false
+	return ""
 }
 
 // Action represents a canopsis Action on alarms.
