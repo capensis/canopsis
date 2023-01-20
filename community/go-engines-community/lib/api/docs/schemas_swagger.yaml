@@ -3493,7 +3493,6 @@ definitions:
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
             * `done` - Alarm is "done"
-            * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
@@ -3571,7 +3570,6 @@ definitions:
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
             * `done` - Alarm is "done"
-            * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
@@ -3632,7 +3630,6 @@ definitions:
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
             * `done` - Alarm is "done"
-            * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
