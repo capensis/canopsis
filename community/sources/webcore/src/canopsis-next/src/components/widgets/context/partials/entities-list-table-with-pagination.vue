@@ -186,6 +186,7 @@ export default {
       this.$emit('update:query', {
         ...this.query,
 
+        page: 1,
         limit,
       });
     },

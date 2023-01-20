@@ -5,6 +5,8 @@
         v-clipboard:copy="value",
         v-clipboard:success="onSuccessCopied",
         v-clipboard:error="onErrorCopied",
+        :small="small",
+        :fab="fab",
         icon
       )
         v-icon(:color="color") {{ icon }}
@@ -28,6 +30,14 @@ export default {
     value: {
       type: String,
       required: true,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
+    fab: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

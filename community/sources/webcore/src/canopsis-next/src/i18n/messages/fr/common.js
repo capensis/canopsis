@@ -1,9 +1,10 @@
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  EVENT_ENTITY_TYPES, PATTERN_FIELD_TYPES,
+  EVENT_ENTITY_TYPES,
+  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
-  SCENARIO_TRIGGERS,
+  TRIGGERS,
 } from '@/constants';
 
 export default {
@@ -146,7 +147,6 @@ export default {
   id: 'Identifiant',
   reset: 'Réinitialiser',
   selectColor: 'Sélectionner la couleur',
-  triggers: 'Déclencheurs',
   disableDuringPeriods: 'Désactiver pendant les pauses',
   retryDelay: 'Délai entre les tentatives',
   retryUnit: 'Unité d\'essai',
@@ -189,7 +189,7 @@ export default {
   graph: 'Graphique | Graphiques',
   systemStatus: 'État du système',
   downloadAsPng: 'Télécharger en PNG',
-  rating: 'Notation | Notations',
+  rating: 'Evaluation | Evaluations',
   sampling: 'Échantillonnage',
   parametersToDisplay: '{count} paramètres à afficher',
   uptime: 'Uptime',
@@ -224,6 +224,8 @@ export default {
   acked: 'Acquitté',
   ackedAt: 'Acquitté à',
   ackedBy: 'Acquitté par',
+  ackMessage: 'Message de l\'acquittement',
+  ackInitiator: 'Origine de l\'acquittement',
   resolvedAt: 'Résolue à',
   extraInfo: 'Extra info | Extra infos',
   custom: 'Personnalisé',
@@ -248,8 +250,14 @@ export default {
   failed: 'Échoué',
   close: 'Fermer',
   alarmId: 'Identifiant de l\'alarme',
+  longOutput: 'Sortie longue',
+  initialOutput: 'Sortie initiale',
+  longInitialOutput: 'Sortie initiale longue',
   timestamp: 'Horodatage',
   countOfMax: '{count} sur {total}',
+  trigger: 'Déclencheur | Déclencheurs',
+  initialLongOutput: 'Sortie initiale longue',
+  totalStateChanges: 'Changements d\'état totaux',
   noReceivedEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
   frequencyLimit: 'Nombre d\'oscillations',
   clearSearch: 'Ne plus appliquer cette recherche',
@@ -393,6 +401,8 @@ export default {
 
     [PATTERN_OPERATORS.activated]: 'Activé',
     [PATTERN_OPERATORS.inactive]: 'Inactif',
+
+    [PATTERN_OPERATORS.regexp]: 'Expression régulière',
   },
   entityEventTypes: {
     [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -406,85 +416,85 @@ export default {
     [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
   },
-  scenarioTriggers: {
-    [SCENARIO_TRIGGERS.create]: {
+  triggers: {
+    [TRIGGERS.create]: {
       text: 'Création d\'alarme',
     },
-    [SCENARIO_TRIGGERS.statedec]: {
+    [TRIGGERS.statedec]: {
       text: 'Diminution de la criticité',
     },
-    [SCENARIO_TRIGGERS.changestate]: {
+    [TRIGGERS.changestate]: {
       text: 'Changement et verrouillage de la criticité',
     },
-    [SCENARIO_TRIGGERS.stateinc]: {
+    [TRIGGERS.stateinc]: {
       text: 'Augmentation de la criticité',
     },
-    [SCENARIO_TRIGGERS.changestatus]: {
+    [TRIGGERS.changestatus]: {
       text: 'Changement de statut (flapping, bagot, ...)',
     },
-    [SCENARIO_TRIGGERS.ack]: {
+    [TRIGGERS.ack]: {
       text: 'Acquittement d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.ackremove]: {
+    [TRIGGERS.ackremove]: {
       text: 'Suppression de l\'acquittement d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.cancel]: {
+    [TRIGGERS.cancel]: {
       text: 'Annulation d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.uncancel]: {
+    [TRIGGERS.uncancel]: {
       text: 'Annulation de l\'annulation d\'une alarme',
       helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
     },
-    [SCENARIO_TRIGGERS.comment]: {
+    [TRIGGERS.comment]: {
       text: 'Commentaire sur une alarme',
     },
-    [SCENARIO_TRIGGERS.done]: {
+    [TRIGGERS.done]: {
       text: 'Alarme en statut "done"',
       helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
     },
-    [SCENARIO_TRIGGERS.declareticket]: {
+    [TRIGGERS.declareticket]: {
       text: 'Déclaration de ticket depuis l\'interface graphique',
     },
-    [SCENARIO_TRIGGERS.declareticketwebhook]: {
+    [TRIGGERS.declareticketwebhook]: {
       text: 'Déclaration de ticket depuis un webhook',
     },
-    [SCENARIO_TRIGGERS.assocticket]: {
+    [TRIGGERS.assocticket]: {
       text: 'Association de ticket sur une alarme',
     },
-    [SCENARIO_TRIGGERS.snooze]: {
+    [TRIGGERS.snooze]: {
       text: 'Mise en veille d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.unsnooze]: {
+    [TRIGGERS.unsnooze]: {
       text: 'Sortie de veille d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.resolve]: {
+    [TRIGGERS.resolve]: {
       text: 'Résolution d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.activate]: {
+    [TRIGGERS.activate]: {
       text: 'Activation d\'une alarme',
     },
-    [SCENARIO_TRIGGERS.pbhenter]: {
+    [TRIGGERS.pbhenter]: {
       text: 'Comportement périodique démarré',
     },
-    [SCENARIO_TRIGGERS.pbhleave]: {
+    [TRIGGERS.pbhleave]: {
       text: 'Comportement périodique terminé',
     },
-    [SCENARIO_TRIGGERS.instructionfail]: {
+    [TRIGGERS.instructionfail]: {
       text: 'Consigne manuelle en erreur',
     },
-    [SCENARIO_TRIGGERS.autoinstructionfail]: {
+    [TRIGGERS.autoinstructionfail]: {
       text: 'Consigne automatique en erreur',
     },
-    [SCENARIO_TRIGGERS.instructionjobfail]: {
+    [TRIGGERS.instructionjobfail]: {
       text: 'Job de remédiation en erreur',
     },
-    [SCENARIO_TRIGGERS.instructionjobcomplete]: {
+    [TRIGGERS.instructionjobcomplete]: {
       text: 'Job de remédiation terminé',
     },
-    [SCENARIO_TRIGGERS.instructioncomplete]: {
+    [TRIGGERS.instructioncomplete]: {
       text: 'Consigne manuelle terminée',
     },
-    [SCENARIO_TRIGGERS.autoinstructioncomplete]: {
+    [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
   },

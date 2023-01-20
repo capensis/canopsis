@@ -32,7 +32,9 @@ describe('pbehaviors-simple-list', () => {
   const pbehaviorsItems = range(totalItems).map(index => ({
     _id: `id-pbehavior-${index}`,
     name: `name-${index}`,
-    author: `author-${index}`,
+    author: {
+      name: `author-${index}`,
+    },
     enabled: !!(index % 2),
     editable: !!(index % 2),
     tstart: 1614861000 + index,

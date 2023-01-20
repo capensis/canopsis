@@ -17,11 +17,13 @@ import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
+  ALARM_ACK_INITIATORS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   MAX_LIMIT,
+  PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
@@ -84,6 +86,8 @@ export default {
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
         PATTERN_OPERATORS.contains,
+        PATTERN_OPERATORS.notContains,
+        PATTERN_OPERATORS.regexp,
       ];
     },
 
@@ -285,6 +289,25 @@ export default {
       };
     },
 
+    ackInitiatorOptions() {
+      return {
+        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: Object.values(ALARM_ACK_INITIATORS),
+          },
+        },
+      };
+    },
+
+    totalStateChangesOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.number,
+        operators: PATTERN_NUMBER_OPERATORS,
+      };
+    },
+
     alarmAttributes() {
       return [
         {
@@ -367,6 +390,16 @@ export default {
           options: this.ackByOptions,
         },
         {
+          text: this.$t('common.ackMessage'),
+          value: ALARM_PATTERN_FIELDS.ackMessage,
+          options: this.stringWithExistOptions,
+        },
+        {
+          text: this.$t('common.ackInitiator'),
+          value: ALARM_PATTERN_FIELDS.ackInitiator,
+          options: this.ackInitiatorOptions,
+        },
+        {
           text: this.$t('common.resolvedAt'),
           value: ALARM_PATTERN_FIELDS.resolvedAt,
           options: this.dateOptions,
@@ -405,6 +438,23 @@ export default {
           text: this.$t('common.activationDate'),
           value: ALARM_PATTERN_FIELDS.activationDate,
           options: this.dateOptions,
+        },
+        {
+          text: this.$t('common.longOutput'),
+          value: ALARM_PATTERN_FIELDS.longOutput,
+        },
+        {
+          text: this.$t('common.initialOutput'),
+          value: ALARM_PATTERN_FIELDS.initialOutput,
+        },
+        {
+          text: this.$t('common.initialLongOutput'),
+          value: ALARM_PATTERN_FIELDS.initialLongOutput,
+        },
+        {
+          text: this.$t('common.totalStateChanges'),
+          value: ALARM_PATTERN_FIELDS.totalStateChanges,
+          options: this.totalStateChangesOptions,
         },
       ];
     },

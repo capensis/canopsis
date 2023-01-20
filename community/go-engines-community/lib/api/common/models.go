@@ -16,16 +16,6 @@ import (
 	"github.com/valyala/fastjson"
 )
 
-type User struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"crecord_name" json:"name"`
-}
-
-type Role struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"crecord_name" json:"name"`
-}
-
 // PaginatedMeta is meta for paginated list data.
 type PaginatedMeta struct {
 	Page       int64 `json:"page"`

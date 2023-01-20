@@ -1,4 +1,4 @@
-import { get, isUndefined, omit, sortBy, keyBy, groupBy } from 'lodash';
+import { get, isUndefined, omit, sortBy } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -64,11 +64,9 @@ export const getCheckboxValue = (
  * Get prepared grouped permissions for the permissions page
  *
  * @param {Array<Object>} permissions
- * @param {Array<Object>} [views = []]
- * @param {Array<Object>} [playlists = []]
  * @returns {*}
  */
-export const getGroupedPermissions = (permissions, views = [], playlists = []) => {
+export const getGroupedPermissions = (permissions) => {
   const allBusinessPermissionsIds = Object.values(flatten(USERS_PERMISSIONS.business));
   const generalApiPermissions = Object.values(USERS_PERMISSIONS.api.general);
   const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
@@ -86,17 +84,12 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
   const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
   const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
 
-  const viewsById = keyBy(views, '_id');
-  const playlistsById = keyBy(playlists, '_id');
-
   const groupedPermissions = permissions.reduce((acc, permission) => {
     const permissionId = String(permission._id);
-    const view = viewsById[permissionId];
-    const playlist = playlistsById[permissionId];
 
-    if (view) {
+    if (permission.view && permission.view_group) {
       acc.view.push(permission);
-    } else if (playlist) {
+    } else if (permission.playlist) {
       acc.playlist.push(permission);
     } else if (adminTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.admin.push(permission);
@@ -180,21 +173,30 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
-  const viewsPermissionsByGroupTitle = groupBy(groupedPermissions.view, (permission) => {
-    const view = viewsById[permission._id];
+  const viewsPermissionsByGroupTitle = groupedPermissions.view.reduce((acc, permission) => {
+    const { view_group: viewGroup, ...rest } = permission;
 
-    return view.group.title;
-  });
+    if (!acc[viewGroup._id]) {
+      acc[viewGroup._id] = {
+        viewGroup,
+        permissions: [],
+      };
+    }
 
-  groupedPermissions.view = Object.entries(viewsPermissionsByGroupTitle)
-    .map(([name, groupPermissions]) => ({
-      name,
-      permissions: sortBy(groupPermissions, ['description']),
+    acc[viewGroup._id].permissions.push(rest);
+
+    return acc;
+  }, {});
+
+  groupedPermissions.view = sortBy(Object.values(viewsPermissionsByGroupTitle), ['viewGroup.position'])
+    .map(({ viewGroup, permissions: viewGroupPermissions }) => ({
+      name: viewGroup.title,
+      permissions: sortBy(viewGroupPermissions, ['view.position']),
     }));
 
   groupedPermissions.view.push({
     key: 'common.playlist',
-    permissions: groupedPermissions.playlist,
+    permissions: sortBy(groupedPermissions.playlist, ['playlist.name']),
   });
 
   return omit(groupedPermissions, ['playlist']);
