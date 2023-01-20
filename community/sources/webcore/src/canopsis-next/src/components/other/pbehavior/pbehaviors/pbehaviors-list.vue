@@ -13,7 +13,7 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected, clearSelected }")
-      pbehaviors-mass-actions-panel.ml-3(
+      pbehaviors-mass-actions-panel(
         :items="selected",
         :removable="removable",
         :enablable="enablable",
@@ -41,6 +41,8 @@
           v-if="updatable",
           :disabled="!item.editable",
           :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
+          :badge-value="isOldPattern(item)",
+          :badge-tooltip="$t('pattern.oldPatternTooltip')",
           type="edit",
           @click="$emit('edit', item)"
         )
@@ -59,6 +61,8 @@
 </template>
 
 <script>
+import { isOldPattern } from '@/helpers/pattern';
+
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 
@@ -110,7 +114,7 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author' },
+        { text: this.$t('common.author'), value: 'author.name' },
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },
@@ -124,6 +128,11 @@ export default {
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
+    },
+  },
+  methods: {
+    isOldPattern(item) {
+      return isOldPattern(item);
     },
   },
 };

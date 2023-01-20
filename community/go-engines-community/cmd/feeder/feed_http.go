@@ -10,7 +10,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
@@ -58,7 +58,7 @@ func (h *HTTPSender) Login() {
 // False otherwise.
 func validJSON(filename string) bool {
 	var data []byte
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Printf("Can not load %s.\n", filename)
 		os.Exit(ErrFileNotFound)
@@ -95,7 +95,7 @@ func (h *HTTPSender) sendEvent(eventFiles []string) {
 			h.Logger.Error().Err(err).Msg("")
 		}
 
-		data, err := ioutil.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
 		if resp.StatusCode != 200 {
 			h.Logger.Error().Err(err).Str("data", string(data)).Msg("")
 			os.Exit(ErrHTTP)

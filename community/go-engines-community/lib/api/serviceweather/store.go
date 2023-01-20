@@ -114,12 +114,6 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 		}
 	}
 
-	if !service.PbehaviorInfo.IsActive() {
-		for i := range res.Data {
-			res.Data[i].IsGrey = true
-		}
-	}
-
 	if r.WithInstructions {
 		alarmIds := make([]string, 0, len(res.Data))
 		for _, v := range res.Data {

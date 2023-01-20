@@ -339,7 +339,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			pattern: pattern.Alarm{
 				{
 					{
-						Field:     "v.initial_output",
+						Field:     "v.unknown",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
 					},
 				},

@@ -101,18 +101,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.Status).UnmarshalJSON(data))
 				}
 			}
-		case "state_type":
-			if in.IsNull() {
-				in.Skip()
-				out.StateType = nil
-			} else {
-				if out.StateType == nil {
-					out.StateType = new(CpsNumber)
-				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.StateType).UnmarshalJSON(data))
-				}
-			}
 		case "source_type":
 			out.SourceType = string(in.String())
 		case "long_output":
@@ -450,15 +438,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
-		const prefix string = ",\"state_type\":"
-		out.RawString(prefix)
-		if in.StateType == nil {
-			out.RawString("null")
-		} else {
-			out.Raw((*in.StateType).MarshalJSON())
-		}
-	}
-	{
 		const prefix string = ",\"source_type\":"
 		out.RawString(prefix)
 		out.String(string(in.SourceType))
@@ -792,8 +771,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.ID = string(in.String())
 		case "name":
 			out.Name = string(in.String())
+		case "reason_name":
+			out.ReasonName = string(in.String())
 		case "reason":
-			out.Reason = string(in.String())
+			out.ReasonID = string(in.String())
 		case "type":
 			out.TypeID = string(in.String())
 		case "type_name":
@@ -834,9 +815,14 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.Name))
 	}
 	{
+		const prefix string = ",\"reason_name\":"
+		out.RawString(prefix)
+		out.String(string(in.ReasonName))
+	}
+	{
 		const prefix string = ",\"reason\":"
 		out.RawString(prefix)
-		out.String(string(in.Reason))
+		out.String(string(in.ReasonID))
 	}
 	{
 		const prefix string = ",\"type\":"
@@ -1147,6 +1133,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes5(in, &out.PbehaviorInfo)
 		case "sli_avail_state":
 			out.SliAvailState = int64(in.Int64())
+		case "soft_deleted":
+			if in.IsNull() {
+				in.Skip()
+				out.SoftDeleted = nil
+			} else {
+				if out.SoftDeleted == nil {
+					out.SoftDeleted = new(CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.SoftDeleted).UnmarshalJSON(data))
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -1348,6 +1346,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"sli_avail_state\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.SliAvailState))
+	}
+	if in.SoftDeleted != nil {
+		const prefix string = ",\"soft_deleted\":"
+		out.RawString(prefix)
+		out.Raw((*in.SoftDeleted).MarshalJSON())
 	}
 	out.RawByte('}')
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -75,7 +74,7 @@ func (f *Feeder) modeSendEvent(ctx context.Context) error {
 		return fmt.Errorf("file %s is a directory", f.flags.File)
 	}
 
-	content, err := ioutil.ReadFile(f.flags.File)
+	content, err := os.ReadFile(f.flags.File)
 
 	if err != nil {
 		return fmt.Errorf("reading file %s: %v", f.flags.File, err)

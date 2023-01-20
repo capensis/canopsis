@@ -12,7 +12,11 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#mass-actions="{ selected }")
-      c-action-btn.ml-3(v-if="removable", type="delete", @click="$emit('remove-selected', selected)")
+      c-action-btn(
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#enable="{ item }")
       c-enabled(:value="item.enable")
     template(#active="{ item }")
@@ -84,6 +88,7 @@ export default {
         {
           text: this.$t('user.active'),
           value: 'active',
+          sortable: false,
         },
         {
           text: this.$t('common.enabled'),
@@ -96,6 +101,7 @@ export default {
         {
           text: this.$t('user.activeConnects'),
           value: 'active_connects',
+          sortable: false,
         },
         {
           text: this.$t('common.actionsLabel'),

@@ -106,6 +106,8 @@ describe('c-pattern-rules-field', () => {
       rules[1],
       {
         ...updatedRule,
+        dictionary: '',
+        field: '',
         value: undefined,
       },
     ]);
@@ -137,6 +139,8 @@ describe('c-pattern-rules-field', () => {
       rules[0],
       {
         ...updatedRule,
+        dictionary: '',
+        field: '',
         operator: '',
         value: undefined,
       },
