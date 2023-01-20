@@ -10,22 +10,46 @@ Pour cela, il faut au préalable ajouter des règles de conversion via l'API `as
 
 Voici un exemple de configuration avec ajout de `2 règles`
 
-```sh
-curl -H "Content-Type: application/json" -X POST -u root:root -d '{
-    "filters" : 
-    [
-      {
-        "column": "v.extra.activation_date",
-        "filter": "date",
-        "attributes": ["long"]
-      },
-      {
-        "column": "v.duration",
-        "filter": "duration"
-      }
-    ]
-}' http://localhost:8082/api/v2/associativetable/alarm-column-filters
-```
+=== "Version < `4.3`"
+
+    ```sh
+    curl -H "Content-Type: application/json" -X POST -u root:root -d '{
+        "filters" : 
+        [
+          {
+            "column": "v.extra.activation_date",
+            "filter": "date",
+            "attributes": ["long"]
+          },
+          {
+            "column": "v.duration",
+            "filter": "duration"
+          }
+        ]
+    }' http://localhost:8082/api/v2/associativetable/alarm-column-filters
+    ```
+
+=== "Version >= `4.3`"
+
+    ```sh
+    curl -H "Content-Type: application/json" -X POST -u root:root -d '{
+        "content": {
+        "filters" : [
+              {
+                "column": "v.extra.activation_date",
+                "filter": "date",
+                "attributes": ["long"]
+              },
+              {
+                "column": "v.duration",
+                "filter": "duration"
+              }
+            ]
+        },
+        "name": "alarm-column-filters"
+    }' http://localhost:8082/api/v4/associativetable
+    ```
+
 
 Dans cet exemple, nous allons configurer `2 valeurs de colonne` avec un rendu particulier.
 
@@ -38,50 +62,75 @@ Toute colonne qui afficherait :
 
 * `date` 
   
-    * `attributes` possibles (tableau de valeurs)
-      
-        * 1) Format (voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date)
-    	* 2) `true` ou `false` (valeur par défaut si non précisée) : Ignore la vérification du jour courant
-        * 3) Valeur par défaut à mettre dans l'attribut si aucune valeur n'est présente dans l'explorateur de contexte
-        
-    * Exemple
+  * `attributes` possibles (tableau de valeurs)
     
-```json
-{
-  column: "v.last_update_date",
-  filter: "date",
-  attributes: [
-    "timePicker",
-    false,
-    "Default value"
-  ]
-}
-```
-    
-        
-    
+    * 1) Format (voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date)
+    * 2) `true` ou `false` (valeur par défaut si non précisée) : Ignore la vérification du jour courant
+    * 3) Valeur par défaut à mettre dans l'attribut si aucune valeur n'est présente dans l'explorateur de contexte
+  
+  * Exemple d'un fichier `configuration.json`
+
+
+=== "Version < `4.3`"
+
+    ```json
+    {
+      "column": "v.last_update_date",
+      "filter": "date",
+      "attributes": [
+        "timePicker",
+        false,
+        "Default value"
+      ]
+    }
+    ```
+
+=== "Version >= `4.3`"
+
+    ```json
+    {
+      "content": {
+      "filters": [
+            {
+              "column": "v.last_update_date",
+              "filter": "date",
+              "attributes": [
+                "timePicker",
+                false,
+                "Default value"      
+              ]
+           }
+         ]
+      },
+      "name": "alarm-column-filters"
+    }
+    ```
+
 * `duration`
   
-    * `attributes` possibles (tableau de valeurs)
-        * 1) Locale (par défaut locale du navigateur)
-            * Exemples
-                * Rendu avec la locale `fr` : 27 jours 5 heures 6 minutes
-                * Rendu avec la locale `en` : 27 days 5 hours 6 minutes
-
-        * 2) Format de la Durée (par défaut - `'D __ H _ m _ s _'`)
+  * `attributes` possibles (tableau de valeurs)
+    
+    * 1) Locale (par défaut locale du navigateur)
+         * Exemples
+           * Rendu avec la locale `fr` : 27 jours 5 heures 6 minutes
+           * Rendu avec la locale `en` : 27 days 5 hours 6 minutes
+    
+    * 2) Format de la Durée (par défaut - `'D __ H _ m _ s _'`)
 
 #### Les attributs liés aux dates peuvent contenir plusieurs type de formats
 
-* `long` - DD/MM/YYYY H:mm:ss
-* `medium` - DD/MM H:mm
-* `short` - DD/MM/YYYY
-* `time` - H:mm:ss
-* `dateTimePicker`  -  DD/MM/YYYY HH:mm
-* `dateTimePickerWithSeconds` - DD/MM/YYYY HH:mm:ss
-* `datePicker` - DD/MM/YYYY
-* `timePicker` - HH:mm
-* `timePickerWithSeconds` - HH:mm:ss
-* `veeValidateDateTimeFormat` - dd/MM/yyyy HH:mm
+| Type                        | Réprésentation        |
+| --------------------------- | --------------------- |
+| `long`                      | `DD/MM/YYYY H:mm:ss`  |
+| `medium`                    | `DD/MM H:mm`          |
+| `short`                     | `DD/MM/YYYY`          |
+| `time`                      | `H:mm:ss`             |
+| `dateTimePicker`            | `DD/MM/YYYY HH:mm`    |
+| `dateTimePickerWithSeconds` | `DD/MM/YYYY HH:mm:ss` |
+| `datePicker`                | `DD/MM/YYYY`          |
+| `timePicker`                | `HH:mm`               |
+| `timePickerWithSeconds`     | `HH:mm:ss`            |
+| `veeValidateDateTimeFormat` | `dd/MM/yyyy HH:mm`    |
 
 Il est à noter que les champs utilisés ne peuvent être que des sous-éléments d'une `alarme` et pas d'une `entité`
 
@@ -89,11 +138,19 @@ Par défaut, la date du jour ne sera pas affichée (uniquement l'heure : format 
 
 ### Le fichier peut ensuite être envoyé via l'API pour charger la configuration
 
-Attention à bien utiliser la méthode `POST` pour la première création de règle et `PUT` par la suite
+Attention à bien utiliser la méthode `POST` pour la première création de règle et `PUT` par la suite en cas de modification
 
-```sh
-curl -H "Content-Type: application/json" -X POST -u root:root -d @configuration.json http://localhost:8082/api/v2/associativetable/alarm-column-filters
-```
+=== "Version < `4.3`"
+
+    ```sh
+    curl -H "Content-Type: application/json" -X POST -u root:root -d @configuration.json http://localhost:8082/api/v2/associativetable/alarm-column-filters
+    ```
+
+=== "Version >= `4.3`"
+
+    ```sh
+    curl -H "Content-Type: application/json" -X POST -u root:root -d @configuration.json http://localhost:8082/api/v4/associativetable
+    ```
 
 ### Accès à la configuration via l'UI
 
