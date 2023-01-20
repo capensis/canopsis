@@ -408,10 +408,10 @@ func (mr *MockScenarioStorageMockRecorder) GetScenario(arg0 interface{}) *gomock
 }
 
 // GetTriggeredScenarios mocks base method.
-func (m *MockScenarioStorage) GetTriggeredScenarios(arg0 []string, arg1 types.Alarm) ([]action.Scenario, error) {
+func (m *MockScenarioStorage) GetTriggeredScenarios(arg0 []string, arg1 types.Alarm) (map[string][]action.Scenario, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTriggeredScenarios", arg0, arg1)
-	ret0, _ := ret[0].([]action.Scenario)
+	ret0, _ := ret[0].(map[string][]action.Scenario)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
