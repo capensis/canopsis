@@ -53,7 +53,7 @@ if (!db.default_rights.findOne({_id: "models_exploitation_declareTicketRule"})) 
     });
 }
 
-db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
+db.action_scenario.find().forEach(function (doc) {
     if (!doc.actions) {
         return;
     }
@@ -75,6 +75,14 @@ db.action_scenario.find({"actions.type": "webhook"}).forEach(function (doc) {
             unset["actions." + index + ".parameters.retry_delay"] = "";
         }
     });
+
+    if (doc.triggers) {
+        doc.triggers.forEach(function (trigger) {
+            if (trigger === "declareticket") {
+                set["enabled"] = false;
+            }
+        });
+    }
 
     var update = {};
     if (Object.keys(set).length > 0) {
