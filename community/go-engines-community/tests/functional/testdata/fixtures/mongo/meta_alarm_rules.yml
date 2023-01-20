@@ -306,56 +306,6 @@ meta_alarm_rules:
     <<: *metaaalarm_rule_complex
     _id: test-metaalarm-to-delete
     name: Test alarm get
-  meta_alarm_rules_18:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-metrics-axe-4-1
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-metrics-axe-4
-    name: test-metaalarm-metrics-axe-4-1-name
-  meta_alarm_rules_19:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-metrics-axe-4-2
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-metrics-axe-4
-    name: test-metaalarm-metrics-axe-4-2-name
-  meta_alarm_rules_20:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-metrics-axe-5
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-metrics-axe-5
-    name: test-metaalarm-metrics-axe-5-name
-  meta_alarm_rules_21:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-metrics-axe-10
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-metrics-axe-10
-    name: test-metaalarm-metrics-axe-10-name
-  meta_alarm_rules_22:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-metrics-axe-11
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.component
-          cond:
-            type: eq
-            value: test-component-metrics-axe-11
-    name: test-metaalarm-metrics-axe-11-name
   meta_alarm_rules_23:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-1
