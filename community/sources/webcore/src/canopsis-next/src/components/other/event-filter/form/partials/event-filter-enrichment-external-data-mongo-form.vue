@@ -1,14 +1,32 @@
 <template lang="pug">
   v-layout(column)
+    v-text-field(
+      v-field="form.collection",
+      v-validate="'required'",
+      :label="$t('eventFilter.collection')",
+      :name="collectionFieldName",
+      :error-messages="errors.collect(collectionFieldName)",
+      :disabled="disabled"
+    )
     v-layout(row)
-      v-text-field(
-        v-field="form.collection",
-        v-validate="'required'",
-        :label="$t('eventFilter.collection')",
-        :name="collectionFieldName",
-        :error-messages="errors.collect(collectionFieldName)",
-        :disabled="disabled"
-      )
+      v-flex(xs6)
+        v-text-field(
+          v-field="form.sort_by",
+          :label="$t('eventFilter.sortBy')",
+          :name="sortByFieldName",
+          :error-messages="errors.collect(sortByFieldName)",
+          :disabled="disabled"
+        )
+      v-flex.ml-3(xs6)
+        v-select(
+          v-field="form.sort",
+          :items="sortOrders",
+          :label="$t('eventFilter.sort')",
+          :name="sortFieldName",
+          :error-messages="errors.collect(sortFieldName)",
+          :disabled="disabled",
+          clearable
+        )
     event-filter-enrichment-external-data-mongo-condition-form(
       v-for="(condition, index) in form.conditions",
       v-field="form.conditions[index]",
@@ -23,6 +41,8 @@
 </template>
 
 <script>
+import { SORT_ORDERS } from '@/constants';
+
 import { eventFilterExternalDataConditionItemToForm } from '@/helpers/forms/event-filter';
 
 import { formMixin } from '@/mixins/form';
@@ -53,12 +73,24 @@ export default {
     },
   },
   computed: {
+    sortOrders() {
+      return Object.values(SORT_ORDERS).map(order => order.toLowerCase());
+    },
+
     hasOnlyOneCondition() {
       return this.form.conditions.length === 1;
     },
 
     collectionFieldName() {
       return `${this.name}.collection`;
+    },
+
+    sortFieldName() {
+      return `${this.name}.sort`;
+    },
+
+    sortByFieldName() {
+      return `${this.name}.sort_by`;
     },
   },
   methods: {

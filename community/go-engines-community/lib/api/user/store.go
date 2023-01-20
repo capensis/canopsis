@@ -35,6 +35,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websock
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 
 		passwordEncoder: passwordEncoder,
 		websocketHub:    websocketHub,
@@ -50,6 +51,7 @@ type store struct {
 	userPrefCollection     mongo.DbCollection
 	patternCollection      mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
+	shareTokenCollection   mongo.DbCollection
 
 	passwordEncoder password.Encoder
 	websocketHub    websocket.Hub
@@ -215,6 +217,11 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
+	err = s.deleteShareTokens(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -239,6 +246,14 @@ func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
 	_, err := s.widgetFilterCollection.DeleteMany(ctx, bson.M{
 		"author":     id,
 		"is_private": true,
+	})
+
+	return err
+}
+
+func (s *store) deleteShareTokens(ctx context.Context, id string) error {
+	_, err := s.shareTokenCollection.DeleteMany(ctx, bson.M{
+		"user": id,
 	})
 
 	return err
@@ -362,7 +377,6 @@ func getRenameFieldsPipeline() []bson.M {
 			"name":                      "$crecord_name",
 			"email":                     "$mail",
 			"ui_groups_navigation_type": "$groupsNavigationType",
-			"ui_tours":                  "$tours",
 		}},
 	}
 }

@@ -15,6 +15,7 @@ type EventRegexMatches struct {
 	Component     RegexMatches
 	Resource      RegexMatches
 	Output        RegexMatches
+	LongOutput    RegexMatches
 	EventType     RegexMatches
 	SourceType    RegexMatches
 	ExtraInfos    map[string]RegexMatches
@@ -36,6 +37,8 @@ func (m *EventRegexMatches) SetRegexMatches(fieldName string, matches RegexMatch
 		m.Resource = matches
 	case "output":
 		m.Output = matches
+	case "long_output":
+		m.LongOutput = matches
 	case "event_type":
 		m.EventType = matches
 	case "source_type":
@@ -225,6 +228,8 @@ func getEventStringField(event types.Event, f string) (string, bool) {
 		return event.Resource, true
 	case "output":
 		return event.Output, true
+	case "long_output":
+		return event.LongOutput, true
 	case "event_type":
 		return event.EventType, true
 	case "source_type":

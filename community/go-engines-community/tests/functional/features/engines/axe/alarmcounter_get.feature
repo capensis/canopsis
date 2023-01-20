@@ -1,9 +1,10 @@
 Feature: Get alarms counters
   I need to be able to get a alarms counters
 
+  @concurrent
   Scenario: given alarms should return alarms counters
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -28,7 +29,6 @@ Feature: Get alarms counters
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarm-counters?search=test-resource-axe-alarm-count-get-1
     Then the response code should be 200
     Then the response body should be:
@@ -43,9 +43,10 @@ Feature: Get alarms counters
     }
     """
 
+  @concurrent
   Scenario: given acked alarms should return ack alarms counter
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -70,8 +71,7 @@ Feature: Get alarms counters
       }
     ]
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-alarm-count-get-2",
@@ -83,7 +83,6 @@ Feature: Get alarms counters
       "output": "test-output-axe-alarm-count-get-2"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarm-counters?search=test-resource-axe-alarm-count-get-2
     Then the response code should be 200
     Then the response body should be:
@@ -98,9 +97,10 @@ Feature: Get alarms counters
     }
     """
 
+  @concurrent
   Scenario: given alarms with ticket should return ticket alarms counter
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -125,8 +125,7 @@ Feature: Get alarms counters
       }
     ]
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-alarm-count-get-3",
@@ -139,7 +138,6 @@ Feature: Get alarms counters
       "ticket": "test-ticket-axe-alarm-count-get-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarm-counters?search=test-resource-axe-alarm-count-get-3
     Then the response code should be 200
     Then the response body should be:
@@ -154,9 +152,10 @@ Feature: Get alarms counters
     }
     """
 
+  @concurrent
   Scenario: given snoozed alarms should return snooze alarms counter
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -181,8 +180,7 @@ Feature: Get alarms counters
       }
     ]
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-alarm-count-get-4",
@@ -195,7 +193,6 @@ Feature: Get alarms counters
       "duration": 3600
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarm-counters?search=test-resource-axe-alarm-count-get-4
     Then the response code should be 200
     Then the response body should be:
@@ -210,9 +207,10 @@ Feature: Get alarms counters
     }
     """
 
+  @concurrent
   Scenario: given get request with opened filter should return alarms by open status
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -247,8 +245,7 @@ Feature: Get alarms counters
       }
     ]
     """
-    When I wait the end of 3 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -311,8 +308,7 @@ Feature: Get alarms counters
       }
     ]
     """
-    When I wait the end of 6 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-alarm-count-get-5",
@@ -324,8 +320,7 @@ Feature: Get alarms counters
       "output": "test-output-axe-alarm-count-get-5"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-alarm-count-get-5",
@@ -337,7 +332,6 @@ Feature: Get alarms counters
       "output": "test-output-axe-alarm-count-get-5"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarm-counters?search=test-resource-axe-alarm-count-get-5
     Then the response code should be 200
     Then the response body should contain:
@@ -378,10 +372,12 @@ Feature: Get alarms counters
     }
     """
 
+  @concurrent
   Scenario: given get unauth request should not allow access
     When I do GET /api/v4/alarm-counters
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/alarm-counters

@@ -13,7 +13,7 @@
           template(v-if="pbehavior.tstop") &nbsp;- {{ tstop }}
         div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
         div(v-if="pbehavior.last_comment") {{ $t('common.lastComment') }}:
-          div.ml-2 - {{ pbehavior.last_comment.author }}: {{ pbehavior.last_comment.message }}
+          div.ml-2 - {{ pbehavior.last_comment.author.name }}: {{ pbehavior.last_comment.message }}
         v-divider
 </template>
 

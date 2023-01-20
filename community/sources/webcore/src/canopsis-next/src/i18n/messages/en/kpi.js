@@ -20,7 +20,7 @@ export default {
       [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarms with acks',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} active alarms with acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarms with cancelled acks',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} active alarms without tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',

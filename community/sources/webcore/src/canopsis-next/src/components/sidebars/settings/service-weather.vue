@@ -50,7 +50,7 @@
       v-divider
       field-template(
         v-model="form.parameters.entityTemplate",
-        :variables="variables",
+        :variables="entityVariables",
         :title="$t('settings.entityTemplate')"
       )
       v-divider
@@ -81,8 +81,8 @@
 import { ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entityVariablesMixin } from '@/mixins/widget/variables';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
-import { entityVariablesMixin } from '@/mixins/widget/entity-variables';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldSortColumn from './fields/service-weather/sort-column.vue';
@@ -129,8 +129,8 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    permissionsWidgetsServiceWeatherFilters,
     entityVariablesMixin,
+    permissionsWidgetsServiceWeatherFilters,
   ],
   computed: {
     sortColumns() {
@@ -149,7 +149,7 @@ export default {
         ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
       ];
 
-      return this.variables.filter(({ value }) => !excludeFields.includes(value));
+      return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
     },
 
     modalTemplateVariables() {

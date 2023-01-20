@@ -1,9 +1,10 @@
 Feature: crop alarm steps
   I need to be able to crop alarm steps on event
 
+  @concurrent
   Scenario: given many check events should crop alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -16,8 +17,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -30,8 +30,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-2"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -44,8 +43,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-3"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -58,8 +56,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-4"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -72,8 +69,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-5"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -86,8 +82,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-6"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -100,8 +95,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-7"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -114,8 +108,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-8"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -128,8 +121,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-9"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -142,8 +134,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-10"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -156,8 +147,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-11"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -170,8 +160,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-12"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -184,8 +173,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-13"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -198,8 +186,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-14"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -212,8 +199,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-15"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -226,8 +212,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-16"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -240,8 +225,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-17"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -254,8 +238,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-18"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -268,8 +251,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-19"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -282,8 +264,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-20"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -296,8 +277,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-21"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -310,8 +290,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-22"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -324,8 +303,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-23"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -338,8 +316,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-24"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -352,8 +329,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-25"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -366,8 +342,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-26"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -380,8 +355,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-27"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -394,8 +368,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-28"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -408,8 +381,7 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-29"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-axe-crop-steps",
@@ -422,7 +394,6 @@ Feature: crop alarm steps
       "output" : "test-output-axe-crop-steps-30"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-crop-steps
     Then the response code should be 200
     Then the response body should contain:

@@ -3,7 +3,6 @@ package fixtures
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -54,7 +53,7 @@ func (l *loader) Load(ctx context.Context) error {
 		}
 
 		for _, filename := range files {
-			content, err := ioutil.ReadFile(filename)
+			content, err := os.ReadFile(filename)
 			if err != nil {
 				return fmt.Errorf("cannot read file %q: %w", filename, err)
 			}
