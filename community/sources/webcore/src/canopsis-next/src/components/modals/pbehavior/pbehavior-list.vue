@@ -75,7 +75,7 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author' },
+        { text: this.$t('common.author'), value: 'author.name' },
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },

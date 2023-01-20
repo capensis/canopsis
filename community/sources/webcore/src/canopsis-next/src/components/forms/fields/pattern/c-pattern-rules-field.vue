@@ -128,6 +128,8 @@ export default {
 
       if (updatedRule.attribute !== rule.attribute) {
         updatedRule.operator = '';
+        updatedRule.field = '';
+        updatedRule.dictionary = '';
         updatedRule.value = defaultValue;
       } else if (updatedRule.operator !== rule.operator) {
         updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);

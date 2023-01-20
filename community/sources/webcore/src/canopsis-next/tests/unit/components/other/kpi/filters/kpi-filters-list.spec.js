@@ -150,4 +150,23 @@ describe('kpi-filters-list', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `kpi-filters-list` with updatable and old_entity_patterns', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters: filtersItems.map(item => ({ ...item, old_entity_patterns: true })),
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+          search: '',
+          sortBy: '',
+          descending: false,
+        },
+        updatable: true,
+        totalItems: 50,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });
