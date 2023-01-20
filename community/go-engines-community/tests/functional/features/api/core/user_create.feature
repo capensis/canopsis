@@ -65,6 +65,7 @@ Feature: Create a user
       "password": "test-password"
     }
     """
+    Then the response code should be 201
     When I do GET /api/v4/users/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
@@ -261,11 +262,11 @@ Feature: Create a user
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",
-      "password": "test-password",
       "source": "saml",
       "external_id": "saml_id"
     }
     """
+    Then the response code should be 201
     When I do GET /api/v4/users/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
@@ -293,5 +294,143 @@ Feature: Create a user
       "ui_language": "fr",
       "source": "saml",
       "external_id": "saml_id"
+    }
+    """
+
+  Scenario: given create request when only source exists should return error
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "name": "test-user-to-create-6-name",
+      "firstname": "test-user-to-create-6-firstname",
+      "lastname": "test-user-to-create-6-lastname",
+      "email": "test-user-to-create-6-email@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "source": "saml"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "external_id": "ExternalID is required when Source is present."
+      }
+    }
+    """
+
+  Scenario: given create request when only external_id exists should return error
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "name": "test-user-to-create-6-name",
+      "firstname": "test-user-to-create-6-firstname",
+      "lastname": "test-user-to-create-6-lastname",
+      "email": "test-user-to-create-6-email@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "external_id": "saml_id"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "source": "Source is required when ExternalID is present."
+      }
+    }
+    """
+
+  Scenario: given create request with wrong source should return error
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "name": "test-user-to-create-6-name",
+      "firstname": "test-user-to-create-6-firstname",
+      "lastname": "test-user-to-create-6-lastname",
+      "email": "test-user-to-create-6-email@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "source": "some",
+      "external_id": "saml_id"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "source": "Source must be one of [ldap cas saml] or empty."
+      }
+    }
+    """
+
+  Scenario: given create request with source and password should return error
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "name": "test-user-to-create-6-name",
+      "firstname": "test-user-to-create-6-firstname",
+      "lastname": "test-user-to-create-6-lastname",
+      "email": "test-user-to-create-6-email@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "password": "test-password",
+      "source": "some",
+      "external_id": "saml_id",
+      "password": "qwerty123"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "source": "Can't be present both Source and Password."
+      }
+    }
+    """
+
+  Scenario: given create request without source and without password should return error
+    When I am admin
+    When I do POST /api/v4/users:
+    """json
+    {
+      "name": "test-user-to-create-6-name",
+      "firstname": "test-user-to-create-6-firstname",
+      "lastname": "test-user-to-create-6-lastname",
+      "email": "test-user-to-create-6-email@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "password": "Password is missing."
+      }
     }
     """

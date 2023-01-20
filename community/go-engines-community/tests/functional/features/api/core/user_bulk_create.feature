@@ -73,10 +73,71 @@ Feature: Bulk create users
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
+        "source": "saml",
+        "external_id": "test-id"
+      },
+      {
+        "name": "test-user-to-bulk-create-4-name",
+        "firstname": "test-user-to-bulk-create-4-firstname",
+        "lastname": "test-user-to-bulk-create-4-lastname",
+        "email": "test-user-to-bulk-create-4-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
         "password": "test-password",
         "source": "saml",
         "external_id": "test-id"
-      }
+      },
+      {
+        "name": "test-user-to-bulk-create-5-name",
+        "firstname": "test-user-to-bulk-create-5-firstname",
+        "lastname": "test-user-to-bulk-create-5-lastname",
+        "email": "test-user-to-bulk-create-5-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
+        "source": "saml"
+      },
+      {
+        "name": "test-user-to-bulk-create-6-name",
+        "firstname": "test-user-to-bulk-create-6-firstname",
+        "lastname": "test-user-to-bulk-create-6-lastname",
+        "email": "test-user-to-bulk-create-6-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
+        "source": "some",
+        "external_id": "test-id"
+      },
+      {
+        "name": "test-user-to-bulk-create-7-name",
+        "firstname": "test-user-to-bulk-create-7-firstname",
+        "lastname": "test-user-to-bulk-create-7-lastname",
+        "email": "test-user-to-bulk-create-7-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user"
+      },
+      {
+        "name": "test-user-to-bulk-create-8-name",
+        "firstname": "test-user-to-bulk-create-8-firstname",
+        "lastname": "test-user-to-bulk-create-8-lastname",
+        "email": "test-user-to-bulk-create-8-email@canopsis.net",
+        "role": "test-role-to-edit-user",
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
+        "password": "123"
+      }         
     ]
     """
     Then the response code should be 207
@@ -184,11 +245,102 @@ Feature: Bulk create users
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
-          "password": "test-password",
           "source": "saml",
           "external_id": "test-id"
         }
-      }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-bulk-create-4-name",
+          "firstname": "test-user-to-bulk-create-4-firstname",
+          "lastname": "test-user-to-bulk-create-4-lastname",
+          "email": "test-user-to-bulk-create-4-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "password": "test-password",
+          "source": "saml",
+          "external_id": "test-id"
+        },
+        "errors": {
+          "source": "Can't be present both Source and Password."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-bulk-create-5-name",
+          "firstname": "test-user-to-bulk-create-5-firstname",
+          "lastname": "test-user-to-bulk-create-5-lastname",
+          "email": "test-user-to-bulk-create-5-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "source": "saml"
+        },
+        "errors": {
+          "external_id": "ExternalID is required when Source is present."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-bulk-create-6-name",
+          "firstname": "test-user-to-bulk-create-6-firstname",
+          "lastname": "test-user-to-bulk-create-6-lastname",
+          "email": "test-user-to-bulk-create-6-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "source": "some",
+          "external_id": "test-id"
+        },
+        "errors": {
+          "source": "Source must be one of [ldap cas saml] or empty."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-bulk-create-7-name",
+          "firstname": "test-user-to-bulk-create-7-firstname",
+          "lastname": "test-user-to-bulk-create-7-lastname",
+          "email": "test-user-to-bulk-create-7-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user"
+        },
+        "errors": {
+          "password": "Password is missing."
+        }
+      },
+      {
+        "status": 400,
+        "item": {
+          "name": "test-user-to-bulk-create-8-name",
+          "firstname": "test-user-to-bulk-create-8-firstname",
+          "lastname": "test-user-to-bulk-create-8-lastname",
+          "email": "test-user-to-bulk-create-8-email@canopsis.net",
+          "role": "test-role-to-edit-user",
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "password": "123"
+        },
+        "errors": {
+          "password": "Password should be 8 or more."
+        }
+      }        
     ]
     """
     When I do GET /api/v4/users?search=test-user-to-bulk-create
@@ -268,7 +420,7 @@ Feature: Bulk create users
           "ui_language": "fr",
           "source": "saml",
           "external_id": "test-id"
-        }        
+        }      
       ],
       "meta": {
         "page": 1,

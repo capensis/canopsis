@@ -3969,8 +3969,6 @@ definitions:
         type: string
       enable:
         type: boolean
-      external_id:
-        type: string
       firstname:
         maxLength: 255
         type: string
@@ -3983,8 +3981,6 @@ definitions:
       password:
         type: string
       role:
-        type: string
-      source:
         type: string
       ui_groups_navigation_type:
         type: string
@@ -3997,42 +3993,7 @@ definitions:
     - name
     - role
     type: object
-  user.EditRequest:
-    properties:
-      defaultview:
-        type: string
-      email:
-        type: string
-      enable:
-        type: boolean
-      external_id:
-        type: string
-      firstname:
-        maxLength: 255
-        type: string
-      lastname:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      password:
-        type: string
-      role:
-        type: string
-      source:
-        type: string
-      ui_groups_navigation_type:
-        type: string
-      ui_language:
-        type: string
-    required:
-    - email
-    - enable
-    - name
-    - role
-    type: object
-  user.Request:
+  user.CreateRequest:
     properties:
       defaultview:
         type: string
@@ -4075,6 +4036,37 @@ definitions:
         $ref: '#/definitions/user.View'
       name:
         type: string
+    type: object
+  user.UpdateRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+    required:
+    - email
+    - enable
+    - name
+    - role
     type: object
   user.User:
     properties:

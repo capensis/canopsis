@@ -613,6 +613,22 @@ default_rights:
     crecord_name: <Current()._id>
     role: "@role_to_edit_user"
 
+  user_to_update_3:
+    <<: *user
+    _id: test-user-to-update-3
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+    source: saml
+    external_id: saml_id
+
+  user_to_update_4:
+    <<: *user
+    _id: test-user-to-update-4
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+
   role_to_account_update_1:
     <<: *role
     _id: test-role-to-account-update-1
@@ -651,6 +667,22 @@ default_rights:
   user_to_bulk_update_2:
     <<: *user
     _id: test-user-to-bulk-update-2
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+
+  user_to_bulk_update_3:
+    <<: *user
+    _id: test-user-to-bulk-update-3
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+    source: saml
+    external_id: saml_id
+
+  user_to_bulk_update_4:
+    <<: *user
+    _id: test-user-to-bulk-update-4
     crecord_name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
     role: "@role_to_edit_user"
