@@ -100,9 +100,7 @@ func (a *mongoAdapter) RemoveDependByQuery(ctx context.Context, query interface{
 
 func (a *mongoAdapter) UpdateCounters(ctx context.Context, id string, counters AlarmCounters) error {
 	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
-		"alarms_cumulative_data.watched_count":           counters.All,
-		"alarms_cumulative_data.watched_pbehavior_count": counters.PbehaviorCounters,
-		"alarms_cumulative_data.watched_not_acked_count": counters.NotAcknowledged,
+		"counters": counters,
 	}})
 
 	return err

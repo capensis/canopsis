@@ -264,3 +264,43 @@ export const ASSOCIATIVE_TABLES_NAMES = {
 export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
 
 export const VALIDATION_DELAY = 300;
+
+export const TRIGGERS = {
+  create: 'create',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  changestate: 'changestate',
+  changestatus: 'changestatus',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  cancel: 'cancel',
+  uncancel: 'uncancel',
+  comment: 'comment',
+  done: 'done',
+  declareticket: 'declareticket',
+  declareticketwebhook: 'declareticketwebhook',
+  assocticket: 'assocticket',
+  snooze: 'snooze',
+  unsnooze: 'unsnooze',
+  resolve: 'resolve',
+  activate: 'activate',
+  pbhenter: 'pbhenter',
+  pbhleave: 'pbhleave',
+  instructionfail: 'instructionfail',
+  autoinstructionfail: 'autoinstructionfail',
+  instructionjobcomplete: 'instructionjobcomplete',
+  instructionjobfail: 'instructionjobfail',
+  instructioncomplete: 'instructioncomplete',
+  autoinstructioncomplete: 'autoinstructioncomplete',
+};
+
+export const PRO_TRIGGERS = [
+  TRIGGERS.declareticket,
+  TRIGGERS.declareticketwebhook,
+  TRIGGERS.instructionfail,
+  TRIGGERS.autoinstructionfail,
+  TRIGGERS.instructionjobcomplete,
+  TRIGGERS.instructionjobfail,
+  TRIGGERS.instructioncomplete,
+  TRIGGERS.autoinstructioncomplete,
+];

@@ -25,7 +25,7 @@ Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant �
 
     Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/interface/broadcast-messages.md) afin de prévenir vos utilisateurs en amont.
 
-### Mise à jour en installation par paquets
+### Mise à jour en installation par paquets CentOS 7
 
 Les commandes suivantes doivent être réalisées avec l'utilisateur `root`.
 
@@ -62,6 +62,37 @@ Puis, redémarrez l'ensemble des moteurs Canopsis :
 systemctl daemon-reload
 canoctl restart
 ```
+
+Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
+
+### Mise à jour en installation par paquets RHEL 8
+
+Les commandes suivantes doivent être réalisées avec l'utilisateur `root`.
+
+Appliquez la mise à jour des paquets Canopsis :
+
+```sh
+dnf makecache
+dnf --disablerepo="*" --enablerepo="canopsis*" update
+```
+
+Après avoir pris en compte toute éventuelle remarque des notes de version au sujet du fichier `canopsis.toml`, appliquez les changements de configuration en fonction de votre édition de Canopsis (Community ou Pro) :
+
+=== "Canopsis Community"
+
+    ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    /opt/canopsis/bin/canopsis-reconfigure -edition community -migrate-postgres=true 
+    systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
+    ```
+
+=== "Canopsis Pro"
+
+    ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    /opt/canopsis/bin/canopsis-reconfigure -edition pro -migrate-postgres=true 
+    systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-correlation.service canopsis-engine-go@engine-dynamic-infos.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service canopsis-engine-go@engine-remediation canopsis-engine-go@engine-webhook
+    ```
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 

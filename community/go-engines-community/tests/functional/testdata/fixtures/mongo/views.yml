@@ -25,7 +25,6 @@ views:
   view_to_get_1:
     <<: *view
     _id: test-view-to-get-1
-    author: test-view-to-get-1-author
     created: 1611229670
     description: test-view-to-get-1-description
     enabled: true
@@ -42,7 +41,6 @@ views:
   view_to_get_2:
     <<: *view
     _id: test-view-to-get-2
-    author: test-view-to-get-2-author
     created: 1611229670
     description: test-view-to-get-2-description
     enabled: true
@@ -89,7 +87,6 @@ views:
   view_to_viewgroup_get_2:
     <<: *view
     _id: test-view-to-viewgroup-get-2
-    author: test-view-to-viewgroup-get-2-author
     created: 1611229670
     description: test-view-to-viewgroup-get-2-description
     enabled: true
@@ -106,7 +103,6 @@ views:
   view_to_viewgroup_get_1:
     <<: *view
     _id: test-view-to-viewgroup-get-1
-    author: test-view-to-viewgroup-get-1-author
     created: 1611229670
     description: test-view-to-viewgroup-get-1-description
     enabled: true
@@ -123,7 +119,6 @@ views:
   view_to_viewgroup_get_3:
     <<: *view
     _id: test-view-to-viewgroup-get-3
-    author: test-view-to-viewgroup-get-3-author
     created: 1611229670
     description: test-view-to-viewgroup-get-3-description
     enabled: true
@@ -136,12 +131,12 @@ views:
       - test-view-to-viewgroup-get-3-tag
     title: test-view-to-viewgroup-get-3-title
     updated: 1611229670
-  
+
   view_to_delete_linked_viewgroup:
     <<: *view
     _id: test-view-to-delete-linked-viewgroup
     group_id: test-viewgroup-to-delete-linked-to-view
-  
+
   view_to_user_preferences_update_1:
     <<: *view
     _id: test-view-to-user-preferences-update-1
@@ -310,3 +305,7 @@ views:
   view_to_map_edit:
     <<: *view
     _id: test-view-to-map-edit
+
+  view_to_test_alarm_tags_filter:
+    <<: *view
+    _id: test-view-to-test-alarm-tags-filter

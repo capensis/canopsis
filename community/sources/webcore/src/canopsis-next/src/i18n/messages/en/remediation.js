@@ -29,6 +29,9 @@ export default {
     type: 'Instruction type',
     approvalPending: 'Approval pending',
     needApprove: 'Approval is needed',
+    executeInstruction: 'Execute {instructionName}',
+    resumeInstruction: 'Resume {instructionName}',
+    inProgressInstruction: '{instructionName} in progress...',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
@@ -110,7 +113,7 @@ export default {
 
   instructionStat: {
     alarmsTimeline: 'Alarms timeline',
-    executedAt: 'Executed at',
+    executedAt: 'End of execution at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',

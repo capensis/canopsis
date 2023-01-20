@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"runtime/trace"
 	"time"
 
@@ -39,6 +40,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	redisSession := m.DepRedisSession(ctx, redis.CacheService, logger, cfg)
@@ -61,6 +63,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
 		redisSession,
+		timezoneConfigProvider,
 		logger,
 	)
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
@@ -82,23 +85,25 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
-			if err != nil {
-				if err == redislock.ErrNotObtained {
-					return nil
+
+			if err == nil {
+				logger.Info().Msg("started to recompute idle_since")
+				err = entityServicesService.RecomputeIdleSince(ctx)
+				if err != nil {
+					logger.Error().Err(err).Msg("error while recomputing idle_since")
+					return err
 				}
 
-				logger.Error().Err(err).Msg("cannot obtain lock")
-				return err
+				logger.Info().Msg("recomputed idle_since")
+			} else {
+				const msgIdleSince = "cannot obtain lock to recompute idle_since"
+				if !errors.Is(err, redislock.ErrNotObtained) {
+					logger.Err(err).Msg(msgIdleSince)
+					// fail all following actions only if error isn't ErrNotObtained
+					return err
+				}
+				logger.Warn().Err(err).Msg(msgIdleSince)
 			}
-
-			logger.Info().Msg("started to recompute idle_since")
-			err = entityServicesService.RecomputeIdleSince(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("error while recomputing idle_since")
-				return err
-			}
-
-			logger.Info().Msg("recomputed idle_since")
 
 			if !options.RecomputeAllOnInit {
 				return nil
@@ -109,29 +114,29 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
-			if err != nil {
-				if err == redislock.ErrNotObtained {
-					return nil
+			if err == nil {
+				logger.Info().Msg("started to recompute entity services")
+				err = entityServicesService.ClearCache(ctx)
+				if err != nil {
+					logger.Error().Err(err).Msg("error while recomputing entity services")
+					return err
 				}
 
-				logger.Error().Err(err).Msg("cannot obtain lock")
-				return err
-			}
+				err = entityServicesService.ComputeAllServices(ctx)
+				if err != nil {
+					logger.Error().Err(err).Msg("error while recomputing entity services")
+					return err
+				}
 
-			logger.Info().Msg("started to recompute entity services")
-			err = entityServicesService.ClearCache(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("error while recomputing entity services")
-				return err
+				logger.Info().Msg("recomputed entity services")
+			} else {
+				const msgEntity = "cannot obtain lock to recompute entity services"
+				if !errors.Is(err, redislock.ErrNotObtained) {
+					logger.Err(err).Msg(msgEntity)
+					return err
+				}
+				logger.Warn().Err(err).Msg(msgEntity)
 			}
-
-			err = entityServicesService.ComputeAllServices(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("error while recomputing entity services")
-				return err
-			}
-
-			logger.Info().Msg("recomputed entity services")
 
 			return nil
 		},
@@ -232,6 +237,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		config.NewAdapter(mongoClient),
 		logger,
 		techMetricsConfigProvider,
+		timezoneConfigProvider,
 	))
 
 	return engineService
