@@ -7,7 +7,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
-  ENTITIES_TYPES,
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
@@ -34,7 +33,7 @@ export default {
   components: { SharedMassActionsPanel },
   mixins: [widgetActionsPanelAlarmMixin],
   props: {
-    itemsIds: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -126,18 +125,13 @@ export default {
       return this.actions.filter(this.actionsAccessFilterHandler);
     },
 
-    items() {
-      return this.getEntitiesList(ENTITIES_TYPES.alarm, this.itemsIds);
-    },
-
     hasMetaAlarm() {
       return this.items.some(item => item.is_meta_alarm);
     },
 
     modalConfig() {
       return {
-        itemsType: ENTITIES_TYPES.alarm,
-        itemsIds: this.itemsIds,
+        items: this.items,
         afterSubmit: this.afterSubmit,
       };
     },

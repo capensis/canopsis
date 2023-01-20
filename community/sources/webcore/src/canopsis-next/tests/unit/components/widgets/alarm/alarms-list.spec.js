@@ -79,15 +79,12 @@ const snapshotFactory = (options = {}) => mount(AlarmsList, {
 const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
-const selectTablePaginationField = wrapper => wrapper.find('c-table-pagination-stub');
 const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
-const selectPagination = wrapper => wrapper.find('c-pagination-stub');
 const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
 const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel-tour-stub');
-const selectMassActionsPanel = wrapper => wrapper.find('mass-actions-panel-stub');
 
 describe('alarms-list', () => {
   const $popups = mockPopups();
@@ -307,7 +304,7 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
           multiSortBy: [],
@@ -339,7 +336,7 @@ describe('alarms-list', () => {
       {
         id: widget._id,
         query: {
-          ...omit(defaultQuery, ['search', 'tstart', 'tstop', 'filters']),
+          ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
           multiSortBy: [],
@@ -406,6 +403,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+
+          page: 1,
           correlation: !userPreferences.content.isCorrelationEnabled,
         },
       },
@@ -466,54 +465,6 @@ describe('alarms-list', () => {
       },
       undefined,
     );
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          page: 1,
-          filter: selectedFilter._id,
-        },
-      },
-      undefined,
-    );
-  });
-
-  it('Filter not updated after trigger filter field without access', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
-        authModule,
-        alarmTagModule,
-      ]),
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const filterSelectorField = selectFilterSelectorField(wrapper);
-
-    const selectedFilter = {
-      _id: Faker.datatype.string(),
-      title: Faker.datatype.string(),
-      filter: {},
-    };
-
-    filterSelectorField.vm.$emit('input', selectedFilter._id);
-
-    await flushPromises();
-
-    expect(updateUserPreference).not.toHaveBeenCalled();
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
       {
@@ -717,7 +668,11 @@ describe('alarms-list', () => {
       expect.any(Object),
       {
         id: widget._id,
-        query: omit(defaultQuery, ['tstart', 'tstop']),
+        query: {
+          ...omit(defaultQuery, ['tstart', 'tstop']),
+
+          page: 1,
+        },
       },
       undefined,
     );
@@ -771,6 +726,8 @@ describe('alarms-list', () => {
         query: {
           ...defaultQuery,
           ...actionValue,
+
+          page: 1,
         },
       },
       undefined,
@@ -834,6 +791,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+
+          page: 1,
           category: newCategory._id,
         },
       },
@@ -853,11 +812,8 @@ describe('alarms-list', () => {
 
     updateQuery.mockClear();
 
-    const tablePagination = selectTablePaginationField(wrapper);
-
     const newLimit = Faker.datatype.number();
-
-    tablePagination.vm.$emit('update:rows-per-page', newLimit);
+    selectAlarmsListTable(wrapper).vm.$emit('update:rows-per-page', newLimit);
 
     await flushPromises();
 
@@ -898,11 +854,8 @@ describe('alarms-list', () => {
 
     updateQuery.mockClear();
 
-    const tablePagination = selectTablePaginationField(wrapper);
-
     const newPage = Faker.datatype.number();
-
-    tablePagination.vm.$emit('update:page', newPage);
+    selectAlarmsListTable(wrapper).vm.$emit('update:page', newPage);
 
     await flushPromises();
 
@@ -1377,39 +1330,6 @@ describe('alarms-list', () => {
     jest.useRealTimers();
   });
 
-  it('Query updated after trigger pagination', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const pagination = selectPagination(wrapper);
-
-    const newPage = Faker.datatype.number();
-
-    pagination.vm.$emit('input', newPage);
-
-    await flushPromises();
-
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          page: newPage,
-        },
-      },
-      undefined,
-    );
-  });
-
   it('First alarm expanded after click on the prev step with first step', async () => {
     const wrapper = factory({
       store,
@@ -1756,24 +1676,6 @@ describe('alarms-list', () => {
     jest.useRealTimers();
   });
 
-  it('Selected alarms cleared after trigger mass actions', () => {
-    const selectedAlarms = alarms.slice(0, -1);
-    const wrapper = factory({
-      store,
-      propsData: {
-        widget,
-      },
-    });
-
-    const table = selectAlarmsListTable(wrapper);
-    table.vm.$emit('input', selectedAlarms);
-
-    const massActionsPanel = selectMassActionsPanel(wrapper);
-    massActionsPanel.vm.$emit('clear:items');
-
-    expect(wrapper.vm.selected).toEqual([]);
-  });
-
   it('Renders `alarms-list` with default props', async () => {
     const wrapper = snapshotFactory({
       store,
@@ -1787,9 +1689,38 @@ describe('alarms-list', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
+  it('Renders `alarms-list` with default props and user filter permission', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget,
+      },
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
   it('Renders `alarms-list` with clear filter disabled props', async () => {
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         widget: {
           ...widget,
@@ -1800,6 +1731,24 @@ describe('alarms-list', () => {
           },
         },
       },
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
     });
 
     await flushPromises();

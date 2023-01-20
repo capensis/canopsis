@@ -31,7 +31,9 @@ describe('extra-details-pbehavior', () => {
     },
     last_comment: {
       _id: 'pbehavior-comment-1-id',
-      author: 'pbehavior-comment-1-author',
+      author: {
+        name: 'pbehavior-comment-1-author',
+      },
       message: 'pbehavior-comment-1-message',
     },
   };

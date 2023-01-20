@@ -36,13 +36,15 @@ theme:
         icon: material/weather-sunny
         name: Désactiver le thème sombre
   features:
-    - navigation.expand
-    - navigation.sections
+    #- navigation.expand
+    #- navigation.sections
     - navigation.tabs
     - search.highlight
+    - toc.follow
     - toc.integrate
     # still a bit buggy (e.g. Mermaid loading)
     #- navigation.instant
+    - navigation.top
 
 markdown_extensions:
     - admonition
@@ -50,6 +52,7 @@ markdown_extensions:
     - codehilite:
         guess_lang: false
     - def_list
+    - pymdownx.details
     - pymdownx.superfences:
         custom_fences:
           - name: mermaid
@@ -60,6 +63,9 @@ markdown_extensions:
         alternate_style: true
     - toc:
         permalink: true
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji 
+        emoji_generator: !!python/name:materialx.emoji.to_svg
 
 plugins:
     - git-revision-date-localized:

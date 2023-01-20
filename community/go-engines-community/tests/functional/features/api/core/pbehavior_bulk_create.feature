@@ -24,7 +24,7 @@ Feature: Bulk create pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -53,7 +53,7 @@ Feature: Bulk create pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -85,7 +85,7 @@ Feature: Bulk create pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -107,7 +107,7 @@ Feature: Bulk create pbehaviors
         "tstop": 1591536400,
         "color": "#FFFFFF",
         "type": "test-type-to-pbh-edit-1",
-        "reason": "test-reason-1",
+        "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
           [
             {
@@ -145,7 +145,7 @@ Feature: Bulk create pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -177,7 +177,7 @@ Feature: Bulk create pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -233,7 +233,7 @@ Feature: Bulk create pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -265,7 +265,7 @@ Feature: Bulk create pbehaviors
           "tstop": 1591536400,
           "color": "#FFFFFF",
           "type": "test-type-to-pbh-edit-1",
-          "reason": "test-reason-1",
+          "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
             [
               {
@@ -298,7 +298,10 @@ Feature: Bulk create pbehaviors
         {
           "_id": "test-pbehavior-to-bulk-create-1",
           "enabled": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "name": "test-pbehavior-to-bulk-create-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
@@ -307,7 +310,7 @@ Feature: Bulk create pbehaviors
             "_id": "test-type-to-pbh-edit-1"
           },
           "reason": {
-            "_id": "test-reason-1"
+            "_id": "test-reason-to-pbh-edit"
           },
           "entity_pattern": [
             [
@@ -337,7 +340,10 @@ Feature: Bulk create pbehaviors
         },
         {
           "enabled": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "name": "test-pbehavior-to-bulk-create-2-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
@@ -346,7 +352,7 @@ Feature: Bulk create pbehaviors
             "_id": "test-type-to-pbh-edit-1"
           },
           "reason": {
-            "_id": "test-reason-1"
+            "_id": "test-reason-to-pbh-edit"
           },
           "entity_pattern": [
             [
