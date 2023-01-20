@@ -353,7 +353,6 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService, metricsSender))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
-	container.Set(types.EventTypeDeclareTicket, executor.NewDeclareTicketExecutor())
 	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider, metricsSender))
 	container.Set(types.EventTypeDone, executor.NewDoneExecutor(configProvider))
 	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService, metricsSender))

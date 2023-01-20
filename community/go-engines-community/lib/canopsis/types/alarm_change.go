@@ -32,11 +32,6 @@ const (
 	AlarmChangeTypeUpdateStatus      AlarmChangeType = "changestatus"
 	AlarmChangeTypeActivate          AlarmChangeType = "activate"
 
-	// AlarmChangeTypeDeclareTicket is used for manual declareticket trigger which is designed
-	// to trigger webhook with declare ticket parameter.
-	// todo remove
-	AlarmChangeTypeDeclareTicket AlarmChangeType = "declareticket"
-
 	AlarmChangeTypeWebhookStart                 AlarmChangeType = "webhookstart"
 	AlarmChangeTypeWebhookComplete              AlarmChangeType = "webhookcomplete"
 	AlarmChangeTypeWebhookFail                  AlarmChangeType = "webhookfail"
