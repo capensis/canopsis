@@ -460,22 +460,31 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 		return false, err
 	}
 
-	scenarios, err := e.scenarioStorage.GetTriggeredScenarios(task.Triggers, task.Alarm)
+	scenariosByTrigger, err := e.scenarioStorage.GetTriggeredScenarios(task.Triggers, task.Alarm)
 	if err != nil {
 		return false, err
 	}
 
-	if len(scenarios) == 0 {
+	scenariosCount := 0
+	for _, scenarios := range scenariosByTrigger {
+		scenariosCount += len(scenarios)
+	}
+
+	if scenariosCount == 0 {
 		return false, nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, task.Alarm.ID, int64(len(scenarios)), true)
+	_, err = e.executionStorage.Inc(ctx, task.Alarm.ID, int64(scenariosCount), true)
 	if err != nil {
 		return false, err
 	}
 
-	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
+	additionalData := task.AdditionalData
+	for trigger, scenarios := range scenariosByTrigger {
+		additionalData.Trigger = trigger
+		for _, scenario := range scenarios {
+			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent)
+		}
 	}
 
 	return true, nil
@@ -497,23 +506,31 @@ func (e *redisBasedManager) processEmittedTrigger(
 		return err
 	}
 
-	scenarios, err := e.scenarioStorage.GetTriggeredScenarios(triggers, prevTaskRes.Alarm)
+	scenariosByTrigger, err := e.scenarioStorage.GetTriggeredScenarios(triggers, prevTaskRes.Alarm)
 	if err != nil {
 		return err
 	}
 
-	if len(scenarios) == 0 {
+	scenariosCount := 0
+	for _, scenarios := range scenariosByTrigger {
+		scenariosCount += len(scenarios)
+	}
+
+	if scenariosCount == 0 {
 		return nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, prevTaskRes.Alarm.ID, int64(len(scenarios)), false)
+	_, err = e.executionStorage.Inc(ctx, prevTaskRes.Alarm.ID, int64(scenariosCount), false)
 	if err != nil {
 		return err
 	}
 
-	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
-			prevScenarioExecution.FifoAckEvent)
+	for trigger, scenarios := range scenariosByTrigger {
+		additionalData.Trigger = trigger
+		for _, scenario := range scenarios {
+			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
+				prevScenarioExecution.FifoAckEvent)
+		}
 	}
 
 	return nil

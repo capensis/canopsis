@@ -480,7 +480,7 @@ Feature: execute action on trigger
             "request": {
               "method": "POST",
               "url": "{{ .dummyApiURL }}/webhook/request",
-              "payload": "{\"_id\":\"test-ticket-action-webhook-6-1-action-1\",\"url\":\"https://test/test-ticket-action-webhook-6-1-action-1\",\"name\":\"test-scenario-action-webhook-6-1-action-1 {{`[{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]`}}\"}"
+              "payload": "{\"_id\":\"test-ticket-action-webhook-6-1-action-1\",\"url\":\"https://test/test-ticket-action-webhook-6-1-action-1\",\"name\":\"test-scenario-action-webhook-6-1-action-1 {{`[{{ .AdditionalData.Trigger }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]`}}\"}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -512,7 +512,7 @@ Feature: execute action on trigger
             "request": {
               "method": "POST",
               "url": "{{ .dummyApiURL }}/webhook/request",
-              "payload": "{\"_id\":\"test-ticket-action-webhook-6-1-action-2\",\"url\":\"https://test/test-ticket-action-webhook-6-1-action-2\",\"name\":\"test-scenario-action-webhook-6-1-action-2 {{`[{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]`}}\"}"
+              "payload": "{\"_id\":\"test-ticket-action-webhook-6-1-action-2\",\"url\":\"https://test/test-ticket-action-webhook-6-1-action-2\",\"name\":\"test-scenario-action-webhook-6-1-action-2 {{`[{{ .AdditionalData.Trigger }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]`}}\"}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -555,7 +555,7 @@ Feature: execute action on trigger
             "request": {
               "method": "POST",
               "url": "{{ .dummyApiURL }}/webhook/request",
-              "payload": "{\"_id\":\"test-ticket-action-webhook-6-2-action-1\",\"url\":\"https://test/test-ticket-action-webhook-6-2-action-1\",\"name\":\"test-scenario-action-webhook-6-2-action-1 {{`[{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]`}}\"}"
+              "payload": "{\"_id\":\"test-ticket-action-webhook-6-2-action-1\",\"url\":\"https://test/test-ticket-action-webhook-6-2-action-1\",\"name\":\"test-scenario-action-webhook-6-2-action-1 {{`[{{ .AdditionalData.Trigger }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]`}}\"}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -646,13 +646,13 @@ Feature: execute action on trigger
       {
         "_t": "declareticket",
         "ticket_data": {
-          "name": "test-scenario-action-webhook-6-1-action-2 [autodeclareticketwebhook] [system] [user] []"
+          "name": "test-scenario-action-webhook-6-1-action-2 [create] [system] [user] []"
         }
       },
       {
         "_t": "declareticket",
         "ticket_data": {
-          "name": "test-scenario-action-webhook-6-2-action-1 [autodeclareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
+          "name": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
         }
       },
       {
@@ -737,7 +737,7 @@ Feature: execute action on trigger
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
-        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-2. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-2. Ticket name: test-scenario-action-webhook-6-1-action-2 [autodeclareticketwebhook] [system] [user] []."
+        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-2. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-2. Ticket name: test-scenario-action-webhook-6-1-action-2 [create] [system] [user] []."
       },
       {
         "_t": "webhookstart",
@@ -755,7 +755,7 @@ Feature: execute action on trigger
         "_t": "declareticket",
         "a": "test-scenario-action-webhook-6-2-action-1-author",
         "user_id": "",
-        "m": "Scenario: test-scenario-action-webhook-6-2-name. Ticket ID: test-ticket-action-webhook-6-2-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-2-action-1. Ticket name: test-scenario-action-webhook-6-2-action-1 [autodeclareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []."
+        "m": "Scenario: test-scenario-action-webhook-6-2-name. Ticket ID: test-ticket-action-webhook-6-2-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-2-action-1. Ticket name: test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []."
       }
     ]
     """
@@ -768,11 +768,11 @@ Feature: execute action on trigger
       },
       {
         "_t": "declareticket",
-        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-2. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-2. Ticket name: test-scenario-action-webhook-6-1-action-2 [autodeclareticketwebhook] [system] [user] []."
+        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-2. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-2. Ticket name: test-scenario-action-webhook-6-1-action-2 [create] [system] [user] []."
       },
       {
         "_t": "declareticket",
-        "m": "Scenario: test-scenario-action-webhook-6-2-name. Ticket ID: test-ticket-action-webhook-6-2-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-2-action-1. Ticket name: test-scenario-action-webhook-6-2-action-1 [autodeclareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []."
+        "m": "Scenario: test-scenario-action-webhook-6-2-name. Ticket ID: test-ticket-action-webhook-6-2-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-2-action-1. Ticket name: test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []."
       }
     ]
     """
