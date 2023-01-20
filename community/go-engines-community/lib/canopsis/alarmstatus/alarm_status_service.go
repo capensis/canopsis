@@ -4,13 +4,13 @@ package alarmstatus
 
 import (
 	"context"
-	"github.com/rs/zerolog"
 	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/rs/zerolog"
 )
 
 type Service interface {
@@ -95,7 +95,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	for _, rule := range s.flappingRules {
 		matched, err := rule.Matches(alarmWithEntity)
 		if err != nil {
-			s.logger.Error().Err(err).Str("flapping rule", rule.ID).Msg("match flapping rule returned error, skip")
+			s.logger.Error().Err(err).Str("flapping_rule", rule.ID).Msg("match flapping rule returned error, skip")
 			continue
 		}
 

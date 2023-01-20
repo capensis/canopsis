@@ -69,6 +69,7 @@ export default {
   },
   methods: {
     async submit() {
+      const { pbehaviors: originalPbehaviors } = this.config;
       const createdPbehaviors = Object.values(this.form.addedPbehaviorsById)
         .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])));
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
@@ -76,7 +77,7 @@ export default {
 
       await Promise.all([
         createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
-        updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors),
+        updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors, originalPbehaviors),
         removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
       ]);
 

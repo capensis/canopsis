@@ -35,9 +35,6 @@ func NewEventPublisher(
 }
 
 func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, execTime time.Duration, state types.CpsNumber) error {
-	stateType := new(types.CpsNumber)
-	*stateType = 1
-
 	return p.sendEvent(ctx, types.Event{
 		Connector:     "taskhandler",
 		ConnectorName: "task_importctx",
@@ -47,7 +44,6 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 		Resource:      uuid,
 		Timestamp:     types.NewCpsTime(time.Now().Unix()),
 		State:         state,
-		StateType:     stateType,
 		Output:        fmt.Sprintf("Import %s failed.", uuid),
 		ExtraInfos: map[string]interface{}{
 			"execution_time": execTime,
@@ -56,9 +52,6 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 }
 
 func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
-	stateType := new(types.CpsNumber)
-	*stateType = 1
-
 	return p.sendEvent(ctx, types.Event{
 		Connector:     "Taskhandler",
 		ConnectorName: "task_importctx",
@@ -67,7 +60,6 @@ func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats
 		SourceType:    types.SourceTypeResource,
 		Resource:      "task_importctx/report",
 		State:         state,
-		StateType:     stateType,
 		Output:        fmt.Sprintf("execution : %f sec, updated ent : %d, deleted ent : %d", stats.ExecTime.Seconds(), stats.Updated, stats.Deleted),
 		PerfDataArray: []types.PerfData{
 			{

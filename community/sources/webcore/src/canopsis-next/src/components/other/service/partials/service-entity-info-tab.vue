@@ -4,6 +4,7 @@
       div {{ $t('common.actionsLabel') }}:
       service-entity-actions(
         :actions="actions",
+        :entity="entity",
         :assigned-instructions="entity.assigned_instructions",
         @apply="$listeners.apply",
         @execute="$listeners.execute"

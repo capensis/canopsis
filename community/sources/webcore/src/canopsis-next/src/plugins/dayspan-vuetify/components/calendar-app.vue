@@ -26,7 +26,7 @@
               )
                 v-icon keyboard_arrow_left
             span {{ prevLabel }}
-          span.subheading {{ summary }}
+          calendar-app-period-picker(:calendar="calendar")
           v-tooltip(bottom)
             template(#activator="{ on }")
               v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
@@ -94,7 +94,10 @@ import { Calendar, Sorts } from 'dayspan';
 
 import calendarOptionsMixin from '../mixins/calendar-options';
 
+import CalendarAppPeriodPicker from './calendar-app-period-picker.vue';
+
 export default {
+  components: { CalendarAppPeriodPicker },
   mixins: [calendarOptionsMixin],
   props: {
     events: {

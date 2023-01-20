@@ -199,7 +199,8 @@ Feature: update connector alarm
             "pbehavior_info": {
               "canonical_type": "maintenance",
               "name": "test-pbehavior-axe-idlerule-connector-2",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "type": "test-maintenance-type-to-engine",
               "type_name": "Engine maintenance"
             }
@@ -292,7 +293,7 @@ Feature: update connector alarm
     """json
     {
       "name": "test-service-axe-idlerule-connector-3",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; AcknowledgedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "enabled": true,
       "impact_level": 1,
       "entity_pattern": [
@@ -402,13 +403,13 @@ Feature: update connector alarm
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -456,6 +457,7 @@ Feature: update connector alarm
     """json
     {
       "name": "test-scenario-axe-idlerule-connector-4-name",
+      "priority": 10059,
       "enabled": true,
       "priority": 60,
       "triggers": ["create"],

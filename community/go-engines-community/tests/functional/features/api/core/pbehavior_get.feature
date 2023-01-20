@@ -4,7 +4,7 @@ Feature: get a PBehavior
 
   Scenario: given get all request should return pbehaviors
     When I am admin
-    When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-get-by-name
+    When I do GET /api/v4/pbehaviors?search=test-pbehavior-to-get-by-name&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -12,17 +12,26 @@ Feature: get a PBehavior
       "data": [
         {
           "_id": "test-pbehavior-to-get-by-name-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "comments": [
             {
               "_id": "test-pbehavior-to-get-by-name-1-comment-1",
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "ts": 1592215337,
               "message": "test-pbehavior-to-get-by-name-1-comment-1-message"
             },
             {
               "_id": "test-pbehavior-to-get-by-name-1-comment-2",
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "ts": 1592215337,
               "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
             }
@@ -95,11 +104,16 @@ Feature: get a PBehavior
             "priority": 11,
             "type": "active"
           },
-          "last_alarm_date": null
+          "last_alarm_date": null,
+          "origin": "",
+          "editable": true
         },
         {
           "_id": "test-pbehavior-to-get-by-name-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "comments": [],
           "color": "#FFFFFF",
           "created": 1592215337,
@@ -131,14 +145,61 @@ Feature: get a PBehavior
             "priority": 12,
             "type": "pause"
           },
-          "last_alarm_date": null
+          "last_alarm_date": null,
+          "origin": "",
+          "editable": true
+        },
+        {
+          "_id": "test-pbehavior-to-get-by-name-3",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
+          "comments": [],
+          "color": "#FFFFFF",
+          "created": 1592215337,
+          "updated": 1592215337,
+          "enabled": true,
+          "exceptions": [],
+          "exdates": [],
+          "entity_pattern": [
+            [
+              {
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-get-by-name-3-pattern"
+                }
+              }
+            ]
+          ],
+          "name": "test-pbehavior-to-get-by-name-3-name",
+          "reason": {
+            "_id": "test-reason-to-pbh-edit",
+            "name": "test-reason-to-pbh-edit-name",
+            "description": "test-reason-to-pbh-edit-description"
+          },
+          "rrule": "",
+          "tstart": 1591172881,
+          "tstop": null,
+          "type": {
+            "_id": "test-type-to-pbh-edit-2",
+            "description": "Pbh edit 2 State type",
+            "icon_name": "test-to-pbh-edit-2-icon",
+            "name": "Pbh edit 2 State",
+            "priority": 12,
+            "type": "pause"
+          },
+          "last_alarm_date": null,
+          "origin": "test-pbehavior-to-get-by-name-3-origin",
+          "editable": false
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -257,6 +318,9 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-2"
         },
         {
+          "_id": "test-pbehavior-to-get-by-name-3"
+        },
+        {
           "_id": "test-pbehavior-to-get-by-name-1"
         }
       ],
@@ -264,7 +328,7 @@ Feature: get a PBehavior
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -286,17 +350,26 @@ Feature: get a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-get-by-name-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "comments": [
         {
           "_id": "test-pbehavior-to-get-by-name-1-comment-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-get-by-name-1-comment-1-message"
         },
         {
           "_id": "test-pbehavior-to-get-by-name-1-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
         }
@@ -369,7 +442,8 @@ Feature: get a PBehavior
         "priority": 11,
         "type": "active"
       },
-      "last_alarm_date": null
+      "last_alarm_date": null,
+      "origin": ""
     }
     """
 
