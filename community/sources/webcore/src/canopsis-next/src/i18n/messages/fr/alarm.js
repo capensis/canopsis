@@ -1,6 +1,7 @@
 import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
+  eventsCount: 'Les événements comptent',
   alarmCreationDate: 'Date de création de l\'alarme',
   alarmDisplayName: 'Nom d\'affichage de l\'alarme',
   liveReporting: 'Définir un intervalle de dates',
@@ -43,8 +44,6 @@ export default {
       manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
       manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
       comment: 'Commenter l\'alarme',
-      executeInstruction: 'Exécuter la consigne "{instructionName}"',
-      resumeInstruction: 'Reprendre la consigne "{instructionName}"',
     },
     iconsTitles: {
       ack: 'Acquitter',
@@ -138,7 +137,7 @@ export default {
     [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
     [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
     [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
-    [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec acks',
+    [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec tickets',
     [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre d\'alarmes actives sans tickets',
     [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
     [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec remédiation automatique',

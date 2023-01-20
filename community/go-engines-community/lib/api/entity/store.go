@@ -2,7 +2,6 @@ package entity
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -258,12 +257,64 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 
 func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error) {
 	res := ContextGraphResponse{}
-	err := s.mainCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
+
+	cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
+		{
+			"$match": bson.M{"_id": id},
+		},
+		{
+			"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$impact",
+				"connectFromField":        "impact",
+				"connectToField":          "_id",
+				"as":                      "impact",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"impact": bson.M{"$map": bson.M{"input": "$impact", "as": "each", "in": "$$each._id"}},
+			},
+		},
+		{
+			"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$depends",
+				"connectFromField":        "depends",
+				"connectToField":          "_id",
+				"as":                      "depends",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"depends": bson.M{"$map": bson.M{"input": "$depends", "as": "each", "in": "$$each._id"}},
+			},
+		},
+		{
+			"$project": bson.M{
+				"impact":  1,
+				"depends": 1,
+			},
+		},
+	})
+
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
 		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, nil
 	}
 
 	return &res, nil

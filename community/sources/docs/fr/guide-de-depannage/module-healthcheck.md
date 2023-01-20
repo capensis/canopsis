@@ -1,7 +1,7 @@
 # Module Healthcheck
 
 !!! info "Information"
-    Pour le moment, le module Healthcheck nécessite une [activation manuelle d'HTTPS](../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) afin d'être pleinement fonctionnel.
+    Pour le moment, le module Healthcheck de l'interface graphique nécessite une [activation manuelle d'HTTPS](../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) afin d'être pleinement fonctionnel.
 
 Le module `Healthcheck` inclus dans Canopsis Edition Pro permet de connaitre l'état de chaque composant technique de Canopsis.  
 Les composants éligibles sont : 
@@ -229,3 +229,15 @@ Dans le menu `Graphiques` du module de bilan de santé, vous accédez
 * à l'historique du nombre de messages traités dans Canopsis
 
 ![module-healthcheck-graphiques2](img/module-healthcheck-graphiques2.png)
+
+## Sonde liveness
+
+Le module `Healthcheck` met à disposition une route d'API, non authentifiée, permettant de savoir si l'ensemble des modules Canopsis sont opérationnels.  
+
+Cet appel d'API
+```
+curl -X GET -H "Content-type: application/json" http://localhost:8082/api/v4/cat/healthcheck/live
+```
+
+renvoie : `{"ok":true}` lorsque tous les composants Canopsis sont OK et `{"ok":false}` lorsqu'un composant est défaillant.  
+

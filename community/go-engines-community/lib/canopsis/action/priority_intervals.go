@@ -247,7 +247,10 @@ func (pi *priorityIntervals) restorePriority(priority int) {
 
 	//if both distances > 1 => don't merge, create a point
 	pi.intervals[priority] = priority
-	pi.sortedKeys = append([]int{priority}, pi.sortedKeys[rightIntervalIndex:]...)
+
+	pi.sortedKeys = append(pi.sortedKeys, 0)
+	copy(pi.sortedKeys[rightIntervalIndex+1:], pi.sortedKeys[rightIntervalIndex:])
+	pi.sortedKeys[rightIntervalIndex] = priority
 }
 
 func (pi *priorityIntervals) GetIntervals() map[int]int {

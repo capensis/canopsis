@@ -78,10 +78,7 @@ Feature: Get alarms
             "_id": "test-resource-to-alarm-get-2/test-component-to-alarm-get",
             "category": {
               "_id": "test-category-to-alarm-get-2",
-              "name": "test-category-to-alarm-get-2-name",
-              "author": "root",
-              "created": 1592215337,
-              "updated": 1592215337
+              "name": "test-category-to-alarm-get-2-name"
             },
             "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
@@ -145,10 +142,7 @@ Feature: Get alarms
             "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
             "category": {
               "_id": "test-category-to-alarm-get-1",
-              "name": "test-category-to-alarm-get-1-name",
-              "author": "root",
-              "created": 1592215337,
-              "updated": 1592215337
+              "name": "test-category-to-alarm-get-1-name"
             },
             "connector": "test-connector-default/test-connector-default-name",
             "component": "test-component-to-alarm-get",
@@ -726,10 +720,7 @@ Feature: Get alarms
         "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
         "category": {
           "_id": "test-category-to-alarm-get-1",
-          "name": "test-category-to-alarm-get-1-name",
-          "author": "root",
-          "created": 1592215337,
-          "updated": 1592215337
+          "name": "test-category-to-alarm-get-1-name"
         },
         "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
@@ -840,6 +831,7 @@ Feature: Get alarms
         "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
         "enabled": true,
+        "old_entity_patterns": null,
         "impact_level": 1,
         "infos": {},
         "name": "test-resource-to-alarm-get-3",
@@ -1402,10 +1394,7 @@ Feature: Get alarms
         "_id": "test-resource-to-alarm-get-1/test-component-to-alarm-get",
         "category": {
           "_id": "test-category-to-alarm-get-1",
-          "name": "test-category-to-alarm-get-1-name",
-          "author": "root",
-          "created": 1592215337,
-          "updated": 1592215337
+          "name": "test-category-to-alarm-get-1-name"
         },
         "connector": "test-connector-default/test-connector-default-name",
         "component": "test-component-to-alarm-get",
@@ -1501,6 +1490,51 @@ Feature: Get alarms
           "val": 1
         },
         "total_state_changes": 1
+      }
+    }
+    """
+
+  Scenario: given tags filter with has_not condition should filter alarms properly
+    When I am admin
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-test-tag-filter&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-test-tag-filter-1"
+        },
+        {
+          "_id": "test-alarm-to-test-tag-filter-2"
+        },
+        {
+          "_id": "test-alarm-to-test-tag-filter-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-test-tag-filter&filters[]=test-widgetfilter-to-alarm-test-tag-filter&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-to-test-tag-filter-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
       }
     }
     """

@@ -1,7 +1,6 @@
 import { ACTION_TYPES } from '@/constants';
 
 export default {
-  triggers: 'Triggers',
   withAuth: 'Do you need auth fields?',
   key: 'Key',
   declareTicket: 'Declare ticket',

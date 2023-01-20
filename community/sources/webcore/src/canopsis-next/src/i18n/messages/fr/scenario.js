@@ -1,7 +1,6 @@
 import { ACTION_TYPES } from '@/constants';
 
 export default {
-  triggers: 'Déclencheurs',
   withAuth: 'Avez-vous besoin de champs d\'authentification ?',
   key: 'Clé',
   declareTicket: 'Déclarer un ticket',

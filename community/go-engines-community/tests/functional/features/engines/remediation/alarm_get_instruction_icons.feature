@@ -832,6 +832,7 @@ Feature: update an instruction statistics
     }
     """
     Then the response code should be 200
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-19&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:

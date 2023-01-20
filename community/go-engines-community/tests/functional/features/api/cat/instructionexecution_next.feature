@@ -80,8 +80,8 @@ Feature: move a instruction execution to next operation
         {
           "name": "test-instruction-execution-next-1-step-1",
           "time_to_complete": {"value": 4, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
               "name": "test-instruction-execution-next-1-step-1-operation-1",
@@ -89,7 +89,7 @@ Feature: move a instruction execution to next operation
               "description": "test-instruction-execution-next-1-step-1-operation-1-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component"
             },
             {
-              "completed_at": 0,
+              "completed_at": null,
               "name": "test-instruction-execution-next-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-next-1-step-1-operation-2-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
@@ -101,15 +101,15 @@ Feature: move a instruction execution to next operation
         {
           "name": "test-instruction-execution-next-1-step-2",
           "time_to_complete": {"value": 6, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-next-1-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "",
+              "description": "test-instruction-execution-next-1-step-2-operation-1-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
               "jobs": []
             }
           ],
@@ -118,9 +118,13 @@ Feature: move a instruction execution to next operation
       ]
     }
     """
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
-    Then the response key "steps.0.operations.0.completed_at" should not be "0"
-    Then the response key "steps.0.operations.1.started_at" should not be "0"
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response op1CompletedAt={{ (index (index .lastResponse.steps 0).operations 0).completed_at }}
+    When I save response op2StartedAt={{ (index (index .lastResponse.steps 0).operations 1).started_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
+    Then "op1CompletedAt" >= "op1StartedAt"
+    Then "op2StartedAt" >= "op1CompletedAt"
 
   Scenario: given running instruction with last operation started should return error
     When I am admin

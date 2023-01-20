@@ -112,7 +112,11 @@ export default {
     },
 
     fetchList() {
-      this.fetchRolesList({ params: this.getQuery() });
+      const params = this.getQuery();
+
+      params.with_flags = true;
+
+      return this.fetchRolesList({ params });
     },
   },
 };
