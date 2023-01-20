@@ -5,7 +5,7 @@ import { MAX_LIMIT } from '@/constants';
 const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
 const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
 
-export const widgetColumnsInfos = {
+export const widgetColumnsInfosMixin = {
   data() {
     return {
       alarmInfos: [],

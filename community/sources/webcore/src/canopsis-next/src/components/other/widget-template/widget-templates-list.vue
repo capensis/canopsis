@@ -56,7 +56,7 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t('common.templateName'), value: 'title', sortable: false },
+        { text: this.$t('common.name'), value: 'title', sortable: false },
         { text: this.$t('common.type'), value: 'type', sortable: false },
         { text: this.$t('common.lastModifiedOn'), value: 'updated', sortable: false },
         { text: this.$t('common.lastModifiedBy'), value: 'author.name', sortable: false },

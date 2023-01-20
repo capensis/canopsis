@@ -95,13 +95,13 @@
 
 <script>
 import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARM_FIELDS_TO_LABELS_KEYS, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
@@ -125,8 +125,8 @@ export default {
     ...featuresService.get('components.alarmListTable.components', {}),
   },
   mixins: [
+    widgetColumnsAlarmMixin,
     widgetColumnsFiltersMixin,
-    entitiesAlarmColumnsFiltersMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -136,10 +136,6 @@ export default {
       required: true,
     },
     alarms: {
-      type: Array,
-      required: true,
-    },
-    columns: {
       type: Array,
       required: true,
     },
@@ -211,9 +207,7 @@ export default {
 
     return {
       selecting: false,
-      columnsFilters: [],
       selected: [],
-      columnsFiltersPending: false,
 
       ...data,
     };
@@ -222,10 +216,6 @@ export default {
   computed: {
     unresolvedSelected() {
       return this.selected.filter(item => !isResolvedAlarm(item));
-    },
-
-    hasColumns() {
-      return this.columns.length > 0;
     },
 
     expanded() {
@@ -237,11 +227,7 @@ export default {
     },
 
     headers() {
-      const headers = this.columns.map(column => ({
-        ...column,
-
-        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[column.value], 2),
-      }));
+      const headers = [...this.columns];
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
@@ -335,10 +321,6 @@ export default {
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
     }
-
-    this.columnsFiltersPending = true;
-    this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
-    this.columnsFiltersPending = false;
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
