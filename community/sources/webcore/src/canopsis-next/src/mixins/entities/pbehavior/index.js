@@ -1,3 +1,4 @@
+import { find } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { entitiesPbehaviorCommentMixin } from '@/mixins/entities/pbehavior/comment';
@@ -65,12 +66,12 @@ export const entitiesPbehaviorMixin = {
       return response;
     },
 
-    async updatePbehaviorsWithComments(pbehaviors) {
+    async updatePbehaviorsWithComments(pbehaviors = [], originalPbehaviors = []) {
       const response = await this.bulkUpdatePbehaviors({ data: pbehaviors });
 
       await Promise.all(
         pbehaviors.map(pbehavior => this.updateSeveralPbehaviorComments({
-          pbehavior: this.getPbehavior(pbehavior._id),
+          pbehavior: find(originalPbehaviors, { _id: pbehavior._id }),
           comments: pbehavior.comments,
         })),
       );

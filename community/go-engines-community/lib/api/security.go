@@ -50,7 +50,6 @@ type Security interface {
 type CookieOptions struct {
 	FileAccessName string
 	MaxAge         int
-	Secure         bool
 }
 
 type security struct {

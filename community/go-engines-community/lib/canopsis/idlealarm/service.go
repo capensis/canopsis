@@ -179,7 +179,7 @@ func (s *baseService) applyRules(
 				Entity: entity,
 			}, now)
 			if err != nil {
-				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				s.logger.Error().Err(err).Str("idle_rule", rule.ID).Msg("match idle rule returned error, skip")
 				continue
 			}
 
@@ -189,7 +189,7 @@ func (s *baseService) applyRules(
 		case idlerule.RuleTypeEntity:
 			matched, err := rule.Matches(types.AlarmWithEntity{Entity: entity}, now)
 			if err != nil {
-				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				s.logger.Error().Err(err).Str("idle_rule", rule.ID).Msg("match idle rule returned error, skip")
 				continue
 			}
 

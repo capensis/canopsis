@@ -5,9 +5,9 @@
     :alarms="alarms",
     :columns="alarmsColumns",
     :query.sync="query",
-    :hide-actions="resolved",
     :expandable="!resolved",
-    :hide-pagination="!resolved"
+    :hide-pagination="!resolved",
+    hide-actions
   )
 </template>
 
@@ -17,9 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { DEFAULT_CONTEXT_ALARMS_COLUMNS } from '@/constants';
-
-import { defaultColumnsToColumns, generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { alarmsListColumnsToTableColumns } from '@/helpers/forms/widgets/alarm';
 import { convertWidgetQueryToRequest } from '@/helpers/query';
 
@@ -58,9 +56,7 @@ export default {
   },
   computed: {
     alarmsColumns() {
-      return alarmsListColumnsToTableColumns(
-        this.columns || defaultColumnsToColumns(DEFAULT_CONTEXT_ALARMS_COLUMNS),
-      );
+      return alarmsListColumnsToTableColumns(this.columns);
     },
 
     widget() {

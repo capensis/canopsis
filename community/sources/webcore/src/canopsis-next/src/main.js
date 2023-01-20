@@ -127,7 +127,7 @@ import CColorIndicatorField from '@/components/forms/fields/color/c-color-indica
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
-import CRolePickerField from '@/components/forms/fields/c-role-picker-field.vue';
+import CRoleField from '@/components/forms/fields/c-role-field.vue';
 import CUserPickerField from '@/components/forms/fields/c-user-picker-field.vue';
 import CInstructionTypeField from '@/components/forms/fields/c-instruction-type-field.vue';
 import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
@@ -400,7 +400,7 @@ Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
 Vue.component('c-help-icon', CHelpIcon);
 Vue.component('c-no-events-icon', CNoEventsIcon);
-Vue.component('c-role-picker-field', CRolePickerField);
+Vue.component('c-role-field', CRoleField);
 Vue.component('c-user-picker-field', CUserPickerField);
 Vue.component('c-instruction-type-field', CInstructionTypeField);
 Vue.component('c-priority-field', CPriorityField);

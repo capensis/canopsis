@@ -469,8 +469,19 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 
 	if r.Steps != nil {
+		var stepsArray any
+		if r.Steps.Reversed {
+			stepsArray = bson.M{"$reverseArray": "$v.steps"}
+		} else {
+			stepsArray = "$v.steps"
+		}
+
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-			"steps.data":  bson.M{"$slice": bson.A{"$v.steps", (r.Steps.Page - 1) * r.Steps.Limit, r.Steps.Limit}},
+			"steps.data": bson.M{"$slice": bson.A{
+				stepsArray,
+				(r.Steps.Page - 1) * r.Steps.Limit,
+				r.Steps.Limit},
+			},
 			"steps_count": bson.M{"$size": "$v.steps"},
 		}})
 	}
@@ -496,7 +507,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 
 	if r.Steps != nil {
-		details.Steps.Meta, err = common.NewPaginatedMeta(*r.Steps, details.StepsCount)
+		details.Steps.Meta, err = common.NewPaginatedMeta(r.Steps.Query, details.StepsCount)
 		if err != nil {
 			return nil, err
 		}
@@ -828,17 +839,6 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			},
 		},
 		{
-			"$lookup": bson.M{
-				"from":         mongo.InstructionMongoCollection,
-				"localField":   "instruction",
-				"foreignField": "_id",
-				"as":           "instruction",
-			},
-		},
-		{
-			"$unwind": "$instruction",
-		},
-		{
 			"$sort": bson.M{
 				"started_at": -1,
 			},
@@ -846,12 +846,12 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		{
 			"$group": bson.M{
 				"_id": bson.M{
-					"alarm_id":    "$alarm",
-					"instruction": "$instruction._id",
+					"alarm":       "$alarm",
+					"instruction": "$instruction",
 				},
-				"instruction_id":   bson.M{"$first": "$instruction._id"},
-				"instruction_name": bson.M{"$first": "$instruction.name"},
-				"instruction_type": bson.M{"$first": "$instruction.type"},
+				"instruction_id":   bson.M{"$first": "$instruction"},
+				"instruction_name": bson.M{"$first": "$name"},
+				"instruction_type": bson.M{"$first": "$type"},
 				"status":           bson.M{"$first": "$status"},
 				"started_at":       bson.M{"$first": "$started_at"},
 			},
@@ -863,7 +863,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 		},
 		{
 			"$group": bson.M{
-				"_id": "$_id.alarm_id",
+				"_id": "$_id.alarm",
 				"all_failed": bson.M{
 					"$push": bson.M{
 						"$cond": bson.M{

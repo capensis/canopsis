@@ -1,6 +1,7 @@
 Feature: resolve alarm on resolve rule
   I need to be able to resolve alarm on resolve rule
 
+  @concurrent
   Scenario: given resolve rule should resolve alarm
     Given I am admin
     When I do POST /api/v4/resolve-rules:
@@ -29,7 +30,7 @@ Feature: resolve alarm on resolve rule
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -42,9 +43,8 @@ Feature: resolve alarm on resolve rule
       "output" : "test-output-axe-resolverule-1"
     }
     """
-    When I wait the end of event processing
     When I wait 1s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -57,7 +57,17 @@ Feature: resolve alarm on resolve rule
       "output" : "test-output-axe-resolverule-1"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "resolve_close",
+      "connector" : "test-connector-axe-resolverule-1",
+      "connector_name" : "test-connector-name-axe-resolverule-1",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-resolverule-1",
+      "resource" : "test-resource-axe-resolverule-1"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-resolverule-1
     Then the response code should be 200
     Then the response body should contain:
@@ -137,9 +147,10 @@ Feature: resolve alarm on resolve rule
     ]
     """
 
+  @concurrent
   Scenario: given resolve rule with old patterns should resolve alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -152,9 +163,8 @@ Feature: resolve alarm on resolve rule
       "output" : "test-resolve-rule-backward-compatibility-1"
     }
     """
-    When I wait the end of event processing
     When I wait 1s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -167,7 +177,17 @@ Feature: resolve alarm on resolve rule
       "output" : "test-resolve-rule-backward-compatibility-1"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "resolve_close",
+      "connector" : "test-resolve-rule-backward-compatibility-1-connector",
+      "connector_name" : "test-resolve-rule-backward-compatibility-1-connector-name",
+      "source_type" : "resource",
+      "component" :  "test-resolve-rule-backward-compatibility-1-component",
+      "resource" : "test-resolve-rule-backward-compatibility-1-resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resolve-rule-backward-compatibility-1-resource
     Then the response code should be 200
     Then the response body should contain:

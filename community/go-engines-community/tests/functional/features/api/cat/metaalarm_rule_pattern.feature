@@ -29,7 +29,10 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     {
       "auto_resolve": true,
       "name": "metaalarm-pattern-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "",
       "config": {
@@ -293,7 +296,10 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     {
       "auto_resolve": true,
       "name": "metaalarm-pattern-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "",
       "config": {
@@ -389,7 +395,10 @@ Feature: Update and delete corporate pattern should affect metaalarm rule models
     {
       "auto_resolve": true,
       "name": "metaalarm-pattern-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "",
       "config": {

@@ -3,12 +3,6 @@ package pbehavior
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-)
-
-const (
-	PBehaviorCollectionName = mongo.PbehaviorMongoCollection
-	TypeCollectionName      = mongo.PbehaviorTypeMongoCollection
 )
 
 type Comment struct {
@@ -56,6 +50,12 @@ type PBehavior struct {
 	LastAlarmDate *types.CpsTime `bson:"last_alarm_date,omitempty"`
 
 	Color string `bson:"color"`
+
+	// Origin is used if a pbehavior is created for certain entity.
+	// Origin can contain some feature name or external service name.
+	Origin string `bson:"origin,omitempty"`
+	// Entity is used if a pbehavior is created for certain entity. Such pbehavior cannot be updated.
+	Entity string `bson:"entity,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	// OldMongoQuery contains old mongo query which cannot be migrated to pattern.

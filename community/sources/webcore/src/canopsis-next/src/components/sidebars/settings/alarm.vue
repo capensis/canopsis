@@ -71,7 +71,8 @@
       v-divider
       field-text-editor(
         v-model="form.parameters.moreInfoTemplate",
-        :title="$t('settings.moreInfosModal')"
+        :title="$t('settings.moreInfosModal')",
+        :variables="alarmVariables"
       )
       v-divider
       field-grid-range-size(
@@ -126,6 +127,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { alarmVariablesMixin } from '@/mixins/widget/variables';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -178,6 +180,7 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
+    alarmVariablesMixin,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],

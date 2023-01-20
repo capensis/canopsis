@@ -34,9 +34,6 @@ Feature: Get a user
           "source": "",
           "ui_groups_navigation_type": "side-bar",
           "ui_language": "en",
-          "ui_tours": {
-            "test-tour-to-get-user-1": true
-          },
           "active_connects": 0
         },
         {
@@ -63,7 +60,6 @@ Feature: Get a user
           "source": "",
           "ui_groups_navigation_type": "side-bar",
           "ui_language": "en",
-          "ui_tours": null,
           "active_connects": 0
         }
       ],
@@ -147,10 +143,7 @@ Feature: Get a user
       },
       "source": "",
       "ui_groups_navigation_type": "side-bar",
-      "ui_language": "en",
-      "ui_tours": {
-        "test-tour-to-get-user-1": true
-      }
+      "ui_language": "en"
     }
     """
 

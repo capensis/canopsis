@@ -83,7 +83,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-1",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",
@@ -180,7 +181,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-1",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -248,7 +250,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-2",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",
@@ -324,7 +327,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-2",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -712,7 +716,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-8",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",
@@ -829,7 +834,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-9",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",
@@ -924,7 +930,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-9",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -991,7 +998,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-10",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "pause",
             "icon_name": "pause",
             "type": "test-pause-type-to-engine",
@@ -1069,7 +1077,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-11",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",
@@ -1163,7 +1172,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-11",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -1254,7 +1264,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-12",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -1332,7 +1343,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-13",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -1402,7 +1414,8 @@ Feature: update alarm on pbehavior
         {
           "pbehavior_info": {
             "name": "test-pbehavior-13",
-            "reason": "Test Engine",
+            "reason": "test-reason-to-engine",
+            "reason_name": "Test Engine",
             "canonical_type": "maintenance",
             "icon_name": "build",
             "type": "test-maintenance-type-to-engine",
@@ -1428,7 +1441,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-13",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",
@@ -1566,7 +1580,8 @@ Feature: update alarm on pbehavior
           "v": {
             "pbehavior_info": {
               "name": "test-pbehavior-14",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "canonical_type": "maintenance",
               "icon_name": "build",
               "type": "test-maintenance-type-to-engine",

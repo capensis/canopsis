@@ -681,7 +681,10 @@ Feature: Bulk create eventfilters
       "data": [
         {
           "_id": "test-eventfilter-bulk-create-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "test create 1",
           "type": "enrichment",
           "event_pattern": [
@@ -716,7 +719,10 @@ Feature: Bulk create eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-create-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "test create 2",
           "type": "enrichment",
           "entity_pattern": [
@@ -751,7 +757,10 @@ Feature: Bulk create eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-create-3",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "test create 3",
           "type": "enrichment",
           "event_pattern": [
@@ -797,7 +806,10 @@ Feature: Bulk create eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-create-4",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "test create 4",
           "type": "enrichment",
           "event_pattern": [

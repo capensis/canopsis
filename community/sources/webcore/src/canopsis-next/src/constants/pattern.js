@@ -54,6 +54,8 @@ export const PATTERN_OPERATORS = {
 
   activated: 'activated',
   inactive: 'inactive',
+
+  regexp: 'regexp',
 };
 
 export const PATTERN_CONDITIONS = {
@@ -71,6 +73,12 @@ export const PATTERN_CONDITIONS = {
   exist: 'exist',
   relativeTime: 'relative_time',
   absoluteTime: 'absolute_time',
+  contains: 'contain',
+  notContains: 'not_contain',
+  beginsWith: 'begin_with',
+  notBeginWith: 'not_begin_with',
+  endsWith: 'end_with',
+  notEndWith: 'not_end_with',
 };
 
 export const PATTERN_FIELD_TYPES = {
@@ -106,6 +114,7 @@ export const PATTERN_RULE_TYPES = {
   date: 'date',
   duration: 'duration',
   string: 'string',
+  number: 'number',
 };
 
 export const PATTERN_RULE_INFOS_FIELDS = {
@@ -137,13 +146,14 @@ export const PATTERN_NUMBER_OPERATORS = [
 
 export const PATTERN_STRING_OPERATORS = [
   PATTERN_OPERATORS.equal,
-  PATTERN_OPERATORS.contains,
   PATTERN_OPERATORS.notEqual,
+  PATTERN_OPERATORS.contains,
   PATTERN_OPERATORS.notContains,
   PATTERN_OPERATORS.beginsWith,
   PATTERN_OPERATORS.notBeginWith,
   PATTERN_OPERATORS.endsWith,
   PATTERN_OPERATORS.notEndWith,
+  PATTERN_OPERATORS.regexp,
 ];
 
 export const PATTERN_BOOLEAN_OPERATORS = [
@@ -205,4 +215,13 @@ export const OLD_PATTERNS_FIELDS = {
   totalEntity: 'old_total_entity_patterns',
   patterns: 'old_patterns',
   mongoQuery: 'old_mongo_query',
+};
+
+export const OLD_PATTERN_FIELDS_TO_NEW_FIELDS = {
+  [OLD_PATTERNS_FIELDS.mongoQuery]: [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+  [OLD_PATTERNS_FIELDS.alarm]: [PATTERNS_FIELDS.alarm],
+  [OLD_PATTERNS_FIELDS.entity]: [PATTERNS_FIELDS.entity],
+  [OLD_PATTERNS_FIELDS.event]: [PATTERNS_FIELDS.event],
+  [OLD_PATTERNS_FIELDS.totalEntity]: [PATTERNS_FIELDS.totalEntity],
+  [OLD_PATTERNS_FIELDS.patterns]: [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
 };
