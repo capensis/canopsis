@@ -1797,7 +1797,10 @@ Feature: Bulk create scenarios
         {
           "_id": "bulk-create-scenario-1",
           "name": "test-scenario-to-bulk-create-1-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "actions": [
@@ -1945,7 +1948,10 @@ Feature: Bulk create scenarios
         {
           "_id": "bulk-create-scenario-2",
           "name": "test-scenario-to-bulk-create-2-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "actions": [
@@ -2093,7 +2099,10 @@ Feature: Bulk create scenarios
         {
           "_id": "bulk-create-scenario-3",
           "name": "test-scenario-to-bulk-create-3-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "delay": {

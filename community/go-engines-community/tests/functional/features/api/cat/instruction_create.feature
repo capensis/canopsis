@@ -557,6 +557,7 @@ Feature: Create a instruction
       "description": "test-instruction-to-create-2-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -611,6 +612,7 @@ Feature: Create a instruction
       "description": "test-instruction-to-create-2-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -707,6 +709,7 @@ Feature: Create a instruction
       "description": "test-instruction-to-create-2-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -880,7 +883,42 @@ Feature: Create a instruction
         "jobs": "Jobs is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
+        "triggers": "Triggers is missing.",
         "timeout_after_execution": "TimeoutAfterExecution is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "jobs": [],
+      "triggers": []
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "jobs": "Jobs is missing.",
+        "triggers": "Triggers is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "triggers": ["notexist"]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0": "Triggers[0] must be one of [create statedec stateinc changestate unsnooze activate pbhenter pbhleave]."
       }
     }
     """
@@ -1226,6 +1264,7 @@ Feature: Create a instruction
       "description": "test-instruction-to-create-3-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -1255,6 +1294,7 @@ Feature: Create a instruction
       "description": "test-instruction-to-create-3-description",
       "enabled": true,
       "priority": 21,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"

@@ -68,6 +68,8 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   mergeStrategy: childMergeStrategy,
 });
 
+viewSchema.disabledCache = true;
+
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {

@@ -1,10 +1,4 @@
 export const widgetColumnsMixin = {
-  props: {
-    widget: {
-      type: Object,
-      required: true,
-    },
-  },
   computed: {
     columns() {
       if (this.widget.parameters.widgetColumns) {
