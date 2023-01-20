@@ -16,10 +16,6 @@
             v-tab-item(:value="$constants.PARAMETERS_TABS.stateSettings", lazy)
               v-card-text
                 state-settings
-            v-tab(:href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`") {{ $t('parameters.tabs.widgetTemplates') }}
-            v-tab-item(:value="$constants.PARAMETERS_TABS.widgetTemplates", lazy)
-              v-card-text
-                widget-templates
             template(v-if="isProVersion")
               v-tab(:href="`#${$constants.PARAMETERS_TABS.notificationSettings}`")
                 | {{ $t('parameters.tabs.notificationsSettings') }}
@@ -31,6 +27,12 @@
               v-tab-item(:value="$constants.PARAMETERS_TABS.storageSettings", lazy)
                 v-card-text
                   storage-settings
+            template(v-if="hasReadAnyWidgetTemplateAccess")
+              v-tab(:href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`")
+                | {{ $t('parameters.tabs.widgetTemplates') }}
+              v-tab-item(:value="$constants.PARAMETERS_TABS.widgetTemplates", lazy)
+                v-card-text
+                  widget-templates
     v-fade-transition
       c-fab-btn(
         v-if="hasFabButton",
@@ -90,6 +92,7 @@ export default {
       this.$modals.show({
         name: MODALS.createWidgetTemplate,
         config: {
+          title: this.$t('modals.createWidgetTemplate.create.title'),
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 

@@ -133,3 +133,5 @@ export const EXPORT_STATUSES = {
   completed: 1,
   failed: 2,
 };
+
+export const CUSTOM_WIDGET_COLUMN_TEMPLATE = Symbol('custom');

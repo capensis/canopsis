@@ -1,79 +1,23 @@
 <template lang="pug">
   div
-    v-card.my-2(
+    c-column-field.my-2(
       v-for="(column, index) in columns",
-      :key="column.key"
+      v-field="columns[index]",
+      :key="column.key",
+      :name="column.key",
+      :type="type",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending",
+      :with-html="withHtml",
+      :with-template="withTemplate",
+      :with-color-indicator="withColorIndicator",
+      :disabled-up="index === 0",
+      :disabled-down="index === columns.length - 1",
+      @up="up(index)",
+      @down="down(index)",
+      @remove="removeItemFromArray(index)"
     )
-      v-layout.pt-2(justify-space-between)
-        v-flex(xs3)
-          v-layout.text-xs-center.pl-2(justify-space-between)
-            v-btn(
-              :disabled="index === 0",
-              icon,
-              @click.prevent="up(index)"
-            )
-              v-icon arrow_upward
-            v-btn(
-              :disabled="index === columns.length - 1",
-              icon,
-              @click.prevent="down(index)"
-            )
-              v-icon arrow_downward
-        v-flex.text-xs-right.pr-2(xs3)
-          v-btn(icon, @click.prevent="removeItemFromArray(index)")
-            v-icon(color="red") close
-      v-layout.px-3.pb-3(justify-center, column)
-        v-select(
-          v-field="columns[index].column",
-          v-validate="'required'",
-          :items="availableColumns",
-          :label="$tc('common.column', 1)",
-          :error-messages="errors.collect(`${column.key}.column`)",
-          :name="`${column.key}.column`"
-        )
-        c-infos-attribute-field(
-          v-if="isInfos(column.column)",
-          v-field="columns[index]",
-          :items="getInfosByColumn(column.column)",
-          :pending="infosPending",
-          :name="`${column.key}.column`",
-          combobox,
-          column
-        )
-        v-text-field(
-          v-if="isLinks(column.column)",
-          v-field="columns[index].field",
-          :label="$t('common.field')"
-        )
-        v-layout(v-if="withTemplate", row)
-          v-switch(
-            :label="$t('settings.columns.withTemplate')",
-            :input-value="!!column.template",
-            color="primary",
-            @change="enableTemplate(index, $event)"
-          )
-          v-btn.primary(v-if="column.template", small, @click="showEditTemplateModal(index)")
-            span {{ $t('common.edit') }}
-        v-switch(
-          v-if="withHtml",
-          v-field="columns[index].isHtml",
-          :label="$t('settings.columns.isHtml')",
-          :disabled="!!column.template",
-          color="primary"
-        )
-        v-switch(
-          v-if="withColorIndicator",
-          :label="$t('settings.colorIndicator.title')",
-          :input-value="!!column.colorIndicator",
-          :disabled="!!column.template",
-          color="primary",
-          @change="switchChangeColorIndicator(index, $event)"
-        )
-        v-layout(v-if="column.colorIndicator", row)
-          c-color-indicator-field(
-            v-field="columns[index].colorIndicator",
-            :disabled="!!column.template"
-          )
     v-btn.ml-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 

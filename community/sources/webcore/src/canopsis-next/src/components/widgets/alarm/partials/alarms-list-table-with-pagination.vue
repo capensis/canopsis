@@ -5,7 +5,6 @@
     :total-items="meta.total_count",
     :pagination.sync="pagination",
     :editing="editing",
-    :columns="columns",
     :loading="loading",
     :parent-alarm="parentAlarm",
     :is-tour-enabled="isTourEnabled",
@@ -53,10 +52,6 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
-    },
-    columns: {
-      type: Array,
-      default: () => [],
     },
     editing: {
       type: Boolean,
