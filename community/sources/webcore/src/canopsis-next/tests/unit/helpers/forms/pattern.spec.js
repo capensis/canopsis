@@ -72,7 +72,7 @@ describe('pattern form converters', () => {
     const value = Faker.lorem.word();
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.component,
-      cond: { type: PATTERN_CONDITIONS.regexp, value },
+      cond: { type: PATTERN_CONDITIONS.contains, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -88,10 +88,9 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `not contains` operator', () => {
     const value = Faker.lorem.word();
-    const valueWithRegexp = `^((?!${value}).)*$`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.component,
-      cond: { type: PATTERN_CONDITIONS.regexp, value: valueWithRegexp },
+      cond: { type: PATTERN_CONDITIONS.notContains, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -100,6 +99,24 @@ describe('pattern form converters', () => {
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.component,
       operator: PATTERN_OPERATORS.notContains,
+      value,
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `regexp` operator', () => {
+    const value = `^((?!${Faker.lorem.word()}).)*$`;
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.output,
+      cond: { type: PATTERN_CONDITIONS.regexp, value },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.output,
+      operator: PATTERN_OPERATORS.regexp,
       value,
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
@@ -235,10 +252,9 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `begins with` operator', () => {
     const value = Faker.lorem.word();
-    const valueWithRegexp = `^${value}`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connector,
-      cond: { type: PATTERN_CONDITIONS.regexp, value: valueWithRegexp },
+      cond: { type: PATTERN_CONDITIONS.beginsWith, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -254,10 +270,9 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `not begin with` operator', () => {
     const value = Faker.lorem.word();
-    const valueWithRegexp = `^(?!${value})`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.resource,
-      cond: { type: PATTERN_CONDITIONS.regexp, value: valueWithRegexp },
+      cond: { type: PATTERN_CONDITIONS.notBeginWith, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -273,10 +288,9 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `ends with` operator', () => {
     const value = Faker.lorem.word();
-    const valueWithRegexp = `${value}$`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      cond: { type: PATTERN_CONDITIONS.regexp, value: valueWithRegexp },
+      cond: { type: PATTERN_CONDITIONS.endsWith, value },
     };
 
     const form = patternRuleToForm(patternRule);
@@ -292,10 +306,9 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `not end with` operator', () => {
     const value = Faker.lorem.word();
-    const valueWithRegexp = `(?<!${value})$`;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.connectorName,
-      cond: { type: PATTERN_CONDITIONS.regexp, value: valueWithRegexp },
+      cond: { type: PATTERN_CONDITIONS.notEndWith, value },
     };
 
     const form = patternRuleToForm(patternRule);

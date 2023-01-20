@@ -1,11 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-layout(row)
-      c-enabled-field(v-field="form.enabled")
-      c-enabled-field(
-        v-field="form.multiple_executions",
-        :label="$t('remediation.job.multipleExecutions')"
-      )
+    c-enabled-field(v-field="form.multiple_executions", :label="$t('remediation.job.multipleExecutions')")
     c-name-field(v-field="form.name")
     remediation-job-configuration-field(v-field="form.config")
     c-id-field(

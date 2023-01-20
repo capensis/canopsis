@@ -82,21 +82,21 @@ Feature: move a instruction execution to previous operation
         {
           "name": "test-instruction-execution-previous-1-step-1",
           "time_to_complete": {"value": 4, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "completed_at": 0,
+              "completed_at": null,
               "name": "test-instruction-execution-previous-1-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
               "description": "test-instruction-execution-previous-1-step-1-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component"
             },
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-previous-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
-              "description": "",
+              "description": "test-instruction-execution-previous-1-step-1-operation-2-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component",
               "jobs": []
             }
           ],
@@ -105,15 +105,15 @@ Feature: move a instruction execution to previous operation
         {
           "name": "test-instruction-execution-previous-1-step-2",
           "time_to_complete": {"value": 6, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-previous-1-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "",
+              "description": "test-instruction-execution-previous-1-step-2-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component",
               "jobs": []
             }
           ],
@@ -122,7 +122,9 @@ Feature: move a instruction execution to previous operation
       ]
     }
     """
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
 
   Scenario: given running instruction with first operation started should return error
     When I am admin
@@ -275,8 +277,8 @@ Feature: move a instruction execution to previous operation
         {
           "name": "test-instruction-execution-previous-3-step-1",
           "time_to_complete": {"value": 4, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
               "name": "test-instruction-execution-previous-3-step-1-operation-1",
@@ -284,7 +286,7 @@ Feature: move a instruction execution to previous operation
               "description": "test-instruction-execution-previous-3-step-1-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component"
             },
             {
-              "completed_at": 0,
+              "completed_at": null,
               "name": "test-instruction-execution-previous-3-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
               "description": "test-instruction-execution-previous-3-step-1-operation-2-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component",
@@ -296,15 +298,15 @@ Feature: move a instruction execution to previous operation
         {
           "name": "test-instruction-execution-previous-3-step-2",
           "time_to_complete": {"value": 6, "unit":"s"},
-          "completed_at": 0,
-          "failed_at": 0,
+          "completed_at": null,
+          "failed_at": null,
           "operations": [
             {
-              "started_at": 0,
-              "completed_at": 0,
+              "started_at": null,
+              "completed_at": null,
               "name": "test-instruction-execution-previous-3-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "",
+              "description": "test-instruction-execution-previous-3-step-2-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component",
               "jobs": []
             }
           ],
@@ -313,9 +315,13 @@ Feature: move a instruction execution to previous operation
       ]
     }
     """
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
-    Then the response key "steps.0.operations.0.completed_at" should not be "0"
-    Then the response key "steps.0.operations.1.started_at" should not be "0"
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response op1CompletedAt={{ (index (index .lastResponse.steps 0).operations 0).completed_at }}
+    When I save response op2StartedAt={{ (index (index .lastResponse.steps 0).operations 1).started_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
+    Then "op1CompletedAt" >= "op1StartedAt"
+    Then "op2StartedAt" >= "op1CompletedAt"
 
   Scenario: given running instruction should finish execution
     When I am admin
@@ -442,12 +448,23 @@ Feature: move a instruction execution to previous operation
       ]
     }
     """
-    Then the response key "steps.0.operations.0.started_at" should not be "0"
-    Then the response key "steps.0.operations.0.completed_at" should not be "0"
-    Then the response key "steps.0.operations.1.started_at" should not be "0"
-    Then the response key "steps.0.operations.1.completed_at" should not be "0"
-    Then the response key "steps.1.operations.0.started_at" should not be "0"
-    Then the response key "steps.1.operations.0.completed_at" should not be "0"
+    When I save response step1CompletedAt={{ (index .lastResponse.steps 0).completed_at }}
+    When I save response op1StartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
+    When I save response op1CompletedAt={{ (index (index .lastResponse.steps 0).operations 0).completed_at }}
+    When I save response op2StartedAt={{ (index (index .lastResponse.steps 0).operations 1).started_at }}
+    When I save response op2CompletedAt={{ (index (index .lastResponse.steps 0).operations 1).completed_at }}
+    When I save response step2CompletedAt={{ (index .lastResponse.steps 1).completed_at }}
+    When I save response op3StartedAt={{ (index (index .lastResponse.steps 1).operations 0).started_at }}
+    When I save response op3CompletedAt={{ (index (index .lastResponse.steps 1).operations 0).completed_at }}
+    When I save response expectedStartedAt=1
+    Then "op1StartedAt" >= "expectedStartedAt"
+    Then "op1CompletedAt" >= "op1StartedAt"
+    Then "op2StartedAt" >= "op1CompletedAt"
+    Then "op2CompletedAt" >= "op2StartedAt"
+    Then "step1CompletedAt" >= "op2CompletedAt"
+    Then "op3StartedAt" >= "op2CompletedAt"
+    Then "op3CompletedAt" >= "op3StartedAt"
+    Then "step2CompletedAt" >= "op3CompletedAt"
 
   Scenario: given unauth request should not allow access
     When I do PUT /api/v4/cat/executions/notexist/previous

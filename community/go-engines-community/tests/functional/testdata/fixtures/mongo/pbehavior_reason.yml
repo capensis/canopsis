@@ -7,13 +7,6 @@ template:
   }
 
 pbehavior_reason:
-  reason_1:
-    <<: *reason
-    _id: test-reason-1
-    created: 1592215337
-    description: test-reason-1-description
-    name: test-reason-1-name
-
   reason_to_get_1:
     <<: *reason
     _id: test-reason-to-get-1
@@ -24,6 +17,11 @@ pbehavior_reason:
   reason_to_update:
     <<: *reason
     _id: test-reason-to-update
+
+  reason_to_check_unique:
+    <<: *reason
+    _id: test-reason-to-check-unique
+    name: test-reason-to-check-unique-name
 
   reason_to_delete:
     <<: *reason
@@ -57,6 +55,20 @@ pbehavior_reason:
     created: 1592215337
     description: Test Engine
     name: Test Engine
+
+  reason_to_engine_2:
+    <<: *reason
+    _id: test-reason-to-engine-2
+    created: 1592215337
+    description: Test Engine 2
+    name: Test Engine 2
+
+  reason_to_engine_3:
+    <<: *reason
+    _id: test-reason-to-engine-3
+    created: 1592215337
+    description: Test Engine 3
+    name: Test Engine 3
 
   reason_to_pbehavior_get:
     <<: *reason

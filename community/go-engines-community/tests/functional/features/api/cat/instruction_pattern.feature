@@ -13,6 +13,7 @@ Feature: Update instruction
       "description": "test-instruction-to-pattern-1-description",
       "enabled": true,
       "priority": 24,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"

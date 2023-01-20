@@ -29,6 +29,11 @@ function updateResolvedAlarms(collectionName) {
 
         for (var step of doc.v.steps) {
             var stepTs = step.t;
+
+            if (isNaN(stepTs)) {
+                continue
+            }
+
             if (stepTs < doc.v.creation_date) {
                 stepTs = doc.v.creation_date;
             }
@@ -37,6 +42,11 @@ function updateResolvedAlarms(collectionName) {
                 case "snooze":
                     var snoozeStartTs = stepTs;
                     var snoozeEndTs = step.val;
+
+                    if (isNaN(snoozeEndTs)) {
+                        break
+                    }
+
                     if (snoozeEndTs > doc.v.resolved) {
                         snoozeEndTs = doc.v.resolved;
                     }
@@ -49,6 +59,10 @@ function updateResolvedAlarms(collectionName) {
 
                     break;
                 case "pbhenter":
+                    if (pbhIndex !== null) {
+                        break;
+                    }
+
                     if (step.pbehavior_canonical_type !== "active") {
                         pbhIndex = inactivePeriods.length;
                         inactivePeriods.push({
@@ -103,10 +117,10 @@ function updateResolvedAlarms(collectionName) {
 
         db.getCollection(collectionName).updateOne({_id: doc._id}, {
             $set: {
-                "v.inactive_duration": inactiveDuration,
-                "v.active_duration": doc.v.duration - inactiveDuration,
-                "v.snooze_duration": snoozeDuration,
-                "v.pbh_inactive_duration": pbhInactiveDuration,
+                "v.inactive_duration": NumberInt(inactiveDuration),
+                "v.active_duration": NumberInt(doc.v.duration - inactiveDuration),
+                "v.snooze_duration": NumberInt(snoozeDuration),
+                "v.pbh_inactive_duration": NumberInt(pbhInactiveDuration),
             }
         });
     };
@@ -125,6 +139,11 @@ function updateOpenedAlarms(collectionName) {
 
         for (var step of doc.v.steps) {
             var stepTs = step.t;
+
+            if (isNaN(stepTs)) {
+                continue
+            }
+
             if (stepTs < doc.v.creation_date) {
                 stepTs = doc.v.creation_date;
             }
@@ -133,6 +152,10 @@ function updateOpenedAlarms(collectionName) {
                 case "snooze":
                     var snoozeStartTs = stepTs;
                     var snoozeEndTs = step.val;
+
+                    if (isNaN(snoozeEndTs)) {
+                        break
+                    }
 
                     if (snoozeEndTs < now) {
                         snoozeDuration += snoozeEndTs - snoozeStartTs;
@@ -148,6 +171,10 @@ function updateOpenedAlarms(collectionName) {
                     }
                     break;
                 case "pbhenter":
+                    if (pbhIndex !== null) {
+                        break;
+                    }
+
                     if (step.pbehavior_canonical_type !== "active") {
                         pbhIndex = inactivePeriods.length;
                         inactivePeriods.push({
@@ -214,12 +241,12 @@ function updateOpenedAlarms(collectionName) {
         }
 
         var set = {
-            "v.inactive_duration": inactiveDuration,
-            "v.snooze_duration": snoozeDuration,
-            "v.pbh_inactive_duration": pbhInactiveDuration,
+            "v.inactive_duration": NumberInt(inactiveDuration),
+            "v.snooze_duration": NumberInt(snoozeDuration),
+            "v.pbh_inactive_duration": NumberInt(pbhInactiveDuration),
         }
         if (inactiveStart !== null) {
-            set["v.inactive_start"] = inactiveStart;
+            set["v.inactive_start"] = NumberInt(inactiveStart);
         }
 
         db.getCollection(collectionName).updateOne({_id: doc._id}, {

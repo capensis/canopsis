@@ -38,7 +38,7 @@ describe('date-interval-selector', () => {
   const value = {
     tstart: QUICK_RANGES.last3Hour.start,
     tstop: QUICK_RANGES.last3Hour.stop,
-    time_field: ALARM_INTERVAL_FIELDS.creationDate,
+    time_field: ALARM_INTERVAL_FIELDS.timestamp,
   };
 
   test('Start time updated after trigger tstart field', () => {
@@ -251,7 +251,7 @@ describe('date-interval-selector', () => {
         value: {
           tstart: QUICK_RANGES.last3Hour.start,
           tstop: QUICK_RANGES.last3Hour.stop,
-          time_field: ALARM_INTERVAL_FIELDS.creationDate,
+          time_field: ALARM_INTERVAL_FIELDS.timestamp,
         },
       },
     });
@@ -265,7 +265,7 @@ describe('date-interval-selector', () => {
         value: {
           tstart: QUICK_RANGES.last2Days.start,
           tstop: QUICK_RANGES.last2Days.stop,
-          time_field: ALARM_INTERVAL_FIELDS.creationDate,
+          time_field: ALARM_INTERVAL_FIELDS.timestamp,
         },
         roundHours: true,
         tstartRules: {

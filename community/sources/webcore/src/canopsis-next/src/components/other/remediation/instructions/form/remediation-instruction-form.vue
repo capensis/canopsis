@@ -31,10 +31,15 @@
           required
         )
       v-flex.ml-2(v-if="isAutoType", xs3)
-        c-priority-field(v-model="form.priority", :disabled="disabled", required)
+        c-priority-field(v-field="form.priority", :disabled="disabled", required)
+    c-triggers-field(
+      v-if="isAutoType",
+      v-field="form.triggers",
+      :triggers="availableTriggers"
+    )
     remediation-instruction-jobs-form(
       v-if="isAutoType || isManualSimplified",
-      v-model="form.jobs",
+      v-field="form.jobs",
       :disabled="disabled"
     )
     remediation-instruction-steps-form(v-else, v-field="form.steps", :disabled="disabled")
@@ -42,6 +47,8 @@
 </template>
 
 <script>
+import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS } from '@/constants';
+
 import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/forms/remediation-instruction';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
@@ -80,6 +87,10 @@ export default {
 
     isManualSimplified() {
       return isInstructionSimpleManual(this.form);
+    },
+
+    availableTriggers() {
+      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS;
     },
   },
 };

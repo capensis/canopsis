@@ -49,7 +49,10 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-1-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
           "alarm_pattern": [
@@ -67,7 +70,10 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-2-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "alarm_pattern": [
             [
               {
@@ -81,7 +87,10 @@ Feature: Copy a widget
           ]
         }
       ],
-      "author": "root"
+      "author": {
+        "_id": "root",
+        "name": "root"
+      }
     }
     """
     When I do GET /api/v4/widgets/{{ .lastResponse._id}}
@@ -108,7 +117,10 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-1-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
           "alarm_pattern": [
@@ -126,7 +138,10 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-2-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "alarm_pattern": [
             [
               {
@@ -140,7 +155,10 @@ Feature: Copy a widget
           ]
         }
       ],
-      "author": "root"
+      "author": {
+        "_id": "root",
+        "name": "root"
+      }
     }
     """
     Then the response key "_id" should not be "test-widget-to-copy-1"

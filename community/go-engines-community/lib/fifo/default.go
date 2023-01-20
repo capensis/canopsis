@@ -66,6 +66,7 @@ func Default(
 	if timezoneConfigProvider == nil {
 		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	}
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
@@ -222,9 +223,8 @@ func Default(
 		&deleteOutdatedRatesWorker{
 			PeriodicalInterval:        time.Hour,
 			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: config.NewDataStorageConfigProvider(cfg, logger),
+			DataStorageConfigProvider: dataStorageConfigProvider,
 			LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
-			RateLimitAdapter:          ratelimit.NewAdapter(mongoClient),
 			Logger:                    logger,
 		},
 		logger,
@@ -235,6 +235,7 @@ func Default(
 		logger,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
+		dataStorageConfigProvider,
 	))
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {

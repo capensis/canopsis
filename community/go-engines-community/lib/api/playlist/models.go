@@ -1,13 +1,14 @@
 package playlist
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string   `json:"sort_by" form:"sort_by" binding:"oneoforempty=name enabled fullscreen interval"`
+	SortBy string   `json:"sort_by" form:"sort_by" binding:"oneoforempty=name enabled fullscreen"`
 	Ids    []string `form:"-"`
 }
 
@@ -21,9 +22,9 @@ type EditRequest struct {
 	Interval   types.DurationWithUnit `json:"interval" binding:"required"`
 }
 
-type Playlist struct {
+type Response struct {
 	ID         string                 `bson:"_id,omitempty" json:"_id"`
-	Author     string                 `bson:"author" json:"author,omitempty"`
+	Author     *author.Author         `bson:"author" json:"author,omitempty"`
 	Name       string                 `bson:"name" json:"name"`
 	Enabled    bool                   `bson:"enabled" json:"enabled"`
 	Fullscreen bool                   `bson:"fullscreen" json:"fullscreen"`
@@ -33,8 +34,20 @@ type Playlist struct {
 	Updated    types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
+type Playlist struct {
+	ID         string                 `bson:"_id,omitempty" json:"_id"`
+	Author     string                 `bson:"author" json:"author,omitempty"`
+	Name       string                 `bson:"name" json:"name"`
+	Enabled    bool                   `bson:"enabled" json:"enabled"`
+	Fullscreen bool                   `bson:"fullscreen" json:"fullscreen"`
+	TabsList   []string               `bson:"tabs_list" json:"tabs_list"`
+	Interval   types.DurationWithUnit `bson:"interval" json:"interval"`
+	Created    types.CpsTime          `bson:"created,omitempty" json:"created,omitempty"`
+	Updated    types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty"`
+}
+
 type AggregationResult struct {
-	Data       []Playlist `bson:"data" json:"data"`
+	Data       []Response `bson:"data" json:"data"`
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 

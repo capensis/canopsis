@@ -21,7 +21,7 @@ Feature: no update service when entity is inactive
     """json
     {
       "name": "test-entityservice-pbehavior-service-1-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acked: {{ `{{.Acknowledged}}` }}; NotAcked: {{ `{{.NotAcknowledged}}` }}; AckedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -101,7 +101,7 @@ Feature: no update service when entity is inactive
     """json
     {
       "name": "test-entityservice-pbehavior-service-2-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acked: {{ `{{.Acknowledged}}` }}; NotAcked: {{ `{{.NotAcknowledged}}` }}; AckedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -211,25 +211,25 @@ Feature: no update service when entity is inactive
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "Depends: 1; All: 1; Active: 0; Acked: 0; NotAcked: 0; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "Depends: 1; All: 1; Active: 0; Acked: 0; NotAcked: 0; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               }
             ],
@@ -251,7 +251,7 @@ Feature: no update service when entity is inactive
     """json
     {
       "name": "test-entityservice-pbehavior-service-3-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acked: {{ `{{.Acknowledged}}` }}; NotAcked: {{ `{{.NotAcknowledged}}` }}; AckedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -361,37 +361,37 @@ Feature: no update service when entity is inactive
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "Depends: 1; All: 1; Active: 0; Acked: 0; NotAcked: 0; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-maintenance-type-to-engine:1];",
+                "m": "Depends: 1; All: 1; Active: 0; Acked: 0; NotAcked: 0; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:0];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[test-maintenance-type-to-engine:0]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[test-maintenance-type-to-engine:0];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[test-maintenance-type-to-engine:0]; UnderPbehavior: 0;",
                 "val": 1
               }
             ],
@@ -413,7 +413,7 @@ Feature: no update service when entity is inactive
     """json
     {
       "name": "test-entityservice-pbehavior-service-4-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "Depends: {{ `{{ .Depends }}` }}; All: {{ `{{.All}}` }}; Active: {{ `{{.Active}}` }}; Acked: {{ `{{.Acknowledged}}` }}; NotAcked: {{ `{{.NotAcknowledged}}` }}; AckedUnderPbh: {{ `{{.AcknowledgedUnderPbh}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateOk: {{ `{{.State.Ok}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }}; UnderPbehavior: {{ `{{.UnderPbehavior}}` }};",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -564,37 +564,37 @@ Feature: no update service when entity is inactive
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateInfo: 0; Pbehaviors: map[];",
+                "m": "Depends: 1; All: 1; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:1];",
+                "m": "Depends: 1; All: 1; Active: 0; Acked: 0; NotAcked: 0; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-inactive-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Alarms: 0; Acknowledged: 0; NotAcknowledged: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:1];",
+                "m": "Depends: 1; All: 1; Active: 0; Acked: 0; NotAcked: 0; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-inactive-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
-                "m": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1];",
+                "m": "Depends: 2; All: 2; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
-                "m": "All: 2; Alarms: 1; Acknowledged: 0; NotAcknowledged: 1; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateInfo: 1; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1];",
+                "m": "Depends: 2; All: 2; Active: 1; Acked: 0; NotAcked: 1; AckedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-inactive-type-to-engine:0 test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 1
               }
             ],
