@@ -37,7 +37,7 @@ type ScenarioStorage interface {
 	GetTriggeredScenarios(
 		triggers []string,
 		alarm types.Alarm,
-	) (triggered []Scenario, err error)
+	) (map[string][]Scenario, error)
 
 	// RunDelayedScenarios starts delay timeout for scenarios which are triggered by triggers.
 	RunDelayedScenarios(
@@ -99,6 +99,7 @@ type ExecuteScenariosTask struct {
 
 type AdditionalData struct {
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
+	Trigger         string                `json:"trigger"`
 	Author          string                `json:"author"`
 	User            string                `json:"user"`
 	Initiator       string                `json:"initiator"`
