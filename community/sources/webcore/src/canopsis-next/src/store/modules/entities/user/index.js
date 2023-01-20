@@ -30,6 +30,18 @@ export default createEntityModule({
     },
 
     /**
+     * Method for update current user
+     *
+     * @param {ActionContext} context
+     * @param {string} id
+     * @param {User} data
+     * @returns {AxiosPromise<any>}
+     */
+    updateCurrentUser(context, { data }) {
+      return request.put(API_ROUTES.currentUser, data);
+    },
+
+    /**
      * Fetch users list with previous params
      *
      * @param {Function} dispatch

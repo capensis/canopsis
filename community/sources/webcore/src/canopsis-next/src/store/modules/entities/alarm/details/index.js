@@ -44,16 +44,13 @@ export default {
     ),
   },
   mutations: {
-    [types.FETCH_ITEM]: (state, { widgetId, id, query }) => {
-      const detailsObject = {
-        pending: true,
-        query,
-      };
-
+    [types.FETCH_ITEM]: (state, { widgetId, id }) => {
       if (!state.widgets[widgetId]) {
-        Vue.set(state.widgets, widgetId, { [id]: detailsObject });
+        Vue.set(state.widgets, widgetId, { [id]: { pending: true, query: {} } });
+      } else if (state.widgets[widgetId][id]) {
+        Vue.set(state.widgets[widgetId][id], 'pending', true);
       } else {
-        Vue.set(state.widgets[widgetId], id, detailsObject);
+        Vue.set(state.widgets[widgetId], id, { pending: true, query: {} });
       }
     },
 
@@ -74,7 +71,13 @@ export default {
     },
 
     [types.UPDATE_QUERY]: (state, { widgetId, id, query }) => {
-      Vue.set(state.widgets[widgetId][id], 'query', query);
+      if (!state.widgets[widgetId]) {
+        Vue.set(state.widgets, widgetId, { [id]: { pending: false, query } });
+      } else if (state.widgets[widgetId][id]) {
+        Vue.set(state.widgets[widgetId][id], 'query', query);
+      } else {
+        Vue.set(state.widgets[widgetId], id, { pending: false, query });
+      }
     },
 
     [types.REMOVE_QUERY]: (state, { widgetId, id }) => {
@@ -94,7 +97,7 @@ export default {
      */
     async fetchItem({ dispatch, commit }, { widgetId, id, query }) {
       try {
-        commit(types.FETCH_ITEM, { widgetId, id, query });
+        commit(types.FETCH_ITEM, { widgetId, id });
 
         await dispatch('entities/create', {
           route: API_ROUTES.alarmDetails,

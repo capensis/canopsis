@@ -12,10 +12,12 @@
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(#toolbar="{ selected }")
-      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', selected)", icon)
-          v-icon delete
+    template(#mass-actions="{ selected }")
+      c-action-btn(
+        v-if="hasDeleteAnyPbehaviorExceptionAccess",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#actions="{ item }")
       c-action-btn(
         v-if="hasUpdateAnyPbehaviorExceptionAccess",

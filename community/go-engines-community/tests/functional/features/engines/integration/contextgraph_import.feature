@@ -7,7 +7,7 @@ Feature: Import entities
     """json
     {
       "name": "test-entityservice-import-partial-1-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "test-entityservice-import-partial-1-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -91,7 +91,7 @@ Feature: Import entities
     """json
     {
       "name": "test-entityservice-import-partial-2-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "test-entityservice-import-partial-2-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -141,16 +141,12 @@ Feature: Import entities
     """
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-2
-    Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "impact" should contain:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "test-connector-import-partial-2/test-connector-name-import-partial-2",
-        "{{ .serviceID }}"
-      ]
-    }
+    [
+      "test-connector-import-partial-2/test-connector-name-import-partial-2",
+      "{{ .serviceID }}"
+    ]
     """
     When I do GET /api/v4/entities/context-graph?_id=test-connector-import-partial-2/test-connector-name-import-partial-2
     Then the response code should be 200

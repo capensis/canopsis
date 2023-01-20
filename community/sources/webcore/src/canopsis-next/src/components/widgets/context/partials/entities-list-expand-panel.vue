@@ -42,6 +42,10 @@
 </template>
 
 <script>
+import { DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS, DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS } from '@/constants';
+
+import { defaultColumnsToColumns } from '@/helpers/entities';
+
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
@@ -77,11 +81,11 @@ export default {
     },
     resolvedAlarmsColumns: {
       type: Array,
-      required: false,
+      default: () => defaultColumnsToColumns(DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS),
     },
     activeAlarmsColumns: {
       type: Array,
-      required: false,
+      default: () => defaultColumnsToColumns(DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS),
     },
   },
 };

@@ -12,13 +12,19 @@ Feature: Get a view
       "data": [
         {
           "_id": "test-view-to-get-1",
-          "author": "test-view-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "description": "test-view-to-get-1-description",
           "enabled": true,
           "group": {
             "_id": "test-viewgroup-to-view-edit",
-            "author": "test-viewgroup-to-view-edit-author",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
             "created": 1611229670,
             "title": "test-viewgroup-to-view-edit-title",
             "updated": 1611229670
@@ -36,13 +42,19 @@ Feature: Get a view
         },
         {
           "_id": "test-view-to-get-2",
-          "author": "test-view-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "description": "test-view-to-get-2-description",
           "enabled": true,
           "group": {
             "_id": "test-viewgroup-to-view-edit",
-            "author": "test-viewgroup-to-view-edit-author",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
             "created": 1611229670,
             "title": "test-viewgroup-to-view-edit-title",
             "updated": 1611229670
@@ -76,13 +88,19 @@ Feature: Get a view
     """json
     {
       "_id": "test-view-to-get-1",
-      "author": "test-view-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670,
       "description": "test-view-to-get-1-description",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
-        "author": "test-viewgroup-to-view-edit-author",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
         "updated": 1611229670
@@ -97,13 +115,19 @@ Feature: Get a view
         {
           "_id": "test-tab-to-view-get-1",
           "title": "test-tab-to-view-get-1-title",
-          "author": "test-tab-to-view-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "updated": 1611229670,
           "widgets": [
             {
               "_id": "test-widget-to-view-get-1",
-              "author": "test-widget-to-view-get-1-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "updated": 1611229670,
               "grid_parameters": {
@@ -124,7 +148,10 @@ Feature: Get a view
                   "_id": "test-widgetfilter-to-view-get-1",
                   "title": "test-widgetfilter-to-view-get-1-title",
                   "is_private": false,
-                  "author": "nopermsuser",
+                  "author": {
+                    "_id": "nopermsuser",
+                    "name": "nopermsuser"
+                  },
                   "created": 1611229670,
                   "updated": 1611229670,
                   "alarm_pattern": [
@@ -143,7 +170,10 @@ Feature: Get a view
                   "_id": "test-widgetfilter-to-view-get-2",
                   "title": "test-widgetfilter-to-view-get-2-title",
                   "is_private": false,
-                  "author": "root",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "created": 1611229670,
                   "updated": 1611229670,
                   "alarm_pattern": [
@@ -164,7 +194,10 @@ Feature: Get a view
             },
             {
               "_id": "test-widget-to-view-get-2",
-              "author": "test-widget-to-view-get-2-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "updated": 1611229670,
               "grid_parameters": {
@@ -189,7 +222,10 @@ Feature: Get a view
         {
           "_id": "test-tab-to-view-get-2",
           "title": "test-tab-to-view-get-2-title",
-          "author": "test-tab-to-view-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "widgets": [],
           "created": 1611229670,
           "updated": 1611229670
@@ -207,13 +243,19 @@ Feature: Get a view
     """json
     {
       "_id": "test-view-to-get-2",
-      "author": "test-view-to-get-2-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670,
       "description": "test-view-to-get-2-description",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
-        "author": "test-viewgroup-to-view-edit-author",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
         "updated": 1611229670
