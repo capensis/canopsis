@@ -4,6 +4,7 @@
     :alarms="alarms",
     :total-items="meta.total_count",
     :pagination.sync="pagination",
+    :columns="columns",
     :editing="editing",
     :loading="loading",
     :parent-alarm="parentAlarm",
@@ -40,6 +41,10 @@ export default {
     alarms: {
       type: Array,
       required: true,
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
     meta: {
       type: Object,

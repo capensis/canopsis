@@ -1,35 +1,42 @@
 <template lang="pug">
-  widget-settings-item(:title="label")
-    c-columns-with-template-field(
-      v-field="columns",
-      :type="type",
-      :template="template",
-      :templates="templates",
-      :templates-pending="templatesPending",
+  v-layout(column)
+    v-select(
+      :value="template",
+      :items="templatesWithCustom",
+      :label="$t('common.template')",
+      :loading="templatesPending",
+      return-object,
+      @input="updateTemplate"
+    )
+    span.body-2.my-2 {{ $tc('common.column', 2) }}
+    c-columns-field(
+      :columns="columns",
       :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
+      :type="type",
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",
       :infos-pending="infosPending",
-      @update:template="$listeners['update:template']"
+      @input="updateColumns"
     )
 </template>
 
 <script>
+import { CUSTOM_WIDGET_COLUMN_TEMPLATE } from '@/constants';
+
+import { formBaseMixin } from '@/mixins/form';
+
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
+  mixins: [formBaseMixin],
   model: {
     prop: 'columns',
     event: 'input',
   },
   props: {
-    label: {
-      type: String,
-      required: true,
-    },
     type: {
       type: String,
       required: true,
@@ -73,6 +80,35 @@ export default {
     infosPending: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    templatesWithCustom() {
+      return [
+        { value: CUSTOM_WIDGET_COLUMN_TEMPLATE, text: this.$t('common.custom'), columns: [] },
+
+        ...this.templates.map(template => ({
+          ...template,
+
+          value: template._id,
+          text: template.title,
+        })),
+      ];
+    },
+  },
+  methods: {
+    updateColumns(columns) {
+      if (this.template !== CUSTOM_WIDGET_COLUMN_TEMPLATE) {
+        this.$emit('update:template', CUSTOM_WIDGET_COLUMN_TEMPLATE, columns);
+
+        return;
+      }
+
+      this.updateModel(columns);
+    },
+
+    updateTemplate({ value, columns }) {
+      this.$emit('update:template', value, columns);
     },
   },
 };

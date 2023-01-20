@@ -18,7 +18,7 @@
       @down="down(index)",
       @remove="removeItemFromArray(index)"
     )
-    v-btn.ml-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
+    v-btn.mx-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>

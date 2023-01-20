@@ -159,7 +159,7 @@ export const DEFAULT_ALARMS_WIDGET_COLUMNS = [ // TODO: check it
   { value: ALARM_FIELDS.status },
 ];
 
-export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [ // TODO: check it
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   { value: ALARM_FIELDS.connector },
   { value: ALARM_FIELDS.connectorName },
   { value: ALARM_FIELDS.resource },

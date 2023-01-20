@@ -49,7 +49,7 @@ export default {
   computed: {
     availableTypes() {
       return [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].map(value => ({
-        value: ENTITIES_TYPES.alarm,
+        value,
         text: this.$t(`entities.${value}`),
       }));
     },

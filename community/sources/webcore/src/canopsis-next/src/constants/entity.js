@@ -2,6 +2,43 @@ import { COLORS } from '@/config';
 
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
+export const ENTITY_FIELDS = {
+  id: '_id',
+  name: 'name',
+  categoryName: 'category.name',
+  type: 'type',
+  component: 'component',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  resource: 'resource',
+  impactLevel: 'impact_level',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  koEvents: 'ko_events',
+  okEvents: 'ok_events',
+  statsOk: 'stats.ok',
+  statsKo: 'stats.ko',
+  pbehaviorInfo: 'pbehavior_info',
+  state: 'state',
+  impactState: 'impact_state',
+  status: 'status',
+  idleSince: 'idle_since',
+  enabled: 'enabled',
+  infos: 'infos',
+  componentInfos: 'component_infos',
+  links: 'links',
+  alarmDisplayName: 'alarm_display_name',
+  alarmCreationDate: 'alarm_creation_date',
+
+  /**
+   * OBJECTS
+   */
+  ack: 'ack',
+  category: 'category',
+  ticket: 'ticket',
+  snooze: 'snooze',
+};
+
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
   check: 'check',
@@ -428,9 +465,9 @@ export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [ // TODO: update or remove
   },
 ];
 
-export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [ // TODO: update or remove
-  { value: 'entity.name' },
-  { value: 'entity.type' },
+export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
+  { value: ENTITY_FIELDS.name },
+  { value: ENTITY_FIELDS.type },
 ];
 
 export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [ // TODO: update or remove
@@ -533,43 +570,6 @@ export const COUNTER_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
 };
 
-export const ENTITY_FIELDS = {
-  id: '_id',
-  name: 'name',
-  categoryName: 'category.name',
-  type: 'type',
-  component: 'component',
-  connector: 'connector',
-  connectorName: 'connector_name',
-  resource: 'resource',
-  impactLevel: 'impact_level',
-  lastEventDate: 'last_event_date',
-  lastUpdateDate: 'last_update_date',
-  koEvents: 'ko_events',
-  okEvents: 'ok_events',
-  statsOk: 'stats.ok',
-  statsKo: 'stats.ko',
-  pbehaviorInfo: 'pbehavior_info',
-  state: 'state',
-  impactState: 'impact_state',
-  status: 'status',
-  idleSince: 'idle_since',
-  enabled: 'enabled',
-  infos: 'infos',
-  componentInfos: 'component_infos',
-  links: 'links',
-  alarmDisplayName: 'alarm_display_name',
-  alarmCreationDate: 'alarm_creation_date',
-
-  /**
-   * OBJECTS
-   */
-  ack: 'ack',
-  category: 'category',
-  ticket: 'ticket',
-  snooze: 'snooze',
-};
-
 export const ENTITY_INFOS_FIELDS = [
   ENTITY_FIELDS.infos,
   ENTITY_FIELDS.componentInfos,
@@ -650,8 +650,8 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.infos]: 'common.infos',
   [ENTITY_FIELDS.componentInfos]: 'entity.fields.componentInfos',
   [ENTITY_FIELDS.links]: 'common.link',
-  [ENTITY_FIELDS.alarmDisplayName]: 'entity.infos.alarmDisplayName',
-  [ENTITY_FIELDS.alarmCreationDate]: 'common.alarmCreationDate',
+  [ENTITY_FIELDS.alarmDisplayName]: 'entity.fields.alarmDisplayName',
+  [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
 
   /**
    * OBJECTS
