@@ -56,6 +56,7 @@ type serviceProvider struct {
 	config         security.Config
 	tokenService   apisecurity.TokenService
 	logger         zerolog.Logger
+	defaultRole    string
 }
 
 func NewServiceProvider(
@@ -153,6 +154,11 @@ func NewServiceProvider(
 		sloLocation = idpMetadata.IDPSSODescriptor.SingleLogoutServices[0].Location
 	}
 
+	defaultRole := config.Security.Saml.DefaultRole
+	if defaultRole == "" {
+		defaultRole = DefaultUserRole
+	}
+
 	return &serviceProvider{
 		samlSP: &saml2.SAMLServiceProvider{
 			IdentityProviderSSOURL:      ssoLocation,
@@ -174,6 +180,7 @@ func NewServiceProvider(
 		enforcer:       enforcer,
 		config:         config,
 		tokenService:   tokenService,
+		defaultRole:    defaultRole,
 		logger:         logger,
 	}, nil
 }
@@ -576,7 +583,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 		return nil, false
 	}
 
-	role := sp.getAssocAttribute(assertionInfo.Values, "role", DefaultUserRole)
+	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.defaultRole)
 
 	err := sp.roleCollection.FindOne(c, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
 	if err != nil {
