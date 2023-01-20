@@ -91,7 +91,7 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
-		Return([]action.Scenario{scenario}, nil)
+		Return(map[string][]action.Scenario{"create": {scenario}}, nil)
 	mockScenarioStorage.EXPECT().
 		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
 		Return(nil)
@@ -236,10 +236,10 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
-		Return([]action.Scenario{firstScenario}, nil)
+		Return(map[string][]action.Scenario{"create": {firstScenario}}, nil)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq([]string{firstScenario.Actions[0].Type}), gomock.Eq(task.Alarm)).
-		Return([]action.Scenario{secondScenario}, nil)
+		Return(map[string][]action.Scenario{"create": {secondScenario}}, nil)
 	mockScenarioStorage.EXPECT().
 		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
 		Return(nil)
