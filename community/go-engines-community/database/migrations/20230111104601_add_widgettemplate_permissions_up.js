@@ -1,3 +1,63 @@
+function genID() {
+    return UUID().toString().split('"')[1];
+}
+
+if (db.widget_templates.count() === 0) {
+    var now = Math.ceil((new Date()).getTime() / 1000);
+    db.widget_templates.insertMany([
+        {
+            "_id": genID(),
+            "type": "alarm",
+            "title": "Default",
+            "columns": [
+                {
+                    "value": "connector"
+                },
+                {
+                    "value": "connector_name"
+                },
+                {
+                    "value": "component"
+                },
+                {
+                    "value": "resource"
+                },
+                {
+                    "value": "v.output"
+                },
+                {
+                    "value": "extra_details"
+                },
+                {
+                    "value": "v.state.val"
+                },
+                {
+                    "value": "v.status.val"
+                }
+            ],
+            "created": now,
+            "updated": now,
+            "author": "root"
+        },
+        {
+            "_id": genID(),
+            "type": "entity",
+            "title": "Default",
+            "columns": [
+                {
+                    "value": "name"
+                },
+                {
+                    "value": "type"
+                }
+            ],
+            "created": now,
+            "updated": now,
+            "author": "root"
+        }
+    ]);
+}
+
 if (!db.default_rights.findOne({_id: "api_widgettemplate"})) {
     db.default_rights.insertOne({
         _id: "api_widgettemplate",
