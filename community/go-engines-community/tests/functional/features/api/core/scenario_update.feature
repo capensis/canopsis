@@ -54,7 +54,10 @@ Feature: Update a scenario
     {
       "_id": "test-scenario-to-update-1",
       "name": "test-scenario-to-update-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "delay": null,
       "priority": 6,
@@ -361,7 +364,10 @@ Feature: Update a scenario
     """json
     {
       "name": "test-scenario-to-update-2-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "delay": {
@@ -643,7 +649,10 @@ Feature: Update a scenario
     """json
     {
       "name": "test-scenario-to-update-3-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "delay": {

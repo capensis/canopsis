@@ -1,9 +1,10 @@
 Feature: unsnooze alarm
   I need to be able to unsnooze alarm
-  
+
+  @concurrent
   Scenario: given unsnooze event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -20,8 +21,7 @@ Feature: unsnooze alarm
     }
     """
     When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "snooze",
@@ -38,7 +38,17 @@ Feature: unsnooze alarm
     }
     """
     When I save response snoozeEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I wait the end of 2 events processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "unsnooze",
+      "connector" : "test-connector-axe-unsnooze-1",
+      "connector_name" : "test-connector-name-axe-unsnooze-1",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-unsnooze-1",
+      "resource" : "test-resource-axe-unsnooze-1"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-unsnooze-1
     Then the response code should be 200
     Then the response body should contain:

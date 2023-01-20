@@ -44,8 +44,6 @@ x-app_service_base: &app_service_base
       condition: service_completed_successfully
     migrate-metrics-meta:
       condition: service_completed_successfully
-    provisioning:
-      condition: service_completed_successfully
 
 
 
@@ -118,7 +116,7 @@ services:
       - timescaledata:/var/lib/postgresql/data
     shm_size: 1g
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -127,13 +125,10 @@ services:
   # Initial configuration
   #
 
-  provisioning:
-    <<: *inital_config_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-prov:${CANOPSIS_IMAGE_TAG}
-
   reconfigure:
     <<: *inital_config_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
+    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
 
   migrate-metrics-meta:
     <<: *inital_config_base
@@ -169,16 +164,6 @@ services:
     volumes:
       - nginxcerts:/etc/nginx/ssl
 
-  oldapi:
-    <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-core:${CANOPSIS_IMAGE_TAG}
-    ports:
-      - "8081:8081"
-    environment:
-      - CPS_OLD_API=1 # must not be moved to compose.env
-    volumes:
-      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
-
   pbehavior:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-pbehavior:${CANOPSIS_IMAGE_TAG}
@@ -194,3 +179,9 @@ services:
       - junitsharedata:/tmp/canopsis/junit
     ports:
       - "8082:8082"
+    healthcheck:
+      test: /usr/bin/wget -q -O /dev/null http://localhost:8082/api/v4/app-info
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 3m

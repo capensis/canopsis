@@ -23,6 +23,7 @@ type rpcPBehaviorClientMessageProcessor struct {
 	FeaturePrintEventOnError bool
 	PublishCh                libamqp.Channel
 	ServiceRpc               engine.RPCClient
+	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
 	EntityAdapter            libentity.Adapter
 	PbehaviorAdapter         pbehavior.Adapter
@@ -109,6 +110,28 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 				}
 
 				p.logError(err, "RPC PBehavior Client: failed to send rpc call to engine-service", msg.Body)
+			}
+		}
+		if p.RemediationRpc != nil {
+			body, err = p.Encoder.Encode(types.RPCRemediationEvent{
+				Alarm:       event.Alarm,
+				Entity:      event.PbhEvent.Entity,
+				AlarmChange: alarmChange,
+			})
+			if err != nil {
+				p.logError(err, "RPC PBehavior Client: failed to encode rpc call to engine-remediation", msg.Body)
+			} else {
+				err = p.RemediationRpc.Call(ctx, engine.RPCMessage{
+					CorrelationID: utils.NewID(),
+					Body:          body,
+				})
+				if err != nil {
+					if engine.IsConnectionError(err) {
+						return err
+					}
+
+					p.logError(err, "RPC PBehavior Client: failed to send rpc call to engine-remediation", msg.Body)
+				}
 			}
 		}
 	}

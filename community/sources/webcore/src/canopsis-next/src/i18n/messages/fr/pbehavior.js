@@ -33,6 +33,7 @@ export default {
   pbehaviorType: 'Type PBehavior',
   pbehaviorReason: 'Raison PBehavior',
   pbehaviorName: 'Nom PBehavior',
+  pbehaviorCanonicalType: 'Type canonique de PBehavior',
   buttons: {
     addFilter: 'Ajouter un filtre',
     editFilter: 'Modifier le filtre',

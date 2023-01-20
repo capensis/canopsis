@@ -9,7 +9,7 @@ export default {
   language: 'Langue par défaut',
   auth: 'Type d\'auth.',
   navigationType: 'Type d\'affichage de la barre de vues',
-  active: 'Séance active',
+  active: 'Session active',
   activeConnects: 'Nombre de connexions',
   navigationTypes: {
     [GROUPS_NAVIGATION_TYPES.sideBar]: 'Barre latérale',

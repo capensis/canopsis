@@ -196,7 +196,12 @@ export default {
       try {
         const widget = generateDefaultAlarmListWidget();
 
-        widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
+        widget.parameters = {
+          ...widget.parameters,
+          ...this.widget.parameters.alarmsList,
+
+          serviceDependenciesColumns: this.widget.parameters.serviceDependenciesColumns,
+        };
 
         this.$modals.show({
           name: MODALS.alarmsList,

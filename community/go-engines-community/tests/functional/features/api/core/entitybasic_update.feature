@@ -64,10 +64,7 @@ Feature: Update entity basic
       "_id": "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name",
       "category": {
         "_id": "test-category-to-entitybasic-edit",
-        "author": "test-category-to-entitybasic-edit-author",
-        "created": 1592215337,
-        "name": "test-category-to-entitybasic-edit-name",
-        "updated": 1592215337
+        "name": "test-category-to-entitybasic-edit-name"
       },
       "description": "test-entitybasic-to-update-connector-description-updated",
       "enabled": true,

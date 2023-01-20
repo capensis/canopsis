@@ -1,6 +1,7 @@
 package eventfilter
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -18,7 +19,7 @@ type EditRequest struct {
 	Priority     int                                           `bson:"priority" json:"priority"`
 	Enabled      bool                                          `bson:"enabled" json:"enabled"`
 	Config       eventfilter.RuleConfig                        `bson:"config" json:"config" binding:"dive"`
-	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
+	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty" binding:"dive"`
 	Created      *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
@@ -34,7 +35,7 @@ type EditRequest struct {
 
 type Response struct {
 	ID                               string                                        `bson:"_id" json:"_id"`
-	Author                           string                                        `bson:"author" json:"author" swaggerignore:"true"`
+	Author                           *author.Author                                `bson:"author" json:"author" swaggerignore:"true"`
 	Description                      string                                        `bson:"description" json:"description"`
 	Type                             string                                        `bson:"type" json:"type"`
 	Priority                         int                                           `bson:"priority" json:"priority"`
@@ -82,5 +83,18 @@ type BulkDeleteRequestItem struct {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author priority created updated on_success on_failure"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author.name priority created updated on_success on_failure"`
+}
+
+type AggregationResult struct {
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
+}
+
+func (r *AggregationResult) GetData() interface{} {
+	return r.Data
+}
+
+func (r *AggregationResult) GetTotal() int64 {
+	return r.TotalCount
 }

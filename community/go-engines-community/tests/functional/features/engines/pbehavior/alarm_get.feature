@@ -38,7 +38,7 @@ Feature: Get alarms
       }
     ]
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -73,7 +73,7 @@ Feature: Get alarms
       "tstop": {{ nowAdd "2h" }},
       "color": "#FFFFFF",
       "type": "test-active-type-to-engine",
-      "reason": "test-reason-to-engine",
+      "reason": "test-reason-to-engine-2",
       "entity_pattern": [
         [
           {
@@ -301,6 +301,108 @@ Feature: Get alarms
             "connector_name": "test-connector-name-pbehavior-alarm-get-1",
             "component":  "test-component-pbehavior-alarm-get-1",
             "resource": "test-resource-pbehavior-alarm-get-1-2"
+          }
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-alarm-get-1-5",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-pbehavior-alarm-get-1"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.reason",
+            "cond": {
+              "type": "eq",
+              "value": "test-reason-to-engine"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector": "test-connector-pbehavior-alarm-get-1",
+            "connector_name": "test-connector-name-pbehavior-alarm-get-1",
+            "component":  "test-component-pbehavior-alarm-get-1",
+            "resource": "test-resource-pbehavior-alarm-get-1-2"
+          }
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-pbehavior-alarm-get-1-6",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-pbehavior-alarm-get-1"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.reason",
+            "cond": {
+              "type": "eq",
+              "value": "test-reason-to-engine-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector": "test-connector-pbehavior-alarm-get-1",
+            "connector_name": "test-connector-name-pbehavior-alarm-get-1",
+            "component":  "test-component-pbehavior-alarm-get-1",
+            "resource": "test-resource-pbehavior-alarm-get-1-3"
           }
         }
       ],
