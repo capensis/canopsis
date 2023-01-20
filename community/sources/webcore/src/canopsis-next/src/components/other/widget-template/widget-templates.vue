@@ -37,8 +37,9 @@ export default {
         config: {
           widgetTemplate,
 
+          title: this.$t('modals.createWidgetTemplate.edit.title'),
           action: async (newWidgetTemplate) => {
-            await this.removeWidgetTemplate({ id: widgetTemplate._id, data: newWidgetTemplate });
+            await this.updateWidgetTemplate({ id: widgetTemplate._id, data: newWidgetTemplate });
 
             return this.fetchList();
           },

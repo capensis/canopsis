@@ -2,6 +2,79 @@ import { COLORS } from '@/config';
 
 import featuresService from '@/services/features';
 
+export const ALARM_FIELDS = {
+  id: '_id',
+  displayName: 'v.display_name',
+  output: 'v.output',
+  longOutput: 'v.long_output',
+  initialOutput: 'v.initial_output',
+  initialLongOutput: 'v.initial_long_output',
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  lastComment: 'v.last_comment.m',
+  ackBy: 'v.ack.a',
+  ackMessage: 'v.ack.m',
+  ackInitiator: 'v.ack.initiator',
+  stateMessage: 'v.state.m',
+  statusMessage: 'v.status.m',
+  state: 'v.state.val',
+  status: 'v.status.val',
+  totalStateChanges: 'v.total_state_changes',
+  timestamp: 't',
+  creationDate: 'v.creation_date',
+  lastUpdateDate: 'v.last_update_date',
+  lastEventDate: 'v.last_event_date',
+  ackAt: 'v.ack.t',
+  stateAt: 'v.state.t',
+  statusAt: 'v.status.t',
+  resolved: 'v.resolved',
+  activationDate: 'v.activation_date',
+  duration: 'v.duration',
+  currentStateDuration: 'v.current_state_duration',
+  snoozeDuration: 'v.snooze_duration',
+  pbhInactiveDuration: 'v.pbh_inactive_duration',
+  activeDuration: 'v.active_duration',
+  eventsCount: 'v.events_count',
+  tags: 'tags',
+  extraDetails: 'extra_details',
+  impactState: 'impact_state',
+  infos: 'v.infos',
+  links: 'links',
+  entityId: 'entity._id',
+  entityName: 'entity.name',
+  entityCategoryName: 'entity.category.name',
+  entityType: 'entity.type',
+  entityComponent: 'entity.component',
+  entityConnector: 'entity.connector',
+  entityImpactLevel: 'entity.impact_level',
+  entityKoEvents: 'entity.ko_events',
+  entityOkEvents: 'entity.ok_events',
+  entityInfos: 'entity.infos',
+  entityComponentInfos: 'entity.component_infos',
+
+  /**
+   * OBJECTS
+   */
+  ack: 'v.ack',
+  ticket: 'v.ticket',
+  canceled: 'v.canceled',
+  snooze: 'v.snooze',
+  pbehaviorInfo: 'v.pbehavior_info',
+
+  /**
+   * VIRTUAL
+   */
+  activated: 'activated',
+};
+
+export const ALARM_INFOS_FIELDS = [
+  ALARM_FIELDS.infos,
+  ALARM_FIELDS.entityInfos,
+  ALARM_FIELDS.entityComponentInfos,
+];
+
 export const ALARM_LEVELS = {
   minor: 20,
   major: 30,
@@ -75,39 +148,25 @@ export const META_ALARMS_THRESHOLD_TYPES = {
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
-export const ALARM_ENTITY_FIELDS = { // TODO: update fields
-  connector: 'v.connector',
-  connectorName: 'v.connector_name',
-  component: 'v.component',
-  resource: 'v.resource',
-  output: 'v.output',
-  extraDetails: 'extra_details',
-  priority: 'priority',
-  impactState: 'impact_state',
-  state: 'v.state.val',
-  status: 'v.status.val',
-  tags: 'tags',
-};
-
-export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
-  { value: ALARM_ENTITY_FIELDS.connector },
-  { value: ALARM_ENTITY_FIELDS.connectorName },
-  { value: ALARM_ENTITY_FIELDS.component },
-  { value: ALARM_ENTITY_FIELDS.resource },
-  { value: ALARM_ENTITY_FIELDS.output },
-  { value: ALARM_ENTITY_FIELDS.extraDetails },
-  { value: ALARM_ENTITY_FIELDS.state },
-  { value: ALARM_ENTITY_FIELDS.status },
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [ // TODO: check it
+  { value: ALARM_FIELDS.connector },
+  { value: ALARM_FIELDS.connectorName },
+  { value: ALARM_FIELDS.component },
+  { value: ALARM_FIELDS.resource },
+  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.extraDetails },
+  { value: ALARM_FIELDS.state },
+  { value: ALARM_FIELDS.status },
 ];
 
-export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
-  { value: ALARM_ENTITY_FIELDS.connector },
-  { value: ALARM_ENTITY_FIELDS.connectorName },
-  { value: ALARM_ENTITY_FIELDS.resource },
-  { value: ALARM_ENTITY_FIELDS.output },
-  { value: ALARM_ENTITY_FIELDS.extraDetails },
-  { value: ALARM_ENTITY_FIELDS.state },
-  { value: ALARM_ENTITY_FIELDS.status },
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [ // TODO: check it
+  { value: ALARM_FIELDS.connector },
+  { value: ALARM_FIELDS.connectorName },
+  { value: ALARM_FIELDS.resource },
+  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.extraDetails },
+  { value: ALARM_FIELDS.state },
+  { value: ALARM_FIELDS.status },
 ];
 
 export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
@@ -158,79 +217,6 @@ export const ALARM_INTERVAL_FIELDS = {
   lastUpdateDate: 'v.last_update_date',
   lastEventDate: 'v.last_event_date',
 };
-
-export const ALARM_FIELDS = {
-  id: '_id',
-  displayName: 'v.display_name',
-  output: 'v.output',
-  longOutput: 'v.long_output',
-  initialOutput: 'v.initial_output',
-  initialLongOutput: 'v.initial_long_output',
-  connector: 'v.connector',
-  connectorName: 'v.connector_name',
-  component: 'v.component',
-  resource: 'v.resource',
-  lastComment: 'v.last_comment.m',
-  ackBy: 'v.ack.a',
-  ackMessage: 'v.ack.m',
-  ackInitiator: 'v.ack.initiator',
-  stateMessage: 'v.state.m',
-  statusMessage: 'v.status.m',
-  state: 'v.state.val',
-  status: 'v.status.val',
-  totalStateChanges: 'v.total_state_changes',
-  timestamp: 't',
-  creationDate: 'v.creation_date',
-  lastUpdateDate: 'v.last_update_date',
-  lastEventDate: 'v.last_event_date',
-  ackAt: 'v.ack.t',
-  stateAt: 'v.state.t',
-  statusAt: 'v.status.t',
-  resolved: 'v.resolved',
-  activationDate: 'v.activation_date',
-  duration: 'v.duration',
-  currentStateDuration: 'v.current_state_duration',
-  snoozeDuration: 'v.snooze_duration',
-  pbhInactiveDuration: 'v.pbh_inactive_duration',
-  activeDuration: 'v.active_duration',
-  eventsCount: 'v.events_count',
-  tags: 'tags',
-  extraDetails: 'extra_details',
-  impactState: 'impact_state',
-  infos: 'v.infos',
-  links: 'links',
-  entityId: 'entity._id',
-  entityName: 'entity.name',
-  entityCategoryName: 'entity.category.name',
-  entityType: 'entity.type',
-  entityComponent: 'entity.component',
-  entityConnector: 'entity.connector',
-  entityImpactLevel: 'entity.impact_level',
-  entityKoEvents: 'entity.ko_events',
-  entityOkEvents: 'entity.ok_events',
-  entityInfos: 'entity.infos',
-  entityComponentInfos: 'entity.component_infos',
-
-  /**
-   * OBJECTS
-   */
-  ack: 'v.ack',
-  ticket: 'v.ticket',
-  canceled: 'v.canceled',
-  snooze: 'v.snooze',
-  pbehaviorInfo: 'v.pbehavior_info',
-
-  /**
-   * VIRTUAL
-   */
-  activated: 'activated',
-};
-
-export const ALARM_INFOS_FIELDS = [
-  ALARM_FIELDS.infos,
-  ALARM_FIELDS.entityInfos,
-  ALARM_FIELDS.entityComponentInfos,
-];
 
 const {
   ack,
@@ -377,3 +363,9 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
    */
   [ALARM_FIELDS.activated]: 'common.activated',
 };
+
+export const ALARM_UNSORTABLE_FIELDS = [
+  ALARM_FIELDS.extraDetails,
+  ALARM_FIELDS.links,
+  ALARM_FIELDS.tags,
+];

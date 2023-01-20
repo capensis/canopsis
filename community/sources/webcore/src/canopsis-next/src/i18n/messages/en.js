@@ -41,7 +41,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
-  ALARM_INTERVAL_FIELDS,
+  ALARM_INTERVAL_FIELDS, ENTITIES_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -887,8 +887,8 @@ export default merge({
         both: 'Both',
       },
     },
-    templateEditor: 'Template',
     columns: {
+      customLabel: 'Custom label',
       isHtml: 'Is it HTML?',
       withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
@@ -1837,6 +1837,14 @@ export default merge({
         title: 'Create share token',
       },
     },
+    createWidgetTemplate: {
+      create: {
+        title: 'Create widget template',
+      },
+      edit: {
+        title: 'Edit widget template',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -2141,6 +2149,7 @@ export default merge({
       stateSettings: 'State settings',
       storageSettings: 'Storage settings',
       notificationsSettings: 'Notifications settings',
+      widgetTemplates: 'Widget templates',
     },
   },
   view: {
@@ -3348,5 +3357,10 @@ export default merge({
     metricsDisabled: 'Engine\'s metrics are disabled',
     generateDump: 'Generate a new dump',
     downloadDump: 'Download dump',
+  },
+
+  entities: {
+    [ENTITIES_TYPES.alarm]: 'Alarm',
+    [ENTITIES_TYPES.entity]: 'Entity',
   },
 }, featureService.get('i18n.en'));

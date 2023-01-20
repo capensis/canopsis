@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_ENTITY_FIELDS } from '@/constants';
+import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, ALARM_FIELDS } from '@/constants';
 
 import { defaultColumnsToColumns } from '@/helpers/entities';
 
@@ -72,7 +72,7 @@ export default {
         ...column,
         value,
         text: label,
-        sortable: value !== ALARM_ENTITY_FIELDS.extraDetails,
+        sortable: value !== ALARM_FIELDS.extraDetails,
       }));
     },
   },

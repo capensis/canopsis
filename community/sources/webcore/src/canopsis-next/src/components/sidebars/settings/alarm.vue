@@ -7,17 +7,20 @@
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(
         v-model="form.parameters.sort",
-        :columns="form.parameters.widgetColumns",
+        :columns="sortablePreparedWidgetColumns",
         :columns-label="$t('settings.columnName')"
       )
       v-divider
       field-columns(
         v-model="form.parameters.widgetColumns",
+        :template.sync="form.parameters.widgetColumnsTemplate",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
+        :templates="alarmWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         with-template,
         with-html,
         with-color-indicator
@@ -25,22 +28,28 @@
       v-divider
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
+        :template.sync="form.parameters.widgetGroupColumnsTemplate",
         :label="$t('settings.groupColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
+        :templates="alarmWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         with-html,
         with-color-indicator
       )
       v-divider
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
+        :template.sync="form.parameters.serviceDependenciesColumnsTemplate",
         :label="$t('settings.trackColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
+        :templates="alarmWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         with-color-indicator
       )
       v-divider
@@ -78,7 +87,7 @@
       v-divider
       field-info-popup(
         v-model="form.parameters.infoPopups",
-        :columns="form.parameters.widgetColumns"
+        :columns="preparedWidgetColumns"
       )
       v-divider
       field-text-editor(
@@ -136,11 +145,15 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+
+import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
-import { widgetColumnsInfos } from '@/mixins/widget/columns/infos';
+import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -194,9 +207,24 @@ export default {
   mixins: [
     widgetSettingsMixin,
     alarmVariablesMixin,
-    widgetColumnsInfos,
+    widgetColumnsMixin,
+    widgetColumnsInfosMixin,
+    widgetColumnsTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
+  computed: {
+    preparedWidgetColumns() {
+      return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
+        ...column,
+
+        text: this.getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      }));
+    },
+
+    sortablePreparedWidgetColumns() {
+      return this.preparedWidgetColumns.filter(column => this.getSortable(column, ALARM_UNSORTABLE_FIELDS));
+    },
+  },
 };
 </script>
