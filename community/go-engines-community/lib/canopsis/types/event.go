@@ -40,11 +40,6 @@ const (
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
 
-	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
-	// to trigger webhook with declare ticket parameter.
-	// todo remove
-	EventTypeDeclareTicket = "declareticket"
-
 	EventTypeDone              = "done"
 	EventTypeChangestate       = "changestate"
 	EventTypeKeepstate         = "keepstate"
@@ -327,7 +322,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 // IsContextable tells you if the given event can lead to context enrichment.
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
-	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
+	case EventTypeCheck, EventTypePerf, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
@@ -610,7 +605,6 @@ func isValidEventType(t string) bool {
 		EventTypeAssocTicket,
 		EventTypeCancel,
 		EventTypeComment,
-		EventTypeDeclareTicket,
 		EventTypeDeclareTicketWebhook,
 		EventTypeDone,
 		EventTypeChangestate,
