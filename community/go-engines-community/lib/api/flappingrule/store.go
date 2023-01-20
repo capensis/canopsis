@@ -2,6 +2,8 @@ package flappingrule
 
 import (
 	"context"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
@@ -34,7 +36,7 @@ func NewStore(
 		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.FlappingRuleMongoCollection),
 
-		defaultSearchByFields: []string{"_id", "author", "name", "description"},
+		defaultSearchByFields: []string{"_id", "author.name", "name", "description"},
 	}
 }
 
@@ -73,7 +75,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, s.authorPipeline()...)
+	pipeline = append(pipeline, author.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -95,7 +97,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	pipeline := author.Pipeline()
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -110,7 +112,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		query.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, query.Sort),
-		s.authorPipeline(),
 	))
 
 	if err != nil {
@@ -208,19 +209,6 @@ func (s *store) updateFollowingPriorities(ctx context.Context, id string, priori
 	)
 
 	return err
-}
-
-func (s *store) authorPipeline() []bson.M {
-	return []bson.M{
-		// Author
-		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "author",
-			"foreignField": "_id",
-			"as":           "author",
-		}},
-		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
-	}
 }
 
 func transformRequestToModel(r EditRequest) flappingrule.Rule {

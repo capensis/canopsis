@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -205,6 +206,18 @@ func NewEngine(
 		Logger:             logger,
 		LoadRules:          !mongoClient.IsDistributed(),
 	})
+	engine.AddPeriodicalWorker("soft delete", libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheSoftDeletePeriodicalLockKey,
+		&softDeletePeriodicalWorker{
+			collection:         mongoClient.Collection(mongo.EntityMongoCollection),
+			periodicalInterval: options.PeriodicalWaitTime,
+			eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			softDeleteWaitTime: options.SoftDeleteWaitTime,
+			logger:             logger,
+		},
+		logger,
+	))
 	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
 	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(

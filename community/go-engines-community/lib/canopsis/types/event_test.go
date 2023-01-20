@@ -2,9 +2,10 @@ package types_test
 
 import (
 	"encoding/json"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
-	"testing"
 )
 
 func getEvent() types.Event {
@@ -22,7 +23,6 @@ func getEvent() types.Event {
 		PerfDataArray: nil,
 		ID:            nil,
 		Status:        nil,
-		StateType:     nil,
 		Alarm:         nil,
 		Entity:        nil,
 	}
@@ -46,7 +46,6 @@ func GetBadEvent() types.Event {
 		PerfDataArray: nil,
 		ID:            nil,
 		Status:        &status,
-		StateType:     nil,
 		SourceType:    "wrong_source_type",
 		LongOutput:    "",
 		State:         -1,

@@ -1,7 +1,6 @@
 import { ACTION_TYPES } from '@/constants';
 
 export default {
-  triggers: 'Déclencheurs',
   emitTrigger: 'Émettre un déclencheur',
   withAuth: 'Avez-vous besoin de champs d\'authentification ?',
   emptyResponse: 'Réponse vide',

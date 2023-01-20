@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
@@ -21,11 +22,6 @@ type Store interface {
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
-type AggregationResult struct {
-	Data       []*Response `bson:"data" json:"data"`
-	TotalCount int64       `bson:"total_count" json:"total_count"`
-}
-
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
@@ -39,7 +35,7 @@ func NewStore(
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EventFilterRulesMongoCollection),
-		defaultSearchByFields: []string{"_id", "author", "description", "type"},
+		defaultSearchByFields: []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:         "created",
 	}
 }
@@ -111,6 +107,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 			},
 		},
 	}
+	pipeline = append(pipeline, author.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -133,7 +130,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	pipeline := author.Pipeline()
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -228,12 +225,4 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
-}
-
-func (r *AggregationResult) GetData() interface{} {
-	return r.Data
-}
-
-func (r *AggregationResult) GetTotal() int64 {
-	return r.TotalCount
 }

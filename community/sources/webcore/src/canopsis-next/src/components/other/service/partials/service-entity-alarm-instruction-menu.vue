@@ -7,39 +7,64 @@
       v-list-tile(
         v-for="assignedInstruction in assignedInstructions",
         :key="assignedInstruction._id",
-        :disabled="isDisabledAssignedInstruction(assignedInstruction)",
+        :disabled="isDisabled(assignedInstruction)",
         @click.stop.prevent="$emit('execute', assignedInstruction)"
       )
-        v-list-tile-title {{ getAssignedInstructionLabel(assignedInstruction) }}
+        v-list-tile-title {{ getLabel(assignedInstruction) }}
 </template>
 
 <script>
-import { get } from 'lodash';
+import { find } from 'lodash';
 
 import { REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
+import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
+
 export default {
   props: {
-    assignedInstructions: {
-      type: Array,
-      default: () => [],
-    },
     icon: {
       type: String,
       required: true,
     },
+    entity: {
+      type: Object,
+      default: () => ({}),
+    },
+    assignedInstructions: {
+      type: Array,
+      default: () => [],
+    },
   },
-  methods: {
-    isDisabledAssignedInstruction(assignedInstruction) {
-      return get(assignedInstruction, 'execution.status') === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;
+  computed: {
+    hasRunningInstruction() {
+      return isInstructionExecutionIconInProgress(this.entity.instruction_execution_icon);
     },
 
-    getAssignedInstructionLabel(assignedInstruction) {
-      const { execution } = assignedInstruction;
-      const titlePrefix = execution ? 'resume' : 'execute';
+    pausedInstructions() {
+      return this.assignedInstructions.filter(instruction => instruction.execution);
+    },
+  },
+  methods: {
+    isDisabled(instruction) {
+      return this.hasRunningInstruction
+        || (
+          Boolean(this.pausedInstructions.length)
+          && !find(this.pausedInstructions, { _id: instruction._id })
+        );
+    },
 
-      return this.$t(`alarm.actions.titles.${titlePrefix}Instruction`, {
-        instructionName: assignedInstruction.name,
+    getLabel(instruction) {
+      const { execution, name } = instruction;
+      let titlePrefix = 'execute';
+
+      if (execution) {
+        titlePrefix = execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running
+          ? 'inProgress'
+          : 'resume';
+      }
+
+      return this.$t(`remediation.instruction.${titlePrefix}Instruction`, {
+        instructionName: name,
       });
     },
   },

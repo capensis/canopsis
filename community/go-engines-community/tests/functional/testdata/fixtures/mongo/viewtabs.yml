@@ -12,7 +12,6 @@ viewtabs:
   tab_to_viewgroup_get_1:
     <<: *tab
     _id: test-tab-to-viewgroup-get-1
-    author: test-user-to-viewgroup-get
     created: 1611229670
     position: 0
     title: test-tab-to-viewgroup-get-1-title
@@ -22,7 +21,6 @@ viewtabs:
   tab_to_viewgroup_get_2:
     <<: *tab
     _id: test-tab-to-viewgroup-get-2
-    author: test-user-to-viewgroup-get
     created: 1611229670
     position: 1
     title: test-tab-to-viewgroup-get-2-title
@@ -32,7 +30,6 @@ viewtabs:
   tab_to_view_get_1:
     <<: *tab
     _id: test-tab-to-view-get-1
-    author: test-tab-to-view-get-1-author
     created: 1611229670
     position: 0
     title: test-tab-to-view-get-1-title
@@ -42,7 +39,6 @@ viewtabs:
   tab_to_view_get_2:
     <<: *tab
     _id: test-tab-to-view-get-2
-    author: test-tab-to-view-get-2-author
     created: 1611229670
     position: 1
     title: test-tab-to-view-get-2-title
@@ -57,7 +53,6 @@ viewtabs:
   tab_to_get:
     <<: *tab
     _id: test-tab-to-get
-    author: test-author-to-tab-get
     created: 1611229670
     position: 0
     title: test-tab-to-get-title
@@ -274,3 +269,8 @@ viewtabs:
     <<: *tab
     _id: test-tab-to-map-edit
     view: test-view-to-map-edit
+
+  tab_to_alarm_test_tags_filter:
+    <<: *tab
+    _id: test-tab-to-alarm-test-tags-filter
+    view: test-view-to-test-alarm-tags-filter

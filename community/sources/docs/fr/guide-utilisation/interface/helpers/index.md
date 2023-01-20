@@ -142,6 +142,7 @@ Utilisation générique :
 Ce helper attend un unique paramètre :
 
 *  `nombre-de-secondes` (obligatoire). Une variable, ou un entier positif correspondant à un [timestamp Unix](https://fr.wikipedia.org/wiki/Heure_Unix) réglé sur UTC. Si la variable est vide, le helper n'affichera rien.
+*  `format` (optionnel). Seul le format `long` est pris en charge. Il s'agit d'afficher la date au format long `30/03/1987 10:00:00` même si le timestamp correspond à la date du jour.
 
 #### Exemple d'utilisation du helper `timestamp`
 
@@ -149,6 +150,7 @@ Afficher le timestamp Unix de `544089600` secondes (correspondant au 30 mars 
 
 ```handlebars
 {{timestamp 544089600}}
+{{timestamp 544089600 format='long'}}
 ```
 
 ### Helper `request`

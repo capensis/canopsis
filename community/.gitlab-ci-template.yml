@@ -1,0 +1,22 @@
+.create_release:
+  tags:
+    - executor-docker
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+    - echo "Running the release job."
+  release:
+    tag_name: ${CI_COMMIT_TAG}
+    name: 'Release ${CANOPSIS_EDITION} ${CI_COMMIT_TAG}'
+    description: 'Canopsis ${CANOPSIS_EDITION} ${CI_COMMIT_TAG}.'
+    assets:
+      links:
+        - name: ${DOCKER_ARCHIVE_FILE}
+          link_type: package
+          url: ${DOCKER_ARCHIVE_PACKAGE}
+  rules:
+    - if: $CANOPSIS_EDITION == "community"
+      exists:
+        - .gitlab-ci.yml
+      when: never
+    - if: $CI_COMMIT_TAG

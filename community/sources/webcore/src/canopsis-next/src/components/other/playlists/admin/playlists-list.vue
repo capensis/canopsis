@@ -102,6 +102,7 @@ export default {
         {
           text: this.$t('common.interval'),
           value: 'interval',
+          sortable: false,
         },
         {
           text: this.$t('common.actionsLabel'),

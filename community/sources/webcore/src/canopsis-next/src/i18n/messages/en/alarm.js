@@ -1,6 +1,7 @@
 import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
+  eventsCount: 'Events count',
   alarmCreationDate: 'Alarm creation date',
   alarmDisplayName: 'Alarm display name',
   liveReporting: 'Set a custom date range',
@@ -34,8 +35,6 @@ export default {
       manualMetaAlarmGroup: 'Manual meta alarm management',
       manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
       comment: 'Comment',
-      executeInstruction: 'Execute {instructionName}',
-      resumeInstruction: 'Resume {instructionName}',
     },
     iconsTitles: {
       ack: 'Ack',
@@ -129,7 +128,7 @@ export default {
     [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
     [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
     [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
-    [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with acks',
+    [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with tickets',
     [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Number of active alarms without tickets',
     [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
     [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
