@@ -11,6 +11,7 @@ exports[`service-entity-info-tab Renders \`service-entity-info-tab\` with custom
     <service-entity-actions-stub
       actions="[object Object]"
       assignedinstructions="[object Object]"
+      entity="[object Object]"
     />
   </div>
   <service-entity-template-stub

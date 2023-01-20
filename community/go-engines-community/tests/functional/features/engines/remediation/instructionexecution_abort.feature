@@ -213,7 +213,7 @@ Feature: abort a instruction execution
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 410
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 404
     When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-3
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -384,7 +384,7 @@ Feature: abort a instruction execution
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 410
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 404
     When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-4
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -529,6 +529,7 @@ Feature: abort a instruction execution
     """
     {
       "name": "test-scenario-remediation-instruction-execution-abort-5-name",
+      "priority": 10067,
       "enabled": true,
       "triggers": ["ack"],
       "actions": [
@@ -569,7 +570,7 @@ Feature: abort a instruction execution
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 410
+    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 404
     When I do GET /api/v4/alarms?search=test-resource-remediation-instruction-execution-abort-5
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:

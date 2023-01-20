@@ -1,3 +1,7 @@
+function isInt(value) {
+    return typeof value === "number" || value instanceof NumberLong;
+}
+
 function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
     if (!oldEntityPatterns) {
         return null;
@@ -116,7 +120,7 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
 
                         switch (vField) {
                             case "ack":
-                                var ackCond = migrateOldAlarmStepPattern(vValue, newField, true)
+                                var ackCond = migrateOldAlarmStepPattern(vValue, newField, {t: true, a: true, m: true, initiator: true});
                                 if (!ackCond) {
                                     return null;
                                 }
@@ -126,7 +130,7 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                             case "canceled":
                             case "ticket":
                             case "snooze":
-                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, false)
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {});
                                 if (!stepCond) {
                                     return null;
                                 }
@@ -153,6 +157,26 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                     cond: timeCond,
                                 });
                                 break;
+                            case "activation_date":
+                                if (vValue === null) {
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: {
+                                            type: "exist",
+                                            value: false,
+                                        },
+                                    });
+                                } else {
+                                    var timeCond = migrateOldTimePattern(vValue)
+                                    if (!timeCond) {
+                                        return null;
+                                    }
+                                    newGroup.push({
+                                        field: newField,
+                                        cond: timeCond,
+                                    });
+                                }
+                                break;
                             case "last_update_date":
                             case "last_event_date":
                             case "resolved":
@@ -163,7 +187,20 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                             case "connector_name":
                             case "display_name":
                             case "output":
+                            case "long_output":
+                            case "initial_output":
+                            case "initial_long_output":
                                 var cond = migrateOldStringPattern(vValue);
+                                if (!cond) {
+                                    return null;
+                                }
+                                newGroup.push({
+                                    field: newField,
+                                    cond: cond,
+                                });
+                                break;
+                            case "total_state_changes":
+                                var cond = migrateOldIntPattern(vValue);
                                 if (!cond) {
                                     return null;
                                 }
@@ -212,6 +249,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                 case "component":
                 case "resource":
                 case "output":
+                case "long_output":
                 case "event_type":
                 case "source_type":
                     var cond = migrateOldStringPattern(value);
@@ -234,13 +272,20 @@ function migrateOldEventPatterns(oldEventPatterns) {
                     }
 
                     break;
+                case "state":
+                    var cond = migrateOldIntPattern(value);
+                    if (!cond) {
+                        return null;
+                    }
+                    newGroup.push({
+                        field: field,
+                        cond: cond,
+                    });
+                    break;
                 case "_id":
                 case "perf_data":
                 case "status":
                 case "timestamp":
-                case "state_type":
-                case "long_output":
-                case "state":
                 case "author":
                 case "routing_key":
                 case "ack_resources":
@@ -259,7 +304,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                                 value: false,
                             },
                         });
-                    } else if (typeof value === "number") {
+                    } else if (isInt(value)) {
                         newGroup.push({
                             field: newField,
                             field_type: "int",
@@ -389,15 +434,27 @@ function migrateOldStringPattern(oldStringPattern) {
 }
 
 function migrateOldTimePattern(oldTimePattern) {
-    if (oldTimePattern["<="] || oldTimePattern[">="]) {
-        return null;
+    var from = null;
+    var to = null
+    if (oldTimePattern[">="]) {
+        from = oldTimePattern[">="];
     }
-    if (oldTimePattern["<"] && oldTimePattern[">"]) {
+    if (oldTimePattern["<="]) {
+        to = oldTimePattern["<="];
+    }
+    if (oldTimePattern[">"]) {
+        from = oldTimePattern[">"];
+    }
+    if (oldTimePattern["<"]) {
+        to = oldTimePattern["<"];
+    }
+
+    if (from && to) {
         return {
             type: "absolute_time",
             value: {
-                from: oldTimePattern[">"],
-                to: oldTimePattern["<"]
+                from: from,
+                to: to,
             },
         };
     }
@@ -405,13 +462,13 @@ function migrateOldTimePattern(oldTimePattern) {
     return null;
 }
 
-function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
+function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowedFields) {
     if (oldAlarmStepPattern === null) {
         return {
             field: stepField,
             cond: {
                 type: "exist",
-                value: "false"
+                value: false
             }
         };
     }
@@ -422,11 +479,27 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowTime) {
 
         switch (field) {
             case "t":
-                if (!allowTime) {
+                if (!allowedFields || !allowedFields[field]) {
                     return null;
                 }
 
                 var cond = migrateOldTimePattern(value);
+                if (!cond) {
+                    return null;
+                }
+                res = {
+                    field: stepField + "." + field,
+                    cond: cond,
+                };
+                break;
+            case "a":
+            case "m":
+            case "initiator":
+                if (!allowedFields || !allowedFields[field]) {
+                    return null;
+                }
+
+                var cond = migrateOldStringPattern(value);
                 if (!cond) {
                     return null;
                 }
@@ -470,8 +543,17 @@ function migrateOldStateAndStatusAlarmStepPattern(oldAlarmStepPattern, stepField
 }
 
 function migrateOldIntPattern(oldIntPattern) {
-    if (oldIntPattern["<="] || oldIntPattern[">="]) {
-        return null;
+    if (oldIntPattern["<="]) {
+        return {
+            type: "lt",
+            value: oldIntPattern["<="] + 1,
+        };
+    }
+    if (oldIntPattern[">="]) {
+        return {
+            type: "gt",
+            value: oldIntPattern[">="] - 1,
+        };
     }
     if (oldIntPattern["<"]) {
         return {
@@ -486,7 +568,7 @@ function migrateOldIntPattern(oldIntPattern) {
         };
     }
 
-    if (typeof oldIntPattern === "number") {
+    if (isInt(oldIntPattern)) {
         return {
             type: "eq",
             value: oldIntPattern,

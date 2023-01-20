@@ -19,6 +19,7 @@ const stubs = {
   'c-progress-overlay': true,
   'pbehavior-create-event': true,
   'pbehavior-planning-calendar-legend': true,
+  'calendar-app-period-picker': true,
 };
 
 describe('pbehavior-planning-calendar', () => {

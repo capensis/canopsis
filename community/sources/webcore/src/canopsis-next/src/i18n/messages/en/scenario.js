@@ -1,7 +1,6 @@
 import { ACTION_TYPES } from '@/constants';
 
 export default {
-  triggers: 'Triggers',
   emitTrigger: 'Emit trigger',
   withAuth: 'Do you need auth fields?',
   emptyResponse: 'Empty response',

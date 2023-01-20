@@ -109,4 +109,25 @@ describe('pbehaviors-list', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  test('Renders `pbehaviors-list` with updatable and old_mongo_query', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        pbehaviors: pbehaviorsItems.map(item => ({ ...item, old_mongo_query: true })),
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+          search: '',
+          sortBy: '',
+          descending: false,
+        },
+        updatable: true,
+        totalItems: 50,
+      },
+    });
+
+    await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });

@@ -10,6 +10,8 @@ import (
 
 const ID = "data_storage"
 
+const BulkSize = 10000
+
 type Adapter interface {
 	Get(ctx context.Context) (DataStorage, error)
 	UpdateHistoryJunit(ctx context.Context, t types.CpsTime) error
