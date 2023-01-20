@@ -41,13 +41,9 @@ Feature: get a declare ticket status
         },
         {
           "request": {
-            "url": "{{ .dummyApiURL }}/webhook/request",
-            "payload": "{\"_id\":\"test-ticket-declareticket-execution-websocket-1\",\"url\":\"https://test/test-ticket-declareticket-execution-websocket-1\",\"name\":\"{{ `{{ .Response.name }}`}}\"}",
             "method": "POST",
-            "auth": {
-              "username": "test",
-              "password": "test"
-            }
+            "url": "{{ .dummyApiURL }}/webhook/long-request",
+            "payload": "{\"_id\":\"test-ticket-declareticket-execution-websocket-1\",\"url\":\"https://test/test-ticket-declareticket-execution-websocket-1\",\"name\":\"{{ `{{ .Response.name }}`}}\"}"
           },
           "declare_ticket": {
             "ticket_id": "_id",
@@ -139,20 +135,16 @@ Feature: get a declare ticket status
       "webhooks": [
         {
           "request": {
-            "url": "{{ .dummyApiURL }}/webhook/auth-request",
+            "url": "{{ .dummyApiURL }}/webhook/long-auth-request",
             "method": "POST"
           },
           "stop_on_fail": true
         },
         {
           "request": {
-            "url": "{{ .dummyApiURL }}/webhook/request",
-            "payload": "{\"_id\":\"test-ticket-declareticket-execution-websocket-2\",\"url\":\"https://test/test-ticket-declareticket-execution-websocket-2\",\"name\":\"test-ticket-declareticket-execution-websocket-2 {{ `{{ range .Alarms }}{{ .Value.Resource }}{{ end }}`}}\"}",
             "method": "POST",
-            "auth": {
-              "username": "test",
-              "password": "test"
-            }
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "payload": "{\"_id\":\"test-ticket-declareticket-execution-websocket-2\",\"url\":\"https://test/test-ticket-declareticket-execution-websocket-2\",\"name\":\"test-ticket-declareticket-execution-websocket-2 {{ `{{ range .Alarms }}{{ .Value.Resource }}{{ end }}`}}\"}"
           },
           "declare_ticket": {
             "ticket_id": "_id",
@@ -212,7 +204,7 @@ Feature: get a declare ticket status
     {
       "_id": "{{ .executionID }}",
       "status": 3,
-      "fail_reason": "url {{ .dummyApiURL }}/webhook/auth-request is unauthorized"
+      "fail_reason": "url {{ .dummyApiURL }}/webhook/long-auth-request is unauthorized"
     }
     """
 
@@ -244,13 +236,9 @@ Feature: get a declare ticket status
       "webhooks": [
         {
           "request": {
-            "url": "{{ .dummyApiURL }}/webhook/request",
-            "payload": "{\"_id\":\"test-ticket-declareticket-execution-websocket-3\",\"url\":\"https://test/test-ticket-declareticket-execution-websocket-3\",\"name\":\"test-ticket-declareticket-execution-websocket-3 {{ `{{ range .Alarms }}{{ .Value.Resource }}{{ end }}`}}\"}",
             "method": "POST",
-            "auth": {
-              "username": "test",
-              "password": "test"
-            }
+            "url": "{{ .dummyApiURL }}/webhook/long-request",
+            "payload": "{\"_id\":\"test-ticket-declareticket-execution-websocket-3\",\"url\":\"https://test/test-ticket-declareticket-execution-websocket-3\",\"name\":\"test-ticket-declareticket-execution-websocket-3 {{ `{{ range .Alarms }}{{ .Value.Resource }}{{ end }}`}}\"}"
           },
           "declare_ticket": {
             "ticket_id": "not_exist_field"
