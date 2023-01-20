@@ -53,6 +53,10 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 			return
 		}
 
+		if response.Timeout > 0 {
+			time.Sleep(response.Timeout)
+		}
+
 		if response.Code != http.StatusOK && response.Code != http.StatusNoContent {
 			http.Error(w, response.Body, response.Code)
 			return
@@ -76,10 +80,6 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 				http.Error(w, r.Method, http.StatusUnauthorized)
 				return
 			}
-		}
-
-		if response.Timeout > 0 {
-			time.Sleep(response.Timeout)
 		}
 
 		if len(response.Headers) > 0 {
@@ -332,6 +332,22 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			ForwardRequestHeader: true,
 			Username:             "test",
 			Password:             "test",
+		},
+		"/webhook/long-request": {
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+			Timeout:              2 * time.Second,
+		},
+		"/webhook/long-auth-request": {
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+			Username:             "test",
+			Password:             "test",
+			Timeout:              2 * time.Second,
 		},
 	}
 }
