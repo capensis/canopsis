@@ -1,71 +1,29 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createDeclareTicketModule, createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
-import {
-  EVENT_DEFAULT_ORIGIN,
-  EVENT_ENTITY_TYPES,
-  EVENT_INITIATORS,
-} from '@/constants';
 
 import CreateDeclareTicketEvent from '@/components/modals/declare-ticket/create-declare-ticket-event.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'alarm-general-table': true,
+  'c-progress-overlay': true,
+  'declare-ticket-event-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'alarm-general-table': true,
+  'c-progress-overlay': true,
+  'declare-ticket-event-form': true,
 };
-
-const factory = (options = {}) => shallowMount(CreateDeclareTicketEvent, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateDeclareTicketEvent, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
@@ -97,46 +55,52 @@ describe('create-declare-ticket-event', () => {
     },
   };
   const items = [alarm];
-  const eventData = {
-    id: alarm._id,
-    component: alarm.v.component,
-    connector: alarm.v.connector,
-    connector_name: alarm.v.connector_name,
-    resource: alarm.v.resource,
-    crecord_type: EVENT_ENTITY_TYPES.declareTicket,
-    event_type: EVENT_ENTITY_TYPES.declareTicket,
-    initiator: EVENT_INITIATORS.user,
-    origin: EVENT_DEFAULT_ORIGIN,
-    ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
-    source_type: alarm.entity.type,
-    state: alarm.v.state.val,
-    state_type: alarm.v.status.val,
-    timestamp: timestamp / 1000,
-  };
-  const declareTicketEventData = {
-    ...eventData,
-
-    output: 'declare ticket',
-  };
   const config = {
     items,
   };
 
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-  const store = createMockedStoreModules([eventModule]);
+  const { declareTicketRuleModule } = createDeclareTicketModule();
+  const store = createMockedStoreModules([declareTicketRuleModule]);
 
-  afterEach(() => {
-    createEvent.mockClear();
+  const factory = generateShallowRenderer(CreateDeclareTicketEvent, {
+    stubs,
+    attachTo: document.body,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+    mocks: {
+      $modals,
+      $popups,
+    },
+  });
+
+  const snapshotFactory = generateRenderer(CreateDeclareTicketEvent, {
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+    mocks: {
+      $modals,
+      $popups,
+    },
   });
 
   test('Form submitted after trigger submit button', async () => {
-    const afterSubmit = jest.fn();
+    const action = jest.fn();
 
     const wrapper = factory({
       store,
@@ -144,30 +108,18 @@ describe('create-declare-ticket-event', () => {
         modal: {
           config: {
             items,
-            afterSubmit,
+            action,
           },
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [declareTicketEventData],
-      },
-      undefined,
-    );
-    expect(afterSubmit).toBeCalled();
+    expect(action).toBeCalledTimes(1);
+    expect(action).toBeCalledWith([]);
     expect($modals.hide).toBeCalledWith();
   });
 
@@ -177,24 +129,21 @@ describe('create-declare-ticket-event', () => {
       unavailableField: 'Error',
       anotherUnavailableField: 'Second error',
     };
-    createEvent.mockRejectedValueOnce(errors);
+    const action = jest.fn().mockRejectedValueOnce(errors);
 
     const wrapper = factory({
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       store,
-      mocks: {
-        $modals,
-        $popups,
-      },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -202,14 +151,7 @@ describe('create-declare-ticket-event', () => {
     expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [declareTicketEventData],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith([]);
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
@@ -223,14 +165,9 @@ describe('create-declare-ticket-event', () => {
           config,
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -244,9 +181,6 @@ describe('create-declare-ticket-event', () => {
         modal: {
           config,
         },
-      },
-      mocks: {
-        $modals,
       },
     });
 

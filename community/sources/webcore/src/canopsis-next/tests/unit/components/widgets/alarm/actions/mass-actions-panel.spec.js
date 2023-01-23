@@ -2,8 +2,8 @@ import Faker from 'faker';
 import { range } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createAuthModule, createEventModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -20,8 +20,6 @@ import {
 
 import MassActionsPanel from '@/components/widgets/alarm/actions/mass-actions-panel.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'shared-mass-actions-panel': {
     props: ['actions', 'dropDownActions'],
@@ -36,20 +34,6 @@ const stubs = {
     `,
   },
 };
-
-const factory = (options = {}) => shallowMount(MassActionsPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MassActionsPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
 
@@ -108,12 +92,7 @@ describe('mass-actions-panel', () => {
     ref_rk: `${fastAckAlarm.v.resource}/${fastAckAlarm.v.component}`,
   }));
 
-  const authModule = {
-    name: 'auth',
-    getters: {
-      currentUserPermissionsById: {},
-    },
-  };
+  const { authModule } = createAuthModule();
   const authModuleWithAccess = {
     ...authModule,
     getters: {
@@ -125,13 +104,7 @@ describe('mass-actions-panel', () => {
     },
   };
   const items = [alarm, metaAlarm];
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
+  const { eventModule, createEvent } = createEventModule();
 
   const widget = {
     parameters: {
@@ -147,6 +120,14 @@ describe('mass-actions-panel', () => {
   };
 
   const refreshAlarmsList = jest.fn();
+
+  const factory = generateShallowRenderer(MassActionsPanel, {
+    stubs,
+  });
+
+  const snapshotFactory = generateRenderer(MassActionsPanel, {
+    stubs,
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
