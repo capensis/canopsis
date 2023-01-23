@@ -13,12 +13,14 @@ export const entitiesDeclareTicketRuleMixin = {
   methods: {
     ...mapActions({
       fetchDeclareTicketRulesList: 'fetchList',
+      fetchAssignedDeclareTicketsWithoutStore: 'fetchAssignedTicketsWithoutStore',
       createDeclareTicketRule: 'create',
       updateDeclareTicketRule: 'update',
       removeDeclareTicketRule: 'remove',
       createTestDeclareTicketExecution: 'createTestDeclareTicketExecution',
       fetchTestDeclareTicketExecutionWebhooksResponse: 'fetchTestDeclareTicketExecutionWebhooksResponse',
       bulkRemoveDeclareTicketRules: 'bulkRemove',
+      bulkCreateDeclareTicketExecution: 'bulkCreateDeclareTicketExecution',
     }),
   },
 };
