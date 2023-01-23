@@ -80,6 +80,7 @@ widget_filters:
     is_private: true
     created: 1605263992
     updated: <Current().created>
+    author: test-user-to-widget-filter-edit-1
 
   filter_to_update_3:
     <<: *filter
@@ -128,6 +129,7 @@ widget_filters:
     is_private: true
     created: 1605263992
     updated: <Current().created>
+    author: test-user-to-widget-filter-edit-1
 
   filter_to_delete_3:
     <<: *filter

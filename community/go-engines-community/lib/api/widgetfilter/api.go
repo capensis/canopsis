@@ -270,17 +270,45 @@ func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	ok, err := a.checkAccess(c, []string{id}, userId, model.PermissionUpdate)
+	filter, err := a.store.GetOneBy(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+	if filter == nil {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	ok, err = a.store.Delete(c, id, userId)
+	if filter.IsPrivate != nil {
+		if !*filter.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *filter.IsPrivate {
+			granted, err = a.checkAccess(c, []string{id}, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccess(c, []string{id}, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
+	}
+
+	ok, err := a.store.Delete(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
