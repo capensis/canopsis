@@ -187,7 +187,7 @@ export default {
           action: async (events) => {
             await this.bulkCreateDeclareTicketExecution({ data: events });
             /**
-             * TODO: Webhook declare ticket status modals should be opened
+             * TODO: Declare ticket status modals should be opened
              */
           },
         },
