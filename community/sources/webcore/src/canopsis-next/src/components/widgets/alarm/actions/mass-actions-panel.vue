@@ -17,6 +17,7 @@ import featuresService from '@/services/features';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
@@ -31,7 +32,7 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: { SharedMassActionsPanel },
-  mixins: [widgetActionsPanelAlarmMixin],
+  mixins: [widgetActionsPanelAlarmMixin, entitiesDeclareTicketRuleMixin],
   props: {
     items: {
       type: Array,
@@ -82,6 +83,12 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
+        },
+        {
+          type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
+          title: this.$t('alarm.actions.titles.declareTicket'),
+          method: this.showCreateDeclareTicketEventModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
@@ -167,6 +174,22 @@ export default {
           ...this.modalConfig,
 
           fastAckOutput: this.widget.parameters.fastAckOutput,
+        },
+      });
+    },
+
+    showCreateDeclareTicketEventModal() {
+      this.$modals.show({
+        name: MODALS.createDeclareTicketEvent,
+        config: {
+          ...this.modalConfig,
+
+          action: async (events) => {
+            await this.bulkCreateDeclareTicketExecution({ data: events });
+            /**
+             * TODO: Webhook declare ticket status modals should be opened
+             */
+          },
         },
       });
     },

@@ -6,7 +6,7 @@
         v-validate="'required'",
         :error-messages="errors.collect(ticketFieldName)",
         :name="ticketFieldName",
-        :label="$t('common.ticket')"
+        :label="$tc('common.ticket')"
       )
     action-note-form(v-field="value")
 </template>

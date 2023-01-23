@@ -20,10 +20,6 @@ export const CreateChangeStateEvent = () => ({
   component: import(/* webpackChunkName: "Events" */ './alarm/create-change-state-event.vue'),
   loading: LoaderOverlay,
 });
-export const CreateDeclareTicketEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-declare-ticket-event.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateSnoozeEvent = () => ({
   component: import(/* webpackChunkName: "Events" */ './alarm/create-snooze-event.vue'),
   loading: LoaderOverlay,
@@ -352,5 +348,9 @@ export const CreateShareToken = () => ({
 
 export const CreateDeclareTicketRule = () => ({
   component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateDeclareTicketEvent = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-event.vue'),
   loading: LoaderOverlay,
 });

@@ -190,9 +190,6 @@ export default {
   createAckRemove: {
     title: 'Annuler l\'acquittement',
   },
-  createDeclareTicket: {
-    title: 'Déclarer un incident',
-  },
   createAssociateTicket: {
     title: 'Associer un numéro de ticket',
     fields: {
@@ -882,5 +879,8 @@ export default {
     duplicate: {
       title: 'Dupliquer une règle de déclaration de ticket',
     },
+  },
+  createDeclareTicketEvent: {
+    title: 'Déclarer un incident',
   },
 };
