@@ -108,6 +108,14 @@ export const filterById = (items, item, idKey = '_id') => items
   .filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
 
 /**
+ * Filter entities by value
+ *
+ * @param {string[] | number[]} items
+ * @param {string | number} removingValue
+ */
+export const filterValue = (items, removingValue) => items.filter(item => item !== removingValue);
+
+/**
  * Generate alarm list widget form with default parameters.
  *
  * @return {WidgetForm}

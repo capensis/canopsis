@@ -250,7 +250,7 @@ export const API_ROUTES = {
     alarmsAssigned: '/api/v4/cat/declare-ticket-assigned',
     testExecution: '/api/v4/cat/test-declare-ticket-executions',
     testExecutionWebhooks: '/api/v4/cat/test-declare-ticket-webhooks',
-    bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-execution',
+    bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
   },
 };
 
