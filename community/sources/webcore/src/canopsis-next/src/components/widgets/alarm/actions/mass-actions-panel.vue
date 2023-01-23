@@ -176,6 +176,22 @@ export default {
       this.showDeclareTicketModalByAlarms(this.items);
     },
 
+    showCreateDeclareTicketEventModal() {
+      this.$modals.show({
+        name: MODALS.createDeclareTicketEvent,
+        config: {
+          ...this.modalConfig,
+
+          action: async (events) => {
+            await this.bulkCreateDeclareTicketExecution({ data: events });
+            /**
+             * TODO: Webhook declare ticket status modals should be opened
+             */
+          },
+        },
+      });
+    },
+
     showCreateGroupRequestEventModal() {
       this.$modals.show({
         name: MODALS.createEvent,
