@@ -1,7 +1,13 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createAlarmModule, createAuthModule, createEventModule, createMockedStoreModules } from '@unit/utils/store';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import {
+  createAlarmModule,
+  createAuthModule,
+  createDeclareTicketModule,
+  createEventModule,
+  createMockedStoreModules,
+} from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
@@ -24,8 +30,6 @@ import featuresService from '@/services/features';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'shared-actions-panel': {
@@ -70,10 +74,12 @@ describe('actions-panel', () => {
   };
   const { alarmModule } = createAlarmModule();
   const { eventModule, createEvent } = createEventModule();
+  const { declareTicketRuleModule, bulkCreateDeclareTicketExecution } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
     authModule,
     alarmModule,
+    declareTicketRuleModule,
   ]);
 
   const assignedInstructions = [
@@ -143,11 +149,10 @@ describe('actions-panel', () => {
   const refreshAlarmsList = jest.fn();
 
   const factory = generateShallowRenderer(ActionsPanel, {
-    localVue,
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(ActionsPanel, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, { stubs });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -399,6 +404,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        declareTicketRuleModule,
       ]),
       propsData: {
         item: alarm,
@@ -417,6 +423,7 @@ describe('actions-panel', () => {
         name: MODALS.createDeclareTicketEvent,
         config: {
           items: [alarm],
+          action: expect.any(Function),
           afterSubmit: expect.any(Function),
         },
       },
@@ -424,9 +431,17 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const events = [{ _id: Faker.datatype.string(), alarms: [Faker.datatype.string()] }];
 
-    expect(refreshAlarmsList).toBeCalledTimes(1);
+    config.action(events);
+
+    expect(bulkCreateDeclareTicketExecution).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: events,
+      },
+      undefined,
+    );
   });
 
   it('Associate ticket modal showed after trigger associate ticket action', () => {
