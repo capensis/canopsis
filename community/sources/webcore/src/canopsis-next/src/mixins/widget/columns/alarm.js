@@ -10,11 +10,8 @@ import { convertDurationToString } from '@/helpers/date/duration';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
-import { widgetColumnsMixin } from './common';
-
 export const widgetColumnsAlarmMixin = {
   mixins: [
-    widgetColumnsMixin,
     entitiesAlarmColumnsFiltersMixin,
   ],
   data() {

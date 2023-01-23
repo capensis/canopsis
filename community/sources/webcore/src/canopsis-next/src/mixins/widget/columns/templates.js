@@ -25,11 +25,11 @@ export const widgetColumnsTemplatesMixin = {
       }));
     },
 
-    alarmWidgetTemplates() {
+    alarmTypeTemplates() { // TODO: May be move this logic to component?
       return this.preparedWidgetTemplates.filter(({ type }) => type === ENTITIES_TYPES.alarm);
     },
 
-    entityWidgetTemplates() {
+    entityTypeTemplates() {
       return this.preparedWidgetTemplates.filter(({ type }) => type === ENTITIES_TYPES.entity);
     },
   },

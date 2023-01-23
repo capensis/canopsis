@@ -9,12 +9,18 @@ import {
   GRID_SIZES,
   SORT_ORDERS,
   TIME_UNITS,
-  CUSTOM_WIDGET_COLUMN_TEMPLATE,
+  DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 
-import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import {
+  widgetColumnsToForm,
+  formToWidgetColumns,
+  widgetColumnTemplateToForm,
+  formToWidgetColumnTemplate,
+} from '../shared/widget-column';
 
 /**
  * @typedef {Object} AlarmsListDataTableColumn
@@ -53,6 +59,7 @@ import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-colum
  * @property {number} itemsPerPage
  * @property {string} moreInfoTemplate
  * @property {WidgetInfoPopup[]} infoPopups
+ * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
  */
 
@@ -95,11 +102,16 @@ import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-colum
 
 /**
  * @typedef {AlarmListBaseParameters} AlarmListBaseParametersForm
+ * @property {string | Symbol} widgetColumnsTemplate
  * @property {WidgetColumnForm[]} widgetColumns
  */
 
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetDefaultParametersForm
+ * @property {string | Symbol} widgetColumnsTemplate
+ * @property {string | Symbol} widgetGroupColumnsTemplate
+ * @property {string | Symbol} widgetExportColumnsTemplate
+ * @property {string | Symbol} serviceDependenciesColumnsTemplate
  * @property {WidgetColumnForm[]} widgetColumns
  * @property {WidgetColumnForm[]} widgetGroupColumns
  * @property {WidgetColumnForm[]} widgetExportColumns
@@ -139,7 +151,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
-  widgetColumnsTemplate: alarmListParameters.infoPopups ?? '',
+  widgetColumnsTemplate: widgetColumnTemplateToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
 });
 
@@ -183,16 +195,16 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
       enabled: false,
       value: 'auto ack',
     },
-  widgetColumnsTemplate: parameters.widgetColumnsTemplate ?? CUSTOM_WIDGET_COLUMN_TEMPLATE,
-  widgetGroupColumnsTemplate: parameters.widgetGroupColumnsTemplate ?? CUSTOM_WIDGET_COLUMN_TEMPLATE,
-  serviceDependenciesColumnsTemplate: parameters.serviceDependenciesColumnsTemplate ?? CUSTOM_WIDGET_COLUMN_TEMPLATE,
-  widgetExportColumnsTemplate: parameters.widgetExportColumnsTemplate ?? CUSTOM_WIDGET_COLUMN_TEMPLATE,
+  widgetColumnsTemplate: widgetColumnTemplateToForm(parameters.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: widgetColumnTemplateToForm(parameters.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: widgetColumnTemplateToForm(parameters.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: widgetColumnTemplateToForm(parameters.widgetExportColumnsTemplate),
   widgetColumns:
-    widgetColumnsToForm(parameters.widgetColumns),
+    widgetColumnsToForm(parameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   widgetGroupColumns:
-    widgetColumnsToForm(parameters.widgetGroupColumns),
+    widgetColumnsToForm(parameters.widgetGroupColumns ?? DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
   serviceDependenciesColumns:
-    widgetColumnsToForm(parameters.serviceDependenciesColumns),
+    widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns),
   linksCategoriesAsList: parameters.linksCategoriesAsList
@@ -238,6 +250,7 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   itemsPerPage: form.itemsPerPage,
   moreInfoTemplate: form.moreInfoTemplate,
   infoPopups: form.infoPopups,
+  widgetColumnsTemplate: formToWidgetColumnTemplate(form.widgetColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
 });
 
@@ -250,20 +263,12 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
 export const formToAlarmListWidgetParameters = form => ({
   ...form,
 
+  widgetColumnsTemplate: formToWidgetColumnTemplate(form.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: formToWidgetColumnTemplate(form.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: formToWidgetColumnTemplate(form.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: formToWidgetColumnTemplate(form.widgetExportColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
   widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
   widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
   serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
 });
-
-/**
- * Convert alarms list columns to data table columns
- *
- * @param {WidgetColumn[]} [columns = []]
- * @returns {AlarmsListDataTableColumn[]}
- */
-export const alarmsListColumnsToTableColumns = (columns = []) => columns.map(({ label, ...column }) => ({
-  ...column,
-
-  text: label,
-}));
