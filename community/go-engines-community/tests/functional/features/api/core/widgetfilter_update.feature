@@ -2,8 +2,8 @@ Feature: Update a widget filter
   I need to be able to update a widget filter
   Only admin should be able to update a widget filter
 
-  Scenario: given update request should return ok
-    When I am admin
+  Scenario: given update public filter request should return ok
+    When I am test-role-to-widget-filter-edit-2
     When I do PUT /api/v4/widget-filters/test-widgetfilter-to-update-1:
     """json
     {
@@ -50,8 +50,8 @@ Feature: Update a widget filter
     """json
     {
       "author": {
-        "_id": "root",
-        "name": "root"
+        "_id": "test-user-to-widget-filter-edit-2",
+        "name": "test-user-to-widget-filter-edit-2"
       },
       "title": "test-widgetfilter-to-update-1-title",
       "is_private": false,
@@ -93,7 +93,7 @@ Feature: Update a widget filter
     """
 
   Scenario: given update private filter request should return ok
-    When I am admin
+    When I am test-role-to-widget-filter-edit-1
     When I do PUT /api/v4/widget-filters/test-widgetfilter-to-update-2:
     """json
     {
@@ -110,8 +110,8 @@ Feature: Update a widget filter
     """json
     {
       "author": {
-        "_id": "root",
-        "name": "root"
+        "_id": "test-user-to-widget-filter-edit-1",
+        "name": "test-user-to-widget-filter-edit-1"
       },
       "title": "test-widgetfilter-to-update-2-title",
       "is_private": true,
