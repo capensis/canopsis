@@ -3,11 +3,16 @@
     field-columns(
       v-field="form.widgetColumns",
       :label="$t('settings.columnNames')",
+      :template="form.widgetColumnsTemplate",
+      :templates="templates",
+      :templates-pending="templatesPending",
+      :type="$constants.ENTITIES_TYPES.alarm",
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",
       :infos-pending="infosPending",
       with-html,
-      with-state
+      with-state,
+      @update:template="updateTemplate"
     )
     v-divider
     field-default-elements-per-page(v-field="form.itemsPerPage")
@@ -24,6 +29,8 @@
 </template>
 
 <script>
+import { formBaseMixin } from '@/mixins/form';
+
 import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
 import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
@@ -38,6 +45,7 @@ export default {
     FieldTextEditor,
     FieldDefaultElementsPerPage,
   },
+  mixins: [formBaseMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -46,6 +54,14 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    templates: {
+      type: Array,
+      default: () => [],
+    },
+    templatesPending: {
+      type: Boolean,
+      default: false,
     },
     alarmInfos: {
       type: Array,
@@ -58,6 +74,20 @@ export default {
     infosPending: {
       type: Boolean,
       default: false,
+    },
+    datetimeFormat: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    updateTemplate(template, columns) {
+      this.updateModel({
+        ...this.form,
+
+        widgetColumnsTemplate: template,
+        widgetColumns: columns,
+      });
     },
   },
 };

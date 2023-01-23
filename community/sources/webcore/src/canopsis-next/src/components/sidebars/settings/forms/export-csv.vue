@@ -20,13 +20,13 @@
         c-columns-with-template-field(
           v-field="form.widgetExportColumns",
           :template="form.widgetExportColumnsTemplate",
+          :templates="templates",
+          :templates-pending="templatesPending",
           :label="$t('settings.exportColumnNames')",
           :type="type",
           :alarm-infos="alarmInfos",
           :entity-infos="entityInfos",
           :infos-pending="infosPending",
-          :templates="templates",
-          :templates-pending="templatesPending",
           @update:template="updateTemplate"
         )
 </template>

@@ -14,13 +14,13 @@
       field-columns(
         v-model="form.parameters.widgetColumns",
         :template="form.parameters.widgetColumnsTemplate",
+        :templates="alarmTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="alarmWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
         with-template,
         with-html,
         with-color-indicator,
@@ -29,14 +29,14 @@
       v-divider
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
-        :template.sync="form.parameters.widgetGroupColumnsTemplate",
+        :template="form.parameters.widgetGroupColumnsTemplate",
+        :templates="alarmTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.groupColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="alarmWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
         with-html,
         with-color-indicator,
         @update:template="updateWidgetGroupColumnsTemplate"
@@ -44,14 +44,14 @@
       v-divider
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
-        :template.sync="form.parameters.serviceDependenciesColumnsTemplate",
+        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :templates="entityTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.trackColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="entityWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
         with-color-indicator,
         @update:template="updateServiceDependenciesColumnsTemplate"
       )
@@ -144,7 +144,7 @@
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="alarmWidgetTemplates",
+        :templates="alarmTypeTemplates",
         :templates-pending="widgetTemplatesPending",
         datetime-format
       )
@@ -160,6 +160,7 @@
 import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
+import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
@@ -230,12 +231,12 @@ export default {
       return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
         ...column,
 
-        text: this.getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+        text: getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       }));
     },
 
     sortablePreparedWidgetColumns() {
-      return this.preparedWidgetColumns.filter(column => this.getSortable(column, ALARM_UNSORTABLE_FIELDS));
+      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
     },
   },
   methods: {

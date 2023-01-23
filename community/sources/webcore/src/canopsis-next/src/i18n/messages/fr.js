@@ -1849,6 +1849,9 @@ export default merge({
         title: 'Créer un jeton de partage',
       },
     },
+    entityDependenciesList: {
+      title: 'Entités Centreon impactées',
+    },
   },
   tables: {
     noData: 'Aucune donnée',

@@ -36,17 +36,32 @@
 
       field-columns(
         v-model="form.parameters.alarmsColumns",
+        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :templates="alarmTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.alarmsColumns')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
         with-template,
         with-html,
-        with-color-indicator
+        @update:template="updateAlarmsColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.entitiesColumns",
+        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :templates="entityTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
+        :type="$constants.ENTITIES_TYPES.entity",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
         with-html,
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateEntitiesColumnsTemplate"
       )
     v-divider
 </template>
@@ -56,6 +71,9 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
+import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
 
 import FieldTitle from './fields/common/title.vue';
@@ -89,7 +107,21 @@ export default {
   mixins: [
     widgetSettingsMixin,
     entityVariablesMixin,
+    widgetColumnsMixin,
+    widgetColumnsInfosMixin,
+    widgetColumnsTemplatesMixin,
     permissionsWidgetsMapFilters,
   ],
+  methods: {
+    updateAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'alarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'alarmsColumns', columns);
+    },
+
+    updateEntitiesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'entitiesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'entitiesColumns', columns);
+    },
+  },
 };
 </script>

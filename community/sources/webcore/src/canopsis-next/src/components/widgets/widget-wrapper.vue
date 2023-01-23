@@ -23,14 +23,15 @@ import {
   WIDGET_TYPES,
   WIDGET_TYPES_RULES,
   WIDGET_GRID_ROW_HEIGHT,
-  ALARM_UNSORTABLE_FIELDS,
-  ALARM_FIELDS_TO_LABELS_KEYS,
-  ENTITY_FIELDS_TO_LABELS_KEYS, DEFAULT_SERVICE_DEPENDENCIES_COLUMNS, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
-import { setSeveralFields } from '@/helpers/immutable';
-
-import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
+import {
+  prepareAlarmListWidget,
+  prepareContextWidget,
+  prepareServiceWeatherWidget,
+  prepareStatsCalendarAndCounterWidget,
+  prepareMapWidget,
+} from '@/helpers/widgets';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
@@ -54,7 +55,6 @@ export default {
     CounterWidget,
     MapWidget,
   },
-  mixins: [widgetColumnsMixin],
   props: {
     widget: {
       type: Object,
@@ -84,49 +84,20 @@ export default {
     preparedWidget() {
       switch (this.widget.type) {
         case WIDGET_TYPES.alarmList:
-          return this.prepareAlarmWidget(this.widget);
+          return prepareAlarmListWidget(this.widget);
 
-        case WIDGET_TYPES.context: // TODO: finish it
-          return {
-            ...this.widget,
+        case WIDGET_TYPES.context:
+          return prepareContextWidget(this.widget);
 
-            parameters: {
-              ...this.widget.parameters,
+        case WIDGET_TYPES.serviceWeather:
+          return prepareServiceWeatherWidget(this.widget);
 
-              widgetColumns: [],
-              widgetGroupColumns: [],
-              serviceDependenciesColumns: [],
-              widgetExportColumns: [],
-            },
-          };
+        case WIDGET_TYPES.statsCalendar:
+        case WIDGET_TYPES.counter:
+          return prepareStatsCalendarAndCounterWidget(this.widget);
 
-        case WIDGET_TYPES.serviceWeather: // TODO: finish it
-          return {
-            ...this.widget,
-
-            parameters: {
-              ...this.widget.parameters,
-
-              widgetColumns: [],
-              widgetGroupColumns: [],
-              serviceDependenciesColumns: [],
-              widgetExportColumns: [],
-            },
-          };
-
-        case WIDGET_TYPES.statsCalendar: // TODO: finish it
-          return {
-            ...this.widget,
-
-            parameters: {
-              ...this.widget.parameters,
-
-              widgetColumns: [],
-              widgetGroupColumns: [],
-              serviceDependenciesColumns: [],
-              widgetExportColumns: [],
-            },
-          };
+        case WIDGET_TYPES.map:
+          return prepareMapWidget(this.widget);
 
         default:
           return this.widget;
@@ -172,47 +143,6 @@ export default {
 
         is: component,
       };
-    },
-  },
-  methods: {
-    prepareAlarmWidget(widget) {
-      return setSeveralFields(widget, {
-        'parameters.widgetColumns': (columns = []) => (
-          columns.map(column => ({
-            ...column,
-
-            sortable: this.getSortable(column, ALARM_UNSORTABLE_FIELDS),
-            text: this.getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-          }))
-        ),
-
-        'parameters.widgetGroupColumns': (columns = DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS) => (
-          columns.map(column => ({
-            ...column,
-
-            sortable: this.getSortable(column, ALARM_UNSORTABLE_FIELDS),
-            text: this.getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-          }))
-        ),
-
-        'parameters.serviceDependenciesColumns': (columns = DEFAULT_SERVICE_DEPENDENCIES_COLUMNS) => (
-          columns.map(column => ({
-            ...column,
-
-            sortable: false,
-            text: this.getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-            value: column.value.startsWith('entity.') ? column.value : `entity.${column.value}`,
-          }))
-        ),
-
-        'parameters.widgetExportColumns': (columns = []) => (
-          columns.map(column => ({
-            ...column,
-
-            text: this.getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
-          }))
-        ),
-      });
     },
   },
 };

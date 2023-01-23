@@ -41,6 +41,7 @@
       v-if="mapState",
       :is="component",
       :map="mapState",
+      :columns="widget.parameters.entitiesColumns",
       :popup-template="widget.parameters.entity_info_template",
       :color-indicator="widget.parameters.color_indicator",
       :pbehavior-enabled="widget.parameters.entities_under_pbehavior_enabled",
