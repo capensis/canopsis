@@ -100,7 +100,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           title: this.$t('alarm.actions.titles.declareTicket'),
-          method: this.showActionModal(MODALS.createDeclareTicketEvent),
+          method: this.showDeclareTicketModal,
         },
         associateTicket: {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,

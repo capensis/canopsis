@@ -24,10 +24,12 @@ export default {
   userId: 'Identifiant d\'utilisateur',
   actionInitiator: 'Initiateur d\'actions',
   triggerEventMessage: 'Déclencher un message d\'événement',
+  noRulesForAlarms: 'Aucune règle à appliquer pour les alarmes sélectionnées',
   webhookStatus: 'Statut du webhook',
   webhookComplete: 'Webhook terminé',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
+    ticketRequired: 'Un ticket doit être ajouté',
   },
 };
