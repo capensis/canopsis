@@ -15,7 +15,12 @@ import {
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { defaultColumnsToColumns } from '@/helpers/entities';
+import {
+  widgetColumnsToForm,
+  formToWidgetColumns,
+  widgetColumnTemplateToForm,
+  formToWidgetColumnTemplate,
+} from '../shared/widget-column';
 
 import {
   alarmListBaseParametersToForm,
@@ -46,6 +51,7 @@ import {
  * @property {number} limit
  * @property {ColorIndicator} colorIndicator
  * @property {ServiceWeatherWidgetModalType} modalType
+ * @property {string} serviceDependenciesColumnsTemplate
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {WidgetMargin} margin
  * @property {ServiceWeatherWidgetCounters} counters
@@ -56,10 +62,16 @@ import {
  */
 
 /**
+ * @typedef {ServiceWeatherWidgetParameters} ServiceWeatherWidgetParametersForm
+ * @property {string | Symbol} serviceDependenciesColumnsTemplate
+ * @property {WidgetColumnForm[]} serviceDependenciesColumns
+ */
+
+/**
  * Convert service weather widget parameters to form
  *
  * @param {ServiceWeatherWidgetParameters} [parameters = {}]
- * @return {ServiceWeatherWidgetParameters}
+ * @return {ServiceWeatherWidgetParametersForm}
  */
 export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
@@ -73,9 +85,9 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   columnDesktop: parameters.columnDesktop ?? 4,
   limit: parameters.limit ?? DEFAULT_WEATHER_LIMIT,
   colorIndicator: parameters.colorIndicator ?? COLOR_INDICATOR_TYPES.state,
-  serviceDependenciesColumns: parameters.serviceDependenciesColumns
-    ? cloneDeep(parameters.serviceDependenciesColumns)
-    : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  serviceDependenciesColumnsTemplate: widgetColumnTemplateToForm(parameters.serviceDependenciesColumnsTemplate),
+  serviceDependenciesColumns:
+    widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   margin: parameters.margin
     ? { ...parameters.margin }
     : { ...DEFAULT_WIDGET_MARGIN },
@@ -97,11 +109,13 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
 /**
  * Convert form to service weather widget parameters
  *
- * @param {ServiceWeatherWidgetParameters} form
+ * @param {ServiceWeatherWidgetParametersForm} form
  * @return {ServiceWeatherWidgetParameters}
  */
 export const formToServiceWeatherWidgetParameters = form => ({
   ...form,
 
+  serviceDependenciesColumnsTemplate: formToWidgetColumnTemplate(form.serviceDependenciesColumnsTemplate),
+  serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
   alarmsList: formToAlarmListBaseParameters(form.alarmsList),
 });

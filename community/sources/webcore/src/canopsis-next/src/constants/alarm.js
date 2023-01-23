@@ -148,7 +148,7 @@ export const META_ALARMS_THRESHOLD_TYPES = {
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
-export const DEFAULT_ALARMS_WIDGET_COLUMNS = [ // TODO: check it
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
   { value: ALARM_FIELDS.connector },
   { value: ALARM_FIELDS.connectorName },
   { value: ALARM_FIELDS.component },
@@ -180,10 +180,6 @@ export const ALARMS_OPENED_VALUES = {
   opened: true,
   all: null,
   resolved: false,
-};
-
-export const ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP = {
-  priority: 'impact_state',
 };
 
 export const ALARM_METRIC_PARAMETERS = {

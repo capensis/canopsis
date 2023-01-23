@@ -1,6 +1,6 @@
 <template lang="pug">
   v-flex.white(v-resize="changeHeaderPositionOnResize")
-    c-empty-data-table-columns(v-if="!hasColumns")
+    c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
         v-if="totalItems && (densable || !hideActions || !hidePagination)",

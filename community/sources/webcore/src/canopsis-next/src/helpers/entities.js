@@ -1,6 +1,5 @@
 import { omit, pick, isObject, groupBy, map } from 'lodash';
 
-import i18n from '@/i18n';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -12,19 +11,6 @@ import uid from './uid';
 import uuid from './uuid';
 import { convertDateToString } from './date/date';
 import { formToWidget, widgetToForm } from './forms/widgets/common';
-
-/**
- * Convert default columns from constants to columns with prepared by i18n label
- *
- * @param {{ labelKey: string, value: string }[]} [columns = []]
- * @returns {{ label: string, value: string }[]}
- */
-export function defaultColumnsToColumns(columns = []) { // TODO: REMOVE THIS FUNCTION
-  return columns.map(({ labelKey, value }) => ({
-    label: i18n.tc(labelKey),
-    value,
-  }));
-}
 
 /**
  * Checks if alarm is resolved

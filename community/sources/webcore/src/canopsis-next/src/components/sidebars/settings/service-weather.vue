@@ -16,7 +16,14 @@
         with-service-weather
       )
       v-divider
-    alarms-list-modal-form(v-model="form.parameters.alarmsList")
+    alarms-list-modal-form(
+      v-model="form.parameters.alarmsList",
+      :templates="entityTypeTemplates",
+      :templates-pending="widgetTemplatesPending",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending"
+    )
     v-divider
     field-number(v-model="form.parameters.limit", :title="$t('settings.limit')")
     v-divider
@@ -24,8 +31,16 @@
     v-divider
     field-columns(
       v-model="form.parameters.serviceDependenciesColumns",
+      :template="form.parameters.serviceDependenciesColumnsTemplate",
+      :templates="entityTypeTemplates",
+      :templates-pending="widgetTemplatesPending",
       :label="$t('settings.treeOfDependenciesColumnNames')",
-      with-color-indicator
+      :type="$constants.ENTITIES_TYPES.entity",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending",
+      with-color-indicator,
+      @input="updateWidgetColumnsTemplate"
     )
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
@@ -81,6 +96,9 @@
 import { ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 
@@ -129,6 +147,9 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
+    widgetColumnsMixin,
+    widgetColumnsInfosMixin,
+    widgetColumnsTemplatesMixin,
     entityVariablesMixin,
     permissionsWidgetsServiceWeatherFilters,
   ],
@@ -154,6 +175,17 @@ export default {
 
     modalTemplateVariables() {
       return this.blockTemplateVariables;
+    },
+  },
+  methods: {
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
+
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
     },
   },
 };
