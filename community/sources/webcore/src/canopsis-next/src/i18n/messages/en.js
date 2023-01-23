@@ -1845,6 +1845,9 @@ export default merge({
         title: 'Edit widget template',
       },
     },
+    entityDependenciesList: {
+      title: 'Centreon impacted entities',
+    },
   },
   tables: {
     noData: 'No data',

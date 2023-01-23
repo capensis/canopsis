@@ -2,7 +2,14 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
-    alarms-list-modal-form(v-model="form.parameters.alarmsList")
+    alarms-list-modal-form(
+      v-model="form.parameters.alarmsList",
+      :templates="entityTypeTemplates",
+      :templates-pending="widgetTemplatesPending",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending"
+    )
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-filters(
@@ -38,6 +45,9 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { formValidationHeaderMixin } from '@/mixins/form';
+import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
@@ -67,6 +77,12 @@ export default {
     AlarmsListModalForm,
     StatsCalendarAdvancedForm,
   },
-  mixins: [widgetSettingsMixin, formValidationHeaderMixin],
+  mixins: [
+    widgetSettingsMixin,
+    formValidationHeaderMixin,
+    widgetColumnsMixin,
+    widgetColumnsInfosMixin,
+    widgetColumnsTemplatesMixin,
+  ],
 };
 </script>

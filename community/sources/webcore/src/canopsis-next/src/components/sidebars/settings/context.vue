@@ -5,29 +5,61 @@
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(
         v-model="form.parameters.sort",
-        :columns="form.parameters.widgetColumns",
+        :columns="sortablePreparedWidgetColumns",
         :columns-label="$t('settings.columnName')"
       )
       v-divider
       field-columns(
         v-model="form.parameters.widgetColumns",
-        :label="$t('settings.columnNames')"
+        :template="form.parameters.widgetColumnsTemplate",
+        :templates="entityTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
+        :label="$t('settings.columnNames')",
+        :type="$constants.ENTITIES_TYPES.entity",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
-        :label="$t('settings.treeOfDependenciesColumnNames')",
-        with-color-indicator
+        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :templates="entityTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
+        :label="$t('settings.columnNames')",
+        :type="$constants.ENTITIES_TYPES.entity",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        with-color-indicator,
+        @update:template="updateServiceDependenciesColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.activeAlarmsColumns",
-        :label="$t('settings.activeAlarmsColumns')"
+        :template="form.parameters.activeAlarmsColumnsTemplate",
+        :templates="alarmTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
+        :label="$t('settings.activeAlarmsColumns')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        @update:template="updateActiveAlarmsColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.resolvedAlarmsColumns",
-        :label="$t('settings.resolvedAlarmsColumns')"
+        :template="form.parameters.resolvedAlarmsColumnsTemplate",
+        :templates="alarmTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
+        :label="$t('settings.resolvedAlarmsColumns')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        @update:template="updateResolvedAlarmsColumnsTemplate"
       )
       v-divider
       template(v-if="hasAccessToListFilters")
@@ -44,15 +76,33 @@
         v-divider
       field-context-entities-types-filter(v-model="form.parameters.selectedTypes")
       v-divider
-      export-csv-form(v-model="form.parameters")
+      export-csv-form(
+        v-model="form.parameters",
+        :type="$constants.ENTITIES_TYPES.entity",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        :templates="entityTypeTemplates",
+        :templates-pending="widgetTemplatesPending"
+      )
     v-divider
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import {
+  SIDE_BARS,
+  ALARM_UNSORTABLE_FIELDS,
+  ENTITY_FIELDS_TO_LABELS_KEYS,
+} from '@/constants';
+
+import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
+import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 
 import FieldTitle from './fields/common/title.vue';
@@ -79,7 +129,44 @@ export default {
   mixins: [
     authMixin,
     widgetSettingsMixin,
+    widgetColumnsMixin,
+    widgetColumnsInfosMixin,
+    widgetColumnsTemplatesMixin,
     permissionsWidgetsContextFilters,
   ],
+  computed: {
+    preparedWidgetColumns() {
+      return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
+        ...column,
+
+        text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+      }));
+    },
+
+    sortablePreparedWidgetColumns() {
+      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
+    },
+  },
+  methods: {
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
+
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
+
+    updateActiveAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'activeAlarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'activeAlarmsColumns', columns);
+    },
+
+    updateResolvedAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'resolvedAlarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'resolvedAlarmsColumns', columns);
+    },
+  },
 };
 </script>

@@ -12,6 +12,7 @@ import {
 } from './alarm';
 import {
   contextWidgetParametersToForm,
+  formToContextWidgetParameters,
 } from './context';
 import {
   serviceWeatherWidgetParametersToForm,
@@ -247,6 +248,8 @@ export const formToWidgetParameters = ({ type, parameters }) => {
   switch (type) {
     case WIDGET_TYPES.alarmList:
       return formToAlarmListWidgetParameters(parameters);
+    case WIDGET_TYPES.context:
+      return formToContextWidgetParameters(parameters);
     case WIDGET_TYPES.serviceWeather:
       return formToServiceWeatherWidgetParameters(parameters);
     case WIDGET_TYPES.statsCalendar:

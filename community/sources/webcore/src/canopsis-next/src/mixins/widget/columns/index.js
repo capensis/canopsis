@@ -1,3 +1,4 @@
 export { widgetColumnsMixin } from './common';
 export { widgetColumnsAlarmMixin } from './alarm';
-export { widgetColumnsContextMixin } from './context';
+export { widgetColumnsInfosMixin } from './infos';
+export { widgetColumnsTemplatesMixin } from './templates';

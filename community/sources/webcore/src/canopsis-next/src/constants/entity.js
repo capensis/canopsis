@@ -454,21 +454,12 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
   validateCancel: 'MDS_VALIDATECANCEL',
 };
 
-export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [ // TODO: update or remove
-  {
-    labelKey: 'common.name',
-    value: 'name',
-  },
-  {
-    labelKey: 'common.type',
-    value: 'type',
-  },
-];
-
-export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
+export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
   { value: ENTITY_FIELDS.name },
   { value: ENTITY_FIELDS.type },
 ];
+
+export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [...DEFAULT_CONTEXT_WIDGET_COLUMNS];
 
 export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [ // TODO: update or remove
   {
@@ -581,18 +572,6 @@ const { ack, category, ticket, snooze, ...contextWidgetColumns } = ENTITY_FIELDS
 
 export const CONTEXT_WIDGET_COLUMNS = contextWidgetColumns;
 
-export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it from backend side in the future
-  ENTITY_FIELDS.id,
-  ENTITY_FIELDS.name,
-  ENTITY_FIELDS.type,
-  ENTITY_FIELDS.category,
-  ENTITY_FIELDS.impactLevel,
-  ENTITY_FIELDS.categoryName,
-  ENTITY_FIELDS.idleSince,
-  ENTITY_FIELDS.enabled,
-  ENTITY_FIELDS.lastEventDate,
-];
-
 export const ENTITY_PATTERN_FIELDS = {
   id: ENTITY_FIELDS.id,
   name: ENTITY_FIELDS.name,
@@ -662,3 +641,8 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.snooze]: 'common.snooze',
   [ENTITY_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
 };
+
+export const ENTITY_UNSORTABLE_FIELDS = [
+  ENTITY_FIELDS.links,
+  ENTITY_FIELDS.pbehaviorInfo,
+];

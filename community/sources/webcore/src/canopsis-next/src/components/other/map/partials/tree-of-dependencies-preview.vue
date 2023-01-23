@@ -32,6 +32,7 @@ import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/enginee
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
+import { generateDefaultContextWidget } from '@/helpers/entities';
 
 export default {
   components: { NetworkGraph },
@@ -44,6 +45,10 @@ export default {
     colorIndicator: {
       type: String,
       required: false,
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -548,10 +553,17 @@ export default {
      * @param {string} entityId
      */
     showAllDependenciesModal(entityId) {
+      const widget = generateDefaultContextWidget();
+
+      if (this.columns.length) {
+        widget.parameters.widgetColumns = this.columns;
+      }
+
       this.$modals.show({
         name: MODALS.entityDependenciesList,
         config: {
           entityId,
+          widget,
           impact: this.impact,
         },
       });
