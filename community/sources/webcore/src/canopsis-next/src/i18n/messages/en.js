@@ -41,6 +41,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
+  ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -722,7 +723,7 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Number of active alarms without tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
@@ -2624,7 +2625,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
-    executedAt: 'Executed at',
+    executedAt: 'End of execution at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
@@ -2919,6 +2920,12 @@ export default merge({
   quickRanges: {
     title: 'Quick ranges',
     timeField: 'Time field',
+    intervalFields: {
+      [ALARM_INTERVAL_FIELDS.timestamp]: 'Creation date',
+      [ALARM_INTERVAL_FIELDS.resolved]: 'Resolved at',
+      [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Last update date',
+      [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Last event date',
+    },
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',
@@ -3121,7 +3128,7 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarms with acks',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} active alarms with acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarms with cancelled acks',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} active alarms without tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',
@@ -3173,6 +3180,7 @@ export default merge({
     noData: 'No pattern set. Click \'@:pattern.addGroup\' button to start adding fields to the pattern',
     noDataDisabled: 'No pattern set.',
     discard: 'Discard pattern',
+    oldPatternTooltip: 'Filter patterns are not migrated',
     types: {
       [PATTERN_TYPES.alarm]: 'Alarm pattern',
       [PATTERN_TYPES.entity]: 'Entity pattern',
@@ -3185,11 +3193,8 @@ export default merge({
       countOverLimit: 'The patterns you\'ve defined targets about {count} items. It can affect performance, are you sure ?',
       oldPattern: 'The current filter pattern is defined in old format. Please use the Advanced editor to view it. Filters in old format will be deprecated soon. Please create new patterns in our updated interface.',
       existExcluded: 'The rules include excluded rule.',
+      required: 'At least one pattern has to be defined. Please define filter patterns for rule',
     },
-  },
-
-  filter: {
-    oldPattern: 'Old pattern format',
   },
 
   map: {

@@ -23,8 +23,10 @@ func NewMongoClient(db libmongo.DbClient) *MongoClient {
 	}
 }
 
-/**
+/*
+*
 Step example:
+
 	And an alarm test_post_resource/test_post_component should be in the db
 */
 func (c *MongoClient) AlarmShouldBeInTheDb(ctx context.Context, eid string) error {
@@ -46,14 +48,16 @@ func (c *MongoClient) AlarmShouldBeInTheDb(ctx context.Context, eid string) erro
 	return nil
 }
 
-/**
+/*
+*
 Step example:
+
 	And an entity test_post_resource/test_post_component should be in the db
 */
 func (c *MongoClient) EntityShouldBeInTheDb(ctx context.Context, eid string) error {
 	var expectedEntity types.Entity
-	res := c.client.Collection(libmongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": eid})
-	if err := res.Err(); err != nil {
+	err := c.client.Collection(libmongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": eid}).Decode(&expectedEntity)
+	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return fmt.Errorf("couldn't find an entity for eid = %s", eid)
 		}
@@ -61,10 +65,25 @@ func (c *MongoClient) EntityShouldBeInTheDb(ctx context.Context, eid string) err
 		return err
 	}
 
-	err := res.Decode(&expectedEntity)
+	return nil
+}
+
+/*
+*
+Step example:
+
+	And an entity test_post_resource/test_post_component should not be in the db
+*/
+func (c *MongoClient) EntityShouldNotBeInTheDb(ctx context.Context, eid string) error {
+	var expectedEntity types.Entity
+	err := c.client.Collection(libmongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": eid}).Decode(&expectedEntity)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil
+		}
+
 		return err
 	}
 
-	return nil
+	return fmt.Errorf("could find an entity for eid = %s", eid)
 }

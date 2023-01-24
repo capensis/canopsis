@@ -43,7 +43,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "color": "#FFFFFF",
       "enabled": true,
@@ -68,13 +71,19 @@ Feature: update a PBehavior
       "comments": [
         {
           "_id": "test-pbehavior-to-update-1-comment-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-update-1-comment-1-message"
         },
         {
           "_id": "test-pbehavior-to-update-1-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215338,
           "message": "test-pbehavior-to-update-1-comment-2-message"
         }
@@ -115,7 +124,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "enabled": true,
       "exceptions": [],
@@ -154,7 +166,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "color": "#FFFFFF",
       "enabled": true,
@@ -209,7 +224,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "color": "#FFFFFF",
       "enabled": true,
@@ -254,7 +272,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "enabled": true,
       "exceptions": [],
