@@ -57,7 +57,7 @@ import { pick } from 'lodash';
 
 import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
@@ -199,7 +199,7 @@ export default {
     },
 
     showAlarmListModal(point) {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters.widgetColumns = this.widget.parameters.alarmsColumns;
 

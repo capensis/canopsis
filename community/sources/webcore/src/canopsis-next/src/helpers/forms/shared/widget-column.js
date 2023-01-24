@@ -122,7 +122,7 @@ export const formToWidgetColumns = (form = []) => form.map(({ key, column, dicti
  * @param {string} [template]
  * @returns {string | Symbol}
  */
-export const widgetColumnTemplateToForm = template => template ?? CUSTOM_WIDGET_COLUMN_TEMPLATE;
+export const widgetColumnTemplateToForm = template => template || CUSTOM_WIDGET_COLUMN_TEMPLATE;
 
 /**
  * Convert form to widget column template
