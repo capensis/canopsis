@@ -9,6 +9,7 @@ import {
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import flushPromises from 'flush-promises';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
@@ -74,7 +75,11 @@ describe('actions-panel', () => {
   };
   const { alarmModule } = createAlarmModule();
   const { eventModule, createEvent } = createEventModule();
-  const { declareTicketRuleModule, bulkCreateDeclareTicketExecution } = createDeclareTicketModule();
+  const {
+    declareTicketRuleModule,
+    bulkCreateDeclareTicketExecution,
+    fetchAssignedDeclareTicketsWithoutStore,
+  } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
     authModule,
@@ -394,11 +399,26 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Declare ticket modal showed after trigger declare action', () => {
+  it('Declare ticket modal showed after trigger declare action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
     };
+
+    const byRules = {
+      rule: {
+        name: 'rule name',
+        alarms: [alarm._id],
+      },
+    };
+    const byAlarms = {
+      [alarm._id]: ['rule name'],
+    };
+
+    fetchAssignedDeclareTicketsWithoutStore.mockResolvedValueOnce({
+      by_rules: byRules,
+      by_alarms: byAlarms,
+    });
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -414,15 +434,17 @@ describe('actions-panel', () => {
       },
     });
 
-    const declareTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.declareTicket);
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.declareTicket).trigger('click');
 
-    declareTicketAction.trigger('click');
+    await flushPromises();
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createDeclareTicketEvent,
         config: {
           items: [alarm],
+          alarmsByTickets: byRules,
+          ticketsByAlarms: byAlarms,
           action: expect.any(Function),
           afterSubmit: expect.any(Function),
         },

@@ -1,9 +1,11 @@
 <template lang="pug">
   v-layout(column)
     declare-ticket-event-alarms-tickets-field(
-      v-field="form.tickets_by_alarms",
+      v-field="form.alarms_by_tickets",
       :alarms="alarms",
-      :tickets-by-alarms="ticketsByAlarms"
+      :tickets-by-alarms="ticketsByAlarms",
+      :disable-tickets="disableTickets",
+      :hide-remove="hideRemove"
     )
     c-description-field.mt-3(v-field="form.comment", :label="$tc('common.comment')", name="comment")
 </template>
@@ -29,6 +31,14 @@ export default {
     alarms: {
       type: Array,
       default: () => [],
+    },
+    disableTickets: {
+      type: Boolean,
+      default: false,
+    },
+    hideRemove: {
+      type: Boolean,
+      default: false,
     },
   },
 };
