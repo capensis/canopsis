@@ -2,6 +2,7 @@ package entitybasic
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -99,8 +100,9 @@ func (v *basicValidator) hasDuplicates(values []string) bool {
 
 func (v *basicValidator) checkExist(ctx context.Context, ids []string, validTypes []string) (bool, error) {
 	count, err := v.dbClient.Collection(mongo.EntityMongoCollection).CountDocuments(ctx, bson.M{
-		"_id":  bson.M{"$in": ids},
-		"type": bson.M{"$in": validTypes},
+		"_id":          bson.M{"$in": ids},
+		"type":         bson.M{"$in": validTypes},
+		"soft_deleted": bson.M{"$exists": false},
 	})
 	if err != nil {
 		return false, err

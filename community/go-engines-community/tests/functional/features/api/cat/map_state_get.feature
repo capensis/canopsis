@@ -40,12 +40,10 @@ Feature: Get a map's state
               "name": "test-resource-to-map-state-get-1",
               "type": "resource",
               "enabled": true,
+              "old_entity_patterns": null,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
-                "name": "test-category-to-map-state-get-1-name",
-                "author": "root",
-                "created": 1592215337,
-                "updated": 1592215337
+                "name": "test-category-to-map-state-get-1-name"
               },
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -95,6 +93,7 @@ Feature: Get a map's state
               "name": "test-resource-to-map-state-get-2",
               "type": "resource",
               "enabled": true,
+              "old_entity_patterns": null,
               "category": null,
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -243,12 +242,10 @@ Feature: Get a map's state
               "name": "test-resource-to-map-state-get-1",
               "type": "resource",
               "enabled": true,
+              "old_entity_patterns": null,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
-                "name": "test-category-to-map-state-get-1-name",
-                "author": "root",
-                "created": 1592215337,
-                "updated": 1592215337
+                "name": "test-category-to-map-state-get-1-name"
               },
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -306,6 +303,7 @@ Feature: Get a map's state
               "name": "test-resource-to-map-state-get-3",
               "type": "resource",
               "enabled": true,
+              "old_entity_patterns": null,
               "category": null,
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -364,12 +362,10 @@ Feature: Get a map's state
               "name": "test-resource-to-map-state-get-1",
               "type": "resource",
               "enabled": true,
+              "old_entity_patterns": null,
               "category": {
                 "_id": "test-category-to-map-state-get-1",
-                "name": "test-category-to-map-state-get-1-name",
-                "author": "root",
-                "created": 1592215337,
-                "updated": 1592215337
+                "name": "test-category-to-map-state-get-1-name"
               },
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
@@ -418,6 +414,7 @@ Feature: Get a map's state
               "name": "test-resource-to-map-state-get-2",
               "type": "resource",
               "enabled": true,
+              "old_entity_patterns": null,
               "category": null,
               "connector": "test-connector-default/test-connector-default-name",
               "component": "test-component-default",
