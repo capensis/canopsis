@@ -53,10 +53,10 @@ export default {
     submittableMixinCreator(),
   ],
   data() {
-    const { alarmsByTickets, items } = this.modal.config;
+    const { alarmsByTickets } = this.modal.config;
 
     return {
-      form: alarmsToDeclareTicketEventForm(alarmsByTickets, items),
+      form: alarmsToDeclareTicketEventForm(alarmsByTickets),
     };
   },
   methods: {

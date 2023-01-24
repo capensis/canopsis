@@ -29,12 +29,12 @@
         )
       c-information-block(:title="$t('declareTicket.noRulesForAlarms')")
         declare-ticket-event-alarms-tickets-field(:alarms="alarmsWithoutTickets", hide-tickets)
-    c-alert(v-if="!hasTickets", type="info") {{ $t('declareTicket.noRulesForAlarms') }}
     c-alert(v-if="hasErrors", type="error") {{ $t('declareTicket.errors.ticketRequired') }}
 </template>
 
 <script>
 import { keyBy, pick } from 'lodash';
+
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventForm from './declare-ticket-event-form.vue';
@@ -79,10 +79,6 @@ export default {
   computed: {
     declareTicketFieldName() {
       return 'declare_event';
-    },
-
-    hasTickets() {
-      return Object.keys(this.alarmsByTickets).length > 0;
     },
 
     hasErrors() {
