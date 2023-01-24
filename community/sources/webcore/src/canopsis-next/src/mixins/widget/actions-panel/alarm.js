@@ -60,11 +60,22 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showDeclareTicketModal() {
+    async showDeclareTicketModal() {
+      const {
+        by_rules: alarmsByTickets,
+        by_alarms: ticketsByAlarms,
+      } = await this.fetchAssignedDeclareTicketsWithoutStore({
+        params: {
+          alarms: [this.item._id],
+        },
+      });
+
       this.$modals.show({
         name: MODALS.createDeclareTicketEvent,
         config: {
           ...this.modalConfig,
+          alarmsByTickets,
+          ticketsByAlarms,
           action: async (events) => {
             await this.bulkCreateDeclareTicketExecution({ data: events });
             /**
