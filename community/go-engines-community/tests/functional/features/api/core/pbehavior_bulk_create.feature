@@ -298,7 +298,10 @@ Feature: Bulk create pbehaviors
         {
           "_id": "test-pbehavior-to-bulk-create-1",
           "enabled": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "name": "test-pbehavior-to-bulk-create-1-name",
           "tstart": 1591172881,
           "tstop": 1591536400,
@@ -337,7 +340,10 @@ Feature: Bulk create pbehaviors
         },
         {
           "enabled": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "name": "test-pbehavior-to-bulk-create-2-name",
           "tstart": 1591172881,
           "tstop": 1591536400,

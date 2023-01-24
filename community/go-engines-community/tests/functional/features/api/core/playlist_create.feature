@@ -25,7 +25,10 @@ Feature: Create a playlist
     {
       "fullscreen": true,
       "name": "test-playlist-to-create-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tabs_list": [
         "test-tab-to-playlist-edit-1"
       ],
@@ -62,7 +65,10 @@ Feature: Create a playlist
     {
       "fullscreen": true,
       "name": "test-playlist-to-create-2-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tabs_list": [
         "test-tab-to-playlist-edit-1"
       ],
@@ -75,7 +81,7 @@ Feature: Create a playlist
     """
 
   Scenario: given create request should create new permission
-    When I am admin
+    When I am test-role-to-playlist-edit
     When I do POST /api/v4/playlists:
     """json
     {
@@ -93,6 +99,11 @@ Feature: Create a playlist
     """
     Then the response code should be 201
     Then I save response playlistId={{ .lastResponse._id }}
+    When I do GET /api/v4/playlists/{{ .playlistId }}
+    Then the response code should be 200
+    Then I am admin
+    When I do GET /api/v4/playlists/{{ .playlistId }}
+    Then the response code should be 200
     When I do GET /api/v4/permissions?search={{ .playlistId }}
     Then the response code should be 200
     Then the response body should be:
@@ -117,6 +128,32 @@ Feature: Create a playlist
         "total_count": 1
       }
     }
+    """
+    When I do GET /api/v4/roles/admin
+    Then the response code should be 200
+    Then the response array key "permissions" should contain:
+    """json
+    [
+      {
+        "_id": "{{ .playlistId }}",
+        "name": "{{ .playlistId }}",
+        "description": "Rights on playlist : test-playlist-to-create-3-name",
+        "type": "RW"
+      }
+    ]
+    """
+    When I do GET /api/v4/roles/test-role-to-playlist-edit
+    Then the response code should be 200
+    Then the response array key "permissions" should contain:
+    """json
+    [
+      {
+        "_id": "{{ .playlistId }}",
+        "name": "{{ .playlistId }}",
+        "description": "Rights on playlist : test-playlist-to-create-3-name",
+        "type": "RW"
+      }
+    ]
     """
 
   Scenario: given create request and no auth user should not allow access

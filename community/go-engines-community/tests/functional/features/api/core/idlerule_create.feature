@@ -58,7 +58,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-1-name",
       "description": "test-idle-rule-to-create-1-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -137,7 +140,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-2-name",
       "description": "test-idle-rule-to-create-2-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "entity",
       "enabled": true,
       "priority": 21,
@@ -222,7 +228,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-3-name",
       "description": "test-idle-rule-to-create-3-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -316,7 +325,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-4-name",
       "description": "test-idle-rule-to-create-4-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -387,7 +399,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-5-name",
       "description": "test-idle-rule-to-create-5-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -459,7 +474,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-6-name",
       "description": "test-idle-rule-to-create-6-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -971,7 +989,10 @@ Feature: Create a idle rule
     {
       "name": "test-idle-rule-to-create-12-name",
       "description": "test-idle-rule-to-create-12-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
