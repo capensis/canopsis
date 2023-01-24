@@ -24,13 +24,19 @@ Feature: Update a view
     """json
     {
       "_id": "test-view-to-update",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670,
       "description": "test-view-to-update-1-description-updated",
       "enabled": true,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
-        "author": "test-viewgroup-to-view-edit-author",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
         "updated": 1611229670
@@ -44,6 +50,35 @@ Feature: Update a view
       "tags": [
         "test-view-to-update-1-tag-updated"
       ]
+    }
+    """
+    When I do GET /api/v4/permissions?search=test-view-to-update
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-view-to-update",
+          "name": "test-view-to-update",
+          "description": "Rights on view : test-view-to-update-1-title-updated",
+          "view": {
+            "_id": "test-view-to-update",
+            "title": "test-view-to-update-1-title-updated"
+          },
+          "view_group": {
+            "_id": "test-viewgroup-to-view-edit",
+            "title": "test-viewgroup-to-view-edit-title"
+          },
+          "type": "RW"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
     }
     """
 

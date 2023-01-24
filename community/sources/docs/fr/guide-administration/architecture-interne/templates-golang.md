@@ -208,6 +208,12 @@ Exemple, Tester l'existence de la clé `une_cle` :
 {{if map_has_key .Entity.Infos "une_cle" }}{{.Entity.Infos.une_cle.Value}}{{else}}default value{{end}}
 ```
 
+## Concaténer des variables de type `chaine`
+
+Vous pouvez concaténer des variables en utilisant la fonction `builtin` **printf**.  
+Exemple : `{{ $description := printf "%s -- %s" .Entity.Infos.var1.Value .Alarm.Value.Output }}`
+
+
 ## Exemples
 
 Cette section présente différents exemples de templates pour les liens et pour les payloads, accompagnés d'explications.

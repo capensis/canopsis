@@ -82,7 +82,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, nil
 	}
 
-	if !event.Entity.Enabled {
+	if !event.Entity.Enabled && event.EventType != types.EventTypeResolveDeleted {
 		var err error
 
 		if event.EventType == types.EventTypeEntityToggled ||
