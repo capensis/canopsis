@@ -22,12 +22,11 @@ COPY community/.env /monorepo/community/.env
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile
-ARG VERSION
-RUN make deps VERSION=${VERSION}
+RUN make deps
 
 # Always build everything in the current $CANOPSIS_EDITION
 COPY . /monorepo
-RUN make VERSION=${VERSION}
+RUN make
 
 #
 # Prepare the common final container
