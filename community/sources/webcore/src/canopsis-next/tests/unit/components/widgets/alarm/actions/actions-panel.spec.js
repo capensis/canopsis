@@ -425,6 +425,21 @@ describe('actions-panel', () => {
       by_alarms: byAlarms,
     });
 
+    const byRules = {
+      rule: {
+        name: 'rule name',
+        alarms: [alarm._id],
+      },
+    };
+    const byAlarms = {
+      [alarm._id]: ['rule name'],
+    };
+
+    fetchAssignedDeclareTicketsWithoutStore.mockResolvedValueOnce({
+      by_rules: byRules,
+      by_alarms: byAlarms,
+    });
+
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
