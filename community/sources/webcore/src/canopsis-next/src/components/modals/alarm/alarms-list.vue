@@ -21,7 +21,7 @@ import { isEqual } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertWidgetQueryToRequest } from '@/helpers/query';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -57,7 +57,7 @@ export default {
     },
 
     widget() {
-      return this.config.widget ?? generateDefaultAlarmListWidget();
+      return this.config.widget ?? generatePreparedDefaultAlarmListWidget();
     },
   },
   watch: {

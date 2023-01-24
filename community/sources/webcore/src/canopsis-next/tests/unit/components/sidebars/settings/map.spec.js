@@ -445,7 +445,7 @@ describe('map', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'alarms_columns', newColumns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'alarmsColumns', newColumns),
       },
     });
   });
@@ -478,7 +478,7 @@ describe('map', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'entities_columns', newColumns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'entitiesColumns', newColumns),
       },
     });
   });
@@ -520,8 +520,8 @@ describe('map', () => {
                 entities_under_pbehavior_enabled: true,
                 filters: [{}],
                 entity_info_template: '<div>TEMPLATE</div>',
-                alarms_columns: [{}],
-                entities_columns: [{}],
+                alarmsColumns: [{}],
+                entitiesColumns: [{}],
               },
             },
           },
