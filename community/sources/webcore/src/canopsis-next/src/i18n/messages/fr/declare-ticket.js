@@ -29,6 +29,8 @@ export default {
   applyRules: 'Appliquer les règles',
   webhookStatus: 'Statut du webhook',
   webhookComplete: 'Webhook terminé',
+  oneTicketForAlarms: 'Un ticket pour toutes les alarmes',
+  applyRules: 'Appliquer les règles',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
