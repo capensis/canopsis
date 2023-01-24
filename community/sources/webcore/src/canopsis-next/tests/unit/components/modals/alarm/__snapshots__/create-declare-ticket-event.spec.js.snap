@@ -20,12 +20,11 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
     <div
       class="text"
     >
-      <c-progress-overlay-stub
-        pending="true"
-      />
-      <declare-ticket-event-form-stub
+      <declare-ticket-events-form-stub
         alarms="[object Object]"
+        alarmsbytickets="[object Object]"
         form="[object Object]"
+        tickets=""
         ticketsbyalarms="[object Object]"
       />
     </div>

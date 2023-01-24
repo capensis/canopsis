@@ -14,7 +14,7 @@ import CreateDeclareTicketEvent from '@/components/modals/declare-ticket/create-
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'c-progress-overlay': true,
-  'declare-ticket-event-form': true,
+  'declare-ticket-events-form': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -22,7 +22,7 @@ const stubs = {
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'c-progress-overlay': true,
-  'declare-ticket-event-form': true,
+  'declare-ticket-events-form': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
@@ -57,6 +57,8 @@ describe('create-declare-ticket-event', () => {
   const items = [alarm];
   const config = {
     items,
+    alarmsByTickets: {},
+    ticketsByAlarms: {},
   };
 
   const { declareTicketRuleModule } = createDeclareTicketModule();
@@ -109,6 +111,8 @@ describe('create-declare-ticket-event', () => {
           config: {
             items,
             action,
+            alarmsByTickets: {},
+            ticketsByAlarms: {},
           },
         },
       },
