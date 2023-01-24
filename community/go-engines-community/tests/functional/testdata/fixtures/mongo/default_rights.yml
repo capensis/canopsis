@@ -1332,9 +1332,9 @@ default_rights:
     mail: admin@canopsis.net
     role: "@role_admin"
 
-  role_to_widget_filter_edit:
+  role_to_widget_filter_edit_1:
     <<: *role
-    _id: test-role-to-widget-filter-edit
+    _id: test-role-to-widget-filter-edit-1
     crecord_name: <Current()._id>
     rights:
       "@permission_api_view":
@@ -1343,9 +1343,25 @@ default_rights:
       "@permission_view_to_filter_edit":
         checksum: 4
         crecord_type: right
-
-  user_to_widget_filter_edit:
+  user_to_widget_filter_edit_1:
     <<: *user
-    _id: test-user-to-widget-filter-edit
+    _id: test-user-to-widget-filter-edit-1
     crecord_name: <Current()._id>
-    role: "@role_to_widget_filter_edit"
+    role: "@role_to_widget_filter_edit_1"
+
+  role_to_widget_filter_edit_2:
+    <<: *role
+    _id: test-role-to-widget-filter-edit-2
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_view":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_filter_edit":
+        checksum: 6
+        crecord_type: right
+  user_to_widget_filter_edit_2:
+    <<: *user
+    _id: test-user-to-widget-filter-edit-2
+    crecord_name: <Current()._id>
+    role: "@role_to_widget_filter_edit_2"
