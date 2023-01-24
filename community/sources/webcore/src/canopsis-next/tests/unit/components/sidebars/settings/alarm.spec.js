@@ -31,7 +31,6 @@ import {
 import ClickOutside from '@/services/click-outside';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
-import { formWidgetColumnsToColumns } from '@/helpers/forms/widgets/alarm';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 
@@ -396,7 +395,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formWidgetColumnsToColumns(columns)),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', columns),
       },
     });
   });

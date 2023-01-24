@@ -17,7 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertWidgetQueryToRequest } from '@/helpers/query';
 
 import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/alarms-list-table-with-pagination.vue';
@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     widget() {
-      return generateDefaultAlarmListWidget();
+      return generatePreparedDefaultAlarmListWidget();
     },
   },
   watch: {

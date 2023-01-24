@@ -206,7 +206,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   serviceDependenciesColumns:
     widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   widgetExportColumns:
-    widgetColumnsToForm(parameters.widgetExportColumns),
+    widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   linksCategoriesAsList: parameters.linksCategoriesAsList
     ? { ...parameters.linksCategoriesAsList }
     : {
