@@ -134,4 +134,4 @@ export const EXPORT_STATUSES = {
   failed: 2,
 };
 
-export const CUSTOM_WIDGET_COLUMN_TEMPLATE = Symbol('custom');
+export const CUSTOM_WIDGET_COLUMN_TEMPLATE = Symbol('custom').toString();

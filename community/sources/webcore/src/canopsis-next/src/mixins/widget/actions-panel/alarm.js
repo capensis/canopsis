@@ -9,7 +9,7 @@ import {
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { authMixin } from '@/mixins/auth';
@@ -144,7 +144,7 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showHistoryModal() {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
 

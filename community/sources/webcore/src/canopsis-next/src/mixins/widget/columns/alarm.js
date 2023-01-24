@@ -111,7 +111,7 @@ export const widgetColumnsAlarmMixin = {
     },
 
     preparedColumns() {
-      return (this.widget.parameters?.widgetColumns ?? []).map(column => ({
+      return (this.columns ?? []).map(column => ({
         ...column,
 
         popupTemplate: this.infoPopupsMap[column.value],
