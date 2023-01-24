@@ -25,6 +25,8 @@ export default {
   actionInitiator: 'Initiateur d\'actions',
   triggerEventMessage: 'Déclencher un message d\'événement',
   noRulesForAlarms: 'Aucune règle à appliquer pour les alarmes sélectionnées',
+  oneTicketForAlarms: 'Un ticket pour toutes les alarmes',
+  applyRules: 'Appliquer les règles',
   webhookStatus: 'Statut du webhook',
   webhookComplete: 'Webhook terminé',
   errors: {

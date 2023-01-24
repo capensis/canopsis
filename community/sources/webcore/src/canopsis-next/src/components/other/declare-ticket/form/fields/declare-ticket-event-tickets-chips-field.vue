@@ -1,13 +1,11 @@
 <template lang="pug">
   v-layout.declare-ticket-event-tickets-chips-field(row, wrap)
-    v-chip.declare-ticket-event-tickets-chips-field__chip(
+    declare-ticket-event-tickets-chip-field(
       v-for="chip in chips",
       :key="chip.value",
-      :selected="chip.active",
-      :color="chip.active ? 'primary' : undefined",
-      :text-color="chip.active ? 'white' : undefined",
-      small,
-      @click="updateActive(chip.value)"
+      :value="chip.active",
+      :disabled="disabled",
+      @input="updateActive(chip.value)"
     ) {{ chip.text }}
 </template>
 
@@ -16,7 +14,10 @@ import { filterValue } from '@/helpers/entities';
 
 import { formMixin } from '@/mixins/form';
 
+import DeclareTicketEventTicketsChipField from './declare-ticket-event-tickets-chip-field.vue';
+
 export default {
+  components: { DeclareTicketEventTicketsChipField },
   mixins: [formMixin],
   model: {
     prop: 'value',
@@ -30,6 +31,10 @@ export default {
     tickets: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -59,8 +64,7 @@ export default {
 
 <style lang="scss">
 .declare-ticket-event-tickets-chips-field {
-  &__chip .v-chip__content {
-    cursor: pointer;
-  }
+  margin: 5px;
+  gap: 5px;
 }
 </style>

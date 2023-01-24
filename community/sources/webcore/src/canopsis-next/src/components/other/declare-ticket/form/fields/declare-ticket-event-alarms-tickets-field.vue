@@ -6,24 +6,31 @@
         td.text-xs-left {{ item.v.connector }}
         td.text-xs-left {{ item.v.component }}
         td.text-xs-left {{ item.v.resource }}
-        td
-          declare-ticket-event-tickets-chips-field(
-            :value="value[item._id]",
-            :tickets="ticketsByAlarms[item._id]",
-            @input="updateTickets(item._id, $event)"
-          )
+        td(v-if="!hideTickets")
+          v-layout(row, align-center)
+            declare-ticket-event-tickets-chips-field(
+              :value="activeTicketsByAlarms[item._id]",
+              :tickets="ticketsByAlarms[item._id]",
+              :disabled="disableTickets",
+              @input="updateTickets(item._id, $event)"
+            )
+            c-action-btn(
+              v-if="!hideRemove",
+              :disabled="!hasActiveTickets(item._id)",
+              type="delete",
+              @click="removeTickets(item._id)"
+            )
     v-divider
-    c-alert(v-if="!hasTickets", type="info") {{ $t('declareTicket.noRulesForAlarms') }}
-    c-alert(v-if="hasErrors", type="error") {{ $t('declareTicket.errors.ticketRequired') }}
 </template>
 
 <script>
+import { filterValue, revertGroupBy } from '@/helpers/entities';
+
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventTicketsChipsField from './declare-ticket-event-tickets-chips-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { DeclareTicketEventTicketsChipsField },
   mixins: [formMixin],
   model: {
@@ -37,7 +44,7 @@ export default {
     },
     ticketsByAlarms: {
       type: Object,
-      required: () => ({}),
+      default: () => ({}),
     },
     alarms: {
       type: Array,
@@ -45,16 +52,24 @@ export default {
     },
     name: {
       type: String,
-      default: 'tickets_by_alarms',
+      default: 'alarms_by_tickets',
+    },
+    disableTickets: {
+      type: Boolean,
+      default: false,
+    },
+    hideRemove: {
+      type: Boolean,
+      default: false,
+    },
+    hideTickets: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
-    hasTickets() {
-      return Object.values(this.ticketsByAlarms).filter(tickets => tickets.length).length;
-    },
-
-    hasErrors() {
-      return this.errors.has(this.name);
+    activeTicketsByAlarms() {
+      return revertGroupBy(this.value);
     },
 
     headers() {
@@ -75,35 +90,42 @@ export default {
           text: this.$t('common.resource'),
           sortable: false,
         },
-        {
+        !this.hideTickets && {
           text: this.$tc('common.ticket', 2),
           sortable: false,
         },
-      ];
+      ].filter(Boolean);
     },
-  },
-  created() {
-    this.attachMinValueRule();
-  },
-  beforeDestroy() {
-    this.detachRules();
   },
   methods: {
-    attachMinValueRule() {
-      this.$validator.attach({
-        name: this.name,
-        rules: 'min_value:1',
-        getter: () => Object.values(this.value).filter(tickets => tickets.length).length,
-        vm: this,
-      });
-    },
-
-    detachRules() {
-      this.$validator.detach(this.name);
+    hasActiveTickets(alarmId) {
+      return !!this.activeTicketsByAlarms[alarmId]?.length;
     },
 
     updateTickets(alarmId, tickets) {
-      this.updateField(alarmId, tickets);
+      const oldTickets = this.activeTicketsByAlarms[alarmId] ?? [];
+      const removedTickets = oldTickets.filter(id => !tickets.includes(id));
+      const addedTickets = tickets.filter(id => !oldTickets.includes(id));
+
+      const newValue = { ...this.value };
+
+      addedTickets.forEach((ticketId) => {
+        newValue[ticketId] = [...this.value[ticketId], alarmId];
+      });
+
+      removedTickets.forEach((ticketId) => {
+        newValue[ticketId] = filterValue(this.value[ticketId], alarmId);
+      });
+
+      this.updateModel(newValue);
+    },
+
+    removeTickets(alarmId) {
+      this.updateModel(Object.entries(this.value).reduce((acc, [ticketId, alarms]) => {
+        acc[ticketId] = filterValue(alarms, alarmId);
+
+        return acc;
+      }, {}));
     },
   },
 };

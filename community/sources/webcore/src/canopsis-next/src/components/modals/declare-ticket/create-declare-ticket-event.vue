@@ -4,8 +4,12 @@
       template(#title="")
         span {{ $t('modals.createDeclareTicketEvent.title') }}
       template(#text="")
-        c-progress-overlay(:pending="pending")
-        declare-ticket-event-form(v-model="form", :alarms="items", :tickets-by-alarms="ticketsByAlarms")
+        declare-ticket-events-form(
+          v-model="form",
+          :alarms="items",
+          :tickets-by-alarms="config.ticketsByAlarms",
+          :alarms-by-tickets="config.alarmsByTickets"
+        )
       template(#actions="")
         v-btn(
           depressed,
@@ -22,16 +26,14 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { declareTicketEventToForm, formToDeclareTicketEvents } from '@/helpers/forms/declare-ticket-event';
-import { mapIds } from '@/helpers/entities';
+import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/forms/declare-ticket-event';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
-import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
-import DeclareTicketEventForm from '@/components/other/declare-ticket/form/declare-ticket-event-form.vue';
+import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -43,41 +45,21 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { DeclareTicketEventForm, ModalWrapper },
+  components: { DeclareTicketEventsForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
-    entitiesDeclareTicketRuleMixin,
     submittableMixinCreator(),
   ],
   data() {
-    const { declareTicketEvent, items } = this.modal.config;
+    const { alarmsByTickets, items } = this.modal.config;
 
     return {
-      form: declareTicketEventToForm(declareTicketEvent, items),
-      pending: true,
-      ticketsByAlarms: {},
+      form: alarmsToDeclareTicketEventForm(alarmsByTickets, items),
     };
   },
-  mounted() {
-    this.fetchAlarmsTickets();
-  },
   methods: {
-    async fetchAlarmsTickets() {
-      this.pending = true;
-
-      const { by_alarms: ticketsByAlarms } = await this.fetchAssignedDeclareTicketsWithoutStore({
-        params: {
-          alarms: mapIds(this.config.items),
-        },
-      });
-
-      this.ticketsByAlarms = ticketsByAlarms;
-
-      this.pending = false;
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
