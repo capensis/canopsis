@@ -9077,6 +9077,40 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/declare-ticket:
+    post:
+      tags:
+        - template-validator
+      summary: Validate declare ticket template
+      description: Validate declare ticket template
+      operationId: template-validator-declare-ticket
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: {
+                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /user-preferences:
     put:
       tags:
