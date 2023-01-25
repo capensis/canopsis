@@ -3,6 +3,7 @@ package userprovider
 
 import (
 	"context"
+
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -28,6 +29,7 @@ func (p *mongoProvider) FindByUsername(ctx context.Context, username string) (*s
 	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          username,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	})
 }
 
@@ -35,6 +37,7 @@ func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*s
 	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      apiKey,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	})
 }
 
@@ -49,6 +52,7 @@ func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User
 	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          objID,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	})
 }
 
