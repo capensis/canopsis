@@ -10,22 +10,24 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+    <span>
+      <div
+        class="layout row justify-space-around align-center"
       >
-        assignment_returned
-      </i>
-      <span
-        class="caption"
-      >
-        1
-      </span>
-    </div>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          assignment_returned
+        </i>
+        <span
+          class="caption"
+        >
+          1
+        </span>
+      </div>
+    </span>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
@@ -33,22 +35,24 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+    <span>
+      <div
+        class="layout row justify-space-around align-center"
       >
-        add_photo_alternate
-      </i>
-      <span
-        class="caption"
-      >
-        3
-      </span>
-    </div>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          add_photo_alternate
+        </i>
+        <span
+          class="caption"
+        >
+          3
+        </span>
+      </div>
+    </span>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
@@ -56,22 +60,24 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+    <span>
+      <div
+        class="layout row justify-space-around align-center"
       >
-        more_horiz
-      </i>
-      <span
-        class="caption"
-      >
-        12
-      </span>
-    </div>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          more_horiz
+        </i>
+        <span
+          class="caption"
+        >
+          12
+        </span>
+      </div>
+    </span>
   </span>
 </div>
 `;

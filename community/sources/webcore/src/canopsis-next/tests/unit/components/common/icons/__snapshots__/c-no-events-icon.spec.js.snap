@@ -7,12 +7,14 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correct
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light secondary--text"
-  >
-    sync_problem
-  </i>
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light secondary--text"
+    >
+      sync_problem
+    </i>
+  </span>
 </span>
 `;
 
@@ -38,12 +40,14 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 1`] 
   <transition-stub
     name=""
   />
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light error--text"
-  >
-    sync_problem
-  </i>
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light error--text"
+    >
+      sync_problem
+    </i>
+  </span>
 </span>
 `;
 

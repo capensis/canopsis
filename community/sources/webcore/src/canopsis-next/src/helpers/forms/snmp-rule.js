@@ -1,4 +1,4 @@
-import { SNMP_STATE_TYPES } from '@/constants';
+import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
 /**
  * @typedef {Object} SnmpRuleModuleMib
@@ -18,6 +18,11 @@ import { SNMP_STATE_TYPES } from '@/constants';
  * @typedef {Object} SnmpRuleState
  * @property {string} type
  * @property {number} [state]
+ * @property {SnmpRuleModuleMib} [stateoid]
+ * @property {string} [info]
+ * @property {string} [minor]
+ * @property {string} [major]
+ * @property {string} [critical]
  */
 
 /**
@@ -79,6 +84,37 @@ export const snmpRuleModuleMibToForm = (moduleMib = {}) => ({
 });
 
 /**
+ * Convert snmp rule state to form
+ *
+ * @param {SnmpRuleState} state
+ * @returns {SnmpRuleState}
+ */
+export const snmpRuleStateToForm = (state = {}) => {
+  const type = state.type ?? SNMP_STATE_TYPES.simple;
+
+  if (type === SNMP_STATE_TYPES.simple) {
+    return {
+      type,
+      state: state.state,
+    };
+  }
+
+  const additional = Object.values(SNMP_TEMPLATE_STATE_STATES).reduce((acc, value) => {
+    acc[value] = state[value] ?? '';
+
+    return acc;
+  }, {});
+
+  return {
+    ...additional,
+
+    type,
+    state: state.state,
+    stateoid: snmpRuleModuleMibToForm(state.stateoid),
+  };
+};
+
+/**
  * Convert snmp rule to form
  *
  * @param {SnmpRule} snmpRule
@@ -90,10 +126,7 @@ export const snmpRuleToForm = (snmpRule = {}) => ({
   connector_name: snmpRuleModuleMibToForm(snmpRule.connector_name),
   output: snmpRuleModuleMibToForm(snmpRule.output),
   resource: snmpRuleModuleMibToForm(snmpRule.resource),
-  state: {
-    type: snmpRule.state?.type ?? SNMP_STATE_TYPES.simple,
-    state: snmpRule.state?.state,
-  },
+  state: snmpRuleStateToForm(snmpRule.state),
 });
 
 /**

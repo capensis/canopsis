@@ -7,186 +7,188 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <div
-    class="layout alarm-counters fill-height column"
-  >
+  <span>
     <div
-      class="layout row justify-space-around align-center"
+      class="layout alarm-counters fill-height column"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+      <div
+        class="layout row justify-space-around align-center"
       >
-        build
-      </i>
-      <span
-        class="caption"
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          build
+        </i>
+        <span
+          class="caption"
+        >
+          11
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
       >
-        11
-      </span>
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          $vuetify.icons.playlist_build
+        </i>
+        <span
+          class="caption"
+        >
+          10
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          playlist_play
+        </i>
+        <span
+          class="caption"
+        >
+          9
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          playlist_add_check
+        </i>
+        <span
+          class="caption"
+        >
+          8
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 18px; color: rgb(245, 105, 84); caret-color: #f56954;"
+        >
+          $vuetify.icons.warning_stroke
+        </i>
+        <span
+          class="caption"
+        >
+          7
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 18px; color: rgb(255, 153, 0); caret-color: #ff9900;"
+        >
+          $vuetify.icons.warning_stroke
+        </i>
+        <span
+          class="caption"
+        >
+          6
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 18px; color: rgb(252, 220, 0); caret-color: #fcdc00;"
+        >
+          $vuetify.icons.warning_stroke
+        </i>
+        <span
+          class="caption"
+        >
+          5
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          check_circle
+        </i>
+        <span
+          class="caption"
+        >
+          4
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 18px; color: rgb(255, 82, 82); caret-color: #ff5252;"
+        >
+          $vuetify.icons.notification_important_stroke
+        </i>
+        <span
+          class="caption"
+        >
+          3
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 18px; color: rgb(255, 82, 82); caret-color: #ff5252;"
+        >
+          notification_important
+        </i>
+        <span
+          class="caption"
+        >
+          2
+        </span>
+      </div>
+      <div
+        class="layout row justify-space-around align-center"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 18px;"
+        >
+          $vuetify.icons.mediation
+        </i>
+        <span
+          class="caption"
+        >
+          1
+        </span>
+      </div>
     </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
-      >
-        $vuetify.icons.playlist_build
-      </i>
-      <span
-        class="caption"
-      >
-        10
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
-      >
-        playlist_play
-      </i>
-      <span
-        class="caption"
-      >
-        9
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
-      >
-        playlist_add_check
-      </i>
-      <span
-        class="caption"
-      >
-        8
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(245, 105, 84); caret-color: #f56954;"
-      >
-        $vuetify.icons.warning_stroke
-      </i>
-      <span
-        class="caption"
-      >
-        7
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(255, 153, 0); caret-color: #ff9900;"
-      >
-        $vuetify.icons.warning_stroke
-      </i>
-      <span
-        class="caption"
-      >
-        6
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(252, 220, 0); caret-color: #fcdc00;"
-      >
-        $vuetify.icons.warning_stroke
-      </i>
-      <span
-        class="caption"
-      >
-        5
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
-      >
-        check_circle
-      </i>
-      <span
-        class="caption"
-      >
-        4
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(255, 82, 82); caret-color: #ff5252;"
-      >
-        $vuetify.icons.notification_important_stroke
-      </i>
-      <span
-        class="caption"
-      >
-        3
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(255, 82, 82); caret-color: #ff5252;"
-      >
-        notification_important
-      </i>
-      <span
-        class="caption"
-      >
-        2
-      </span>
-    </div>
-    <div
-      class="layout row justify-space-around align-center"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
-      >
-        $vuetify.icons.mediation
-      </i>
-      <span
-        class="caption"
-      >
-        1
-      </span>
-    </div>
-  </div>
+  </span>
 </span>
 `;
 
@@ -242,6 +244,11 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with default prop
   <transition-stub
     name="slide-y-reverse-transition"
   />
+  <span>
+    <div
+      class="layout alarm-counters fill-height column"
+    />
+  </span>
 </span>
 `;
 

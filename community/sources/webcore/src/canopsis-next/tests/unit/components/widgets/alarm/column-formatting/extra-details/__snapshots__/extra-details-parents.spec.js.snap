@@ -7,13 +7,15 @@ exports[`extra-details-parents Renders \`extra-details-parents\` with full paren
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <i
-    aria-hidden="true"
-    class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
-    style="font-size: 16px;"
-  >
-    center_focus_weak
-  </i>
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
+      style="font-size: 16px;"
+    >
+      center_focus_weak
+    </i>
+  </span>
 </span>
 `;
 
@@ -64,13 +66,15 @@ exports[`extra-details-parents Renders \`extra-details-parents\` without rules 1
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <i
-    aria-hidden="true"
-    class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
-    style="font-size: 16px;"
-  >
-    center_focus_weak
-  </i>
+  <span>
+    <i
+      aria-hidden="true"
+      class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
+      style="font-size: 16px;"
+    >
+      center_focus_weak
+    </i>
+  </span>
 </span>
 `;
 

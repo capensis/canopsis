@@ -20,21 +20,23 @@ exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-fie
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <button
-      class="v-btn v-btn--icon theme--light"
-      type="button"
-    >
-      <div
-        class="v-btn__content"
+    <span>
+      <button
+        class="v-btn v-btn--icon theme--light"
+        type="button"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light grey--text text--darken-1"
+        <div
+          class="v-btn__content"
         >
-          info
-        </i>
-      </div>
-    </button>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light grey--text text--darken-1"
+          >
+            info
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
   <c-action-btn-stub
     type="delete"

@@ -107,7 +107,7 @@ describe('filter-selector', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `filter-selector` with custom props', () => {
+  it('Renders `filter-selector` with custom props 2', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters,
