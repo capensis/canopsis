@@ -89,20 +89,18 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
           >
             Something went wrong...
           </div>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            help
+          </i>
           <span
             class="v-tooltip v-tooltip--top"
           >
             <transition-stub
               name="slide-y-reverse-transition"
             />
-            <span>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                help
-              </i>
-            </span>
           </span>
         </div>
       </div>

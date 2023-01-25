@@ -108,14 +108,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -155,14 +153,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -202,14 +198,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -328,14 +322,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with default props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -375,14 +367,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with default props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -422,14 +412,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with default props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -547,14 +535,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with old_entity_patterns 2`] 
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -593,14 +579,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with old_entity_patterns 2`] 
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
@@ -639,14 +623,12 @@ exports[`c-filter-field Renders \`c-filter-field\` with old_entity_patterns 2`] 
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <span>
-                        <i
-                          aria-hidden="true"
-                          class="v-icon material-icons theme--light white--text"
-                        >
-                          priority_high
-                        </i>
-                      </span>
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light white--text"
+                      >
+                        priority_high
+                      </i>
                     </span>
                   </span>
                 </transition-stub>
