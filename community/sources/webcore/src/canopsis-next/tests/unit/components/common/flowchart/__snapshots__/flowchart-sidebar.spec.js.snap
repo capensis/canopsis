@@ -68,32 +68,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      stroke="currentColor"
-                      width="44"
-                      x="0.5"
-                      y="1.17773"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        stroke="currentColor"
+                        width="44"
+                        x="0.5"
+                        y="1.17773"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -101,33 +103,35 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      rx="4.5"
-                      stroke="currentColor"
-                      width="44"
-                      x="0.5"
-                      y="1.17773"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        rx="4.5"
+                        stroke="currentColor"
+                        width="44"
+                        x="0.5"
+                        y="1.17773"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -135,32 +139,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 35 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      stroke="currentColor"
-                      width="34"
-                      x="0.5"
-                      y="1.17773"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 35 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        stroke="currentColor"
+                        width="34"
+                        x="0.5"
+                        y="1.17773"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -168,34 +174,36 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 36 36"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="24"
-                      stroke="currentColor"
-                      transform="rotate(-45 0.707107 18.1777)"
-                      width="24"
-                      x="0.707107"
-                      y="18.1777"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 36 36"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="24"
+                        stroke="currentColor"
+                        transform="rotate(-45 0.707107 18.1777)"
+                        width="24"
+                        x="0.707107"
+                        y="18.1777"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -203,32 +211,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <circle
-                      cx="22.5"
-                      cy="22.5"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      r="21.5"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        cx="22.5"
+                        cy="22.5"
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        r="21.5"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -236,30 +246,32 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M44.5 18.1777C44.5 27.4569 34.7745 35.1777 22.5 35.1777C10.2255 35.1777 0.5 27.4569 0.5 18.1777C0.5
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M44.5 18.1777C44.5 27.4569 34.7745 35.1777 22.5 35.1777C10.2255 35.1777 0.5 27.4569 0.5 18.1777C0.5
     8.89855 10.2255 1.17773 22.5 1.17773C34.7745 1.17773 44.5 8.89855 44.5 18.1777Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -267,29 +279,31 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 55 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M0.662865 35.1777L10.3772 1.17773H54.3371L44.6228 35.1777H0.662865Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 55 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0.662865 35.1777L10.3772 1.17773H54.3371L44.6228 35.1777H0.662865Z"
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -297,48 +311,50 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      stroke="currentColor"
-                      width="28.6994"
-                      x="8.15039"
-                      y="1.17773"
-                    />
-                     
-                    <path
-                      d="M0.5 9.22756C0.5 4.94968 3.83693 1.45118 8.04983 1.19301V35.1625C3.83693 34.9043 0.5 31.4058
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        stroke="currentColor"
+                        width="28.6994"
+                        x="8.15039"
+                        y="1.17773"
+                      />
+                       
+                      <path
+                        d="M0.5 9.22756C0.5 4.94968 3.83693 1.45118 8.04983 1.19301V35.1625C3.83693 34.9043 0.5 31.4058
     0.5 27.1279V9.22756Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                     
-                    <path
-                      d="M36.9492 1.19301C41.1621 1.45118 44.499 4.94968 44.499 9.22757V27.1279C44.499 31.4058 41.1621
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                       
+                      <path
+                        d="M36.9492 1.19301C41.1621 1.45118 44.499 4.94968 44.499 9.22757V27.1279C44.499 31.4058 41.1621
     34.9043 36.9492 35.1625V1.19301Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -346,32 +362,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M0.5 26.7896V1.17773H44.5V34.6026L42.6222 33.0204L42.6002 33.0019L42.5763 32.986L39.2763 30.7985L39.2225
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0.5 26.7896V1.17773H44.5V34.6026L42.6222 33.0204L42.6002 33.0019L42.5763 32.986L39.2763 30.7985L39.2225
     30.7628L39.1614 30.742L34.2864 29.0795L34.2005 29.0502L34.1098 29.053L28.3723 29.228L28.2743 29.231L28.1847
     29.2707L22.0722 31.9832L22.0565 31.9902L22.0413 31.9982L17.3148 34.4969L13.0423 35.1727L9.07379 34.6676L5.23604
     32.7246L2.641 30.3699L0.5 26.7896Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -379,30 +397,32 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M 0,11a 22,10 0 1, 0 45, 0a 22,10 0 1, 0 -45, 0L 0,34a 22,10 0 1, 0 45, 0L 45,11"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0,11a 22,10 0 1, 0 45, 0a 22,10 0 1, 0 -45, 0L 0,34a 22,10 0 1, 0 45, 0L 45,11"
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -410,32 +430,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M 0 44
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0 44
     Q 45 44 22.5 22.5
     Q 0 1 45 1"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -443,37 +465,39 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M33 0 l12 6 l-12 6 l3 -6 Z"
-                      fill="currentColor"
-                    />
-                     
-                    <path
-                      d="M 0 44
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33 0 l12 6 l-12 6 l3 -6 Z"
+                        fill="currentColor"
+                      />
+                       
+                      <path
+                        d="M 0 44
     Q 45 44 22.5 22.5
     Q 0 6 36 6"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -481,42 +505,79 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M33 0 l12 6 l-12 6 l3 -6 Z"
-                      fill="currentColor"
-                    />
-                     
-                    <path
-                      d="M0 38 l12 -6 l-3 6 l3 6 Z"
-                      fill="currentColor"
-                    />
-                     
-                    <path
-                      d="M 9 38
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33 0 l12 6 l-12 6 l3 -6 Z"
+                        fill="currentColor"
+                      />
+                       
+                      <path
+                        d="M0 38 l12 -6 l-3 6 l3 6 Z"
+                        fill="currentColor"
+                      />
+                       
+                      <path
+                        d="M 9 38
     Q 45 38 22.5 22.5
     Q 0 6 36 6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <span
+              class="v-tooltip v-tooltip--top"
+            >
+              <transition-stub
+                name="slide-y-reverse-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
                       fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    />
-                  </svg>
-                </div>
-              </button>
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <line
+                        stroke="currentColor"
+                        stroke-width="2"
+                        x1="1"
+                        x2="44"
+                        y1="44"
+                        y2="1"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -524,73 +585,42 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <line
-                      stroke="currentColor"
-                      stroke-width="2"
-                      x1="1"
-                      x2="44"
-                      y1="44"
-                      y2="1"
-                    />
-                  </svg>
-                </div>
-              </button>
-            </span>
-            <span
-              class="v-tooltip v-tooltip--top"
-            >
-              <transition-stub
-                name="slide-y-reverse-transition"
-              />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
-                >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M 1 44 L 40 5"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
                       fill="none"
-                      pointer-events="stroke"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                      stroke-width="2"
-                    />
-                     
-                    <path
-                      d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
-                      fill="currentColor"
-                      pointer-events="all"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                  </svg>
-                </div>
-              </button>
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 1 44 L 40 5"
+                        fill="none"
+                        pointer-events="stroke"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="2"
+                      />
+                       
+                      <path
+                        d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
+                        fill="currentColor"
+                        pointer-events="all"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -598,48 +628,50 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M 0 44 L 4 33 L 5 40 L 12 41 Z"
-                      fill="currentColor"
-                      pointer-events="all"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                     
-                    <path
-                      d="M 1 44 L 40 5"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
                       fill="none"
-                      pointer-events="stroke"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                      stroke-width="2"
-                    />
-                     
-                    <path
-                      d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
-                      fill="currentColor"
-                      pointer-events="all"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                  </svg>
-                </div>
-              </button>
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0 44 L 4 33 L 5 40 L 12 41 Z"
+                        fill="currentColor"
+                        pointer-events="all"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                      />
+                       
+                      <path
+                        d="M 1 44 L 40 5"
+                        fill="none"
+                        pointer-events="stroke"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="2"
+                      />
+                       
+                      <path
+                        d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
+                        fill="currentColor"
+                        pointer-events="all"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -647,113 +679,115 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      height="41"
-                      stroke="currentColor"
-                      stroke-dasharray="5 5"
-                      width="41"
-                      x="2"
-                      y="2"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="41"
-                    />
-                     
-                    <text
-                      fill="currentColor"
-                      font-size="14px"
-                      x="6"
-                      y="26"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      Text
-                    </text>
-                  </svg>
-                </div>
-              </button>
+                      <rect
+                        height="41"
+                        stroke="currentColor"
+                        stroke-dasharray="5 5"
+                        width="41"
+                        x="2"
+                        y="2"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="41"
+                      />
+                       
+                      <text
+                        fill="currentColor"
+                        font-size="14px"
+                        x="6"
+                        y="26"
+                      >
+                        Text
+                      </text>
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -761,123 +795,125 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      height="41"
-                      stroke="currentColor"
-                      stroke-dasharray="5 5"
-                      width="41"
-                      x="2"
-                      y="2"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="41"
-                    />
-                     
-                    <text
-                      fill="currentColor"
-                      font-size="9px"
-                      font-weight="bold"
-                      x="7"
-                      y="18"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      Header
-                    </text>
-                     
-                    <text
-                      fill="currentColor"
-                      font-size="8px"
-                      x="7"
-                      y="32"
-                    >
-                      Text
-                    </text>
-                  </svg>
-                </div>
-              </button>
+                      <rect
+                        height="41"
+                        stroke="currentColor"
+                        stroke-dasharray="5 5"
+                        width="41"
+                        x="2"
+                        y="2"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="41"
+                      />
+                       
+                      <text
+                        fill="currentColor"
+                        font-size="9px"
+                        font-weight="bold"
+                        x="7"
+                        y="18"
+                      >
+                        Header
+                      </text>
+                       
+                      <text
+                        fill="currentColor"
+                        font-size="8px"
+                        x="7"
+                        y="32"
+                      >
+                        Text
+                      </text>
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <file-selector-stub
               errormessages=""
@@ -1060,32 +1096,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      stroke="currentColor"
-                      width="44"
-                      x="0.5"
-                      y="1.17773"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        stroke="currentColor"
+                        width="44"
+                        x="0.5"
+                        y="1.17773"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1093,33 +1131,35 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      rx="4.5"
-                      stroke="currentColor"
-                      width="44"
-                      x="0.5"
-                      y="1.17773"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        rx="4.5"
+                        stroke="currentColor"
+                        width="44"
+                        x="0.5"
+                        y="1.17773"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1127,32 +1167,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 35 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      stroke="currentColor"
-                      width="34"
-                      x="0.5"
-                      y="1.17773"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 35 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        stroke="currentColor"
+                        width="34"
+                        x="0.5"
+                        y="1.17773"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1160,34 +1202,36 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 36 36"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="24"
-                      stroke="currentColor"
-                      transform="rotate(-45 0.707107 18.1777)"
-                      width="24"
-                      x="0.707107"
-                      y="18.1777"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 36 36"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="24"
+                        stroke="currentColor"
+                        transform="rotate(-45 0.707107 18.1777)"
+                        width="24"
+                        x="0.707107"
+                        y="18.1777"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1195,32 +1239,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <circle
-                      cx="22.5"
-                      cy="22.5"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      r="21.5"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        cx="22.5"
+                        cy="22.5"
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        r="21.5"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1228,30 +1274,32 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M44.5 18.1777C44.5 27.4569 34.7745 35.1777 22.5 35.1777C10.2255 35.1777 0.5 27.4569 0.5 18.1777C0.5
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M44.5 18.1777C44.5 27.4569 34.7745 35.1777 22.5 35.1777C10.2255 35.1777 0.5 27.4569 0.5 18.1777C0.5
     8.89855 10.2255 1.17773 22.5 1.17773C34.7745 1.17773 44.5 8.89855 44.5 18.1777Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1259,29 +1307,31 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 55 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M0.662865 35.1777L10.3772 1.17773H54.3371L44.6228 35.1777H0.662865Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 55 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0.662865 35.1777L10.3772 1.17773H54.3371L44.6228 35.1777H0.662865Z"
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1289,48 +1339,50 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      height="34"
-                      stroke="currentColor"
-                      width="28.6994"
-                      x="8.15039"
-                      y="1.17773"
-                    />
-                     
-                    <path
-                      d="M0.5 9.22756C0.5 4.94968 3.83693 1.45118 8.04983 1.19301V35.1625C3.83693 34.9043 0.5 31.4058
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        height="34"
+                        stroke="currentColor"
+                        width="28.6994"
+                        x="8.15039"
+                        y="1.17773"
+                      />
+                       
+                      <path
+                        d="M0.5 9.22756C0.5 4.94968 3.83693 1.45118 8.04983 1.19301V35.1625C3.83693 34.9043 0.5 31.4058
     0.5 27.1279V9.22756Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                     
-                    <path
-                      d="M36.9492 1.19301C41.1621 1.45118 44.499 4.94968 44.499 9.22757V27.1279C44.499 31.4058 41.1621
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                       
+                      <path
+                        d="M36.9492 1.19301C41.1621 1.45118 44.499 4.94968 44.499 9.22757V27.1279C44.499 31.4058 41.1621
     34.9043 36.9492 35.1625V1.19301Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1338,32 +1390,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 36"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M0.5 26.7896V1.17773H44.5V34.6026L42.6222 33.0204L42.6002 33.0019L42.5763 32.986L39.2763 30.7985L39.2225
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0.5 26.7896V1.17773H44.5V34.6026L42.6222 33.0204L42.6002 33.0019L42.5763 32.986L39.2763 30.7985L39.2225
     30.7628L39.1614 30.742L34.2864 29.0795L34.2005 29.0502L34.1098 29.053L28.3723 29.228L28.2743 29.231L28.1847
     29.2707L22.0722 31.9832L22.0565 31.9902L22.0413 31.9982L17.3148 34.4969L13.0423 35.1727L9.07379 34.6676L5.23604
     32.7246L2.641 30.3699L0.5 26.7896Z"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1371,30 +1425,32 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M 0,11a 22,10 0 1, 0 45, 0a 22,10 0 1, 0 -45, 0L 0,34a 22,10 0 1, 0 45, 0L 45,11"
-                      fill="currentColor"
-                      fill-opacity="0.6"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0,11a 22,10 0 1, 0 45, 0a 22,10 0 1, 0 -45, 0L 0,34a 22,10 0 1, 0 45, 0L 45,11"
+                        fill="currentColor"
+                        fill-opacity="0.6"
+                        stroke="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1402,32 +1458,34 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M 0 44
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0 44
     Q 45 44 22.5 22.5
     Q 0 1 45 1"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1435,37 +1493,39 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M33 0 l12 6 l-12 6 l3 -6 Z"
-                      fill="currentColor"
-                    />
-                     
-                    <path
-                      d="M 0 44
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33 0 l12 6 l-12 6 l3 -6 Z"
+                        fill="currentColor"
+                      />
+                       
+                      <path
+                        d="M 0 44
     Q 45 44 22.5 22.5
     Q 0 6 36 6"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    />
-                  </svg>
-                </div>
-              </button>
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1473,42 +1533,79 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M33 0 l12 6 l-12 6 l3 -6 Z"
-                      fill="currentColor"
-                    />
-                     
-                    <path
-                      d="M0 38 l12 -6 l-3 6 l3 6 Z"
-                      fill="currentColor"
-                    />
-                     
-                    <path
-                      d="M 9 38
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33 0 l12 6 l-12 6 l3 -6 Z"
+                        fill="currentColor"
+                      />
+                       
+                      <path
+                        d="M0 38 l12 -6 l-3 6 l3 6 Z"
+                        fill="currentColor"
+                      />
+                       
+                      <path
+                        d="M 9 38
     Q 45 38 22.5 22.5
     Q 0 6 36 6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
+            </span>
+            <span
+              class="v-tooltip v-tooltip--top"
+            >
+              <transition-stub
+                name="slide-y-reverse-transition"
+              />
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
                       fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    />
-                  </svg>
-                </div>
-              </button>
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <line
+                        stroke="currentColor"
+                        stroke-width="2"
+                        x1="1"
+                        x2="44"
+                        y1="44"
+                        y2="1"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1516,73 +1613,42 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <line
-                      stroke="currentColor"
-                      stroke-width="2"
-                      x1="1"
-                      x2="44"
-                      y1="44"
-                      y2="1"
-                    />
-                  </svg>
-                </div>
-              </button>
-            </span>
-            <span
-              class="v-tooltip v-tooltip--top"
-            >
-              <transition-stub
-                name="slide-y-reverse-transition"
-              />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
-                >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M 1 44 L 40 5"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
                       fill="none"
-                      pointer-events="stroke"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                      stroke-width="2"
-                    />
-                     
-                    <path
-                      d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
-                      fill="currentColor"
-                      pointer-events="all"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                  </svg>
-                </div>
-              </button>
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 1 44 L 40 5"
+                        fill="none"
+                        pointer-events="stroke"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="2"
+                      />
+                       
+                      <path
+                        d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
+                        fill="currentColor"
+                        pointer-events="all"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1590,48 +1656,50 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <path
-                      d="M 0 44 L 4 33 L 5 40 L 12 41 Z"
-                      fill="currentColor"
-                      pointer-events="all"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                     
-                    <path
-                      d="M 1 44 L 40 5"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
                       fill="none"
-                      pointer-events="stroke"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                      stroke-width="2"
-                    />
-                     
-                    <path
-                      d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
-                      fill="currentColor"
-                      pointer-events="all"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                  </svg>
-                </div>
-              </button>
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M 0 44 L 4 33 L 5 40 L 12 41 Z"
+                        fill="currentColor"
+                        pointer-events="all"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                      />
+                       
+                      <path
+                        d="M 1 44 L 40 5"
+                        fill="none"
+                        pointer-events="stroke"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="2"
+                      />
+                       
+                      <path
+                        d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
+                        fill="currentColor"
+                        pointer-events="all"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1639,113 +1707,115 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      height="41"
-                      stroke="currentColor"
-                      stroke-dasharray="5 5"
-                      width="41"
-                      x="2"
-                      y="2"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="41"
-                    />
-                     
-                    <text
-                      fill="currentColor"
-                      font-size="14px"
-                      x="6"
-                      y="26"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      Text
-                    </text>
-                  </svg>
-                </div>
-              </button>
+                      <rect
+                        height="41"
+                        stroke="currentColor"
+                        stroke-dasharray="5 5"
+                        width="41"
+                        x="2"
+                        y="2"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="41"
+                      />
+                       
+                      <text
+                        fill="currentColor"
+                        font-size="14px"
+                        x="6"
+                        y="26"
+                      >
+                        Text
+                      </text>
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <span
               class="v-tooltip v-tooltip--top"
@@ -1753,123 +1823,125 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
               <transition-stub
                 name="slide-y-reverse-transition"
               />
-              <button
-                class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
+              <span>
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
                 >
-                  <svg
-                    class="grey--text text--darken-3 pa-1"
-                    fill="none"
-                    height="45"
-                    viewBox="0 0 45 45"
-                    width="45"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    class="v-btn__content"
                   >
-                    <rect
-                      height="41"
-                      stroke="currentColor"
-                      stroke-dasharray="5 5"
-                      width="41"
-                      x="2"
-                      y="2"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="0"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="20.5"
-                      y="41"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="20.5"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="0"
-                    />
-                     
-                    <rect
-                      fill="white"
-                      height="4"
-                      stroke="currentColor"
-                      width="4"
-                      x="41"
-                      y="41"
-                    />
-                     
-                    <text
-                      fill="currentColor"
-                      font-size="9px"
-                      font-weight="bold"
-                      x="7"
-                      y="18"
+                    <svg
+                      class="grey--text text--darken-3 pa-1"
+                      fill="none"
+                      height="45"
+                      viewBox="0 0 45 45"
+                      width="45"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      Header
-                    </text>
-                     
-                    <text
-                      fill="currentColor"
-                      font-size="8px"
-                      x="7"
-                      y="32"
-                    >
-                      Text
-                    </text>
-                  </svg>
-                </div>
-              </button>
+                      <rect
+                        height="41"
+                        stroke="currentColor"
+                        stroke-dasharray="5 5"
+                        width="41"
+                        x="2"
+                        y="2"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="0"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="20.5"
+                        y="41"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="20.5"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="0"
+                      />
+                       
+                      <rect
+                        fill="white"
+                        height="4"
+                        stroke="currentColor"
+                        width="4"
+                        x="41"
+                        y="41"
+                      />
+                       
+                      <text
+                        fill="currentColor"
+                        font-size="9px"
+                        font-weight="bold"
+                        x="7"
+                        y="18"
+                      >
+                        Header
+                      </text>
+                       
+                      <text
+                        fill="currentColor"
+                        font-size="8px"
+                        x="7"
+                        y="32"
+                      >
+                        Text
+                      </text>
+                    </svg>
+                  </div>
+                </button>
+              </span>
             </span>
             <file-selector-stub
               errormessages=""
