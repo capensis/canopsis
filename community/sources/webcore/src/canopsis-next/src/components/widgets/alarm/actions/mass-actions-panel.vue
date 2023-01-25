@@ -15,7 +15,6 @@ import {
 import featuresService from '@/services/features';
 
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { mapIds } from '@/helpers/entities';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
@@ -89,7 +88,8 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           title: this.$t('alarm.actions.titles.declareTicket'),
-          method: this.showCreateDeclareTicketEventModal,
+          loading: this.ticketsForAlarmsPending,
+          method: this.showCreateDeclareTicketModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
@@ -179,30 +179,8 @@ export default {
       });
     },
 
-    async showCreateDeclareTicketEventModal() {
-      const {
-        by_rules: alarmsByTickets,
-        by_alarms: ticketsByAlarms,
-      } = await this.fetchAssignedDeclareTicketsWithoutStore({
-        params: {
-          alarms: mapIds(this.items),
-        },
-      });
-
-      this.$modals.show({
-        name: MODALS.createDeclareTicketEvent,
-        config: {
-          ...this.modalConfig,
-          alarmsByTickets,
-          ticketsByAlarms,
-          action: async (events) => {
-            await this.bulkCreateDeclareTicketExecution({ data: events });
-            /**
-             * TODO: Declare ticket status modals should be opened
-             */
-          },
-        },
-      });
+    showCreateDeclareTicketModal() {
+      this.showDeclareTicketModalByAlarmsIds(this.items);
     },
 
     showCreateGroupRequestEventModal() {

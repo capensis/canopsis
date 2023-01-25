@@ -883,4 +883,7 @@ export default {
   createDeclareTicketEvent: {
     title: 'Declare ticket',
   },
+  executeDeclareTicket: {
+    title: 'Ticket declaration status',
+  },
 };
