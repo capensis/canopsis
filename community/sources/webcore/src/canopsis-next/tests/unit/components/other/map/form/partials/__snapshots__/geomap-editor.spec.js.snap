@@ -37,21 +37,23 @@ exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
           <transition-stub
             name="slide-x-transition"
           />
-          <button
-            class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
+          <span>
+            <button
+              class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+              type="button"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--dark"
+              <div
+                class="v-btn__content"
               >
-                add_location
-              </i>
-            </div>
-          </button>
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--dark"
+                >
+                  add_location
+                </i>
+              </div>
+            </button>
+          </span>
         </span>
       </geomap-control-stub>
       <geomap-control-stub
@@ -170,21 +172,23 @@ exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
           <transition-stub
             name="slide-x-transition"
           />
-          <button
-            class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
+          <span>
+            <button
+              class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+              type="button"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--dark"
+              <div
+                class="v-btn__content"
               >
-                add_location
-              </i>
-            </div>
-          </button>
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--dark"
+                >
+                  add_location
+                </i>
+              </div>
+            </button>
+          </span>
         </span>
       </geomap-control-stub>
       <geomap-control-stub
@@ -273,27 +277,29 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
         options="[object Object]"
         position="topleft"
       >
-        <button
-          class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              add_location
-            </i>
-          </div>
-        </button>
         <span
           class="v-tooltip v-tooltip--right"
         >
           <transition-stub
             name="slide-x-transition"
           />
+          <span>
+            <button
+              class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--dark"
+                >
+                  add_location
+                </i>
+              </div>
+            </button>
+          </span>
         </span>
       </geomap-control-stub>
       <geomap-control-stub

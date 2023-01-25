@@ -183,12 +183,14 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -279,12 +281,14 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -378,12 +382,14 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -474,12 +480,14 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -610,12 +618,14 @@ exports[`filter-selector Renders \`filter-selector\` with badges 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -662,12 +672,14 @@ exports[`filter-selector Renders \`filter-selector\` with badges 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -717,12 +729,14 @@ exports[`filter-selector Renders \`filter-selector\` with badges 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -769,12 +783,14 @@ exports[`filter-selector Renders \`filter-selector\` with badges 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -935,12 +951,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -988,12 +1006,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -1044,12 +1064,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -1097,12 +1119,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -1116,7 +1140,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
 </div>
 `;
 
-exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
+exports[`filter-selector Renders \`filter-selector\` with custom props 2 1`] = `
 <div
   class="v-input filter-selector v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
@@ -1185,7 +1209,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
 </div>
 `;
 
-exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
+exports[`filter-selector Renders \`filter-selector\` with custom props 2 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -1239,12 +1263,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -1292,12 +1318,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -1348,12 +1376,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>
@@ -1401,12 +1431,14 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
                       <transition-stub
                         name="slide-y-reverse-transition"
                       />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light white--text"
-                      >
-                        priority_high
-                      </i>
+                      <span>
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light white--text"
+                        >
+                          priority_high
+                        </i>
+                      </span>
                     </span>
                   </span>
                 </transition-stub>

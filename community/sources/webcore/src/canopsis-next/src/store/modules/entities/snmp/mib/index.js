@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
@@ -18,14 +16,7 @@ export default {
     },
 
     upload(context, { data } = {}) {
-      return request.post(API_ROUTES.snmpMib, qs.stringify({
-        filecontent: JSON.stringify([{
-          filename: 'concatenatedMibFiles',
-          data,
-        }]),
-      }), {
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      });
+      return request.post(API_ROUTES.snmpMib, data);
     },
   },
 };
