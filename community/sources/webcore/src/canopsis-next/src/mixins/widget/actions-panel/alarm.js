@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import { keyBy } from 'lodash';
 
 import {
   MODALS,
