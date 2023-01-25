@@ -191,8 +191,12 @@ type ExportRequest struct {
 }
 
 type ExportResponse struct {
-	ID     string `json:"_id"`
-	Status int    `json:"status"`
+	ID string `json:"_id"`
+	// Possible values.
+	//   * `0` - Running
+	//   * `1` - Succeeded
+	//   * `2` - Failed
+	Status int `json:"status"`
 }
 
 type Alarm struct {

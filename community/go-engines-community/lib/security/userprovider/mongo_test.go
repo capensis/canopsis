@@ -2,6 +2,8 @@ package userprovider
 
 import (
 	"context"
+	"testing"
+
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -10,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"testing"
 )
 
 func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
@@ -33,6 +34,7 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          username,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -66,6 +68,7 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnNil(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          username,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -109,6 +112,7 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      userApiKey,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -142,6 +146,7 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      userApiKey,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -185,6 +190,7 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          userID,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -218,6 +224,7 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          userID,
+		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
