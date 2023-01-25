@@ -268,6 +268,7 @@ export default {
   header: 'En-tête | En-têtes',
   headerKey: 'Clé d\'en-tête',
   headerValue: 'Valeur d\'en-tête',
+  rule: 'Règle | Règles',
   copyValue: 'Copier la valeur',
   copyProperty: 'Copier la propriété',
   copyPropertyPath: 'Copier le chemin de la propriété',
