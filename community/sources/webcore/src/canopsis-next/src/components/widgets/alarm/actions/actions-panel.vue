@@ -63,9 +63,16 @@ export default {
       default: () => {},
     },
   },
-  data() {
-    return {
-      actionsMap: {
+  computed: {
+    actionsMap() {
+      /**
+       * TODO: We need check all features
+       */
+      const featuresActionsMap = featuresService.has('components.alarmListActionPanel.computed.actionsMap')
+        ? featuresService.call('components.alarmListActionPanel.computed.actionsMap', this, [])
+        : {};
+
+      return {
         ack: {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
@@ -100,6 +107,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
           title: this.$t('alarm.actions.titles.declareTicket'),
+          loading: this.ticketsForAlarmsPending,
           method: this.showDeclareTicketModal,
         },
         associateTicket: {
@@ -149,16 +157,18 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
           method: this.showExecuteInstructionModal,
         },
-      },
-    };
-  },
-  computed: {
+        ...featuresActionsMap,
+      };
+    },
+
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(get(this.parentAlarm, 'rule.type'));
     },
+
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
+
     modalConfig() {
       return {
         items: [this.item],
