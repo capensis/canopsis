@@ -1094,7 +1094,7 @@ Feature: Metrics should be added on alarm changes
     When I do GET /api/v4/alarms?search=test-resource-metrics-axe-second-5-4
     Then the response code should be 200
     When I save response alarmID4={{ (index .lastResponse.data 0)._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
