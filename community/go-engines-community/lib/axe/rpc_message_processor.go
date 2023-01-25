@@ -91,7 +91,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	p.sendEventToService(ctx, *alarm, *event.Entity, alarmChange, msg)
-	p.sendTriggerEvent(ctx, *alarm, *event.Entity, alarmChange, msg)
+	p.sendTriggerEvent(ctx, event, alarmChange, msg)
 	p.sendEventToRemediation(ctx, *alarm, *event.Entity, alarmChange, msg)
 	p.sendEventToAction(ctx, *alarm, d.CorrelationId, event, alarmChange, msg)
 
@@ -263,8 +263,7 @@ func (p *rpcMessageProcessor) sendEventToRemediation(
 
 func (p *rpcMessageProcessor) sendTriggerEvent(
 	ctx context.Context,
-	alarm types.Alarm,
-	entity types.Entity,
+	event rpc.AxeEvent,
 	alarmChange types.AlarmChange,
 	msg []byte,
 ) {
@@ -272,19 +271,22 @@ func (p *rpcMessageProcessor) sendTriggerEvent(
 	case types.AlarmChangeTypeAutoInstructionFail,
 		types.AlarmChangeTypeAutoInstructionComplete,
 		types.AlarmChangeTypeInstructionJobFail,
-		types.AlarmChangeTypeInstructionJobComplete,
-		types.AlarmChangeTypeDeclareTicketWebhook:
+		types.AlarmChangeTypeInstructionJobComplete:
+	case types.AlarmChangeTypeDeclareTicketWebhook:
+		if !event.Parameters.EmitTrigger {
+			return
+		}
 	default:
 		return
 	}
 
 	body, err := p.Encoder.Encode(types.Event{
 		EventType:     types.EventTypeTrigger,
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		SourceType:    entity.Type,
+		Connector:     event.Alarm.Value.Connector,
+		ConnectorName: event.Alarm.Value.ConnectorName,
+		Component:     event.Alarm.Value.Component,
+		Resource:      event.Alarm.Value.Resource,
+		SourceType:    event.Entity.Type,
 		AlarmChange:   &alarmChange,
 	})
 	if err != nil {
