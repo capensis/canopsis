@@ -15,7 +15,6 @@ import {
 import featuresService from '@/services/features';
 
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { mapIds } from '@/helpers/entities';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
@@ -175,32 +174,6 @@ export default {
 
     showCreateDeclareTicketModal() {
       this.showDeclareTicketModalByAlarms(this.items);
-    },
-
-    async showCreateDeclareTicketEventModal() {
-      const {
-        by_rules: alarmsByTickets,
-        by_alarms: ticketsByAlarms,
-      } = await this.fetchAssignedDeclareTicketsWithoutStore({
-        params: {
-          alarms: mapIds(this.items),
-        },
-      });
-
-      this.$modals.show({
-        name: MODALS.createDeclareTicketEvent,
-        config: {
-          ...this.modalConfig,
-          alarmsByTickets,
-          ticketsByAlarms,
-          action: async (events) => {
-            await this.bulkCreateDeclareTicketExecution({ data: events });
-            /**
-             * TODO: Webhook declare ticket status modals should be opened
-             */
-          },
-        },
-      });
     },
 
     showCreateGroupRequestEventModal() {
