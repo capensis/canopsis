@@ -42,6 +42,7 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   ALARM_INTERVAL_FIELDS,
+  SNMP_TEMPLATE_STATE_STATES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1361,6 +1362,13 @@ export default merge({
       edit: {
         title: 'Modifier la règle SNMP',
       },
+      duplicate: {
+        title: 'Dupliquer la règle SNMP',
+      },
+      [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+      [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',
+      [SNMP_TEMPLATE_STATE_STATES.major]: 'Majeur',
+      [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critique',
     },
     selectView: {
       title: 'Sélectionner une vue',
@@ -3166,6 +3174,9 @@ export default merge({
     formatter: 'Format (groupe de capture avec \\x)',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
+    uploadedMibPopup:
+      'Le fichier a été téléchargé.\nAvis: {notification}\nObjets: {object}'
+      + '|Les fichiers ont été téléchargés.\nAvis: {notification}\nObjets: {object}',
   },
 
   pattern: {

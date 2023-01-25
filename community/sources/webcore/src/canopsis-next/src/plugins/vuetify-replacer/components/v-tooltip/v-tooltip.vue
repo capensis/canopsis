@@ -9,7 +9,6 @@ export default {
       default: false,
     },
   },
-  mounted() {},
   methods: {
     mouseEnterHandler(e) {
       this.getActivator(e);
@@ -38,6 +37,10 @@ export default {
         mouseenter: this.mouseEnterHandler,
         mouseleave: this.mouseLeaveHandler,
       };
+
+      if (!this.$scopedSlots.activator && !this.$slots.activator) {
+        return null;
+      }
 
       return this.$createElement('span', {
         on: listeners,

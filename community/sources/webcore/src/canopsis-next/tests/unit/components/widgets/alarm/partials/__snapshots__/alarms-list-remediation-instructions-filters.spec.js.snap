@@ -13,27 +13,29 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     editable="true"
     filters=""
   />
-  <button
-    class="v-btn v-btn--icon v-btn--small theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light black--text"
-      >
-        assignment
-      </i>
-    </div>
-  </button>
   <span
     class="v-tooltip v-tooltip--bottom"
   >
     <transition-stub
       name="slide-y-transition"
     />
+    <span>
+      <button
+        class="v-btn v-btn--icon v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light black--text"
+          >
+            assignment
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
 </div>
 `;
@@ -51,27 +53,29 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     editable="true"
     filters="[object Object],[object Object]"
   />
-  <button
-    class="v-btn v-btn--icon v-btn--small theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light primary--text"
-      >
-        assignment
-      </i>
-    </div>
-  </button>
   <span
     class="v-tooltip v-tooltip--bottom"
   >
     <transition-stub
       name="slide-y-transition"
     />
+    <span>
+      <button
+        class="v-btn v-btn--icon v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light primary--text"
+          >
+            assignment
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
 </div>
 `;
@@ -100,27 +104,29 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
   <remediation-instructions-filters-list-stub
     filters=""
   />
-  <button
-    class="v-btn v-btn--icon v-btn--small theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light primary--text"
-      >
-        assignment
-      </i>
-    </div>
-  </button>
   <span
     class="v-tooltip v-tooltip--bottom"
   >
     <transition-stub
       name="slide-y-transition"
     />
+    <span>
+      <button
+        class="v-btn v-btn--icon v-btn--small theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light primary--text"
+          >
+            assignment
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
 </div>
 `;

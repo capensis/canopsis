@@ -20,10 +20,16 @@
       )
       v-layout(row, wrap)
         v-flex(xs12)
-          v-layout(v-for="(state, key) in $constants.ENTITIES_STATES", :key="key", row, wrap, align-center)
+          v-layout(
+            v-for="(state, key) in $constants.SNMP_TEMPLATE_STATE_STATES",
+            :key="key",
+            row,
+            wrap,
+            align-center
+          )
             v-flex(xs2)
-              v-chip(:style="{ backgroundColor: $constants.ENTITIES_STATES_STYLES[state].color }", label)
-                strong.state-title {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
+              v-chip(:style="{ backgroundColor: $constants.SNMP_TEMPLATE_STATE_STATES_COLORS[state] }", label)
+                strong.state-title {{ $t(`modals.createSnmpRule.states.${key}`) }}
             v-flex(xs10)
               v-text-field(v-field="form[key]", :placeholder="$t('snmpRule.writeTemplate')")
     template(v-else)

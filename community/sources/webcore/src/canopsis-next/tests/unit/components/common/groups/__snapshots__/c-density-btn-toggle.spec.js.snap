@@ -10,23 +10,25 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
-      type="button"
-      value="false"
-    >
-      <div
-        class="v-btn__content"
+    <span>
+      <button
+        class="v-btn v-btn--flat v-btn--small theme--light"
+        type="button"
+        value="false"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+        <div
+          class="v-btn__content"
         >
-          $vuetify.icons.density_medium
-        </i>
-      </div>
-    </button>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
+          >
+            $vuetify.icons.density_medium
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
@@ -34,23 +36,25 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <button
-      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
-      type="button"
-      value="true"
-    >
-      <div
-        class="v-btn__content"
+    <span>
+      <button
+        class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+        type="button"
+        value="true"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+        <div
+          class="v-btn__content"
         >
-          $vuetify.icons.density_small
-        </i>
-      </div>
-    </button>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
+          >
+            $vuetify.icons.density_small
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
 </div>
 `;
@@ -65,23 +69,25 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <button
-      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
-      type="button"
-      value="false"
-    >
-      <div
-        class="v-btn__content"
+    <span>
+      <button
+        class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+        type="button"
+        value="false"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+        <div
+          class="v-btn__content"
         >
-          $vuetify.icons.density_medium
-        </i>
-      </div>
-    </button>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
+          >
+            $vuetify.icons.density_medium
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
@@ -89,23 +95,25 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
-      type="button"
-      value="true"
-    >
-      <div
-        class="v-btn__content"
+    <span>
+      <button
+        class="v-btn v-btn--flat v-btn--small theme--light"
+        type="button"
+        value="true"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+        <div
+          class="v-btn__content"
         >
-          $vuetify.icons.density_small
-        </i>
-      </div>
-    </button>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
+          >
+            $vuetify.icons.density_small
+          </i>
+        </div>
+      </button>
+    </span>
   </span>
 </div>
 `;
