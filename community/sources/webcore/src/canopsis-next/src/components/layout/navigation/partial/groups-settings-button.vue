@@ -9,7 +9,8 @@
       v-tooltip(
         :right="tooltipRight",
         :left="tooltipLeft",
-        z-index="10"
+        z-index="10",
+        custom-activator
       )
         template(#activator="{ on }")
           v-btn.primary(
@@ -24,7 +25,8 @@
       v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
       :right="tooltipRight",
       :left="tooltipLeft",
-      z-index="10"
+      z-index="10",
+      custom-activator
     )
       template(#activator="{ on }")
         v-btn(
@@ -43,7 +45,8 @@
       v-if="hasCreateAnyViewAccess",
       :right="tooltipRight",
       :left="tooltipLeft",
-      z-index="10"
+      z-index="10",
+      custom-activator
     )
       template(#activator="{ on }")
         v-btn(

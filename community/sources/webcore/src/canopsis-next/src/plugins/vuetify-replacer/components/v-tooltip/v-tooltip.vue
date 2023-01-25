@@ -8,7 +8,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    customActivator: {
+      type: Boolean,
+      default: false,
+    },
   },
+  /**
+   * We need this empty method to avoid warning message in console about #activator="" slots
+   */
+  mounted() {},
   methods: {
     mouseEnterHandler(e) {
       this.getActivator(e);
@@ -37,6 +45,10 @@ export default {
         mouseenter: this.mouseEnterHandler,
         mouseleave: this.mouseLeaveHandler,
       };
+
+      if (!this.customActivator) {
+        return VTooltip.methods.genActivator.call(this);
+      }
 
       if (!this.$scopedSlots.activator && !this.$slots.activator) {
         return null;
