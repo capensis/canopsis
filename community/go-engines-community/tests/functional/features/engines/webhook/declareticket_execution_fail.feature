@@ -20,7 +20,7 @@ Feature: run a declare ticket rule
     When I do GET /api/v4/alarms?search=test-resource-declareticket-execution-fail-1
     Then the response code should be 200
     When I save response alarmId={{ (index .lastResponse.data 0)._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
@@ -96,7 +96,7 @@ Feature: run a declare ticket rule
     """
     Then the response code should be 201
     Then I save response ruleId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
@@ -199,7 +199,7 @@ Feature: run a declare ticket rule
     """
     Then the response code should be 201
     Then I save response ruleId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
@@ -324,7 +324,7 @@ Feature: run a declare ticket rule
     """
     Then the response code should be 201
     Then I save response ruleId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
@@ -356,11 +356,11 @@ Feature: run a declare ticket rule
 
   @concurrent
   Scenario: given start request and no auth user should not allow access
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions
     Then the response code should be 401
 
   @concurrent
   Scenario: given start request and auth user without permissions should not allow access
     When I am noperms
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions
     Then the response code should be 403
