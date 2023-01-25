@@ -7,15 +7,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto ins
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light instruction-icon--completed"
-      style="font-size: 24px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--completed"
+    style="font-size: 24px;"
+  >
+    assignment
+  </i>
 </span>
 `;
 
@@ -37,15 +35,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
-      style="font-size: 24px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 24px;"
+  >
+    assignment
+  </i>
 </span>
 `;
 
@@ -67,15 +63,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
-      style="font-size: 24px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 24px;"
+  >
+    assignment
+  </i>
 </span>
 `;
 
@@ -97,15 +91,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light"
-      style="font-size: 24px;"
-    >
-      $vuetify.icons.manual_instruction
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light"
+    style="font-size: 24px;"
+  >
+    $vuetify.icons.manual_instruction
+  </i>
 </span>
 `;
 
@@ -127,15 +119,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light blinking instruction-icon--dotted"
-      style="font-size: 24px;"
-    >
-      $vuetify.icons.manual_instruction
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light blinking instruction-icon--dotted"
+    style="font-size: 24px;"
+  >
+    $vuetify.icons.manual_instruction
+  </i>
 </span>
 `;
 
@@ -157,15 +147,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
-      style="font-size: 24px;"
-    >
-      $vuetify.icons.manual_instruction
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 24px;"
+  >
+    $vuetify.icons.manual_instruction
+  </i>
 </span>
 `;
 

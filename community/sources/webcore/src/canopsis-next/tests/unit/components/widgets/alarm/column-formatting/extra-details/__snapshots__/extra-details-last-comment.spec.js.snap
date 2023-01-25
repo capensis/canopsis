@@ -19,6 +19,7 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
     <transition-stub
       name="slide-y-reverse-transition"
     />
+    <span />
   </span>
 </div>
 `;
@@ -73,6 +74,7 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
     <transition-stub
       name="slide-y-reverse-transition"
     />
+    <span />
   </span>
 </div>
 `;

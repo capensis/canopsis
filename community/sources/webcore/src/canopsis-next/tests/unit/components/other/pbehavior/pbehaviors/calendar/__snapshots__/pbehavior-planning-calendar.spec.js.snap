@@ -10,54 +10,50 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     <div
       class="flex"
     >
+      <button
+        class="ds-skinny-button ds-calendar-app-action v-btn v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <span>
+            TODAY
+          </span>
+        </div>
+      </button>
       <span
         class="v-tooltip v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-skinny-button ds-calendar-app-action v-btn v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <span>
-                TODAY
-              </span>
-            </div>
-          </button>
-        </span>
       </span>
     </div>
     <div
       class="flex text-sm-center"
     >
+      <button
+        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_left
+          </i>
+        </div>
+      </button>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                keyboard_arrow_left
-              </i>
-            </div>
-          </button>
-        </span>
       </span>
       <span
         class="ds-calendar-app-period-picker"
@@ -184,29 +180,27 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
           </div>
         </div>
       </span>
+      <button
+        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            keyboard_arrow_right
+          </i>
+        </div>
+      </button>
       <span
         class="v-tooltip mx-2 v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
         />
-        <span>
-          <button
-            class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                keyboard_arrow_right
-              </i>
-            </div>
-          </button>
-        </span>
       </span>
     </div>
     <div
