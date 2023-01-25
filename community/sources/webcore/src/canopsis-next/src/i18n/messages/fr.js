@@ -1365,10 +1365,12 @@ export default merge({
       duplicate: {
         title: 'Dupliquer la règle SNMP',
       },
-      [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
-      [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',
-      [SNMP_TEMPLATE_STATE_STATES.major]: 'Majeur',
-      [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critique',
+      states: {
+        [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+        [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',
+        [SNMP_TEMPLATE_STATE_STATES.major]: 'Majeur',
+        [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critique',
+      },
     },
     selectView: {
       title: 'Sélectionner une vue',
