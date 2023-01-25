@@ -25,6 +25,7 @@ type History struct {
 	Name              string   `bson:"name" json:"name"`
 
 	SystemName      string                        `bson:"system_name,omitempty" json:"system_name,omitempty"`
+	EmitTrigger     bool                          `bson:"emit_trigger,omitempty" json:"emit_trigger,omitempty"`
 	Status          int64                         `bson:"status" json:"status"`
 	Comment         string                        `bson:"comment,omitempty" json:"comment,omitempty"`
 	Request         request.Parameters            `bson:"request" json:"request"`
