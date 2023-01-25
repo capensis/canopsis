@@ -213,6 +213,7 @@ Feature: Update a user
           "title": "test-view-to-edit-user-title"
         }
       },
+      "ui_theme": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
       "source": "saml",
