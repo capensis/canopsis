@@ -441,6 +441,11 @@ definitions:
       _id:
         type: string
       status:
+        description: |-
+          Possible values.
+            * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
         type: integer
     type: object
   alarm.InstructionFilterRequest:
@@ -990,6 +995,11 @@ definitions:
       _id:
         type: string
       status:
+        description: |-
+          Possible values.
+            * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
         type: integer
     type: object
   entity.Info:
@@ -3946,6 +3956,13 @@ definitions:
       duration:
         type: integer
       status:
+        description: |-
+          Possible values.
+            * `0` - None
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
+            * `4` - Disabled
         type: integer
     type: object
   types.Coordinates:
@@ -4122,7 +4139,7 @@ definitions:
     - name
     - role
     type: object
-  user.EditRequest:
+  user.CreateRequest:
     properties:
       defaultview:
         type: string
@@ -4130,6 +4147,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -4143,41 +4162,7 @@ definitions:
         type: string
       role:
         type: string
-      ui_groups_navigation_type:
-        maxLength: 255
-        type: string
-      ui_language:
-        maxLength: 255
-        type: string
-      ui_theme:
-        maxLength: 255
-        type: string
-    required:
-    - email
-    - enable
-    - name
-    - role
-    type: object
-  user.Request:
-    properties:
-      defaultview:
-        type: string
-      email:
-        type: string
-      enable:
-        type: boolean
-      firstname:
-        maxLength: 255
-        type: string
-      lastname:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      password:
-        type: string
-      role:
+      source:
         type: string
       ui_groups_navigation_type:
         maxLength: 255
@@ -4202,6 +4187,42 @@ definitions:
         $ref: '#/definitions/user.View'
       name:
         type: string
+    type: object
+  user.UpdateRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
+        type: string
+    required:
+    - email
+    - enable
+    - name
+    - role
     type: object
   user.User:
     properties:
