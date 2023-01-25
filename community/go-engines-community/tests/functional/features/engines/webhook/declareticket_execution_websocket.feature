@@ -70,7 +70,7 @@ Feature: get a declare ticket status
     """
     Then the response code should be 201
     Then I save response ruleId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
@@ -171,7 +171,7 @@ Feature: get a declare ticket status
     """
     Then the response code should be 201
     Then I save response ruleId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
@@ -270,7 +270,7 @@ Feature: get a declare ticket status
     """
     Then the response code should be 201
     Then I save response ruleId={{ .lastResponse._id }}
-    When I do POST /api/v4/cat/bulk/declare-ticket-execution:
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
     """json
     [
       {
