@@ -853,6 +853,13 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      webhook:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          sanitize_request:
+            type: boolean
+        type: object
     type: object
   datastorage.DataStorage:
     properties:
@@ -874,6 +881,8 @@ definitions:
       pbehavior:
         type: integer
       remediation:
+        type: integer
+      webhook:
         type: integer
     type: object
   datastorage.HistoryWithCount:
