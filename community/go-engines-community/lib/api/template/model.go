@@ -7,6 +7,7 @@ type Request struct {
 }
 
 type Response struct {
-	IsValid bool              `json:"is_valid"`
-	Report  *validator.Report `json:"report,omitempty"`
+	IsValid  bool                  `json:"is_valid"`
+	Err      *validator.ErrReport  `json:"err,omitempty"`
+	Warnings []validator.WrnReport `json:"warnings,omitempty"`
 }

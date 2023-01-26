@@ -4048,10 +4048,14 @@ definitions:
     type: object
   template.Response:
     properties:
+      err:
+        $ref: '#/definitions/validator.ErrReport'
       is_valid:
         type: boolean
-      report:
-        $ref: '#/definitions/validator.Report'
+      warnings:
+        items:
+          $ref: '#/definitions/validator.WrnReport'
+        type: array
     type: object
   types.Coordinates:
     properties:
@@ -4314,7 +4318,7 @@ definitions:
       widget:
         type: string
     type: object
-  validator.Report:
+  validator.ErrReport:
     properties:
       line:
         type: integer
@@ -4324,7 +4328,7 @@ definitions:
         type: integer
       type:
         description: |-
-          Possible trigger values.
+          Possible error type values.
             * `0` - Undefined error
             * `1` - No main variable
             * `2` - No secondary variable
@@ -4335,6 +4339,18 @@ definitions:
         type: integer
       var:
         description: Var is defined only for template exec errors
+        type: string
+    type: object
+  validator.WrnReport:
+    properties:
+      message:
+        type: string
+      type:
+        description: |-
+          Possible warning type variables
+            * `0` - Might be unfinished variable block
+        type: integer
+      var:
         type: string
     type: object
   view.EditPositionItemRequest:

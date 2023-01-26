@@ -1600,11 +1600,20 @@ func RegisterRoutes(
 			)
 		}
 
-		protected.POST(
-			"/template-validator/declare-ticket",
-			middleware.OnlyAuth(),
-			template.NewApi(validator.NewValidator(libtemplate.NewExecutor(timezoneConfigProvider))).ValidateDeclareTicket,
-		)
+		templateValidatorApi := template.NewApi(validator.NewValidator(libtemplate.NewExecutor(timezoneConfigProvider)))
+		templateValidatorRouter := protected.Group("/template-validator")
+		{
+			templateValidatorRouter.POST(
+				"/declare-ticket-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateDeclareTicketRules,
+			)
+			templateValidatorRouter.POST(
+				"/scenarios",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateScenarios,
+			)
+		}
 	}
 }
 
