@@ -896,6 +896,7 @@ describe('actions-panel', () => {
       method: jest.fn(),
     };
     const featureHasSpy = jest.spyOn(featuresService, 'has')
+      .mockReturnValueOnce(false)
       .mockReturnValueOnce(true);
     const featureGetSpy = jest.spyOn(featuresService, 'get')
       .mockReturnValueOnce((

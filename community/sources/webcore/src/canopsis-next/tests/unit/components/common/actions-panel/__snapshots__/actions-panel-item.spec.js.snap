@@ -13,13 +13,13 @@ exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as 
       >
         <i
           aria-hidden="true"
-          class="v-icon pr-3 v-icon--left material-icons theme--light customDropdownIconColor--text"
+          class="v-icon v-icon--left material-icons theme--light customDropdownIconColor--text"
           style="font-size: 16px;"
         >
           customDropdownIcon
         </i>
         <span
-          class="body-1"
+          class="body-1 pl-3"
         >
           Custom dropdown title
         </span>
@@ -45,13 +45,13 @@ exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as 
       >
         <i
           aria-hidden="true"
-          class="v-icon pr-3 v-icon--disabled v-icon--left material-icons theme--light disabledCustomDropdownIconColor--text"
+          class="v-icon v-icon--disabled v-icon--left material-icons theme--light disabledCustomDropdownIconColor--text"
           style="font-size: 16px;"
         >
           disabledCustomDropdownIcon
         </i>
         <span
-          class="body-1"
+          class="body-1 pl-3"
         >
           Disabled custom dropdown title
         </span>
