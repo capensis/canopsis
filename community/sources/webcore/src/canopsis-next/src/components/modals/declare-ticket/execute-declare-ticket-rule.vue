@@ -18,7 +18,7 @@
           :success="isExecutionsSucceeded",
           :fail-reason="failReason"
         )
-      declare-ticket-rule-execution(:alarm-executions="alarmExecutions", :is-one-execution="isOneExecution")
+      declare-ticket-rule-execution-alarms(:alarm-executions="alarmExecutions", :is-one-execution="isOneExecution")
     template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
 </template>
@@ -28,17 +28,19 @@ import { SOCKET_ROOMS } from '@/config';
 
 import { DECLARE_TICKET_EXECUTION_STATUSES, MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
+import Socket from '@/plugins/socket/services/socket';
 
-import DeclareTicketRuleExecution from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution.vue';
-import DeclareTicketRuleExecutionStatus from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-status.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/forms/declare-ticket-rule';
-import Socket from '@/plugins/socket/services/socket';
+
+import { modalInnerMixin } from '@/mixins/modal/inner';
+
+import DeclareTicketRuleExecutionStatus from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-status.vue';
+import DeclareTicketRuleExecutionAlarms from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-alarms.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to declare a ticket
@@ -48,7 +50,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { DeclareTicketRuleExecutionStatus, DeclareTicketRuleExecution, ModalWrapper },
+  components: { DeclareTicketRuleExecutionAlarms, DeclareTicketRuleExecutionStatus, ModalWrapper },
   mixins: [
     modalInnerMixin,
   ],

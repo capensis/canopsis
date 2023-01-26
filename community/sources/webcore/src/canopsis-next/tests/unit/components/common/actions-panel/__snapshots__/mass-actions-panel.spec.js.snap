@@ -51,13 +51,13 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -77,13 +77,13 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>
@@ -146,13 +146,13 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -172,13 +172,13 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>

@@ -84,13 +84,13 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -110,13 +110,13 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>
@@ -213,13 +213,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -239,13 +239,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>
@@ -312,13 +312,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -338,13 +338,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>
@@ -411,13 +411,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -437,13 +437,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>
@@ -510,13 +510,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+              class="v-icon v-icon--left material-icons theme--light primary--text"
               style="font-size: 16px;"
             >
               edit
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Edit title
             </span>
@@ -536,13 +536,13 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           >
             <i
               aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+              class="v-icon v-icon--left material-icons theme--light secondary--text"
               style="font-size: 16px;"
             >
               delete
             </i>
             <span
-              class="body-1"
+              class="body-1 pl-3"
             >
               Delete title
             </span>
