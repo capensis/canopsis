@@ -358,3 +358,7 @@ export const CreateAssociateTicketEvent = () => ({
   component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
   loading: LoaderOverlay,
 });
+export const CreateAssociateTicketEvent = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
