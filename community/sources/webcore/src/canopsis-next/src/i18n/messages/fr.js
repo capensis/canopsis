@@ -1365,12 +1365,6 @@ export default merge({
       duplicate: {
         title: 'Dupliquer la règle SNMP',
       },
-      states: {
-        [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
-        [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',
-        [SNMP_TEMPLATE_STATE_STATES.major]: 'Majeur',
-        [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critique',
-      },
     },
     selectView: {
       title: 'Sélectionner une vue',
@@ -3179,6 +3173,12 @@ export default merge({
     uploadedMibPopup:
       'Le fichier a été téléchargé.\nAvis: {notification}\nObjets: {object}'
       + '|Les fichiers ont été téléchargés.\nAvis: {notification}\nObjets: {object}',
+    states: {
+      [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+      [SNMP_TEMPLATE_STATE_STATES.minor]: 'Mineur',
+      [SNMP_TEMPLATE_STATE_STATES.major]: 'Majeur',
+      [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critique',
+    },
   },
 
   pattern: {
