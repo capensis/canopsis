@@ -24,7 +24,6 @@ import { getNowTimestamp } from '@/helpers/date/date';
  *   'changestate' |
  *   'declareticket' |
  *   'snooze' |
- *   'done' |
  *   'validate' |
  *   'invalidate' |
  *   'pause' |
