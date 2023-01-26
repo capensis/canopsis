@@ -29,6 +29,7 @@ type AxeParameters struct {
 	WebhookResponse   map[string]any    `json:"webhook_response,omitempty"`
 	WebhookFailReason string            `json:"webhook_fail_reason,omitempty"`
 	WebhookError      *Error            `json:"webhook_error,omitempty"`
+	EmitTrigger       bool              `json:"emit_trigger,omitempty"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior
