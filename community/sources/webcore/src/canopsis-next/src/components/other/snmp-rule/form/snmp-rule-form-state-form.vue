@@ -29,7 +29,7 @@
           )
             v-flex(xs2)
               v-chip(:style="{ backgroundColor: $constants.SNMP_TEMPLATE_STATE_STATES_COLORS[state] }", label)
-                strong.state-title {{ $t(`modals.createSnmpRule.states.${key}`) }}
+                strong.state-title {{ $t(`snmpRule.states.${key}`) }}
             v-flex(xs10)
               v-text-field(v-field="form[key]", :placeholder="$t('snmpRule.writeTemplate')")
     template(v-else)
