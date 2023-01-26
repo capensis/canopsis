@@ -169,18 +169,11 @@ export default {
     },
 
     showCreateAssociateTicketEventModal() {
-      this.$modals.show({
-        name: MODALS.createAssociateTicketEvent,
-        config: {
-          ...this.modalConfig,
-
-          fastAckOutput: this.widget.parameters.fastAckOutput,
-        },
-      });
+      this.showAssociateTicketModalByAlarms(this.items);
     },
 
     showCreateDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarmsIds(this.items);
+      this.showDeclareTicketModalByAlarms(this.items);
     },
 
     showCreateGroupRequestEventModal() {

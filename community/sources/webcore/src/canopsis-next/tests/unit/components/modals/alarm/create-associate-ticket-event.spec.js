@@ -15,7 +15,7 @@ import {
   EVENT_INITIATORS,
 } from '@/constants';
 
-import CreateAssociateTicketEvent from '@/components/modals/alarm/create-associate-ticket-event.vue';
+import CreateAssociateTicketEvent from '@/components/modals/declare-ticket/create-associate-ticket-event.vue';
 
 const localVue = createVueInstance();
 
