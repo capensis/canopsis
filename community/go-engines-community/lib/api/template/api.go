@@ -5,12 +5,12 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 )
 
 type API interface {
-	ValidateDeclareTicket(c *gin.Context)
+	ValidateDeclareTicketRules(c *gin.Context)
+	ValidateScenarios(c *gin.Context)
 }
 
 type api struct {
@@ -21,15 +21,10 @@ func NewApi(validator validator.Validator) API {
 	return &api{validator: validator}
 }
 
-type AlarmWithEntity struct {
-	types.Alarm `bson:",inline"`
-	Entity      types.Entity `bson:"entity" json:"entity"`
-}
-
-// ValidateDeclareTicket
+// ValidateDeclareTicketRules
 // @Param body body Request true "body"
 // @Success 200 {object} Response
-func (a *api) ValidateDeclareTicket(c *gin.Context) {
+func (a *api) ValidateDeclareTicketRules(c *gin.Context) {
 	var request Request
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -37,9 +32,29 @@ func (a *api) ValidateDeclareTicket(c *gin.Context) {
 		return
 	}
 
-	isValid, report := a.validator.ValidateDeclareTicketTemplate(request.Text)
+	isValid, errReport, wrnReports := a.validator.ValidateDeclareTicketRuleTemplate(request.Text)
 	c.JSON(http.StatusOK, Response{
-		IsValid: isValid,
-		Report:  report,
+		IsValid:  isValid,
+		Err:      errReport,
+		Warnings: wrnReports,
+	})
+}
+
+// ValidateScenarios
+// @Param body body Request true "body"
+// @Success 200 {object} Response
+func (a *api) ValidateScenarios(c *gin.Context) {
+	var request Request
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	isValid, errReport, wrnReports := a.validator.ValidateScenarioTemplate(request.Text)
+	c.JSON(http.StatusOK, Response{
+		IsValid:  isValid,
+		Err:      errReport,
+		Warnings: wrnReports,
 	})
 }
