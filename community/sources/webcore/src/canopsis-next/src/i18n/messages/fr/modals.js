@@ -190,15 +190,6 @@ export default {
   createAckRemove: {
     title: 'Annuler l\'acquittement',
   },
-  createAssociateTicket: {
-    title: 'Associer un numéro de ticket',
-    fields: {
-      ticket: 'Numéro du ticket',
-    },
-    alerts: {
-      noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement acquitté pour l\'élément sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements acquittés pour les éléments seront envoyés avant.',
-    },
-  },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
     dateInterval: 'Intervalle de dates',
