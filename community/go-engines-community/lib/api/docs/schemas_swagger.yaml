@@ -235,8 +235,6 @@ definitions:
         type: integer
       display_name:
         type: string
-      done:
-        $ref: '#/definitions/common.AlarmStep'
       duration:
         type: integer
       events_count:
@@ -3392,7 +3390,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -3470,7 +3467,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -3531,7 +3527,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
