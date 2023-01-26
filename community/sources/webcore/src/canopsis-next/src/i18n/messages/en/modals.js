@@ -190,15 +190,6 @@ export default {
   createAckRemove: {
     title: 'Remove ack',
   },
-  createAssociateTicket: {
-    title: 'Associate ticket number',
-    fields: {
-      ticket: 'Number of the ticket',
-    },
-    alerts: {
-      noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
-    },
-  },
   liveReporting: {
     editLiveReporting: 'Live reporting',
     dateInterval: 'Date interval',
@@ -885,5 +876,8 @@ export default {
   },
   executeDeclareTickets: {
     title: 'Ticket declaration status',
+  },
+  createAssociateTicketEvent: {
+    title: 'Associate ticket number',
   },
 };

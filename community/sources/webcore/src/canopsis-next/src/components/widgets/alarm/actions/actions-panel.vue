@@ -114,7 +114,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarm.actions.titles.associateTicket'),
-          method: this.showActionModal(MODALS.createAssociateTicketEvent),
+          method: this.showAssociateTicketModal,
         },
         cancel: {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
