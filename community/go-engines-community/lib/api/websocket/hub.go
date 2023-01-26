@@ -30,11 +30,6 @@ const (
 )
 
 const (
-	errAuthFailed          = "cannot authorize user"
-	errUnknownRMessageType = "unknown message type"
-)
-
-const (
 	// Time allowed to write a message to the peer.
 	writeWait = 10 * time.Second
 )
@@ -46,7 +41,7 @@ type Hub interface {
 	// Connect creates listener connection.
 	Connect(w http.ResponseWriter, r *http.Request) error
 	// Send sends message to all listeners in room.
-	Send(room string, msg interface{})
+	Send(room string, msg any)
 	// RegisterRoom adds room with permissions.
 	RegisterRoom(room string, perms ...string) error
 	// CloseRoom removes room.
@@ -83,10 +78,10 @@ type RMessage struct {
 }
 
 type WMessage struct {
-	Type  int         `json:"type"`
-	Room  string      `json:"room,omitempty"`
-	Msg   interface{} `json:"msg,omitempty"`
-	Error string      `json:"error,omitempty"`
+	Type  int    `json:"type"`
+	Room  string `json:"room,omitempty"`
+	Msg   any    `json:"msg,omitempty"`
+	Error int    `json:"error,omitempty"`
 }
 
 type hub struct {
@@ -179,7 +174,7 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (h *hub) Send(room string, b interface{}) {
+func (h *hub) Send(room string, b any) {
 	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageSuccess,
 		Room: room,
@@ -274,17 +269,49 @@ func (h *hub) join(connId, room string) (closed bool) {
 	userId := c.userId
 	conn := c.conn
 
-	ok, err := h.authorizer.Authorize(userId, room)
-	if err != nil {
-		h.logger.Err(err).Msg(errAuthFailed)
-		return
-	}
-
+	ok := h.authorizer.HasRoom(room)
 	if !ok {
 		err := conn.WriteJSON(WMessage{
 			Type:  WMessageFail,
 			Room:  room,
-			Error: errAuthFailed,
+			Error: http.StatusNotFound,
+		})
+		if err != nil {
+			closed = true
+			h.logger.Err(err).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
+		}
+		return
+	}
+
+	ok, err := h.authorizer.Authorize(userId, room)
+	if err != nil {
+		h.logger.Err(err).Msg("cannot authorize user")
+
+		err := conn.WriteJSON(WMessage{
+			Type:  WMessageFail,
+			Room:  room,
+			Error: http.StatusInternalServerError,
+		})
+		if err != nil {
+			closed = true
+			h.logger.Err(err).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
+		}
+		return
+	}
+
+	if !ok {
+		code := http.StatusForbidden
+		if userId == "" {
+			code = http.StatusUnauthorized
+		}
+		err := conn.WriteJSON(WMessage{
+			Type:  WMessageFail,
+			Room:  room,
+			Error: code,
 		})
 		if err != nil {
 			closed = true
@@ -455,32 +482,44 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 
 		conn := c.conn
 		userId, err := h.authorizer.Authenticate(ctx, c.token)
-		if err == nil {
-			if userId != "" {
-				checked[connId] = true
-				continue
+		if err != nil {
+			h.logger.Err(err).Msg("cannot authorize user")
+			err = conn.WriteJSON(WMessage{
+				Type:  WMessageFail,
+				Error: http.StatusInternalServerError,
+			})
+			if err != nil {
+				closedConns = append(closedConns, connId)
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("cannot write message to connection, connection will be closed")
 			}
 
+			continue
+		}
+
+		if userId == "" {
 			connsToDisconnect = append(connsToDisconnect, connId)
 			h.logger.Error().
 				Str("addr", conn.RemoteAddr().String()).
 				Str("user", c.userId).
 				Msg("cannot found user, connection will be closed")
 
+			err = conn.WriteJSON(WMessage{
+				Type:  WMessageFail,
+				Error: http.StatusUnauthorized,
+			})
+			if err != nil {
+				closedConns = append(closedConns, connId)
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("cannot write message to connection, connection will be closed")
+			}
+
 			continue
 		}
 
-		h.logger.Err(err).Msg(errAuthFailed)
-		err = conn.WriteJSON(WMessage{
-			Type:  WMessageFail,
-			Error: errAuthFailed,
-		})
-		if err != nil {
-			closedConns = append(closedConns, connId)
-			h.logger.Err(err).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
+		checked[connId] = true
 	}
 
 	h.roomsMx.Lock()
@@ -509,26 +548,40 @@ func (h *hub) checkRoomAuth(room string, checked map[string]bool) []string {
 		conn := c.conn
 		userId := c.userId
 		ok, err := h.authorizer.Authorize(userId, room)
-		if err == nil && ok {
-			authRoomConns = append(authRoomConns, connId)
+		if err != nil {
+			h.logger.Err(err).Msg("cannot authorize user")
+
+			err = conn.WriteJSON(WMessage{
+				Type:  WMessageFail,
+				Room:  room,
+				Error: http.StatusInternalServerError,
+			})
+			if err != nil {
+				closedConns = append(closedConns, connId)
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("cannot write message to connection, connection will be closed")
+			}
+
 			continue
 		}
 
-		if err != nil {
-			h.logger.Err(err).Msg(errAuthFailed)
+		if !ok {
+			err = conn.WriteJSON(WMessage{
+				Type:  WMessageFail,
+				Room:  room,
+				Error: http.StatusForbidden,
+			})
+			if err != nil {
+				closedConns = append(closedConns, connId)
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("cannot write message to connection, connection will be closed")
+			}
+			continue
 		}
 
-		err = conn.WriteJSON(WMessage{
-			Type:  WMessageFail,
-			Room:  room,
-			Error: errAuthFailed,
-		})
-		if err != nil {
-			closedConns = append(closedConns, connId)
-			h.logger.Err(err).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
+		authRoomConns = append(authRoomConns, connId)
 	}
 
 	h.rooms[room] = authRoomConns
@@ -555,7 +608,11 @@ func (h *hub) listen(connId string, conn Connection) {
 			unmarshalErr := &json.UnmarshalTypeError{}
 			syntaxErr := &json.SyntaxError{}
 			if errors.As(err, &syntaxErr) || errors.As(err, &unmarshalErr) {
-				closed = h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "invalid message"})
+				closed = h.sendToConn(connId, WMessage{
+					Type:  WMessageFail,
+					Error: http.StatusBadRequest,
+					Msg:   "cannot parse JSON",
+				})
 				continue
 			}
 
@@ -586,7 +643,11 @@ func (h *hub) listen(connId string, conn Connection) {
 			closed = h.sendToConn(connId, WMessage{Type: WMessageClientPong})
 		case RMessageAuth:
 			if msg.Token == "" {
-				closed = h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "token is missing"})
+				closed = h.sendToConn(connId, WMessage{
+					Type:  WMessageFail,
+					Error: http.StatusBadRequest,
+					Msg:   "token is missing",
+				})
 				continue
 			}
 
@@ -597,7 +658,7 @@ func (h *hub) listen(connId string, conn Connection) {
 			if userId == "" {
 				closed = h.sendToConn(connId, WMessage{
 					Type:  WMessageFail,
-					Error: "authentication failed",
+					Error: http.StatusUnauthorized,
 				})
 			} else {
 				h.setConnAuth(connId, userId, msg.Token)
@@ -606,13 +667,21 @@ func (h *hub) listen(connId string, conn Connection) {
 			}
 		case RMessageJoin:
 			if msg.Room == "" {
-				closed = h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "room is missing"})
+				closed = h.sendToConn(connId, WMessage{
+					Type:  WMessageFail,
+					Error: http.StatusBadRequest,
+					Msg:   "room is missing",
+				})
 				continue
 			}
 			closed = h.join(connId, msg.Room)
 		case RMessageLeave:
 			if msg.Room == "" {
-				closed = h.sendToConn(connId, WMessage{Type: WMessageFail, Error: "room is missing"})
+				closed = h.sendToConn(connId, WMessage{
+					Type:  WMessageFail,
+					Error: http.StatusBadRequest,
+					Msg:   "room is missing",
+				})
 				continue
 			}
 			closed = h.leave(connId, msg.Room)
@@ -620,7 +689,8 @@ func (h *hub) listen(connId string, conn Connection) {
 			closed = h.sendToConn(connId, WMessage{
 				Type:  WMessageFail,
 				Room:  msg.Room,
-				Error: errUnknownRMessageType,
+				Error: http.StatusBadRequest,
+				Msg:   "unknown message type",
 			})
 		}
 	}
