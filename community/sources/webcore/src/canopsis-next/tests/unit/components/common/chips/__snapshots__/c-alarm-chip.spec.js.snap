@@ -451,36 +451,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
 </div>
 `;
 
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: done 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          done20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
 exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: executeInstruction 1`] = `
 <div
   class="chip-container"
