@@ -1365,12 +1365,6 @@ export default merge({
       duplicate: {
         title: 'Duplicate SNMP rule',
       },
-      states: {
-        [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
-        [SNMP_TEMPLATE_STATE_STATES.minor]: 'Minor',
-        [SNMP_TEMPLATE_STATE_STATES.major]: 'Major',
-        [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critical',
-      },
     },
     selectView: {
       title: 'Select view',
@@ -3179,6 +3173,12 @@ export default merge({
     uploadedMibPopup:
       'File was uploaded.\nNotifications: {notification}\nObjects: {object}'
     + '|Files were uploaded.\nNotifications: {notification}\nObjects: {object}',
+    states: {
+      [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+      [SNMP_TEMPLATE_STATE_STATES.minor]: 'Minor',
+      [SNMP_TEMPLATE_STATE_STATES.major]: 'Major',
+      [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critical',
+    },
   },
 
   pattern: {
