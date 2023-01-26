@@ -12,18 +12,22 @@ import (
 )
 
 const (
-	ParseErrorMatches = 3
-	ExecErrorMatches  = 5
+	parseErrorMatches = 3
+	execErrorMatches  = 5
 )
 
 const (
-	ErrorTypeUndefined = iota
-	ErrorTypeNoSuchMainVariable
-	ErrorTypeNoSuchSecondaryVariable
-	ErrorTypeUnexpectedBlock
-	ErrorTypeUnexpectedSymbol
-	ErrorTypeUnexpectedFunction
-	ErrorTypeUnexpectedEOF
+	ErrTypeUndefined = iota
+	ErrTypeNoSuchMainVariable
+	ErrTypeNoSuchSecondaryVariable
+	ErrTypeUnexpectedBlock
+	ErrTypeUnexpectedSymbol
+	ErrTypeUnexpectedFunction
+	ErrTypeUnexpectedEOF
+)
+
+const (
+	WrnTypeOutsideBlockVar = iota
 )
 
 type RegexpInfo struct {
@@ -34,7 +38,8 @@ type RegexpInfo struct {
 }
 
 type Validator interface {
-	ValidateDeclareTicketTemplate(s string) (bool, *Report)
+	ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport)
+	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport)
 }
 
 type validator struct {
@@ -45,9 +50,27 @@ type validator struct {
 
 	parseErrorRegex         *regexp.Regexp
 	parseErrorsMsgRegexInfo []RegexpInfo
+
+	declareTicketTplData map[string]any
+	scenarioTplData      map[string]any
 }
 
 func NewValidator(executor *template.Executor) Validator {
+	alarm := types.Alarm{
+		Value: types.AlarmValue{
+			ACK:         &types.AlarmStep{},
+			Canceled:    &types.AlarmStep{},
+			Done:        &types.AlarmStep{},
+			Snooze:      &types.AlarmStep{},
+			State:       &types.AlarmStep{},
+			Status:      &types.AlarmStep{},
+			LastComment: &types.AlarmStep{},
+			Ticket:      &types.AlarmStep{},
+			Tickets:     []types.AlarmStep{{}},
+			Steps:       []types.AlarmStep{{}},
+		},
+	}
+
 	return &validator{
 		executor: executor,
 
@@ -57,7 +80,7 @@ func NewValidator(executor *template.Executor) Validator {
 		parseErrorRegex: regexp.MustCompile("^template: (.+): (.+)$"),
 		parseErrorsMsgRegexInfo: []RegexpInfo{
 			{
-				errType:       ErrorTypeUnexpectedFunction,
+				errType:       ErrTypeUnexpectedFunction,
 				errRegexp:     regexp.MustCompile("^function \"(.+)\" not defined$"),
 				matchesNumber: 2,
 				getErrMessage: func(matches []string) string {
@@ -65,7 +88,7 @@ func NewValidator(executor *template.Executor) Validator {
 				},
 			},
 			{
-				errType:       ErrorTypeUnexpectedSymbol,
+				errType:       ErrTypeUnexpectedSymbol,
 				errRegexp:     regexp.MustCompile("^unexpected \"(.+)\" in (.+)$"),
 				matchesNumber: 3,
 				getErrMessage: func(matches []string) string {
@@ -73,7 +96,7 @@ func NewValidator(executor *template.Executor) Validator {
 				},
 			},
 			{
-				errType:       ErrorTypeUnexpectedEOF,
+				errType:       ErrTypeUnexpectedEOF,
 				errRegexp:     regexp.MustCompile("^unexpected EOF$"),
 				matchesNumber: 1,
 				getErrMessage: func(_ []string) string {
@@ -81,7 +104,7 @@ func NewValidator(executor *template.Executor) Validator {
 				},
 			},
 			{
-				errType:       ErrorTypeUnexpectedBlock,
+				errType:       ErrTypeUnexpectedBlock,
 				errRegexp:     regexp.MustCompile("^unexpected (.+)$"),
 				matchesNumber: 2,
 				getErrMessage: func(matches []string) string {
@@ -93,14 +116,36 @@ func NewValidator(executor *template.Executor) Validator {
 				},
 			},
 		},
+
+		declareTicketTplData: map[string]any{
+			"Alarms": []struct {
+				types.Alarm
+				Entity types.Entity
+			}{{
+				Alarm:  alarm,
+				Entity: types.Entity{},
+			}},
+			"Response":    map[string]any{},
+			"ResponseMap": map[string]any{},
+			"Header":      map[string]string{},
+		},
+		scenarioTplData: map[string]any{
+			"Alarm":          alarm,
+			"Entity":         types.Entity{},
+			"Children":       []types.Alarm{alarm},
+			"Response":       map[string]any{},
+			"ResponseMap":    map[string]any{},
+			"Header":         map[string]string{},
+			"AdditionalData": action.AdditionalData{},
+		},
 	}
 }
 
-type Report struct {
+type ErrReport struct {
 	Line     int `json:"line,omitempty"`
 	Position int `json:"position,omitempty"`
 
-	// Possible trigger values.
+	// Possible error type values.
 	//   * `0` - Undefined error
 	//   * `1` - No main variable
 	//   * `2` - No secondary variable
@@ -115,42 +160,45 @@ type Report struct {
 	Var string `json:"var,omitempty"`
 }
 
-func (v *validator) ValidateDeclareTicketTemplate(s string) (bool, *Report) {
-	tplData := map[string]interface{}{
-		"Alarm":    types.Alarm{},
-		"Entity":   types.Entity{},
-		"Children": make([]types.Alarm, 0),
-		"Alarms": []struct {
-			types.Alarm
-			Entity types.Entity
-		}{{}},
-		"Response":       map[string]any{},
-		"ResponseMap":    map[string]any{},
-		"Header":         map[string]string{},
-		"AdditionalData": action.AdditionalData{},
-	}
+type WrnReport struct {
+	// Possible warning type variables
+	//   * `0` - Might be unfinished variable block
+	Type int `json:"type"`
 
-	_, err := v.executor.Execute(s, tplData)
+	Message string `json:"message"`
+	Var     string `json:"var,omitempty"`
+}
+
+func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport) {
+	return v.validate(s, v.declareTicketTplData)
+}
+
+func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport) {
+	return v.validate(s, v.scenarioTplData)
+}
+
+func (v *validator) validate(s string, tplData map[string]any) (bool, *ErrReport, []WrnReport) {
+	res, err := v.executor.Execute(s, tplData)
 	if err != nil {
 		fullErrString := err.Error()
-		report := &Report{
-			Type:    ErrorTypeUndefined,
+		report := &ErrReport{
+			Type:    ErrTypeUndefined,
 			Message: fullErrString,
 		}
 
 		// parse template exec error
 		tplErrorMatches := v.execErrorRegex.FindStringSubmatch(fullErrString)
-		if len(tplErrorMatches) == ExecErrorMatches {
+		if len(tplErrorMatches) == execErrorMatches {
 			report.Line, report.Position = getLocation(tplErrorMatches[1])
 
 			report.Var = tplErrorMatches[3]
 			report.Message = tplErrorMatches[4]
 
 			if strings.HasPrefix(report.Message, "map has no entry for key") {
-				report.Type = ErrorTypeNoSuchMainVariable
+				report.Type = ErrTypeNoSuchMainVariable
 				report.Message = fmt.Sprintf("No such variable \"%s\"", report.Var)
 			} else if strings.HasPrefix(report.Message, "can't evaluate field") {
-				report.Type = ErrorTypeNoSuchSecondaryVariable
+				report.Type = ErrTypeNoSuchSecondaryVariable
 
 				errMsgMatches := v.secondaryVarErrRegex.FindStringSubmatch(report.Message)
 				if len(errMsgMatches) == 3 {
@@ -159,12 +207,12 @@ func (v *validator) ValidateDeclareTicketTemplate(s string) (bool, *Report) {
 				}
 			}
 
-			return false, report
+			return false, report, nil
 		}
 
 		// parse template parse error
 		tplErrorMatches = v.parseErrorRegex.FindStringSubmatch(fullErrString)
-		if len(tplErrorMatches) == ParseErrorMatches {
+		if len(tplErrorMatches) == parseErrorMatches {
 			report.Line, report.Position = getLocation(tplErrorMatches[1])
 			report.Message = tplErrorMatches[2]
 
@@ -179,10 +227,24 @@ func (v *validator) ValidateDeclareTicketTemplate(s string) (bool, *Report) {
 			}
 		}
 
-		return false, report
+		return false, report, nil
 	}
 
-	return true, nil
+	var warnings []WrnReport
+
+	// try to find template variables in the result text
+	for k := range tplData {
+		val := "." + k
+		if strings.Contains(res, val) {
+			warnings = append(warnings, WrnReport{
+				Type:    WrnTypeOutsideBlockVar,
+				Message: "Variable are out of a template block",
+				Var:     val,
+			})
+		}
+	}
+
+	return true, nil, warnings
 }
 
 func getLocation(s string) (int, int) {
