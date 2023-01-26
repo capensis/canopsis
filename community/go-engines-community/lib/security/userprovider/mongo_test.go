@@ -112,7 +112,6 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      userApiKey,
-		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -146,7 +145,6 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      userApiKey,
-		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -190,7 +188,6 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          userID,
-		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
@@ -224,7 +221,6 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 	filter := bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          userID,
-		"source":       bson.M{"$in": bson.A{"", nil}},
 	}
 	mockDbCollection.
 		EXPECT().
