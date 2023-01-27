@@ -1855,7 +1855,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/user.Request'
+                $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         required: true
       responses:
         207:
@@ -1872,7 +1872,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/user.Request'
+                            $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -5982,7 +5982,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Comment'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorcomment.Response'
         400:
           description: Bad Request
           content:
@@ -9060,7 +9060,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/user.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         required: true
       responses:
         201:
@@ -9120,7 +9120,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/user.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/user.UpdateRequest'
         required: true
       responses:
         200:

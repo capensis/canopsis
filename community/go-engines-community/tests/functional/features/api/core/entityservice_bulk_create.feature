@@ -410,10 +410,7 @@ Feature: Bulk create entityservices
       "_id": "test-entityservice-to-bulk-create-1",
       "category": {
         "_id": "test-category-to-entityservice-edit",
-        "name": "test-category-to-entityservice-edit-name",
-        "author": "test-category-to-entityservice-edit-author",
-        "created": 1592215337,
-        "updated": 1592215337
+        "name": "test-category-to-entityservice-edit-name"
       },
       "enabled": true,
       "entity_pattern": [
@@ -474,10 +471,7 @@ Feature: Bulk create entityservices
       "_id": "test-entityservice-to-bulk-create-2",
       "category": {
         "_id": "test-category-to-entityservice-edit",
-        "name": "test-category-to-entityservice-edit-name",
-        "author": "test-category-to-entityservice-edit-author",
-        "created": 1592215337,
-        "updated": 1592215337
+        "name": "test-category-to-entityservice-edit-name"
       },
       "enabled": true,
       "entity_pattern": [

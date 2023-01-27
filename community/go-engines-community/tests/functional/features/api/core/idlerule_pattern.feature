@@ -38,7 +38,10 @@ Feature: Update and delete corporate pattern should affect idle rule models
     {
       "name": "test-idle-rule-to-edit-patterns-name",
       "description": "test-idle-rule-to-edit-patterns-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -112,7 +115,10 @@ Feature: Update and delete corporate pattern should affect idle rule models
     {
       "name": "test-idle-rule-to-edit-patterns-name",
       "description": "test-idle-rule-to-edit-patterns-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -186,7 +192,10 @@ Feature: Update and delete corporate pattern should affect idle rule models
     {
       "name": "test-idle-rule-to-edit-patterns-name",
       "description": "test-idle-rule-to-edit-patterns-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -242,7 +251,10 @@ Feature: Update and delete corporate pattern should affect idle rule models
     {
       "name": "test-idle-rule-to-edit-patterns-name",
       "description": "test-idle-rule-to-edit-patterns-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -298,7 +310,10 @@ Feature: Update and delete corporate pattern should affect idle rule models
     {
       "name": "test-idle-rule-to-edit-patterns-name",
       "description": "test-idle-rule-to-edit-patterns-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,

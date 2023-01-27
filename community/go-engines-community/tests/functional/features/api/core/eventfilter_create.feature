@@ -46,7 +46,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 1",
       "type": "enrichment",
       "event_pattern": [
@@ -125,7 +128,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 2",
       "type": "enrichment",
       "entity_pattern": [
@@ -215,7 +221,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 3",
       "type": "enrichment",
       "event_pattern": [
@@ -306,7 +315,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 4",
       "type": "enrichment",
       "event_pattern": [
@@ -1064,7 +1076,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 12",
       "type": "enrichment",
       "start": 1663316803,
@@ -1296,7 +1311,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 16",
       "type": "enrichment",
       "start": 1663316803,
@@ -1487,7 +1505,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 19",
       "type": "enrichment",
       "start": 1663316803,
@@ -1644,7 +1665,10 @@ Feature: Create an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 20",
       "type": "enrichment",
       "start": 1663316803,
