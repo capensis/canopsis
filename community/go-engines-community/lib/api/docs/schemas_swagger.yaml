@@ -4330,12 +4330,11 @@ definitions:
         description: |-
           Possible error type values.
             * `0` - Undefined error
-            * `1` - No main variable
-            * `2` - No secondary variable
-            * `3` - Unexpected block
-            * `4` - Unexpected symbol
-            * `5` - Unexpected function
-            * `6` - Unexpected EOF
+            * `1` - Invalid variable
+            * `2` - Unexpected block
+            * `3` - Unexpected symbol
+            * `4` - Unexpected function
+            * `5` - Unexpected EOF
         type: integer
       var:
         description: Var is defined only for template exec errors
@@ -4347,8 +4346,9 @@ definitions:
         type: string
       type:
         description: |-
-          Possible warning type variables
+          Possible warning type values.
             * `0` - Might be unfinished variable block
+            * `1` - Unsafe map access
         type: integer
       var:
         type: string

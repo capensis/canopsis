@@ -50,6 +50,24 @@ func (e *Executor) Execute(tplStr string, data interface{}) (string, error) {
 	return buf.String(), nil
 }
 
+func (e *Executor) ExecuteWithoutOptions(tplStr string, data interface{}) (string, error) {
+	location := e.timezoneConfigProvider.Get().Location
+	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+	if err != nil {
+		return "", err
+	}
+
+	buf := e.bufPool.Get().(*bytes.Buffer)
+	defer e.bufPool.Put(buf)
+	buf.Reset()
+	err = tpl.Execute(buf, data)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
 func GetFunctions(appLocation *time.Location) template.FuncMap {
 	return template.FuncMap{
 		// json will convert an item to an JSON-compatible element,
