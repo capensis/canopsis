@@ -55,7 +55,7 @@ import { isOldPattern } from '@/helpers/pattern';
 
 import { permissionsTechnicalExploitationScenarioMixin } from '@/mixins/permissions/technical/exploitation/scenario';
 
-import ScenariosListExpandItem from './scenarios-list-expand-item.vue';
+import ScenariosListExpandItem from './partials/scenarios-list-expand-item.vue';
 
 export default {
   components: { ScenariosListExpandItem },
