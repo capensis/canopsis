@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
@@ -57,22 +56,26 @@ type CleanTask struct {
 }
 
 type ExportResponse struct {
-	ID     string `json:"_id"`
-	Status int    `json:"status"`
+	ID string `json:"_id"`
+	// Possible values.
+	//   * `0` - Running
+	//   * `1` - Succeeded
+	//   * `2` - Failed
+	Status int `json:"status"`
 }
 
 type Entity struct {
-	ID             string                   `bson:"_id" json:"_id"`
-	Name           string                   `bson:"name" json:"name"`
-	Enabled        bool                     `bson:"enabled" json:"enabled"`
-	Infos          Infos                    `bson:"infos" json:"infos"`
-	ComponentInfos Infos                    `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
-	Type           string                   `bson:"type" json:"type"`
-	ImpactLevel    int64                    `bson:"impact_level" json:"impact_level"`
-	Category       *entitycategory.Category `bson:"category" json:"category"`
-	IdleSince      *types.CpsTime           `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
-	PbehaviorInfo  *PbehaviorInfo           `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	LastEventDate  *types.CpsTime           `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
+	ID             string         `bson:"_id" json:"_id"`
+	Name           string         `bson:"name" json:"name"`
+	Enabled        bool           `bson:"enabled" json:"enabled"`
+	Infos          Infos          `bson:"infos" json:"infos"`
+	ComponentInfos Infos          `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
+	Type           string         `bson:"type" json:"type"`
+	ImpactLevel    int64          `bson:"impact_level" json:"impact_level"`
+	Category       *Category      `bson:"category" json:"category"`
+	IdleSince      *types.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
+	PbehaviorInfo  *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastEventDate  *types.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
@@ -107,12 +110,19 @@ type Entity struct {
 
 	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	Depends []string `bson:"depends,omitempty" json:"-"`
 }
 
 func (e *Entity) fillConnectorType() {
 	if e.Type == types.EntityTypeConnector {
 		e.ConnectorType = strings.TrimSuffix(e.ID, "/"+e.Name)
 	}
+}
+
+type Category struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
 }
 
 type Infos map[string]Info
@@ -166,9 +176,10 @@ type BulkToggleRequestItem struct {
 }
 
 type SimplifiedEntity struct {
-	ID      string `bson:"_id"`
-	Type    string `bson:"type"`
-	Enabled bool   `bson:"enabled"`
+	ID      string   `bson:"_id"`
+	Type    string   `bson:"type"`
+	Enabled bool     `bson:"enabled"`
+	Depends []string `bson:"depends"`
 }
 
 type ContextGraphRequest struct {

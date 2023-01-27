@@ -41,6 +41,7 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
+  ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -465,10 +466,6 @@ export default merge({
       [TRIGGERS.comment]: {
         text: 'Alarm has been commented',
       },
-      [TRIGGERS.done]: {
-        text: 'Alarm is "done"',
-        helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
-      },
       [TRIGGERS.declareticket]: {
         text: 'Ticket has been declared by the UI action',
       },
@@ -722,7 +719,7 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Total number of acks',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Number of canceled acks',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Number of active alarms with tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Number of active alarms without tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% of correlated alarms',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% of alarms with auto remediation',
@@ -2624,7 +2621,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Alarms timeline',
-    executedAt: 'Completed at',
+    executedAt: 'End of execution at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
@@ -2919,6 +2916,12 @@ export default merge({
   quickRanges: {
     title: 'Quick ranges',
     timeField: 'Time field',
+    intervalFields: {
+      [ALARM_INTERVAL_FIELDS.timestamp]: 'Creation date',
+      [ALARM_INTERVAL_FIELDS.resolved]: 'Resolved at',
+      [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Last update date',
+      [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Last event date',
+    },
     types: {
       [QUICK_RANGES.custom.value]: 'Custom',
       [QUICK_RANGES.last15Minutes.value]: 'Last 15 minutes',
@@ -3121,7 +3124,7 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarms with acks',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} active alarms with acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarms with cancelled acks',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} active alarms with tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} active alarms without tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% of alarms with auto remediation',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% alarms with instructions',

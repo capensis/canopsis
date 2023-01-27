@@ -83,6 +83,7 @@ export default {
         {
           text: this.$t('remediationJobs.table.configuration'),
           value: 'config.name',
+          sortable: false,
         },
         {
           text: this.$t('remediationJobs.table.jobId'),

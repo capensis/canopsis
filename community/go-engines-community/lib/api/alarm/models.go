@@ -1,10 +1,12 @@
 package alarm
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -189,8 +191,12 @@ type ExportRequest struct {
 }
 
 type ExportResponse struct {
-	ID     string `json:"_id"`
-	Status int    `json:"status"`
+	ID string `json:"_id"`
+	// Possible values.
+	//   * `0` - Running
+	//   * `1` - Succeeded
+	//   * `2` - Failed
+	Status int `json:"status"`
 }
 
 type Alarm struct {
@@ -234,7 +240,6 @@ type MetaAlarmRule struct {
 type AlarmValue struct {
 	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *common.AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
@@ -289,7 +294,7 @@ type AlarmTicket struct {
 
 type Pbehavior struct {
 	ID     string            `bson:"_id" json:"_id"`
-	Author common.User       `bson:"author" json:"author"`
+	Author *author.Author    `bson:"author" json:"author"`
 	Name   string            `bson:"name" json:"name"`
 	RRule  string            `bson:"rrule" json:"rrule"`
 	Start  *types.CpsTime    `bson:"tstart" json:"tstart" swaggertype:"integer"`
@@ -297,7 +302,7 @@ type Pbehavior struct {
 	Type   *pbehavior.Type   `bson:"type" json:"type"`
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
 
-	LastComment *pbehavior.Comment `bson:"last_comment" json:"last_comment"`
+	LastComment *pbehaviorcomment.Response `bson:"last_comment" json:"last_comment"`
 }
 
 type Instruction struct {
