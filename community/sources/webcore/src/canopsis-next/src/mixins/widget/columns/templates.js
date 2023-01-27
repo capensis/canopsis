@@ -4,7 +4,7 @@ import { MAX_LIMIT, ENTITIES_TYPES } from '@/constants';
 
 import { widgetColumnsToForm } from '@/helpers/forms/shared/widget-column';
 
-const { mapActions } = createNamespacedHelpers('view/widget/template');
+const { mapActions } = createNamespacedHelpers('widgetTemplate');
 
 export const widgetColumnsTemplatesMixin = {
   data() {

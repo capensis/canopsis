@@ -49,6 +49,7 @@ import mapModule from './map';
 import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
+import widgetTemplateModule from './widget-template';
 
 export default {
   alarm: alarmModule,
@@ -102,4 +103,5 @@ export default {
   alarmTag: alarmTagModule,
   shareToken: shareTokenModule,
   techMetrics: techMetricsModule,
+  widgetTemplate: widgetTemplateModule,
 };

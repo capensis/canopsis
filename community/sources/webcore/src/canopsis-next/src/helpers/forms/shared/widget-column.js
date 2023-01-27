@@ -35,10 +35,10 @@ import uid from '@/helpers/uid';
 /**
  * Check if column is infos
  *
- * @param {string} column
+ * @param {string} [column = '']
  * @returns {string}
  */
-export const getInfosWidgetColumn = column => [
+export const getInfosWidgetColumn = (column = '') => [
   ...ALARM_INFOS_FIELDS,
   ...ENTITY_INFOS_FIELDS,
 ].find(constantField => column.startsWith(constantField));
@@ -46,10 +46,10 @@ export const getInfosWidgetColumn = column => [
 /**
  * Check if column is links
  *
- * @param {string} column
+ * @param {string} [column = '']
  * @returns {boolean}
  */
-export const isLinksWidgetColumn = column => column.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
+export const isLinksWidgetColumn = (column = '') => column.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
  * Convert widget column to form
