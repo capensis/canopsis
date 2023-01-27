@@ -105,8 +105,8 @@ func (a *authorizer) RemoveRoom(room string) error {
 }
 
 func (a *authorizer) HasRoom(room string) bool {
-	a.roomPermsMx.Lock()
-	defer a.roomPermsMx.Unlock()
+	a.roomPermsMx.RLock()
+	defer a.roomPermsMx.RUnlock()
 
 	_, ok := a.roomPerms[room]
 	return ok
