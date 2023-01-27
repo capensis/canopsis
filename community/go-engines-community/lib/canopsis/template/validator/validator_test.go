@@ -54,9 +54,9 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 			expectedErrReport: validator.ErrReport{
 				Line:     1,
 				Position: 8,
-				Type:     validator.ErrTypeNoSuchMainVariable,
-				Message:  "No such variable \".Alarmmm\"",
-				Var:      ".Alarmmm",
+				Type:     validator.ErrTypeNoSuchVariable,
+				Message:  "Invalid variable \"Alarmmm\"",
+				Var:      "Alarmmm",
 			},
 		},
 		{
@@ -65,9 +65,9 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 			expectedErrReport: validator.ErrReport{
 				Line:     2,
 				Position: 3,
-				Type:     validator.ErrTypeNoSuchMainVariable,
-				Message:  "No such variable \".Alarmmm\"",
-				Var:      ".Alarmmm",
+				Type:     validator.ErrTypeNoSuchVariable,
+				Message:  "Invalid variable \"Alarmmm\"",
+				Var:      "Alarmmm",
 			},
 		},
 		{
@@ -76,7 +76,7 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 			expectedErrReport: validator.ErrReport{
 				Line:     1,
 				Position: 39,
-				Type:     validator.ErrTypeNoSuchSecondaryVariable,
+				Type:     validator.ErrTypeNoSuchVariable,
 				Message:  "Invalid variable \"Outputed\"",
 				Var:      "Outputed",
 			},
@@ -174,6 +174,18 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 			},
 			expectedValid: true,
 		},
+		{
+			testName:   "validate with unsafe map access",
+			testString: "{{ .Response.abc }}",
+			expectedWrnReports: []validator.WrnReport{
+				{
+					Type:    validator.WrnUnsafeMapAccess,
+					Message: "Access to the map might be unsafe",
+					Var:     ".Response.abc",
+				},
+			},
+			expectedValid: true,
+		},
 	}
 
 	v := getValidator(ctrl)
@@ -189,7 +201,7 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 				if errReport == nil {
 					t.Error("report shouldn't be nil")
 				} else if *errReport != dataset.expectedErrReport {
-					t.Errorf("expected error report = %v, got %v", dataset.expectedErrReport, errReport)
+					t.Errorf("expected error report = %v, got %v", dataset.expectedErrReport, *errReport)
 				}
 			} else if !reflect.DeepEqual(dataset.expectedWrnReports, wrnReports) {
 				t.Errorf("expected warning reports = %v, got %v", dataset.expectedWrnReports, wrnReports)
@@ -251,9 +263,9 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 			expectedErrReport: validator.ErrReport{
 				Line:     1,
 				Position: 8,
-				Type:     validator.ErrTypeNoSuchMainVariable,
-				Message:  "No such variable \".Alarmmm\"",
-				Var:      ".Alarmmm",
+				Type:     validator.ErrTypeNoSuchVariable,
+				Message:  "Invalid variable \"Alarmmm\"",
+				Var:      "Alarmmm",
 			},
 		},
 		{
@@ -262,9 +274,9 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 			expectedErrReport: validator.ErrReport{
 				Line:     2,
 				Position: 3,
-				Type:     validator.ErrTypeNoSuchMainVariable,
-				Message:  "No such variable \".Alarmmm\"",
-				Var:      ".Alarmmm",
+				Type:     validator.ErrTypeNoSuchVariable,
+				Message:  "Invalid variable \"Alarmmm\"",
+				Var:      "Alarmmm",
 			},
 		},
 		{
@@ -273,7 +285,7 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 			expectedErrReport: validator.ErrReport{
 				Line:     1,
 				Position: 23,
-				Type:     validator.ErrTypeNoSuchSecondaryVariable,
+				Type:     validator.ErrTypeNoSuchVariable,
 				Message:  "Invalid variable \"Some\"",
 				Var:      "Some",
 			},
@@ -371,6 +383,18 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 			},
 			expectedValid: true,
 		},
+		{
+			testName:   "validate with unsafe map access",
+			testString: "{{ .Response.abc }}",
+			expectedWrnReports: []validator.WrnReport{
+				{
+					Type:    validator.WrnUnsafeMapAccess,
+					Message: "Access to the map might be unsafe",
+					Var:     ".Response.abc",
+				},
+			},
+			expectedValid: true,
+		},
 	}
 
 	v := getValidator(ctrl)
@@ -386,7 +410,7 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 				if errReport == nil {
 					t.Error("report shouldn't be nil")
 				} else if *errReport != dataset.expectedErrReport {
-					t.Errorf("expected error report = %v, got %v", dataset.expectedErrReport, errReport)
+					t.Errorf("expected error report = %v, got %v", dataset.expectedErrReport, *errReport)
 				}
 			} else if !reflect.DeepEqual(dataset.expectedWrnReports, wrnReports) {
 				t.Errorf("expected warning reports = %v, got %v", dataset.expectedWrnReports, wrnReports)

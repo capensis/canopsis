@@ -42,8 +42,8 @@ Feature: Validate templates for declare ticket rules
         "line": 1,
         "position": 19,
         "type": 1,
-        "message": "No such variable \".Alarmmm\"",
-        "var": ".Alarmmm"
+        "message": "Invalid variable \"Alarmmm\"",
+        "var": "Alarmmm"
       }
     }
     """
@@ -66,8 +66,8 @@ Feature: Validate templates for declare ticket rules
         "line": 4,
         "position": 2,
         "type": 1,
-        "message": "No such variable \".Alarmmm\"",
-        "var": ".Alarmmm"
+        "message": "Invalid variable \"Alarmmm\"",
+        "var": "Alarmmm"
       }
     }
     """
@@ -89,7 +89,7 @@ Feature: Validate templates for declare ticket rules
       "err": {
         "line": 1,
         "position": 29,
-        "type": 2,
+        "type": 1,
         "message": "Invalid variable \"Some\"",
         "var": "Some"
       }
@@ -112,7 +112,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 3,
+        "type": 2,
         "message": "Function or block is missing"
       }
     }
@@ -134,7 +134,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 4,
+        "type": 3,
         "message": "Unexpected \"}\""
       }
     }
@@ -156,7 +156,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 5,
+        "type": 4,
         "message": "Invalid function \"rangee\""
       }
     }
@@ -178,7 +178,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 6,
+        "type": 5,
         "message": "Parsing error: invalid template"
       }
     }
@@ -207,7 +207,7 @@ Feature: Validate templates for declare ticket rules
     """
 
   @concurrent
-  Scenario: given validate template request with unsafe mapp access should return warning
+  Scenario: given validate template request with var out of block
     When I am admin
     When I do POST /api/v4/template-validator/declare-ticket-rules:
     """
@@ -225,6 +225,30 @@ Feature: Validate templates for declare ticket rules
           "type": 0,
           "message": "Variable are out of a template block",
           "var": ".Response"
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given validate template request with unsafe map access
+    When I am admin
+    When I do POST /api/v4/template-validator/declare-ticket-rules:
+    """
+    {
+      "text": "test {{ `{{ .Response.test }}` }}"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "is_valid": true,
+      "warnings": [
+        {
+          "type": 1,
+          "message": "Access to the map might be unsafe",
+          "var": ".Response.test"
         }
       ]
     }
