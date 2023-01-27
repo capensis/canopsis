@@ -305,6 +305,10 @@ export const PRO_TRIGGERS = [
   TRIGGERS.autoinstructioncomplete,
 ];
 
+export const DEPRECATED_TRIGGERS = [
+  TRIGGERS.declareticket,
+];
+
 export const HEADERS = {
   authorization: 'Authorization',
   contentType: 'Content-Type',
