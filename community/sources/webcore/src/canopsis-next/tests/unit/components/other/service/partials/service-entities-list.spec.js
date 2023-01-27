@@ -466,7 +466,7 @@ describe('service-entities-list', () => {
     });
   });
 
-  test.only('Declare ticket action applied after trigger mass declare ticket action', async () => {
+  test('Declare ticket action applied after trigger mass declare ticket action', async () => {
     bulkCreateDeclareTicketExecution.mockResolvedValueOnce([
       {
         id: 'execution-id',
