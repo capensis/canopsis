@@ -12,7 +12,7 @@
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",
       :infos-pending="infosPending",
-      @update:template="$listeners['update:template']"
+      @update:template="updateTemplate"
     )
 </template>
 
@@ -73,6 +73,11 @@ export default {
     infosPending: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    updateTemplate(...args) {
+      this.$emit('update:template', ...args);
     },
   },
 };

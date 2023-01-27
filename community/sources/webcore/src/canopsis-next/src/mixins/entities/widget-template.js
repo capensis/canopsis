@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('view/widget/template');
+const { mapActions, mapGetters } = createNamespacedHelpers('widgetTemplate');
 
 export const entitiesWidgetTemplatesMixin = {
   computed: {

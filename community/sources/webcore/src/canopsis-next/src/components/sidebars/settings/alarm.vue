@@ -27,7 +27,34 @@
         @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
+      field-columns(
+        v-model="form.parameters.widgetGroupColumns",
+        :template="form.parameters.widgetGroupColumnsTemplate",
+        :templates="alarmTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
+        :label="$t('settings.groupColumnNames')",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        with-html,
+        with-color-indicator,
+        @update:template="updateWidgetGroupColumnsTemplate"
+      )
       v-divider
+      field-columns(
+        v-model="form.parameters.serviceDependenciesColumns",
+        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :templates="entityTypeTemplates",
+        :templates-pending="widgetTemplatesPending",
+        :label="$t('settings.trackColumnNames')",
+        :type="$constants.ENTITIES_TYPES.entity",
+        :alarm-infos="alarmInfos",
+        :entity-infos="entityInfos",
+        :infos-pending="infosPending",
+        with-color-indicator,
+        @update:template="updateServiceDependenciesColumnsTemplate"
+      )
       v-divider
       field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
       v-divider
