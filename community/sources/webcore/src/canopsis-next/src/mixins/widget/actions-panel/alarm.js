@@ -121,20 +121,22 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createAssociateTicketEvent,
         config: {
           items: alarms,
-          afterSubmit: this.afterSubmit,
           action: async (event) => {
             const itemsWithoutAck = alarms.filter(alarm => !alarm.v.ack);
 
             const { fastAckOutput } = this.widget.parameters;
 
-            const ackEvents = prepareEventsByAlarms(EVENT_ENTITY_TYPES.ack, itemsWithoutAck, {
-              output: fastAckOutput?.enabled ? fastAckOutput.value : '',
-              ticket: event.ticket,
-            });
+            const ackEvents = prepareEventsByAlarms(
+              EVENT_ENTITY_TYPES.ack,
+              itemsWithoutAck,
+              { output: fastAckOutput?.enabled ? fastAckOutput.value : '' },
+            );
 
             const assocTicketEvents = prepareEventsByAlarms(EVENT_ENTITY_TYPES.assocTicket, alarms, event);
 
             await this.createEventAction({ data: [...ackEvents, ...assocTicketEvents] });
+
+            this.afterSubmit();
           },
         },
       });

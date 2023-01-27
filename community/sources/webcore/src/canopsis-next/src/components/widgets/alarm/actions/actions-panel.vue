@@ -172,7 +172,7 @@ export default {
     modalConfig() {
       return {
         items: [this.item],
-        afterSubmit: this.refreshAlarmsList,
+        afterSubmit: this.afterSubmit,
       };
     },
     resolvedActions() {
@@ -289,6 +289,10 @@ export default {
     },
   },
   methods: {
+    afterSubmit() {
+      this.refreshAlarmsList();
+    },
+
     showExecuteInstructionModal(assignedInstruction) {
       const refreshAlarm = () => this.refreshAlarmsList();
 
