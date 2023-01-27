@@ -78,8 +78,10 @@ func Default(
 	overrideDocs bool,
 ) (API, fs.ReadFileFS, error) {
 	configUpdateInterval := canopsis.PeriodicalWaitTime
+	checkHubAuthInterval := canopsis.PeriodicalWaitTime
 	if flags.Test {
 		configUpdateInterval = time.Second
+		checkHubAuthInterval = 5 * time.Second
 	}
 
 	// Retrieve config.
@@ -204,7 +206,7 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), logger)
+	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), checkHubAuthInterval, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
 	}
@@ -434,7 +436,12 @@ func Default(
 	return api, docsFile, nil
 }
 
-func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProviders []libsecurity.TokenProvider, logger zerolog.Logger) (websocket.Hub, error) {
+func newWebsocketHub(
+	enforcer libsecurity.Enforcer,
+	tokenProviders []libsecurity.TokenProvider,
+	checkAuthInterval time.Duration,
+	logger zerolog.Logger,
+) (websocket.Hub, error) {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 2048,
@@ -444,7 +451,7 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProviders []libsecurity
 	})
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
-		canopsis.PeriodicalWaitTime, logger)
+		checkAuthInterval, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
 		return nil, err
 	}
