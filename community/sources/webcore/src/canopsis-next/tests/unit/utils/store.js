@@ -649,3 +649,53 @@ export const createPbehaviorTimespanModule = () => {
     pbehaviorTimespanModule,
   };
 };
+
+export const createWidgetTemplateModule = () => {
+  const fetchWidgetTemplatesListWithoutStore = jest.fn()
+    .mockReturnValue({
+      meta: { total_count: 0 },
+      data: [],
+    }); // TODO: finish it in the future
+
+  const createWidgetTemplate = jest.fn();
+  const updateWidgetTemplate = jest.fn();
+  const removeWidgetTemplate = jest.fn();
+
+  const widgetTemplateModule = {
+    name: 'widgetTemplate',
+    actions: {
+      fetchListWithoutStore: fetchWidgetTemplatesListWithoutStore,
+      create: createWidgetTemplate,
+      update: updateWidgetTemplate,
+      remove: removeWidgetTemplate,
+    },
+  };
+
+  return {
+    fetchWidgetTemplatesListWithoutStore,
+    createWidgetTemplate,
+    updateWidgetTemplate,
+    removeWidgetTemplate,
+    widgetTemplateModule,
+  };
+};
+
+export const createDynamicInfoModule = () => {
+  const fetchDynamicInfosKeysWithoutStore = jest.fn()
+    .mockReturnValue({
+      meta: { total_count: 0 },
+      data: [],
+    }); // TODO: finish it in the future
+
+  const dynamicInfoModule = {
+    name: 'dynamicInfo',
+    actions: {
+      fetchInfosKeysWithoutStore: fetchDynamicInfosKeysWithoutStore,
+    },
+  };
+
+  return {
+    fetchDynamicInfosKeysWithoutStore,
+    dynamicInfoModule,
+  };
+};
