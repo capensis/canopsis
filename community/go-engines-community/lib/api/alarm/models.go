@@ -247,7 +247,6 @@ type MetaAlarmRule struct {
 type AlarmValue struct {
 	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *common.AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`

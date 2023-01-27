@@ -40,16 +40,12 @@ const (
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
 
-	EventTypeDone              = "done"
-	EventTypeChangestate       = "changestate"
-	EventTypeKeepstate         = "keepstate"
-	EventTypePerf              = "perf"
-	EventTypeSnooze            = "snooze"
-	EventTypeUnsnooze          = "unsnooze"
-	EventTypeStatCounterInc    = "statcounterinc"
-	EventTypeStatDuration      = "statduration"
-	EventTypeStatStateInterval = "statstateinterval"
-	EventTypeUncancel          = "uncancel"
+	EventTypeChangestate = "changestate"
+	EventTypeKeepstate   = "keepstate"
+	EventTypePerf        = "perf"
+	EventTypeSnooze      = "snooze"
+	EventTypeUnsnooze    = "unsnooze"
+	EventTypeUncancel    = "uncancel"
 
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 	EventTypeWebhookStarted       = "webhookstarted"
@@ -64,7 +60,6 @@ const (
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
-	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
 	EventTypeResolveDeleted     = "resolve_deleted"
@@ -606,12 +601,10 @@ func isValidEventType(t string) bool {
 		EventTypeCancel,
 		EventTypeComment,
 		EventTypeDeclareTicketWebhook,
-		EventTypeDone,
 		EventTypeChangestate,
 		EventTypeSnooze,
 		EventTypeUnsnooze,
 		EventTypeUncancel,
-		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
 		EventTypeResolveDeleted,
