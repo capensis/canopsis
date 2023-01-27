@@ -10,8 +10,23 @@
 
 # How can I create a new widget type ?
 
-**If you want to add new widget type you must follow the instruction.**
+There are two ways to do it:
+1. Add widget by feature
+2. Add widget directly into source code
 
+
+## Add widget by feature
+In order to make it easier to create a widget in this way, we created [widget template](https://git.canopsis.net/cat/widget-template)
+
+Steps to install:
+1. Go to `src/features` folder
+2. Clone the [widget template](https://git.canopsis.net/cat/widget-template) repository to this folder
+3. Rebuild/restart application
+4. You will see `AlarmsListCustom` widget in the `Create new widget` modal window
+
+*For more information about **writing** new widget in this way you can read [Custom feature repository](#custom-feature-repo) paragraph and README.md in the [widget template](https://git.canopsis.net/cat/widget-template) repository.*
+
+## Add widget directly into application source code
 Note: *We've added examples of `Counter` widget creation.*
 
 1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
@@ -398,6 +413,7 @@ export default {
 *Example: We've added featuresService using in the alarms list widget actions. But if you need to customize context widget actions you must to put `featuresService` by yourself.*
 
 ## Custom feature repository
+<a name="custom-feature-repo"></a>
 Feature repository must contain `index.js` file with configurations. Here we should define the points which we want to customize.
 
 `index.js` should have the special structure:
