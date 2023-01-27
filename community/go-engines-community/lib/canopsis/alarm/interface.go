@@ -29,9 +29,6 @@ type Adapter interface {
 	// GetAlarmsWithCancelMark returns all alarms where v.cancel is not null
 	GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alarm, error)
 
-	// GetAlarmsWithDoneMark returns all alarms where v.done is not null
-	GetAlarmsWithDoneMark(ctx context.Context) ([]types.Alarm, error)
-
 	// GetAlarmsWithSnoozeMark returns all alarms where v.snooze is not null
 	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error)
 
@@ -126,9 +123,6 @@ type Service interface {
 
 	// ResolveCancels close canceled alarms when time has expired
 	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
-
-	// ResolveDone close one alarms when time has expired
-	ResolveDone(ctx context.Context) ([]types.Alarm, error)
 
 	// ResolveSnoozes remove snooze state when snooze time has expired
 	ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
