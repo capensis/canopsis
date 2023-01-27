@@ -7,6 +7,8 @@ import {
   createServiceModule,
   createUserPreferenceModule,
   createWidgetModule,
+  createWidgetTemplateModule,
+  createDynamicInfoModule,
 } from '@unit/utils/store';
 
 export const createSettingsMocks = () => ({
@@ -15,6 +17,9 @@ export const createSettingsMocks = () => ({
   ...createWidgetModule(),
   ...createServiceModule(),
   ...createActiveViewModule(),
+  ...createWidgetTemplateModule(),
+  ...createServiceModule(),
+  ...createDynamicInfoModule(),
 });
 
 export const getWidgetRequestWithNewProperty = (widget, key, value) => ({

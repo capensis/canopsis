@@ -18,11 +18,11 @@ import { getInfosWidgetColumn, isLinksWidgetColumn } from './forms/shared/widget
 /**
  * Get translated label for widget column
  *
- * @param {WidgetColumn} column
- * @param {Object<string, string>} labelsMap
+ * @param {WidgetColumn} [column = {}]
+ * @param {Object<string, string>} [labelsMap = {}]
  * @returns {string}
  */
-export const getColumnLabel = (column, labelsMap) => {
+export const getColumnLabel = (column = {}, labelsMap = {}) => {
   if (column.label) {
     return column.label;
   }
@@ -43,12 +43,12 @@ export const getColumnLabel = (column, labelsMap) => {
 /**
  * Get sortable property for widget column for table
  *
- * @param {WidgetColumn} column
- * @param {string[]} unsortableFields
+ * @param {WidgetColumn} [column = {}]
+ * @param {string[]} [unsortableFields = []]
  * @returns {boolean}
  */
-export const getSortable = (column, unsortableFields = []) => (
-  unsortableFields.some(field => column.value.startsWith(field))
+export const getSortable = (column = {}, unsortableFields = []) => (
+  unsortableFields.some(field => (column.value ?? '').startsWith(field))
 );
 
 /**

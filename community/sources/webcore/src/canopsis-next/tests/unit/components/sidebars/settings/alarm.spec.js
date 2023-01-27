@@ -16,9 +16,7 @@ import {
 
 import {
   ALARMS_OPENED_VALUES,
-
   EXPORT_CSV_DATETIME_FORMATS,
-
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
   TIME_UNITS,
@@ -30,7 +28,13 @@ import {
 
 import ClickOutside from '@/services/click-outside';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import {
+  widgetToForm,
+  formToWidget,
+  getEmptyWidgetByType,
+  widgetParametersToForm, formToWidgetParameters,
+} from '@/helpers/forms/widgets/common';
+import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 
@@ -148,6 +152,9 @@ describe('alarm', () => {
     widgetModule,
     authModule,
     userPreferenceModule,
+    widgetTemplateModule,
+    serviceModule,
+    dynamicInfoModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -171,6 +178,9 @@ describe('alarm', () => {
     userPreferenceModule,
     authModule,
     userPreferenceModule,
+    widgetTemplateModule,
+    serviceModule,
+    dynamicInfoModule,
   ]);
 
   afterEach(() => {
@@ -350,7 +360,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetColumns(wrapper);
 
     const columns = [{
-      label: Faker.datatype.string(),
+      ...widgetColumnToForm(),
+
       value: Faker.datatype.string(),
     }];
 
@@ -362,7 +373,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -381,6 +392,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: `alarm.${Faker.datatype.string()}`,
       isHtml: false,
@@ -395,7 +408,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -414,6 +427,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetGroupColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: Faker.datatype.string(),
     }];
@@ -426,7 +441,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -445,6 +460,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldServiceDependenciesColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: Faker.datatype.string(),
     }];
@@ -457,7 +474,8 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', columns),
+        data:
+          getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -522,6 +540,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        dynamicInfoModule,
         {
           ...authModule,
           getters: {
@@ -567,6 +588,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        dynamicInfoModule,
         {
           ...authModule,
           getters: {
@@ -615,6 +639,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        dynamicInfoModule,
         {
           ...authModule,
           getters: {
@@ -1001,7 +1028,7 @@ describe('alarm', () => {
     const fieldExportCsvForm = selectFieldExportCsvForm(wrapper);
 
     const exportProperties = {
-      ...widget.parameters,
+      ...widgetParametersToForm(widget),
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: [],
@@ -1015,7 +1042,15 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty(widget, 'parameters', exportProperties),
+        data:
+          getWidgetRequestWithNewProperty(
+            widget,
+            'parameters',
+            formToWidgetParameters({
+              type: WIDGET_TYPES.alarmList,
+              parameters: exportProperties,
+            }),
+          ),
       },
     });
   });
@@ -1112,6 +1147,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        dynamicInfoModule,
+        serviceModule,
         {
           ...authModule,
           getters: {

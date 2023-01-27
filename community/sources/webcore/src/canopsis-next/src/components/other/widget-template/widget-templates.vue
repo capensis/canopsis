@@ -15,7 +15,7 @@
 import { MODALS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/view/widget/template';
+import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
 
 import WidgetTemplatesList from './widget-templates-list.vue';

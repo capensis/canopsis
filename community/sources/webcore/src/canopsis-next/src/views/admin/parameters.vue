@@ -47,7 +47,7 @@
 import { MODALS, PARAMETERS_TABS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/view/widget/template';
+import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
 

@@ -5,13 +5,8 @@ import request from '@/services/request';
 
 import { widgetSchema } from '@/store/schemas';
 
-import widgetTemplateModule from './template';
-
 export default {
   namespaced: true,
-  modules: {
-    template: widgetTemplateModule,
-  },
   getters: {
     getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
       ENTITIES_TYPES.widget,

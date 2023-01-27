@@ -18,7 +18,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columns="[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -26,8 +26,13 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      entityinfos=""
       label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
@@ -36,8 +41,13 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      entityinfos=""
       label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -45,8 +55,13 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object],[object Object]"
+      entityinfos=""
       label="Track alarm source columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
     />
     <hr
@@ -176,8 +191,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       class="v-divider theme--light"
     />
     <export-csv-form-stub
+      alarminfos=""
       datetimeformat="true"
+      entityinfos=""
       form="[object Object]"
+      templates=""
+      type="alarm"
     />
     <hr
       class="v-divider theme--light"
@@ -210,7 +229,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object]"
+      columns=""
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -218,8 +237,13 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object]"
+      entityinfos=""
       label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
@@ -228,8 +252,13 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object]"
+      entityinfos=""
       label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -237,8 +266,13 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object]"
+      entityinfos=""
       label="Track alarm source columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
     />
     <hr
@@ -354,8 +388,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <export-csv-form-stub
+      alarminfos=""
       datetimeformat="true"
+      entityinfos=""
       form="[object Object]"
+      templates=""
+      type="alarm"
     />
     <hr
       class="v-divider theme--light"
@@ -389,7 +427,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columns="[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -397,8 +435,13 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      entityinfos=""
       label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
@@ -407,8 +450,13 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      entityinfos=""
       label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -416,8 +464,13 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
+      alarminfos=""
       columns="[object Object],[object Object]"
+      entityinfos=""
       label="Track alarm source columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
     />
     <hr
@@ -529,8 +582,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <export-csv-form-stub
+      alarminfos=""
       datetimeformat="true"
+      entityinfos=""
       form="[object Object]"
+      templates=""
+      type="alarm"
     />
     <hr
       class="v-divider theme--light"
