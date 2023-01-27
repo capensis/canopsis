@@ -142,21 +142,6 @@ func (mr *MockAdapterMockRecorder) GetAlarmsWithCancelMark(arg0 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmsWithCancelMark", reflect.TypeOf((*MockAdapter)(nil).GetAlarmsWithCancelMark), arg0)
 }
 
-// GetAlarmsWithDoneMark mocks base method.
-func (m *MockAdapter) GetAlarmsWithDoneMark(arg0 context.Context) ([]types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAlarmsWithDoneMark", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAlarmsWithDoneMark indicates an expected call of GetAlarmsWithDoneMark.
-func (mr *MockAdapterMockRecorder) GetAlarmsWithDoneMark(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmsWithDoneMark", reflect.TypeOf((*MockAdapter)(nil).GetAlarmsWithDoneMark), arg0)
-}
-
 // GetAlarmsWithFlappingStatus mocks base method.
 func (m *MockAdapter) GetAlarmsWithFlappingStatus(arg0 context.Context) ([]types.AlarmWithEntity, error) {
 	m.ctrl.T.Helper()
@@ -618,21 +603,6 @@ func (m *MockService) ResolveClosed(arg0 context.Context) ([]types.Alarm, error)
 func (mr *MockServiceMockRecorder) ResolveClosed(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResolveClosed", reflect.TypeOf((*MockService)(nil).ResolveClosed), arg0)
-}
-
-// ResolveDone mocks base method.
-func (m *MockService) ResolveDone(arg0 context.Context) ([]types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ResolveDone", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ResolveDone indicates an expected call of ResolveDone.
-func (mr *MockServiceMockRecorder) ResolveDone(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResolveDone", reflect.TypeOf((*MockService)(nil).ResolveDone), arg0)
 }
 
 // ResolveSnoozes mocks base method.
