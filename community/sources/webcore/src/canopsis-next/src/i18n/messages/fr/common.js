@@ -256,6 +256,7 @@ export default {
   timestamp: 'Horodatage',
   countOfMax: '{count} sur {total}',
   trigger: 'Déclencheur | Déclencheurs',
+  deprecatedTrigger: 'Ce déclencheur n\'est plus pris en charge',
   initialLongOutput: 'Sortie initiale longue',
   totalStateChanges: 'Changements d\'état totaux',
   noReceivedEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
