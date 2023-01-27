@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
-	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -51,7 +50,6 @@ import (
 
 const chanBuf = 10
 const sessionStoreSessionMaxAge = 24 * time.Hour
-const sessionStoreAutoCleanInterval = 10 * time.Second
 
 //go:embed swaggerui/*
 var docsUiFile embed.FS
@@ -77,13 +75,6 @@ func Default(
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, fs.ReadFileFS, error) {
-	configUpdateInterval := canopsis.PeriodicalWaitTime
-	checkHubAuthInterval := canopsis.PeriodicalWaitTime
-	if flags.Test {
-		configUpdateInterval = time.Second
-		checkHubAuthInterval = 5 * time.Second
-	}
-
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
@@ -206,7 +197,7 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), checkHubAuthInterval, logger)
+	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
 	}
@@ -273,9 +264,6 @@ func Default(
 			})
 		})
 
-		if flags.Test {
-			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
-		}
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
@@ -342,7 +330,7 @@ func Default(
 		techMetricsSender.Run(ctx)
 	})
 	api.AddWorker("session clean", func(ctx context.Context) {
-		security.GetSessionStore().StartAutoClean(ctx, sessionStoreAutoCleanInterval)
+		security.GetSessionStore().StartAutoClean(ctx, flags.IntegrationPeriodicalWaitTime)
 	})
 	api.AddWorker("enforce policy load", func(ctx context.Context) {
 		enforcer.StartAutoLoadPolicy(ctx)
@@ -370,7 +358,7 @@ func Default(
 		importWorker.Run(ctx)
 	})
 	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
-		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, configUpdateInterval, logger))
+		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
