@@ -1,6 +1,7 @@
 package scenario
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -12,7 +13,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author expected_interval created updated enabled priority delay"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name created updated enabled priority"`
 }
 
 type EditRequest struct {
@@ -32,7 +33,6 @@ type EditRequest struct {
 	//   * `cancel` - Alarm has been cancelled
 	//   * `uncancel` - Alarm has been uncancelled
 	//   * `comment` - Alarm has been commented
-	//   * `done` - Alarm is "done"
 	//   * `declareticket` - Ticket has been declared by the UI action
 	//   * `declareticketwebhook` - Ticket has been declared by the webhook
 	//   * `assocticket` - Ticket has been associated with an alarm
@@ -48,7 +48,7 @@ type EditRequest struct {
 	//   * `instructionjobcomplete` - Manual or auto instruction's job is completed
 	//   * `instructioncomplete` - Manual instruction is completed
 	//   * `autoinstructioncomplete` - Auto instruction is completed
-	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment done declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete"`
+	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete"`
 	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
 	Delay                *types.DurationWithUnit `json:"delay"`
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
@@ -102,7 +102,7 @@ type ActionRequest struct {
 type Scenario struct {
 	ID                   string                  `bson:"_id" json:"_id"`
 	Name                 string                  `bson:"name" json:"name"`
-	Author               string                  `bson:"author" json:"author"`
+	Author               *author.Author          `bson:"author" json:"author"`
 	Enabled              bool                    `bson:"enabled" json:"enabled"`
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
 	Triggers             []string                `bson:"triggers" json:"triggers"`

@@ -48,7 +48,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-1",
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -79,7 +82,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-1",
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -140,7 +146,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-2",
       "auto_resolve": true,
       "name": "complex-test-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -171,7 +180,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-2",
       "auto_resolve": true,
       "name": "complex-test-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -243,7 +255,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-3",
       "auto_resolve": true,
       "name": "complex-test-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -285,7 +300,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-3",
       "auto_resolve": true,
       "name": "complex-test-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -358,7 +376,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-4",
       "auto_resolve": true,
       "name": "complex-test-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -402,7 +423,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-4",
       "auto_resolve": true,
       "name": "complex-test-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -467,7 +491,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-5",
       "auto_resolve": true,
       "name": "complex-test-5",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -513,7 +540,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-5",
       "auto_resolve": true,
       "name": "complex-test-5",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -600,7 +630,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-6",
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -642,7 +675,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-6",
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -715,7 +751,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-7",
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -759,7 +798,10 @@ Feature: Create an metaalarmrule
       "_id": "complex-7",
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -1446,7 +1488,10 @@ Feature: Create an metaalarmrule
     {
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {

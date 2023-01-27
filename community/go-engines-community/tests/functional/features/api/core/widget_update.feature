@@ -91,13 +91,19 @@ Feature: Update a widget
         "test-widget-to-update-param-arr": ["teststr1", "teststr2"],
         "test-widget-to-update-param-map": {"testkey": "teststr"}
       },
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670,
       "filters": [
         {
           "title": "test-widgetfilter-to-widget-update-1-3-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "alarm_pattern": [
             [
               {
@@ -136,7 +142,10 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-2",
           "title": "test-widgetfilter-to-widget-update-1-2-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
@@ -156,7 +165,10 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-4",
           "title": "test-widgetfilter-to-widget-update-1-4-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "old_mongo_query": {
             "name": "test-widgetfilter-to-widget-update-1-4-pattern"
@@ -174,7 +186,10 @@ Feature: Update a widget
         {
           "title": "test-widgetfilter-to-widget-update-1-3-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "alarm_pattern": [
             [
               {
@@ -213,7 +228,10 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-2",
           "title": "test-widgetfilter-to-widget-update-1-2-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
@@ -233,7 +251,10 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-4",
           "title": "test-widgetfilter-to-widget-update-1-4-title",
           "is_private": false,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "old_mongo_query": {
             "name": "test-widgetfilter-to-widget-update-1-4-pattern"
@@ -243,7 +264,10 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-5",
           "title": "test-widgetfilter-to-widget-update-1-5-title",
           "is_private": true,
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "updated": 1611229670,
           "alarm_pattern": [

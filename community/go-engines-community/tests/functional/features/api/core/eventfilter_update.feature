@@ -29,7 +29,10 @@ Feature: Update an eventfilter
     """
     {
       "_id": "test-eventfilter-to-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "drop filter",
       "type": "drop",
       "event_pattern": [
@@ -86,7 +89,10 @@ Feature: Update an eventfilter
     """
     {
       "_id": "test-eventfilter-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "drop filter",
       "type": "drop",
       "event_pattern": [
@@ -154,7 +160,10 @@ Feature: Update an eventfilter
     """
     {
       "_id": "test-eventfilter-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "drop filter",
       "type": "drop",
       "event_pattern": [
@@ -212,7 +221,10 @@ Feature: Update an eventfilter
     """
     {
       "_id": "test-eventfilter-to-update-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "drop filter",
       "type": "drop",
       "event_pattern": [
@@ -552,7 +564,10 @@ Feature: Update an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "changed description",
       "type": "drop",
       "priority": 0,
@@ -920,7 +935,10 @@ Feature: Update an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test update 10",
       "type": "enrichment",
       "start": 1663316803,
@@ -1152,7 +1170,10 @@ Feature: Update an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test update 14",
       "type": "enrichment",
       "start": 1463314803,
@@ -1343,7 +1364,10 @@ Feature: Update an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test update 17",
       "type": "enrichment",
       "start": 1663316803,
@@ -1500,7 +1524,10 @@ Feature: Update an eventfilter
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test update 19",
       "type": "enrichment",
       "start": 1663316803,
