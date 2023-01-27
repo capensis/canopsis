@@ -844,7 +844,7 @@ Feature: update service on event
       "connector": "test-connector-service-6",
       "connector_name": "test-connector-name-service-6",
       "source_type": "resource",
-      "event_type": "done",
+      "event_type": "cancel",
       "component": "test-component-service-6",
       "resource": "test-resource-service-6",
       "output": "test-output-service-6"
@@ -857,7 +857,7 @@ Feature: update service on event
       "connector": "test-connector-service-6",
       "connector_name": "test-connector-name-service-6",
       "source_type": "resource",
-      "event_type": "resolve_done",
+      "event_type": "resolve_cancel",
       "component": "test-component-service-6",
       "resource": "test-resource-service-6",
       "output": "test-output-service-6"
@@ -971,7 +971,7 @@ Feature: update service on event
       "connector": "test-connector-service-7",
       "connector_name": "test-connector-name-service-7",
       "source_type": "resource",
-      "event_type": "done",
+      "event_type": "cancel",
       "component": "test-component-service-7",
       "resource": "test-resource-service-7",
       "output": "test-output-service-7"
@@ -984,7 +984,7 @@ Feature: update service on event
       "connector": "test-connector-service-7",
       "connector_name": "test-connector-name-service-7",
       "source_type": "resource",
-      "event_type": "resolve_done",
+      "event_type": "resolve_cancel",
       "component": "test-component-service-7",
       "resource": "test-resource-service-7",
       "output": "test-output-service-7"
