@@ -1688,16 +1688,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Canceled)
 			}
-		case "done":
-			if in.IsNull() {
-				in.Skip()
-				out.Done = nil
-			} else {
-				if out.Done == nil {
-					out.Done = new(AlarmStep)
-				}
-				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(in, out.Done)
-			}
 		case "snooze":
 			if in.IsNull() {
 				in.Skip()
@@ -2052,16 +2042,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString(prefix)
 		}
 		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Canceled)
-	}
-	if in.Done != nil {
-		const prefix string = ",\"done\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes8(out, *in.Done)
 	}
 	if in.Snooze != nil {
 		const prefix string = ",\"snooze\":"

@@ -42,6 +42,8 @@ type ChangeEntityMessage struct {
 	// ServiceAlarm is required on entity service delete because alarm is removed from
 	// storage but alarm state is required by engine-service.
 	ServiceAlarm *types.Alarm
+	// Resources are used only when component entity is toggled to toggle dependent resources
+	Resources []string
 }
 
 func NewEventPublisher(
@@ -182,11 +184,35 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	event.SourceType = event.DetectSourceType()
 	err = p.publishEvent(ctx, event)
 	if err != nil {
-		p.logger.Err(err).Msg("cannot send event to amqp")
+		p.logger.Err(err).Str("entity_id", msg.ID).Msg("cannot send event to amqp")
 		return
 	}
 
 	p.logger.Debug().Msgf("publish %s", msg.ID)
+
+	if msg.IsToggled && msg.EntityType == types.EntityTypeComponent {
+		resourceEvent := types.Event{
+			EventType:     types.EventTypeEntityToggled,
+			Connector:     event.Connector,
+			ConnectorName: event.ConnectorName,
+			Component:     event.Component,
+			Timestamp:     event.Timestamp,
+			Author:        event.Author,
+			SourceType:    types.SourceTypeResource,
+		}
+
+		for _, resID := range msg.Resources {
+			resourceEvent.Resource = strings.ReplaceAll(resID, "/"+msg.ID, "")
+
+			err = p.publishEvent(ctx, resourceEvent)
+			if err != nil {
+				p.logger.Err(err).Str("entity_id", resID).Msg("cannot send event to amqp")
+				return
+			}
+
+			p.logger.Debug().Msgf("publish %s", resID)
+		}
+	}
 }
 
 func (p *eventPublisher) publishEvent(ctx context.Context, event types.Event) error {

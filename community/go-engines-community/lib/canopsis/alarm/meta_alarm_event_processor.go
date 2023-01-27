@@ -665,7 +665,6 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 		types.AlarmChangeTypeCancel,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeComment,
-		types.AlarmChangeTypeDone,
 		types.AlarmChangeTypeSnooze,
 		types.AlarmChangeTypeUncancel,
 		types.AlarmChangeTypeUpdateStatus,
