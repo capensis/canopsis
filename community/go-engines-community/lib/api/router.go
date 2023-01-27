@@ -486,7 +486,7 @@ func RegisterRoutes(
 		}
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
-			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewModelTransformer(), pbehaviorcomment.NewStore(dbClient))
+			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewStore(dbClient))
 			pbehaviorCommentRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
@@ -886,7 +886,7 @@ func RegisterRoutes(
 			)
 			widgetFilterRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
 				widgetFilterAPI.Delete,
 			)
 		}
