@@ -1365,3 +1365,18 @@ default_rights:
     _id: test-user-to-widget-filter-edit
     crecord_name: <Current()._id>
     role: "@role_to_widget_filter_edit"
+
+  role_to_websocket_connect:
+    <<: *role
+    _id: test-role-to-websocket-connect
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_healthcheck":
+        checksum: 1
+        crecord_type: right
+
+  user_to_websocket_connect:
+    <<: *user
+    _id: test-user-to-websocket-connect
+    crecord_name: <Current()._id>
+    role: "@role_to_websocket_connect"
