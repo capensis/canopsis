@@ -48,6 +48,10 @@ describe('mass-actions-panel', () => {
     entity: {
       _id: 'alarm-entity-id',
     },
+    v: {
+      state: {},
+      status: {},
+    },
   };
 
   const metaAlarm = {
@@ -55,6 +59,10 @@ describe('mass-actions-panel', () => {
     metaalarm: true,
     entity: {
       _id: 'meta-alarm-entity-id',
+    },
+    v: {
+      state: {},
+      status: {},
     },
   };
   const fastAckAlarms = range(2).map(index => ({
@@ -408,7 +416,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Associate ticket modal showed after trigger associate ticket action', () => {
+  it('Associate ticket modal showed after trigger associate ticket action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -416,10 +424,11 @@ describe('mass-actions-panel', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
+        eventModule,
         authModuleWithAccess,
       ]),
       propsData: {
-        items,
+        items: [alarm],
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -428,27 +437,71 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const associateTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket);
-
-    associateTicketAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
-          items,
-          afterSubmit: expect.any(Function),
+          items: [alarm],
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const event = {
+      ticket: Faker.datatype.string(),
+      ticket_url: Faker.datatype.string(),
+      ticket_system_name: Faker.datatype.string(),
+    };
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
+    config.action(event);
 
-    expect(clearItemsEvent).toHaveLength(1);
+    await flushPromises();
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          component: undefined,
+          connector: undefined,
+          connector_name: undefined,
+          crecord_type: EVENT_ENTITY_TYPES.ack,
+          event_type: EVENT_ENTITY_TYPES.ack,
+          id: alarm._id,
+          initiator: 'user',
+          origin: 'canopsis',
+          output: '',
+          ref_rk: 'undefined/undefined',
+          resource: undefined,
+          source_type: undefined,
+          state: undefined,
+          state_type: undefined,
+          timestamp: 1386435600,
+        }, {
+          component: undefined,
+          connector: undefined,
+          connector_name: undefined,
+          crecord_type: EVENT_ENTITY_TYPES.assocTicket,
+          event_type: EVENT_ENTITY_TYPES.assocTicket,
+          id: alarm._id,
+          initiator: 'user',
+          origin: 'canopsis',
+          ref_rk: 'undefined/undefined',
+          resource: undefined,
+          source_type: undefined,
+          state: undefined,
+          state_type: undefined,
+          timestamp: 1386435600,
+          ...event,
+        }],
+      },
+      undefined,
+    );
+
+    expect(wrapper).toEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
