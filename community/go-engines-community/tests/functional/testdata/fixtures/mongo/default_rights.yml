@@ -623,6 +623,22 @@ default_rights:
     crecord_name: <Current()._id>
     role: "@role_to_edit_user"
 
+  user_to_update_3:
+    <<: *user
+    _id: test-user-to-update-3
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+    source: saml
+    external_id: saml_id
+
+  user_to_update_4:
+    <<: *user
+    _id: test-user-to-update-4
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+
   role_to_account_update_1:
     <<: *role
     _id: test-role-to-account-update-1
@@ -661,6 +677,22 @@ default_rights:
   user_to_bulk_update_2:
     <<: *user
     _id: test-user-to-bulk-update-2
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+
+  user_to_bulk_update_3:
+    <<: *user
+    _id: test-user-to-bulk-update-3
+    crecord_name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    role: "@role_to_edit_user"
+    source: saml
+    external_id: saml_id
+
+  user_to_bulk_update_4:
+    <<: *user
+    _id: test-user-to-bulk-update-4
     crecord_name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
     role: "@role_to_edit_user"
@@ -1348,9 +1380,9 @@ default_rights:
     mail: admin@canopsis.net
     role: "@role_admin"
 
-  role_to_widget_filter_edit:
+  role_to_widget_filter_edit_1:
     <<: *role
-    _id: test-role-to-widget-filter-edit
+    _id: test-role-to-widget-filter-edit-1
     crecord_name: <Current()._id>
     rights:
       "@permission_api_view":
@@ -1359,12 +1391,28 @@ default_rights:
       "@permission_view_to_filter_edit":
         checksum: 4
         crecord_type: right
-
-  user_to_widget_filter_edit:
+  user_to_widget_filter_edit_1:
     <<: *user
-    _id: test-user-to-widget-filter-edit
+    _id: test-user-to-widget-filter-edit-1
     crecord_name: <Current()._id>
-    role: "@role_to_widget_filter_edit"
+    role: "@role_to_widget_filter_edit_1"
+
+  role_to_widget_filter_edit_2:
+    <<: *role
+    _id: test-role-to-widget-filter-edit-2
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_view":
+        checksum: 6
+        crecord_type: right
+      "@permission_view_to_filter_edit":
+        checksum: 6
+        crecord_type: right
+  user_to_widget_filter_edit_2:
+    <<: *user
+    _id: test-user-to-widget-filter-edit-2
+    crecord_name: <Current()._id>
+    role: "@role_to_widget_filter_edit_2"
 
   role_to_websocket_connect:
     <<: *role

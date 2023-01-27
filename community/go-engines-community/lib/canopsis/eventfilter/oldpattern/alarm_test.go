@@ -29,9 +29,6 @@ func TestAlarmPatternToMongoDriverQuery(t *testing.T) {
 					"canceled": bson.M{
 						"_t": "test2",
 					},
-					"done": bson.M{
-						"_t": "test3",
-					},
 					"snooze": bson.M{
 						"_t": "test4",
 					},
@@ -66,7 +63,6 @@ func TestAlarmPatternToMongoDriverQuery(t *testing.T) {
 
 			"v.ack._t":           bson.M{"$eq": "test1"},
 			"v.canceled._t":      bson.M{"$eq": "test2"},
-			"v.done._t":          bson.M{"$eq": "test3"},
 			"v.snooze._t":        bson.M{"$eq": "test4"},
 			"v.state._t":         bson.M{"$eq": "test5"},
 			"v.status._t":        bson.M{"$eq": "test6"},
@@ -111,9 +107,6 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					},
 					"canceled": bson.M{
 						"_t": "test2",
-					},
-					"done": bson.M{
-						"_t": "test3",
 					},
 					"snooze": bson.M{
 						"_t": "test4",
@@ -168,9 +161,6 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					},
 					Canceled: &types.AlarmStep{
 						Type: "test2",
-					},
-					Done: &types.AlarmStep{
-						Type: "test3",
 					},
 					Snooze: &types.AlarmStep{
 						Type: "test4",
@@ -229,9 +219,6 @@ func TestAlarmPatternMatchesMongoDriver(t *testing.T) {
 					},
 					Canceled: &types.AlarmStep{
 						Type: "test2",
-					},
-					Done: &types.AlarmStep{
-						Type: "test3",
 					},
 					Snooze: &types.AlarmStep{
 						Type: "test4",
@@ -293,9 +280,6 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 						},
 						"canceled": bson.M{
 							"_t": "test2",
-						},
-						"done": bson.M{
-							"_t": "test3",
 						},
 						"snooze": bson.M{
 							"_t": "test4",
@@ -367,18 +351,6 @@ func TestAlarmPatternMarshalBSON(t *testing.T) {
 											Equal: types.OptionalString{
 												Set:   true,
 												Value: "test2",
-											},
-										},
-									},
-								},
-							},
-							Done: oldpattern.AlarmStepRefPattern{
-								AlarmStepFields: oldpattern.AlarmStepFields{
-									Type: oldpattern.StringPattern{
-										StringConditions: oldpattern.StringConditions{
-											Equal: types.OptionalString{
-												Set:   true,
-												Value: "test3",
 											},
 										},
 									},

@@ -218,6 +218,7 @@ func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse
 		common.GetSortQuery("v.display_name", common.SortAsc),
 		bson.M{"$limit": manualMetaAlarmsLimit},
 		bson.M{"$project": bson.M{
+			"_id":  "$d",
 			"name": "$v.display_name",
 		}},
 	)
