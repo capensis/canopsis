@@ -256,6 +256,7 @@ export default {
   timestamp: 'Timestamp',
   countOfMax: '{count} of {total}',
   trigger: 'Trigger | Triggers',
+  deprecatedTrigger: 'This trigger is not supported anymore',
   initialLongOutput: 'Long initial output',
   totalStateChanges: 'Total state changes',
   noReceivedEvents: 'No events received for {duration} by some of dependencies',
