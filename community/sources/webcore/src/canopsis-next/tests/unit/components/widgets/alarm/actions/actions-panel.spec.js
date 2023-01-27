@@ -82,6 +82,7 @@ describe('actions-panel', () => {
   } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
+    eventModule,
     authModule,
     alarmModule,
     declareTicketRuleModule,
@@ -135,6 +136,7 @@ describe('actions-panel', () => {
       status: {
         val: ENTITIES_STATUSES.flapping,
       },
+      state: {},
     },
   };
 
@@ -466,7 +468,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Associate ticket modal showed after trigger associate ticket action', () => {
+  it('Associate ticket modal showed after trigger associate ticket action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -474,6 +476,7 @@ describe('actions-panel', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
+        eventModule,
         authModuleWithAccess,
         alarmModule,
       ]),
@@ -485,24 +488,46 @@ describe('actions-panel', () => {
       },
     });
 
-    const associateTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket);
-
-    associateTicketAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    config.action({});
 
+    await flushPromises();
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          component: undefined,
+          connector: undefined,
+          connector_name: undefined,
+          crecord_type: EVENT_ENTITY_TYPES.assocTicket,
+          event_type: EVENT_ENTITY_TYPES.assocTicket,
+          id: alarm._id,
+          initiator: 'user',
+          origin: 'canopsis',
+          ref_rk: 'undefined/undefined',
+          resource: undefined,
+          source_type: undefined,
+          state: undefined,
+          state_type: 3,
+          timestamp: 1386435600,
+        }],
+      },
+      undefined,
+    );
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
