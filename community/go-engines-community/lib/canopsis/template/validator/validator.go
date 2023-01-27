@@ -18,8 +18,7 @@ const (
 
 const (
 	ErrTypeUndefined = iota
-	ErrTypeNoSuchMainVariable
-	ErrTypeNoSuchSecondaryVariable
+	ErrTypeNoSuchVariable
 	ErrTypeUnexpectedBlock
 	ErrTypeUnexpectedSymbol
 	ErrTypeUnexpectedFunction
@@ -28,6 +27,7 @@ const (
 
 const (
 	WrnTypeOutsideBlockVar = iota
+	WrnUnsafeMapAccess
 )
 
 type RegexpInfo struct {
@@ -42,6 +42,28 @@ type Validator interface {
 	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport)
 }
 
+type alarmWithEntity struct {
+	types.Alarm
+	Entity types.Entity
+}
+
+type declareTicketTplData struct {
+	Alarms      []alarmWithEntity
+	Response    map[string]any
+	ResponseMap map[string]any
+	Header      map[string]string
+}
+
+type scenarioTplData struct {
+	Alarm          types.Alarm
+	Entity         types.Entity
+	Children       []types.Alarm
+	Response       map[string]any
+	ResponseMap    map[string]any
+	Header         map[string]string
+	AdditionalData action.AdditionalData
+}
+
 type validator struct {
 	executor *template.Executor
 
@@ -51,8 +73,11 @@ type validator struct {
 	parseErrorRegex         *regexp.Regexp
 	parseErrorsMsgRegexInfo []RegexpInfo
 
-	declareTicketTplData map[string]any
-	scenarioTplData      map[string]any
+	declareTicketTplData declareTicketTplData
+	scenarioTplData      scenarioTplData
+
+	declareTicketTplDataKeys []string
+	scenarioTplDataKeys      []string
 }
 
 func NewValidator(executor *template.Executor) Validator {
@@ -117,26 +142,38 @@ func NewValidator(executor *template.Executor) Validator {
 			},
 		},
 
-		declareTicketTplData: map[string]any{
-			"Alarms": []struct {
-				types.Alarm
-				Entity types.Entity
-			}{{
+		declareTicketTplData: declareTicketTplData{
+			Alarms: []alarmWithEntity{{
 				Alarm:  alarm,
 				Entity: types.Entity{},
 			}},
-			"Response":    map[string]any{},
-			"ResponseMap": map[string]any{},
-			"Header":      map[string]string{},
+			Response:    map[string]any{},
+			ResponseMap: map[string]any{},
+			Header:      map[string]string{},
 		},
-		scenarioTplData: map[string]any{
-			"Alarm":          alarm,
-			"Entity":         types.Entity{},
-			"Children":       []types.Alarm{alarm},
-			"Response":       map[string]any{},
-			"ResponseMap":    map[string]any{},
-			"Header":         map[string]string{},
-			"AdditionalData": action.AdditionalData{},
+		declareTicketTplDataKeys: []string{
+			".Alarms",
+			".Response",
+			".ResponseMap",
+			".Header",
+		},
+		scenarioTplData: scenarioTplData{
+			Alarm:          alarm,
+			Entity:         types.Entity{},
+			Children:       []types.Alarm{alarm},
+			Response:       map[string]any{},
+			ResponseMap:    map[string]any{},
+			Header:         map[string]string{},
+			AdditionalData: action.AdditionalData{},
+		},
+		scenarioTplDataKeys: []string{
+			".Alarm",
+			".Entity",
+			".Children",
+			".Response",
+			".ResponseMap",
+			".Header",
+			".AdditionalData",
 		},
 	}
 }
@@ -147,12 +184,11 @@ type ErrReport struct {
 
 	// Possible error type values.
 	//   * `0` - Undefined error
-	//   * `1` - No main variable
-	//   * `2` - No secondary variable
-	//   * `3` - Unexpected block
-	//   * `4` - Unexpected symbol
-	//   * `5` - Unexpected function
-	//   * `6` - Unexpected EOF
+	//   * `1` - Invalid variable
+	//   * `2` - Unexpected block
+	//   * `3` - Unexpected symbol
+	//   * `4` - Unexpected function
+	//   * `5` - Unexpected EOF
 	Type    int    `json:"type"`
 	Message string `json:"message"`
 
@@ -161,8 +197,9 @@ type ErrReport struct {
 }
 
 type WrnReport struct {
-	// Possible warning type variables
+	// Possible warning type values.
 	//   * `0` - Might be unfinished variable block
+	//   * `1` - Unsafe map access
 	Type int `json:"type"`
 
 	Message string `json:"message"`
@@ -170,15 +207,15 @@ type WrnReport struct {
 }
 
 func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport) {
-	return v.validate(s, v.declareTicketTplData)
+	return v.validate(s, v.declareTicketTplData, v.declareTicketTplDataKeys)
 }
 
 func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport) {
-	return v.validate(s, v.scenarioTplData)
+	return v.validate(s, v.scenarioTplData, v.scenarioTplDataKeys)
 }
 
-func (v *validator) validate(s string, tplData map[string]any) (bool, *ErrReport, []WrnReport) {
-	res, err := v.executor.Execute(s, tplData)
+func (v *validator) validate(s string, tplData any, tplKeys []string) (bool, *ErrReport, []WrnReport) {
+	res, err := v.executor.ExecuteWithoutOptions(s, tplData)
 	if err != nil {
 		fullErrString := err.Error()
 		report := &ErrReport{
@@ -194,11 +231,8 @@ func (v *validator) validate(s string, tplData map[string]any) (bool, *ErrReport
 			report.Var = tplErrorMatches[3]
 			report.Message = tplErrorMatches[4]
 
-			if strings.HasPrefix(report.Message, "map has no entry for key") {
-				report.Type = ErrTypeNoSuchMainVariable
-				report.Message = fmt.Sprintf("No such variable \"%s\"", report.Var)
-			} else if strings.HasPrefix(report.Message, "can't evaluate field") {
-				report.Type = ErrTypeNoSuchSecondaryVariable
+			if strings.HasPrefix(report.Message, "can't evaluate field") {
+				report.Type = ErrTypeNoSuchVariable
 
 				errMsgMatches := v.secondaryVarErrRegex.FindStringSubmatch(report.Message)
 				if len(errMsgMatches) == 3 {
@@ -233,14 +267,28 @@ func (v *validator) validate(s string, tplData map[string]any) (bool, *ErrReport
 	var warnings []WrnReport
 
 	// try to find template variables in the result text
-	for k := range tplData {
-		val := "." + k
-		if strings.Contains(res, val) {
+	for _, key := range tplKeys {
+		if strings.Contains(res, key) {
 			warnings = append(warnings, WrnReport{
 				Type:    WrnTypeOutsideBlockVar,
 				Message: "Variable are out of a template block",
-				Var:     val,
+				Var:     key,
 			})
+		}
+	}
+
+	// normal execution to check unsafe map accesses
+	_, err = v.executor.Execute(s, tplData)
+	if err != nil {
+		tplErrorMatches := v.execErrorRegex.FindStringSubmatch(err.Error())
+		if len(tplErrorMatches) == execErrorMatches {
+			if strings.HasPrefix(tplErrorMatches[4], "map has no entry for key") {
+				warnings = append(warnings, WrnReport{
+					Type:    WrnUnsafeMapAccess,
+					Message: "Access to the map might be unsafe",
+					Var:     tplErrorMatches[3],
+				})
+			}
 		}
 	}
 
