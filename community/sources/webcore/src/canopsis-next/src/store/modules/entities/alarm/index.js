@@ -112,6 +112,10 @@ export default {
       }, { root: true });
     },
 
+    fetchItemWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.alarmList}/${id}`);
+    },
+
     async createAlarmsListExport(context, { data = {} }) {
       return request.post(API_ROUTES.alarmListExport, data);
     },

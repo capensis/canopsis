@@ -5,7 +5,7 @@
         span {{ $t('modals.createAssociateTicketEvent.title') }}
       template(#text="")
         v-layout(column)
-          alarm-general-table(:items="items")
+          alarm-general-table(v-if="config.items", :items="config.items")
           v-divider
           associate-ticket-event-form.mt-3(v-model="form")
           c-alert(v-if="itemsWithoutAck.length", type="info") {{ alertMessage }}
@@ -28,7 +28,6 @@ import { MODALS } from '@/constants';
 import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/forms/associate-ticket-event';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -49,7 +48,6 @@ export default {
   components: { AssociateTicketEventForm, AlarmGeneralTable, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    modalInnerItemsMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -62,7 +60,7 @@ export default {
   },
   computed: {
     itemsWithoutAck() {
-      return this.items.filter(item => !item.v.ack);
+      return this.config.items.filter(item => !item.v.ack);
     },
 
     alertMessage() {
@@ -78,10 +76,6 @@ export default {
       if (isFormValid) {
         if (this.config.action) {
           await this.config.action(formToAssociateTicketEvent(this.form));
-        }
-
-        if (this.config?.afterSubmit) {
-          this.config.afterSubmit();
         }
 
         this.$modals.hide();

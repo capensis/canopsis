@@ -21,84 +21,23 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
       class="text"
     >
       <div
-        class="container"
+        class="layout column"
       >
-        <div
-          class="layout row"
+        <alarm-general-table-stub
+          items="[object Object]"
+        />
+        <hr
+          class="v-divider theme--light"
+        />
+        <associate-ticket-event-form-stub
+          class="mt-3"
+          form="[object Object]"
+        />
+        <c-alert-stub
+          type="info"
         >
-          <div
-            class="flex text-xs-center"
-          >
-            <alarm-general-table-stub
-              items="[object Object]"
-            />
-          </div>
-        </div>
-        <div
-          class="layout row"
-        >
-          <hr
-            class="my-3 v-divider theme--light"
-          />
-        </div>
-        <div
-          class="layout row"
-        >
-          <div
-            class="v-input v-text-field theme--light"
-          >
-            <div
-              class="v-input__control"
-            >
-              <div
-                class="v-input__slot"
-              >
-                <div
-                  class="v-text-field__slot"
-                >
-                  <label
-                    aria-hidden="true"
-                    class="v-label theme--light"
-                    style="left: 0px; position: absolute;"
-                  >
-                    Number of the ticket
-                  </label>
-                  <input
-                    aria-label="Number of the ticket"
-                    name="ticket"
-                    type="text"
-                  />
-                </div>
-              </div>
-              <div
-                class="v-text-field__details"
-              >
-                <div
-                  class="v-messages theme--light"
-                >
-                  <div
-                    class="v-messages__wrapper"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-alert info"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light v-alert__icon"
-          >
-            info
-          </i>
-          <div>
-            <span>
-              There is 1 item without ack. Ack event for the item will send before.
-            </span>
-          </div>
-        </div>
+          There is 1 item without ack. Ack event for the item will send before.
+        </c-alert-stub>
       </div>
     </div>
      
@@ -151,84 +90,23 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
       class="text"
     >
       <div
-        class="container"
+        class="layout column"
       >
-        <div
-          class="layout row"
+        <alarm-general-table-stub
+          items="[object Object]"
+        />
+        <hr
+          class="v-divider theme--light"
+        />
+        <associate-ticket-event-form-stub
+          class="mt-3"
+          form="[object Object]"
+        />
+        <c-alert-stub
+          type="info"
         >
-          <div
-            class="flex text-xs-center"
-          >
-            <alarm-general-table-stub
-              items="[object Object]"
-            />
-          </div>
-        </div>
-        <div
-          class="layout row"
-        >
-          <hr
-            class="my-3 v-divider theme--light"
-          />
-        </div>
-        <div
-          class="layout row"
-        >
-          <div
-            class="v-input v-text-field theme--light"
-          >
-            <div
-              class="v-input__control"
-            >
-              <div
-                class="v-input__slot"
-              >
-                <div
-                  class="v-text-field__slot"
-                >
-                  <label
-                    aria-hidden="true"
-                    class="v-label theme--light"
-                    style="left: 0px; position: absolute;"
-                  >
-                    Number of the ticket
-                  </label>
-                  <input
-                    aria-label="Number of the ticket"
-                    name="ticket"
-                    type="text"
-                  />
-                </div>
-              </div>
-              <div
-                class="v-text-field__details"
-              >
-                <div
-                  class="v-messages theme--light"
-                >
-                  <div
-                    class="v-messages__wrapper"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-alert info"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light v-alert__icon"
-          >
-            info
-          </i>
-          <div>
-            <span>
-              There is 1 item without ack. Ack event for the item will send before.
-            </span>
-          </div>
-        </div>
+          There is 1 item without ack. Ack event for the item will send before.
+        </c-alert-stub>
       </div>
     </div>
      

@@ -15,6 +15,7 @@
             v-else,
             v-on="on",
             :disabled="action.disabled",
+            :loading="action.loading",
             depressed,
             small,
             light,
