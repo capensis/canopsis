@@ -22,7 +22,14 @@
     template(#delay="{ item }")
       span {{ item.delay | duration }}
     template(#enabled="{ item }")
-      c-enabled(:value="item.enabled")
+      c-help-icon(
+        v-if="hasDeprecatedTrigger(item)",
+        :text="$t('scenario.errors.deprecatedTriggerExist')",
+        color="error",
+        icon="error",
+        top
+      )
+      c-enabled(v-else, :value="item.enabled")
     template(#created="{ item }") {{ item.created | date }}
     template(#updated="{ item }") {{ item.updated | date }}
     template(#actions="{ item }")
@@ -52,6 +59,7 @@
 import { OLD_PATTERNS_FIELDS } from '@/constants';
 
 import { isOldPattern } from '@/helpers/pattern';
+import { isDeprecatedTrigger } from '@/helpers/entities/scenarios';
 
 import { permissionsTechnicalExploitationScenarioMixin } from '@/mixins/permissions/technical/exploitation/scenario';
 
@@ -135,8 +143,8 @@ export default {
     },
   },
   methods: {
-    isDisabledInstruction({ deletable }) {
-      return !deletable;
+    hasDeprecatedTrigger(item) {
+      return item.triggers.some(isDeprecatedTrigger);
     },
 
     isOldPattern({ actions = [] }) {
