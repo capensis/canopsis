@@ -197,8 +197,8 @@ export default merge({
     impactLevel: 'Niveau d\'impact',
     impactState: 'État d\'impact',
     loadMore: 'Charger plus',
-    initiator: 'Initiateur',
     download: 'Télécharger',
+    initiator: 'Initiateur',
     percent: 'Pourcentage | Pourcentages',
     tests: 'Tests',
     total: 'Total',
@@ -257,7 +257,6 @@ export default merge({
     connectorName: 'Nom du connecteur',
     component: 'Composant',
     resource: 'Ressource',
-    extraDetails: 'Détails supplémentaires',
     ack: 'Acquittement',
     acked: 'Acquitté',
     extraInfo: 'Extra info | Extra infos',
@@ -286,7 +285,6 @@ export default merge({
     longOutput: 'Sortie longue',
     timestamp: 'Horodatage',
     trigger: 'Déclencheur | Déclencheurs',
-    initialLongOutput: 'Sortie initiale longue',
     column: 'Colonne | Colonnes',
     countOfTotal: '{count} sur {total}',
     actions: {
@@ -1252,13 +1250,6 @@ export default merge({
         edit: 'Éditer un groupe',
       },
     },
-    addStat: {
-      title: {
-        add: 'Ajouter une statistique',
-        edit: 'Éditer une statistique',
-      },
-      slaRequired: "La paramètre 'SLA' est obligatoire",
-    },
     group: {
       create: {
         title: 'Créer un groupe',
@@ -1838,16 +1829,16 @@ export default merge({
         title: 'Créer un jeton de partage',
       },
     },
+    createWidgetTemplate: {
+      create: {
+        title: 'Créer un modèle de widget',
+      },
+      edit: {
+        title: 'Modifier le modèle de widget',
+      },
+    },
     entityDependenciesList: {
       title: 'Entités Centreon impactées',
-    },
-  },
-  createWidgetTemplate: {
-    create: {
-      title: 'Créer un modèle de widget',
-    },
-    edit: {
-      title: 'Modifier le modèle de widget',
     },
   },
   tables: {
