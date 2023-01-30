@@ -41,7 +41,8 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
-  ALARM_INTERVAL_FIELDS, ENTITIES_TYPES,
+  ALARM_INTERVAL_FIELDS,
+  ENTITIES_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -259,7 +260,6 @@ export default merge({
     extraDetail: 'Extra detail | Extra details',
     ack: 'Ack',
     acked: 'Acked',
-    ackedAt: 'Acked at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
     eventType: 'Event type',
@@ -793,7 +793,6 @@ export default merge({
     elementsPerPage: 'Elements per page',
     filterOnOpenResolved: 'Filter on Open/Resolved',
     open: 'Open',
-    resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack?',

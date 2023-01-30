@@ -42,6 +42,7 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   ALARM_INTERVAL_FIELDS,
+  ENTITIES_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -81,7 +82,6 @@ export default merge({
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
-    lastComment: 'Dernier commentaire',
     end: 'Fin',
     start: 'Début',
     message: 'Message',
@@ -162,13 +162,11 @@ export default merge({
     payload: 'Payload',
     note: 'Note',
     output: 'Output',
-    displayName: 'Nom simplifié (DisplayName)',
     created: 'Date de création',
     updated: 'Date de dernière modification',
     expired: 'Date d\'expiration',
     accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
-    activationDate: 'Date d\'activation',
     activated: 'Activé',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
@@ -262,11 +260,6 @@ export default merge({
     extraDetails: 'Détails supplémentaires',
     ack: 'Acquittement',
     acked: 'Acquitté',
-    ackedAt: 'Acquitté à',
-    ackedBy: 'Acquitté par',
-    ackMessage: 'Message de l\'acquittement',
-    ackInitiator: 'Origine de l\'acquittement',
-    resolved: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',
@@ -291,12 +284,11 @@ export default merge({
     close: 'Fermer',
     alarmId: 'Identifiant de l\'alarme',
     longOutput: 'Sortie longue',
-    initialOutput: 'Sortie initiale',
-    longInitialOutput: 'Sortie initiale longue',
     timestamp: 'Horodatage',
     trigger: 'Déclencheur | Déclencheurs',
     initialLongOutput: 'Sortie initiale longue',
-    totalStateChanges: 'Changements d\'état totaux',
+    column: 'Colonne | Colonnes',
+    countOfTotal: '{count} sur {total}',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -611,8 +603,6 @@ export default merge({
     },
   },
   alarmList: {
-    alarmCreationDate: 'Date de création de l\'alarme',
-    alarmDisplayName: 'Nom d\'affichage de l\'alarme',
     actions: {
       titles: {
         ack: 'Acquitter',
@@ -804,7 +794,6 @@ export default merge({
     elementsPerPage: 'Élements par page',
     filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
     open: 'Ouverte',
-    resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
@@ -899,8 +888,8 @@ export default merge({
         both: 'Les deux',
       },
     },
-    templateEditor: 'Modèle',
     columns: {
+      customLabel: 'Étiquette personnalisée',
       isHtml: 'Est-ce du HTML ?',
       withTemplate: 'Modèle personnalisé',
       isState: 'Affiché comme une criticité ?',
@@ -1853,6 +1842,14 @@ export default merge({
       title: 'Entités Centreon impactées',
     },
   },
+  createWidgetTemplate: {
+    create: {
+      title: 'Créer un modèle de widget',
+    },
+    edit: {
+      title: 'Modifier le modèle de widget',
+    },
+  },
   tables: {
     noData: 'Aucune donnée',
     contextEntities: {
@@ -2156,6 +2153,7 @@ export default merge({
       stateSettings: 'Paramètres d\'état',
       storageSettings: 'Paramètres de stockage',
       notificationsSettings: 'Paramètres des notifications',
+      widgetTemplates: 'Modèles de widgets',
     },
   },
   view: {
@@ -2755,7 +2753,40 @@ export default merge({
   },
 
   alarm: {
-    eventsCount: 'Les événements comptent',
+    fields: {
+      displayName: 'Nom simplifié (DisplayName)',
+      initialOutput: 'Sortie initiale longue',
+      initialLongOutput: 'Sortie longue initiale',
+      lastComment: 'Dernier commentaire',
+      ackBy: 'Acquis par',
+      ackMessage: 'Message de l\'acquittement',
+      ackInitiator: 'Origine de l\'acquittement',
+      stateMessage: 'Message d\'état',
+      statusMessage: 'Message de statut',
+      totalStateChanges: 'Changements d\'état totaux',
+      ackAt: 'Acquitté à',
+      stateAt: 'État changé à',
+      statusAt: 'Le statut a changé à',
+      resolved: 'Résolue à',
+      activationDate: 'Date d\'activation',
+      currentStateDuration: 'Durée de l\'état actuel',
+      snoozeDuration: 'Durée de sommeil',
+      pbhInactiveDuration: 'Pbehavior durée d\'inactivité',
+      activeDuration: 'Durée active',
+      eventsCount: 'Les événements comptent',
+      extraDetails: 'Détails supplémentaires',
+      entityId: 'ID d\'entité',
+      entityName: 'Nom de l\'entité',
+      entityCategoryName: 'Nom de la catégorie d\'entité',
+      entityType: 'Type d\'entité',
+      entityComponent: 'Composant d\'entité',
+      entityConnector: 'Connecteur d\'entité',
+      entityImpactLevel: 'Niveau d\'impact de l\'entité',
+      entityKoEvents: 'Événements d\'entité KO',
+      entityOkEvents: 'Événements d\'entité OK',
+      entityInfos: 'Informations sur l\'entité',
+      entityComponentInfos: 'Informations sur les composants de l\'entité',
+    },
   },
 
   entity: {
@@ -2766,13 +2797,20 @@ export default merge({
     addInformation: 'Ajouter une information',
     emptyInfos: 'Aucune information',
     availabilityState: 'État de disponibilité',
-    okEvents: 'OK événements',
-    koEvents: 'KO événements',
     types: {
       [ENTITY_TYPES.component]: 'Composant',
       [ENTITY_TYPES.connector]: 'Connecteur',
       [ENTITY_TYPES.resource]: 'Ressource',
       [ENTITY_TYPES.service]: 'Service',
+    },
+    fields: {
+      categoryName: 'Nom de catégorie',
+      koEvents: 'KO événements',
+      okEvents: 'OK événements',
+      idleSince: 'Inactif depuis',
+      componentInfos: 'Informations sur les composants',
+      alarmDisplayName: 'Nom d\'affichage de l\'alarme',
+      alarmCreationDate: 'Date de création de l\'alarme',
     },
   },
 
@@ -3323,5 +3361,10 @@ export default merge({
     metricsDisabled: 'Les métriques des moteurs sont désactivées',
     generateDump: 'Générer un nouveau dump',
     downloadDump: 'Télécharger le dump',
+  },
+
+  entities: {
+    [ENTITIES_TYPES.alarm]: 'Alarm',
+    [ENTITIES_TYPES.entity]: 'Entity',
   },
 }, featureService.get('i18n.fr'));
