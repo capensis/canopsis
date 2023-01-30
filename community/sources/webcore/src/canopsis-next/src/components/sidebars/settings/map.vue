@@ -37,7 +37,7 @@
       field-columns(
         v-model="form.parameters.alarmsColumns",
         :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="alarmTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.alarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -52,7 +52,7 @@
       field-columns(
         v-model="form.parameters.entitiesColumns",
         :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
         :type="$constants.ENTITIES_TYPES.entity",

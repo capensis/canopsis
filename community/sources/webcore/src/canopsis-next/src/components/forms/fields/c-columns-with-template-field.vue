@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { CUSTOM_WIDGET_COLUMN_TEMPLATE } from '@/constants';
+import { CUSTOM_WIDGET_COLUMN_TEMPLATE, ENTITIES_TYPES } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -83,11 +83,23 @@ export default {
     },
   },
   computed: {
+    alarmTypeTemplates() {
+      return this.templates.filter(({ type }) => type === ENTITIES_TYPES.alarm);
+    },
+
+    entityTypeTemplates() {
+      return this.templates.filter(({ type }) => type === ENTITIES_TYPES.entity);
+    },
+
     templatesWithCustom() {
+      const templates = this.type === ENTITIES_TYPES.alarm
+        ? this.alarmTypeTemplates
+        : this.entityTypeTemplates;
+
       return [
         { value: CUSTOM_WIDGET_COLUMN_TEMPLATE, text: this.$t('common.custom'), columns: [] },
 
-        ...this.templates.map(template => ({
+        ...templates.map(template => ({
           ...template,
 
           value: template._id,

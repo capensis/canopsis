@@ -169,6 +169,19 @@ export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   { value: ALARM_FIELDS.status },
 ];
 
+export const DEFAULT_CONTEXT_WIDGET_RESOLVED_ALARMS_COLUMNS = [
+  { value: ALARM_FIELDS.id },
+  { value: ALARM_FIELDS.creationDate },
+  { value: ALARM_FIELDS.lastUpdateDate },
+];
+
+export const DEFAULT_CONTEXT_WIDGET_ACTIVE_ALARM_COLUMNS = [
+  { value: ALARM_FIELDS.displayName },
+  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.state },
+  { value: ALARM_FIELDS.status },
+];
+
 export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
   connector: 'engine',
