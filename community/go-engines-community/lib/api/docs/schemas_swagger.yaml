@@ -4324,17 +4324,14 @@ definitions:
         type: integer
       message:
         type: string
-      position:
-        type: integer
       type:
         description: |-
           Possible error type values.
             * `0` - Undefined error
-            * `1` - Invalid variable
-            * `2` - Unexpected block
-            * `3` - Unexpected symbol
-            * `4` - Unexpected function
-            * `5` - Unexpected EOF
+            * `1` - Unexpected block
+            * `2` - Unexpected symbol
+            * `3` - Unexpected function
+            * `4` - Unexpected EOF
         type: integer
       var:
         description: Var is defined only for template exec errors
@@ -4348,7 +4345,6 @@ definitions:
         description: |-
           Possible warning type values.
             * `0` - Might be unfinished variable block
-            * `1` - Unsafe map access
         type: integer
       var:
         type: string
