@@ -1,12 +1,9 @@
-import { get } from 'lodash';
+import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import {
-  ALARM_FIELDS,
-  COLOR_INDICATOR_TYPES,
-} from '@/constants';
-
-import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
-import { convertDurationToString } from '@/helpers/date/duration';
+  getAlarmsListWidgetColumnValueFilter,
+  getAlarmsListWidgetColumnValueComponentGetter,
+} from '@/helpers/widgets';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
@@ -37,86 +34,13 @@ export const widgetColumnsAlarmMixin = {
       }, {});
     },
 
-    componentGettersMap() {
-      return {
-        [ALARM_FIELDS.state]: context => ({
-          bind: {
-            is: 'alarm-column-value-state',
-            alarm: context.alarm,
-          },
-        }),
-        [ALARM_FIELDS.status]: context => ({
-          bind: {
-            is: 'alarm-column-value-status',
-            alarm: context.alarm,
-          },
-        }),
-        [ALARM_FIELDS.impactState]: context => ({
-          bind: {
-            is: 'color-indicator-wrapper',
-            type: COLOR_INDICATOR_TYPES.impactState,
-            entity: context.alarm.entity,
-            alarm: context.alarm,
-          },
-        }),
-        [ALARM_FIELDS.links]: context => ({
-          bind: {
-            is: 'alarm-column-value-categories',
-            asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
-            limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
-            links: context.alarm.links ?? {},
-          },
-          on: {
-            activate: context.$listeners.activate,
-          },
-        }),
-        [ALARM_FIELDS.extraDetails]: context => ({
-          bind: {
-            is: 'alarm-column-value-extra-details',
-            alarm: context.alarm,
-          },
-        }),
-        [ALARM_FIELDS.tags]: context => ({
-          bind: {
-            is: 'c-alarm-tags-chips',
-            alarm: context.alarm,
-            selectedTag: context.selectedTag,
-          },
-          on: {
-            select: context.$listeners['select:tag'],
-          },
-        }),
-      };
-    },
-
-    columnPropertiesFiltersMap() {
-      return {
-        [ALARM_FIELDS.lastUpdateDate]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.creationDate]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.lastEventDate]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.activationDate]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.ackAt]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.stateAt]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.statusAt]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.resolved]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.timestamp]: convertDateToStringWithFormatForToday,
-        [ALARM_FIELDS.duration]: convertDurationToString,
-        [ALARM_FIELDS.currentStateDuration]: convertDurationToString,
-        [ALARM_FIELDS.activeDuration]: convertDurationToString,
-        [ALARM_FIELDS.snoozeDuration]: convertDurationToString,
-        [ALARM_FIELDS.pbhInactiveDuration]: convertDurationToString,
-
-        ...this.columnsFiltersMap,
-      };
-    },
-
     preparedColumns() {
       return (this.columns ?? []).map(column => ({
         ...column,
 
         popupTemplate: this.infoPopupsMap[column.value],
-        filter: this.$i18n.locale && this.columnPropertiesFiltersMap[column.value],
-        getComponent: this.getComponentGetter(column),
+        filter: this.$i18n.locale && this.getColumnFilter(column.value),
+        getComponent: getAlarmsListWidgetColumnValueComponentGetter(column.value, this.widget),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
       }));
     },
@@ -125,31 +49,8 @@ export const widgetColumnsAlarmMixin = {
     this.fetchColumnFilters();
   },
   methods: {
-    getComponentGetter(column) {
-      const getCell = this.componentGettersMap[column.value];
-
-      if (getCell) {
-        return getCell;
-      }
-
-      if (column.value.startsWith('links.')) {
-        return context => ({
-          bind: {
-            links: get(context.alarm, column.value, []),
-
-            is: 'alarm-column-value-links',
-          },
-        });
-      }
-
-      const prepareFunc = column.filter ?? String;
-
-      return context => ({
-        bind: {
-          is: 'c-ellipsis',
-          text: prepareFunc(get(context.alarm, column.value, '')),
-        },
-      });
+    getColumnFilter(value) {
+      return this.columnsFiltersMap[value] ?? getAlarmsListWidgetColumnValueFilter(value);
     },
 
     getFilter(filter, attributes = []) {
