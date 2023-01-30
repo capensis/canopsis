@@ -271,7 +271,6 @@ export const COLORS = {
     ackRemove: '#9c27b0',
     declareTicket: '#2196f3',
     snooze: '#e91e63',
-    done: '#00a65a',
     pbhenter: '#18ffff',
     pbhleave: '#18ffff',
     comment: '#ba68c8',

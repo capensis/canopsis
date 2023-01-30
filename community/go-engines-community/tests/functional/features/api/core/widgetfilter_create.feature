@@ -3,7 +3,7 @@ Feature: Create a widget filter
   Only admin should be able to create a widget filter
 
   Scenario: given create public request should return ok
-    When I am admin
+    When I am test-role-to-widget-filter-edit-2
     When I do POST /api/v4/widget-filters:
     """json
     {
@@ -50,8 +50,8 @@ Feature: Create a widget filter
     """json
     {
       "author": {
-        "_id": "root",
-        "name": "root"
+        "_id": "test-user-to-widget-filter-edit-2",
+        "name": "test-user-to-widget-filter-edit-2"
       },
       "title": "test-widgetfilter-to-create-1-title",
       "is_private": false,
@@ -96,8 +96,8 @@ Feature: Create a widget filter
     """json
     {
       "author": {
-        "_id": "root",
-        "name": "root"
+        "_id": "test-user-to-widget-filter-edit-2",
+        "name": "test-user-to-widget-filter-edit-2"
       },
       "title": "test-widgetfilter-to-create-1-title",
       "is_private": false,
@@ -138,7 +138,7 @@ Feature: Create a widget filter
     """
 
   Scenario: given create private request should return ok
-    When I am test-role-to-widget-filter-edit
+    When I am test-role-to-widget-filter-edit-1
     When I do POST /api/v4/widget-filters:
     """json
     {
@@ -185,8 +185,8 @@ Feature: Create a widget filter
     """json
     {
       "author": {
-        "_id": "test-user-to-widget-filter-edit",
-        "name": "test-user-to-widget-filter-edit"
+        "_id": "test-user-to-widget-filter-edit-1",
+        "name": "test-user-to-widget-filter-edit-1"
       },
       "title": "test-widgetfilter-to-create-4-title",
       "is_private": true,
@@ -231,8 +231,8 @@ Feature: Create a widget filter
     """json
     {
       "author": {
-        "_id": "test-user-to-widget-filter-edit",
-        "name": "test-user-to-widget-filter-edit"
+        "_id": "test-user-to-widget-filter-edit-1",
+        "name": "test-user-to-widget-filter-edit-1"
       },
       "title": "test-widgetfilter-to-create-4-title",
       "is_private": true,
@@ -487,7 +487,7 @@ Feature: Create a widget filter
     Then the response code should be 403
 
   Scenario: given create private request and auth user without view permission should not allow access
-    When I am test-role-to-widget-filter-edit
+    When I am test-role-to-widget-filter-edit-1
     When I do POST /api/v4/widget-filters:
     """json
     {

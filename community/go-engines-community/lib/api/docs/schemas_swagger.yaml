@@ -235,8 +235,6 @@ definitions:
         type: integer
       display_name:
         type: string
-      done:
-        $ref: '#/definitions/common.AlarmStep'
       duration:
         type: integer
       events_count:
@@ -3392,7 +3390,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -3470,7 +3467,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -3531,7 +3527,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -4130,7 +4125,7 @@ definitions:
     - name
     - role
     type: object
-  user.EditRequest:
+  user.CreateRequest:
     properties:
       defaultview:
         type: string
@@ -4138,6 +4133,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -4151,36 +4148,7 @@ definitions:
         type: string
       role:
         type: string
-      ui_groups_navigation_type:
-        type: string
-      ui_language:
-        type: string
-    required:
-    - email
-    - enable
-    - name
-    - role
-    type: object
-  user.Request:
-    properties:
-      defaultview:
-        type: string
-      email:
-        type: string
-      enable:
-        type: boolean
-      firstname:
-        maxLength: 255
-        type: string
-      lastname:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      password:
-        type: string
-      role:
+      source:
         type: string
       ui_groups_navigation_type:
         type: string
@@ -4200,6 +4168,37 @@ definitions:
         $ref: '#/definitions/user.View'
       name:
         type: string
+    type: object
+  user.UpdateRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+    required:
+    - email
+    - enable
+    - name
+    - role
     type: object
   user.User:
     properties:

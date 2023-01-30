@@ -245,17 +245,6 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: delete 1`] = `
 </div>
 `;
 
-exports[`time-line-flag Renders \`time-line-flag\` with type: done 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(0, 166, 90);"
-  >
-    assignment_turned_in
-  </i>
-</div>
-`;
-
 exports[`time-line-flag Renders \`time-line-flag\` with type: executeInstruction 1`] = `
 <div>
   <i
