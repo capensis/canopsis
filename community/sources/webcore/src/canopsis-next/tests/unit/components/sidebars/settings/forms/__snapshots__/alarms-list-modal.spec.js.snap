@@ -6,8 +6,12 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   value="[object Object]"
 >
   <field-columns-stub
+    alarminfos=""
     columns=""
+    entityinfos=""
     label="Column names"
+    templates=""
+    type="alarm"
     with-state="with-state"
     withhtml="true"
   />
@@ -39,8 +43,12 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
   title="Alarm list settings"
 >
   <field-columns-stub
+    alarminfos=""
     columns=""
+    entityinfos=""
     label="Column names"
+    templates=""
+    type="alarm"
     with-state="with-state"
     withhtml="true"
   />

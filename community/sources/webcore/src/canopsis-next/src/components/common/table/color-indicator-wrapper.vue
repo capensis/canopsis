@@ -65,7 +65,7 @@ export default {
 
     text() {
       if (this.isImpactState) {
-        return this.$t('common.countOfMax', { count: this.impactState, total: COLORS.impactState.length - 1 }); // TODO: add translations
+        return this.$t('common.countOfTotal', { count: this.impactState, total: COLORS.impactState.length - 1 });
       }
 
       return this.$t(`common.stateTypes.${this.state}`);
