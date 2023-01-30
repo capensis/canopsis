@@ -37,8 +37,6 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 ### Webcore
 COPY sources/webcore ${CPS_HOME}/var/www/
 
-COPY VERSION.txt /${CPS_HOME}/
-
 WORKDIR ${CPS_HOME}
 
 COPY sources/canopsis/etc ./etc

@@ -5,8 +5,6 @@
 env2cfg makes configuration in canopsis easier:
 
 # export CPS_MONGO_URL="<valid_mongodb_url>"
-# export CPS_REDIS_URL="redis://<ip>:<port>/<db>"
-# export CPS_AMQP_URL="<valid_amqp_url>"
 # env2cfg
 
 Will write/update:
@@ -15,9 +13,6 @@ ${CPS_PREFIX}/etc/cstorage.conf
 ${CPS_PREFIX}/etc/common/mongo_store.conf
 ${CPS_PREFIX}/etc/mongo/storage.conf
 
-${CPS_PREFIX}/etc/influx/storage.conf
-
-${CPS_PREFIX}/etc/amqp.conf
 """
 
 from __future__ import unicode_literals
@@ -27,7 +22,6 @@ import os
 import sys
 from configparser import ConfigParser
 from os.path import join as pjoin
-from urllib.parse import urlparse
 
 from pymongo import uri_parser
 from pymongo.errors import ConfigurationError
@@ -37,10 +31,7 @@ from canopsis.common import root_path
 
 class Env2Cfg(object):
 
-    CPS_AMQP_URL = 'CPS_AMQP_URL'
-    CPS_REDIS_URL = 'CPS_REDIS_URL'
     CPS_MONGO_URL = 'CPS_MONGO_URL'
-
     MONGO_URI_KEY = 'db_uri'
 
     @staticmethod
@@ -76,8 +67,6 @@ class Env2Cfg(object):
 
         :raises: ValueError if one of the values is invalid.
         """
-        self._check_empty(self.CPS_AMQP_URL)
-        self._check_empty(self.CPS_REDIS_URL)
         self.__check_mongo_dsn()
 
     @staticmethod
@@ -90,35 +79,6 @@ class Env2Cfg(object):
         dirs = os.path.dirname(fpath)
         if not os.path.isdir(dirs):
             os.makedirs(dirs)
-
-    def _update_amqp(self):
-        """
-        Write the RabbitMQ configuration.
-        """
-        pu = urlparse(os.environ.get(self.CPS_AMQP_URL))
-
-        p = pjoin(root_path, 'etc', 'amqp.conf')
-
-        self._makedirs(p)
-
-        amqp = ConfigParser()
-
-        amqp.read(p)
-
-        if 'master' not in amqp.sections():
-            amqp.add_section('master')
-
-        amqp.set('master', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        amqp.set('master', 'port', '5672' if pu.port is None else str(pu.port))
-        amqp.set('master', 'userid', 'cpsrabbit' if pu.username is None else pu.username)
-        amqp.set('master', 'password', 'canopsis' if pu.password is None else pu.password)
-        amqp.set('master', 'virtual_host', 'canopsis' if pu.path == '' else pu.path[1:])
-
-        if amqp.get('master', 'exchange_name', fallback=None) is None:
-            amqp.set('master', 'exchange_name', 'canopsis')
-
-        with open(p, 'w') as fh:
-            amqp.write(fh)
 
     def _update_mongo(self):
         """
@@ -165,39 +125,11 @@ class Env2Cfg(object):
         with open(ps, 'w') as fh:
             storage.write(fh)
 
-    def _update_redis(self):
-        """
-        Write the Redis configuration.
-        """
-        pu = urlparse(os.environ.get(self.CPS_REDIS_URL))
-
-        p = pjoin(root_path, 'etc', 'common', 'redis_store.conf')
-
-        self._makedirs(p)
-
-        redis = ConfigParser()
-
-        redis.read(p)
-
-        if 'DATABASE' not in redis.sections():
-            redis.add_section('DATABASE')
-
-        redis.set('DATABASE', 'host', 'localhost' if pu.hostname is None else pu.hostname)
-        redis.set('DATABASE', 'port', '6379' if pu.port is None else str(pu.port))
-        redis.set('DATABASE', 'dbnum', '0' if pu.path == '' else pu.path[1:])
-        if pu.password:
-            redis.set('DATABASE', 'pwd', pu.password)
-
-        with open(p, 'w') as fh:
-            redis.write(fh)
-
     def update(self):
         """
         Write the configuration files.
         """
-        self._update_amqp()
         self._update_mongo()
-        self._update_redis()
 
     @staticmethod
     def main():
