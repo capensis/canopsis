@@ -287,6 +287,7 @@ export default merge({
     timestamp: 'Timestamp',
     trigger: 'Trigger | Triggers',
     column: 'Column | Columns',
+    countOfTotal: '{count} of {total}',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',

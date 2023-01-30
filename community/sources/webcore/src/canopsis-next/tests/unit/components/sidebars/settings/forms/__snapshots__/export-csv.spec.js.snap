@@ -182,16 +182,24 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
             </div>
           </div>
         </div>
+        <div
+          class="layout column"
+        >
+          <h4
+            class="subheading"
+          >
+            Export column names
+          </h4>
+          <c-columns-with-template-field-stub
+            alarm-infos=""
+            entity-infos=""
+            label="Export column names"
+            templates=""
+            type="alarm"
+            value="[object Object]"
+          />
+        </div>
       </div>
-      <h4
-        class="subheading ml-4"
-      >
-        Export column names
-      </h4>
-      <c-columns-field-stub
-        class="subheading"
-        value="[object Object]"
-      />
     </div>
   </transition-stub>
 </div>
@@ -492,15 +500,23 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
           </div>
         </div>
         <!---->
+        <div
+          class="layout column"
+        >
+          <h4
+            class="subheading"
+          >
+            Export column names
+          </h4>
+          <c-columns-with-template-field-stub
+            alarm-infos=""
+            entity-infos=""
+            label="Export column names"
+            templates=""
+            type="alarm"
+          />
+        </div>
       </div>
-      <h4
-        class="subheading ml-4"
-      >
-        Export column names
-      </h4>
-      <c-columns-field-stub
-        class="subheading"
-      />
     </div>
   </transition-stub>
 </div>
