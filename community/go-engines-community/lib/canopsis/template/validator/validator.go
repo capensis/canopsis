@@ -5,20 +5,18 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"text/template"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 )
 
 const (
 	parseErrorMatches = 3
-	execErrorMatches  = 5
 )
 
 const (
 	ErrTypeUndefined = iota
-	ErrTypeNoSuchVariable
 	ErrTypeUnexpectedBlock
 	ErrTypeUnexpectedSymbol
 	ErrTypeUnexpectedFunction
@@ -27,7 +25,6 @@ const (
 
 const (
 	WrnTypeOutsideBlockVar = iota
-	WrnUnsafeMapAccess
 )
 
 type RegexpInfo struct {
@@ -42,65 +39,21 @@ type Validator interface {
 	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport)
 }
 
-type alarmWithEntity struct {
-	types.Alarm
-	Entity types.Entity
-}
-
-type declareTicketTplData struct {
-	Alarms      []alarmWithEntity
-	Response    map[string]any
-	ResponseMap map[string]any
-	Header      map[string]string
-}
-
-type scenarioTplData struct {
-	Alarm          types.Alarm
-	Entity         types.Entity
-	Children       []types.Alarm
-	Response       map[string]any
-	ResponseMap    map[string]any
-	Header         map[string]string
-	AdditionalData action.AdditionalData
-}
-
 type validator struct {
-	executor *template.Executor
-
-	execErrorRegex       *regexp.Regexp
-	secondaryVarErrRegex *regexp.Regexp
+	timezoneConfigProvider config.TimezoneConfigProvider
 
 	parseErrorRegex         *regexp.Regexp
 	parseErrorsMsgRegexInfo []RegexpInfo
 
-	declareTicketTplData declareTicketTplData
-	scenarioTplData      scenarioTplData
-
 	declareTicketTplDataKeys []string
 	scenarioTplDataKeys      []string
+
+	warningOutOfBlockRegex *regexp.Regexp
 }
 
-func NewValidator(executor *template.Executor) Validator {
-	alarm := types.Alarm{
-		Value: types.AlarmValue{
-			ACK:         &types.AlarmStep{},
-			Canceled:    &types.AlarmStep{},
-			Done:        &types.AlarmStep{},
-			Snooze:      &types.AlarmStep{},
-			State:       &types.AlarmStep{},
-			Status:      &types.AlarmStep{},
-			LastComment: &types.AlarmStep{},
-			Ticket:      &types.AlarmStep{},
-			Tickets:     []types.AlarmStep{{}},
-			Steps:       []types.AlarmStep{{}},
-		},
-	}
-
+func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validator {
 	return &validator{
-		executor: executor,
-
-		execErrorRegex:       regexp.MustCompile("^template: (.+): executing (.+) at <(.+)>: (.+)$"),
-		secondaryVarErrRegex: regexp.MustCompile("^can't evaluate field (.+) in type (.+)$"),
+		timezoneConfigProvider: timezoneConfigProvider,
 
 		parseErrorRegex: regexp.MustCompile("^template: (.+): (.+)$"),
 		parseErrorsMsgRegexInfo: []RegexpInfo{
@@ -141,30 +94,14 @@ func NewValidator(executor *template.Executor) Validator {
 				},
 			},
 		},
-
-		declareTicketTplData: declareTicketTplData{
-			Alarms: []alarmWithEntity{{
-				Alarm:  alarm,
-				Entity: types.Entity{},
-			}},
-			Response:    map[string]any{},
-			ResponseMap: map[string]any{},
-			Header:      map[string]string{},
-		},
 		declareTicketTplDataKeys: []string{
 			".Alarms",
 			".Response",
 			".ResponseMap",
 			".Header",
-		},
-		scenarioTplData: scenarioTplData{
-			Alarm:          alarm,
-			Entity:         types.Entity{},
-			Children:       []types.Alarm{alarm},
-			Response:       map[string]any{},
-			ResponseMap:    map[string]any{},
-			Header:         map[string]string{},
-			AdditionalData: action.AdditionalData{},
+			// for range alarms case
+			".Value",
+			".Entity",
 		},
 		scenarioTplDataKeys: []string{
 			".Alarm",
@@ -174,21 +111,22 @@ func NewValidator(executor *template.Executor) Validator {
 			".ResponseMap",
 			".Header",
 			".AdditionalData",
+			// for range children case
+			".Value",
 		},
+		warningOutOfBlockRegex: regexp.MustCompile(`\{{2}[^\}]*\}{2}`),
 	}
 }
 
 type ErrReport struct {
-	Line     int `json:"line,omitempty"`
-	Position int `json:"position,omitempty"`
+	Line int `json:"line"`
 
 	// Possible error type values.
 	//   * `0` - Undefined error
-	//   * `1` - Invalid variable
-	//   * `2` - Unexpected block
-	//   * `3` - Unexpected symbol
-	//   * `4` - Unexpected function
-	//   * `5` - Unexpected EOF
+	//   * `1` - Unexpected block
+	//   * `2` - Unexpected symbol
+	//   * `3` - Unexpected function
+	//   * `4` - Unexpected EOF
 	Type    int    `json:"type"`
 	Message string `json:"message"`
 
@@ -199,7 +137,6 @@ type ErrReport struct {
 type WrnReport struct {
 	// Possible warning type values.
 	//   * `0` - Might be unfinished variable block
-	//   * `1` - Unsafe map access
 	Type int `json:"type"`
 
 	Message string `json:"message"`
@@ -207,15 +144,17 @@ type WrnReport struct {
 }
 
 func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport) {
-	return v.validate(s, v.declareTicketTplData, v.declareTicketTplDataKeys)
+	return v.validate(s, v.declareTicketTplDataKeys)
 }
 
 func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport) {
-	return v.validate(s, v.scenarioTplData, v.scenarioTplDataKeys)
+	return v.validate(s, v.scenarioTplDataKeys)
 }
 
-func (v *validator) validate(s string, tplData any, tplKeys []string) (bool, *ErrReport, []WrnReport) {
-	res, err := v.executor.ExecuteWithoutOptions(s, tplData)
+func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []WrnReport) {
+	location := v.timezoneConfigProvider.Get().Location
+
+	_, err := template.New("tpl").Funcs(libtemplate.GetFunctions(location)).Parse(s)
 	if err != nil {
 		fullErrString := err.Error()
 		report := &ErrReport{
@@ -223,31 +162,10 @@ func (v *validator) validate(s string, tplData any, tplKeys []string) (bool, *Er
 			Message: fullErrString,
 		}
 
-		// parse template exec error
-		tplErrorMatches := v.execErrorRegex.FindStringSubmatch(fullErrString)
-		if len(tplErrorMatches) == execErrorMatches {
-			report.Line, report.Position = getLocation(tplErrorMatches[1])
-
-			report.Var = tplErrorMatches[3]
-			report.Message = tplErrorMatches[4]
-
-			if strings.HasPrefix(report.Message, "can't evaluate field") {
-				report.Type = ErrTypeNoSuchVariable
-
-				errMsgMatches := v.secondaryVarErrRegex.FindStringSubmatch(report.Message)
-				if len(errMsgMatches) == 3 {
-					report.Message = fmt.Sprintf("Invalid variable \"%s\"", errMsgMatches[1])
-					report.Var = errMsgMatches[1]
-				}
-			}
-
-			return false, report, nil
-		}
-
 		// parse template parse error
-		tplErrorMatches = v.parseErrorRegex.FindStringSubmatch(fullErrString)
+		tplErrorMatches := v.parseErrorRegex.FindStringSubmatch(fullErrString)
 		if len(tplErrorMatches) == parseErrorMatches {
-			report.Line, report.Position = getLocation(tplErrorMatches[1])
+			report.Line = getLine(tplErrorMatches[1])
 			report.Message = tplErrorMatches[2]
 
 			for _, regexInfo := range v.parseErrorsMsgRegexInfo {
@@ -266,55 +184,30 @@ func (v *validator) validate(s string, tplData any, tplKeys []string) (bool, *Er
 
 	var warnings []WrnReport
 
-	// try to find template variables in the result text
+	// try to find out of block variables in the filtered text
 	for _, key := range tplKeys {
-		if strings.Contains(res, key) {
+		if strings.Contains(v.warningOutOfBlockRegex.ReplaceAllString(s, ""), key) {
 			warnings = append(warnings, WrnReport{
 				Type:    WrnTypeOutsideBlockVar,
-				Message: "Variable are out of a template block",
+				Message: "Variable is out of a template block",
 				Var:     key,
 			})
-		}
-	}
-
-	// normal execution to check unsafe map accesses
-	_, err = v.executor.Execute(s, tplData)
-	if err != nil {
-		tplErrorMatches := v.execErrorRegex.FindStringSubmatch(err.Error())
-		if len(tplErrorMatches) == execErrorMatches {
-			if strings.HasPrefix(tplErrorMatches[4], "map has no entry for key") {
-				warnings = append(warnings, WrnReport{
-					Type:    WrnUnsafeMapAccess,
-					Message: "Access to the map might be unsafe",
-					Var:     tplErrorMatches[3],
-				})
-			}
 		}
 	}
 
 	return true, nil, warnings
 }
 
-func getLocation(s string) (int, int) {
-	var err error
-	line, position := 0, 0
-
+func getLine(s string) int {
 	locationSplit := strings.Split(s, ":")
 	if len(locationSplit) < 2 {
 		panic(fmt.Errorf("template exec error contains invalid location value = %s", s))
 	}
 
-	line, err = strconv.Atoi(locationSplit[1])
+	line, err := strconv.Atoi(locationSplit[1])
 	if err != nil {
 		panic(fmt.Errorf("convert line variable to int error = %w", err))
 	}
 
-	if len(locationSplit) > 2 {
-		position, err = strconv.Atoi(locationSplit[2])
-		if err != nil {
-			panic(fmt.Errorf("convert position variable to int error = %w", err))
-		}
-	}
-
-	return line, position
+	return line
 }
