@@ -257,7 +257,6 @@ export default merge({
     connectorName: 'Connector name',
     component: 'Component',
     resource: 'Resource',
-    extraDetail: 'Extra detail | Extra details',
     ack: 'Ack',
     acked: 'Acked',
     extraInfo: 'Extra info | Extra infos',
@@ -1250,13 +1249,6 @@ export default merge({
         add: 'Add a group',
         edit: 'Edit a group',
       },
-    },
-    addStat: {
-      title: {
-        add: 'Add a stat',
-        edit: 'Edit a stat',
-      },
-      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {
