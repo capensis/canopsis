@@ -3,12 +3,12 @@ import { cloneDeep } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import {
   DEFAULT_CONTEXT_WIDGET_COLUMNS,
-  DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS,
+  DEFAULT_CONTEXT_WIDGET_RESOLVED_ALARMS_COLUMNS,
+  DEFAULT_CONTEXT_WIDGET_ACTIVE_ALARM_COLUMNS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
-  DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS,
 } from '@/constants';
 
 import {
@@ -71,9 +71,9 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   serviceDependenciesColumns:
     widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   resolvedAlarmsColumns:
-    widgetColumnsToForm(parameters.resolvedAlarmsColumns ?? DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS),
+    widgetColumnsToForm(parameters.resolvedAlarmsColumns ?? DEFAULT_CONTEXT_WIDGET_RESOLVED_ALARMS_COLUMNS),
   activeAlarmsColumns:
-    widgetColumnsToForm(parameters.activeAlarmsColumns ?? DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS),
+    widgetColumnsToForm(parameters.activeAlarmsColumns ?? DEFAULT_CONTEXT_WIDGET_ACTIVE_ALARM_COLUMNS),
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
   selectedTypes: parameters.selectedTypes

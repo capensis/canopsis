@@ -461,40 +461,6 @@ export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
 
 export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [...DEFAULT_CONTEXT_WIDGET_COLUMNS];
 
-export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [ // TODO: update or remove
-  {
-    labelKey: 'common.alarmId',
-    value: '_id',
-  },
-  {
-    labelKey: 'common.created',
-    value: 'v.creation_date',
-  },
-  {
-    labelKey: 'common.updated',
-    value: 'v.last_update_date',
-  },
-];
-
-export const DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS = [ // TODO: update or remove
-  {
-    labelKey: 'alarm.fields.displayName',
-    value: 'v.display_name',
-  },
-  {
-    labelKey: 'common.output',
-    value: 'v.output',
-  },
-  {
-    labelKey: 'common.state',
-    value: 'v.state.val',
-  },
-  {
-    labelKey: 'common.status',
-    value: 'v.status.val',
-  },
-];
-
 export const AVAILABLE_COUNTERS = {
   total: 'total',
   total_active: 'total_active',
@@ -565,8 +531,6 @@ export const ENTITY_INFOS_FIELDS = [
   ENTITY_FIELDS.infos,
   ENTITY_FIELDS.componentInfos,
 ];
-
-export const CONTEXT_COLUMN_INFOS_PREFIX = 'infos.'; // TODO: use another field
 
 const { ack, category, ticket, snooze, ...contextWidgetColumns } = ENTITY_FIELDS;
 

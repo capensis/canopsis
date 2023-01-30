@@ -12,7 +12,7 @@
       field-columns(
         v-model="form.parameters.widgetColumns",
         :template="form.parameters.widgetColumnsTemplate",
-        :templates="entityTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -25,7 +25,7 @@
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
         :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -39,7 +39,7 @@
       field-columns(
         v-model="form.parameters.activeAlarmsColumns",
         :template="form.parameters.activeAlarmsColumnsTemplate",
-        :templates="alarmTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.activeAlarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -52,7 +52,7 @@
       field-columns(
         v-model="form.parameters.resolvedAlarmsColumns",
         :template="form.parameters.resolvedAlarmsColumnsTemplate",
-        :templates="alarmTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.resolvedAlarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -82,7 +82,7 @@
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="entityTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending"
       )
     v-divider

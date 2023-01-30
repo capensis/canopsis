@@ -4,7 +4,7 @@
     v-divider
     alarms-list-modal-form(
       v-model="form.parameters.alarmsList",
-      :templates="entityTypeTemplates",
+      :templates="preparedWidgetTemplates",
       :templates-pending="widgetTemplatesPending",
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",

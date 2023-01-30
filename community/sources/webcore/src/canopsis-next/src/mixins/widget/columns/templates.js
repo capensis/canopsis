@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT, ENTITIES_TYPES } from '@/constants';
+import { MAX_LIMIT } from '@/constants';
 
 import { widgetColumnsToForm } from '@/helpers/forms/shared/widget-column';
 
@@ -23,14 +23,6 @@ export const widgetColumnsTemplatesMixin = {
 
         columns: widgetColumnsToForm(template.columns),
       }));
-    },
-
-    alarmTypeTemplates() { // TODO: May be move this logic to component?
-      return this.preparedWidgetTemplates.filter(({ type }) => type === ENTITIES_TYPES.alarm);
-    },
-
-    entityTypeTemplates() {
-      return this.preparedWidgetTemplates.filter(({ type }) => type === ENTITIES_TYPES.entity);
     },
   },
   methods: {
