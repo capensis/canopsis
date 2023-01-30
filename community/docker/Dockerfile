@@ -45,8 +45,6 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 COPY sources/webcore /sources/webcore
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a /sources/webcore/ ${CPS_HOME}/var/www/
 
-COPY VERSION.txt /${CPS_HOME}/
-
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 
@@ -57,6 +55,7 @@ ENV https_proxy ${PROXY}
 ENV CPS_OLD_API 0
 
 COPY --from=build /${CPS_HOME} /${CPS_HOME}
+COPY --from=build /opt/python /opt/python
 
 WORKDIR ${CPS_HOME}
 
