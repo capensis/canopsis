@@ -25,78 +25,6 @@ Feature: Validate templates for declare ticket rules
     Then the response key "warnings" should not exist
 
   @concurrent
-  Scenario: given validate template request with unexpected variable should return error
-    When I am admin
-    When I do POST /api/v4/template-validator/declare-ticket-rules:
-    """
-    {
-      "text": "http://localhost/{{ `{{.Alarmmm}}` }}"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "is_valid": false,
-      "err": {
-        "line": 1,
-        "position": 19,
-        "type": 1,
-        "message": "Invalid variable \"Alarmmm\"",
-        "var": "Alarmmm"
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given validate template request with unexpected variable and new lines should return error and valid line value
-    When I am admin
-    When I do POST /api/v4/template-validator/declare-ticket-rules:
-    """
-    {
-      "text": "test\ntest\ntest\n{{ `{{.Alarmmm}}` }}"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "is_valid": false,
-      "err": {
-        "line": 4,
-        "position": 2,
-        "type": 1,
-        "message": "Invalid variable \"Alarmmm\"",
-        "var": "Alarmmm"
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given validate template request with unexpected secondary variable should return error
-    When I am admin
-    When I do POST /api/v4/template-validator/declare-ticket-rules:
-    """
-    {
-      "text": "{{ `{{ range .Alarms }} {{ .Alarm.Value.Some }} {{ end }}` }}"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "is_valid": false,
-      "err": {
-        "line": 1,
-        "position": 29,
-        "type": 1,
-        "message": "Invalid variable \"Some\"",
-        "var": "Some"
-      }
-    }
-    """
-
-  @concurrent
   Scenario: given validate template request with unexpected block should return error
     When I am admin
     When I do POST /api/v4/template-validator/declare-ticket-rules:
@@ -112,7 +40,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 2,
+        "type": 1,
         "message": "Function or block is missing"
       }
     }
@@ -134,7 +62,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 3,
+        "type": 2,
         "message": "Unexpected \"}\""
       }
     }
@@ -156,7 +84,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 4,
+        "type": 3,
         "message": "Invalid function \"rangee\""
       }
     }
@@ -178,7 +106,7 @@ Feature: Validate templates for declare ticket rules
       "is_valid": false,
       "err": {
         "line": 1,
-        "type": 5,
+        "type": 4,
         "message": "Parsing error: invalid template"
       }
     }
@@ -212,7 +140,7 @@ Feature: Validate templates for declare ticket rules
     When I do POST /api/v4/template-validator/declare-ticket-rules:
     """
     {
-      "text": "test {{ `{ index .Response \"test\" }}` }}"
+      "text": "test {{ `{{ range .Alarms }} test { .Value.Output }} {{ end }}` }}"
     }
     """
     Then the response code should be 200
@@ -223,32 +151,8 @@ Feature: Validate templates for declare ticket rules
       "warnings": [
         {
           "type": 0,
-          "message": "Variable are out of a template block",
-          "var": ".Response"
-        }
-      ]
-    }
-    """
-
-  @concurrent
-  Scenario: given validate template request with unsafe map access
-    When I am admin
-    When I do POST /api/v4/template-validator/declare-ticket-rules:
-    """
-    {
-      "text": "test {{ `{{ .Response.test }}` }}"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "is_valid": true,
-      "warnings": [
-        {
-          "type": 1,
-          "message": "Access to the map might be unsafe",
-          "var": ".Response.test"
+          "message": "Variable is out of a template block",
+          "var": ".Value"
         }
       ]
     }

@@ -69,7 +69,6 @@ import (
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -1600,7 +1599,7 @@ func RegisterRoutes(
 			)
 		}
 
-		templateValidatorApi := template.NewApi(validator.NewValidator(libtemplate.NewExecutor(timezoneConfigProvider)))
+		templateValidatorApi := template.NewApi(validator.NewValidator(timezoneConfigProvider))
 		templateValidatorRouter := protected.Group("/template-validator")
 		{
 			templateValidatorRouter.POST(

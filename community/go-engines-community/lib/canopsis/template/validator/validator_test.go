@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	"github.com/golang/mock/gomock"
@@ -47,39 +46,6 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 			testString:        "test {{ index .Header \"test\" }}",
 			expectedErrReport: validator.ErrReport{},
 			expectedValid:     true,
-		},
-		{
-			testName:   "validate main variable",
-			testString: "test {{ .Alarmmm }} test",
-			expectedErrReport: validator.ErrReport{
-				Line:     1,
-				Position: 8,
-				Type:     validator.ErrTypeNoSuchVariable,
-				Message:  "Invalid variable \"Alarmmm\"",
-				Var:      "Alarmmm",
-			},
-		},
-		{
-			testName:   "validate main variable on the second line",
-			testString: "test\n{{ .Alarmmm }} test",
-			expectedErrReport: validator.ErrReport{
-				Line:     2,
-				Position: 3,
-				Type:     validator.ErrTypeNoSuchVariable,
-				Message:  "Invalid variable \"Alarmmm\"",
-				Var:      "Alarmmm",
-			},
-		},
-		{
-			testName:   "validate secondary variable",
-			testString: "test {{ range .Alarms }} test {{ .Value.Outputed }} {{ end }}",
-			expectedErrReport: validator.ErrReport{
-				Line:     1,
-				Position: 39,
-				Type:     validator.ErrTypeNoSuchVariable,
-				Message:  "Invalid variable \"Outputed\"",
-				Var:      "Outputed",
-			},
 		},
 		{
 			testName:   "validate unexpected symbol in operand",
@@ -168,20 +134,8 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 			expectedWrnReports: []validator.WrnReport{
 				{
 					Type:    validator.WrnTypeOutsideBlockVar,
-					Message: "Variable are out of a template block",
+					Message: "Variable is out of a template block",
 					Var:     ".Response",
-				},
-			},
-			expectedValid: true,
-		},
-		{
-			testName:   "validate with unsafe map access",
-			testString: "{{ .Response.abc }}",
-			expectedWrnReports: []validator.WrnReport{
-				{
-					Type:    validator.WrnUnsafeMapAccess,
-					Message: "Access to the map might be unsafe",
-					Var:     ".Response.abc",
 				},
 			},
 			expectedValid: true,
@@ -256,39 +210,6 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 			testString:        "test {{ .AdditionalData.Author }}",
 			expectedErrReport: validator.ErrReport{},
 			expectedValid:     true,
-		},
-		{
-			testName:   "validate main variable",
-			testString: "test {{ .Alarmmm }} test",
-			expectedErrReport: validator.ErrReport{
-				Line:     1,
-				Position: 8,
-				Type:     validator.ErrTypeNoSuchVariable,
-				Message:  "Invalid variable \"Alarmmm\"",
-				Var:      "Alarmmm",
-			},
-		},
-		{
-			testName:   "validate main variable on the second line",
-			testString: "test\n{{ .Alarmmm }} test",
-			expectedErrReport: validator.ErrReport{
-				Line:     2,
-				Position: 3,
-				Type:     validator.ErrTypeNoSuchVariable,
-				Message:  "Invalid variable \"Alarmmm\"",
-				Var:      "Alarmmm",
-			},
-		},
-		{
-			testName:   "validate secondary variable",
-			testString: "test {{ .AdditionalData.Some }}",
-			expectedErrReport: validator.ErrReport{
-				Line:     1,
-				Position: 23,
-				Type:     validator.ErrTypeNoSuchVariable,
-				Message:  "Invalid variable \"Some\"",
-				Var:      "Some",
-			},
 		},
 		{
 			testName:   "validate unexpected symbol in operand",
@@ -373,24 +294,12 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 		},
 		{
 			testName:   "validate with unfinished variable block",
-			testString: "{ index .Response \"test\" }}",
+			testString: "test {{ index .ResponseMap \"key1\"}} { index .Response \"test\" }} test {{ range .Alarms }} {{ .Value.Resource }} test {{ end }}",
 			expectedWrnReports: []validator.WrnReport{
 				{
 					Type:    validator.WrnTypeOutsideBlockVar,
-					Message: "Variable are out of a template block",
+					Message: "Variable is out of a template block",
 					Var:     ".Response",
-				},
-			},
-			expectedValid: true,
-		},
-		{
-			testName:   "validate with unsafe map access",
-			testString: "{{ .Response.abc }}",
-			expectedWrnReports: []validator.WrnReport{
-				{
-					Type:    validator.WrnUnsafeMapAccess,
-					Message: "Access to the map might be unsafe",
-					Var:     ".Response.abc",
 				},
 			},
 			expectedValid: true,
@@ -423,5 +332,5 @@ func getValidator(ctrl *gomock.Controller) validator.Validator {
 	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
 	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
 
-	return validator.NewValidator(template.NewExecutor(mockTimezoneConfigProvider))
+	return validator.NewValidator(mockTimezoneConfigProvider)
 }
