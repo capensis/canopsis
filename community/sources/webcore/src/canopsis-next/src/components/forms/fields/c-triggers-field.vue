@@ -7,6 +7,7 @@
     :label="label || $tc('common.trigger', 2)",
     :error-messages="errorMessages",
     :name="name",
+    item-disabled="deprecated",
     multiple,
     chips
   )
@@ -21,9 +22,9 @@
           ) {{ item.text }}
         span {{ $t('common.deprecatedTrigger') }}
     template(#item="{ item, tile, parent }")
-      v-list-tile(v-bind="tile.props", v-on="tile.on", :disabled="item.deprecated")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
         v-list-tile-action
-          v-checkbox(:input-value="tile.props.value", :color="parent.color", :disabled="item.deprecated")
+          v-checkbox(:input-value="tile.props.value", :color="parent.color")
         v-list-tile-content {{ item.text }}
         v-list-tile-action(v-if="item.helpText")
           c-help-icon(:text="item.helpText", size="20", top)
@@ -85,7 +86,7 @@ export default {
         }, []);
     },
 
-    deprecatedValue() {
+    deprecatedValues() {
       return this.value.filter(isDeprecatedTrigger);
     },
 
@@ -95,8 +96,8 @@ export default {
           const messageMap = {
             max_value: this.$tc(
               'errors.triggerMustNotUsed',
-              this.deprecatedValue.length,
-              { field: this.deprecatedValue.join(', ') },
+              this.deprecatedValues.length,
+              { field: this.deprecatedValues.join(', ') },
             ),
           };
 
@@ -115,7 +116,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: 'max_value:0',
-        getter: () => this.deprecatedValue.length,
+        getter: () => this.deprecatedValues.length,
         vm: this,
       });
     },
