@@ -18,7 +18,7 @@
       v-divider
     alarms-list-modal-form(
       v-model="form.parameters.alarmsList",
-      :templates="entityTypeTemplates",
+      :templates="preparedWidgetTemplates",
       :templates-pending="widgetTemplatesPending",
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",
@@ -32,7 +32,7 @@
     field-columns(
       v-model="form.parameters.serviceDependenciesColumns",
       :template="form.parameters.serviceDependenciesColumnsTemplate",
-      :templates="entityTypeTemplates",
+      :templates="preparedWidgetTemplates",
       :templates-pending="widgetTemplatesPending",
       :label="$t('settings.treeOfDependenciesColumnNames')",
       :type="$constants.ENTITIES_TYPES.entity",

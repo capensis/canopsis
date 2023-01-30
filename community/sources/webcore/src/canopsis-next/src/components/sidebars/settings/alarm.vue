@@ -14,7 +14,7 @@
       field-columns(
         v-model="form.parameters.widgetColumns",
         :template="form.parameters.widgetColumnsTemplate",
-        :templates="alarmTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -30,7 +30,7 @@
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
         :template="form.parameters.widgetGroupColumnsTemplate",
-        :templates="alarmTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.groupColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -45,7 +45,7 @@
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
         :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.trackColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -144,7 +144,7 @@
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="alarmTypeTemplates",
+        :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         datetime-format
       )
