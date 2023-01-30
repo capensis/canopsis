@@ -456,10 +456,6 @@ export default merge({
       [TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
       },
-      [TRIGGERS.done]: {
-        text: 'Alarme en statut "done"',
-        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
-      },
       [TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
       },

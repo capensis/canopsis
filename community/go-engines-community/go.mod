@@ -2,7 +2,7 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 
 // Needs to be synced with .env:GOLANG_VERSION and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
-go 1.18
+go 1.19
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
@@ -43,7 +43,7 @@ require (
 	github.com/teambition/rrule-go v1.8.0
 	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/valyala/fastjson v1.6.3
-	go.mongodb.org/mongo-driver v1.10.3
+	go.mongodb.org/mongo-driver v1.11.1
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/text v0.4.0
