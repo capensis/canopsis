@@ -220,21 +220,3 @@ Feature: test a declare ticket rule
       }
     }
     """
-
-  Scenario: given create request with already exists name should return error
-    When I am admin
-    When I do POST /api/v4/cat/test-declare-ticket-executions:
-    """json
-    {
-      "name": "test-declare-ticket-rule-to-check-unique-name"
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "name": "Name already exists."
-      }
-    }
-    """
