@@ -1,7 +1,9 @@
+import { get } from 'lodash';
+
 import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
-  ALARM_UNSORTABLE_FIELDS,
+  ALARM_UNSORTABLE_FIELDS, COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   DEFAULT_CONTEXT_WIDGET_COLUMNS,
@@ -12,6 +14,8 @@ import {
 
 import i18n from '@/i18n';
 
+import { convertDateToStringWithFormatForToday } from './date/date';
+import { convertDurationToString } from './date/duration';
 import { setSeveralFields } from './immutable';
 import { getInfosWidgetColumn, isLinksWidgetColumn } from './forms/shared/widget-column';
 
@@ -217,3 +221,121 @@ export const prepareMapWidget = (widget = {}) => setSeveralFields(widget, {
     }))
   ),
 });
+
+/**
+ * Get filter for alarms list widget column value
+ *
+ * @param {string} value
+ * @returns {Function | undefined}
+ */
+export const getAlarmsListWidgetColumnValueFilter = (value) => {
+  switch (value) {
+    case ALARM_FIELDS.lastUpdateDate:
+    case ALARM_FIELDS.creationDate:
+    case ALARM_FIELDS.lastEventDate:
+    case ALARM_FIELDS.activationDate:
+    case ALARM_FIELDS.ackAt:
+    case ALARM_FIELDS.stateAt:
+    case ALARM_FIELDS.statusAt:
+    case ALARM_FIELDS.resolved:
+    case ALARM_FIELDS.timestamp:
+      return convertDateToStringWithFormatForToday;
+
+    case ALARM_FIELDS.duration:
+    case ALARM_FIELDS.currentStateDuration:
+    case ALARM_FIELDS.activeDuration:
+    case ALARM_FIELDS.snoozeDuration:
+    case ALARM_FIELDS.pbhInactiveDuration:
+      return convertDurationToString;
+
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * Get component getter for alarms list widget column value
+ *
+ * @param {string} value
+ * @param {Widget | {}} [widget = {}]
+ * @returns {Function}
+ */
+export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}) => {
+  switch (value) {
+    case ALARM_FIELDS.state:
+      return context => ({
+        bind: {
+          is: 'alarm-column-value-state',
+          alarm: context.alarm,
+        },
+      });
+
+    case ALARM_FIELDS.status:
+      return context => ({
+        bind: {
+          is: 'alarm-column-value-status',
+          alarm: context.alarm,
+        },
+      });
+
+    case ALARM_FIELDS.impactState:
+      return context => ({
+        bind: {
+          is: 'color-indicator-wrapper',
+          type: COLOR_INDICATOR_TYPES.impactState,
+          entity: context.alarm.entity,
+          alarm: context.alarm,
+        },
+      });
+
+    case ALARM_FIELDS.links:
+      return context => ({
+        bind: {
+          is: 'alarm-column-value-categories',
+          asList: get(widget.parameters, 'linksCategoriesAsList.enabled', false),
+          limit: get(widget.parameters, 'linksCategoriesAsList.limit'),
+          links: context.alarm.links ?? {},
+        },
+        on: {
+          activate: context.$listeners.activate,
+        },
+      });
+
+    case ALARM_FIELDS.extraDetails:
+      return context => ({
+        bind: {
+          is: 'alarm-column-value-extra-details',
+          alarm: context.alarm,
+        },
+      });
+
+    case ALARM_FIELDS.tags:
+      return context => ({
+        bind: {
+          is: 'c-alarm-tags-chips',
+          alarm: context.alarm,
+          selectedTag: context.selectedTag,
+        },
+        on: {
+          select: context.$listeners['select:tag'],
+        },
+      });
+  }
+
+  if (value.startsWith('links.')) {
+    return context => ({
+      bind: {
+        links: get(context.alarm, value, []),
+
+        is: 'alarm-column-value-links',
+      },
+    });
+  }
+
+  return context => ({
+    bind: {
+      is: 'c-ellipsis',
+      text: context.value,
+    },
+  });
+};

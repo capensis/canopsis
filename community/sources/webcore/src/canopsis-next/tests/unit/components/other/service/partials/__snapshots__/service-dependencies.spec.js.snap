@@ -97,22 +97,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Custom name label: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Custom name label
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Custom type label: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Custom type label
                 </th>
               </tr>
               <tr
@@ -326,22 +326,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Name
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Type
                 </th>
               </tr>
               <tr
@@ -603,22 +603,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Name
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Type
                 </th>
               </tr>
               <tr
