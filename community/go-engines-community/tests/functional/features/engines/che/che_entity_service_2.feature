@@ -571,13 +571,7 @@ Feature: create service entity
     {
       "enabled": false,
       "impact_level": 1,
-      "sli_avail_state": 0,
-      "impact": [
-        "test-component-che-service-second-4"
-      ],
-      "depends": [
-        "test-connector-che-service-second-4/test-connector-name-che-service-second-4"
-      ]
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -619,13 +613,7 @@ Feature: create service entity
     {
       "enabled": true,
       "impact_level": 1,
-      "sli_avail_state": 0,
-      "impact": [
-        "test-component-che-service-second-4"
-      ],
-      "depends": [
-        "test-connector-che-service-second-4/test-connector-name-che-service-second-4"
-      ]
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200

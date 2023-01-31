@@ -320,12 +320,6 @@ Feature: create entities on event
           "name": "test-component-che-8-info-1-name",
           "value": "test-component-che-8-info-1-value"
         }
-      ],
-      "impact": [
-        "test-connector-che-8/test-connector-name-che-8"
-      ],
-      "depends": [
-        "test-resource-che-8/test-component-che-8"
       ]
     }
     """

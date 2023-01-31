@@ -3477,12 +3477,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_component"
-                  ],
-                  "depends": [
-                    "cps_connector/cps_connector_name"
                   ]
                 }
               component:
@@ -3500,13 +3494,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_connector/cps_connector_name"
-                  ],
-                  "depends": [
-                    "cps_resource_1/cps_component",
-                    "cps_resource_2/cps_component"
                   ]
                 }
               connector:
@@ -3524,14 +3511,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_resource_1/cps_component_1",
-                    "cps_resource_2/cps_component_2"
-                  ],
-                  "depends": [
-                    "cps_component_1",
-                    "cps_component_2"
                   ]
                 }
         required: true
