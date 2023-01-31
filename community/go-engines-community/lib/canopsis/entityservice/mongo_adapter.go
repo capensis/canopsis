@@ -71,7 +71,7 @@ func (a *mongoAdapter) GetDependenciesCount(
 }
 
 func (a *mongoAdapter) AddToService(ctx context.Context, serviceId string, ids []string) error {
-	_, err := a.collection.UpdateOne(
+	_, err := a.collection.UpdateMany(
 		ctx,
 		bson.M{"_id": bson.M{"$in": ids}},
 		bson.M{"$push": bson.M{"services": serviceId}},
@@ -80,7 +80,7 @@ func (a *mongoAdapter) AddToService(ctx context.Context, serviceId string, ids [
 }
 
 func (a *mongoAdapter) RemoveFromService(ctx context.Context, serviceId string, ids []string) error {
-	_, err := a.collection.UpdateOne(
+	_, err := a.collection.UpdateMany(
 		ctx,
 		bson.M{"_id": bson.M{"$in": ids}},
 		bson.M{"$pull": bson.M{"services": serviceId}},
