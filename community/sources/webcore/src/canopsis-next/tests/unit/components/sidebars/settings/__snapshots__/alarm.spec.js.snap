@@ -18,7 +18,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object]"
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -229,7 +229,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns=""
+      columns="[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -427,7 +427,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object]"
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />

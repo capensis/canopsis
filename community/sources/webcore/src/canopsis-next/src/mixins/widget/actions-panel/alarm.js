@@ -147,6 +147,8 @@ export const widgetActionsPanelAlarmMixin = {
       const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
+      widget.parameters.widgetGroupColumns = this.widget.parameters.widgetGroupColumns;
+      widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
 
       this.$modals.show({
         name: MODALS.alarmsList,

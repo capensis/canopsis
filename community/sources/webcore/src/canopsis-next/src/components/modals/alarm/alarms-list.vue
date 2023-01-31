@@ -5,6 +5,7 @@
     template(#text="")
       alarms-list-table-with-pagination(
         :widget="widget",
+        :columns="widget.parameters.widgetColumns",
         :alarms="alarms",
         :meta="meta",
         :loading="pending",

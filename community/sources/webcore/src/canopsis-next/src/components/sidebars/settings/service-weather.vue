@@ -59,7 +59,7 @@
       v-divider
       field-template(
         v-model="form.parameters.modalTemplate",
-        :variables="modalTemplateVariables",
+        :variables="blockTemplateVariables",
         :title="$t('settings.modalTemplate')"
       )
       v-divider
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
+import { ENTITY_FIELDS, ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
@@ -154,8 +154,8 @@ export default {
   computed: {
     sortColumns() {
       return [
-        { label: this.$t('common.name'), value: 'name' },
-        { label: this.$t('common.state'), value: 'state' },
+        { label: this.$t('common.name'), value: ENTITY_FIELDS.name },
+        { label: this.$t('common.state'), value: ENTITY_FIELDS.state },
       ];
     },
 
@@ -169,10 +169,6 @@ export default {
       ];
 
       return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
-    },
-
-    modalTemplateVariables() {
-      return this.blockTemplateVariables;
     },
   },
   methods: {

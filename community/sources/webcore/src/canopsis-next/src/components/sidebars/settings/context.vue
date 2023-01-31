@@ -27,7 +27,7 @@
         :template="form.parameters.serviceDependenciesColumnsTemplate",
         :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.columnNames')",
+        :label="$t('settings.treeOfDependenciesColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
@@ -91,7 +91,7 @@
 <script>
 import {
   SIDE_BARS,
-  ALARM_UNSORTABLE_FIELDS,
+  ENTITY_UNSORTABLE_FIELDS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
 } from '@/constants';
 
@@ -142,7 +142,7 @@ export default {
     },
 
     sortablePreparedWidgetColumns() {
-      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
+      return this.preparedWidgetColumns.filter(column => getSortable(column, ENTITY_UNSORTABLE_FIELDS));
     },
   },
   methods: {
