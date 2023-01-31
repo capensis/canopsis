@@ -1,5 +1,38 @@
-# Prerequisite
-* Node v14
+# UI environment setup
+## Pre requirements
+* **Node.js** version `^14.18.1` ([Node.js releases](https://nodejs.org/en/blog/release/))
+* **Yarn** version `^1.22.17` ([Yarn releases](https://github.com/yarnpkg/yarn/releases))
+
+## Steps to run UI in development mode
+
+Install all dependencies:
+```bash
+yarn install
+```
+
+Configure .env.local file:
+```bash
+cp .env .env.local
+
+# You should set into VUE_APP_API_HOST correct path to API server. The server must be in HTTPS.
+# Example https://localhost:8082/backend
+
+# You can do it with command
+sed -i "1s/.*/VUE_APP_API_HOST=https:\/\/localhost:8082\/backend/" .env.local
+
+# Or manually
+nano .env.local
+```
+
+Run the development server in watch mode:
+```bash
+yarn serve
+
+# If you want to run server on specific host or port you can use special arguments
+yarn serve --port 8089 --host 0.0.0.0
+```
+
+At this point you can go with a browser to the URL indicated by the last command and use the Canopsis UI.
 
 # Test the project :
 * Checkout on the branch you want : ` git checkout branch-name`
@@ -9,7 +42,6 @@
 * Open the link provided by yarn in chrome
 
 # How can I create a new widget type ?
-
 There are two ways to do it:
 1. Add widget by feature
 2. Add widget directly into source code
