@@ -35,7 +35,6 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  inject: ['$system'],
   components: {
     WidgetTemplateForm,
     ModalWrapper,

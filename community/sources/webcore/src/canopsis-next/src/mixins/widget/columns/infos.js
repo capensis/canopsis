@@ -2,8 +2,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MAX_LIMIT } from '@/constants';
 
-const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
-const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
+const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
+const { mapActions: mapDynamicInfoActions } = createNamespacedHelpers('dynamicInfo');
 
 export const widgetColumnsInfosMixin = {
   data() {
@@ -17,8 +17,8 @@ export const widgetColumnsInfosMixin = {
     this.fetchInfos();
   },
   methods: {
-    ...serviceMapActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
-    ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+    ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+    ...mapDynamicInfoActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
 
     async fetchInfos() {
       try {

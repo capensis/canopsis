@@ -4,7 +4,7 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   DATETIME_FORMATS,
-  WIDGET_TYPES, ALARM_LIST_WIDGET_COLUMNS, CONTEXT_WIDGET_COLUMNS,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import uid from './uid';
@@ -167,61 +167,3 @@ export const getAlarmDetailsDataPreparer = widgetId => data => (
     _id: generateAlarmDetailsId(item._id, widgetId),
   }))
 );
-
-export const isInfosColumn = column => [
-  ALARM_LIST_WIDGET_COLUMNS.infos,
-  ALARM_LIST_WIDGET_COLUMNS.entityInfos,
-  ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
-  CONTEXT_WIDGET_COLUMNS.infos,
-  CONTEXT_WIDGET_COLUMNS.componentInfos,
-].some(constantField => column.startsWith(constantField));
-
-export const isLinksColumn = column => column.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
-
-export const columnsToForm = (columns = []) => columns.map(({ column }) => {
-  const key = uid();
-
-  if (isInfosColumn(column)) {
-    const [infoColumn, dictionary, field] = column.split('.');
-
-    return {
-      key,
-      dictionary,
-      field,
-      column: infoColumn,
-    };
-  }
-
-  if (isLinksColumn(column)) {
-    const [linksColumn, field] = column.split('.');
-
-    return {
-      key,
-      field,
-      column: linksColumn,
-    };
-  }
-
-  return {
-    key,
-    column,
-  };
-});
-
-export const formToColumns = (form = []) => form.map(({ column, dictionary, field }) => {
-  if (isInfosColumn(column)) {
-    return {
-      column: `${column}.${dictionary}.${field}`,
-    };
-  }
-
-  if (isLinksColumn(column) && field) {
-    return {
-      column: `${column}.${field}`,
-    };
-  }
-
-  return {
-    column,
-  };
-});

@@ -2,10 +2,10 @@
   widget-settings-group(:title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)")
     field-columns(
       v-field="form.widgetColumns",
-      :label="$t('settings.columnNames')",
       :template="form.widgetColumnsTemplate",
       :templates="templates",
       :templates-pending="templatesPending",
+      :label="$t('settings.columnNames')",
       :type="$constants.ENTITIES_TYPES.alarm",
       :alarm-infos="alarmInfos",
       :entity-infos="entityInfos",

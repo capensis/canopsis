@@ -41,10 +41,9 @@
         v-field="column.field",
         :label="$t('common.field')"
       )
-      v-switch(
+      v-enabled-field(
         v-model="customLabel",
-        :label="$t('settings.columns.customLabel')",
-        color="primary"
+        :label="$t('settings.columns.customLabel')"
       )
       v-text-field(
         v-if="customLabel",
@@ -55,11 +54,10 @@
         :name="`${name}.label`"
       )
       v-layout(v-if="withTemplate", row)
-        v-switch(
+        c-enabled-field(
           :label="$t('settings.columns.withTemplate')",
           :input-value="!!column.template",
-          color="primary",
-          @change="enableTemplate($event)"
+          @input="enableTemplate($event)"
         )
         v-btn.primary(
           v-if="column.template",
@@ -67,20 +65,18 @@
           @click="showEditTemplateModal()"
         )
           span {{ $t('common.edit') }}
-      v-switch(
+      c-enabled-field(
         v-if="withHtml",
         v-field="column.isHtml",
         :label="$t('settings.columns.isHtml')",
-        :disabled="!!column.template",
-        color="primary"
+        :disabled="!!column.template"
       )
-      v-switch(
+      c-enabled-field(
         v-if="withColorIndicator",
         :label="$t('settings.colorIndicator.title')",
         :input-value="!!column.colorIndicator",
         :disabled="!!column.template",
-        color="primary",
-        @change="switchChangeColorIndicator($event)"
+        @input="switchChangeColorIndicator($event)"
       )
       v-layout(v-if="column.colorIndicator", row)
         c-color-indicator-field(
