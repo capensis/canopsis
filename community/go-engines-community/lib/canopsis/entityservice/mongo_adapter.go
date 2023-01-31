@@ -3,6 +3,7 @@ package entityservice
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,70 +35,6 @@ func (a *mongoAdapter) GetByID(ctx context.Context, id string) (*EntityService, 
 	return a.findOne(ctx, bson.M{"type": types.EntityTypeService, "_id": id})
 }
 
-func (a *mongoAdapter) AddDepends(ctx context.Context, id string, depends []string) (bool, error) {
-	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
-		"$addToSet": bson.M{
-			"depends": bson.M{"$each": depends},
-		},
-	})
-
-	if err != nil {
-		return false, err
-	}
-
-	return res.MatchedCount > 0, nil
-}
-
-func (a *mongoAdapter) RemoveDepends(ctx context.Context, id string, depends []string) (bool, error) {
-	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
-		"$pull": bson.M{
-			"depends": bson.M{"$in": depends},
-		},
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return res.MatchedCount > 0, nil
-}
-
-func (a *mongoAdapter) RemoveDependByQuery(ctx context.Context, query interface{}, depend string) ([]string, error) {
-	res, err := a.collection.Find(
-		ctx,
-		bson.M{"$and": []interface{}{
-			query,
-			bson.M{"depends": depend},
-		}},
-		options.Find().SetProjection(bson.M{"_id": 1}))
-	if err != nil {
-		return nil, err
-	}
-
-	removedEntities := make([]types.Entity, 0)
-	err = res.All(ctx, &removedEntities)
-	if err != nil {
-		return nil, err
-	}
-
-	removedIDs := make([]string, len(removedEntities))
-	for i := range removedEntities {
-		removedIDs[i] = removedEntities[i].ID
-	}
-
-	if len(removedIDs) > 0 {
-		_, err = a.collection.UpdateMany(
-			ctx,
-			bson.M{"_id": bson.M{"$in": removedIDs}},
-			bson.M{"$pull": bson.M{"depends": depend}},
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return removedIDs, nil
-}
-
 func (a *mongoAdapter) UpdateCounters(ctx context.Context, id string, counters AlarmCounters) error {
 	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
 		"counters": counters,
@@ -118,8 +55,8 @@ func (a *mongoAdapter) GetServiceDependencies(
 ) (mongo.Cursor, error) {
 	return a.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"enabled": true,
-			"impact":  serviceID,
+			"enabled":  true,
+			"services": serviceID,
 		}},
 	})
 }
@@ -128,26 +65,130 @@ func (a *mongoAdapter) GetDependenciesCount(
 	ctx context.Context,
 	serviceID string,
 ) (int64, error) {
-	cursor, err := a.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"_id": serviceID,
-		}},
-		{"$project": bson.M{
-			"depends_count": bson.M{"$size": "$depends"},
-		}},
+	return a.collection.CountDocuments(ctx, bson.M{
+		"services": serviceID,
 	})
-	if err != nil {
-		return 0, err
+}
+
+func (a *mongoAdapter) AddToService(ctx context.Context, serviceId string, ids []string) error {
+	_, err := a.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": bson.M{"$in": ids}},
+		bson.M{"$push": bson.M{"services": serviceId}},
+	)
+	return err
+}
+
+func (a *mongoAdapter) RemoveFromService(ctx context.Context, serviceId string, ids []string) error {
+	_, err := a.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": bson.M{"$in": ids}},
+		bson.M{"$pull": bson.M{"services": serviceId}},
+	)
+	return err
+}
+
+func (a *mongoAdapter) AddToServiceByQuery(ctx context.Context, serviceId string, query any) (int64, error) {
+	var count int64
+	and := []any{
+		bson.M{"enabled": true},
+		query,
+		bson.M{"services": bson.M{"$nin": bson.A{serviceId}}},
 	}
-	if cursor.Next(ctx) {
-		res := struct {
-			DependsCount int64 `bson:"depends_count"`
-		}{}
-		err = cursor.Decode(&res)
-		return res.DependsCount, err
+	match := bson.M{"$and": and}
+	for {
+		res, err := a.collection.Find(
+			ctx,
+			match,
+			options.Find().
+				SetLimit(canopsis.DefaultBulkSize).
+				SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return 0, err
+		}
+
+		entities := make([]types.Entity, 0)
+		err = res.All(ctx, &entities)
+		if err != nil {
+			return 0, err
+		}
+		if len(entities) == 0 {
+			break
+		}
+
+		ids := make([]string, len(entities))
+		for i := range entities {
+			ids[i] = entities[i].ID
+		}
+
+		_, err = a.collection.UpdateMany(
+			ctx,
+			bson.M{
+				"_id":  bson.M{"$in": ids},
+				"$and": and,
+			},
+			bson.M{"$push": bson.M{"services": serviceId}},
+		)
+		if err != nil {
+			return 0, err
+		}
+
+		count += int64(len(ids))
 	}
 
-	return 0, nil
+	return count, nil
+}
+
+func (a *mongoAdapter) RemoveFromServiceByQuery(ctx context.Context, serviceId string, query any) (int64, error) {
+	and := []any{bson.M{"enabled": true}}
+	if query != nil {
+		and = append(and, query)
+	}
+	and = append(and, bson.M{"services": bson.M{"$in": bson.A{serviceId}}})
+	match := bson.M{"$and": and}
+	var count int64
+	for {
+		res, err := a.collection.Find(
+			ctx,
+			match,
+			options.Find().
+				SetLimit(canopsis.DefaultBulkSize).
+				SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return 0, err
+		}
+
+		entities := make([]types.Entity, 0)
+		err = res.All(ctx, &entities)
+		if err != nil {
+			return 0, err
+		}
+
+		if len(entities) == 0 {
+			break
+		}
+
+		ids := make([]string, len(entities))
+		for i := range entities {
+			ids[i] = entities[i].ID
+		}
+
+		_, err = a.collection.UpdateMany(
+			ctx,
+			bson.M{
+				"_id":  bson.M{"$in": ids},
+				"$and": and,
+			},
+			bson.M{"$pull": bson.M{"services": serviceId}},
+		)
+		if err != nil {
+			return 0, err
+		}
+
+		count += int64(len(ids))
+	}
+
+	return count, nil
 }
 
 func (a *mongoAdapter) find(ctx context.Context, filter interface{}) ([]EntityService, error) {

@@ -6,7 +6,6 @@ const (
 	EntityTypeComponent = "component"
 	EntityTypeResource  = "resource"
 	EntityTypeService   = "service"
-	EntityTypeMetaAlarm = "metaalarm"
 )
 
 const EntityDefaultImpactLevel = 1
@@ -43,12 +42,14 @@ type Entity struct {
 	Created        CpsTime         `bson:"created" json:"created"`
 	LastEventDate  *CpsTime        `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
-	Impacts []string `bson:"impact" json:"impact"`
-	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
+	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
+	Component string   `bson:"component,omitempty" json:"component,omitempty"`
+	Services  []string `bson:"services," json:"services,omitempty"`
+	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
-	Depends          []string `bson:"depends" json:"depends"`
-	Connector        string   `bson:"connector,omitempty" json:"connector,omitempty"`
-	Component        string   `bson:"component,omitempty" json:"component,omitempty"`
+
+	Impacts []string `bson:"impact" json:"impact"`
+	Depends []string `bson:"depends" json:"depends"`
 
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
