@@ -516,6 +516,8 @@ default_entities:
     _id: test-resource-service-weather-entity-5/test-component-service-weather-entity-5
     name: test-resource-service-weather-entity-5
     component: test-component-service-weather-entity-5
+    services:
+      - test-service-weather-entity-5
     depends: [ ]
     impact:
       - test-component-service-weather-entity-5
@@ -583,9 +585,9 @@ default_entities:
             type: eq
             value: test-entityservice-to-emit-entityupdated-on-component-info-update-val
 
-  service_to_che_service_19:
+  service_to_che_service_second_2:
     <<: *service
-    _id: test-entityservice-che-service-19
+    _id: test-entityservice-che-service-second-2
     enabled: false
     entity_pattern:
     old_entity_patterns:
@@ -1590,6 +1592,7 @@ default_entities:
   default_entities_122:
     _id: test-idle-since-integration-2-resource-1/test-idle-since-integration-2-component
     component: test-idle-since-integration-2-component
+    connector: test-idle-since-integration-2-connector/test-idle-since-integration-2-connectorname
     depends:
       - test-idle-since-integration-2-connector/test-idle-since-integration-2-connectorname
     enable_history:
