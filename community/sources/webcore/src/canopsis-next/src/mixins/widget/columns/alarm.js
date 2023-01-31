@@ -8,9 +8,7 @@ import {
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 export const widgetColumnsAlarmMixin = {
-  mixins: [
-    entitiesAlarmColumnsFiltersMixin,
-  ],
+  mixins: [entitiesAlarmColumnsFiltersMixin],
   data() {
     return {
       columnsFilters: [],
