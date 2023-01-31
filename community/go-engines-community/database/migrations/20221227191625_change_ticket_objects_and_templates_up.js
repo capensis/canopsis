@@ -56,7 +56,7 @@ db.resolved_alarms.find({"v.ticket": {$exists: true}}).forEach(function (doc) {
 
     delete ticket.data
 
-    db.periodical_alarm.updateOne(
+    db.resolved_alarms.updateOne(
         {
             _id: doc._id
         },
