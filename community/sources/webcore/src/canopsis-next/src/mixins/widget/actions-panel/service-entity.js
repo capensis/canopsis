@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { keyBy } from 'lodash';
 
 import {
   MODALS,
@@ -200,23 +199,18 @@ export const widgetActionPanelServiceEntityMixin = {
             items: alarms,
             alarmsByTickets,
             ticketsByAlarms,
-            action: async (events) => {
-              const items = await this.bulkCreateDeclareTicketExecution({ data: events });
-              const successExecutions = items.filter(({ status }) => status >= 200 && status < 300);
-              const alarmsById = keyBy(alarms, '_id');
-
-              if (successExecutions.length) {
-                this.$modals.show({
-                  name: MODALS.executeDeclareTickets,
-                  config: {
-                    executions: successExecutions.map(({ id, item }) => ({
-                      executionId: id,
-                      ruleName: alarmsByTickets[item._id].name,
-                      alarms: item.alarms.map(alarmId => alarmsById[alarmId]),
-                    })),
-                  },
-                });
-              }
+            action: (events) => {
+              this.$modals.show({
+                name: MODALS.executeDeclareTickets,
+                config: {
+                  executions: events,
+                  tickets: events.map(({ _id: id }) => ({
+                    _id: id,
+                    name: alarmsByTickets[id].name,
+                  })),
+                  alarms,
+                },
+              });
             },
           },
         });
