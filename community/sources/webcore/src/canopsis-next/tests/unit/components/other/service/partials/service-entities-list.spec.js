@@ -526,7 +526,7 @@ describe('service-entities-list', () => {
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.executeDeclareTicket,
+        name: MODALS.executeDeclareTickets,
         config: {
           executions: [
             {

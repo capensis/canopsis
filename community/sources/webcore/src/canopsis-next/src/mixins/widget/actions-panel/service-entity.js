@@ -207,7 +207,7 @@ export const widgetActionPanelServiceEntityMixin = {
 
               if (successExecutions.length) {
                 this.$modals.show({
-                  name: MODALS.executeDeclareTicket,
+                  name: MODALS.executeDeclareTickets,
                   config: {
                     executions: successExecutions.map(({ id, item }) => ({
                       executionId: id,
