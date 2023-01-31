@@ -1,21 +1,9 @@
-import { createNamespacedHelpers } from 'vuex';
-
-import { MAX_LIMIT, ENTITY_TEMPLATE_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS } from '@/constants';
+import { ENTITY_TEMPLATE_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { variablesMixin } from './common';
 
-const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
-
 export const entityVariablesMixin = {
   mixins: [variablesMixin],
-  data() {
-    return {
-      infos: [],
-    };
-  },
-  mounted() {
-    this.fetchInfos();
-  },
   computed: {
     infosSubVariables() {
       return [
@@ -31,7 +19,7 @@ export const entityVariablesMixin = {
     },
 
     infosVariables() {
-      return this.infos.map(({ value }) => ({
+      return this.entityInfos.map(({ value }) => ({
         text: value,
         value,
         variables: this.infosSubVariables,
@@ -94,19 +82,8 @@ export const entityVariablesMixin = {
       ].map(variable => ({
         ...variable,
 
-        text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[variable.value], 2),
+        text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[variable.value.replace('entity.', '')], 2),
       }));
-    },
-  },
-  methods: {
-    ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
-
-    async fetchInfos() {
-      const { data: infos } = await this.fetchEntityInfosKeysWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
-
-      this.infos = infos;
     },
   },
 };

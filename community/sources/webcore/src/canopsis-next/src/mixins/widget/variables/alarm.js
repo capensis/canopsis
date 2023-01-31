@@ -72,7 +72,7 @@ export const alarmVariablesMixin = {
       ].map(variable => ({
         ...variable,
 
-        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[variable.value], 2),
+        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[variable.value.replace('alarm.', '')], 2),
       }));
     },
   },

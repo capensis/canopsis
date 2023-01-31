@@ -2794,6 +2794,8 @@ export default merge({
       categoryName: 'Nom de catégorie',
       koEvents: 'KO événements',
       okEvents: 'OK événements',
+      statsKo: 'Stats KO',
+      statsOk: 'Stats OK',
       idleSince: 'Inactif depuis',
       componentInfos: 'Informations sur les composants',
       alarmDisplayName: 'Nom d\'affichage de l\'alarme',
