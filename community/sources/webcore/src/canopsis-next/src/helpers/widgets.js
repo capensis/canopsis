@@ -52,7 +52,7 @@ export const getColumnLabel = (column = {}, labelsMap = {}) => {
  * @returns {boolean}
  */
 export const getSortable = (column = {}, unsortableFields = []) => (
-  unsortableFields.some(field => (column.value ?? '').startsWith(field))
+  !unsortableFields.some(field => (column.value ?? '').startsWith(field))
 );
 
 /**
