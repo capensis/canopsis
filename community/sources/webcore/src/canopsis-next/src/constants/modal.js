@@ -94,5 +94,5 @@ export const MODALS = {
 
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createDeclareTicketRule: 'create-declare-ticket-rule',
-  executeDeclareTicket: 'execute-declare-ticket',
+  executeDeclareTickets: 'execute-declare-tickets',
 };

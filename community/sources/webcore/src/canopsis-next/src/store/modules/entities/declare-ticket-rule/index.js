@@ -20,6 +20,10 @@ export default createEntityModule({
       return request.post(API_ROUTES.declareTicket.testExecution, data);
     },
 
+    fetchDeclareTicketExecutionWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.declareTicket.declareTicketExecution}/${id}`);
+    },
+
     fetchTestDeclareTicketExecutionWebhooksResponse(context, { id }) {
       return request.get(`${API_ROUTES.declareTicket.testExecutionWebhooks}/${id}/response`);
     },
