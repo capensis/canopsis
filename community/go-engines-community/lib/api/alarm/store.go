@@ -303,18 +303,22 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		return nil, err
 	}
 
-	ids := service.Depends
+	entityMatch := bson.M{"entity.services": service.ID}
 	if r.WithService {
-		ids = append(ids, id)
+		entityMatch = bson.M{"$or": []bson.M{
+			{"entity._id": service.ID},
+			entityMatch,
+		}}
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, bson.M{
-		"d":          bson.M{"$in": ids},
-		"v.resolved": nil,
-	}, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
-		Category: r.Category,
-		Search:   r.Search,
-	}}, now)
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
+		ctx,
+		bson.M{"v.resolved": nil},
+		entityMatch,
+		r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			Category: r.Category,
+			Search:   r.Search,
+		}}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -365,10 +369,11 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		return nil, err
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, bson.M{
-		"d":          bson.M{"$in": component.Depends},
-		"v.resolved": nil,
-	}, r.Query, r.SortRequest, FilterRequest{}, now)
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
+		ctx,
+		bson.M{"v.resolved": nil},
+		bson.M{"entity.component": component.ID},
+		r.Query, r.SortRequest, FilterRequest{}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -420,7 +425,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 
 	match := bson.M{"d": r.ID}
 	opened := false
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, match, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, match, nil, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
 		StartFrom: r.StartFrom,
 		StartTo:   r.StartTo,
 		Opened:    &opened,
