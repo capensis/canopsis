@@ -24,45 +24,32 @@
             declare-ticket-rule-ticket-id-field(
               v-field="value.ticket_id",
               :disabled="disabled",
-              :name="ticketIdFieldName"
+              :name="ticketIdFieldName",
+              required
             )
           v-flex(xs6)
-            v-text-field(v-field="value.ticket_url", :label="$t('declareTicket.ticketURL')")
-              template(#append="")
-                c-help-icon(
-                  :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })",
-                  icon="help",
-                  color="grey darken-1",
-                  left
-                )
-        c-information-block(:title="$t('declareTicket.customFields')")
-          c-alert(v-if="!value.mapping.length", type="info") {{ $t('declareTicket.emptyFields') }}
-          c-text-pairs-field(
-            v-field="value.mapping",
-            :text-label="$t('declareTicket.alarmFieldName')",
-            :value-label="$t('declareTicket.responseField')",
-            :name="name",
-            text-required,
-            value-required
-          )
-            template(#append-value="{ item }")
-              c-help-icon(
-                v-if="item.text",
-                :text="$t('declareTicket.responseFieldHelpText', { field: item.text })",
-                icon="help",
-                color="grey darken-1",
-                left
-              )
+            declare-ticket-rule-ticket-url-field(
+              v-field="value.ticket_url",
+              :disabled="disabled",
+              :name="ticketUrlFieldName"
+            )
+        declare-ticket-rule-ticket-custom-fields-field(v-field="value.mapping", :name="name", :disabled="disabled")
 </template>
 
 <script>
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
+import DeclareTicketRuleTicketCustomFieldsField from './declare-ticket-rule-ticket-custom-fields-field.vue';
+import DeclareTicketRuleTicketUrlField from './declare-ticket-rule-ticket-url-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DeclareTicketRuleTicketIdField },
+  components: {
+    DeclareTicketRuleTicketUrlField,
+    DeclareTicketRuleTicketCustomFieldsField,
+    DeclareTicketRuleTicketIdField,
+  },
   mixins: [formMixin],
   model: {
     prop: 'value',
@@ -97,6 +84,10 @@ export default {
   computed: {
     ticketIdFieldName() {
       return `${this.name}.ticket_id`;
+    },
+
+    ticketUrlFieldName() {
+      return `${this.name}.ticket_url`;
     },
   },
   created() {
