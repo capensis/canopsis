@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { isValidJson } from '@/plugins/validator/helpers/is-valid-json';
+import { isString } from 'lodash';
 
 import JsonTreeview from '@/components/common/request/c-json-treeview.vue';
 
@@ -34,9 +34,20 @@ export default {
             value: value?.trim(),
           };
         }),
-        isJsonBody: isValidJson(body),
+        isJsonBody: this.isValidJsonData(body),
         body,
       };
+    },
+  },
+  methods: {
+    isValidJsonData(data) {
+      try {
+        const json = JSON.parse(data);
+
+        return !isString(json);
+      } catch (err) {
+        return false;
+      }
     },
   },
 };
