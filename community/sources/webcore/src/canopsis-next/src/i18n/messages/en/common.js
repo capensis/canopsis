@@ -268,12 +268,16 @@ export default {
   header: 'Header | Headers',
   headerKey: 'Header key',
   headerValue: 'Header value',
+  copyValue: 'Copy value',
+  copyProperty: 'Copy property',
+  copyPropertyPath: 'Copy property path',
   variableTypes: {
     string: 'String',
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
+    object: 'Object',
   },
   mixedField: {
     types: {

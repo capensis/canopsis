@@ -205,6 +205,7 @@ export const ALARM_INTERVAL_FIELDS = {
 };
 
 export const ALARM_PATTERN_FIELDS = {
+  id: '_id',
   displayName: 'v.display_name',
   state: 'v.state.val',
   status: 'v.status.val',

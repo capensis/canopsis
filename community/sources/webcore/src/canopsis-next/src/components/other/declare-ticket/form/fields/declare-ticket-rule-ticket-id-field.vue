@@ -36,11 +36,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     rules() {
       return {
-        required: this.isTicketIdExist,
+        required: this.required,
       };
     },
   },

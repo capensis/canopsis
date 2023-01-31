@@ -268,12 +268,16 @@ export default {
   header: 'En-tête | En-têtes',
   headerKey: 'Clé d\'en-tête',
   headerValue: 'Valeur d\'en-tête',
+  copyValue: 'Copier la valeur',
+  copyProperty: 'Copier la propriété',
+  copyPropertyPath: 'Copier le chemin de la propriété',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Tableau',
+    object: 'Object',
   },
   mixedField: {
     types: {
