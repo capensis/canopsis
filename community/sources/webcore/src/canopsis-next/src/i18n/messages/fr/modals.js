@@ -883,7 +883,7 @@ export default {
   createDeclareTicketEvent: {
     title: 'Déclarer un incident',
   },
-  executeDeclareTicket: {
+  executeDeclareTickets: {
     title: 'Statut de la déclaration du ticket',
   },
 };

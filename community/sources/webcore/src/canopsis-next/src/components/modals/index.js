@@ -354,7 +354,7 @@ export const CreateDeclareTicketEvent = () => ({
   component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-event.vue'),
   loading: LoaderOverlay,
 });
-export const ExecuteDeclareTicket = () => ({
-  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/execute-declare-ticket-rule.vue'),
+export const ExecuteDeclareTickets = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/execute-declare-tickets-rule.vue'),
   loading: LoaderOverlay,
 });
