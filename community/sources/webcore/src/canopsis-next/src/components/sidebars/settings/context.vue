@@ -100,7 +100,6 @@ import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
 import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
@@ -129,7 +128,6 @@ export default {
   mixins: [
     authMixin,
     widgetSettingsMixin,
-    widgetColumnsMixin,
     widgetColumnsInfosMixin,
     widgetColumnsTemplatesMixin,
     permissionsWidgetsContextFilters,

@@ -126,26 +126,6 @@ export default {
     },
   },
   methods: {
-    isLinks(column) {
-      return [
-        ALARM_LIST_WIDGET_COLUMNS.links,
-        CONTEXT_WIDGET_COLUMNS.links,
-      ].includes(column);
-    },
-
-    isInfos(column) {
-      return this.infosFields.includes(column);
-    },
-
-    getInfosByColumn(column) {
-      return [
-        ALARM_LIST_WIDGET_COLUMNS.entityInfos,
-        ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
-        CONTEXT_WIDGET_COLUMNS.infos,
-        CONTEXT_WIDGET_COLUMNS.componentInfos,
-      ].includes(column) ? this.entityInfos : this.alarmInfos;
-    },
-
     enableTemplate(index, checked) {
       const value = checked
         ? DEFAULT_COLUMN_TEMPLATE_VALUE

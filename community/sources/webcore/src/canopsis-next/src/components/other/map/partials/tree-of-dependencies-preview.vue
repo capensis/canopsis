@@ -24,6 +24,7 @@ import {
 } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
+import { generateDefaultContextWidget } from '@/helpers/entities';
 import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -32,7 +33,6 @@ import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/enginee
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
-import { generateDefaultContextWidget } from '@/helpers/entities';
 
 export default {
   components: { NetworkGraph },
