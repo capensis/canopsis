@@ -240,7 +240,7 @@ Feature: New import entities
       "depends": []
     }
     """
-    
+
   Scenario: given set import request should create component with resource config
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
@@ -1297,10 +1297,7 @@ Feature: New import entities
       "enabled": true,
       "infos": {},
       "type": "component",
-      "impact_level": 1,
-      "changeable_depends": [
-        "test-entity-contextgraph-new-import-resource-to-delete-1-2/test-entity-contextgraph-new-import-component-to-delete-1"
-      ]
+      "impact_level": 1
     }
     """
     When I do GET /api/v4/entities/context-graph?_id=test-entity-contextgraph-new-import-component-to-delete-1 until response code is 200 and body contains:
