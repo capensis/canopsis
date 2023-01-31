@@ -702,7 +702,7 @@ describe('actions-panel', () => {
 
     historyAction.trigger('click');
 
-    const defaultWidget = generateDefaultAlarmListWidget();
+    const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
     expect($modals.show).toBeCalledWith(
       {
@@ -710,14 +710,18 @@ describe('actions-panel', () => {
         config: {
           title: `${entity._id} - alarm list`,
           fetchList: expect.any(Function),
-          widget: prepareAlarmListWidget({
+          widget: {
             ...defaultWidget,
+
             _id: expect.any(String),
             parameters: {
               ...defaultWidget.parameters,
+
               widgetColumns: widgetData.parameters.widgetColumns,
+              widgetGroupColumns: widgetData.parameters.widgetGroupColumns,
+              serviceDependenciesColumns: widgetData.parameters.serviceDependenciesColumns,
             },
-          }),
+          },
         },
       },
     );
