@@ -450,24 +450,6 @@ default_entities:
       - test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
     impact:
       - test-entitybasic-to-update-component-2
-  component_to_entitybasic_update_3:
-    <<: *component
-    _id: test-entitybasic-to-update-component-3
-    name: test-entitybasic-to-update-component-3
-    component: test-entitybasic-to-update-component-3
-    connector:
-    depends:
-      - test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
-    impact: [ ]
-  resource_to_entitybasic_update_3:
-    <<: *resource
-    _id: test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
-    name: test-entitybasic-to-update-resource-3
-    component: test-entitybasic-to-update-component-3
-    connector:
-    depends: [ ]
-    impact:
-      - test-entitybasic-to-update-component-3
   resource_to_entitybasic_delete:
     <<: *resource
     _id: test-entitybasic-to-delete-resource/test-entitybasic-to-delete-component
@@ -1246,6 +1228,73 @@ default_entities:
     _id: test-resource-to-instruction-execution-next-step-7/test-component-default
     name: test-resource-to-instruction-execution-next-step-7
 
+  connector_junit:
+    <<: *connector
+    _id: junit/junit
+    name: junit
+    depends:
+      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    impact:
+      - test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+      - test-case-to-get-entity-gantt-1-2-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+      - test-case-to-get-entity-gantt-1-3-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+      - test-case-to-get-entity-gantt-1-4-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+  component_junit_test_suite:
+    <<: *component
+    _id: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    name: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    component: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    depends:
+      - test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+      - test-case-to-get-entity-gantt-1-2-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+      - test-case-to-get-entity-gantt-1-3-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+      - test-case-to-get-entity-gantt-1-4-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    impact:
+      - junit/junit
+  resource_junit_test_case_1_1:
+    <<: *resource
+    _id: test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    name: test-case-to-get-entity-gantt-1-1-name
+    component: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    depends:
+      - junit/junit
+    impact:
+      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+  resource_junit_test_case_1_2:
+    <<: *resource
+    _id: test-case-to-get-entity-gantt-1-2-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    name: test-case-to-get-entity-gantt-1-2-name
+    component: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    depends:
+      - junit/junit
+    impact:
+      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+  resource_junit_test_case_1_3:
+    <<: *resource
+    _id: test-case-to-get-entity-gantt-1-3-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    name: test-case-to-get-entity-gantt-1-3-name
+    component: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    depends:
+      - junit/junit
+    impact:
+      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+  resource_junit_test_case_1_4:
+    <<: *resource
+    _id: test-case-to-get-entity-gantt-1-4-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    name: test-case-to-get-entity-gantt-1-4-name
+    component: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+    depends:
+      - junit/junit
+    impact:
+      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
+  component_junit_test_suite_not_linked:
+    <<: *component
+    _id: test-junit-entity-to-get-entity-gantt-not-linked-to-test-suite
+    name: test-junit-entity-to-get-entity-gantt-not-linked-to-test-suite
+    depends: [ ]
+    impact:
+      - junit/junit
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
@@ -1605,113 +1654,6 @@ default_entities:
     measurements: null
     name: test-idle-since-integration-2-resource-1
     type: resource
-  default_entities_126:
-    _id: junit/junit
-    depends:
-      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-      - test-case-to-get-entity-gantt-1-2-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-      - test-case-to-get-entity-gantt-1-3-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-      - test-case-to-get-entity-gantt-1-4-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: junit
-    type: connector
-  default_entities_127:
-    _id: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    depends:
-      - test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-      - test-case-to-get-entity-gantt-1-2-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-      - test-case-to-get-entity-gantt-1-3-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-      - test-case-to-get-entity-gantt-1-4-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - junit/junit
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    type: component
-  default_entities_128:
-    _id: test-case-to-get-entity-gantt-1-1-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    component: test-alarm-get-component
-    depends:
-      - junit/junit
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-case-to-get-entity-gantt-1-1-name
-    type: resource
-  default_entities_129:
-    _id: test-case-to-get-entity-gantt-1-2-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    component: test-alarm-get-component
-    depends:
-      - junit/junit
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-case-to-get-entity-gantt-1-2-name
-    type: resource
-  default_entities_130:
-    _id: test-case-to-get-entity-gantt-1-3-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    component: test-alarm-get-component
-    depends:
-      - junit/junit
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-case-to-get-entity-gantt-1-3-name
-    type: resource
-  default_entities_131:
-    _id: test-case-to-get-entity-gantt-1-4-name/test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    component: test-alarm-get-component
-    depends:
-      - junit/junit
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - test-suite-to-get-entity-gantt-1-name.test-report-to-get-entity-gantt.xml
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-case-to-get-entity-gantt-1-4-name
-    type: resource
-  default_entities_132:
-    _id: test-junit-entity-to-get-entity-gantt-not-linked-to-test-suite
-    depends: [ ]
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact:
-      - junit/junit
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-junit-entity-to-get-entity-gantt-not-linked-to-test-suite
-    type: component
   default_entities_133:
     _id: test-entity-to-export-resource-1/test-entity-to-export-component
     component: test-entity-to-export-component
