@@ -187,10 +187,16 @@ func (h *hub) Send(room string, b any) {
 }
 
 func (h *hub) RegisterRoom(room string, perms ...string) error {
+	defer func() {
+		h.logger.Debug().Str("room", room).Msg("register websocket room")
+	}()
 	return h.authorizer.AddRoom(room, perms)
 }
 
 func (h *hub) CloseRoom(room string) error {
+	defer func() {
+		h.logger.Debug().Str("room", room).Msg("close websocket room")
+	}()
 	err := h.authorizer.RemoveRoom(room)
 	if err != nil {
 		return err
@@ -638,6 +644,12 @@ func (h *hub) listen(connId string, conn Connection) {
 			return
 		}
 
+		h.logger.Debug().
+			Str("conn", connId).
+			Int("type", msg.Type).
+			Str("room", msg.Room).
+			Msg("read websocket conn")
+
 		switch msg.Type {
 		case RMessageClientPing:
 			closed = h.sendToConn(connId, WMessage{Type: WMessageClientPong})
@@ -711,6 +723,14 @@ func (h *hub) sendToConn(connId string, msg WMessage) (closed bool) {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
+	defer func() {
+		h.logger.Debug().
+			Int("type", msg.Type).
+			Str("conn", connId).
+			Bool("closed", closed).
+			Msg("send to webhook conn")
+	}()
+
 	conn := h.conns[connId].conn
 	err := conn.WriteJSON(msg)
 	if err != nil {
@@ -732,6 +752,17 @@ func (h *hub) sendToRoom(room string, msg WMessage) []string {
 	}()
 
 	closedConns := make([]string, 0)
+	count := len(h.rooms[room])
+	defer func() {
+		if count > 0 {
+			h.logger.Debug().
+				Str("room", room).
+				Int("type", msg.Type).
+				Int("conns", count).
+				Int("closed", len(closedConns)).
+				Msg("send to webhook room")
+		}
+	}()
 	for _, connId := range h.rooms[room] {
 		conn := h.conns[connId].conn
 		err := conn.WriteJSON(msg)
