@@ -45,7 +45,6 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { formValidationHeaderMixin } from '@/mixins/form';
-import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
 import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 
@@ -80,7 +79,6 @@ export default {
   mixins: [
     widgetSettingsMixin,
     formValidationHeaderMixin,
-    widgetColumnsMixin,
     widgetColumnsInfosMixin,
     widgetColumnsTemplatesMixin,
   ],

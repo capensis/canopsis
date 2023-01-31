@@ -36,7 +36,7 @@
 
       field-columns(
         v-model="form.parameters.alarmsColumns",
-        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :template="form.parameters.alarmsColumnsTemplate",
         :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.alarmsColumns')",
@@ -51,7 +51,7 @@
       v-divider
       field-columns(
         v-model="form.parameters.entitiesColumns",
-        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :template="form.parameters.entitiesColumnsTemplate",
         :templates="preparedWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
@@ -71,7 +71,6 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
-import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
 import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
@@ -107,7 +106,6 @@ export default {
   mixins: [
     widgetSettingsMixin,
     entityVariablesMixin,
-    widgetColumnsMixin,
     widgetColumnsInfosMixin,
     widgetColumnsTemplatesMixin,
     permissionsWidgetsMapFilters,

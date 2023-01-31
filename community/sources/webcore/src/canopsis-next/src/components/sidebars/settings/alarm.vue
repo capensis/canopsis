@@ -164,7 +164,6 @@ import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
-import { widgetColumnsMixin } from '@/mixins/widget/columns/common';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
 import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -220,7 +219,6 @@ export default {
   mixins: [
     widgetSettingsMixin,
     alarmVariablesMixin,
-    widgetColumnsMixin,
     widgetColumnsInfosMixin,
     widgetColumnsTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
