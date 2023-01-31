@@ -44,7 +44,7 @@ import Socket from '@/plugins/socket/services/socket';
  * Modal to declare a ticket
  */
 export default {
-  name: MODALS.executeDeclareTicket,
+  name: MODALS.executeDeclareTickets,
   $_veeValidate: {
     validator: 'new',
   },
@@ -100,7 +100,7 @@ export default {
 
       return this.isOneExecution
         ? this.config.executions[0].ruleName
-        : this.$t('modals.executeDeclareTicket.title');
+        : this.$t('modals.executeDeclareTickets.title');
     },
   },
   mounted() {
