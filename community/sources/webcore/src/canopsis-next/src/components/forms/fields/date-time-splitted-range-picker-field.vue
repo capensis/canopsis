@@ -99,8 +99,8 @@ $dashWidth: 26px;
   }
 
   &__start, &__end {
-    width: calc(50% - #{$dashWidth / 2});
-    max-width: calc(50% - #{$dashWidth / 2});
+    width: calc(50% - calc($dashWidth / 2));
+    max-width: calc(50% - calc($dashWidth / 2));
   }
 }
 </style>
