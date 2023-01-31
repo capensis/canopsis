@@ -11,3 +11,9 @@ export const DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES = {
   initiator: '.AdditionalData.Initiator',
   output: '.AdditionalData.Output',
 };
+
+export const DECLARE_TICKET_EXECUTION_STATUSES = {
+  running: 1,
+  succeeded: 2,
+  failed: 3,
+};

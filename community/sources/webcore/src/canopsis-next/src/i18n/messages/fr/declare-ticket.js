@@ -24,6 +24,8 @@ export default {
   userId: 'Identifiant d\'utilisateur',
   actionInitiator: 'Initiateur d\'actions',
   triggerEventMessage: 'Déclencher un message d\'événement',
+  webhookStatus: 'Statut du webhook',
+  webhookComplete: 'Webhook terminé',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',

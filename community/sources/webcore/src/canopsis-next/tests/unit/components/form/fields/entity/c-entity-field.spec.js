@@ -5,17 +5,20 @@ import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { BASIC_ENTITY_TYPES, SAMPLINGS } from '@/constants';
 
+import { PAGINATION_LIMIT } from '@/config';
 import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
-import { PAGINATION_LIMIT } from '@/config';
+import CLazySearchField from '@/components/forms/fields/c-lazy-search-field';
 
 const localVue = createVueInstance();
 
 const stubs = {
+  'c-lazy-search-field': CLazySearchField,
   'c-select-field': createSelectInputStub('c-select-field'),
 };
 
 const snapshotStubs = {
+  'c-lazy-search-field': CLazySearchField,
   'c-select-field': CSelectField,
 };
 

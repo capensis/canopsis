@@ -1,45 +1,27 @@
 <template lang="pug">
-  c-select-field.c-entity-field(
+  c-lazy-search-field(
     v-field="value",
-    v-validate="rules",
-    :search-input="query.search",
     :label="selectLabel",
-    :loading="entitiesPending",
+    :loading="pending",
     :items="entities",
     :name="name",
+    :has-more="hasMoreEntities",
     :item-text="itemText",
     :item-value="itemValue",
-    :multiple="isMultiply",
-    :deletable-chips="isMultiply",
-    :small-chips="isMultiply",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
-    :return-object="returnObject",
     :item-disabled="itemDisabled",
-    :menu-props="{ contentClass: 'c-entity-field__list' }",
+    :required="required",
     :clearable="clearable",
-    no-filter,
-    combobox,
-    dense,
-    @focus="onFocus",
-    @blur="onBlur",
-    @update:searchInput="debouncedUpdateSearch"
+    :autocomplete="autocomplete",
+    :return-object="returnObject",
+    @fetch="fetchEntities",
+    @fetch:more="fetchMoreEntities",
+    @update:search="updateSearch"
   )
-    template(#item="{ item, tile }")
-      v-list-tile.c-entity-field--tile(v-bind="tile.props", v-on="tile.on")
-        slot(name="icon", :item="item")
-        v-list-tile-content {{ getItemText(item) }}
-        span.ml-4.grey--text {{ item.type }}
-    template(#append-item="")
-      div.c-entity-field__append(ref="append")
-    template(v-if="isMultiply", #selection="{ item, index }")
-      v-chip.c-entity-field__chip(small, close, @input="removeItemFromArray(index)")
-        span.ellipsis {{ getItemText(item) }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { debounce, isEqual, keyBy, isArray, isString, isFunction } from 'lodash';
+import { isArray, keyBy, pick } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
@@ -97,6 +79,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    autocomplete: {
+      type: Boolean,
+      default: false,
+    },
     itemDisabled: {
       type: [String, Array, Function],
       required: false,
@@ -108,9 +94,8 @@ export default {
   },
   data() {
     return {
-      isFocused: false,
       entitiesById: {},
-      entitiesPending: false,
+      pending: false,
       pageCount: Infinity,
 
       query: {
@@ -120,18 +105,12 @@ export default {
     };
   },
   computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-
     entities() {
       return Object.values(this.entitiesById);
     },
 
-    isMultiply() {
-      return isArray(this.value);
+    hasMoreEntities() {
+      return this.pageCount > this.query.page;
     },
 
     selectLabel() {
@@ -146,68 +125,8 @@ export default {
       return this.$tc('common.entity');
     },
   },
-  watch: {
-    query: {
-      deep: true,
-      handler(newQuery, prevQuery) {
-        if (this.isFocused && !isEqual(newQuery, prevQuery)) {
-          this.fetchEntities();
-        }
-      },
-    },
-  },
-  created() {
-    this.debouncedUpdateSearch = debounce(this.updateSearch, 300);
-  },
-  mounted() {
-    this.observer = new IntersectionObserver(this.intersectionHandler);
-
-    this.observer.observe(this.$refs.append);
-  },
-  beforeDestroy() {
-    this.observer.unobserve(this.$refs.append);
-  },
   methods: {
     ...entityMapActions({ fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore' }),
-
-    getItemText(item) {
-      if (isString(item)) {
-        return item;
-      }
-
-      return isFunction(this.itemText) ? this.itemText(item) : item[this.itemText];
-    },
-
-    intersectionHandler(entries) {
-      const [entry] = entries;
-
-      if (entry.isIntersecting && this.pageCount > this.query.page) {
-        this.query = {
-          ...this.query,
-          page: this.query.page + 1,
-        };
-      }
-    },
-
-    updateSearch(value) {
-      this.pageCount = Infinity;
-      this.query = {
-        page: 1,
-        search: value,
-      };
-    },
-
-    onFocus() {
-      this.isFocused = true;
-
-      if (!this.entities.length) {
-        this.fetchEntities();
-      }
-    },
-
-    onBlur() {
-      this.isFocused = false;
-    },
 
     getQuery() {
       return {
@@ -220,7 +139,7 @@ export default {
 
     async fetchEntities() {
       try {
-        this.entitiesPending = true;
+        this.pending = true;
 
         const { data: entities, meta } = await this.fetchContextEntitiesListWithoutStore({
           params: this.getQuery(),
@@ -228,45 +147,35 @@ export default {
 
         this.pageCount = meta.page_count;
 
+        const currentEntities = this.returnObject
+          ? keyBy(this.value, '_id')
+          : pick(this.entitiesById, isArray(this.value) ? this.value : [this.value]);
+
         this.entitiesById = {
-          // ...this.entitiesById,
-          ...keyBy(entities, this.itemValue),
+          ...(this.query.page !== 1 ? this.entitiesById : {}),
+          ...keyBy(entities, '_id'),
+          ...currentEntities,
         };
+        this.entitiesById = keyBy(entities, this.itemValue);
       } catch (err) {
         console.error(err);
       } finally {
-        this.entitiesPending = false;
+        this.pending = false;
       }
+    },
+
+    fetchMoreEntities() {
+      this.query.page += 1;
+
+      this.fetchEntities();
+    },
+
+    updateSearch(search) {
+      this.query.search = search;
+      this.query.page = 1;
+
+      this.fetchEntities();
     },
   },
 };
 </script>
-
-<style lang="scss">
-.c-entity-field {
-  &__list .v-list {
-    position: relative;
-  }
-
-  &__append {
-    position: absolute;
-    pointer-events: none;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 300px;
-  }
-
-  .v-select__selections {
-    max-width: calc(100% - 24px);
-  }
-
-  &__chip {
-    max-width: 100%;
-
-    .v-chip__content {
-      max-width: 100%;
-    }
-  }
-}
-</style>

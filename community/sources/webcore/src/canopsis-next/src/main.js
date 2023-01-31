@@ -91,6 +91,8 @@ import CActionFabBtn from '@/components/common/buttons/c-action-fab-btn.vue';
 import CFabExpandBtn from '@/components/common/buttons/c-fab-expand-btn.vue';
 import CFabBtn from '@/components/common/buttons/c-fab-btn.vue';
 import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
+import CRequestTextInformation from '@/components/common/request/c-request-text-information.vue';
+import CJsonTreeview from '@/components/common/request/c-json-treeview.vue';
 
 /**
  * Fields
@@ -165,6 +167,7 @@ import CServiceWeatherIconField from '@/components/forms/fields/service-weather/
 import CServiceWeatherStateCounterField from '@/components/forms/fields/service-weather/c-service-weather-state-counter-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
+import CLazySearchFieldField from '@/components/forms/fields/c-lazy-search-field.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
 import CCardIterator from '@/components/common/card-iterator/c-card-iterator.vue';
@@ -186,6 +189,7 @@ import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pat
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CAlarmTagField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
+import CAlarmField from '@/components/forms/fields/alarm/c-alarm-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
 
@@ -420,6 +424,8 @@ Vue.component('c-filter-field', CFilterField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);
+Vue.component('c-request-text-information', CRequestTextInformation);
+Vue.component('c-json-treeview', CJsonTreeview);
 Vue.component('c-responsive-list', CResponsiveList);
 Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
@@ -436,6 +442,7 @@ Vue.component('c-draggable-list-field', CDraggableListField);
 Vue.component('c-number-field', CNumberField);
 Vue.component('c-select-field', CSelectField);
 Vue.component('c-entity-field', CEntityField);
+Vue.component('c-lazy-search-field', CLazySearchFieldField);
 Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
@@ -458,6 +465,7 @@ Vue.component('c-runtime-template', CRuntimeTemplate);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);
+Vue.component('c-alarm-field', CAlarmField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
