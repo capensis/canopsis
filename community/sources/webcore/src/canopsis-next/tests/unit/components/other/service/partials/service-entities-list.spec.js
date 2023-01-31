@@ -474,20 +474,27 @@ describe('service-entities-list', () => {
         status: 200,
       },
     ]);
+    const rule = {
+      _id: Faker.datatype.string(),
+      name: Faker.datatype.string(),
+    };
+
     const byRules = {
-      'ticket-id': {
-        name: 'Ticket name',
+      [rule._id]: {
+        name: rule.name,
         alarms: [],
       },
     };
+    const byAlarms = {};
     fetchAssignedDeclareTicketsWithoutStore.mockResolvedValueOnce({
       by_rules: byRules,
-      by_alarms: {},
+      by_alarms: byAlarms,
     });
     const entity = {
       _id: Faker.datatype.string(),
       pbehaviors: [],
     };
+
     const wrapper = factory({
       propsData: {
         serviceEntities: [
@@ -518,23 +525,18 @@ describe('service-entities-list', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    await config.action([{}]);
+    const events = [{ _id: rule._id }];
 
-    expect(bulkCreateDeclareTicketExecution).toBeCalled();
-
-    await flushPromises();
+    $modals.show.mockReset();
+    await config.action(events);
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.executeDeclareTickets,
         config: {
-          executions: [
-            {
-              alarms: [],
-              executionId: 'execution-id',
-              ruleName: 'Ticket name',
-            },
-          ],
+          executions: events,
+          alarms: [{}],
+          tickets: [rule],
         },
       },
     );
