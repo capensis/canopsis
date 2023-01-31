@@ -21,7 +21,7 @@ db.periodical_alarm.find({"v.tickets": {$exists: true}}).forEach(function (doc) 
 
 db.resolved_alarms.find({"v.tickets": {$exists: true}}).forEach(function (doc) {
     var ticket = doc.v.ticket
-    db.periodical_alarm.updateOne(
+    db.resolved_alarms.updateOne(
         {
             _id: doc._id
         },
