@@ -5,13 +5,12 @@ import (
 	"errors"
 	"time"
 
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -75,15 +74,37 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		isToggled = false
 		oldSimplifiedEntity = SimplifiedEntity{}
 
-		err := s.mainCollection.FindOneAndUpdate(
-			ctx,
-			bson.M{"_id": id},
-			bson.M{"$set": bson.M{"enabled": enabled}},
-			options.
-				FindOneAndUpdate().
-				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1, "depends": 1}).
-				SetReturnDocument(options.Before),
-		).Decode(&oldSimplifiedEntity)
+		cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": id}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "component",
+				"as":                      "resources",
+				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
+				"maxDepth":                0,
+			}},
+			{"$project": bson.M{
+				"_id":       1,
+				"enabled":   1,
+				"type":      1,
+				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		})
+		if err != nil {
+			return err
+		}
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&oldSimplifiedEntity)
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+
+		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"enabled": enabled}})
 		if err != nil {
 			return err
 		}
@@ -92,14 +113,18 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		return nil
 	})
 
+	if oldSimplifiedEntity.ID == "" {
+		return false, SimplifiedEntity{}, nil
+	}
+
 	if isToggled && !enabled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
-		depLen := len(oldSimplifiedEntity.Depends)
+		depLen := len(oldSimplifiedEntity.Resources)
 		from := 0
 
 		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
-				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:to]}},
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:to]}},
 				bson.M{"$set": bson.M{"enabled": enabled}},
 			)
 			if err != nil {
@@ -112,7 +137,7 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		if from < depLen {
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
-				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:depLen]}},
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:depLen]}},
 				bson.M{"$set": bson.M{"enabled": enabled}},
 			)
 			if err != nil {

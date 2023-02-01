@@ -38,9 +38,8 @@ type EventPublisher interface {
 type EntityConfiguration struct {
 	ID             string                `json:"-" bson:"_id"`
 	Name           string                `json:"name" bson:"name" binding:"required"`
-	Depends        []string              `json:"-" bson:"depends"`
-	Impact         []string              `json:"-" bson:"impact"`
 	Component      string                `json:"component" bson:"component,omitempty"`
+	Services       []string              `json:"-" bson:"services,omitempty"`
 	EnableHistory  []int64               `json:"-" bson:"enable_history"`
 	EntityPattern  pattern.Entity        `json:"entity_pattern" bson:"entity_pattern,omitempty"`
 	OutputTemplate string                `json:"output_template" bson:"output_template,omitempty"`
@@ -57,9 +56,9 @@ type EntityConfiguration struct {
 type ConfigurationItem struct {
 	ID             string                 `json:"_id" bson:"-"`
 	Name           *string                `json:"name" bson:"name,omitempty"`
-	Depends        []string               `json:"-" bson:"depends"`
-	Impact         []string               `json:"-" bson:"impact"`
 	Component      string                 `json:"-" bson:"component,omitempty"`
+	Connector      string                 `json:"-" bson:"connector,omitempty"`
+	Services       []string               `json:"-" bson:"services,omitempty"`
 	EnableHistory  []int64                `json:"-" bson:"enable_history"`
 	Measurements   []interface{}          `json:"measurements" bson:"measurements"`
 	EntityPattern  pattern.Entity         `json:"entity_pattern,omitempty" bson:"entity_pattern"`
