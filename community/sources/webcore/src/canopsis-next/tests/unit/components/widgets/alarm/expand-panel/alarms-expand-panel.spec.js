@@ -20,6 +20,7 @@ const stubs = {
   'time-line': true,
   'alarms-expand-panel-children': true,
   'service-dependencies': true,
+  'declared-tickets-list': true,
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
 };
@@ -110,6 +111,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget: {
           parameters: {
@@ -145,6 +147,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget,
       },
@@ -173,6 +176,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget: {
           parameters: {
@@ -199,6 +203,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget: {
           parameters: {
@@ -227,6 +232,9 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           entity: {
             type: ENTITY_TYPES.service,
             impact: ['test'],
+          },
+          v: {
+            tickets: [{}],
           },
         },
         widget: {
