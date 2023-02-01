@@ -4,6 +4,7 @@ package entity
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -24,14 +25,6 @@ type Adapter interface {
 	Count(ctx context.Context) (int, error)
 
 	UpsertMany(ctx context.Context, entities []types.Entity) (map[string]bool, error)
-
-	AddImpacts(ctx context.Context, ids []string, impacts []string) error
-
-	RemoveImpacts(ctx context.Context, ids []string, impacts []string) error
-
-	AddImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error)
-
-	RemoveImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error)
 
 	AddInfos(ctx context.Context, id string, infos map[string]types.Info) (bool, error)
 
