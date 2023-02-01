@@ -30,6 +30,7 @@ export default {
   webhookStatus: 'Webhook status',
   webhookComplete: 'Webhook complete',
   noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
+  ruleName: 'Rule name',
   errors: {
     webhookRequired: 'The webhooks must be added',
     webhookTicketDeclarationRequired: 'Some one webhook ticket declaration must be set',
