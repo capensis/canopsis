@@ -146,7 +146,11 @@ func TestValidator_ValidateDeclareTicket(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			isValid, errReport, wrnReports := v.ValidateDeclareTicketRuleTemplate(dataset.testString)
+			isValid, errReport, wrnReports, err := v.ValidateDeclareTicketRuleTemplate(dataset.testString)
+			if err != nil {
+				t.Errorf("error is not expected, but got %s", err.Error())
+			}
+
 			if isValid != dataset.expectedValid {
 				t.Errorf("expected valid = %t, got %t", dataset.expectedValid, isValid)
 			}
@@ -310,7 +314,11 @@ func TestValidator_ValidateScenarioWebhookTemplate(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			isValid, errReport, wrnReports := v.ValidateScenarioTemplate(dataset.testString)
+			isValid, errReport, wrnReports, err := v.ValidateScenarioTemplate(dataset.testString)
+			if err != nil {
+				t.Errorf("error is not expected, but got %s", err.Error())
+			}
+
 			if isValid != dataset.expectedValid {
 				t.Errorf("expected valid = %t, got %t", dataset.expectedValid, isValid)
 			}
