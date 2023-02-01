@@ -893,7 +893,7 @@ func RegisterRoutes(
 
 		protected.PUT(
 			"/widget-filter-positions",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
 			widgetFilterAPI.UpdatePositions,
 		)
 
