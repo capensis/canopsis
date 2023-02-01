@@ -98,7 +98,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
 
   return {
     enabled: !!declareTicket,
-    empty_response: emptyResponse ?? true,
+    empty_response: emptyResponse ?? false,
     is_regexp: isRegexp ?? false,
     ticket_id: ticketId ?? '',
     ticket_url: ticketUrl ?? '',

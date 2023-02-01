@@ -14,6 +14,7 @@ export default {
   ackMessage: 'Ack message',
   lastCommentAuthor: 'Last comment author',
   lastCommentMessage: 'Last comment message',
+  metaAlarm: 'Meta alarm',
   advancedSearch: '<span>Help on the advanced research :</span>\n'
     + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
     + '<p>The "-" before the research is required</p>\n'
@@ -111,6 +112,7 @@ export default {
     trackSource: 'Track source',
     impactChain: 'Impact chain',
     entityGantt: 'Gantt chart',
+    ticketsDeclared: 'Tickets declared',
   },
   moreInfos: {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',

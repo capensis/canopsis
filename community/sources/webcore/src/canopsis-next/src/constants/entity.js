@@ -15,6 +15,7 @@ export const EVENT_ENTITY_TYPES = {
   delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
+  declareTicketFail: 'declareticketfail',
   snooze: 'snooze',
   done: 'done',
   validate: 'validate',
