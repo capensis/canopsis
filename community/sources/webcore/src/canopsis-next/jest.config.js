@@ -41,5 +41,5 @@ module.exports = {
   setupFiles: ['jest-localstorage-mock'],
   setupFilesAfterEnv: ['<rootDir>/tests/unit/jest.setup-test-framework'],
   globalSetup: '<rootDir>/tests/unit/jest.global-setup',
-  maxWorkers: process.env.JEST_MAX_WORKERS ?? '50%',
+  maxWorkers: process.env.JEST_MAX_WORKERS ?? '10%',
 };
