@@ -32,7 +32,11 @@ func (a *api) ValidateDeclareTicketRules(c *gin.Context) {
 		return
 	}
 
-	isValid, errReport, wrnReports := a.validator.ValidateDeclareTicketRuleTemplate(request.Text)
+	isValid, errReport, wrnReports, err := a.validator.ValidateDeclareTicketRuleTemplate(request.Text)
+	if err != nil {
+		panic(err)
+	}
+
 	c.JSON(http.StatusOK, Response{
 		IsValid:  isValid,
 		Err:      errReport,
@@ -51,7 +55,11 @@ func (a *api) ValidateScenarios(c *gin.Context) {
 		return
 	}
 
-	isValid, errReport, wrnReports := a.validator.ValidateScenarioTemplate(request.Text)
+	isValid, errReport, wrnReports, err := a.validator.ValidateScenarioTemplate(request.Text)
+	if err != nil {
+		panic(err)
+	}
+
 	c.JSON(http.StatusOK, Response{
 		IsValid:  isValid,
 		Err:      errReport,
