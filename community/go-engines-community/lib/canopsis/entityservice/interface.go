@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -31,8 +32,8 @@ type Adapter interface {
 
 	AddToService(ctx context.Context, serviceId string, ids []string) error
 	RemoveFromService(ctx context.Context, serviceId string, ids []string) error
-	AddToServiceByQuery(ctx context.Context, serviceId string, query any) (int64, error)
-	RemoveFromServiceByQuery(ctx context.Context, serviceId string, query any) (int64, error)
+	AddToServiceByQuery(ctx context.Context, serviceId string, query bson.M) (int64, error)
+	RemoveFromServiceByQuery(ctx context.Context, serviceId string, query bson.M) (int64, error)
 }
 
 // Manager is used to implement context graph modifier for entity service.
