@@ -11,6 +11,7 @@ import (
 	entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
+	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	mongo0 "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -52,7 +53,7 @@ func (mr *MockAdapterMockRecorder) AddToService(arg0, arg1, arg2 interface{}) *g
 }
 
 // AddToServiceByQuery mocks base method.
-func (m *MockAdapter) AddToServiceByQuery(arg0 context.Context, arg1 string, arg2 interface{}) (int64, error) {
+func (m *MockAdapter) AddToServiceByQuery(arg0 context.Context, arg1 string, arg2 primitive.M) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddToServiceByQuery", arg0, arg1, arg2)
 	ret0, _ := ret[0].(int64)
@@ -156,7 +157,7 @@ func (mr *MockAdapterMockRecorder) RemoveFromService(arg0, arg1, arg2 interface{
 }
 
 // RemoveFromServiceByQuery mocks base method.
-func (m *MockAdapter) RemoveFromServiceByQuery(arg0 context.Context, arg1 string, arg2 interface{}) (int64, error) {
+func (m *MockAdapter) RemoveFromServiceByQuery(arg0 context.Context, arg1 string, arg2 primitive.M) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveFromServiceByQuery", arg0, arg1, arg2)
 	ret0, _ := ret[0].(int64)

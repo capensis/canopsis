@@ -324,8 +324,8 @@ func (m *manager) removeService(ctx context.Context, serviceID string) ([]string
 	return s.Services, nil
 }
 
-func getServiceQueries(data ServiceData) (interface{}, interface{}, error) {
-	var query, negativeQuery interface{}
+func getServiceQueries(data ServiceData) (bson.M, bson.M, error) {
+	var query, negativeQuery bson.M
 	var err error
 
 	if len(data.EntityPattern) > 0 {
