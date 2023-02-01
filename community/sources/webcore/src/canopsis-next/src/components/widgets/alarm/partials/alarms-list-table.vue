@@ -77,7 +77,8 @@
             :alarm="item",
             :widget="widget",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+            :is-parent="!!parentAlarm"
           )
     c-table-pagination(
       v-if="!hidePagination",

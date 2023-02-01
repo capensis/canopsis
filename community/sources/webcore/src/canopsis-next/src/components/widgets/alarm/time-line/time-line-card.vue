@@ -8,7 +8,7 @@
           :type="stepType"
         )
         p {{ stepTitle }}
-      p(v-else) {{ $t('alarmList.timeLine.stateCounter.header') }}
+      p(v-else) {{ $t('alarm.timeLine.stateCounter.header') }}
 
     div.time-line-card__content
       template(v-if="isStateCounter")
@@ -16,10 +16,10 @@
         p(v-else) {{ step.m }}
       table(v-else)
         tr
-          td {{ $t('alarmList.timeLine.stateCounter.stateIncreased') }} :
+          td {{ $t('alarm.timeLine.stateCounter.stateIncreased') }} :
           td {{ step.val.stateinc }}
         tr
-          td {{ $t('alarmList.timeLine.stateCounter.stateDecreased') }} :
+          td {{ $t('alarm.timeLine.stateCounter.stateDecreased') }} :
           td {{ step.val.statedec }}
         tr(v-for="state in states")
           td {{ $t('common.state') }} {{ state.text }} :
