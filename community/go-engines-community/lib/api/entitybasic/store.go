@@ -55,6 +55,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 		return nil, err
 	}
 
+	defer cursor.Close(ctx)
+
 	if cursor.Next(ctx) {
 		res := Entity{}
 		err := cursor.Decode(&res)
@@ -114,6 +116,9 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		if err != nil {
 			return err
 		}
+
+		defer cursor.Close(ctx)
+
 		if cursor.Next(ctx) {
 			err = cursor.Decode(&oldEntity)
 			if err != nil {
