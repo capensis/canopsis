@@ -96,49 +96,34 @@ func (mr *MockAdapterMockRecorder) FindByIDs(arg0, arg1 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByIDs", reflect.TypeOf((*MockAdapter)(nil).FindByIDs), arg0, arg1)
 }
 
-// FindComponentForResource mocks base method.
-func (m *MockAdapter) FindComponentForResource(arg0 context.Context, arg1 string) (*types.Entity, error) {
+// FindComponent mocks base method.
+func (m *MockAdapter) FindComponent(arg0 context.Context, arg1 string) (*types.Entity, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindComponentForResource", arg0, arg1)
+	ret := m.ctrl.Call(m, "FindComponent", arg0, arg1)
 	ret0, _ := ret[0].(*types.Entity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindComponentForResource indicates an expected call of FindComponentForResource.
-func (mr *MockAdapterMockRecorder) FindComponentForResource(arg0, arg1 interface{}) *gomock.Call {
+// FindComponent indicates an expected call of FindComponent.
+func (mr *MockAdapterMockRecorder) FindComponent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindComponentForResource", reflect.TypeOf((*MockAdapter)(nil).FindComponentForResource), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindComponent", reflect.TypeOf((*MockAdapter)(nil).FindComponent), arg0, arg1)
 }
 
-// FindConnectorForComponent mocks base method.
-func (m *MockAdapter) FindConnectorForComponent(arg0 context.Context, arg1 string) (*types.Entity, error) {
+// FindConnector mocks base method.
+func (m *MockAdapter) FindConnector(arg0 context.Context, arg1 string) (*types.Entity, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindConnectorForComponent", arg0, arg1)
+	ret := m.ctrl.Call(m, "FindConnector", arg0, arg1)
 	ret0, _ := ret[0].(*types.Entity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindConnectorForComponent indicates an expected call of FindConnectorForComponent.
-func (mr *MockAdapterMockRecorder) FindConnectorForComponent(arg0, arg1 interface{}) *gomock.Call {
+// FindConnector indicates an expected call of FindConnector.
+func (mr *MockAdapterMockRecorder) FindConnector(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindConnectorForComponent", reflect.TypeOf((*MockAdapter)(nil).FindConnectorForComponent), arg0, arg1)
-}
-
-// FindConnectorForResource mocks base method.
-func (m *MockAdapter) FindConnectorForResource(arg0 context.Context, arg1 string) (*types.Entity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindConnectorForResource", arg0, arg1)
-	ret0, _ := ret[0].(*types.Entity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindConnectorForResource indicates an expected call of FindConnectorForResource.
-func (mr *MockAdapterMockRecorder) FindConnectorForResource(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindConnectorForResource", reflect.TypeOf((*MockAdapter)(nil).FindConnectorForResource), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindConnector", reflect.TypeOf((*MockAdapter)(nil).FindConnector), arg0, arg1)
 }
 
 // FindToCheckPbehaviorInfo mocks base method.
@@ -213,21 +198,6 @@ func (m *MockAdapter) GetIDs(arg0 context.Context, arg1 map[string]interface{}, 
 func (mr *MockAdapterMockRecorder) GetIDs(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIDs", reflect.TypeOf((*MockAdapter)(nil).GetIDs), arg0, arg1, arg2)
-}
-
-// GetImpactedServicesInfo mocks base method.
-func (m *MockAdapter) GetImpactedServicesInfo(arg0 context.Context) (mongo.Cursor, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetImpactedServicesInfo", arg0)
-	ret0, _ := ret[0].(mongo.Cursor)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetImpactedServicesInfo indicates an expected call of GetImpactedServicesInfo.
-func (mr *MockAdapterMockRecorder) GetImpactedServicesInfo(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetImpactedServicesInfo", reflect.TypeOf((*MockAdapter)(nil).GetImpactedServicesInfo), arg0)
 }
 
 // GetWithIdleSince mocks base method.
