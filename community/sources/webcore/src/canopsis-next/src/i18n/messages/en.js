@@ -44,7 +44,7 @@ import {
   ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
-import featureService from '@/services/features';
+import featuresService from '@/services/features';
 
 export default merge({
   common: {
@@ -3317,4 +3317,4 @@ export default merge({
     generateDump: 'Generate a new dump',
     downloadDump: 'Download dump',
   },
-}, featureService.get('i18n.en'));
+}, featuresService.get('i18n.en'));

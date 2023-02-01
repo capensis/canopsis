@@ -584,7 +584,7 @@ export default {
 <style lang="scss" scoped>
 // We've turned off animation because of render freezes on css animation on the render process
 
-.calendar-progress /deep/ .v-progress-circular--indeterminate .v-progress-circular__overlay {
+.calendar-progress ::v-deep .v-progress-circular--indeterminate .v-progress-circular__overlay {
   animation: none;
 }
 </style>
