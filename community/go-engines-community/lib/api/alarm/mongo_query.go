@@ -1253,21 +1253,17 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$entity.services",
-			"connectFromField": "entity.services",
-			"connectToField":   "_id",
-			"as":               "service_impacts",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
 		}},
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$entity._id",
-			"connectFromField": "entity._id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "depends",
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},
