@@ -129,7 +129,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	if len(alarms) == 0 {
 		switch msg.EntityType {
 		case types.EntityTypeComponent:
-			connector, err := p.entityAdapter.FindConnectorForComponent(ctx, msg.ID)
+			connector, err := p.entityAdapter.FindConnector(ctx, msg.ID)
 			if err != nil || connector == nil {
 				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to component: no alarms and no connector")
 				return
@@ -140,12 +140,12 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 				Component:     msg.ID,
 			}
 		case types.EntityTypeResource:
-			connector, err := p.entityAdapter.FindConnectorForResource(ctx, msg.ID)
+			connector, err := p.entityAdapter.FindConnector(ctx, msg.ID)
 			if err != nil || connector == nil {
 				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no connector")
 				return
 			}
-			component, err := p.entityAdapter.FindComponentForResource(ctx, msg.ID)
+			component, err := p.entityAdapter.FindComponent(ctx, msg.ID)
 			if err != nil || component == nil {
 				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no component")
 				return
