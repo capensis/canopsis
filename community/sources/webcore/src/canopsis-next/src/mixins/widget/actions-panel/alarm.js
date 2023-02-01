@@ -99,6 +99,7 @@ export const widgetActionsPanelAlarmMixin = {
                     name: alarmsByTickets[id].name,
                   })),
                   alarms,
+                  onExecute: this.afterSubmit,
                 },
               });
             },
