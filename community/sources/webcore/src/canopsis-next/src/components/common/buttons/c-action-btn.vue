@@ -133,7 +133,7 @@ export default {
 .c-action-btn__badge {
   margin: 6px 4px;
 
-  & /deep/ .v-badge__badge {
+  & ::v-deep .v-badge__badge {
     top: -4px;
     right: -4px;
     height: 16px;
