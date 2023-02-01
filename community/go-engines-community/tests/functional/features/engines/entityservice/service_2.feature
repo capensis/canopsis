@@ -322,12 +322,6 @@ Feature: update service on event
           "value": "test-manager-service-second-2"
         }
       ],
-      "impact": [
-        "test-component-service-second-2"
-      ],
-      "depends": [
-        "test-connector-service-second-2/test-connector-name-service-second-2"
-      ],
       "sli_avail_state": 0
     }
     """
@@ -1674,12 +1668,6 @@ Feature: update service on event
       "impact_level": 1,
       "enabled": false,
       "infos": [],
-      "impact": [
-        "test-component-service-second-8"
-      ],
-      "depends": [
-        "test-connector-service-second-8/test-connector-name-service-second-8"
-      ],
       "sli_avail_state": 0
     }
     """
