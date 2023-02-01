@@ -37,35 +37,6 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// AddImpactByQuery mocks base method.
-func (m *MockAdapter) AddImpactByQuery(arg0 context.Context, arg1 interface{}, arg2 string) ([]string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddImpactByQuery", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// AddImpactByQuery indicates an expected call of AddImpactByQuery.
-func (mr *MockAdapterMockRecorder) AddImpactByQuery(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddImpactByQuery", reflect.TypeOf((*MockAdapter)(nil).AddImpactByQuery), arg0, arg1, arg2)
-}
-
-// AddImpacts mocks base method.
-func (m *MockAdapter) AddImpacts(arg0 context.Context, arg1, arg2 []string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddImpacts", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddImpacts indicates an expected call of AddImpacts.
-func (mr *MockAdapterMockRecorder) AddImpacts(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddImpacts", reflect.TypeOf((*MockAdapter)(nil).AddImpacts), arg0, arg1, arg2)
-}
-
 // AddInfos mocks base method.
 func (m *MockAdapter) AddInfos(arg0 context.Context, arg1 string, arg2 map[string]types.Info) (bool, error) {
 	m.ctrl.T.Helper()
@@ -286,35 +257,6 @@ func (m *MockAdapter) Insert(arg0 context.Context, arg1 types.Entity) error {
 func (mr *MockAdapterMockRecorder) Insert(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockAdapter)(nil).Insert), arg0, arg1)
-}
-
-// RemoveImpactByQuery mocks base method.
-func (m *MockAdapter) RemoveImpactByQuery(arg0 context.Context, arg1 interface{}, arg2 string) ([]string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveImpactByQuery", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RemoveImpactByQuery indicates an expected call of RemoveImpactByQuery.
-func (mr *MockAdapterMockRecorder) RemoveImpactByQuery(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveImpactByQuery", reflect.TypeOf((*MockAdapter)(nil).RemoveImpactByQuery), arg0, arg1, arg2)
-}
-
-// RemoveImpacts mocks base method.
-func (m *MockAdapter) RemoveImpacts(arg0 context.Context, arg1, arg2 []string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveImpacts", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RemoveImpacts indicates an expected call of RemoveImpacts.
-func (mr *MockAdapterMockRecorder) RemoveImpacts(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveImpacts", reflect.TypeOf((*MockAdapter)(nil).RemoveImpacts), arg0, arg1, arg2)
 }
 
 // Update mocks base method.
