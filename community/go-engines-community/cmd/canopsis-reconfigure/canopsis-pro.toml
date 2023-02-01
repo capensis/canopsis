@@ -51,6 +51,15 @@ internal = false
 noWait = false
 # args =
 
+[[RabbitMQ.exchanges]]
+name = "canopsis.snmp"
+kind = "topic"
+durable = true
+autoDelete = false
+internal = false
+noWait = false
+# args =
+
 [[RabbitMQ.queues]]
 name = "Engine_action"
 durable = true
@@ -238,6 +247,19 @@ name = "Engine_pbehavior_rpc_server"
 durable = true
 autoDelete = false
 exclusive = false
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_snmp"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+[RabbitMQ.queues.bind]
+key = "#"
+exchange = "canopsis.snmp"
 noWait = false
 # args =
 
