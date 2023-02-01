@@ -88,12 +88,12 @@ func (a *mongoAdapter) RemoveFromService(ctx context.Context, serviceId string, 
 	return err
 }
 
-func (a *mongoAdapter) AddToServiceByQuery(ctx context.Context, serviceId string, query any) (int64, error) {
+func (a *mongoAdapter) AddToServiceByQuery(ctx context.Context, serviceId string, query bson.M) (int64, error) {
 	var count int64
-	and := []any{
-		bson.M{"enabled": true},
+	and := []bson.M{
+		{"enabled": true},
 		query,
-		bson.M{"services": bson.M{"$nin": bson.A{serviceId}}},
+		{"services": bson.M{"$nin": bson.A{serviceId}}},
 	}
 	match := bson.M{"$and": and}
 	for {
@@ -139,8 +139,8 @@ func (a *mongoAdapter) AddToServiceByQuery(ctx context.Context, serviceId string
 	return count, nil
 }
 
-func (a *mongoAdapter) RemoveFromServiceByQuery(ctx context.Context, serviceId string, query any) (int64, error) {
-	and := []any{bson.M{"enabled": true}}
+func (a *mongoAdapter) RemoveFromServiceByQuery(ctx context.Context, serviceId string, query bson.M) (int64, error) {
+	and := []bson.M{{"enabled": true}}
 	if query != nil {
 		and = append(and, query)
 	}
@@ -191,7 +191,7 @@ func (a *mongoAdapter) RemoveFromServiceByQuery(ctx context.Context, serviceId s
 	return count, nil
 }
 
-func (a *mongoAdapter) find(ctx context.Context, filter interface{}) ([]EntityService, error) {
+func (a *mongoAdapter) find(ctx context.Context, filter bson.M) ([]EntityService, error) {
 	cursor, err := a.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (a *mongoAdapter) find(ctx context.Context, filter interface{}) ([]EntitySe
 	return res, nil
 }
 
-func (a *mongoAdapter) findOne(ctx context.Context, filter interface{}) (*EntityService, error) {
+func (a *mongoAdapter) findOne(ctx context.Context, filter bson.M) (*EntityService, error) {
 	mongoRes := a.collection.FindOne(ctx, filter)
 	if err := mongoRes.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
