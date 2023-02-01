@@ -3,7 +3,6 @@ package entityservice
 import (
 	"context"
 	"strings"
-	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -39,9 +38,6 @@ type ChangeEntityMessage struct {
 	EntityType string
 	// IsPatternChanged defines should service's context graph and state be recomputed.
 	IsServicePatternChanged bool
-	// ServiceAlarm is required on entity service delete because alarm is removed from
-	// storage but alarm state is required by engine-service.
-	ServiceAlarm *types.Alarm
 	// Resources are used only when component entity is toggled to toggle dependent resources
 	Resources []string
 }
@@ -107,10 +103,9 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 		Connector:     types.ConnectorEngineService,
 		ConnectorName: types.ConnectorEngineService,
 		Component:     msg.ID,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     types.NewCpsTime(),
 		Author:        canopsis.DefaultEventAuthor,
 		SourceType:    types.SourceTypeService,
-		Alarm:         msg.ServiceAlarm,
 	}
 
 	err := p.publishEvent(ctx, event)
