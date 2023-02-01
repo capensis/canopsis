@@ -1,10 +1,5 @@
 <template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="tickets",
-    hide-actions,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
+  c-advanced-data-table(:headers="headers", :items="tickets", hide-actions, disable-initial-sort)
     template(#ticket_url="{ item }")
       template(v-if="item.ticket_url")
         a(v-if="isValidTicketUrl(item.ticket_url)", :href="item.ticket_url", target="_blank") {{ item.ticket_url }}
@@ -14,7 +9,6 @@
       c-help-icon(v-bind="getIconProps(item)", top)
     template(#ticket_meta_alarm_id="{ item }")
       v-icon(v-if="item.ticket_meta_alarm_id", top) low_priority
-    template(#actions="{ item }")
 </template>
 
 <script>
@@ -54,7 +48,7 @@ export default {
     },
 
     isSuccessTicket(ticket) {
-      return ticket._t === EVENT_ENTITY_TYPES.declareTicket;
+      return [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket._t);
     },
 
     getIconProps(item) {
