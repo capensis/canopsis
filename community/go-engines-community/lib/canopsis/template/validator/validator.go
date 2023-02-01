@@ -12,7 +12,9 @@ import (
 )
 
 const (
-	parseErrorMatches = 3
+	locationStringMatch = 1
+	messageStringMatch  = 2
+	parseErrorMatches   = 3
 )
 
 const (
@@ -28,15 +30,16 @@ const (
 )
 
 type RegexpInfo struct {
-	errRegexp     *regexp.Regexp
-	errType       int
+	errRegexp *regexp.Regexp
+	errType   int
+	// matchesNumber equals number of matched groups in errRegexp + 1
 	matchesNumber int
 	getErrMessage func([]string) string
 }
 
 type Validator interface {
-	ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport)
-	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport)
+	ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error)
+	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport, error)
 }
 
 type validator struct {
@@ -143,15 +146,15 @@ type WrnReport struct {
 	Var     string `json:"var,omitempty"`
 }
 
-func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport) {
+func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
 	return v.validate(s, v.declareTicketTplDataKeys)
 }
 
-func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport) {
+func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
 	return v.validate(s, v.scenarioTplDataKeys)
 }
 
-func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []WrnReport) {
+func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []WrnReport, error) {
 	location := v.timezoneConfigProvider.Get().Location
 
 	_, err := template.New("tpl").Funcs(libtemplate.GetFunctions(location)).Parse(s)
@@ -165,8 +168,12 @@ func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []Wr
 		// parse template parse error
 		tplErrorMatches := v.parseErrorRegex.FindStringSubmatch(fullErrString)
 		if len(tplErrorMatches) == parseErrorMatches {
-			report.Line = getLine(tplErrorMatches[1])
-			report.Message = tplErrorMatches[2]
+			report.Line, err = getLine(tplErrorMatches[locationStringMatch])
+			if err != nil {
+				return false, nil, nil, err
+			}
+
+			report.Message = tplErrorMatches[messageStringMatch]
 
 			for _, regexInfo := range v.parseErrorsMsgRegexInfo {
 				errMsgMatches := regexInfo.errRegexp.FindStringSubmatch(report.Message)
@@ -179,7 +186,7 @@ func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []Wr
 			}
 		}
 
-		return false, report, nil
+		return false, report, nil, nil
 	}
 
 	var warnings []WrnReport
@@ -195,19 +202,19 @@ func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []Wr
 		}
 	}
 
-	return true, nil, warnings
+	return true, nil, warnings, nil
 }
 
-func getLine(s string) int {
+func getLine(s string) (int, error) {
 	locationSplit := strings.Split(s, ":")
 	if len(locationSplit) < 2 {
-		panic(fmt.Errorf("template exec error contains invalid location value = %s", s))
+		return 0, fmt.Errorf("template exec error contains invalid location value = %s", s)
 	}
 
 	line, err := strconv.Atoi(locationSplit[1])
 	if err != nil {
-		panic(fmt.Errorf("convert line variable to int error = %w", err))
+		return 0, fmt.Errorf("convert line variable to int error = %w", err)
 	}
 
-	return line
+	return line, nil
 }
