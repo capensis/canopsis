@@ -53,6 +53,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
@@ -68,6 +69,7 @@ import (
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -1594,6 +1596,21 @@ func RegisterRoutes(
 				security.GetFileAuthMiddleware(),
 				middleware.Authorize(apisecurity.PermTechMetrics, model.PermissionCan, enforcer),
 				techMetricsAPI.DownloadExport,
+			)
+		}
+
+		templateValidatorApi := template.NewApi(validator.NewValidator(timezoneConfigProvider))
+		templateValidatorRouter := protected.Group("/template-validator")
+		{
+			templateValidatorRouter.POST(
+				"/declare-ticket-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateDeclareTicketRules,
+			)
+			templateValidatorRouter.POST(
+				"/scenarios",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateScenarios,
 			)
 		}
 	}
