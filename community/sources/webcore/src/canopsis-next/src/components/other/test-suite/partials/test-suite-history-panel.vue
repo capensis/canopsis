@@ -32,7 +32,7 @@ export default {
 
 <style lang="scss" scoped>
 .test-suite-history {
-  & /deep/ .v-expansion-panel {
+  & ::v-deep .v-expansion-panel {
     border-radius: 5px;
     overflow: hidden;
   }

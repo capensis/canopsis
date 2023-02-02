@@ -61,6 +61,7 @@ var docsUiFile embed.FS
 var docsFile embed.FS
 
 type ConfigProviders struct {
+	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
@@ -96,6 +97,9 @@ func Default(
 	}
 	if p.TimezoneConfigProvider == nil {
 		p.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+	}
+	if p.DataStorageConfigProvider == nil {
+		p.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
@@ -179,8 +183,8 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
-		entity.NewStore(dbClient, p.TimezoneConfigProvider),
 		datastorage.NewAdapter(dbClient),
+		p.DataStorageConfigProvider,
 		metricsEntityMetaUpdater,
 		logger,
 	)
@@ -370,7 +374,7 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
+	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
 		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, configUpdateInterval, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
@@ -459,6 +463,7 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProviders []libsecurity
 
 func updateConfig(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	dataStorageConfigProvider *config.BaseDataStorageConfigProvider,
 	apiConfigProvider *config.BaseApiConfigProvider,
 	techMetricsConfigProvider *config.BaseTechMetricsConfigProvider,
 	configAdapter config.Adapter,
@@ -483,6 +488,7 @@ func updateConfig(
 				timezoneConfigProvider.Update(cfg)
 				apiConfigProvider.Update(cfg)
 				techMetricsConfigProvider.Update(cfg)
+				dataStorageConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {

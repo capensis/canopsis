@@ -24,9 +24,9 @@ import { MODALS } from '@/constants';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertWidgetQueryToRequest } from '@/helpers/query';
-import { alarmsListColumnsToTableColumns } from '@/helpers/forms/widgets/alarm';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 
 import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/alarms-list-table-with-pagination.vue';
 
@@ -35,15 +35,20 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.alarmsList,
   components: { AlarmsListTableWithPagination, ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    widgetColumnsAlarmMixin,
+  ],
   data() {
+    const { config = {} } = this.modal;
+
     return {
       pending: false,
       alarms: [],
       meta: {},
       query: {
         page: 1,
-        limit: PAGINATION_LIMIT,
+        limit: config.widget?.parameters?.itemsPerPage ?? PAGINATION_LIMIT,
       },
     };
   },
@@ -54,10 +59,6 @@ export default {
 
     widget() {
       return this.config.widget ?? generateDefaultAlarmListWidget();
-    },
-
-    columns() {
-      return alarmsListColumnsToTableColumns(this.config.widget.parameters.widgetColumns);
     },
   },
   watch: {

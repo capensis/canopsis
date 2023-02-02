@@ -48,7 +48,7 @@ export default {
     border: 1px solid #707070;
   }
 
-  &-radio-group /deep/ .v-input__control {
+  &-radio-group ::v-deep .v-input__control {
     width: 100%;
   }
 }
