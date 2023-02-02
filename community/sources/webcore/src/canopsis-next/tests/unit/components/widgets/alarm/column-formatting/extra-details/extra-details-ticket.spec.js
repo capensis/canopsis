@@ -1,8 +1,8 @@
-import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
 
@@ -15,11 +15,20 @@ describe('extra-details-ticket', () => {
 
   mockDateNow(nowTimestamp);
 
-  const ticket = {
-    a: 'ticket-author',
-    t: prevDateTimestamp,
-    val: 'ticket-message',
-  };
+  const tickets = [
+    {
+      a: 'ticket-author-1',
+      t: prevDateTimestamp,
+      ticket_rule_name: 'ticket-rule-name-1',
+      ticket: 'ticket-1',
+      _t: EVENT_ENTITY_TYPES.declareTicket,
+    },
+    {
+      a: 'ticket-author-2',
+      t: prevMonthDateTimestamp,
+      ticket_rule_name: 'ticket-rule-name-2',
+    },
+  ];
 
   const snapshotFactory = generateRenderer(ExtraDetailsTicket, {
     localVue,
@@ -29,7 +38,7 @@ describe('extra-details-ticket', () => {
   it('Renders `extra-details-ticket` with full ticket', async () => {
     snapshotFactory({
       propsData: {
-        ticket,
+        tickets,
       },
     });
 
@@ -41,7 +50,7 @@ describe('extra-details-ticket', () => {
   it('Renders `extra-details-ticket` without value', async () => {
     snapshotFactory({
       propsData: {
-        ticket: omit(ticket, ['val']),
+        tickets,
       },
     });
 
@@ -53,10 +62,7 @@ describe('extra-details-ticket', () => {
   it('Renders `extra-details-ticket` with date in previous month', async () => {
     snapshotFactory({
       propsData: {
-        ticket: {
-          ...ticket,
-          t: prevMonthDateTimestamp,
-        },
+        tickets,
       },
     });
 
