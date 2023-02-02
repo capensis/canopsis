@@ -56,8 +56,12 @@ type CleanTask struct {
 }
 
 type ExportResponse struct {
-	ID     string `json:"_id"`
-	Status int    `json:"status"`
+	ID string `json:"_id"`
+	// Possible values.
+	//   * `0` - Running
+	//   * `1` - Succeeded
+	//   * `2` - Failed
+	Status int `json:"status"`
 }
 
 type Entity struct {
@@ -106,6 +110,8 @@ type Entity struct {
 
 	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	Depends []string `bson:"depends,omitempty" json:"-"`
 }
 
 func (e *Entity) fillConnectorType() {
@@ -170,9 +176,10 @@ type BulkToggleRequestItem struct {
 }
 
 type SimplifiedEntity struct {
-	ID      string `bson:"_id"`
-	Type    string `bson:"type"`
-	Enabled bool   `bson:"enabled"`
+	ID      string   `bson:"_id"`
+	Type    string   `bson:"type"`
+	Enabled bool     `bson:"enabled"`
+	Depends []string `bson:"depends"`
 }
 
 type ContextGraphRequest struct {
