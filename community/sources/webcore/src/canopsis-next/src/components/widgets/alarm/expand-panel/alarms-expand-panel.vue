@@ -40,7 +40,7 @@
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
-                declared-tickets-list(:tickets="alarm.v.tickets", :hide-meta-alarm="!isParent")
+                declared-tickets-list(:tickets="alarm.v.tickets")
 
     v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
@@ -166,10 +166,6 @@ export default {
       default: false,
     },
     isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
-    isParent: {
       type: Boolean,
       default: false,
     },

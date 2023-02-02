@@ -395,7 +395,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   class="v-card__text"
                 >
                   <declared-tickets-list-stub
-                    hidemetaalarm="true"
                     tickets="[object Object]"
                   />
                 </div>
