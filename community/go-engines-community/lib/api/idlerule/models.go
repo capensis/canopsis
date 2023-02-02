@@ -92,7 +92,10 @@ type Parameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty" bson:"state"`
 	// AssocTicket
-	Ticket string `json:"ticket,omitempty" bson:"ticket"`
+	Ticket           string            `json:"ticket,omitempty" bson:"ticket"`
+	TicketURL        string            `json:"ticket_url,omitempty" bson:"ticket_url"`
+	TicketSystemName string            `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
+	TicketData       map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
 	// Pbehavior
