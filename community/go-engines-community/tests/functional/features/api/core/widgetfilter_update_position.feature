@@ -3,7 +3,7 @@ Feature: Update widget filter positions
   Only admin should be able to widget filter positions
 
   Scenario: given update private filters request should return ok
-    When I am test-role-to-filter-update-position
+    When I am test-role-to-filter-update-position-1
     When I do POST /api/v4/widget-filters:
     """json
     {
@@ -104,7 +104,7 @@ Feature: Update widget filter positions
     """
 
   Scenario: given update public filters request should return ok
-    When I am test-role-to-filter-update-position
+    When I am test-role-to-filter-update-position-2
     When I do POST /api/v4/widgets:
     """json
     {
@@ -276,7 +276,7 @@ Feature: Update widget filter positions
     Then the response code should be 403
 
   Scenario: given invalid request should return error
-    When I am test-role-to-filter-update-position
+    When I am test-role-to-filter-update-position-2
     When I do PUT /api/v4/widget-filter-positions:
     """json
     []
@@ -296,7 +296,7 @@ Feature: Update widget filter positions
       "test-widgetfilter-not-exist"
     ]
     """
-    Then the response code should be 403
+    Then the response code should be 404
     When I do PUT /api/v4/widget-filter-positions:
     """json
     [
@@ -304,7 +304,7 @@ Feature: Update widget filter positions
       "test-widgetfilter-not-exist"
     ]
     """
-    Then the response code should be 403
+    Then the response code should be 400
     When I do PUT /api/v4/widget-filter-positions:
     """json
     [
@@ -332,7 +332,7 @@ Feature: Update widget filter positions
     Then the response body should contain:
     """json
     {
-      "error": "filters are related to different widgets"
+      "error": "filters are related to different widgets or users"
     }
     """
     When I do PUT /api/v4/widget-filter-positions:
@@ -346,7 +346,7 @@ Feature: Update widget filter positions
     Then the response body should contain:
     """json
     {
-      "error": "filters are related to different widgets"
+      "error": "filters are related to different widgets or users"
     }
     """
     When I do PUT /api/v4/widget-filter-positions:
@@ -356,13 +356,7 @@ Feature: Update widget filter positions
       "test-widgetfilter-to-update-position-3-3"
     ]
     """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "error": "filters are related to different users"
-    }
-    """
+    Then the response code should be 404
     When I do PUT /api/v4/widget-filter-positions:
     """json
     [
@@ -373,7 +367,7 @@ Feature: Update widget filter positions
     Then the response body should contain:
     """json
     {
-      "error": "filters are missing"
+      "error": "filters are related to different widgets or users"
     }
     """
     When I do PUT /api/v4/widget-filter-positions:
@@ -382,13 +376,7 @@ Feature: Update widget filter positions
       "test-widgetfilter-to-update-position-3-3"
     ]
     """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "error": "filters are missing"
-    }
-    """
+    Then the response code should be 404
     When I do PUT /api/v4/widget-filter-positions:
     """json
     [
