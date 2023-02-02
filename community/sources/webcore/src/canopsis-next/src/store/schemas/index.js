@@ -7,6 +7,7 @@ import {
   childMergeStrategy,
   parentProcessStrategy,
 } from './helpers';
+import featuresService from '@/services/features';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -203,4 +204,6 @@ export default {
   [ENTITIES_TYPES.alarmTag]: alarmTagSchema,
   [ENTITIES_TYPES.shareToken]: shareTokenSchema,
   [ENTITIES_TYPES.widgetTemplate]: widgetTemplateSchema,
+
+  ...featuresService.get('schemas', {}),
 };
