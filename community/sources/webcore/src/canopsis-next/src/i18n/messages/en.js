@@ -45,7 +45,7 @@ import {
   ENTITIES_TYPES,
 } from '@/constants';
 
-import featureService from '@/services/features';
+import featuresService from '@/services/features';
 
 export default merge({
   common: {
@@ -3356,4 +3356,4 @@ export default merge({
     [ENTITIES_TYPES.alarm]: 'Alarm',
     [ENTITIES_TYPES.entity]: 'Entity',
   },
-}, featureService.get('i18n.en'));
+}, featuresService.get('i18n.en'));

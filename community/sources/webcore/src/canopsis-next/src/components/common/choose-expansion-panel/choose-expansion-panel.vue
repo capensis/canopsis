@@ -62,7 +62,7 @@ export default {
 
 <style scoped lang="scss">
   .choose-expansion-panel {
-    & /deep/ .v-expansion-panel__header .v-icon {
+    & ::v-deep .v-expansion-panel__header .v-icon {
       color: white !important;
     }
   }

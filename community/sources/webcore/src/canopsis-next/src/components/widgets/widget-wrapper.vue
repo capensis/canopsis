@@ -33,6 +33,8 @@ import {
   prepareMapWidget,
 } from '@/helpers/widgets';
 
+import featuresService from '@/services/features';
+
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import ServiceWeatherWidget from './service-weather/service-weather.vue';
@@ -54,6 +56,8 @@ export default {
     TextWidget,
     CounterWidget,
     MapWidget,
+
+    ...featuresService.get('components.widgetWrapper.components', {}),
   },
   props: {
     widget: {
@@ -115,6 +119,8 @@ export default {
         [WIDGET_TYPES.counter]: 'counter-widget',
         [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
         [WIDGET_TYPES.map]: 'map-widget',
+
+        ...featuresService.get('components.widgetWrapper.widgetProps.widgetComponentsMap', {}),
       };
       let widgetSpecificsProp = {};
 
