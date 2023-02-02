@@ -6,7 +6,7 @@
     :total-items="totalItems",
     :pagination="pagination",
     :is-disabled-item="isDisabledType",
-    :select-all="deletable",
+    :select-all="removable",
     expand,
     search,
     advanced-pagination,
