@@ -2144,6 +2144,14 @@ definitions:
       ticket:
         description: AssocTicket
         type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
       tstart:
         type: integer
       tstop:
