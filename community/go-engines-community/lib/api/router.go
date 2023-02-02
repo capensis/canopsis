@@ -888,7 +888,7 @@ func RegisterRoutes(
 			)
 			widgetFilterRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
 				widgetFilterAPI.Delete,
 			)
 		}
