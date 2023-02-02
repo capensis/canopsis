@@ -33,7 +33,7 @@ func (g *generator) Generate(
 	case types.EntityTypeConnector:
 		event.Connector = strings.TrimSuffix(entity.ID, "/"+entity.Name)
 		event.ConnectorName = entity.Name
-		event.SourceType = event.DetectSourceType()
+		event.SourceType = types.SourceTypeConnector
 	case types.EntityTypeComponent:
 		if entity.Connector == "" {
 			event.Connector = g.connector
@@ -42,7 +42,7 @@ func (g *generator) Generate(
 			event.Connector, event.ConnectorName, _ = strings.Cut(entity.Connector, "/")
 		}
 		event.Component = entity.Name
-		event.SourceType = event.DetectSourceType()
+		event.SourceType = types.SourceTypeComponent
 	case types.EntityTypeResource:
 		if entity.Connector == "" {
 			event.Connector = g.connector
@@ -52,7 +52,7 @@ func (g *generator) Generate(
 		}
 		event.Component = entity.Component
 		event.Resource = entity.Name
-		event.SourceType = event.DetectSourceType()
+		event.SourceType = types.SourceTypeResource
 	case types.EntityTypeService:
 		event.Connector = g.connector
 		event.ConnectorName = g.connectorName
