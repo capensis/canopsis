@@ -6,6 +6,8 @@
     :disabled="disabled",
     :hide-details="hideDetails"
   )
+    template(#append="")
+      slot(name="append")
 </template>
 
 <script>

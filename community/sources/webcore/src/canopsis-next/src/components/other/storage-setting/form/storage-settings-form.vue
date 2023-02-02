@@ -68,6 +68,25 @@
         :label="$t('storageSetting.healthCheck.deleteAfter')",
         :name="healthCheckDeleteAfterFieldName"
       )
+    c-information-block(
+      :title="$t('storageSetting.webhook.title')",
+      :help-text="$t('storageSetting.webhook.titleHelp')"
+    )
+      template(v-if="history.webhook", #subtitle="") {{ webhookSubTitle }}
+      c-enabled-duration-field(
+        v-field="form.webhook.delete_after",
+        :label="$t('storageSetting.webhook.deleteAfter')",
+        :help-text="$t('storageSetting.webhook.deleteAfterHelpText')",
+        :name="webhookDeleteAfterFieldName"
+      )
+      c-enabled-field(
+        v-field="form.webhook.sanitize_request",
+        :label="$t('storageSetting.webhook.sanitizeRequest')",
+        :name="webhookSanitizeRequestFieldName",
+        hide-details
+      )
+        template(#append="")
+          c-help-icon(:text="$t('storageSetting.webhook.sanitizeRequestHelpText')", top)
 </template>
 
 <script>
@@ -120,6 +139,14 @@ export default {
       return 'health_check.delete_after';
     },
 
+    webhookDeleteAfterFieldName() {
+      return 'webhook.delete_after';
+    },
+
+    webhookSanitizeRequestFieldName() {
+      return 'webhook.sanitize_request';
+    },
+
     junitSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: convertDateToString(this.history.junit),
@@ -141,6 +168,12 @@ export default {
     healthCheckSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: convertDateToString(this.history.health_check),
+      });
+    },
+
+    webhookSubTitle() {
+      return this.$t('storageSetting.history.scriptLaunched', {
+        launchedAt: convertDateToString(this.history.webhook),
       });
     },
 
