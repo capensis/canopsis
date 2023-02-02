@@ -96,6 +96,7 @@ job:
   job_to_check_linked_to_manual_instruction:
     <<: *job
     _id: test-job-to-check-linked-to-manual-instruction
+    name: test-job-to-check-linked-to-manual-instruction
 
   job_to_check_linked_to_auto_instruction:
     <<: *job
