@@ -24,7 +24,7 @@ import {
 } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
-import { generateDefaultContextWidget } from '@/helpers/entities';
+import { generatePreparedDefaultContextWidget } from '@/helpers/entities';
 import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -553,19 +553,19 @@ export default {
      * @param {string} entityId
      */
     showAllDependenciesModal(entityId) {
-      const widget = generateDefaultContextWidget();
+      const config = {
+        entityId,
+        impact: this.impact,
+      };
 
       if (this.columns.length) {
-        widget.parameters.widgetColumns = this.columns;
+        config.widget = generatePreparedDefaultContextWidget();
+        config.widget.parameters.widgetColumns = this.columns;
       }
 
       this.$modals.show({
         name: MODALS.entityDependenciesList,
-        config: {
-          entityId,
-          widget,
-          impact: this.impact,
-        },
+        config,
       });
     },
 

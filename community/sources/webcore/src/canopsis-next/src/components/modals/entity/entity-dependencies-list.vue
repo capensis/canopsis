@@ -14,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { generateDefaultContextWidget } from '@/helpers/entities';
+import { generatePreparedDefaultContextWidget } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
@@ -35,7 +35,7 @@ export default {
     },
 
     widget() {
-      return this.config.widget ?? generateDefaultContextWidget();
+      return this.config.widget ?? generatePreparedDefaultContextWidget();
     },
   },
 };
