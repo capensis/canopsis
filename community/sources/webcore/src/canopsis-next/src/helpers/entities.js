@@ -11,7 +11,7 @@ import uid from './uid';
 import uuid from './uuid';
 import { convertDateToString } from './date/date';
 import { formToWidget, widgetToForm } from './forms/widgets/common';
-import { prepareAlarmListWidget } from './widgets';
+import { prepareAlarmListWidget, prepareContextWidget } from './widgets';
 
 /**
  * Checks if alarm is resolved
@@ -129,6 +129,13 @@ export const generateDefaultContextWidget = () => ({
 
   _id: uuid(),
 });
+
+/**
+ * Generate prepared default context
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
 
 /**
  * Generate service weather widget with default parameters.
