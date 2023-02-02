@@ -351,8 +351,6 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	connector := types.Entity{
 		ID:            connectorID,
 		Name:          event.ConnectorName,
-		Impacts:       []string{},
-		Depends:       []string{componentID},
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeConnector,
@@ -365,8 +363,6 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	component := types.Entity{
 		ID:            componentID,
 		Name:          event.Component,
-		Impacts:       []string{connectorID},
-		Depends:       []string{},
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeComponent,
@@ -379,23 +375,18 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	}
 	if resourceID == "" {
 		component.LastEventDate = &now
-	} else {
-		connector.Impacts = append(connector.Impacts, resourceID)
-		component.Depends = append(component.Depends, resourceID)
 	}
 
 	var entities []types.Entity
 
 	if entity != nil {
-		if event.SourceType == types.SourceTypeResource && (entity.SoftDeleted != nil || !entity.HasDepend(connectorID)) {
+		if event.SourceType == types.SourceTypeResource && (entity.SoftDeleted != nil || entity.Connector != connectorID) {
 			entity.Connector = connectorID
-			entity.Depends = append(entity.Depends, connectorID)
 			entities = []types.Entity{connector, component, *entity}
 		}
 
-		if event.SourceType == types.SourceTypeComponent && (entity.SoftDeleted != nil || !entity.HasImpact(connectorID)) {
+		if event.SourceType == types.SourceTypeComponent && (entity.SoftDeleted != nil || entity.Connector != connectorID) {
 			entity.Connector = connectorID
-			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
 		}
 	} else {
@@ -404,8 +395,6 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 			resource := types.Entity{
 				ID:            resourceID,
 				Name:          event.Resource,
-				Impacts:       []string{componentID},
-				Depends:       []string{connectorID},
 				EnableHistory: []types.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
