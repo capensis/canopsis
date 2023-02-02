@@ -9077,6 +9077,74 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/declare-ticket-rules:
+    post:
+      tags:
+        - template-validator
+      summary: Validate declare ticket rule template
+      description: Validate declare ticket rule template
+      operationId: template-validator-declare-ticket-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: {
+                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/scenarios:
+    post:
+      tags:
+        - template-validator
+      summary: Validate scenario template
+      description: Validate scenario template
+      operationId: template-scenario-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: {
+                  "text": "{{ .Alarm.Value.Output }}"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /user-preferences:
     put:
       tags:

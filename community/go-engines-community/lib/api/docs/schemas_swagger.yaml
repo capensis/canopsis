@@ -4085,6 +4085,22 @@ definitions:
             * `4` - Disabled
         type: integer
     type: object
+  template.Request:
+    properties:
+      text:
+        type: string
+    type: object
+  template.Response:
+    properties:
+      err:
+        $ref: '#/definitions/validator.ErrReport'
+      is_valid:
+        type: boolean
+      warnings:
+        items:
+          $ref: '#/definitions/validator.WrnReport'
+        type: array
+    type: object
   types.Coordinates:
     properties:
       lat:
@@ -4348,6 +4364,37 @@ definitions:
           $ref: '#/definitions/widgetfilter.Response'
         type: array
       widget:
+        type: string
+    type: object
+  validator.ErrReport:
+    properties:
+      line:
+        type: integer
+      message:
+        type: string
+      type:
+        description: |-
+          Possible error type values.
+            * `0` - Undefined error
+            * `1` - Unexpected block
+            * `2` - Unexpected symbol
+            * `3` - Unexpected function
+            * `4` - Unexpected EOF
+        type: integer
+      var:
+        description: Var is defined only for template exec errors
+        type: string
+    type: object
+  validator.WrnReport:
+    properties:
+      message:
+        type: string
+      type:
+        description: |-
+          Possible warning type values.
+            * `0` - Might be unfinished variable block
+        type: integer
+      var:
         type: string
     type: object
   view.EditPositionItemRequest:
