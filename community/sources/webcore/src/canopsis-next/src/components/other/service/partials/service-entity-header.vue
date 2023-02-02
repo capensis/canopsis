@@ -122,7 +122,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.2) !important;
   border-radius: 5px;
 
-  & /deep/ .v-alert__dismissible .v-icon {
+  & ::v-deep .v-alert__dismissible .v-icon {
     margin-left: 0;
     font-size: 18px;
   }

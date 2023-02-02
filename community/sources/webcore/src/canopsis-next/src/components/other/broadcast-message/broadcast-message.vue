@@ -37,7 +37,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
 
-      & /deep/ p {
+      & ::v-deep p {
         margin: 0 !important;
       }
     }
