@@ -41,10 +41,12 @@
         v-field="column.field",
         :label="$t('common.field')"
       )
-      v-switch(
+      v-switch.pa-0.my-2(
         v-model="customLabel",
         :label="$t('settings.columns.customLabel')",
-        color="primary"
+        color="primary",
+        hide-details,
+        @change="updateCustomLabel"
       )
       v-text-field(
         v-if="customLabel",
@@ -54,32 +56,35 @@
         :error-messages="errors.collect(`${name}.label`)",
         :name="`${name}.label`"
       )
-      v-layout(v-if="withTemplate", row)
-        v-switch(
+      v-layout(v-if="withTemplate", row, align-center)
+        v-switch.pa-0.my-2(
           :label="$t('settings.columns.withTemplate')",
           :input-value="!!column.template",
-          color="submit",
+          color="primary",
+          hide-details,
           @change="enableTemplate($event)"
         )
         v-btn.primary(
           v-if="column.template",
           small,
-          @click="showEditTemplateModal()"
+          @click="showEditTemplateModal"
         )
           span {{ $t('common.edit') }}
-      v-switch(
+      v-switch.pa-0.my-2(
         v-if="withHtml",
         v-field="column.isHtml",
         :label="$t('settings.columns.isHtml')",
         :disabled="!!column.template",
-        color="submit"
+        color="primary",
+        hide-details
       )
-      v-switch(
+      v-switch.pa-0.my-2(
         v-if="withColorIndicator",
         :label="$t('settings.colorIndicator.title')",
         :input-value="!!column.colorIndicator",
         :disabled="!!column.template",
-        color="submit",
+        color="primary",
+        hide-details,
         @change="switchChangeColorIndicator($event)"
       )
       v-layout(v-if="column.colorIndicator", row)
@@ -225,12 +230,26 @@ export default {
     },
   },
   methods: {
+    updateCustomLabel(checked) {
+      if (checked) {
+        return;
+      }
+
+      this.updateField('label', '');
+    },
+
     enableTemplate(checked) {
-      const value = checked
+      const template = checked
         ? DEFAULT_COLUMN_TEMPLATE_VALUE
         : null;
 
-      return this.updateField('template', value);
+      return this.updateModel({
+        ...this.column,
+
+        template,
+        isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
+        colorIndicator: checked && this.column.isHtml ? null : this.column.isHtml,
+      });
     },
 
     switchChangeColorIndicator(colorIndicator) {
