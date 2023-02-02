@@ -48,9 +48,6 @@ type Entity struct {
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
 
-	Impacts []string `bson:"impact" json:"impact"`
-	Depends []string `bson:"depends" json:"depends"`
-
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
 	// IdleSince represents since when entity didn't receive any events.
@@ -90,24 +87,4 @@ func (e *Entity) EnsureInitialized() {
 // CacheID implements cache.Cache interface
 func (e Entity) CacheID() string {
 	return e.ID
-}
-
-func (e Entity) HasImpact(impact string) bool {
-	for _, v := range e.Impacts {
-		if v == impact {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (e Entity) HasDepend(depend string) bool {
-	for _, v := range e.Depends {
-		if v == depend {
-			return true
-		}
-	}
-
-	return false
 }
