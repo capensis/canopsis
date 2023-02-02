@@ -1,5 +1,7 @@
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
+import featuresService from '@/services/features';
+
 import { CANOPSIS_EDITION } from './permission';
 
 export const WIDGET_TYPES = {
@@ -11,6 +13,8 @@ export const WIDGET_TYPES = {
   counter: 'Counter',
   testingWeather: 'Junit',
   map: 'Map',
+
+  ...featuresService.get('constants.WIDGET_TYPES'),
 };
 
 export const WIDGET_ICONS = {
@@ -22,6 +26,8 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.counter]: 'view_module',
   [WIDGET_TYPES.testingWeather]: 'view_module',
   [WIDGET_TYPES.map]: 'location_on',
+
+  ...featuresService.get('constants.WIDGET_ICONS'),
 };
 
 export const SIDE_BARS = {
@@ -33,6 +39,8 @@ export const SIDE_BARS = {
   counterSettings: 'counter-settings',
   testingWeatherSettings: 'testing-weather-settings',
   mapSettings: 'map-settings',
+
+  ...featuresService.get('constants.SIDE_BARS'),
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -44,12 +52,16 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
   [WIDGET_TYPES.testingWeather]: SIDE_BARS.testingWeatherSettings,
   [WIDGET_TYPES.map]: SIDE_BARS.mapSettings,
+
+  ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
 
 export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.map]: { edition: CANOPSIS_EDITION.pro },
+
+  ...featuresService.get('constants.WIDGET_TYPES_RULES'),
 };
 
 export const WIDGET_GRID_SIZES_KEYS = {

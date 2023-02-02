@@ -135,7 +135,7 @@ export default {
     background: #686868;
   }
 
-  & /deep/ {
+  & ::v-deep {
     .v-select__slot {
       padding: 0 5px;
     }
