@@ -34,6 +34,15 @@ export default {
     title: 'Healthcheck data storage',
     deleteAfter: 'Delete FIFO incoming flow data after',
   },
+  webhook: {
+    title: 'Webhooks data storage',
+    titleHelp: 'All webhook requests history is kept in logs',
+    deleteAfter: 'Clear webhooks logs after',
+    deleteAfterHelpText: 'All webhook requests history older than the defined time period will be deleted',
+    sanitizeRequest: 'Open auth data in logs',
+    sanitizeRequestHelpText: 'When enabled, all credentials and auth data is written in logs in open way (not recommended). \n'
+      + 'When disabled, all passwords, tokens and auth data is hidden and written as *** in logs.',
+  },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
     alarm: {
