@@ -56,7 +56,6 @@ state_settings:
         major: 20
         critical: 30
         type: 1
-
 notification:
   instruction:
     _id: notification

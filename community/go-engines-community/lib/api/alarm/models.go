@@ -191,8 +191,12 @@ type ExportRequest struct {
 }
 
 type ExportResponse struct {
-	ID     string `json:"_id"`
-	Status int    `json:"status"`
+	ID string `json:"_id"`
+	// Possible values.
+	//   * `0` - Running
+	//   * `1` - Succeeded
+	//   * `2` - Failed
+	Status int `json:"status"`
 }
 
 type Alarm struct {
@@ -236,7 +240,6 @@ type MetaAlarmRule struct {
 type AlarmValue struct {
 	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *common.AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`

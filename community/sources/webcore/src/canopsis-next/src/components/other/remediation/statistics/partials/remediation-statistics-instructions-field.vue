@@ -62,7 +62,9 @@ export default {
       try {
         this.pending = true;
 
-        const { data } = await this.fetchInstructionsListWithoutStore({ limit: MAX_LIMIT });
+        const { data } = await this.fetchInstructionsListWithoutStore({
+          params: { limit: MAX_LIMIT },
+        });
 
         this.instructions = data;
       } catch (err) {
