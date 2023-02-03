@@ -47,8 +47,8 @@ type Config struct {
 		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"health_check" json:"health_check"`
 	Webhook struct {
-		SanitizeRequest bool                       `bson:"sanitize_request,omitempty" json:"sanitize_request"`
-		DeleteAfter     *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+		LogCredentials bool                       `bson:"log_credentials,omitempty" json:"log_credentials"`
+		DeleteAfter    *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"webhook" json:"webhook"`
 }
 
