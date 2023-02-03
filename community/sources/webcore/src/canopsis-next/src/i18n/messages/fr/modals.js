@@ -872,4 +872,15 @@ export default {
       title: 'Créer un jeton de partage',
     },
   },
+  createDeclareTicketRule: {
+    create: {
+      title: 'Créer une règle de déclaration de ticket',
+    },
+    edit: {
+      title: 'Modifier une règle de déclaration de ticket',
+    },
+    duplicate: {
+      title: 'Dupliquer une règle de déclaration de ticket',
+    },
+  },
 };
