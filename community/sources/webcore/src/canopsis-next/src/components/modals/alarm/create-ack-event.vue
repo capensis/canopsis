@@ -7,7 +7,11 @@
         v-layout(column)
           alarm-general-table(v-if="config.items", :items="config.items")
           v-divider
-          ack-event-form(v-model="form", :is-note-required="isNoteRequired")
+          ack-event-form(
+            v-model="form",
+            :is-note-required="isNoteRequired",
+            :hide-ack-resources="!isAllComponentAlarms"
+          )
           v-radio-group(
             v-model="actionType",
             :label="$t('alarm.actionsRequired')",
@@ -36,7 +40,7 @@
 </template>
 
 <script>
-import { MODALS, ACK_MODAL_ACTIONS_TYPES } from '@/constants';
+import { MODALS, ACK_MODAL_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -71,8 +75,18 @@ export default {
     };
   },
   computed: {
+    isAlarmsHasDeclareTicketRules() {
+      return this.config.items.some(
+        ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
+      );
+    },
+
+    isAllComponentAlarms() {
+      return this.config.items.every(({ entity }) => entity.type === ENTITY_TYPES.component);
+    },
+
     actionTypes() {
-      return [
+      const types = [
         {
           label: this.$t('alarm.acknowledge'),
           value: ACK_MODAL_ACTIONS_TYPES.ack,
@@ -81,11 +95,16 @@ export default {
           label: this.$t('alarm.acknowledgeAndAssociateTicket'),
           value: ACK_MODAL_ACTIONS_TYPES.ackAndAssociateTicket,
         },
-        {
+      ];
+
+      if (this.isAlarmsHasDeclareTicketRules) {
+        types.push({
           label: this.$t('alarm.acknowledgeAndDeclareTicket'),
           value: ACK_MODAL_ACTIONS_TYPES.ackAndDeclareTicket,
-        },
-      ];
+        });
+      }
+
+      return types;
     },
 
     isNoteRequired() {

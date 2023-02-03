@@ -145,6 +145,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -197,6 +198,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -333,6 +335,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -379,6 +382,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -518,6 +522,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -563,6 +568,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -609,6 +615,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -649,6 +656,7 @@ describe('mass-actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         widget,

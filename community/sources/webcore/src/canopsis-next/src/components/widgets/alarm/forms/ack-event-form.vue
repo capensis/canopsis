@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-tooltip(top)
+    v-tooltip(v-if="!hideAckResources", top)
       template(#activator="{ on }")
         v-checkbox(
           v-on="on",
@@ -29,6 +29,10 @@ export default {
       default: () => ({}),
     },
     isNoteRequired: {
+      type: Boolean,
+      default: false,
+    },
+    hideAckResources: {
       type: Boolean,
       default: false,
     },
