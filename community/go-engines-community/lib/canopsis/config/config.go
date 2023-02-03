@@ -94,6 +94,10 @@ type SectionTechMetrics struct {
 	DumpKeepInterval string `toml:"DumpKeepInterval"`
 }
 
+type SectionTemplate struct {
+	Vars map[string]any `toml:"vars"`
+}
+
 // CanopsisConf represents a generic configuration object.
 type CanopsisConf struct {
 	ID          string             `bson:"_id,omitempty" toml:"omitempty"`
@@ -107,6 +111,7 @@ type CanopsisConf struct {
 	API         SectionApi         `bson:"api" toml:"api"`
 	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
 	TechMetrics SectionTechMetrics `bson:"tech_metrics" toml:"tech_metrics"`
+	Template    SectionTemplate    `bson:"template" toml:"template"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

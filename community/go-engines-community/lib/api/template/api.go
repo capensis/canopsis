@@ -2,8 +2,11 @@ package template
 
 import (
 	"net/http"
+	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"github.com/gin-gonic/gin"
 )
@@ -11,14 +14,19 @@ import (
 type API interface {
 	ValidateDeclareTicketRules(c *gin.Context)
 	ValidateScenarios(c *gin.Context)
+	GetEnvVars(c *gin.Context)
 }
 
 type api struct {
-	validator validator.Validator
+	validator              validator.Validator
+	templateConfigProvider config.TemplateConfigProvider
 }
 
-func NewApi(validator validator.Validator) API {
-	return &api{validator: validator}
+func NewApi(validator validator.Validator, templateConfigProvider config.TemplateConfigProvider) API {
+	return &api{
+		validator:              validator,
+		templateConfigProvider: templateConfigProvider,
+	}
 }
 
 // ValidateDeclareTicketRules
@@ -65,4 +73,17 @@ func (a *api) ValidateScenarios(c *gin.Context) {
 		Err:      errReport,
 		Warnings: wrnReports,
 	})
+}
+
+func (a *api) GetEnvVars(c *gin.Context) {
+	envVars := a.templateConfigProvider.Get().Vars
+	response := make([]string, len(envVars))
+	i := 0
+	for v := range envVars {
+		response[i] = "." + template.EnvVar + "." + v
+		i++
+	}
+
+	sort.Strings(response)
+	c.JSON(http.StatusOK, response)
 }
