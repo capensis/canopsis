@@ -9145,6 +9145,22 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-vars:
+    get:
+      tags:
+        - template-validator
+      summary: Get template env vars
+      description: Get template env vars
+      operationId: template-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
   /user-preferences:
     put:
       tags:
