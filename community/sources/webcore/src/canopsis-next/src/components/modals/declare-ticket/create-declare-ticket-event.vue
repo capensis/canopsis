@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/forms/declare-ticket-event';
 
@@ -44,6 +44,7 @@ export default {
   name: MODALS.createDeclareTicketEvent,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { DeclareTicketEventsForm, ModalWrapper },
   mixins: [
