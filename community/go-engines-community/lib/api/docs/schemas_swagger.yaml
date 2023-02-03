@@ -855,7 +855,7 @@ definitions:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
-          sanitize_request:
+          log_credentials:
             type: boolean
         type: object
     type: object
