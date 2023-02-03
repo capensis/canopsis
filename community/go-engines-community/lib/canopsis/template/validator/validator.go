@@ -98,6 +98,7 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 			},
 		},
 		declareTicketTplDataKeys: []string{
+			"." + libtemplate.EnvVar,
 			".Alarms",
 			".Response",
 			".ResponseMap",
@@ -107,6 +108,7 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 			".Entity",
 		},
 		scenarioTplDataKeys: []string{
+			"." + libtemplate.EnvVar,
 			".Alarm",
 			".Entity",
 			".Children",

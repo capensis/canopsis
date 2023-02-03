@@ -56,6 +56,10 @@ configuration:
       dumpkeepinterval: 1h
     timezone:
       timezone: Europe/Paris
+    template:
+      vars:
+        Name: Test
+        Location: FR
 
   configuration_remediation:
     _id: remediation

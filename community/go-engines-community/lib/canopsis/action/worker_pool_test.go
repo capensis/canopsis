@@ -14,9 +14,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
@@ -81,10 +81,9 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	taskChannel := make(chan action.Task)
 	defer close(taskChannel)
 
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	pool := action.NewWorkerPool(5, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), mockTimezoneConfigProvider)
+	pool := action.NewWorkerPool(5, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), tplExecutor)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")
