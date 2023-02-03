@@ -164,7 +164,7 @@ describe('actions-panel', () => {
     jest.clearAllMocks();
   });
 
-  it('Ack modal showed after trigger ack action', () => {
+  it('Ack modal showed after trigger ack action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -197,14 +197,16 @@ describe('actions-panel', () => {
         config: {
           isNoteRequired,
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    config.action({ output: 'OUTPUT', ack_resources: true }, { needDeclareTicket: false, needAssociateTicket: false });
+
+    await flushPromises();
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
@@ -501,6 +503,7 @@ describe('actions-panel', () => {
         name: MODALS.createAssociateTicketEvent,
         config: {
           items: [alarm],
+          ignoreAck: false,
           action: expect.any(Function),
         },
       },
