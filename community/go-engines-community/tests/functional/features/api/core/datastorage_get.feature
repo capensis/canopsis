@@ -52,7 +52,7 @@ Feature: Get and update data storage config
         }
       },
       "webhook": {
-        "sanitize_request": true,
+        "log_credentials": true,
         "delete_after": {
           "enabled": true,
           "value": 20,
@@ -112,7 +112,7 @@ Feature: Get and update data storage config
           }
         },
         "webhook": {
-          "sanitize_request": true,
+          "log_credentials": true,
           "delete_after": {
             "enabled": true,
             "value": 20,
@@ -183,7 +183,7 @@ Feature: Get and update data storage config
           }
         },
         "webhook": {
-          "sanitize_request": true,
+          "log_credentials": true,
           "delete_after": {
             "enabled": true,
             "value": 20,
@@ -229,7 +229,7 @@ Feature: Get and update data storage config
           "delete_after": null
         },
         "webhook": {
-          "sanitize_request": false,
+          "log_credentials": false,
           "delete_after": null
         }
       },
@@ -268,7 +268,7 @@ Feature: Get and update data storage config
           "delete_after": null
         },
         "webhook": {
-          "sanitize_request": false,
+          "log_credentials": false,
           "delete_after": null
         }
       },
