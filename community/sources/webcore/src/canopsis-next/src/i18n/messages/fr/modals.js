@@ -84,17 +84,6 @@ export default {
       output: 'Note',
     },
   },
-  createAckEvent: {
-    title: 'Acquitter',
-    tooltips: {
-      ackResources: 'Voulez-vous acquitter les ressources liées ?',
-    },
-    fields: {
-      ticket: 'Numéro du ticket',
-      output: 'Note',
-      ackResources: 'Acquitter les ressources',
-    },
-  },
   confirmAckWithTicket: {
     continueAndAssociateTicket: 'Continuer et associer un ticket',
     infoMessage: `Un numéro de ticket a été renseigné.
@@ -879,5 +868,8 @@ export default {
   },
   createAssociateTicketEvent: {
     title: 'Associer un numéro de ticket',
+  },
+  createAckEvent: {
+    title: 'Acquitter',
   },
 };
