@@ -80,13 +80,13 @@
         :name="webhookDeleteAfterFieldName"
       )
       c-enabled-field(
-        v-field="form.webhook.sanitize_request",
-        :label="$t('storageSetting.webhook.sanitizeRequest')",
-        :name="webhookSanitizeRequestFieldName",
+        v-field="form.webhook.log_credentials",
+        :label="$t('storageSetting.webhook.logCredentials')",
+        :name="webhookLogCredentialsFieldName",
         hide-details
       )
         template(#append="")
-          c-help-icon(:text="$t('storageSetting.webhook.sanitizeRequestHelpText')", top)
+          c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", top)
 </template>
 
 <script>
@@ -143,8 +143,8 @@ export default {
       return 'webhook.delete_after';
     },
 
-    webhookSanitizeRequestFieldName() {
-      return 'webhook.sanitize_request';
+    webhookLogCredentialsFieldName() {
+      return 'webhook.log_credentials';
     },
 
     junitSubTitle() {

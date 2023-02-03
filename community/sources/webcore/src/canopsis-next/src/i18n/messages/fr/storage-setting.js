@@ -39,8 +39,8 @@ export default {
     titleHelp: 'L\'historique de toutes les demandes de webhook est conservé dans des journaux',
     deleteAfter: 'Effacer les journaux des webhooks après',
     deleteAfterHelpText: 'Tous les historiques de demandes de webhook antérieurs à la période définie seront supprimés',
-    sanitizeRequest: 'Ouvrir les données d\'authentification dans les journaux',
-    sanitizeRequestHelpText: 'Lorsqu\'il est activé, toutes les informations d\'identification et les données d\'authentification sont écrites dans les journaux de manière ouverte (non recommandé). \n'
+    logCredentials: 'Ouvrir les données d\'authentification dans les journaux',
+    logCredentialsHelpText: 'Lorsqu\'il est activé, toutes les informations d\'identification et les données d\'authentification sont écrites dans les journaux de manière ouverte (non recommandé). \n'
       + 'Lorsqu\'il est désactivé, tous les mots de passe, jetons et données d\'authentification sont masqués et écrits sous la forme *** dans les journaux.',
   },
   history: {

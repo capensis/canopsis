@@ -38,7 +38,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {Object} DataStorageWebhookConfig
  * @property {DurationWithEnabled} delete_after
- * @property {boolean} sanitize_request
+ * @property {boolean} log_credentials
  */
 
 /**
@@ -166,7 +166,7 @@ export const dataStorageWebhookSettingsToForm = (webhook = {}) => ({
   delete_after: webhook.delete_after
     ? durationWithEnabledToForm(webhook.delete_after)
     : { value: 60, unit: TIME_UNITS.day, enabled: false },
-  sanitize_request: webhook.sanitize_request ?? false,
+  log_credentials: webhook.log_credentials ?? false,
 });
 
 /**
