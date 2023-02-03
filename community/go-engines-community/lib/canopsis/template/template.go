@@ -15,13 +15,24 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-type Executor struct {
+const EnvVar = "Env"
+
+type Executor interface {
+	Execute(tplStr string, data any) (string, error)
+}
+
+type executor struct {
+	templateConfigProvider config.TemplateConfigProvider
 	timezoneConfigProvider config.TimezoneConfigProvider
 	bufPool                sync.Pool
 }
 
-func NewExecutor(timezoneConfigProvider config.TimezoneConfigProvider) *Executor {
-	return &Executor{
+func NewExecutor(
+	templateConfigProvider config.TemplateConfigProvider,
+	timezoneConfigProvider config.TimezoneConfigProvider,
+) Executor {
+	return &executor{
+		templateConfigProvider: templateConfigProvider,
 		timezoneConfigProvider: timezoneConfigProvider,
 		bufPool: sync.Pool{
 			New: func() any {
@@ -31,7 +42,7 @@ func NewExecutor(timezoneConfigProvider config.TimezoneConfigProvider) *Executor
 	}
 }
 
-func (e *Executor) Execute(tplStr string, data interface{}) (string, error) {
+func (e *executor) Execute(tplStr string, data any) (string, error) {
 	location := e.timezoneConfigProvider.Get().Location
 	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
 	if err != nil {
@@ -42,7 +53,7 @@ func (e *Executor) Execute(tplStr string, data interface{}) (string, error) {
 	buf := e.bufPool.Get().(*bytes.Buffer)
 	defer e.bufPool.Put(buf)
 	buf.Reset()
-	err = tpl.Execute(buf, data)
+	err = tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
 	if err != nil {
 		return "", err
 	}
@@ -225,5 +236,67 @@ func castTime(v interface{}) (time.Time, bool) {
 		return *t, true
 	default:
 		return time.Time{}, false
+	}
+}
+
+func addEnvVarsToData(data any, envVars map[string]any) any {
+	if len(envVars) == 0 {
+		return data
+	}
+
+	var mapData map[string]any
+	v := reflect.ValueOf(data)
+	v = getStruct(v)
+
+	switch v.Kind() {
+	case reflect.Map:
+		mapData = make(map[string]any, v.Len()+1)
+		mi := v.MapRange()
+		for mi.Next() {
+			if mi.Key().Kind() != reflect.String {
+				return data
+			}
+			mapData[mi.Key().String()] = mi.Value().Interface()
+		}
+	case reflect.Struct:
+		mapData = make(map[string]any, v.Type().NumField()+1)
+		structToMap(v, mapData)
+	default:
+		return data
+	}
+
+	mapData[EnvVar] = envVars
+	return mapData
+}
+
+func structToMap(v reflect.Value, data map[string]any) {
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		if !f.IsExported() {
+			continue
+		}
+		fv := v.Field(i)
+		if !fv.IsValid() {
+			continue
+		}
+		if f.Anonymous {
+			fv = getStruct(fv)
+			structToMap(fv, data)
+			continue
+		}
+
+		data[f.Name] = fv.Interface()
+	}
+}
+
+func getStruct(v reflect.Value) reflect.Value {
+	for {
+		switch v.Kind() {
+		case reflect.Interface, reflect.Ptr:
+			v = v.Elem()
+		default:
+			return v
+		}
 	}
 }

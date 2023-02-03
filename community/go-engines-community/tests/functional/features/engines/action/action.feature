@@ -77,7 +77,7 @@ Feature: execute action on trigger
             "state": 3,
             "forward_author": false,
             "author": "",
-            "output": "test-scenario-action-1-action-3-output {{ `{{ .Entity.Name }} {{ .Alarm.Value.State.Value }}` }}"
+            "output": "test-scenario-action-1-action-3-output {{ `{{ .Env.Name }} {{ .Entity.Name }} {{ .Alarm.Value.State.Value }}` }}"
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
@@ -273,7 +273,7 @@ Feature: execute action on trigger
                 "_t": "changestate",
                 "a": "system",
                 "user_id": "",
-                "m": "test-scenario-action-1-action-3-output test-resource-action-1-1 2",
+                "m": "test-scenario-action-1-action-3-output Test test-resource-action-1-1 2",
                 "val": 3
               }
             ],
@@ -322,7 +322,7 @@ Feature: execute action on trigger
                 "_t": "changestate",
                 "a": "system",
                 "user_id": "",
-                "m": "test-scenario-action-1-action-3-output test-resource-action-1-2 1",
+                "m": "test-scenario-action-1-action-3-output Test test-resource-action-1-2 1",
                 "val": 3
               }
             ],

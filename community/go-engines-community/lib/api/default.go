@@ -61,6 +61,7 @@ type ConfigProviders struct {
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
+	TemplateConfigProvider      *config.BaseTemplateConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 }
 
@@ -91,6 +92,9 @@ func Default(
 	}
 	if p.DataStorageConfigProvider == nil {
 		p.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
+	}
+	if p.TemplateConfigProvider == nil {
+		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg)
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
@@ -278,6 +282,7 @@ func Default(
 			legacyUrlStr,
 			dbClient,
 			p.TimezoneConfigProvider,
+			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
@@ -361,8 +366,9 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
-		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
+	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
+		p.TemplateConfigProvider, techMetricsConfigProvider, configAdapter, p.UserInterfaceConfigProvider,
+		userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
@@ -457,6 +463,7 @@ func updateConfig(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	dataStorageConfigProvider *config.BaseDataStorageConfigProvider,
 	apiConfigProvider *config.BaseApiConfigProvider,
+	templateConfigProvider *config.BaseTemplateConfigProvider,
 	techMetricsConfigProvider *config.BaseTechMetricsConfigProvider,
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
@@ -481,6 +488,7 @@ func updateConfig(
 				apiConfigProvider.Update(cfg)
 				techMetricsConfigProvider.Update(cfg)
 				dataStorageConfigProvider.Update(cfg)
+				templateConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {
