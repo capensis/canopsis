@@ -52,6 +52,11 @@ export default {
     message: 'Les règles SNMP peuvent être utilisées pour traiter les traps SNMP remontées par le connecteur snmp2canopsis au travers du moteur SNMP.',
   },
 
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: {
+    title: 'Règles de déclaration des billets',
+    // message: '', // TODO: need to put description
+  },
+
   /**
    * Admin access
    */
