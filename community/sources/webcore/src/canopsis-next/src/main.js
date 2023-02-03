@@ -536,7 +536,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createFlowchartMap]: { maxWidth: 1600 },
     [MODALS.entityDependenciesList]: { maxWidth: 1600 },
     [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
-    [MODALS.createDeclareTicketEvent]: { maxWidth: 920 },
+    [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
