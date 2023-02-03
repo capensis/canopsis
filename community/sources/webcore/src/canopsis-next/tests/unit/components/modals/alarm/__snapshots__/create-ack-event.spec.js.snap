@@ -31,6 +31,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         />
         <ack-event-form-stub
           form="[object Object]"
+          hideackresources="true"
           isnoterequired="true"
         />
         <div
@@ -118,38 +119,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
                     Acknowledge and associate ticket
                   </label>
                 </div>
-                <div
-                  class="v-radio theme--light"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      aria-label="Acknowledge and declare ticket"
-                      name="actionType"
-                      role="radio"
-                      type="radio"
-                      value="2"
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      radio_button_unchecked
-                    </i>
-                  </div>
-                  <label
-                    aria-hidden="true"
-                    class="v-label theme--light"
-                    style="left: 0px; position: relative;"
-                  >
-                    Acknowledge and declare ticket
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -216,6 +185,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         />
         <ack-event-form-stub
           form="[object Object]"
+          hideackresources="true"
         />
         <div
           class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
@@ -300,38 +270,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
                     style="left: 0px; position: relative;"
                   >
                     Acknowledge and associate ticket
-                  </label>
-                </div>
-                <div
-                  class="v-radio theme--light"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      aria-label="Acknowledge and declare ticket"
-                      name="actionType"
-                      role="radio"
-                      type="radio"
-                      value="2"
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      radio_button_unchecked
-                    </i>
-                  </div>
-                  <label
-                    aria-hidden="true"
-                    class="v-label theme--light"
-                    style="left: 0px; position: relative;"
-                  >
-                    Acknowledge and declare ticket
                   </label>
                 </div>
               </div>

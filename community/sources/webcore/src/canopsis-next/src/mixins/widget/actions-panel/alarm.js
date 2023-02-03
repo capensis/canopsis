@@ -181,7 +181,10 @@ export const widgetActionsPanelAlarmMixin = {
             if (needAssociateTicket) {
               this.showAssociateTicketModalByAlarms(alarms, true);
             } else if (needDeclareTicket) {
-              await this.showDeclareTicketModalByAlarms(alarms);
+              const alarmsWithRules = alarms.filter(
+                ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
+              );
+              await this.showDeclareTicketModalByAlarms(alarmsWithRules);
             }
           },
 

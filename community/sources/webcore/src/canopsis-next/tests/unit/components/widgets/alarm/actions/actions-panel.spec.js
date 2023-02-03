@@ -178,6 +178,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -290,6 +291,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -330,6 +332,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: { ...alarm, entity },
@@ -371,6 +374,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -431,6 +435,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
         declareTicketRuleModule,
       ]),
       propsData: {
@@ -550,6 +555,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -590,6 +596,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -643,6 +650,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarmData,
@@ -702,6 +710,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: { ...alarm, entity },
@@ -826,6 +835,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -877,6 +887,7 @@ describe('actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
         {
           ...alarmModule,
           getters: {
@@ -965,6 +976,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: {
@@ -983,6 +995,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: {
@@ -1010,6 +1023,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: {
@@ -1028,6 +1042,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: {
@@ -1046,6 +1061,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: {
@@ -1064,6 +1080,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
@@ -1079,6 +1096,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: {
@@ -1101,6 +1119,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         item: alarm,
