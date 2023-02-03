@@ -176,6 +176,10 @@ export default {
       this.showDeclareTicketModalByAlarms(this.items);
     },
 
+    showAckModal() {
+      this.showAckModalByAlarms(this.items);
+    },
+
     showCreateGroupRequestEventModal() {
       this.$modals.show({
         name: MODALS.createEvent,

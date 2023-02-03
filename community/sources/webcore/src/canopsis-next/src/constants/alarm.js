@@ -286,3 +286,9 @@ export const ALARM_PAYLOADS_VARIABLES = {
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
 };
+
+export const ACK_MODAL_ACTIONS_TYPES = {
+  ack: 0,
+  ackAndAssociateTicket: 1,
+  ackAndDeclareTicket: 2,
+};
