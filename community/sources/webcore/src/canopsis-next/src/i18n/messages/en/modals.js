@@ -872,4 +872,15 @@ export default {
       title: 'Create share token',
     },
   },
+  createDeclareTicketRule: {
+    create: {
+      title: 'Create a declare ticket rule',
+    },
+    edit: {
+      title: 'Edit a declare ticket rule',
+    },
+    duplicate: {
+      title: 'Duplicate a declare ticket rule',
+    },
+  },
 };

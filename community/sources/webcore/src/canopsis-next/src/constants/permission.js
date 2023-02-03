@@ -277,6 +277,7 @@ export const USERS_PERMISSIONS = {
       api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
+      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -289,7 +290,7 @@ export const USERS_PERMISSIONS = {
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
-      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
