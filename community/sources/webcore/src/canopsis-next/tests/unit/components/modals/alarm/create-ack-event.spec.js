@@ -93,7 +93,9 @@ describe('create-ack-event', () => {
     const wrapper = factory({
       propsData: {
         modal: {
-          config: {},
+          config: {
+            items: [],
+          },
         },
       },
     });
