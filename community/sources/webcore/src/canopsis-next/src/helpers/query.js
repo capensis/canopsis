@@ -92,6 +92,7 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
+    with_declare_tickets: true,
     with_links: true,
     multiSortBy: [],
     lockedFilter: mainFilter,
