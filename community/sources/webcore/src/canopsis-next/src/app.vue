@@ -1,6 +1,6 @@
 <template lang="pug">
   v-app#app
-    v-layout(v-if="!pending")
+    v-layout(v-if="!wholePending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
         active-broadcast-message
@@ -28,6 +28,7 @@ import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
+import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -46,6 +47,7 @@ export default {
     systemMixin,
     entitiesInfoMixin,
     entitiesUserMixin,
+    entitiesTemplateVarsMixin,
   ],
   data() {
     return {
@@ -53,6 +55,10 @@ export default {
     };
   },
   computed: {
+    wholePending() {
+      return this.pending || this.appInfoPending || this.templateVarsPending;
+    },
+
     routeViewKey() {
       if (this.$route.name === ROUTES_NAMES.view) {
         return this.$route.path;
@@ -75,6 +81,7 @@ export default {
     this.socketConnectWithErrorHandling();
     this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
+    this.fetchTemplateVars();
   },
   methods: {
     ...mapActions({
