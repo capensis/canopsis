@@ -129,17 +129,6 @@ meta_alarm_rules:
               - test-resource-to-alarm-correlation-get-2-1
               - test-resource-to-alarm-correlation-get-2-3
 
-  metaalarm_rule_alarm_correlation_get_3:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-rule-alarm-correlation-get-3
-    name: test-metaalarm-rule-alarm-correlation-get-3-name
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.resource
-          cond:
-            type: eq
-            value: test-resource-to-alarm-correlation-get-3-1
-
   metaalarm_rule_alarm_correlation_get_7:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarm-rule-alarm-correlation-get-7
