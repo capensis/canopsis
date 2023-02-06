@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//Alarm states
+// Alarm states
 const (
 	AlarmStateOK = iota
 	AlarmStateMinor
@@ -26,7 +26,7 @@ const (
 	AlarmStateTitleCritical = "critical"
 )
 
-//Alarm statuses
+// Alarm statuses
 const (
 	AlarmStatusOff = iota
 	AlarmStatusOngoing
@@ -44,7 +44,7 @@ const (
 	AlarmStatusTitleCancelled = "cancelled"
 )
 
-//Alarm steps
+// Alarm steps
 const (
 	AlarmStepStateIncrease   = "stateinc"
 	AlarmStepStateDecrease   = "statedec"
@@ -109,6 +109,11 @@ type Alarm struct {
 	// is used only for manual instructions KPI metrics
 	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
 	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+
+	// is uses only for not acked metrics
+	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors

@@ -263,6 +263,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 
 	if pbehaviorInfo.IsDefaultActive() {
 		changeType = types.AlarmChangeTypeCreate
+		alarm.NotAckedSince = &alarm.Time
 	} else {
 		output := fmt.Sprintf(
 			"Pbehavior %s. Type: %s. Reason: %s.",
