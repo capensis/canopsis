@@ -2,11 +2,9 @@ package template
 
 import (
 	"net/http"
-	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"github.com/gin-gonic/gin"
 )
@@ -76,14 +74,5 @@ func (a *api) ValidateScenarios(c *gin.Context) {
 }
 
 func (a *api) GetEnvVars(c *gin.Context) {
-	envVars := a.templateConfigProvider.Get().Vars
-	response := make([]string, len(envVars))
-	i := 0
-	for v := range envVars {
-		response[i] = "." + template.EnvVar + "." + v
-		i++
-	}
-
-	sort.Strings(response)
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, a.templateConfigProvider.Get().Vars)
 }

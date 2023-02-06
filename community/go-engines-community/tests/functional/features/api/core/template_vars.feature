@@ -11,8 +11,8 @@ Feature: Get template env vars
     When I am admin
     When I do GET /api/v4/template-vars:
     """json
-    [
-      ".Env.Location",
-      ".Env.Name"
-    ]
+    {
+        "Name": "Test",
+        "Location": "FR"
+    }
     """
