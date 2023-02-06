@@ -39,4 +39,6 @@ const (
 	DynamicInfosDictionaryPeriodicalLockKey   = "dynamic-infos-dictionary-periodical-lock-key"
 
 	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
+
+	NotAckedPeriodicalLockKey = "not-acked-periodical-lock-key"
 )
