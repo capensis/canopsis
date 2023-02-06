@@ -218,9 +218,51 @@ func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedDropEventfilterWi
 	})
 }
 
+func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedEnrichmentEntityEventFiltersWithTpl(b *testing.B) {
+	benchmarkMessageProcessor(b, "./testdata/fixtures/new_entity_and_matched_enrichment_entity_event_filters_with_tpl.yml", func(i int) types.Event {
+		return types.Event{
+			EventType:     types.EventTypeCheck,
+			Connector:     fmt.Sprintf("test-connector-%d", i),
+			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			Component:     fmt.Sprintf("test-component-%d", i),
+			Resource:      fmt.Sprintf("test-resource-%d", i),
+			SourceType:    types.SourceTypeResource,
+		}
+	})
+}
+
+func BenchmarkMessageProcessor_Process_GivenNewEntityAndMatchedEnrichmentEntityEventFiltersWithTplWithEnvVars(b *testing.B) {
+	cfg := config.CanopsisConf{
+		Template: config.SectionTemplate{
+			Vars: map[string]any{
+				"Location": "FR",
+			},
+		},
+	}
+	benchmarkMessageProcessorWithConfig(b, "./testdata/fixtures/new_entity_and_matched_enrichment_entity_event_filters_with_tpl_with_env_vars.yml", cfg, func(i int) types.Event {
+		return types.Event{
+			EventType:     types.EventTypeCheck,
+			Connector:     fmt.Sprintf("test-connector-%d", i),
+			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			Component:     fmt.Sprintf("test-component-%d", i),
+			Resource:      fmt.Sprintf("test-resource-%d", i),
+			SourceType:    types.SourceTypeResource,
+		}
+	})
+}
+
 func benchmarkMessageProcessor(
 	b *testing.B,
 	fixturesPath string,
+	genEvent func(i int) types.Event,
+) {
+	benchmarkMessageProcessorWithConfig(b, fixturesPath, config.CanopsisConf{}, genEvent)
+}
+
+func benchmarkMessageProcessorWithConfig(
+	b *testing.B,
+	fixturesPath string,
+	cfg config.CanopsisConf,
 	genEvent func(i int) types.Event,
 ) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -259,7 +301,6 @@ func benchmarkMessageProcessor(
 		}
 	})
 
-	cfg := config.CanopsisConf{}
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
@@ -299,6 +340,7 @@ func benchmarkMessageProcessor(
 			metrics.NewNullMetaUpdater(),
 		),
 		EventFilterService: ruleService,
+		TechMetricsSender:  techMetricsSender,
 		Encoder:            json.NewEncoder(),
 		Decoder:            json.NewDecoder(),
 		Logger:             zerolog.Nop(),
