@@ -5435,24 +5435,6 @@ paths:
           description: OK
       security:
         - BearerAuth: [ ]
-  /manual-meta-alarms:
-    get:
-      tags:
-        - alarms
-      summary: Find manual meta alarms
-      description: Get manual meta alarms.
-      operationId: alarms-find-meta-alarms
-      parameters:
-        - $ref: '#/components/parameters/search'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: 'schemas_swagger.yaml#/definitions/alarm.ManualResponse'
   /message-rate-stats:
     get:
       tags:
