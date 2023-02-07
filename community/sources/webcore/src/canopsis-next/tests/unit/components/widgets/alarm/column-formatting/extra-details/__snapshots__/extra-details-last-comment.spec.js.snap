@@ -5,13 +5,17 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   class="c-clickable-tooltip c-extra-details"
 >
   <div>
-    <i
-      aria-hidden="true"
-      class="v-icon white--text purple lighten-2 c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+    <span
+      class="c-extra-details__badge purple lighten-2"
     >
-      comment
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        comment
+      </i>
+    </span>
   </div>
   <span
     class="v-tooltip v-tooltip--top"
@@ -60,13 +64,17 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   class="c-clickable-tooltip c-extra-details"
 >
   <div>
-    <i
-      aria-hidden="true"
-      class="v-icon white--text purple lighten-2 c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+    <span
+      class="c-extra-details__badge purple lighten-2"
     >
-      comment
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        comment
+      </i>
+    </span>
   </div>
   <span
     class="v-tooltip v-tooltip--top"
