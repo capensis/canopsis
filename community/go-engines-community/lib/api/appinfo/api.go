@@ -3,27 +3,24 @@ package appinfo
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 )
 
-type api struct {
-	enforcer security.Enforcer
-	store    Store
+type API interface {
+	GetAppInfo(c *gin.Context)
+	UpdateUserInterface(c *gin.Context)
+	DeleteUserInterface(c *gin.Context)
 }
 
-func NewApi(
-	enforcer security.Enforcer,
-	store Store,
-) *api {
+type api struct {
+	store Store
+}
+
+func NewApi(store Store) API {
 	return &api{
-		enforcer: enforcer,
-		store:    store,
+		store: store,
 	}
 }
 
@@ -42,27 +39,16 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		panic(err)
 	}
 	response.Login = a.store.RetrieveLoginConfig()
-
-	user, ok := c.Get(auth.UserKey)
-	if ok {
-		ok, err := a.enforcer.Enforce(user.(string), apisecurity.PermAppInfoRead, model.PermissionCan)
-		if err != nil {
-			panic(err)
-		}
-
-		if ok {
-			response.GlobalConf, err = a.store.RetrieveGlobalConfig(c)
-			if err != nil {
-				panic(err)
-			}
-
-			remediation, err := a.store.RetrieveRemediationConfig(c)
-			if err != nil {
-				panic(err)
-			}
-			response.Remediation = &remediation
-		}
+	response.GlobalConf, err = a.store.RetrieveGlobalConfig(c)
+	if err != nil {
+		panic(err)
 	}
+
+	remediation, err := a.store.RetrieveRemediationConfig(c)
+	if err != nil {
+		panic(err)
+	}
+	response.Remediation = &remediation
 
 	c.JSON(http.StatusOK, response)
 }

@@ -981,11 +981,6 @@ default_rights:
     _id: api_associative_table
     crecord_name: <Current()._id>
     desc: Associative table
-  permission_api_app_info_read:
-    <<: *permission
-    _id: api_app_info_read
-    crecord_name: <Current()._id>
-    desc: Read app info
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
@@ -1420,9 +1415,6 @@ default_rights:
         crecord_type: right
       "@permission_api_associative_table":
         checksum: 15
-        crecord_type: right
-      "@permission_api_app_info_read":
-        checksum: 1
         crecord_type: right
       "@permission_api_user_interface_update":
         checksum: 1
