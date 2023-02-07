@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     wholePending() {
-      return this.pending || this.appInfoPending || this.templateVarsPending;
+      return this.pending || this.templateVarsPending;
     },
 
     routeViewKey() {
