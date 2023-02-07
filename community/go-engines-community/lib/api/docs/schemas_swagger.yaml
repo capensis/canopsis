@@ -9,6 +9,8 @@ definitions:
         type: string
       ui_language:
         type: string
+      ui_theme:
+        type: string
       ui_tours:
         additionalProperties:
           type: boolean
@@ -47,6 +49,8 @@ definitions:
       ui_groups_navigation_type:
         type: string
       ui_language:
+        type: string
+      ui_theme:
         type: string
       ui_tours:
         additionalProperties:
@@ -4117,8 +4121,13 @@ definitions:
       role:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - _id
@@ -4153,8 +4162,13 @@ definitions:
       source:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - email
@@ -4193,8 +4207,13 @@ definitions:
       role:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - email
@@ -4231,6 +4250,8 @@ definitions:
       ui_groups_navigation_type:
         type: string
       ui_language:
+        type: string
+      ui_theme:
         type: string
     type: object
   user.View:
