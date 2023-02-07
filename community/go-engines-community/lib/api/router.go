@@ -743,7 +743,7 @@ func RegisterRoutes(
 		}
 
 		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, securityConfig.AuthProviders,
 			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
