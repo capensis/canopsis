@@ -41,9 +41,8 @@ export default {
         commit(types.FETCH_LIST_COMPLETED, { items });
       } catch (err) {
         console.warn(err);
-        commit(types.FETCH_LIST_FAILED);
 
-        throw err;
+        commit(types.FETCH_LIST_FAILED);
       }
     },
   },
