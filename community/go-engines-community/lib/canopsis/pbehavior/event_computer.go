@@ -39,8 +39,9 @@ type PbhEventParams struct {
 
 // ComputedType represents type for determined time span.
 type ComputedType struct {
-	ID   string        `json:"t"`
-	Span timespan.Span `json:"s"`
+	ID    string        `json:"t"`
+	Span  timespan.Span `json:"s"`
+	Color string        `json:"-"`
 }
 
 // Compute calculates types for provided timespan.
@@ -73,7 +74,7 @@ func (c *eventComputer) Compute(
 	if err != nil {
 		return nil, err
 	}
-	computed, err := c.computeByRrule(event, span, params.Type, params.Exdates)
+	computed, err := c.computeByRrule(event, span, c.typesByID[params.Type], params.Exdates)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +93,7 @@ func (c *eventComputer) Compute(
 func (c *eventComputer) computeByRrule(
 	event Event,
 	span timespan.Span,
-	typeID string,
+	t Type,
 	exdates []Exdate,
 ) ([]ComputedType, error) {
 	location := event.span.From().Location()
@@ -104,7 +105,8 @@ func (c *eventComputer) computeByRrule(
 	computed := make([]ComputedType, len(eventTimespans))
 	for i := range eventTimespans {
 		computed[i].Span = eventTimespans[i]
-		computed[i].ID = typeID
+		computed[i].ID = t.ID
+		computed[i].Color = t.Color
 	}
 
 	computedByExdate := make([]ComputedType, 0)
@@ -124,8 +126,9 @@ func (c *eventComputer) computeByRrule(
 			diffs := curr.Span.Diff(exdateSpan)
 			for _, diff := range diffs {
 				computedWithoutExdates = append(computedWithoutExdates, ComputedType{
-					ID:   curr.ID,
-					Span: diff,
+					Span:  diff,
+					ID:    curr.ID,
+					Color: curr.Color,
 				})
 			}
 
@@ -192,9 +195,11 @@ func (c *eventComputer) computeByActiveType(
 		}
 
 		for _, activeTimespan := range timespans {
+			inactiveType := c.typesByID[c.defaultTypes[TypeInactive]]
 			computed = append(computed, ComputedType{
-				Span: activeTimespan,
-				ID:   c.defaultTypes[TypeInactive],
+				Span:  activeTimespan,
+				ID:    inactiveType.ID,
+				Color: inactiveType.Color,
 			})
 		}
 	}
