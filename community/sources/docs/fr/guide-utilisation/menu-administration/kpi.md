@@ -23,15 +23,15 @@ Canopsis fournit des indicateurs statistiques et des indicateurs de performance 
 
 Dans le menu principal de Canopsis, cliquer sur le menu administration :
 
-![Menu Principal](./img/menu_1.png)
+![Menu Principal](./img/kpi_menu_1.png)
 
 Dans le menu administration, cliquer sur le menu KPI :
 
-![Menu Administration](./img/menu_2.png)
+![Menu Administration](./img/kpi_menu_2.png)
 
 Fonctionnalités disponibles :
 
-![Fonctionnalités](./img/fonctionnalites.png)
+![Fonctionnalités](./img/kpi_fonctionnalites.png)
 
 ## Graphiques
 ### Métriques d’alarmes
@@ -47,7 +47,7 @@ Valeurs configurables :
 
 *Par ex. état du nombre d’alarmes actives et acquittées par jour sur une période de six mois :*
 
-![Métrique d’alarme](./img/alarmes.png)
+![Métrique d’alarme](./img/kpi_alarmes.png)
 
 ### Notations
 
@@ -62,7 +62,7 @@ Valeurs configurables :
 
 *Par ex. le nombre d’alarmes actives avec acquittements, rangées par rôle :*
 
-![Notations](./img/notations.png)
+![Notations](./img/kpi_notations.png)
 
 ### SLI
 
@@ -77,7 +77,7 @@ Valeurs configurables :
 
 *Par ex. la répartition en pourcentage du temps passé dans les divers états chaque jour :*
 
-![SLI](./img/sli.png)
+![SLI](./img/kpi_sli.png)
 
 ## Filtres
 
@@ -85,25 +85,25 @@ Les filtres permettent de restreindre le périmètre pour le SLI/SLA. (en utilis
 
 Pour créer un filtre, cliquer sur le bouton "plus" :
 
-![Création de filtre 1/5](./img/filtres_1.png)
+![Création de filtre 1/5](./img/kpi_filtres_1.png)
 
 Cliquer sur le bouton "Ajouter".
 
-![Création de filtre 2/5](./img/filtres_2.png)
+![Création de filtre 2/5](./img/kpi_filtres_2.png)
 
 Cliquer sur le bouton "plus" pour ajouter une règle.
 
-![Création de filtre 3/5](./img/filtres_3.png)
+![Création de filtre 3/5](./img/kpi_filtres_3.png)
 
 Passer en mode avancé pour une comparaison de texte.
 
-![Création de filtre 4/5](./img/filtres_4.png)
+![Création de filtre 4/5](./img/kpi_filtres_4.png)
 
 Ajouter ma règle de comparaison.
 
 *Par ex. une regex sur le nom de mon application :*
 
-![Création de filtre 5/5](./img/filtres_5.png)
+![Création de filtre 5/5](./img/kpi_filtres_5.png)
 
 ## Paramètres d’évaluation
 
@@ -112,7 +112,7 @@ Les paramètres d’évaluation contrôlent les critères utilisables pour les [
 
 *Paramètres par défaut :*
 
-![Paramètres](./img/parametres.png)
+![Paramètres](./img/kpi_parametres.png)
 
 ## Glossaire des paramètres de comparaison
 
