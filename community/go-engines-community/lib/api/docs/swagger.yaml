@@ -9161,6 +9161,8 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
+      security:
+        - { }
   /user-preferences:
     put:
       tags:
