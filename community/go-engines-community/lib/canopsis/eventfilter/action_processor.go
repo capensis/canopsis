@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -13,16 +12,16 @@ import (
 )
 
 type actionProcessor struct {
-	templateExecutor  *template.Executor
+	templateExecutor  template.Executor
 	techMetricsSender techmetrics.Sender
 }
 
 func NewActionProcessor(
-	timezoneConfigProvider config.TimezoneConfigProvider,
+	templateExecutor template.Executor,
 	sender techmetrics.Sender,
 ) ActionProcessor {
 	return &actionProcessor{
-		templateExecutor:  template.NewExecutor(timezoneConfigProvider),
+		templateExecutor:  templateExecutor,
 		techMetricsSender: sender,
 	}
 }

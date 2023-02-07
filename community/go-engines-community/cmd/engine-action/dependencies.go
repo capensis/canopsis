@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
@@ -39,6 +40,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
@@ -58,6 +60,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		delayedScenarioManager, storage, json.NewEncoder(), json.NewDecoder(), amqpChannel,
 		options.FifoAckExchange, options.FifoAckQueue,
 		alarm.NewActivationService(json.NewEncoder(), amqpChannel, canopsis.CheQueueName, logger), logger)
+	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	rpcResultChannel := make(chan action.RpcResult)
 
@@ -105,7 +108,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 			manager := action.NewTaskManager(
-				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, timezoneConfigProvider),
+				action.NewWorkerPool(options.WorkerPoolSize, mongoClient, axeRpcClient, webhookRpcClient, json.NewEncoder(), logger, templateExecutor),
 				storage,
 				actionScenarioStorage,
 				logger,
@@ -226,6 +229,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		logger,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
+		templateConfigProvider,
 	))
 
 	return engineAction

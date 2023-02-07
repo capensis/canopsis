@@ -131,6 +131,7 @@ func RegisterRoutes(
 	legacyUrl string,
 	dbClient mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
@@ -742,7 +743,7 @@ func RegisterRoutes(
 		}
 
 		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, securityConfig.AuthProviders,
 			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
@@ -1599,7 +1600,7 @@ func RegisterRoutes(
 			)
 		}
 
-		templateValidatorApi := template.NewApi(validator.NewValidator(timezoneConfigProvider))
+		templateValidatorApi := template.NewApi(validator.NewValidator(timezoneConfigProvider), templateConfigProvider)
 		templateValidatorRouter := protected.Group("/template-validator")
 		{
 			templateValidatorRouter.POST(
@@ -1613,6 +1614,10 @@ func RegisterRoutes(
 				templateValidatorApi.ValidateScenarios,
 			)
 		}
+		protected.GET(
+			"/template-vars",
+			templateValidatorApi.GetEnvVars,
+		)
 	}
 }
 
