@@ -485,6 +485,8 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/appinfo.AppInfoResponse'
+      security:
+        - { }
   /associativetable:
     get:
       tags:
@@ -9145,6 +9147,24 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-vars:
+    get:
+      tags:
+        - template-validator
+      summary: Get template env vars
+      description: Get template env vars
+      operationId: template-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      security:
+        - { }
   /user-preferences:
     put:
       tags:

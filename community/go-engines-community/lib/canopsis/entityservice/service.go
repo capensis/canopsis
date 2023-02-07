@@ -10,7 +10,6 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -50,7 +49,7 @@ type service struct {
 	redisClient     redis.Cmdable
 	logger          zerolog.Logger
 
-	templateExecutor *template.Executor
+	templateExecutor template.Executor
 }
 
 // NewService gives the correct service adapter.
@@ -65,7 +64,7 @@ func NewService(
 	storage Storage,
 	lockClient libredis.LockClient,
 	redisClient redis.Cmdable,
-	timezoneConfigProvider config.TimezoneConfigProvider,
+	templateExecutor template.Executor,
 	logger zerolog.Logger,
 ) Service {
 	service := service{
@@ -82,7 +81,7 @@ func NewService(
 		redisClient:     redisClient,
 		logger:          logger,
 
-		templateExecutor: template.NewExecutor(timezoneConfigProvider),
+		templateExecutor: templateExecutor,
 	}
 	return &service
 }

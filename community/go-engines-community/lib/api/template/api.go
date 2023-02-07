@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"github.com/gin-gonic/gin"
 )
@@ -11,14 +12,19 @@ import (
 type API interface {
 	ValidateDeclareTicketRules(c *gin.Context)
 	ValidateScenarios(c *gin.Context)
+	GetEnvVars(c *gin.Context)
 }
 
 type api struct {
-	validator validator.Validator
+	validator              validator.Validator
+	templateConfigProvider config.TemplateConfigProvider
 }
 
-func NewApi(validator validator.Validator) API {
-	return &api{validator: validator}
+func NewApi(validator validator.Validator, templateConfigProvider config.TemplateConfigProvider) API {
+	return &api{
+		validator:              validator,
+		templateConfigProvider: templateConfigProvider,
+	}
 }
 
 // ValidateDeclareTicketRules
@@ -65,4 +71,8 @@ func (a *api) ValidateScenarios(c *gin.Context) {
 		Err:      errReport,
 		Warnings: wrnReports,
 	})
+}
+
+func (a *api) GetEnvVars(c *gin.Context) {
+	c.JSON(http.StatusOK, a.templateConfigProvider.Get().Vars)
 }
