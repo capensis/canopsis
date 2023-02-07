@@ -34,8 +34,6 @@ const (
 
 	ObjAssociativeTable = "api_associative_table"
 
-	PermAppInfoRead = "api_app_info_read"
-
 	PermUserInterfaceUpdate = "api_user_interface_update"
 	PermUserInterfaceDelete = "api_user_interface_delete"
 
