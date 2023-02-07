@@ -9,7 +9,7 @@ virtualenv -p python3 --no-download --system-site-packages ${CPS_HOME}/venv-ansi
 
 source ${CPS_HOME}/venv-ansible/bin/activate
 
-pip3 install -U setuptools "pip==22.3.1"
+pip3 install -U setuptools "pip==23.0"
 pip3 --no-color install -U wheel
 
 # pymongo is required by the Ansible mongodb/canopsis roles
