@@ -5,7 +5,7 @@ set -o pipefail
 export PATH=/opt/python/3.9/bin:$PATH
 python3 --version
 type -P python3
-pip3.9 install -U setuptools "pip==22.3.1"
+pip3.9 install -U setuptools "pip==23.0"
 
 python3 -m pip install --upgrade virtualenv
 virtualenv -p python3 --no-download --system-site-packages ${CPS_HOME}

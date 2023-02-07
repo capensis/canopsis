@@ -21,7 +21,11 @@
 import logging
 import time
 import os
-import ConfigParser
+from sys import version_info
+if version_info < (3, 0):
+    from ConfigParser import RawConfigParser, Error as ConfigError
+else:
+    from configparser import RawConfigParser, Error as ConfigError
 
 from uuid import uuid1
 
@@ -33,7 +37,7 @@ from canopsis.common import root_path
 from canopsis.old.account import Account
 from canopsis.old.record import Record
 
-CONFIG = ConfigParser.RawConfigParser()
+CONFIG = RawConfigParser()
 CONFIG.read(os.path.join(root_path, 'etc', 'cstorage.conf'))
 
 
@@ -62,48 +66,48 @@ class Storage(object):
         try:
             self.mongo_uri = CONFIG.get('master', 'db_uri')
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.mongo_uri = mongo_uri
 
         try:
             self.mongo_host = CONFIG.get("master", "host")
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.mongo_host = mongo_host
 
         try:
             self.mongo_port = CONFIG.getint("master", "port")
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.mongo_port = mongo_port
 
         try:
             self.mongo_db = CONFIG.get("master", "db")
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.mongo_db = mongo_db
 
         try:
             self.mongo_userid = CONFIG.get("master", "userid")
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.mongo_userid = mongo_userid
 
         try:
             self.mongo_password = CONFIG.get("master", "password")
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.mongo_password = mongo_password
 
         try:
             self.fetch_limit = int(CONFIG.get("master", "fetch_limit"))
 
-        except ConfigParser.Error:
+        except ConfigError:
             self.fetch_limit = 10000
 
         try:
             self.no_count_limit = int(CONFIG.get("master", "no_count_limit"))
-        except ConfigParser.Error:
+        except ConfigError:
             self.no_count_limit = 200000
 
         self.mongo_safe = mongo_safe

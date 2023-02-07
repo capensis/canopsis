@@ -33,11 +33,7 @@ import bottle
 import sys
 import os
 import importlib
-import gevent
-
-# DO NOT EVER MODIFY THE 2 LINES BELOW OR UNDESIRED BEHAVIOR ***WILL** HAPPEN.
-from gevent import monkey
-monkey.patch_all()
+import signal
 
 
 # TODO: replace with canopsis.mongo.MongoStorage
@@ -98,8 +94,8 @@ class OldApi():
 
     def init_app(self):
         self.logger.info('Initialize gevent signal-handlers')
-        gevent.signal(SIGTERM, self.exit)
-        gevent.signal(SIGINT, self.exit)
+        signal.signal(SIGTERM, self.exit)
+        signal.signal(SIGINT, self.exit)
         self.logger.info('Initialize WSGI Application')
         self.app = BottleApplication()
 
