@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     wholePending() {
-      return this.pending || this.templateVarsPending;
+      return this.pending || this.appInfoPending || this.templateVarsPending;
     },
 
     routeViewKey() {
@@ -78,6 +78,7 @@ export default {
     this.registerCurrentUserOnceWatcher();
   },
   mounted() {
+    this.fetchAppInfoWithErrorHandling();
     this.socketConnectWithErrorHandling();
     this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
@@ -101,16 +102,8 @@ export default {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
 
-          await Promise.all([
-            this.fetchAppInfo(),
-            this.filesAccess(),
-          ]);
+          await this.filesAccess();
 
-          this.setSystemData({
-            timezone: this.timezone,
-          });
-
-          this.setTitle();
           this.showPausedExecutionsPopup();
 
           unwatch();
@@ -175,6 +168,26 @@ export default {
         console.error(err);
       } finally {
         this.pending = false;
+      }
+    },
+
+    async fetchAppInfoWithErrorHandling() {
+      try {
+        await this.fetchAppInfo();
+
+        this.setSystemData({
+          timezone: this.timezone,
+        });
+
+        this.setTitle();
+      } catch (err) {
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+          this.$router.push({
+            name: ROUTES_NAMES.error,
+          });
+        }
+
+        console.error(err);
       }
     },
   },
