@@ -39,15 +39,22 @@
     c-information-block(:title="$t('storageSettings.remediation.title')")
       template(v-if="history.remediation", slot="subtitle") {{ remediationSubTitle }}
       c-enabled-duration-field(
-        v-field="form.remediation.accumulate_after",
-        :label="$t('storageSettings.remediation.accumulateAfter')",
-        :name="remediationAccumulateAfterFieldName"
-      )
-      c-enabled-duration-field(
         v-field="form.remediation.delete_after",
         :label="$t('storageSettings.remediation.deleteAfter')",
         :help-text="$t('storageSettings.remediation.deleteAfterHelpText')",
         :name="remediationDeleteAfterFieldName"
+      )
+      c-enabled-duration-field(
+        v-field="form.remediation.delete_stats_after",
+        :label="$t('storageSettings.remediation.deleteStatsAfter')",
+        :help-text="$t('storageSettings.remediation.deleteStatsAfterHelpText')",
+        :name="remediationDeleteStatsAfterFieldName"
+      )
+      c-enabled-duration-field(
+        v-field="form.remediation.delete_mod_stats_after",
+        :label="$t('storageSettings.remediation.deleteModStatsAfter')",
+        :help-text="$t('storageSettings.remediation.deleteModStatsAfterHelpText')",
+        :name="remediationDeleteModStatsAfterFieldName"
       )
     c-information-block(:title="$t('storageSettings.pbehavior.title')")
       template(v-if="history.pbehavior", slot="subtitle") {{ pbehaviorSubTitle }}
@@ -108,12 +115,16 @@ export default {
       return 'alarm.delete_after';
     },
 
-    remediationAccumulateAfterFieldName() {
-      return 'remediation.accumulate_after';
-    },
-
     remediationDeleteAfterFieldName() {
       return 'remediation.delete_after';
+    },
+
+    remediationDeleteStatsAfterFieldName() {
+      return 'remediation.delete_stats_after';
+    },
+
+    remediationDeleteModStatsAfterFieldName() {
+      return 'remediation.delete_mod_stats_after';
     },
 
     pbehaviorDeleteAfterFieldName() {
