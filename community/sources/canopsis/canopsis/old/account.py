@@ -65,10 +65,10 @@ class Account(Record):
         return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)
 
     def passwd(self, passwd):
-        self.shadowpasswd = sha1(str(passwd)).hexdigest()
+        self.shadowpasswd = sha1(str(passwd).encode('utf-8')).hexdigest()
 
     def check_passwd(self, passwd):
-        return self.check_shadowpasswd(sha1(str(passwd)).hexdigest())
+        return self.check_shadowpasswd(sha1(str(passwd).encode('utf-8')).hexdigest())
 
     def check_shadowpasswd(self, shadowpasswd):
         shadowpasswd = str(shadowpasswd).upper()
@@ -109,7 +109,7 @@ class Account(Record):
         return m.hexdigest()
 
     def generate_new_authkey(self):
-        return sha224(str(getrandbits(512))).hexdigest()
+        return sha224(str(getrandbits(512)).encode('utf-8')).hexdigest()
 
     def dump(self):
         self.name = self.user
