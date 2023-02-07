@@ -45,7 +45,6 @@
         )
     c-pbehavior-reason-field(v-field="form.reason", required, return-object)
     c-pbehavior-type-field(v-field="form.type", required, return-object)
-    c-color-picker-field(v-field="form.color")
 </template>
 
 <script>
