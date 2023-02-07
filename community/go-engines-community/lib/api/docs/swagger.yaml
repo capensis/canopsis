@@ -485,6 +485,8 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/appinfo.AppInfoResponse'
+      security:
+        - { }
   /associativetable:
     get:
       tags:
