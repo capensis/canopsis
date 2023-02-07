@@ -1141,6 +1141,9 @@ export default merge({
             message: 'Message',
           },
         },
+        color: {
+          label: 'Use special color for this event?',
+        },
       },
       errors: {
         invalid: 'Invalid',
@@ -1480,6 +1483,12 @@ export default merge({
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
+      },
+      canonicalTypes: {
+        [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+        [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+        [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -2358,7 +2367,7 @@ export default merge({
 
   pbehaviorTypes: {
     usingType: 'Cannot be deleted since it is in use',
-    defaultType: 'Type is default, because cannot be edited',
+    defaultType: 'The type is default, you can edit only color field',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
