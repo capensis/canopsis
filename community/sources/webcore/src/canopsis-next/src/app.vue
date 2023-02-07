@@ -1,5 +1,10 @@
 <template lang="pug">
   v-app#app
+    c-progress-overlay(
+      :pending="wholePending",
+      :transition="false",
+      color="gray"
+    )
     v-layout(v-if="!wholePending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
@@ -51,12 +56,13 @@ export default {
   ],
   data() {
     return {
-      pending: true,
+      currentUserLocalPending: true,
+      appInfoLocalPending: true,
     };
   },
   computed: {
     wholePending() {
-      return this.pending || this.appInfoPending || this.templateVarsPending;
+      return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending;
     },
 
     routeViewKey() {
@@ -157,7 +163,7 @@ export default {
 
     async fetchCurrentUserWithErrorHandling() {
       try {
-        this.pending = true;
+        this.currentUserLocalPending = true;
 
         await this.fetchCurrentUser();
       } catch (err) {
@@ -167,12 +173,13 @@ export default {
 
         console.error(err);
       } finally {
-        this.pending = false;
+        this.currentUserLocalPending = false;
       }
     },
 
     async fetchAppInfoWithErrorHandling() {
       try {
+        this.appInfoLocalPending = true;
         await this.fetchAppInfo();
 
         this.setSystemData({
@@ -188,6 +195,8 @@ export default {
         }
 
         console.error(err);
+      } finally {
+        this.appInfoLocalPending = false;
       }
     },
   },
