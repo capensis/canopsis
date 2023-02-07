@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -68,7 +67,7 @@ type pool struct {
 	webhookRpcClient engine.RPCClient
 	encoder          encoding.Encoder
 	logger           zerolog.Logger
-	templateExecutor *template.Executor
+	templateExecutor template.Executor
 
 	alarmCollection          mongo.DbCollection
 	webhookHistoryCollection mongo.DbCollection
@@ -81,7 +80,7 @@ func NewWorkerPool(
 	webhookRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
-	timezoneConfigProvider config.TimezoneConfigProvider,
+	templateExecutor template.Executor,
 ) WorkerPool {
 	return &pool{
 		size:             size,
@@ -89,7 +88,7 @@ func NewWorkerPool(
 		webhookRpcClient: webhookRpcClient,
 		encoder:          encoder,
 		logger:           logger,
-		templateExecutor: template.NewExecutor(timezoneConfigProvider),
+		templateExecutor: templateExecutor,
 
 		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryMongoCollection),
