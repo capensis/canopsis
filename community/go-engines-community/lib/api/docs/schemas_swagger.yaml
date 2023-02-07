@@ -2485,7 +2485,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - entity
     - name
     - origin
@@ -2542,7 +2541,6 @@ definitions:
         type: string
     required:
     - _id
-    - color
     - enabled
     - name
     - reason
@@ -2602,7 +2600,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2726,6 +2723,8 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
       description:
         type: string
       icon_name:
@@ -2773,7 +2772,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2920,6 +2918,8 @@ definitions:
     type: object
   pbehaviortype.EditRequest:
     properties:
+      color:
+        type: string
       description:
         maxLength: 255
         type: string
@@ -2939,6 +2939,7 @@ definitions:
         - pause
         type: string
     required:
+    - color
     - description
     - icon_name
     - name
@@ -2949,12 +2950,14 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
+      default:
+        type: boolean
       deletable:
         type: boolean
       description:
         type: string
-      editable:
-        type: boolean
       icon_name:
         type: string
       name:
