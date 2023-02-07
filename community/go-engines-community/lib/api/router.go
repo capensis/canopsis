@@ -1616,7 +1616,6 @@ func RegisterRoutes(
 		}
 		protected.GET(
 			"/template-vars",
-			middleware.OnlyAuth(),
 			templateValidatorApi.GetEnvVars,
 		)
 	}
