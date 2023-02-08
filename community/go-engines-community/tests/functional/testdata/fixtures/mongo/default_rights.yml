@@ -3,20 +3,20 @@ template:
     _id: <UUID()>,
     crecord_type: action,
     crecord_name: <Current()._id>,
-    desc: <LoremIpsumSentence(3)>
+    description: <LoremIpsumSentence(3)>
   }
   - &permission_crud {
     _id: <UUID()>,
     crecord_type: action,
     crecord_name: <Current()._id>,
-    desc: <LoremIpsumSentence(3)>,
+    description: <LoremIpsumSentence(3)>,
     type: CRUD
   }
   - &permission_rw {
     _id: <UUID()>,
     crecord_type: action,
     crecord_name: <Current()._id>,
-    desc: <LoremIpsumSentence(3)>,
+    description: <LoremIpsumSentence(3)>,
     type: RW
   }
   - &role {
@@ -41,242 +41,242 @@ default_rights:
     <<: *permission
     _id: api_alarm_read
     crecord_name: <Current()._id>
-    desc: Read alarms
+    description: Read alarms
   permission_api_idlerule:
     <<: *permission_crud
     _id: api_idlerule
     crecord_name: <Current()._id>
-    desc: Idle rules
+    description: Idle rules
   permission_api_eventfilter:
     <<: *permission_crud
     _id: api_eventfilter
     crecord_name: <Current()._id>
-    desc: Event filters
+    description: Event filters
   permission_api_action:
     <<: *permission_crud
     _id: api_action
     crecord_name: <Current()._id>
-    desc: Actions
+    description: Actions
   permission_api_metaalarmrule:
     <<: *permission_crud
     _id: api_metaalarmrule
     crecord_name: <Current()._id>
-    desc: Meta-alarm rules
+    description: Meta-alarm rules
   permission_api_playlist:
     <<: *permission_crud
     _id: api_playlist
     crecord_name: <Current()._id>
-    desc: Playlists
+    description: Playlists
   permission_api_dynamicinfos:
     <<: *permission_crud
     _id: api_dynamicinfos
     crecord_name: <Current()._id>
-    desc: Dynamic infos
+    description: Dynamic infos
   permission_api_entityservice:
     <<: *permission_crud
     _id: api_entityservice
     crecord_name: <Current()._id>
-    desc: Entity service
+    description: Entity service
   permission_api_entitycategory:
     <<: *permission_crud
     _id: api_entitycategory
     crecord_name: <Current()._id>
-    desc: Entity categories
+    description: Entity categories
   permission_api_viewgroup:
     <<: *permission_crud
     _id: api_viewgroup
     crecord_name: <Current()._id>
-    desc: View groups
+    description: View groups
   permission_api_view:
     <<: *permission_crud
     _id: api_view
     crecord_name: <Current()._id>
-    desc: Views
+    description: Views
   permission_api_pbehavior:
     <<: *permission_crud
     _id: api_pbehavior
     crecord_name: <Current()._id>
-    desc: PBehaviors
+    description: PBehaviors
   permission_api_pbehaviortype:
     <<: *permission_crud
     _id: api_pbehaviortype
     crecord_name: <Current()._id>
-    desc: PBehaviorTypes
+    description: PBehaviorTypes
   permission_api_pbehaviorreason:
     <<: *permission_crud
     _id: api_pbehaviorreason
     crecord_name: <Current()._id>
-    desc: PBehaviorReasons
+    description: PBehaviorReasons
   permission_api_pbehaviorexception:
     <<: *permission_crud
     _id: api_pbehaviorexception
     crecord_name: <Current()._id>
-    desc: PBehaviorExceptions
+    description: PBehaviorExceptions
   permission_api_event:
     <<: *permission
     _id: api_event
     crecord_name: <Current()._id>
-    desc: Event
+    description: Event
   permission_api_healthcheck:
     <<: *permission
     _id: api_healthcheck
     crecord_name: <Current()._id>
-    desc: Healthcheck
+    description: Healthcheck
   permission_api_message_rate_stats_read:
     <<: *permission
     _id: api_message_rate_stats_read
     crecord_name: <Current()._id>
-    desc: Message rate statistics
+    description: Message rate statistics
   permission_api_execution:
     <<: *permission
     _id: api_execution
     crecord_name: <Current()._id>
-    desc: Runs instructions
+    description: Runs instructions
   permission_api_job_config:
     <<: *permission_crud
     _id: api_job_config
     crecord_name: <Current()._id>
-    desc: Job configs
+    description: Job configs
   permission_api_job:
     <<: *permission_crud
     _id: api_job
     crecord_name: <Current()._id>
-    desc: Jobs
+    description: Jobs
   permission_api_instruction:
     <<: *permission_crud
     _id: api_instruction
     crecord_name: <Current()._id>
-    desc: Instructions
+    description: Instructions
   permission_api_file:
     <<: *permission_crud
     _id: api_file
     crecord_name: <Current()._id>
-    desc: File
+    description: File
   permission_api_entity:
     <<: *permission_crud
     _id: api_entity
     crecord_name: <Current()._id>
-    desc: Entity
+    description: Entity
   permission_api_contextgraph:
     <<: *permission_crud
     _id: api_contextgraph
     crecord_name: <Current()._id>
-    desc: Context graph import
+    description: Context graph import
   permission_api_acl:
     <<: *permission_crud
     _id: api_acl
     crecord_name: <Current()._id>
-    desc: Roles, permissions, users
+    description: Roles, permissions, users
   permission_api_state_settings:
     <<: *permission
     _id: api_state_settings
     crecord_name: <Current()._id>
-    desc: State settings
+    description: State settings
   permission_api_broadcast_message:
     <<: *permission_crud
     _id: api_broadcast_message
     crecord_name: <Current()._id>
-    desc: Broadcast Message
+    description: Broadcast Message
   permission_api_associative_table:
     <<: *permission_crud
     _id: api_associative_table
     crecord_name: <Current()._id>
-    desc: Associative table
+    description: Associative table
   permission_api_app_info_read:
     <<: *permission
     _id: api_app_info_read
     crecord_name: <Current()._id>
-    desc: Read app info
+    description: Read app info
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
     crecord_name: <Current()._id>
-    desc: Update user interface
+    description: Update user interface
   permission_api_user_interface_delete:
     <<: *permission
     _id: api_user_interface_delete
     crecord_name: <Current()._id>
-    desc: Delete user interface
+    description: Delete user interface
   permission_api_junit:
     <<: *permission_crud
     _id: api_junit
     crecord_name: <Current()._id>
-    desc: JUnit API
+    description: JUnit API
   permission_api_datastorage_read:
     <<: *permission
     _id: api_datastorage_read
     crecord_name: <Current()._id>
-    desc: Data storage settings read
+    description: Data storage settings read
   permission_api_datastorage_update:
     <<: *permission
     _id: api_datastorage_update
     crecord_name: <Current()._id>
-    desc: Data storage settings update
+    description: Data storage settings update
   permission_api_notification:
     <<: *permission
     _id: api_notification
     crecord_name: <Current()._id>
-    desc: Notification settings
+    description: Notification settings
   permission_api_instruction_approve:
     <<: *permission
     _id: api_instruction_approve
     crecord_name: <Current()._id>
-    desc: Instruction approve
+    description: Instruction approve
   permission_api_resolve_rule:
     <<: *permission_crud
     _id: api_resolve_rule
     crecord_name: <Current()._id>
-    desc: Resolve rule
+    description: Resolve rule
   permission_api_flapping_rule:
     <<: *permission_crud
     _id: api_flapping_rule
     crecord_name: <Current()._id>
-    desc: Flapping rule
+    description: Flapping rule
   permission_api_metrics:
     <<: *permission
     _id: api_metrics
     crecord_name: <Current()._id>
-    desc: Metrics
+    description: Metrics
   permission_api_rating_settings:
     <<: *permission_crud
     _id: api_rating_settings
     crecord_name: <Current()._id>
-    desc: Rating settings
+    description: Rating settings
   permission_api_metrics_settings:
     <<: *permission_crud
     _id: api_metrics_settings
     crecord_name: <Current()._id>
-    desc: Metrics settings
+    description: Metrics settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
     crecord_name: <Current()._id>
-    desc: KPI filters
+    description: KPI filters
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
     crecord_name: <Current()._id>
-    desc: SNMP
+    description: SNMP
   permission_api_snmpmib:
     <<: *permission_crud
     _id: api_snmpmib
     crecord_name: <Current()._id>
-    desc: SNMP MIB
+    description: SNMP MIB
   permission_api_corporate_pattern:
     <<: *permission
     _id: api_corporate_pattern
     crecord_name: <Current()._id>
-    desc: Corporate patterns
+    description: Corporate patterns
   permission_api_map:
     <<: *permission_crud
     _id: api_map
     crecord_name: <Current()._id>
-    desc: Map
+    description: Map
   permission_api_share_token:
     <<: *permission_crud
     _id: api_share_token
     crecord_name: <Current()._id>
-    desc: Share token
+    description: Share token
 
   role_noperms:
     <<: *role
@@ -379,7 +379,7 @@ default_rights:
     contact:
       address: 30 Rue du Triez 59290 Wasquehal France
       name: John Doe
-    mail: manager@canopsis.net
+    email: manager@canopsis.net
     role: "@role_manager"
 
   user_noperms:
@@ -410,31 +410,31 @@ default_rights:
     <<: *permission
     _id: test-permission-to-get-1
     crecord_name: <Current()._id>
-    desc: test-permission-to-get-1-description
+    description: test-permission-to-get-1-description
 
   permission_to_get_2:
     <<: *permission
     _id: test-permission-to-get-2
     crecord_name: <Current()._id>
-    desc: test-permission-to-get-2-description
+    description: test-permission-to-get-2-description
 
   permission_to_edit_role_1:
     <<: *permission
     _id: test-permission-to-edit-role-1
     crecord_name: <Current()._id>
-    desc: test-permission-to-edit-role-1-description
+    description: test-permission-to-edit-role-1-description
 
   permission_to_edit_role_2:
     <<: *permission_crud
     _id: test-permission-to-edit-role-2
     crecord_name: <Current()._id>
-    desc: test-permission-to-edit-role-2-description
+    description: test-permission-to-edit-role-2-description
 
   permission_to_edit_role_3:
     <<: *permission_rw
     _id: test-permission-to-edit-role-3
     crecord_name: <Current()._id>
-    desc: test-permission-to-edit-role-3-description
+    description: test-permission-to-edit-role-3-description
 
   role_to_check_unique_name:
     <<: *role
@@ -506,19 +506,19 @@ default_rights:
     <<: *permission
     _id: test-permission-to-edit-user-1
     crecord_name: <Current()._id>
-    desc: test-permission-to-edit-user-1-description
+    description: test-permission-to-edit-user-1-description
 
   permission_to_edit_user_2:
     <<: *permission_crud
     _id: test-permission-to-edit-user-2
     crecord_name: <Current()._id>
-    desc: test-permission-to-edit-user-2-description
+    description: test-permission-to-edit-user-2-description
 
   permission_to_edit_user_3:
     <<: *permission_rw
     _id: test-permission-to-edit-user-3
     crecord_name: <Current()._id>
-    desc: test-permission-to-edit-user-3-description
+    description: test-permission-to-edit-user-3-description
 
   role_to_edit_user:
     <<: *role
@@ -572,13 +572,14 @@ default_rights:
     authkey: 3ct2e1ff-5e9e-4b1f-9d80-d968d61g5202
     defaultview: test-view-to-edit-user
     firstname: test-user-to-get-1-firstname
-    groupsNavigationType: side-bar
+    ui_groups_navigation_type: side-bar
     lastname: test-user-to-get-1-lastname
-    mail: test-user-to-get-1-email@canopsis.net
+    email: test-user-to-get-1-email@canopsis.net
     role: "@role_to_user_get_1"
-    tours:
+    ui_tours:
       test-tour-to-get-user-1: true
     ui_language: en
+    ui_theme: canopsis
 
   user_to_get_2:
     <<: *user
@@ -587,11 +588,12 @@ default_rights:
     authkey: 4du3d2gg-6d0d-5c2g-0e91-e079f72o6313
     defaultview: test-view-to-edit-user
     firstname: test-user-to-get-2-firstname
-    groupsNavigationType: side-bar
+    ui_groups_navigation_type: side-bar
     lastname: test-user-to-get-2-lastname
-    mail: test-user-to-get-2-email@canopsis.net
+    email: test-user-to-get-2-email@canopsis.net
     role: "@role_to_user_get_2"
     ui_language: en
+    ui_theme: canopsis
 
   user_to_check_unique_name:
     <<: *user
@@ -650,7 +652,7 @@ default_rights:
     <<: *user
     _id: test-user-to-account-update-1
     crecord_name: <Current()._id>
-    mail: test-user-to-account-update-1-email@canopsis.net
+    email: test-user-to-account-update-1-email@canopsis.net
     firstname: test-user-to-account-update-1-firstname
     lastname: test-user-to-account-update-1-lastname
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6425
@@ -977,9 +979,25 @@ default_rights:
     _id: test-view-to-filter-update-position
     crecord_name: <Current()._id>
 
-  role_to_filter_update_position:
+  role_to_filter_update_position_1:
     <<: *role
-    _id: test-role-to-filter-update-position
+    _id: test-role-to-filter-update-position-1
+    crecord_name: <Current()._id>
+    rights:
+      "@permission_api_view":
+        checksum: 4
+        crecord_type: right
+      "@permission_view_to_filter_update_position":
+        checksum: 4
+        crecord_type: right
+  user_to_filter_update_position_1:
+    <<: *user
+    _id: test-user-to-filter-update-position-1
+    crecord_name: <Current()._id>
+    role: "@role_to_filter_update_position_1"
+  role_to_filter_update_position_2:
+    <<: *role
+    _id: test-role-to-filter-update-position-2
     crecord_name: <Current()._id>
     rights:
       "@permission_api_view":
@@ -988,12 +1006,11 @@ default_rights:
       "@permission_view_to_filter_update_position":
         checksum: 6
         crecord_type: right
-
-  user_to_filter_update_position:
+  user_to_filter_update_position_2:
     <<: *user
-    _id: test-user-to-filter-update-position
+    _id: test-user-to-filter-update-position-2
     crecord_name: <Current()._id>
-    role: "@role_to_filter_update_position"
+    role: "@role_to_filter_update_position_2"
 
   permission_view_to_widget_update_grid_position_1:
     <<: *permission_rw
@@ -1369,7 +1386,7 @@ default_rights:
     contact:
       address: 30 Rue du Triez 59290 Wasquehal France
       name: John Doe
-    mail: admin@canopsis.net
+    email: admin@canopsis.net
     role: "@role_admin"
 
   role_to_widget_filter_edit_1:

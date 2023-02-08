@@ -92,7 +92,7 @@ export default {
     min-height: 150px;
     max-width: 100%;
 
-    & /deep/ img {
+    & ::v-deep img {
       cursor: pointer !important;
     }
   }
@@ -101,7 +101,7 @@ export default {
     &__disabled {
       color: rgba(0, 0, 0, 0.38);
 
-      & /deep/ img {
+      & ::v-deep img {
         pointer-events: all !important;
       }
     }
