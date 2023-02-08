@@ -1,20 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-parents Renders \`extra-details-parents\` with full parents 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <i
-    aria-hidden="true"
-    class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
-    style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
   >
-    center_focus_weak
-  </i>
-</span>
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge brown darken-1"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        center_focus_weak
+      </i>
+    </span>
+  </span>
+</div>
 `;
 
 exports[`extra-details-parents Renders \`extra-details-parents\` with full parents 2`] = `
@@ -58,20 +64,26 @@ exports[`extra-details-parents Renders \`extra-details-parents\` with full paren
 `;
 
 exports[`extra-details-parents Renders \`extra-details-parents\` without rules 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <i
-    aria-hidden="true"
-    class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
-    style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
   >
-    center_focus_weak
-  </i>
-</span>
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge brown darken-1"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        center_focus_weak
+      </i>
+    </span>
+  </span>
+</div>
 `;
 
 exports[`extra-details-parents Renders \`extra-details-parents\` without rules 2`] = `

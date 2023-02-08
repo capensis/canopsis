@@ -7,6 +7,7 @@
     :items="availableIconNames",
     :name="name",
     :error-messages="errors.collect(name)",
+    :disabled="disabled",
     persistent-hint
   )
     template(slot="selection", slot-scope="data")
@@ -46,6 +47,10 @@ export default {
       default: 'icon_name',
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

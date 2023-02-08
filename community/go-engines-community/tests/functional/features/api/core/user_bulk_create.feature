@@ -23,6 +23,7 @@ Feature: Bulk create users
         "email": "test-user-to-bulk-create-1-email@canopsis.net",
         "role": "test-role-to-edit-user",
         "ui_language": "fr",
+        "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
@@ -35,6 +36,7 @@ Feature: Bulk create users
         "email": "test-user-to-bulk-create-1-email@canopsis.net",
         "role": "test-role-to-edit-user",
         "ui_language": "fr",
+        "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
@@ -58,6 +60,7 @@ Feature: Bulk create users
         "email": "test-user-to-bulk-create-2-email@canopsis.net",
         "role": "test-role-to-edit-user",
         "ui_language": "fr",
+        "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
         "defaultview": "test-view-to-edit-user",
@@ -137,7 +140,7 @@ Feature: Bulk create users
         "enable": true,
         "defaultview": "test-view-to-edit-user",
         "password": "123"
-      }         
+      }
     ]
     """
     Then the response code should be 207
@@ -154,6 +157,7 @@ Feature: Bulk create users
           "email": "test-user-to-bulk-create-1-email@canopsis.net",
           "role": "test-role-to-edit-user",
           "ui_language": "fr",
+          "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
@@ -169,6 +173,7 @@ Feature: Bulk create users
           "email": "test-user-to-bulk-create-1-email@canopsis.net",
           "role": "test-role-to-edit-user",
           "ui_language": "fr",
+          "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
@@ -226,6 +231,7 @@ Feature: Bulk create users
           "email": "test-user-to-bulk-create-2-email@canopsis.net",
           "role": "test-role-to-edit-user",
           "ui_language": "fr",
+          "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
           "defaultview": "test-view-to-edit-user",
@@ -340,7 +346,7 @@ Feature: Bulk create users
         "errors": {
           "password": "Password should be 8 or more."
         }
-      }        
+      }
     ]
     """
     When I do GET /api/v4/users?search=test-user-to-bulk-create
@@ -371,7 +377,8 @@ Feature: Bulk create users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr"
+          "ui_language": "fr",
+          "ui_theme": "canopsis"
         },
         {
           "_id": "test-user-to-bulk-create-2-name",
@@ -395,7 +402,8 @@ Feature: Bulk create users
           },
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr"
+          "ui_language": "fr",
+          "ui_theme": "canopsis"
         },
         {
           "_id": "test-user-to-bulk-create-3-name",
@@ -420,7 +428,7 @@ Feature: Bulk create users
           "ui_language": "fr",
           "source": "saml",
           "external_id": "test-id"
-        }      
+        }
       ],
       "meta": {
         "page": 1,
