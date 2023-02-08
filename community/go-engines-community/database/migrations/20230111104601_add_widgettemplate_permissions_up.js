@@ -63,7 +63,7 @@ if (!db.default_rights.findOne({_id: "api_widgettemplate"})) {
         _id: "api_widgettemplate",
         crecord_name: "api_widgettemplate",
         crecord_type: "action",
-        desc: "Widget templates",
+        description: "Widget templates",
         type: "CRUD"
     });
     db.default_rights.updateOne({_id: "admin"}, {
@@ -81,7 +81,7 @@ if (!db.default_rights.findOne({_id: "models_widgetTemplate"})) {
         _id: "models_widgetTemplate",
         crecord_name: "models_widgetTemplate",
         crecord_type: "action",
-        desc: "Widget templates",
+        description: "Widget templates",
         type: "CRUD"
     });
     db.default_rights.updateOne({_id: "admin"}, {
