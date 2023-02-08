@@ -149,8 +149,12 @@ export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
   loading: LoaderOverlay,
 });
-export const CreateWidgetTemplate = () => ({
-  component: import(/* webpackChunkName: "Widget" */ './view/create-widget-template.vue'),
+export const CreateWidgetColumnsTemplate = () => ({
+  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/create-widget-columns-template.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateWidgetMoreInfosTemplate = () => ({
+  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/create-widget-more-infos-template.vue'),
   loading: LoaderOverlay,
 });
 export const CreateService = () => ({
