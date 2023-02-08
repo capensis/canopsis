@@ -192,6 +192,78 @@ func (mr *MockSenderMockRecorder) SendInstructionExecutionForInstruction(arg0, a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionExecutionForInstruction", reflect.TypeOf((*MockSender)(nil).SendInstructionExecutionForInstruction), arg0, arg1)
 }
 
+// SendNotAckedInDayDec mocks base method.
+func (m *MockSender) SendNotAckedInDayDec(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendNotAckedInDayDec", arg0, arg1)
+}
+
+// SendNotAckedInDayDec indicates an expected call of SendNotAckedInDayDec.
+func (mr *MockSenderMockRecorder) SendNotAckedInDayDec(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotAckedInDayDec", reflect.TypeOf((*MockSender)(nil).SendNotAckedInDayDec), arg0, arg1)
+}
+
+// SendNotAckedInDayInc mocks base method.
+func (m *MockSender) SendNotAckedInDayInc(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendNotAckedInDayInc", arg0, arg1)
+}
+
+// SendNotAckedInDayInc indicates an expected call of SendNotAckedInDayInc.
+func (mr *MockSenderMockRecorder) SendNotAckedInDayInc(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotAckedInDayInc", reflect.TypeOf((*MockSender)(nil).SendNotAckedInDayInc), arg0, arg1)
+}
+
+// SendNotAckedInFourHoursDec mocks base method.
+func (m *MockSender) SendNotAckedInFourHoursDec(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendNotAckedInFourHoursDec", arg0, arg1)
+}
+
+// SendNotAckedInFourHoursDec indicates an expected call of SendNotAckedInFourHoursDec.
+func (mr *MockSenderMockRecorder) SendNotAckedInFourHoursDec(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotAckedInFourHoursDec", reflect.TypeOf((*MockSender)(nil).SendNotAckedInFourHoursDec), arg0, arg1)
+}
+
+// SendNotAckedInFourHoursInc mocks base method.
+func (m *MockSender) SendNotAckedInFourHoursInc(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendNotAckedInFourHoursInc", arg0, arg1)
+}
+
+// SendNotAckedInFourHoursInc indicates an expected call of SendNotAckedInFourHoursInc.
+func (mr *MockSenderMockRecorder) SendNotAckedInFourHoursInc(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotAckedInFourHoursInc", reflect.TypeOf((*MockSender)(nil).SendNotAckedInFourHoursInc), arg0, arg1)
+}
+
+// SendNotAckedInHourDec mocks base method.
+func (m *MockSender) SendNotAckedInHourDec(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendNotAckedInHourDec", arg0, arg1)
+}
+
+// SendNotAckedInHourDec indicates an expected call of SendNotAckedInHourDec.
+func (mr *MockSenderMockRecorder) SendNotAckedInHourDec(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotAckedInHourDec", reflect.TypeOf((*MockSender)(nil).SendNotAckedInHourDec), arg0, arg1)
+}
+
+// SendNotAckedInHourInc mocks base method.
+func (m *MockSender) SendNotAckedInHourInc(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendNotAckedInHourInc", arg0, arg1)
+}
+
+// SendNotAckedInHourInc indicates an expected call of SendNotAckedInHourInc.
+func (mr *MockSenderMockRecorder) SendNotAckedInHourInc(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotAckedInHourInc", reflect.TypeOf((*MockSender)(nil).SendNotAckedInHourInc), arg0, arg1)
+}
+
 // SendPbhEnter mocks base method.
 func (m *MockSender) SendPbhEnter(arg0 *types.Alarm, arg1 types.Entity) {
 	m.ctrl.T.Helper()
@@ -226,6 +298,18 @@ func (m *MockSender) SendPbhLeaveAndEnter(arg0 *types.Alarm, arg1 types.Entity, 
 func (mr *MockSenderMockRecorder) SendPbhLeaveAndEnter(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeaveAndEnter", reflect.TypeOf((*MockSender)(nil).SendPbhLeaveAndEnter), arg0, arg1, arg2, arg3)
+}
+
+// SendRemoveNotAckedMetric mocks base method.
+func (m *MockSender) SendRemoveNotAckedMetric(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendRemoveNotAckedMetric", arg0, arg1)
+}
+
+// SendRemoveNotAckedMetric indicates an expected call of SendRemoveNotAckedMetric.
+func (mr *MockSenderMockRecorder) SendRemoveNotAckedMetric(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRemoveNotAckedMetric", reflect.TypeOf((*MockSender)(nil).SendRemoveNotAckedMetric), arg0, arg1)
 }
 
 // SendResolve mocks base method.
