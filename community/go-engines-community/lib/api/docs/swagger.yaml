@@ -6642,7 +6642,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -6713,7 +6713,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.UpdateRequest'
             examples:
               update:
                 summary: Update
