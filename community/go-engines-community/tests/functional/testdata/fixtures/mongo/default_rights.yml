@@ -242,6 +242,11 @@ default_rights:
     _id: api_rating_settings
     crecord_name: <Current()._id>
     desc: Rating settings
+  permission_api_metrics_settings:
+    <<: *permission_crud
+    _id: api_metrics_settings
+    crecord_name: <Current()._id>
+    desc: Metrics settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
@@ -1239,6 +1244,9 @@ default_rights:
         checksum: 1
         crecord_type: right
       "@permission_api_rating_settings":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_metrics_settings":
         checksum: 15
         crecord_type: right
       "@permission_api_kpi_filter":
