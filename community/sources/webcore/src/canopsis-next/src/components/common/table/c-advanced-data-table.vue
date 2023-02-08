@@ -273,7 +273,7 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-data-table {
-  /deep/ thead th {
+  ::v-deep thead th {
     vertical-align: middle;
   }
 

@@ -44,7 +44,7 @@ import {
   ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
-import featureService from '@/services/features';
+import featuresService from '@/services/features';
 
 export default merge({
   common: {
@@ -1141,6 +1141,9 @@ export default merge({
             message: 'Message',
           },
         },
+        color: {
+          label: 'Use special color for this event?',
+        },
       },
       errors: {
         invalid: 'Invalid',
@@ -1480,6 +1483,12 @@ export default merge({
         type: 'Type',
         priority: 'Priority',
         iconName: 'Icon name',
+      },
+      canonicalTypes: {
+        [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+        [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+        [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -2358,7 +2367,7 @@ export default merge({
 
   pbehaviorTypes: {
     usingType: 'Cannot be deleted since it is in use',
-    defaultType: 'Type is default, because cannot be edited',
+    defaultType: 'The type is default, you can edit only color field',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
@@ -2869,9 +2878,12 @@ export default merge({
     },
     remediation: {
       title: 'Instructions data storage',
-      accumulateAfter: 'Accumulate instructions statistics after',
-      deleteAfter: 'Delete instructions data after',
-      deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+      deleteAfter: 'Delete instructions timeline data after',
+      deleteAfterHelpText: 'When switched on, the instructions timelines data will be deleted after the defined time period.',
+      deleteStatsAfter: 'Delete instruction statistics data after',
+      deleteStatsAfterHelpText: 'When switched on, the instruction statistics will be deleted after the defined time period.',
+      deleteModStatsAfter: 'Delete instructions summary data after',
+      deleteModStatsAfterHelpText: 'When switched on, the instructions summary data will be deleted after the defined time period.',
     },
     entity: {
       title: 'Entities data storage',
@@ -3317,4 +3329,4 @@ export default merge({
     generateDump: 'Generate a new dump',
     downloadDump: 'Download dump',
   },
-}, featureService.get('i18n.en'));
+}, featuresService.get('i18n.en'));

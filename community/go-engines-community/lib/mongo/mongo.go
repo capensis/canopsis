@@ -65,9 +65,9 @@ const (
 	JobConfigMongoCollection            = "job_config"
 	JobMongoCollection                  = "job"
 	JobHistoryMongoCollection           = "job_history"
-	// Instruction statistics collections
+	// InstructionWeekStatsMongoCollection
+	// Deprecated : keep for backward compatibility, remove in the next release
 	InstructionWeekStatsMongoCollection = "instruction_week_stats"
-	InstructionModStatsMongoCollection  = "instruction_mod_stats"
 	// Data storage alarm collections
 	ResolvedAlarmMongoCollection = "resolved_alarms"
 	ArchivedAlarmMongoCollection = "archived_alarms"

@@ -16,9 +16,12 @@
           hide-details
         )
     template(#executed_on="{ item }")
-      span.c-nowrap {{ item.executed_on | date }}
+      span.c-nowrap {{ (item.alarm ? item.executed_on : item.instruction_modified_on) | date }}
     template(#result="{ item }")
-      c-enabled(:value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed")
+      c-enabled(
+        v-if="item.alarm",
+        :value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed"
+      )
     template(#duration="{ item }")
       span {{ item.duration | duration }}
     template(#resolved="{ item }")
@@ -29,8 +32,12 @@
 </template>
 
 <script>
-import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
+import {
+  prepareRemediationInstructionExecutionsForAlarmTimeline,
+} from '@/helpers/entities/remediation-instruction-execution';
+
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import AlarmHorizontalTimeLine from '@/components/widgets/alarm/time-line/horizontal-time-line.vue';
 
@@ -115,7 +122,9 @@ export default {
         id: this.remediationInstruction._id,
       });
 
-      this.remediationInstructionExecutions = remediationInstructionExecutions;
+      this.remediationInstructionExecutions = prepareRemediationInstructionExecutionsForAlarmTimeline(
+        remediationInstructionExecutions,
+      );
       this.totalItems = meta.total_count;
       this.pending = false;
     },
