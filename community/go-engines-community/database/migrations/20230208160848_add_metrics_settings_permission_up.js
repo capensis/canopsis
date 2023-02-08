@@ -3,7 +3,7 @@ if (!db.default_rights.findOne({_id: "api_metrics_settings"})) {
         _id: "api_metrics_settings",
         crecord_name: "api_metrics_settings",
         crecord_type: "action",
-        desc: "Metrics settings",
+        description: "Metrics settings",
         type: "CRUD"
     });
     db.default_rights.updateOne({_id: "admin"}, {
