@@ -110,7 +110,7 @@ type Alarm struct {
 	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
 	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
 
-	// is uses only for not acked metrics
+	// is used only for not acked metrics
 	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
 	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
 	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
