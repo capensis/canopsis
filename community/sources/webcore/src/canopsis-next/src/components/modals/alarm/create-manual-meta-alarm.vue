@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { isWarningAlarmState, mapIds } from '@/helpers/entities';
 
@@ -43,12 +43,13 @@ import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-al
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
- * Modal to manage alarms in meta alarm
+ * Modal to manage alarms in manual meta alarm
  */
 export default {
   name: MODALS.createManualMetaAlarm,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     AlarmGeneralTable,
