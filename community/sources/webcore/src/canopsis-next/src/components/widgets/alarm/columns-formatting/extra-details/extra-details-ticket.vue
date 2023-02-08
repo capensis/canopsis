@@ -1,7 +1,9 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.blue.white--text(slot="activator", small) {{ icon }}
+      template(#activator="{ on }")
+        span.c-extra-details__badge.blue(v-on="on")
+          v-icon(color="white", small) {{ icon }}
       div.text-md-center
         strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
         div {{ $t('common.by') }} : {{ ticket.a }}

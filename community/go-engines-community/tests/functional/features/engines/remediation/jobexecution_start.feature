@@ -2,6 +2,29 @@ Feature: run a job
   I need to be able to run a job
   Only admin should be able to run a job
 
+  Scenario: given unauth start job request should not allow access
+    When I do POST /api/v4/cat/job-executions
+    Then the response code should be 401
+
+  Scenario: given start job request and auth user without permissions should not allow access
+    When I am noperms
+    When I do POST /api/v4/cat/job-executions
+    Then the response code should be 403
+
+  Scenario: given unauth get output request should not allow access
+    When I do GET /api/v4/cat/job-executions/test-job-not-exist/output
+    Then the response code should be 401
+
+  Scenario: given get output request and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/cat/job-executions/test-job-not-exist/output
+    Then the response code should be 403
+
+  Scenario: given not exist id in get output request should return error
+    When I am admin
+    When I do GET /api/v4/cat/job-executions/test-job-not-exist/output
+    Then the response code should be 404
+
   Scenario: given job should start job for operation of instruction
     When I am admin
     When I do POST /api/v4/cat/jobs:
@@ -113,13 +136,14 @@ Feature: run a job
       "job_id": "{{ .job2ID }}",
       "status": 0,
       "fail_reason": "",
-      "output": "",
       "started_at": null,
       "launched_at": null,
       "completed_at": null,
       "queue_number": 0
     }
     """
+    When I do GET /api/v4/cat/job-executions/{{ .lastResponse._id }}/output
+    Then the response code should be 404
     When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
     """json
     {
@@ -140,7 +164,6 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-1-name",
                   "status": null,
                   "fail_reason": "",
-                  "output": "",
                   "started_at": null,
                   "launched_at": null,
                   "completed_at": null,
@@ -151,7 +174,6 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-2-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
                   "queue_number": null
                 }
               ]
@@ -168,6 +190,12 @@ Feature: run a job
     Then "job2StartedAt" >= "expectedStartedAt"
     Then "job2LaunchedAt" >= "job2StartedAt"
     Then "job2CompletedAt" >= "job2LaunchedAt"
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 1)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-succeeded-output
+    """
     When I do POST /api/v4/cat/job-executions:
     """json
     {
@@ -184,7 +212,6 @@ Feature: run a job
       "job_id": "{{ .job1ID }}",
       "status": 0,
       "fail_reason": "",
-      "output": "",
       "started_at": null,
       "launched_at": null,
       "completed_at": null,
@@ -210,7 +237,6 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-1-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
                   "queue_number": null
                 },
                 {
@@ -218,7 +244,6 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-1-2-name",
                   "status": 1,
                   "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output",
                   "queue_number": null
                 }
               ]
@@ -235,6 +260,12 @@ Feature: run a job
     Then "job1StartedAt" >= "expectedStartedAt"
     Then "job1LaunchedAt" >= "job1StartedAt"
     Then "job1CompletedAt" >= "job1LaunchedAt"
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-succeeded-output
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I wait the end of 3 events processing
@@ -493,22 +524,18 @@ Feature: run a job
               "jobs": [
                 {
                   "fail_reason": "http-error",
-                  "output": "",
                   "status": 2
                 },
                 {
                   "fail_reason": "url POST http://not-exist/api/35/job/test-job/run cannot be connected",
-                  "output": "",
                   "status": 2
                 },
                 {
                   "fail_reason": "job is executing too long, cannot retrieve status after 2 retries by 2s",
-                  "output": "",
                   "status": 2
                 },
                 {
                   "fail_reason": "job is executing too long, cannot retrieve status after 1 retries by 1s",
-                  "output": "",
                   "status": 2
                 },
                 {
@@ -522,6 +549,37 @@ Feature: run a job
         }
       ]
     }
+    """
+    When I save response jobExecId1={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}
+    When I save response jobExecId2={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 1)._id }}
+    When I save response jobExecId3={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 2)._id }}
+    When I save response jobExecId4={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 3)._id }}
+    When I save response jobExecId5={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 4)._id }}
+    When I do GET /api/v4/cat/job-executions/{{ .jobExecId1 }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    """
+    When I do GET /api/v4/cat/job-executions/{{ .jobExecId2 }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    """
+    When I do GET /api/v4/cat/job-executions/{{ .jobExecId3 }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    """
+    When I do GET /api/v4/cat/job-executions/{{ .jobExecId4 }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    """
+    When I do GET /api/v4/cat/job-executions/{{ .jobExecId5 }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-failed-output
     """
     When I do GET /api/v4/alarms?search=test-resource-to-job-execution-start-2
     Then the response code should be 200
@@ -1300,7 +1358,6 @@ Feature: run a job
       "name": "test-job-to-job-execution-start-8-name",
       "status": 0,
       "fail_reason": "",
-      "output": "",
       "started_at": null,
       "launched_at": null,
       "completed_at": null
@@ -1317,8 +1374,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-8-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -1326,6 +1382,12 @@ Feature: run a job
         }
       ]
     }
+    """
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-succeeded-output
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
@@ -1432,7 +1494,6 @@ Feature: run a job
       "name": "test-job-to-job-execution-start-9-name",
       "status": 0,
       "fail_reason": "",
-      "output": "",
       "started_at": null,
       "launched_at": null,
       "completed_at": null
@@ -1449,8 +1510,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-9-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-params-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -1458,6 +1518,12 @@ Feature: run a job
         }
       ]
     }
+    """
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-params-succeeded-output
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
@@ -1561,7 +1627,6 @@ Feature: run a job
       "name": "test-job-to-job-execution-start-10-name",
       "status": 0,
       "fail_reason": "",
-      "output": "",
       "started_at": null,
       "launched_at": null,
       "completed_at": null
@@ -1578,8 +1643,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-10-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -1587,6 +1651,12 @@ Feature: run a job
         }
       ]
     }
+    """
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-succeeded-output
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
@@ -2125,15 +2195,6 @@ Feature: run a job
     Then the response code should be 200
     When I wait the end of 4 events processing
 
-  Scenario: given unauth request should not allow access
-    When I do POST /api/v4/cat/job-executions
-    Then the response code should be 401
-
-  Scenario: given get request and auth user without permissions should not allow access
-    When I am noperms
-    When I do POST /api/v4/cat/job-executions
-    Then the response code should be 403
-
   Scenario: given job should not add step to resolved alarm and new alarm
     When I am admin
     When I do POST /api/v4/cat/jobs:
@@ -2276,8 +2337,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-13-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-long-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -2285,6 +2345,12 @@ Feature: run a job
         }
       ]
     }
+    """
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-long-succeeded-output
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
@@ -2489,8 +2555,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-14-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-long-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -2500,6 +2565,12 @@ Feature: run a job
     }
     """
     When I save response job1CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).completed_at }}
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-long-succeeded-output
+    """
     When I wait 1s
     When I do POST /api/v4/cat/job-executions:
     """json
@@ -2530,8 +2601,7 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-14-name",
                   "status": 0,
                   "fail_reason": "",
-                  "completed_at": null,
-                  "output": ""
+                  "completed_at": null
                 }
               ]
             }
@@ -2557,8 +2627,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-14-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-long-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -2573,6 +2642,12 @@ Feature: run a job
     Then "job2StartedAt" > "job1CompletedAt"
     Then "job2LaunchedAt" >= "job2StartedAt"
     Then "job2CompletedAt" >= "job2LaunchedAt"
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-long-succeeded-output
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I wait the end of 3 events processing
@@ -2751,8 +2826,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-15-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-long-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -2762,6 +2836,12 @@ Feature: run a job
     }
     """
     When I save response job1CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0).completed_at }}
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-long-succeeded-output
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/previous
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next
@@ -2787,7 +2867,6 @@ Feature: run a job
                   "name": "test-job-to-job-execution-start-15-name",
                   "status": null,
                   "fail_reason": "",
-                  "output": "",
                   "started_at": null,
                   "launched_at": null,
                   "completed_at": null
@@ -2827,8 +2906,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-15-name",
                   "status": 1,
-                  "fail_reason": "",
-                  "output": "test-job-execution-long-succeeded-output"
+                  "fail_reason": ""
                 }
               ]
             }
@@ -2843,6 +2921,12 @@ Feature: run a job
     Then "job2StartedAt" > "job1CompletedAt"
     Then "job2LaunchedAt" >= "job2StartedAt"
     Then "job2CompletedAt" >= "job2LaunchedAt"
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 1).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-long-succeeded-output
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I wait the end of 3 events processing

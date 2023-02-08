@@ -1,22 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge pink"
     >
-      alarm
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in previous month 2`] = `
@@ -52,22 +56,26 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in prev
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge pink"
     >
-      alarm
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 2`] = `
@@ -103,22 +111,26 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge pink"
     >
-      alarm
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 2`] = `
@@ -152,22 +164,26 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon pink white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge pink"
     >
-      alarm
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        alarm
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 2`] = `
