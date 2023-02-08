@@ -8,7 +8,7 @@ export const entitiesManualMetaAlarmMixin = {
       fetchManualMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
       createManualMetaAlarm: 'create',
       addAlarmsIntoManualMetaAlarm: 'addAlarms',
-      removeAlarmsIntoManualMetaAlarm: 'removeAlarms',
+      removeAlarmsFromManualMetaAlarm: 'removeAlarms',
     }),
   },
 };
