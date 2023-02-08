@@ -303,11 +303,18 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		}
 
 		if isToggled {
-			a.sendChangeMessage(entityservice.ChangeEntityMessage{
+			msg := entityservice.ChangeEntityMessage{
 				ID:         simplifiedEntity.ID,
 				EntityType: simplifiedEntity.Type,
 				IsToggled:  isToggled,
-			})
+			}
+
+			if !enabled && simplifiedEntity.Type == types.EntityTypeComponent {
+				msg.Resources = make([]string, len(simplifiedEntity.Depends))
+				copy(msg.Resources, simplifiedEntity.Depends)
+			}
+
+			a.sendChangeMessage(msg)
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, simplifiedEntity.ID, http.StatusOK, rawObject, nil))
@@ -328,6 +335,9 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		}
 
 		a.metricMetaUpdater.UpdateById(c, simplifiedEntity.ID)
+		if isToggled && simplifiedEntity.Type == types.EntityTypeComponent {
+			a.metricMetaUpdater.UpdateById(c, simplifiedEntity.Depends...)
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))

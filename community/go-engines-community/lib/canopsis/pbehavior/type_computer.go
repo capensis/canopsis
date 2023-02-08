@@ -302,12 +302,12 @@ func (c *typeComputer) computePbehavior(
 		Type:    pbehavior.Type,
 		Exdates: exdates,
 	}
-	compitedTypes, err := eventComputer.Compute(params, span)
+	computedTypes, err := eventComputer.Compute(params, span)
 	if err != nil {
 		return ComputedPbehavior{}, err
 	}
 
-	if len(compitedTypes) > 0 {
+	if len(computedTypes) > 0 {
 		reason, ok := models.reasonsByID[pbehavior.Reason]
 		reasonName := pbehavior.Reason
 		if ok {
@@ -326,7 +326,7 @@ func (c *typeComputer) computePbehavior(
 			Name:       pbehavior.Name,
 			ReasonName: reasonName,
 			ReasonID:   reason.ID,
-			Types:      compitedTypes,
+			Types:      computedTypes,
 			Created:    pbehavior.Created.Unix(),
 			Color:      pbehavior.Color,
 

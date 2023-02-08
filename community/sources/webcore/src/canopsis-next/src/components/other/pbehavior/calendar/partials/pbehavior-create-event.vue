@@ -2,8 +2,9 @@
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
     pbehavior-form(v-model="form", :no-pattern="!!entityPattern")
     v-layout(row, justify-end)
-      v-btn.error(
+      v-btn(
         v-show="pbehavior",
+        color="error",
         @click="remove"
       ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(
@@ -11,7 +12,11 @@
         flat,
         @click="cancel"
       ) {{ $t('common.cancel') }}
-      v-btn.mr-0.mb-0.primary.white--text(type="submit") {{ $t('common.submit') }}
+      v-btn.mr-0.mb-0(
+        :disabled="errors.any()",
+        color="primary",
+        type="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>

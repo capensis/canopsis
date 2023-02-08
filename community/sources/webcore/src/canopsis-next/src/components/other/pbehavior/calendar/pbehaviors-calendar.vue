@@ -15,10 +15,10 @@
 <script>
 import { Calendar } from 'dayspan';
 
-import { COLORS } from '@/config';
-
 import { DATETIME_FORMATS } from '@/constants';
 
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 
@@ -79,13 +79,17 @@ export default {
         });
         const fromString = convertDateToString(pbehavior.from, DATETIME_FORMATS.medium);
         const toString = convertDateToString(pbehavior.to, DATETIME_FORMATS.medium);
+        const color = getPbehaviorColor(pbehavior);
+        const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         return {
           id: index,
           data: {
             ...defaultEvent,
+
+            color,
+            forecolor,
             title: `${fromString} - ${toString} ${pbehavior.title}`,
-            color: pbehavior.color || COLORS.secondary,
             icon: pbehavior.type.icon_name,
           },
           schedule: getScheduleForSpan(daySpan),
