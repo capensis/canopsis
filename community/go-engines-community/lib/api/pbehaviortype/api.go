@@ -3,9 +3,9 @@ package pbehaviortype
 import (
 	"context"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -96,6 +96,12 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
+		var fieldValErr common.ValidationError
+		if errors.As(err, &fieldValErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, fieldValErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -131,6 +137,12 @@ func (a *api) Update(c *gin.Context) {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
+		var fieldValErr common.ValidationError
+		if errors.As(err, &fieldValErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, fieldValErr.ValidationErrorResponse())
 			return
 		}
 

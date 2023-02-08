@@ -1,8 +1,9 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      template(#activator="{ on, attrs }")
-        v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", v-bind="attrs", small) {{ icon }}
+      template(#activator="{ on }")
+        span.c-extra-details__badge.brown.darken-1(v-on="on")
+          v-icon(color="white", small) {{ icon }}
       div.text-md-center
         strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
         div {{ $t('common.title') }} : {{ ruleName }}

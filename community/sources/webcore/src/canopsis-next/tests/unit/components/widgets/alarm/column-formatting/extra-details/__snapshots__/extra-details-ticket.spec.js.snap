@@ -8,10 +8,12 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in prev
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge blue"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge blue white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         report_problem
@@ -53,10 +55,12 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge blue"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge blue white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         report_problem
@@ -98,10 +102,12 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 1`]
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge blue"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge blue white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         report_problem
