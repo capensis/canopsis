@@ -160,17 +160,17 @@ export default {
 
 <style lang="scss" scoped>
   .manage-playlist-tabs {
-    & /deep/ .panel-header {
+    & ::v-deep .panel-header {
       display: flex;
       flex: inherit;
       align-items: center;
     }
-    & /deep/ .v-expansion-panel__body {
+    & ::v-deep .v-expansion-panel__body {
       transition: none !important;
     }
   }
   .tabs-panel {
-    & /deep/ .v-expansion-panel__header {
+    & ::v-deep .v-expansion-panel__header {
       padding: 0;
       margin: 0;
     }

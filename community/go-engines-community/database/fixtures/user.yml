@@ -308,806 +308,806 @@ default_rights:
     <<: *permission_crud
     _id: models_userview
     crecord_name: <Current()._id>
-    desc: Userviews
+    description: Userviews
   permission_models_role:
     <<: *permission_crud
     _id: models_role
     crecord_name: <Current()._id>
-    desc: Roles
+    description: Roles
   permission_models_permission:
     <<: *permission_crud
     _id: models_permission
     crecord_name: <Current()._id>
-    desc: Rights
+    description: Rights
   permission_models_user:
     <<: *permission_crud
     _id: models_user
     crecord_name: <Current()._id>
-    desc: Users
+    description: Users
   permission_models_parameters:
     <<: *permission_rw
     _id: models_parameters
     crecord_name: <Current()._id>
-    desc: Parameters
+    description: Parameters
   permission_models_broadcastMessage:
     <<: *permission_crud
     _id: models_broadcastMessage
     crecord_name: <Current()._id>
-    desc: Broadcast Messages
+    description: Broadcast Messages
   permission_models_playlist:
     <<: *permission_crud
     _id: models_playlist
     crecord_name: <Current()._id>
-    desc: Playlists
+    description: Playlists
   permission_models_planning:
     <<: *permission_crud
     _id: models_planning
     crecord_name: <Current()._id>
-    desc: Planning
+    description: Planning
   permission_models_planningType:
     <<: *permission_crud
     _id: models_planningType
     crecord_name: <Current()._id>
-    desc: Planning type
+    description: Planning type
   permission_models_planningReason:
     <<: *permission_crud
     _id: models_planningReason
     crecord_name: <Current()._id>
-    desc: Planning reason
+    description: Planning reason
   permission_models_planningExceptions:
     <<: *permission_crud
     _id: models_planningExceptions
     crecord_name: <Current()._id>
-    desc: Planning dates of exceptions
+    description: Planning dates of exceptions
   permission_models_remediation:
     <<: *permission_crud
     _id: models_remediation
     crecord_name: <Current()._id>
-    desc: Remediation
+    description: Remediation
   permission_models_remediationInstruction:
     <<: *permission_crud
     _id: models_remediationInstruction
     crecord_name: <Current()._id>
-    desc: Remediation instruction
+    description: Remediation instruction
   permission_models_remediationJob:
     <<: *permission_crud
     _id: models_remediationJob
     crecord_name: <Current()._id>
-    desc: Remediation job
+    description: Remediation job
   permission_models_remediationConfiguration:
     <<: *permission_crud
     _id: models_remediationConfiguration
     crecord_name: <Current()._id>
-    desc: Remediation configuration
+    description: Remediation configuration
   permission_models_engine:
     <<: *permission
     _id: models_engine
     crecord_name: <Current()._id>
-    desc: Engines
+    description: Engines
   permission_models_exploitation_eventFilter:
     <<: *permission_crud
     _id: models_exploitation_eventFilter
     crecord_name: <Current()._id>
-    desc: "Exploitation: Event filter"
+    description: "Exploitation: Event filter"
   permission_models_exploitation_pbehavior:
     <<: *permission_crud
     _id: models_exploitation_pbehavior
     crecord_name: <Current()._id>
-    desc: "Exploitation: Pbehaviors"
+    description: "Exploitation: Pbehaviors"
   permission_models_exploitation_snmpRule:
     <<: *permission_crud
     _id: models_exploitation_snmpRule
     crecord_name: <Current()._id>
-    desc: "Exploitation: Snmp rule"
+    description: "Exploitation: Snmp rule"
   permission_models_exploitation_dynamicInfo:
     <<: *permission_crud
     _id: models_exploitation_dynamicInfo
     crecord_name: <Current()._id>
-    desc: "Exploitation: Dynamic informations"
+    description: "Exploitation: Dynamic informations"
   permission_models_exploitation_metaAlarmRule:
     <<: *permission_crud
     _id: models_exploitation_metaAlarmRule
     crecord_name: <Current()._id>
-    desc: "Exploitation: Meta alarm rule"
+    description: "Exploitation: Meta alarm rule"
   permission_models_exploitation_scenario:
     <<: *permission_crud
     _id: models_exploitation_scenario
     crecord_name: <Current()._id>
-    desc: "Exploitation: Scenarios"
+    description: "Exploitation: Scenarios"
   permission_models_exploitation_idleRules:
     <<: *permission_crud
     _id: models_exploitation_idleRules
     crecord_name: <Current()._id>
-    desc: "Exploitation: Idle rules"
+    description: "Exploitation: Idle rules"
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
     crecord_name: <Current()._id>
-    desc: "Exploitation: Flapping rules"
+    description: "Exploitation: Flapping rules"
   permission_models_exploitation_resolveRules:
     <<: *permission_crud
     _id: models_exploitation_resolveRules
     crecord_name: <Current()._id>
-    desc: "Exploitation: Resolve rules"
+    description: "Exploitation: Resolve rules"
   permission_models_exploitation_declareTicketRule:
     <<: *permission_crud
     _id: models_exploitation_declareTicketRule
     crecord_name: <Current()._id>
-    desc: "Exploitation: Declare ticket rule"
+    description: "Exploitation: Declare ticket rule"
   permission_models_healthcheck:
     <<: *permission
     _id: models_healthcheck
     crecord_name: <Current()._id>
-    desc: Healthcheck
+    description: Healthcheck
   permission_models_healthcheckStatus:
     <<: *permission
     _id: models_healthcheckStatus
     crecord_name: <Current()._id>
-    desc: Healthcheck status
+    description: Healthcheck status
   permission_models_kpi:
     <<: *permission
     _id: models_kpi
     crecord_name: <Current()._id>
-    desc: KPI
+    description: KPI
   permission_models_kpiFilters:
     <<: *permission_crud
     _id: models_kpiFilters
     crecord_name: <Current()._id>
-    desc: KPI Filters
+    description: KPI Filters
   permission_models_kpiRatingSettings:
     <<: *permission_crud
     _id: models_kpiRatingSettings
     crecord_name: <Current()._id>
-    desc: KPI Rating settings
+    description: KPI Rating settings
   permission_models_notification_instructionStats:
     <<: *permission_crud
     _id: models_notification_instructionStats
     crecord_name: <Current()._id>
-    desc: "Notifications: Instructions stats"
+    description: "Notifications: Instructions stats"
   permission_models_profile_corporatePattern:
     <<: *permission_crud
     _id: models_profile_corporatePattern
     crecord_name: <Current()._id>
-    desc: "Profile: Corporate patterns"
+    description: "Profile: Corporate patterns"
   permission_models_map:
     <<: *permission_crud
     _id: models_map
     crecord_name: <Current()._id>
-    desc: Map
+    description: Map
   permission_models_shareToken:
     <<: *permission_crud
     _id: models_shareToken
     crecord_name: <Current()._id>
-    desc: "Share token"
+    description: "Share token"
   permission_models_techmetrics:
     <<: *permission
     _id: models_techmetrics
     crecord_name: <Current()._id>
-    desc: "Tech metrics"
+    description: "Tech metrics"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: ack"
+    description: "Rights on listalarm: ack"
   permission_listalarm_fastAck:
     <<: *permission
     _id: listalarm_fastAck
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: fast ack"
+    description: "Rights on listalarm: fast ack"
   permission_listalarm_cancelAck:
     <<: *permission
     _id: listalarm_cancelAck
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: cancel ack"
+    description: "Rights on listalarm: cancel ack"
   permission_listalarm_pbehavior:
     <<: *permission
     _id: listalarm_pbehavior
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: pbehavior"
+    description: "Rights on listalarm: pbehavior"
   permission_listalarm_snoozeAlarm:
     <<: *permission
     _id: listalarm_snoozeAlarm
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: snooze alarm"
+    description: "Rights on listalarm: snooze alarm"
   permission_listalarm_listPbehavior:
     <<: *permission
     _id: listalarm_listPbehavior
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: list pbehavior"
+    description: "Rights on listalarm: list pbehavior"
   permission_listalarm_declareanIncident:
     <<: *permission
     _id: listalarm_declareanIncident
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: declare an incident"
+    description: "Rights on listalarm: declare an incident"
   permission_listalarm_assignTicketNumber:
     <<: *permission
     _id: listalarm_assignTicketNumber
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: assign ticket number"
+    description: "Rights on listalarm: assign ticket number"
   permission_listalarm_removeAlarm:
     <<: *permission
     _id: listalarm_removeAlarm
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: remove alarm"
+    description: "Rights on listalarm: remove alarm"
   permission_listalarm_changeState:
     <<: *permission
     _id: listalarm_changeState
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: change state"
+    description: "Rights on listalarm: change state"
   permission_listalarm_history:
     <<: *permission
     _id: listalarm_history
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: history"
+    description: "Rights on listalarm: history"
   permission_listalarm_groupRequest:
     <<: *permission
     _id: listalarm_groupRequest
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: group request"
+    description: "Rights on listalarm: group request"
   permission_listalarm_manualMetaAlarmGroup:
     <<: *permission
     _id: listalarm_manualMetaAlarmGroup
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Manual meta alarm actions"
+    description: "Rights on listalarm: Manual meta alarm actions"
   permission_listalarm_comment:
     <<: *permission
     _id: listalarm_comment
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Comment' action"
+    description: "Rights on listalarm: Access to 'Comment' action"
   permission_listalarm_listFilters:
     <<: *permission
     _id: listalarm_listFilters
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: list filters"
+    description: "Rights on listalarm: list filters"
   permission_listalarm_editFilter:
     <<: *permission
     _id: listalarm_editFilter
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: edit filters"
+    description: "Rights on listalarm: edit filters"
   permission_listalarm_addFilter:
     <<: *permission
     _id: listalarm_addFilter
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: add filter"
+    description: "Rights on listalarm: add filter"
   permission_listalarm_userFilter:
     <<: *permission
     _id: listalarm_userFilter
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: User filter"
+    description: "Rights on listalarm: User filter"
   permission_listalarm_listRemediationInstructionsFilters:
     <<: *permission
     _id: listalarm_listRemediationInstructionsFilters
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Remediation instructions filters: list' action"
+    description: "Rights on listalarm: Access to 'Remediation instructions filters: list' action"
   permission_listalarm_editRemediationInstructionsFilter:
     <<: *permission
     _id: listalarm_editRemediationInstructionsFilter
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Remediation instructions filters: edit' action"
+    description: "Rights on listalarm: Access to 'Remediation instructions filters: edit' action"
   permission_listalarm_addRemediationInstructionsFilter:
     <<: *permission
     _id: listalarm_addRemediationInstructionsFilter
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Remediation instructions filters: add' action"
+    description: "Rights on listalarm: Access to 'Remediation instructions filters: add' action"
   permission_listalarm_userRemediationInstructionsFilter:
     <<: *permission
     _id: listalarm_userRemediationInstructionsFilter
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Remediation instructions filters: user' action"
+    description: "Rights on listalarm: Access to 'Remediation instructions filters: user' action"
   permission_listalarm_links:
     <<: *permission
     _id: listalarm_links
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to Links"
+    description: "Rights on listalarm: Access to Links"
   permission_listalarm_correlation:
     <<: *permission
     _id: listalarm_correlation
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Correlation' action"
+    description: "Rights on listalarm: Access to 'Correlation' action"
   permission_listalarm_executeInstruction:
     <<: *permission
     _id: listalarm_executeInstruction
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Execute instruction' action"
+    description: "Rights on listalarm: Access to 'Execute instruction' action"
   permission_listalarm_category:
     <<: *permission
     _id: listalarm_category
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Category' action"
+    description: "Rights on listalarm: Access to 'Category' action"
   permission_listalarm_exportAsCsv:
     <<: *permission
     _id: listalarm_exportAsCsv
     crecord_name: <Current()._id>
-    desc: "Rights on listalarm: Access to 'Export as csv' action"
+    description: "Rights on listalarm: Access to 'Export as csv' action"
   permission_serviceweather_entityAck:
     <<: *permission
     _id: serviceweather_entityAck
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Ack' action"
+    description: "Service weather: Access to 'Ack' action"
   permission_serviceweather_entityAssocTicket:
     <<: *permission
     _id: serviceweather_entityAssocTicket
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Assoc Ticket' action"
+    description: "Service weather: Access to 'Assoc Ticket' action"
   permission_serviceweather_entityComment:
     <<: *permission
     _id: serviceweather_entityComment
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Comment' action"
+    description: "Service weather: Access to 'Comment' action"
   permission_serviceweather_entityValidate:
     <<: *permission
     _id: serviceweather_entityValidate
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Validate' action"
+    description: "Service weather: Access to 'Validate' action"
   permission_serviceweather_entityInvalidate:
     <<: *permission
     _id: serviceweather_entityInvalidate
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Invalidate' action"
+    description: "Service weather: Access to 'Invalidate' action"
   permission_serviceweather_entityPause:
     <<: *permission
     _id: serviceweather_entityPause
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Pause' action"
+    description: "Service weather: Access to 'Pause' action"
   permission_serviceweather_entityPlay:
     <<: *permission
     _id: serviceweather_entityPlay
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Play' action"
+    description: "Service weather: Access to 'Play' action"
   permission_serviceweather_entityCancel:
     <<: *permission
     _id: serviceweather_entityCancel
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Cancel' action"
+    description: "Service weather: Access to 'Cancel' action"
   permission_serviceweather_entityManagePbehaviors:
     <<: *permission
     _id: serviceweather_entityManagePbehaviors
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to pbehaviors management"
+    description: "Service weather: Access to pbehaviors management"
   permission_serviceweather_entityLinks:
     <<: *permission
     _id: serviceweather_entityLinks
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to Links"
+    description: "Service weather: Access to Links"
   permission_serviceweather_moreInfos:
     <<: *permission
     _id: serviceweather_moreInfos
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'More infos' modal"
+    description: "Service weather: Access to 'More infos' modal"
   permission_serviceweather_alarmsList:
     <<: *permission
     _id: serviceweather_alarmsList
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to 'Alarms list' modal"
+    description: "Service weather: Access to 'Alarms list' modal"
   permission_serviceweather_pbehaviorList:
     <<: *permission
     _id: serviceweather_pbehaviorList
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to watcher pbehavior list"
+    description: "Service weather: Access to watcher pbehavior list"
   permission_serviceweather_listFilters:
     <<: *permission
     _id: serviceweather_listFilters
     crecord_name: <Current()._id>
-    desc: "Rights on service weather: List filters"
+    description: "Rights on service weather: List filters"
   permission_serviceweather_editFilter:
     <<: *permission
     _id: serviceweather_editFilter
     crecord_name: <Current()._id>
-    desc: "Rights on service weather: Edit filters"
+    description: "Rights on service weather: Edit filters"
   permission_serviceweather_addFilter:
     <<: *permission
     _id: serviceweather_addFilter
     crecord_name: <Current()._id>
-    desc: "Rights on service weather: Add filter"
+    description: "Rights on service weather: Add filter"
   permission_serviceweather_userFilter:
     <<: *permission
     _id: serviceweather_userFilter
     crecord_name: <Current()._id>
-    desc: "Rights on service weather: User filter"
+    description: "Rights on service weather: User filter"
   permission_serviceweather_category:
     <<: *permission
     _id: serviceweather_category
     crecord_name: <Current()._id>
-    desc: "Rights on service weather: Access to 'Category' action"
+    description: "Rights on service weather: Access to 'Category' action"
   permission_serviceweather_executeInstruction:
     <<: *permission
     _id: serviceweather_executeInstruction
     crecord_name: <Current()._id>
-    desc: "Service weather: Access to execute instruction"
+    description: "Service weather: Access to execute instruction"
   permission_crudcontext_createEntity:
     <<: *permission
     _id: crudcontext_createEntity
     crecord_name: <Current()._id>
-    desc: "Rights on context: create entity"
+    description: "Rights on context: create entity"
   permission_crudcontext_edit:
     <<: *permission
     _id: crudcontext_edit
     crecord_name: <Current()._id>
-    desc: "Rights on context: edit entity"
+    description: "Rights on context: edit entity"
   permission_crudcontext_duplicate:
     <<: *permission
     _id: crudcontext_duplicate
     crecord_name: <Current()._id>
-    desc: "Rights on context: duplicate entity"
+    description: "Rights on context: duplicate entity"
   permission_crudcontext_delete:
     <<: *permission
     _id: crudcontext_delete
     crecord_name: <Current()._id>
-    desc: "Rights on context: delete entity"
+    description: "Rights on context: delete entity"
   permission_crudcontext_pbehavior:
     <<: *permission
     _id: crudcontext_pbehavior
     crecord_name: <Current()._id>
-    desc: "Rights on context: pbehavior"
+    description: "Rights on context: pbehavior"
   permission_crudcontext_listPbehavior:
     <<: *permission
     _id: crudcontext_listPbehavior
     crecord_name: <Current()._id>
-    desc: "Rights on context: List Pbehaviors"
+    description: "Rights on context: List Pbehaviors"
   permission_crudcontext_deletePbehavior:
     <<: *permission
     _id: crudcontext_deletePbehavior
     crecord_name: <Current()._id>
-    desc: "Rights on context: Delete Pbehaviors"
+    description: "Rights on context: Delete Pbehaviors"
   permission_crudcontext_listFilters:
     <<: *permission
     _id: crudcontext_listFilters
     crecord_name: <Current()._id>
-    desc: "Rights on context: List filters"
+    description: "Rights on context: List filters"
   permission_crudcontext_editFilter:
     <<: *permission
     _id: crudcontext_editFilter
     crecord_name: <Current()._id>
-    desc: "Rights on context: Edit filter"
+    description: "Rights on context: Edit filter"
   permission_crudcontext_addFilter:
     <<: *permission
     _id: crudcontext_addFilter
     crecord_name: <Current()._id>
-    desc: "Rights on context: Add filter"
+    description: "Rights on context: Add filter"
   permission_crudcontext_userFilter:
     <<: *permission
     _id: crudcontext_userFilter
     crecord_name: <Current()._id>
-    desc: "Rights on context: User filter"
+    description: "Rights on context: User filter"
   permission_crudcontext_category:
     <<: *permission
     _id: crudcontext_category
     crecord_name: <Current()._id>
-    desc: "Rights on context: Access to 'Category' action"
+    description: "Rights on context: Access to 'Category' action"
   permission_crudcontext_exportAsCsv:
     <<: *permission
     _id: crudcontext_exportAsCsv
     crecord_name: <Current()._id>
-    desc: "Rights on context: Export as csv"
+    description: "Rights on context: Export as csv"
   permission_crudcontext_massEnable:
     <<: *permission
     _id: crudcontext_massEnable
     crecord_name: <Current()._id>
-    desc: "Rights on context: Mass enable"
+    description: "Rights on context: Mass enable"
   permission_crudcontext_massDisable:
     <<: *permission
     _id: crudcontext_massDisable
     crecord_name: <Current()._id>
-    desc: "Rights on context: Mass disable"
+    description: "Rights on context: Mass disable"
   permission_common_variablesHelp:
     <<: *permission
     _id: common_variablesHelp
     crecord_name: <Current()._id>
-    desc: Access to available variables list
+    description: Access to available variables list
   permission_counter_alarmsList:
     <<: *permission
     _id: counter_alarmsList
     crecord_name: <Current()._id>
-    desc: "Counter: Access to 'Alarms list' modal"
+    description: "Counter: Access to 'Alarms list' modal"
   permission_testingweather_alarmsList:
     <<: *permission
     _id: testingweather_alarmsList
     crecord_name: <Current()._id>
-    desc: "Testing weather: Access to 'Alarms list' modal"
+    description: "Testing weather: Access to 'Alarms list' modal"
   permission_map_alarmsList:
     <<: *permission
     _id: map_alarmsList
     crecord_name: <Current()._id>
-    desc: "Map: Access to 'Alarms list' modal"
+    description: "Map: Access to 'Alarms list' modal"
   permission_map_listFilters:
     <<: *permission
     _id: map_listFilters
     crecord_name: <Current()._id>
-    desc: "Rights on map: List filters"
+    description: "Rights on map: List filters"
   permission_map_editFilter:
     <<: *permission
     _id: map_editFilter
     crecord_name: <Current()._id>
-    desc: "Rights on map: Edit filters"
+    description: "Rights on map: Edit filters"
   permission_map_addFilter:
     <<: *permission
     _id: map_addFilter
     crecord_name: <Current()._id>
-    desc: "Rights on map: Add filter"
+    description: "Rights on map: Add filter"
   permission_map_userFilter:
     <<: *permission
     _id: map_userFilter
     crecord_name: <Current()._id>
-    desc: "Rights on map: User filter"
+    description: "Rights on map: User filter"
   permission_map_category:
     <<: *permission
     _id: map_category
     crecord_name: <Current()._id>
-    desc: "Rights on map: Access to 'Category' action"
+    description: "Rights on map: Access to 'Category' action"
 
   # API permissions
   permission_api_alarm_read:
     <<: *permission
     _id: api_alarm_read
     crecord_name: <Current()._id>
-    desc: Read alarms
+    description: Read alarms
   permission_api_idlerule:
     <<: *permission_crud
     _id: api_idlerule
     crecord_name: <Current()._id>
-    desc: Idle rules
+    description: Idle rules
   permission_api_eventfilter:
     <<: *permission_crud
     _id: api_eventfilter
     crecord_name: <Current()._id>
-    desc: Event filters
+    description: Event filters
   permission_api_action:
     <<: *permission_crud
     _id: api_action
     crecord_name: <Current()._id>
-    desc: Actions
+    description: Actions
   permission_api_metaalarmrule:
     <<: *permission_crud
     _id: api_metaalarmrule
     crecord_name: <Current()._id>
-    desc: Meta-alarm rules
+    description: Meta-alarm rules
   permission_api_playlist:
     <<: *permission_crud
     _id: api_playlist
     crecord_name: <Current()._id>
-    desc: Playlists
+    description: Playlists
   permission_api_dynamicinfos:
     <<: *permission_crud
     _id: api_dynamicinfos
     crecord_name: <Current()._id>
-    desc: Dynamic infos
+    description: Dynamic infos
   permission_api_entityservice:
     <<: *permission_crud
     _id: api_entityservice
     crecord_name: <Current()._id>
-    desc: Entity service
+    description: Entity service
   permission_api_entitycategory:
     <<: *permission_crud
     _id: api_entitycategory
     crecord_name: <Current()._id>
-    desc: Entity categories
+    description: Entity categories
   permission_api_viewgroup:
     <<: *permission_crud
     _id: api_viewgroup
     crecord_name: <Current()._id>
-    desc: View groups
+    description: View groups
   permission_api_view:
     <<: *permission_crud
     _id: api_view
     crecord_name: <Current()._id>
-    desc: Views
+    description: Views
   permission_api_pbehavior:
     <<: *permission_crud
     _id: api_pbehavior
     crecord_name: <Current()._id>
-    desc: PBehaviors
+    description: PBehaviors
   permission_api_pbehaviortype:
     <<: *permission_crud
     _id: api_pbehaviortype
     crecord_name: <Current()._id>
-    desc: PBehaviorTypes
+    description: PBehaviorTypes
   permission_api_pbehaviorreason:
     <<: *permission_crud
     _id: api_pbehaviorreason
     crecord_name: <Current()._id>
-    desc: PBehaviorReasons
+    description: PBehaviorReasons
   permission_api_pbehaviorexception:
     <<: *permission_crud
     _id: api_pbehaviorexception
     crecord_name: <Current()._id>
-    desc: PBehaviorExceptions
+    description: PBehaviorExceptions
   permission_api_event:
     <<: *permission
     _id: api_event
     crecord_name: <Current()._id>
-    desc: Event
+    description: Event
   permission_api_healthcheck:
     <<: *permission
     _id: api_healthcheck
     crecord_name: <Current()._id>
-    desc: Healthcheck
+    description: Healthcheck
   permission_api_message_rate_stats_read:
     <<: *permission
     _id: api_message_rate_stats_read
     crecord_name: <Current()._id>
-    desc: Message rate statistics
+    description: Message rate statistics
   permission_api_execution:
     <<: *permission
     _id: api_execution
     crecord_name: <Current()._id>
-    desc: Runs instructions
+    description: Runs instructions
   permission_api_job_config:
     <<: *permission_crud
     _id: api_job_config
     crecord_name: <Current()._id>
-    desc: Job configs
+    description: Job configs
   permission_api_job:
     <<: *permission_crud
     _id: api_job
     crecord_name: <Current()._id>
-    desc: Jobs
+    description: Jobs
   permission_api_instruction:
     <<: *permission_crud
     _id: api_instruction
     crecord_name: <Current()._id>
-    desc: Instructions
+    description: Instructions
   permission_api_file:
     <<: *permission_crud
     _id: api_file
     crecord_name: <Current()._id>
-    desc: File
+    description: File
   permission_api_entity:
     <<: *permission_crud
     _id: api_entity
     crecord_name: <Current()._id>
-    desc: Entity
+    description: Entity
   permission_api_contextgraph:
     <<: *permission_crud
     _id: api_contextgraph
     crecord_name: <Current()._id>
-    desc: Context graph import
+    description: Context graph import
   permission_api_acl:
     <<: *permission_crud
     _id: api_acl
     crecord_name: <Current()._id>
-    desc: Roles, permissions, users
+    description: Roles, permissions, users
   permission_api_state_settings:
     <<: *permission
     _id: api_state_settings
     crecord_name: <Current()._id>
-    desc: State settings
+    description: State settings
   permission_api_broadcast_message:
     <<: *permission_crud
     _id: api_broadcast_message
     crecord_name: <Current()._id>
-    desc: Broadcast Message
+    description: Broadcast Message
   permission_api_associative_table:
     <<: *permission_crud
     _id: api_associative_table
     crecord_name: <Current()._id>
-    desc: Associative table
+    description: Associative table
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
     crecord_name: <Current()._id>
-    desc: Update user interface
+    description: Update user interface
   permission_api_user_interface_delete:
     <<: *permission
     _id: api_user_interface_delete
     crecord_name: <Current()._id>
-    desc: Delete user interface
+    description: Delete user interface
   permission_api_junit:
     <<: *permission_crud
     _id: api_junit
     crecord_name: <Current()._id>
-    desc: JUnit API
+    description: JUnit API
   permission_api_datastorage_read:
     <<: *permission
     _id: api_datastorage_read
     crecord_name: <Current()._id>
-    desc: Data storage settings read
+    description: Data storage settings read
   permission_api_datastorage_update:
     <<: *permission
     _id: api_datastorage_update
     crecord_name: <Current()._id>
-    desc: Data storage settings update
+    description: Data storage settings update
   permission_api_notification:
     <<: *permission
     _id: api_notification
     crecord_name: <Current()._id>
-    desc: Notification settings
+    description: Notification settings
   permission_api_instruction_approve:
     <<: *permission
     _id: api_instruction_approve
     crecord_name: <Current()._id>
-    desc: Instruction approve
+    description: Instruction approve
   permission_api_resolve_rule:
     <<: *permission_crud
     _id: api_resolve_rule
     crecord_name: <Current()._id>
-    desc: Resolve rule
+    description: Resolve rule
   permission_api_flapping_rule:
     <<: *permission_crud
     _id: api_flapping_rule
     crecord_name: <Current()._id>
-    desc: Flapping rule
+    description: Flapping rule
   permission_api_metrics:
     <<: *permission
     _id: api_metrics
     crecord_name: <Current()._id>
-    desc: Metrics
+    description: Metrics
   permission_api_rating_settings:
     <<: *permission_crud
     _id: api_rating_settings
     crecord_name: <Current()._id>
-    desc: Rating settings
+    description: Rating settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
     crecord_name: <Current()._id>
-    desc: KPI filters
+    description: KPI filters
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
     crecord_name: <Current()._id>
-    desc: SNMP
+    description: SNMP
   permission_api_snmpmib:
     <<: *permission_crud
     _id: api_snmpmib
     crecord_name: <Current()._id>
-    desc: SNMP MIB
+    description: SNMP MIB
   permission_api_corporate_pattern:
     <<: *permission
     _id: api_corporate_pattern
     crecord_name: <Current()._id>
-    desc: Corporate patterns
+    description: Corporate patterns
   permission_api_map:
     <<: *permission_crud
     _id: api_map
     crecord_name: <Current()._id>
-    desc: Map
+    description: Map
   permission_api_share_token:
     <<: *permission_crud
     _id: api_share_token
     crecord_name: <Current()._id>
-    desc: Share token
+    description: Share token
   permission_api_techmetrics:
     <<: *permission
     _id: api_techmetrics
     crecord_name: <Current()._id>
-    desc: Tech Metrics
+    description: Tech Metrics
   permission_api_export_configurations:
     <<: *permission
     _id: api_export_configurations
     crecord_name: <Current()._id>
-    desc: Export configurations
+    description: Export configurations
   permission_api_declare_ticket_rule:
     <<: *permission_crud
     _id: api_declare_ticket_rule
     crecord_name: <Current()._id>
-    desc: Declare ticket rule
+    description: Declare ticket rule
   permission_api_declare_ticket_execution:
     <<: *permission
     _id: api_declare_ticket_execution
     crecord_name: <Current()._id>
-    desc: Run declare ticket rules
+    description: Run declare ticket rules
 
   # Views permissions
   permission_view_open_alarms:
     <<: *permission_rw
     _id: "@view_open_alarms"
     crecord_name: <Current()._id>
-    desc: "Rights on view: alarmes en cours"
+    description: "Rights on view: alarmes en cours"
   permission_view_resolved_alarms:
     <<: *permission_rw
     _id: "@view_resolved_alarms"
     crecord_name: <Current()._id>
-    desc: "Rights on view: alarmes resolues"
+    description: "Rights on view: alarmes resolues"
   permission_view_context_explorer:
     <<: *permission_rw
     _id: "@view_context_explorer"
     crecord_name: <Current()._id>
-    desc: "Rights on view: Explorateur de Contexte"
+    description: "Rights on view: Explorateur de Contexte"
   permission_models_remediation_statistics:
     <<: *permission
     _id: models_remediationStatistic
     crecord_name: <Current()._id>
-    desc: Remediation statistics
+    description: Remediation statistics
 
   role_admin:
     <<: *role
@@ -1498,5 +1498,5 @@ default_rights:
     _id: root
     crecord_name: <Current()._id>
     role: "@role_admin"
-    mail: admin@canopsis.org
+    email: admin@canopsis.org
     shadowpasswd: "<Password(root)>"
