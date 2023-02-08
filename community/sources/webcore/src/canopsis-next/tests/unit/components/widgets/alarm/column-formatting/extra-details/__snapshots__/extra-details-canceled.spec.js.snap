@@ -8,10 +8,12 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in 
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge blue-grey"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         delete
@@ -55,10 +57,12 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with full can
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge blue-grey"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         delete
@@ -102,10 +106,12 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` without messa
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge blue-grey"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         delete
