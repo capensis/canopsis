@@ -40,5 +40,5 @@ const (
 
 	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
 
-	NotAckedPeriodicalLockKey = "not-acked-periodical-lock-key"
+	MetricsNotAckedPeriodicalLockKey = "metrics-not-acked-periodical-lock-key"
 )

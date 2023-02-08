@@ -131,14 +131,14 @@ func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo Pbehavior
 
 	a.AddUpdate("$set", bson.M{"v.pbehavior_info": a.Value.PbehaviorInfo})
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
-	a.AddUpdate("$unset", bson.M{
-		"not_acked_metric_type":      "",
-		"not_acked_metric_send_time": "",
-		"not_acked_since":            "",
-	})
 
 	if !a.Value.PbehaviorInfo.IsActive() {
 		a.startInactiveInterval(timestamp)
+		a.AddUpdate("$unset", bson.M{
+			"not_acked_metric_type":      "",
+			"not_acked_metric_send_time": "",
+			"not_acked_since":            "",
+		})
 	}
 
 	return nil

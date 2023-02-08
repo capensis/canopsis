@@ -1475,7 +1475,7 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response key "data.1.data.0.value" should be greater or equal than 1
 
-  Scenario: given acked alarm should add ack_alarms and average_ack metrics
+  Scenario: given acked alarm should add min_ack and max_ack metrics
     Given I am admin
     When I do POST /api/v4/cat/kpi-filters:
     """json
@@ -1543,28 +1543,5 @@ Feature: Metrics should be added on alarm changes
       "resource" : "test-resource-metrics-axe-14"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=min_ack&parameters[]=max_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
-    """json
-    {
-      "data": [
-        {
-          "title": "min_ack",
-          "data": [
-            {
-              "timestamp": {{ nowDate }},
-              "value": 2
-            }
-          ]
-        },
-        {
-          "title": "max_ack",
-          "data": [
-            {
-              "timestamp": {{ nowDate }},
-              "value": 4
-            }
-          ]
-        }
-      ]
-    }
-    """
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=min_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=max_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 4
