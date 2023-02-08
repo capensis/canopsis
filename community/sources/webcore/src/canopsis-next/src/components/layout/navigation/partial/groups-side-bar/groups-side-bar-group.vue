@@ -65,12 +65,12 @@ export default {
 
 <style lang="scss" scoped>
   .group-item {
-    & /deep/ .v-expansion-panel__header {
+    & ::v-deep .v-expansion-panel__header {
       height: 48px;
     }
 
     &.editing {
-      & /deep/ .v-expansion-panel__header {
+      & ::v-deep .v-expansion-panel__header {
         cursor: move;
       }
 
@@ -86,7 +86,7 @@ export default {
       }
     }
 
-    & /deep/ .v-expansion-panel__body  .v-card {
+    & ::v-deep .v-expansion-panel__body  .v-card {
       border-radius: 0;
       box-shadow: 0 0 0 0 rgba(0,0,0,.2),0 0 0 0 rgba(0,0,0,.14),0 0 0 0 rgba(0,0,0,.12)!important;
     }

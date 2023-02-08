@@ -179,7 +179,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .weather-service-entity-expansion-panel /deep/ .v-expansion-panel__header {
+  .weather-service-entity-expansion-panel ::v-deep .v-expansion-panel__header {
     padding: 0 16px;
     height: auto;
   }

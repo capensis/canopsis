@@ -97,7 +97,6 @@ Feature: run a instruction
                   "status": null,
                   "name": "test-instruction-execution-1-name",
                   "fail_reason": "",
-                  "output": "",
                   "queue_number": null,
                   "started_at": null,
                   "launched_at": null,

@@ -85,7 +85,7 @@ export default {
   font-size: 0.7em;
   position: relative;
 
-  & /deep/ .logged-users-count {
+  & ::v-deep .logged-users-count {
     position: absolute;
     top: 0;
     left: -8px;
@@ -105,11 +105,11 @@ export default {
 }
 
 .top-bar {
-  & /deep/ .v-toolbar__content {
+  & ::v-deep .v-toolbar__content {
     padding: 0;
   }
 
-  & /deep/ .v-toolbar__extension {
+  & ::v-deep .v-toolbar__extension {
     padding: 0;
   }
 }

@@ -48,7 +48,6 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmService.EXPECT().ResolveClosed(gomock.Any())
 	mockAlarmService.EXPECT().ResolveSnoozes(gomock.Any(), gomock.Eq(alarmConfig))
 	mockAlarmService.EXPECT().ResolveCancels(gomock.Any(), gomock.Eq(alarmConfig))
-	mockAlarmService.EXPECT().ResolveDone(gomock.Any())
 	mockAlarmService.EXPECT().UpdateFlappingAlarms(gomock.Any())
 	mockIdleAlarmService.EXPECT().Process(gomock.Any())
 
