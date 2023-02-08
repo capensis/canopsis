@@ -19,6 +19,7 @@ func (modelTransformer) TransformCreateRequestToModel(request CreateRequest) *Ty
 		Type:        request.Type,
 		Priority:    *request.Priority,
 		IconName:    request.IconName,
+		Color:       request.Color,
 	}
 }
 

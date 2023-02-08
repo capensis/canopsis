@@ -1,13 +1,16 @@
 <template lang="pug">
-  v-tooltip.c-extra-details(top)
-    v-icon.pink.white--text.c-extra-details__badge(slot="activator", small) {{ icon }}
-    div.text-md-center
-      strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
-      div {{ $t('common.by') }} : {{ snooze.a }}
-      div {{ $t('common.date') }} : {{ date }}
-      div {{ $t('common.end') }} : {{ end }}
-      div(v-if="snooze.initiator") {{ $t('common.initiator') }} : {{ snooze.initiator }}
-      div.c-extra-details__message(v-if="snooze.m") {{ $tc('common.comment') }} : {{ snooze.m }}
+  div
+    v-tooltip.c-extra-details(top)
+      template(#activator="{ on }")
+        span.c-extra-details__badge.pink(v-on="on")
+          v-icon(color="white", small) {{ icon }}
+      div.text-md-center
+        strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
+        div {{ $t('common.by') }} : {{ snooze.a }}
+        div {{ $t('common.date') }} : {{ date }}
+        div {{ $t('common.end') }} : {{ end }}
+        div(v-if="snooze.initiator") {{ $t('common.initiator') }} : {{ snooze.initiator }}
+        div.c-extra-details__message(v-if="snooze.m") {{ $tc('common.comment') }} : {{ snooze.m }}
 </template>
 
 <script>

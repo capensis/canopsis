@@ -55,7 +55,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .logged-users-count /deep/ .v-badge__badge {
+  .logged-users-count ::v-deep .v-badge__badge {
     top: 2px;
     right: 2px;
     height: 17px;

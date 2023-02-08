@@ -15,7 +15,6 @@ import (
 type AlarmValueRegexMatches struct {
 	ACK               AlarmStepRegexMatches
 	Canceled          AlarmStepRegexMatches
-	Done              AlarmStepRegexMatches
 	Snooze            AlarmStepRegexMatches
 	State             AlarmStepRegexMatches
 	Status            AlarmStepRegexMatches
@@ -47,7 +46,6 @@ func NewAlarmValueRegexMatches() AlarmValueRegexMatches {
 type AlarmValueFields struct {
 	ACK                           AlarmStepRefPattern   `bson:"ack,omitempty"`
 	Canceled                      AlarmStepRefPattern   `bson:"canceled,omitempty"`
-	Done                          AlarmStepRefPattern   `bson:"done,omitempty"`
 	Snooze                        AlarmStepRefPattern   `bson:"snooze,omitempty"`
 	State                         AlarmStepRefPattern   `bson:"state,omitempty"`
 	Status                        AlarmStepRefPattern   `bson:"status,omitempty"`
@@ -80,7 +78,6 @@ type AlarmValueFields struct {
 // Empty returns true if the pattern has not been set
 func (p AlarmValueFields) Empty() bool {
 	return p.ACK.Empty() &&
-		p.Done.Empty() &&
 		p.Snooze.Empty() &&
 		p.State.Empty() &&
 		p.Status.Empty() &&
@@ -117,7 +114,6 @@ func (p AlarmValuePattern) IsSet() bool {
 		p.AlarmValueFields.LastUpdateDate.IsSet() ||
 		p.AlarmValueFields.Ticket.IsSet() ||
 		p.AlarmValueFields.ACK.IsSet() ||
-		p.AlarmValueFields.Done.IsSet() ||
 		p.AlarmValueFields.ActivationDate.IsSet() ||
 		p.AlarmValueFields.Canceled.IsSet() ||
 		p.AlarmValueFields.Component.IsSet() ||
@@ -142,7 +138,6 @@ func (p AlarmValuePattern) IsSet() bool {
 func (p AlarmValuePattern) AsMongoDriverQuery(prefix string, query bson.M) {
 	p.ACK.AsMongoDriverQuery(fmt.Sprintf("%s.ack", prefix), query)
 	p.Canceled.AsMongoDriverQuery(fmt.Sprintf("%s.canceled", prefix), query)
-	p.Done.AsMongoDriverQuery(fmt.Sprintf("%s.done", prefix), query)
 	p.Snooze.AsMongoDriverQuery(fmt.Sprintf("%s.snooze", prefix), query)
 	p.State.AsMongoDriverQuery(fmt.Sprintf("%s.state", prefix), query)
 	p.Status.AsMongoDriverQuery(fmt.Sprintf("%s.status", prefix), query)
@@ -213,7 +208,6 @@ func (p AlarmValuePattern) AsMongoDriverQuery(prefix string, query bson.M) {
 // sub-expressions are written in the matches argument.
 func (p AlarmValuePattern) Matches(value types.AlarmValue, matches *AlarmValueRegexMatches) bool {
 	match := p.ACK.Matches(value.ACK, &matches.ACK) &&
-		p.Done.Matches(value.Done, &matches.Done) &&
 		p.Snooze.Matches(value.Snooze, &matches.Snooze) &&
 		p.State.Matches(value.State, &matches.State) &&
 		p.Status.Matches(value.Status, &matches.Status) &&
@@ -287,15 +281,6 @@ func (p AlarmValuePattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		}
 
 		resultBson[bsonFieldName] = p.ACK
-	}
-
-	if p.Done.IsSet() {
-		bsonFieldName, err := GetFieldBsonName(p, "Done", "done")
-		if err != nil {
-			return bsontype.Undefined, nil, err
-		}
-
-		resultBson[bsonFieldName] = p.Done
 	}
 
 	if p.ActivationDate.IsSet() {
