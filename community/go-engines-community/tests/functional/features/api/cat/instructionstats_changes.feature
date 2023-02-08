@@ -7,7 +7,7 @@ Feature: get instruction statistics
     When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-changes-get-1/changes
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -51,34 +51,13 @@ Feature: get instruction statistics
           "execution_count": 2,
           "successful": 2,
           "modified_on": 1596712103
-        },
-        {
-          "alarm_states": {
-            "critical": {
-              "from": 0,
-              "to": 0
-            },
-            "major": {
-              "from": 0,
-              "to": 0
-            },
-            "minor": {
-              "from": 0,
-              "to": 0
-            }
-          },
-          "ok_alarm_states": 0,
-          "avg_complete_time": 0,
-          "execution_count": 0,
-          "successful": 0,
-          "modified_on": 1596712003
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -88,7 +67,7 @@ Feature: get instruction statistics
     When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-changes-get-2/changes
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -132,83 +111,40 @@ Feature: get instruction statistics
           "execution_count": 2,
           "successful": 2,
           "modified_on": 1596712103
-        },
-        {
-          "alarm_states": {
-            "critical": {
-              "from": 0,
-              "to": 0
-            },
-            "major": {
-              "from": 0,
-              "to": 0
-            },
-            "minor": {
-              "from": 0,
-              "to": 0
-            }
-          },
-          "ok_alarm_states": 0,
-          "avg_complete_time": 0,
-          "execution_count": 0,
-          "successful": 0,
-          "modified_on": 1596712003
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
 
-  Scenario: given get request should return empty instruction stats
+  Scenario: given instruction without executions should return empty response
     When I am admin
     When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-changes-get-3/changes
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
-      "data": [
-        {
-          "alarm_states": {
-            "critical": {
-              "from": 0,
-              "to": 0
-            },
-            "major": {
-              "from": 0,
-              "to": 0
-            },
-            "minor": {
-              "from": 0,
-              "to": 0
-            }
-          },
-          "ok_alarm_states": 0,
-          "avg_complete_time": 0,
-          "execution_count": 0,
-          "successful": 0,
-          "modified_on": 1596712203
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
 
-  Scenario: given get request and and user without instruction create permission should return instruction stats
+  Scenario: given get request and user without instruction create permission should return instruction stats
     When I am test-role-to-stats-instruction-get
     When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-changes-get-1/changes
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -252,34 +188,13 @@ Feature: get instruction statistics
           "execution_count": 2,
           "successful": 2,
           "modified_on": 1596712103
-        },
-        {
-          "alarm_states": {
-            "critical": {
-              "from": 0,
-              "to": 0
-            },
-            "major": {
-              "from": 0,
-              "to": 0
-            },
-            "minor": {
-              "from": 0,
-              "to": 0
-            }
-          },
-          "ok_alarm_states": 0,
-          "avg_complete_time": 0,
-          "execution_count": 0,
-          "successful": 0,
-          "modified_on": 1596712003
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -303,7 +218,7 @@ Feature: get instruction statistics
     When I do GET /api/v4/cat/instruction-stats/notexist/changes
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

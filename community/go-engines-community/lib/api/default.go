@@ -37,6 +37,7 @@ import (
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -72,6 +73,7 @@ func Default(
 	enforcer libsecurity.Enforcer,
 	p *ConfigProviders,
 	logger zerolog.Logger,
+	pgPoolProvider postgres.PoolProvider,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	exportExecutor export.TaskExecutor,
@@ -287,6 +289,7 @@ func Default(
 			enforcer,
 			legacyUrlStr,
 			dbClient,
+			pgPoolProvider,
 			p.TimezoneConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
