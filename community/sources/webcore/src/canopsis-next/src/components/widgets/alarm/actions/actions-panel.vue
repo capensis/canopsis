@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { get, pickBy, compact, find } from 'lodash';
+import { pickBy, compact, find } from 'lodash';
 
 import {
   MODALS,
@@ -138,11 +138,11 @@ export default {
           title: this.$t('alarmList.actions.titles.comment'),
           method: this.showCreateCommentModal,
         },
-        manualMetaAlarmUngroup: {
-          type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmUngroup].icon,
-          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
-          method: this.showManualMetaAlarmUngroupModal,
+        removeAlarmsFromManualMetaAlarm: {
+          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm].icon,
+          title: this.$t('alarmList.actions.titles.removeAlarmsFromManualMetaAlarm'),
+          method: this.showRemoveAlarmsFromManualMetaAlarmModal,
         },
         executeInstruction: {
           type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
@@ -154,7 +154,7 @@ export default {
   },
   computed: {
     isParentAlarmManualMetaAlarm() {
-      return isManualGroupMetaAlarmRuleType(get(this.parentAlarm, 'rule.type'));
+      return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
@@ -188,7 +188,7 @@ export default {
       actions.push(filteredActionsMap.variablesHelp);
 
       if (this.isParentAlarmManualMetaAlarm) {
-        actions.push(filteredActionsMap.manualMetaAlarmUngroup);
+        actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
       }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
@@ -293,6 +293,18 @@ export default {
           onClose: refreshAlarm,
           onComplete: refreshAlarm,
           onExecute: refreshAlarm,
+        },
+      });
+    },
+
+    showRemoveAlarmsFromManualMetaAlarmModal() {
+      this.$modals.show({
+        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('alarmList.actions.titles.removeAlarmsFromManualMetaAlarm'),
+          parentAlarm: this.parentAlarm,
         },
       });
     },

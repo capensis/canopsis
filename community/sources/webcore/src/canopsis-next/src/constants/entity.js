@@ -25,9 +25,8 @@ export const EVENT_ENTITY_TYPES = {
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
   comment: 'comment',
-  manualMetaAlarmGroup: 'manual_metaalarm_group',
-  manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
-  manualMetaAlarmUpdate: 'manual_metaalarm_update',
+  createManualMetaAlarm: 'createManualMetaAlarm',
+  removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   stateinc: 'stateinc',
   statedec: 'statedec',
   statusinc: 'statusinc',
@@ -236,10 +235,10 @@ export const EVENT_ENTITY_STYLE = {
     color: COLORS.entitiesEvents.comment,
     icon: 'comment',
   },
-  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: {
+  [EVENT_ENTITY_TYPES.createManualMetaAlarm]: {
     icon: 'center_focus_strong',
   },
-  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
+  [EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm]: {
     icon: 'link_off',
   },
   [EVENT_ENTITY_TYPES.metaalarmattach]: {
@@ -339,8 +338,8 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.pbhenter]: 'pause',
   [EVENT_ENTITY_TYPES.pbhleave]: 'play_arrow',
   [EVENT_ENTITY_TYPES.comment]: 'comment',
-  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: 'center_focus_strong',
-  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: 'link_off',
+  [EVENT_ENTITY_TYPES.createManualMetaAlarm]: 'center_focus_strong',
+  [EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
   [EVENT_ENTITY_TYPES.metaalarmattach]: 'center_focus_weak',
   [EVENT_ENTITY_TYPES.executeInstruction]: 'assignment',
   [EVENT_ENTITY_TYPES.instructionStart]: 'assignment',

@@ -106,9 +106,9 @@ export default {
             method: this.showCreateGroupRequestEventModal,
           },
           {
-            type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup,
-            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
-            title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+            type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
+            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.createManualMetaAlarm].icon,
+            title: this.$t('alarmList.actions.titles.createManualMetaAlarm'),
             method: this.showCreateManualMetaAlarmModal,
           },
         );
