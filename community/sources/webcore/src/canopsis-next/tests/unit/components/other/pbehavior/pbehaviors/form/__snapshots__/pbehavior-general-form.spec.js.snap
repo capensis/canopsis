@@ -32,9 +32,6 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
     return-object="return-object"
     value="[object Object]"
   />
-  <c-color-picker-field-stub
-    value="#123123"
-  />
 </div>
 `;
 
@@ -113,9 +110,6 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
     required="required"
     return-object="return-object"
     value="[object Object]"
-  />
-  <c-color-picker-field-stub
-    value="#123123"
   />
 </div>
 `;
