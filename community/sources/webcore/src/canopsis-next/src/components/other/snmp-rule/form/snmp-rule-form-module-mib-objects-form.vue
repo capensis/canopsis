@@ -101,7 +101,7 @@ export default {
     }
   }
 
-  .vars-input /deep/ .v-input__slot {
+  .vars-input ::v-deep .v-input__slot {
     height: 56px;
   }
 </style>

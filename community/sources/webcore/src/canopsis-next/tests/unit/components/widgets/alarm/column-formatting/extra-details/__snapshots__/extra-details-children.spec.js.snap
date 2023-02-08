@@ -8,13 +8,17 @@ exports[`extra-details-children Renders \`extra-details-children\` with full chi
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <i
-      aria-hidden="true"
-      class="v-icon c-extra-details__badge brown darken-1 white--text material-icons theme--light"
-      style="font-size: 16px;"
+    <span
+      class="c-extra-details__badge brown darken-1"
     >
-      center_focus_strong
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        center_focus_strong
+      </i>
+    </span>
   </span>
 </div>
 `;

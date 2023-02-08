@@ -38,7 +38,7 @@ export default {
 
 <style lang="scss" scoped>
 .test-suite-message {
-  & /deep/ .v-sheet {
+  & ::v-deep .v-sheet {
     border-radius: 5px;
     overflow: hidden;
   }
