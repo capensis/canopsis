@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE } from '@/constants';
+import { EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
 
 export default {
   props: {
@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     icon() {
-      return EVENT_ENTITY_STYLE.groupParents.icon;
+      return EVENT_ENTITY_ICONS_BY_TYPE.groupParents;
     },
   },
 };
