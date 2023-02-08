@@ -273,7 +273,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.service-dependencies /deep/ .v-treeview-node__label {
+.service-dependencies ::v-deep .v-treeview-node__label {
   &, .expand-append {
     display: inline-flex;
     align-items: center;

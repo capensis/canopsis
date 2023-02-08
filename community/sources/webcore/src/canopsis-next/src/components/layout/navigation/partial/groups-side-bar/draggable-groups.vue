@@ -87,7 +87,7 @@ export default {
   .groups-panel {
     cursor: move;
 
-    & /deep/ .v-expansion-panel__header {
+    & ::v-deep .v-expansion-panel__header {
       cursor: move;
     }
 

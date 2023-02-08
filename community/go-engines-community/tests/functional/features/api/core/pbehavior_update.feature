@@ -113,7 +113,7 @@ Feature: update a PBehavior
       "name": "test-pbehavior-to-update-2-name",
       "tstart": 1591172881,
       "tstop": null,
-      "color": "#FFFFFF",
+      "color": "",
       "type": "test-type-to-pbh-edit-3",
       "reason": "test-reason-to-pbh-edit",
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2"
@@ -129,6 +129,7 @@ Feature: update a PBehavior
         "name": "root"
       },
       "created": 1592215337,
+      "color": "",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -171,7 +172,7 @@ Feature: update a PBehavior
         "name": "root"
       },
       "created": 1592215337,
-      "color": "#FFFFFF",
+      "color": "",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -360,7 +361,6 @@ Feature: update a PBehavior
         "entity_pattern": "EntityPattern is missing.",
         "reason": "Reason is missing.",
         "tstart": "Start is missing.",
-        "color": "Color is missing.",
         "type": "Type is missing."
       }
     }
