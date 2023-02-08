@@ -62,6 +62,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("iscolororempty", common.ValidateColorOrEmpty)
+	if err != nil {
+		panic(err)
+	}
 	err = v.RegisterValidation("id", common.ValidateID)
 	if err != nil {
 		panic(err)

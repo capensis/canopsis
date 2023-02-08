@@ -1,9 +1,8 @@
 <template lang="pug">
   c-clickable-tooltip.c-extra-details(top)
-    v-icon.white--text.purple.lighten-2.c-extra-details__badge(
-      slot="activator",
-      small
-    ) {{ icon }}
+    template(#activator="")
+      span.c-extra-details__badge.purple.lighten-2
+        v-icon(color="white", small) {{ icon }}
     div.text-md-center
       strong {{ $t('alarmList.actions.iconsTitles.comment') }}
       div {{ $t('common.by') }}: {{ lastComment.a }}
