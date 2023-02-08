@@ -9,6 +9,8 @@ definitions:
         type: string
       ui_language:
         type: string
+      ui_theme:
+        type: string
       ui_tours:
         additionalProperties:
           type: boolean
@@ -47,6 +49,8 @@ definitions:
       ui_groups_navigation_type:
         type: string
       ui_language:
+        type: string
+      ui_theme:
         type: string
       ui_tours:
         additionalProperties:
@@ -822,9 +826,11 @@ definitions:
         type: object
       remediation:
         properties:
-          accumulate_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
           delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_mod_stats_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
     type: object
@@ -2479,7 +2485,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - entity
     - name
     - origin
@@ -2536,7 +2541,6 @@ definitions:
         type: string
     required:
     - _id
-    - color
     - enabled
     - name
     - reason
@@ -2596,7 +2600,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2720,6 +2723,8 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
       description:
         type: string
       icon_name:
@@ -2767,7 +2772,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2914,6 +2918,8 @@ definitions:
     type: object
   pbehaviortype.EditRequest:
     properties:
+      color:
+        type: string
       description:
         maxLength: 255
         type: string
@@ -2933,6 +2939,7 @@ definitions:
         - pause
         type: string
     required:
+    - color
     - description
     - icon_name
     - name
@@ -2943,12 +2950,14 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
+      default:
+        type: boolean
       deletable:
         type: boolean
       description:
         type: string
-      editable:
-        type: boolean
       icon_name:
         type: string
       name:
@@ -4115,8 +4124,13 @@ definitions:
       role:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - _id
@@ -4151,8 +4165,13 @@ definitions:
       source:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - email
@@ -4191,8 +4210,13 @@ definitions:
       role:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - email
@@ -4229,6 +4253,8 @@ definitions:
       ui_groups_navigation_type:
         type: string
       ui_language:
+        type: string
+      ui_theme:
         type: string
     type: object
   user.View:
