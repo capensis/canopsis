@@ -70,6 +70,7 @@ import (
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
@@ -128,6 +129,7 @@ func RegisterRoutes(
 	enforcer libsecurity.Enforcer,
 	legacyUrl string,
 	dbClient mongo.DbClient,
+	pgPoolProvider postgres.PoolProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
@@ -1428,7 +1430,7 @@ func RegisterRoutes(
 
 		dateStorageRouter := protected.Group("data-storage")
 		{
-			dateStorageAPI := datastorage.NewApi(datastorage.NewStore(dbClient))
+			dateStorageAPI := datastorage.NewApi(datastorage.NewStore(dbClient, pgPoolProvider, logger))
 			dateStorageRouter.GET(
 				"",
 				middleware.Authorize(authDataStorageRead, permCan, enforcer),

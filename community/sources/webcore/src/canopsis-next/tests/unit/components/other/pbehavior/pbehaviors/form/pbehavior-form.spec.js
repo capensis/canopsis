@@ -11,12 +11,14 @@ const stubs = {
   'pbehavior-comments-field': true,
   'pbehavior-filter-field': true,
   'pbehavior-recurrence-rule-field': true,
+  'c-enabled-color-picker-field': true,
 };
 
 const selectPbehaviorGeneralForm = wrapper => wrapper.find('pbehavior-general-form-stub');
 const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
 const selectPbehaviorFilterField = wrapper => wrapper.find('pbehavior-filter-field-stub');
 const selectPbehaviorRruleField = wrapper => wrapper.find('pbehavior-recurrence-rule-field-stub');
+const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
 
 describe('pbehavior-form', () => {
   const factory = generateShallowRenderer(PbehaviorForm, { localVue, stubs });
@@ -120,6 +122,31 @@ describe('pbehavior-form', () => {
     selectPbehaviorRruleField(wrapper).vm.$emit('input', newForm);
 
     expect(wrapper).toEmit('input', newForm);
+  });
+
+  test('Color changed after trigger color field', () => {
+    const form = {
+      name: Faker.datatype.string(),
+      rrule: '',
+      patterns: {},
+      comments: [],
+    };
+
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newColor = Faker.internet.color();
+
+    selectEnabledColorPickerField(wrapper).vm.$emit('input', newColor);
+
+    expect(wrapper).toEmit('input', {
+      ...form,
+
+      color: newColor,
+    });
   });
 
   test('Renders `pbehavior-form` with required props', () => {
