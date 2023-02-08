@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { mapIds } from '@/helpers/entities';
 
@@ -47,12 +47,13 @@ import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
- * Modal to cancel an alarm
+ * Modal to remove alarms from meta alarm
  */
 export default {
   name: MODALS.removeAlarmsFromManualMetaAlarm,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
@@ -80,7 +81,7 @@ export default {
           alarms: mapIds(this.items),
         };
 
-        await this.removeAlarmsIntoManualMetaAlarm({ id: this.config.parentAlarm?._id, data });
+        await this.removeAlarmsFromManualMetaAlarm({ id: this.config.parentAlarm?._id, data });
 
         if (this.config.afterSubmit) {
           await this.config.afterSubmit();

@@ -53,7 +53,7 @@ export const CreateManualMetaAlarm = () => ({
   loading: LoaderOverlay,
 });
 export const RemoveAlarmsFromManualMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-meta-alarm.vue'),
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-manual-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
 export const AlarmsList = () => ({

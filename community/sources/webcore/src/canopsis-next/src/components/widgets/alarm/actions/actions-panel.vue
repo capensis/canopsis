@@ -9,10 +9,11 @@ import {
   MODALS,
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
-  EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
+
+import { getEntityEventIcon } from '@/helpers/icon';
 
 import featuresService from '@/services/features';
 
@@ -68,55 +69,55 @@ export default {
       actionsMap: {
         ack: {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
           title: this.$t('alarmList.actions.titles.ack'),
           method: this.showAckModal,
         },
         fastAck: {
           type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
           title: this.$t('alarmList.actions.titles.fastAck'),
           method: this.createFastAckEvent,
         },
         ackRemove: {
           type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
           title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         pbehaviorAdd: {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
           title: this.$t('alarmList.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         snooze: {
           type: ALARM_LIST_ACTIONS_TYPES.snooze,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
         declareTicket: {
           type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
           title: this.$t('alarmList.actions.titles.declareTicket'),
           method: this.showActionModal(MODALS.createDeclareTicketEvent),
         },
         associateTicket: {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           title: this.$t('alarmList.actions.titles.associateTicket'),
           method: this.showActionModal(MODALS.createAssociateTicketEvent),
         },
         cancel: {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         changeState: {
           type: ALARM_LIST_ACTIONS_TYPES.changeState,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.changeState].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.changeState),
           title: this.$t('alarmList.actions.titles.changeState'),
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
@@ -134,19 +135,19 @@ export default {
         },
         comment: {
           type: ALARM_LIST_ACTIONS_TYPES.comment,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
           title: this.$t('alarmList.actions.titles.comment'),
           method: this.showCreateCommentModal,
         },
         removeAlarmsFromManualMetaAlarm: {
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm),
           title: this.$t('alarmList.actions.titles.removeAlarmsFromManualMetaAlarm'),
           method: this.showRemoveAlarmsFromManualMetaAlarmModal,
         },
         executeInstruction: {
           type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
           method: this.showExecuteInstructionModal,
         },
       },
