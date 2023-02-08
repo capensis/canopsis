@@ -53,3 +53,11 @@ export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pb
   comment,
   entity: entity._id,
 }));
+
+/**
+ * Get color for pbehavior
+ *
+ * @param pbehavior
+ * @returns {string}
+ */
+export const getPbehaviorColor = (pbehavior = {}) => pbehavior.color || pbehavior.type?.color || COLORS.secondary;

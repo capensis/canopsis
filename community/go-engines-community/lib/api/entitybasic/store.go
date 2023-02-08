@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -74,7 +75,6 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 		{"$addFields": bson.M{
 			"changeable_depends": bson.M{"$map": bson.M{"input": "$changeable_depends", "as": "each", "in": "$$each._id"}},
 		}},
-		{"$project": bson.M{"depends": 0}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
@@ -159,6 +159,34 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	}
 
 	isToggled := updatedEntity.Enabled != entity.Enabled
+	if isToggled && !updatedEntity.Enabled && updatedEntity.Type == types.EntityTypeComponent {
+		depLen := len(updatedEntity.Depends)
+		from := 0
+
+		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
+			_, err = s.dbCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": updatedEntity.Depends[from:to]}},
+				bson.M{"$set": bson.M{"enabled": updatedEntity.Enabled}},
+			)
+			if err != nil {
+				return nil, false, err
+			}
+
+			from = to
+		}
+
+		if from < depLen {
+			_, err = s.dbCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": updatedEntity.Depends[from:depLen]}},
+				bson.M{"$set": bson.M{"enabled": updatedEntity.Enabled}},
+			)
+			if err != nil {
+				return nil, false, err
+			}
+		}
+	}
 
 	return updatedEntity, isToggled, nil
 }

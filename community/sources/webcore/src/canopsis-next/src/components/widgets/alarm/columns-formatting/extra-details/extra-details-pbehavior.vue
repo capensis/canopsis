@@ -1,10 +1,9 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.secondary.accent-2.white--text(
-        small,
-        slot="activator"
-      ) {{ pbehaviorInfo.icon_name }}
+      template(#activator="{ on }")
+        span.c-extra-details__badge(v-on="on", :style="{ backgroundColor: color }")
+          v-icon(:color="iconColor", small) {{ pbehaviorInfo.icon_name }}
       div
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
@@ -22,6 +21,8 @@
 
 <script>
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
 
 export default {
   props: {
@@ -35,6 +36,14 @@ export default {
     },
   },
   computed: {
+    color() {
+      return getPbehaviorColor(this.pbehavior);
+    },
+
+    iconColor() {
+      return getMostReadableTextColor(this.color, { level: 'AA', size: 'large' });
+    },
+
     tstart() {
       return convertDateToStringWithFormatForToday(this.pbehavior.tstart);
     },

@@ -63,6 +63,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("iscolororempty", common.ValidateColorOrEmpty)
+	if err != nil {
+		panic(err)
+	}
 	err = v.RegisterValidation("id", common.ValidateID)
 	if err != nil {
 		panic(err)
@@ -208,7 +212,8 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
 
 	userValidator := user.NewValidator(client)
-	v.RegisterStructValidationCtx(userValidator.ValidateRequest, user.Request{})
+	v.RegisterStructValidationCtx(userValidator.ValidateUpdateRequest, user.UpdateRequest{})
+	v.RegisterStructValidationCtx(userValidator.ValidateCreateRequest, user.CreateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateBulkUpdateRequestItem, user.BulkUpdateRequestItem{})
 
 	accountValidator := account.NewValidator(client)
