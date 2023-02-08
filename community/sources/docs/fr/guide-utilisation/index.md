@@ -26,12 +26,14 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Rôles](menu-administration/roles.md)
   * [Utilisateurs](menu-administration/utilisateurs.md)
   * [Diffusion de messages](menu-administration/diffusion-de-messages.md)
-  * [Listes de lecture](menu-administration/Listes-de-lecture.md)
+-->
+  * [Listes de lecture](menu-administration/listes-de-lecture/index.md)
+<!--
   * [Bilan de santé](menu-administration/bilan-de-sante.md)
   * [Cartographie](menu-administration/cartographie.md)
   * [Consignes](menu-administration/consignes.md)
 -->
-  * [KPI](menu-administration/kpi.md)
+  * [KPI](menu-administration/kpi/index.md)
 <!--
   * [Paramètres](menu-administration/paramtres.md)
   * [Planification](menu-administration/planification.md)
