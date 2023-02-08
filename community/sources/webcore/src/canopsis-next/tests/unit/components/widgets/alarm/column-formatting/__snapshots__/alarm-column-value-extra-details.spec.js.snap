@@ -2,7 +2,7 @@
 
 exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with empty alarm 1`] = `
 <div
-  class="layout"
+  class="layout alarm-column-value-extra-details"
 >
   <!---->
   <!---->
@@ -17,7 +17,7 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
 
 exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm (only children) 1`] = `
 <div
-  class="layout"
+  class="layout alarm-column-value-extra-details"
 >
   <extra-details-ack-stub
     ack="[object Object]"
@@ -26,7 +26,8 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     lastcomment="[object Object]"
   />
   <extra-details-ticket-stub
-    ticket="[object Object]"
+    limit="5"
+    tickets="[object Object]"
   />
   <extra-details-canceled-stub
     canceled="[object Object]"
@@ -48,7 +49,7 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
 
 exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm (only parent) 1`] = `
 <div
-  class="layout"
+  class="layout alarm-column-value-extra-details"
 >
   <extra-details-ack-stub
     ack="[object Object]"
@@ -57,7 +58,8 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     lastcomment="[object Object]"
   />
   <extra-details-ticket-stub
-    ticket="[object Object]"
+    limit="5"
+    tickets="[object Object]"
   />
   <extra-details-canceled-stub
     canceled="[object Object]"
