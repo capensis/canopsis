@@ -24,6 +24,7 @@ Feature: Create a pbehavior type
       "errors": {
         "description": "Description is missing.",
         "icon_name": "IconName is missing.",
+        "color": "Color is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
         "type": "Type is missing."
@@ -55,7 +56,8 @@ Feature: Create a pbehavior type
       "description": "Active state type",
       "type": "active",
       "priority": 177,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 201
@@ -66,7 +68,8 @@ Feature: Create a pbehavior type
       "description": "Active state type",
       "type": "active",
       "priority": 177,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
 
@@ -80,7 +83,8 @@ Feature: Create a pbehavior type
       "description": "Active state type",
       "type": "active",
       "priority": 277,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 201

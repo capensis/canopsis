@@ -40,7 +40,7 @@ type EditRequest struct {
 	Type       string                             `json:"type" binding:"required"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
-	Color      string                             `json:"color" binding:"required,iscolor"`
+	Color      string                             `json:"color" binding:"iscolororempty"`
 
 	common.EntityPatternFieldsRequest
 }
@@ -201,7 +201,7 @@ type BulkEntityCreateRequestItem struct {
 	Start   *types.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
 	Stop    *types.CpsTime `json:"tstop" swaggertype:"integer"`
 	Type    string         `json:"type" binding:"required"`
-	Color   string         `json:"color" binding:"required,iscolor"`
+	Color   string         `json:"color" binding:"iscolororempty"`
 	Comment string         `json:"comment"`
 }
 

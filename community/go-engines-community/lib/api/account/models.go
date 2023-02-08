@@ -18,16 +18,18 @@ type EditRequest struct {
 	Password               string          `json:"password"`
 	UILanguage             string          `json:"ui_language"`
 	UIGroupsNavigationType string          `json:"ui_groups_navigation_type"`
+	UITheme                string          `json:"ui_theme"`
 	DefaultView            string          `json:"defaultview"`
 	UITours                map[string]bool `json:"ui_tours"`
 }
 
 func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
-		"ui_language":          r.UILanguage,
-		"groupsNavigationType": r.UIGroupsNavigationType,
-		"defaultview":          r.DefaultView,
-		"tours":                r.UITours,
+		"ui_language":               r.UILanguage,
+		"ui_groups_navigation_type": r.UIGroupsNavigationType,
+		"ui_theme":                  r.UITheme,
+		"defaultview":               r.DefaultView,
+		"ui_tours":                  r.UITours,
 	}
 	if r.Password != "" {
 		bsonModel["shadowpasswd"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))

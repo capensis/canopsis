@@ -149,7 +149,7 @@ $networkGraphMinHeight: 100px;
   &__tabs {
     flex: 1;
 
-    /deep/ .v-window__container {
+    ::v-deep .v-window__container {
       height: 100%;
     }
   }

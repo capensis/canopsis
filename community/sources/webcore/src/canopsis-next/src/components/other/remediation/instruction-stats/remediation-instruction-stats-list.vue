@@ -49,7 +49,7 @@
       template(#expand="{ item }")
         remediation-instruction-stats-list-expand-panel(
           :interval="interval",
-          :remediation-instruction-stats-id="item._id"
+          :remediation-instruction-stats-item="item"
         )
 </template>
 
