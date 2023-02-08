@@ -629,10 +629,6 @@ export const createPbehaviorModule = () => {
 export const createPbehaviorTimespanModule = () => {
   const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
 
-  afterEach(() => {
-    fetchTimespansListWithoutStore.mockClear();
-  });
-
   const pbehaviorTimespanModule = {
     name: 'pbehaviorTimespan',
     actions: {
@@ -647,5 +643,37 @@ export const createPbehaviorTimespanModule = () => {
   return {
     fetchTimespansListWithoutStore,
     pbehaviorTimespanModule,
+  };
+};
+
+export const createManualMetaAlarmModule = () => {
+  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
+  const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchManualMetaAlarmsListWithoutStore.mockClear();
+    createManualMetaAlarm.mockClear();
+    addAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsIntoManualMetaAlarm.mockClear();
+  });
+
+  const manualMetaAlarmModule = {
+    name: 'manualMetaAlarm',
+    actions: {
+      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
+      create: createManualMetaAlarm,
+      addAlarms: addAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+    },
+  };
+
+  return {
+    fetchManualMetaAlarmsListWithoutStore,
+    createManualMetaAlarm,
+    addAlarmsIntoManualMetaAlarm,
+    removeAlarmsIntoManualMetaAlarm,
+    manualMetaAlarmModule,
   };
 };

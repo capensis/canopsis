@@ -2,17 +2,22 @@
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
       template(#title="")
-        span {{ $t('modals.createManualMetaAlarm.title') }}
+        span {{ config.title }}
       template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
-              alarm-general-table(:items="alarms")
+              alarm-general-table(:items="items")
           v-layout(row)
             v-divider.my-3
           v-layout(row)
-            v-flex(xs12)
-              manual-meta-alarm-form(v-model="form")
+            v-text-field(
+              v-model="form.comment",
+              v-validate="'required'",
+              :label="$t('modals.createEvent.fields.output')",
+              :error-messages="errors.collect('comment')",
+              name="comment"
+            )
       template(#actions="")
         v-btn(
           depressed,
@@ -29,7 +34,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { isWarningAlarmState, mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
@@ -38,23 +43,18 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
-import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-alarm-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
- * Modal to manage alarms in meta alarm
+ * Modal to cancel an alarm
  */
 export default {
-  name: MODALS.createManualMetaAlarm,
+  name: MODALS.removeAlarmsFromManualMetaAlarm,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    AlarmGeneralTable,
-    ManualMetaAlarmForm,
-    ModalWrapper,
-  },
+  components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
     modalInnerMixin,
     modalInnerItemsMixin,
@@ -65,19 +65,9 @@ export default {
   data() {
     return {
       form: {
-        metaAlarm: null,
         comment: '',
       },
     };
-  },
-  computed: {
-    alarms() {
-      return this.items.filter(isWarningAlarmState);
-    },
-
-    metaAlarmId() {
-      return this.form.metaAlarm?._id;
-    },
   },
   methods: {
     async submit() {
@@ -85,17 +75,12 @@ export default {
 
       if (isFormValid) {
         const data = {
-          comment: this.form.comment,
-          alarms: mapIds(this.alarms),
+          ...this.form,
+
+          alarms: mapIds(this.items),
         };
 
-        if (this.metaAlarmId) {
-          await this.addAlarmsIntoManualMetaAlarm({ id: this.metaAlarmId, data });
-        } else {
-          data.name = this.form.metaAlarm;
-
-          await this.createManualMetaAlarm({ data });
-        }
+        await this.removeAlarmsIntoManualMetaAlarm({ id: this.config.parentAlarm?._id, data });
 
         if (this.config.afterSubmit) {
           await this.config.afterSubmit();
