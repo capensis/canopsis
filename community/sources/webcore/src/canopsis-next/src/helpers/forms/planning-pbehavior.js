@@ -7,8 +7,6 @@ import {
   Schedule,
 } from 'dayspan';
 
-import { COLORS } from '@/config';
-
 import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
@@ -20,7 +18,6 @@ import {
   getLocaleTimezone,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
-import { getRandomHexColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} PbehaviorReason
@@ -206,7 +203,7 @@ export const pbehaviorToForm = (
     rrule,
     patterns,
     _id: pbehavior._id ?? uid('pbehavior'),
-    color: pbehavior.color ?? COLORS.secondary,
+    color: pbehavior.color ?? '',
     enabled: pbehavior.enabled ?? true,
     name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
@@ -361,10 +358,6 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   if (pbehavior.exceptions) {
     result.exceptions = exceptionsToRequest(pbehavior.exceptions);
-  }
-
-  if (!pbehavior.color) {
-    result.color = getRandomHexColor();
   }
 
   return result;

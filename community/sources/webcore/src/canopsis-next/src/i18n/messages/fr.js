@@ -44,7 +44,7 @@ import {
   ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
-import featureService from '@/services/features';
+import featuresService from '@/services/features';
 
 export default merge({
   common: {
@@ -465,10 +465,6 @@ export default merge({
       },
       [TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
-      },
-      [TRIGGERS.done]: {
-        text: 'Alarme en statut "done"',
-        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
       },
       [TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
@@ -1145,6 +1141,9 @@ export default merge({
             message: 'Message',
           },
         },
+        color: {
+          label: 'Utiliser une couleur spéciale pour cet événement ?',
+        },
       },
       errors: {
         invalid: 'Invalide',
@@ -1484,6 +1483,12 @@ export default merge({
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
+      },
+      canonicalTypes: {
+        [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+        [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+        [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -2362,7 +2367,7 @@ export default merge({
 
   pbehaviorTypes: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
-    defaultType: 'Le type par défaut ne peut pas être modifié.',
+    defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
@@ -2873,9 +2878,12 @@ export default merge({
     },
     remediation: {
       title: 'Stockage des données de consigne',
-      accumulateAfter: 'Accumuler les statistiques des consignes après',
-      deleteAfter: 'Supprimer les données des consignes après',
-      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+      deleteAfter: 'Supprimer les données de la chronologie des instructions après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
+      deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
+      deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
+      deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
+      deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -3321,4 +3329,4 @@ export default merge({
     generateDump: 'Générer un nouveau dump',
     downloadDump: 'Télécharger le dump',
   },
-}, featureService.get('i18n.fr'));
+}, featuresService.get('i18n.fr'));

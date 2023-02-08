@@ -4,29 +4,24 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const bulkMaxSize = 10000
-
 type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
-	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
-	DeleteArchivedEntities(ctx context.Context) (int64, error)
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 }
 
 type store struct {
-	db                 mongo.DbClient
-	mainCollection     mongo.DbCollection
-	archivedCollection mongo.DbCollection
-
+	db                     mongo.DbClient
+	mainCollection         mongo.DbCollection
+	archivedCollection     mongo.DbCollection
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
@@ -69,164 +64,6 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	return &res, nil
 }
 
-func (s *store) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error) {
-	var totalArchived int64
-
-	archived, err := s.archiveEntitiesByType(ctx, types.EntityTypeConnector, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived += archived
-
-	archived, err = s.archiveEntitiesByType(ctx, types.EntityTypeComponent, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived += archived
-
-	archived, err = s.archiveEntitiesByType(ctx, types.EntityTypeResource, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived += archived
-
-	return totalArchived, nil
-}
-
-func (s *store) archiveEntitiesByType(ctx context.Context, eType string, archiveDeps bool) (int64, error) {
-	models := make([]mongodriver.WriteModel, 0, bulkMaxSize)
-	ids := make([]string, 0, bulkMaxSize)
-
-	cursor, err := s.mainCollection.Find(
-		ctx,
-		bson.M{
-			"enabled": bson.M{"$in": bson.A{false, nil}},
-			"type":    eType,
-		},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived, err := s.processCursor(ctx, cursor, &models, &ids, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	if len(models) != 0 {
-		archived, err := s.bulkArchive(ctx, &models, &ids)
-		if err != nil {
-			return 0, err
-		}
-
-		totalArchived += archived
-	}
-
-	return totalArchived, cursor.Close(ctx)
-}
-
-func (s *store) processCursor(ctx context.Context, cursor mongo.Cursor, models *[]mongodriver.WriteModel, ids *[]string, archiveDeps bool) (int64, error) {
-	var totalArchived int64
-
-	for cursor.Next(ctx) {
-		var entity types.Entity
-
-		err := cursor.Decode(&entity)
-		if err != nil {
-			return 0, err
-		}
-
-		if archiveDeps {
-			switch entity.Type {
-			case types.EntityTypeConnector:
-				archived, err := s.archiveDependencies(ctx, append(entity.Impacts, entity.Depends...), models, ids)
-				if err != nil {
-					return 0, err
-				}
-
-				totalArchived += archived
-			case types.EntityTypeComponent:
-				archived, err := s.archiveDependencies(ctx, entity.Depends, models, ids)
-				if err != nil {
-					return 0, err
-				}
-
-				totalArchived += archived
-			case types.EntityTypeResource:
-			default:
-				continue
-			}
-		}
-
-		*ids = append(*ids, entity.ID)
-		*models = append(
-			*models,
-			mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": entity.ID}).
-				SetUpdate(bson.M{"$set": entity}).
-				SetUpsert(true),
-		)
-
-		if len(*models) == bulkMaxSize {
-			archived, err := s.bulkArchive(ctx, models, ids)
-			if err != nil {
-				return 0, err
-			}
-
-			totalArchived += archived
-		}
-	}
-
-	return totalArchived, nil
-}
-
-func (s *store) archiveDependencies(ctx context.Context, depIds []string, models *[]mongodriver.WriteModel, ids *[]string) (int64, error) {
-	cursor, err := s.mainCollection.Find(
-		ctx,
-		bson.M{"_id": bson.M{"$in": depIds}},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	// do not archive dependencies' dependencies
-	archived, err := s.processCursor(ctx, cursor, models, ids, false)
-	if err != nil {
-		return 0, err
-	}
-
-	return archived, cursor.Close(ctx)
-}
-
-func (s *store) bulkArchive(ctx context.Context, models *[]mongodriver.WriteModel, ids *[]string) (int64, error) {
-	res, err := s.archivedCollection.BulkWrite(ctx, *models)
-	if err != nil {
-		return 0, err
-	}
-
-	_, err = s.mainCollection.DeleteMany(
-		ctx,
-		bson.M{"_id": bson.M{"$in": ids}},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	*models = (*models)[:0]
-	*ids = (*ids)[:0]
-
-	return res.UpsertedCount, err
-}
-
-func (s *store) DeleteArchivedEntities(ctx context.Context) (int64, error) {
-	deleted, err := s.archivedCollection.DeleteMany(ctx, bson.M{})
-
-	return deleted, err
-}
-
 func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error) {
 	var isToggled bool
 	var oldSimplifiedEntity SimplifiedEntity
@@ -241,7 +78,7 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 			bson.M{"$set": bson.M{"enabled": enabled}},
 			options.
 				FindOneAndUpdate().
-				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1}).
+				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1, "depends": 1}).
 				SetReturnDocument(options.Before),
 		).Decode(&oldSimplifiedEntity)
 		if err != nil {
@@ -251,6 +88,35 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		isToggled = oldSimplifiedEntity.Enabled != enabled
 		return nil
 	})
+
+	if isToggled && !enabled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
+		depLen := len(oldSimplifiedEntity.Depends)
+		from := 0
+
+		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
+			_, err = s.mainCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:to]}},
+				bson.M{"$set": bson.M{"enabled": enabled}},
+			)
+			if err != nil {
+				return isToggled, oldSimplifiedEntity, err
+			}
+
+			from = to
+		}
+
+		if from < depLen {
+			_, err = s.mainCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:depLen]}},
+				bson.M{"$set": bson.M{"enabled": enabled}},
+			)
+			if err != nil {
+				return isToggled, oldSimplifiedEntity, err
+			}
+		}
+	}
 
 	return isToggled, oldSimplifiedEntity, err
 }

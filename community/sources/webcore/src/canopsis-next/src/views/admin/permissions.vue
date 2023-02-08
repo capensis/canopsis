@@ -250,7 +250,7 @@ export default {
     bottom: 10px;
   }
 
-  .admin-rights /deep/ {
+  .admin-rights ::v-deep {
     .v-window__container--is-active th {
       position: relative;
       top: 0;
@@ -266,7 +266,7 @@ export default {
     opacity: .4;
     z-index: 1;
 
-    & /deep/ .v-progress-circular {
+    & ::v-deep .v-progress-circular {
       top: 50%;
       left: 50%;
       margin-top: -16px;

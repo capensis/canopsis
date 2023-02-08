@@ -55,7 +55,6 @@ const (
 	AlarmStepCancel          = "cancel"
 	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
-	AlarmStepDone            = "done"
 	AlarmStepDeclareTicket   = "declareticket"
 	AlarmStepAssocTicket     = "assocticket"
 	AlarmStepSnooze          = "snooze"
