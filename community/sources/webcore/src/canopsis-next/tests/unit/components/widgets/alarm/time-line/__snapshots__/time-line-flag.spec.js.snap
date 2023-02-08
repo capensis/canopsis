@@ -224,6 +224,16 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: comment 1`] = `
 </div>
 `;
 
+exports[`time-line-flag Renders \`time-line-flag\` with type: createManualMetaAlarm 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    center_focus_strong
+  </i>
+</div>
+`;
+
 exports[`time-line-flag Renders \`time-line-flag\` with type: declareTicket 1`] = `
 <div>
   <i
@@ -416,37 +426,6 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestSuiteUpda
 </div>
 `;
 
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmGroup 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    center_focus_strong
-  </i>
-</div>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUngroup 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    link_off
-  </i>
-</div>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUpdate 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
-`;
-
 exports[`time-line-flag Renders \`time-line-flag\` with type: metaalarmattach 1`] = `
 <div>
   <i
@@ -516,6 +495,16 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: play 1`] = `
     class="material-icons"
   >
     play_arrow
+  </i>
+</div>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: removeAlarmsFromManualMetaAlarm 1`] = `
+<div>
+  <i
+    class="material-icons"
+  >
+    link_off
   </i>
 </div>
 `;
