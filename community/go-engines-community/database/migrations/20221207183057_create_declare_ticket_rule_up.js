@@ -5,7 +5,7 @@ if (!db.default_rights.findOne({_id: "api_declare_ticket_rule"})) {
         _id: "api_declare_ticket_rule",
         crecord_name: "api_declare_ticket_rule",
         crecord_type: "action",
-        desc: "Declare ticket rule",
+        description: "Declare ticket rule",
         type: "CRUD"
     });
     db.default_rights.updateOne({_id: "admin"}, {
@@ -23,7 +23,7 @@ if (!db.default_rights.findOne({_id: "api_declare_ticket_execution"})) {
         _id: "api_declare_ticket_execution",
         crecord_name: "api_declare_ticket_execution",
         crecord_type: "action",
-        desc: "Run declare ticket rules"
+        description: "Run declare ticket rules"
     });
     db.default_rights.updateOne({_id: "admin"}, {
         $set: {
@@ -40,7 +40,7 @@ if (!db.default_rights.findOne({_id: "models_exploitation_declareTicketRule"})) 
         _id: "models_exploitation_declareTicketRule",
         crecord_name: "models_exploitation_declareTicketRule",
         crecord_type: "action",
-        desc: "Exploitation: Declare ticket rule",
+        description: "Exploitation: Declare ticket rule",
         type: "CRUD"
     });
     db.default_rights.updateOne({_id: "admin"}, {
