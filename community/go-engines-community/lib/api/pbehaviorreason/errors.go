@@ -2,7 +2,13 @@ package pbehaviorreason
 
 import "errors"
 
-type ValidationError error
+type ValidationError struct {
+	Err error
+}
 
-var ErrLinkedReasonToPbehavior = ValidationError(errors.New("reason is linked to pbehavior"))
-var ErrLinkedReasonToAction = ValidationError(errors.New("reason is linked to action"))
+func (e ValidationError) Error() string {
+	return e.Err.Error()
+}
+
+var ErrLinkedReasonToPbehavior = ValidationError{Err: errors.New("reason is linked to pbehavior")}
+var ErrLinkedReasonToAction = ValidationError{Err: errors.New("reason is linked to action")}
