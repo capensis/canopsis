@@ -2999,8 +2999,10 @@ definitions:
     - view_from
     - view_to
     type: object
-  pbehaviortype.EditRequest:
+  pbehaviortype.CreateRequest:
     properties:
+      _id:
+        type: string
       color:
         type: string
       description:
@@ -3049,6 +3051,35 @@ definitions:
         type: integer
       type:
         type: string
+    type: object
+  pbehaviortype.UpdateRequest:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - color
+    - description
+    - name
+    - priority
+    - type
     type: object
   permission.Permission:
     properties:
