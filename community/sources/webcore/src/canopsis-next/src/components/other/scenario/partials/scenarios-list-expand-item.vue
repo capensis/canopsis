@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import ScenarioInfoItem from './partials/scenario-info-item.vue';
-import ScenarioActionCard from './partials/scenario-action-card.vue';
+import ScenarioInfoItem from './scenario-info-item.vue';
+import ScenarioActionCard from './scenario-action-card.vue';
 
 export default {
   components: { ScenarioInfoItem, ScenarioActionCard },
