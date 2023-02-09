@@ -36,6 +36,7 @@ import { DECLARE_TICKET_EXECUTION_STATUSES, MODALS } from '@/constants';
 import Socket from '@/plugins/socket/services/socket';
 
 import {
+  isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/forms/declare-ticket-rule';
@@ -101,6 +102,10 @@ export default {
       return this.alarmExecutions.every(isDeclareTicketExecutionSucceeded);
     },
 
+    isExecutionsFailed() {
+      return this.alarmExecutions.every(isDeclareTicketExecutionFailed);
+    },
+
     failReason() {
       return Object.values(this.executionsStatusesById).map(execution => execution.fail_reason).join('\n');
     },
@@ -113,6 +118,13 @@ export default {
       return this.isOneTicket
         ? this.config.tickets[0].name
         : this.$t('modals.executeDeclareTickets.title');
+    },
+  },
+  watch: {
+    alarmExecutions(value) {
+      if (value.length && (this.isExecutionsFailed || this.isExecutionsSucceeded)) {
+        this.config.onExecute?.();
+      }
     },
   },
   async mounted() {

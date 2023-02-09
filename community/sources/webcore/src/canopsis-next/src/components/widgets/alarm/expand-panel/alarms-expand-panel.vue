@@ -33,6 +33,15 @@
                 :is-html-enabled="isHtmlEnabled",
                 @update:page="updateStepsQueryPage"
               )
+    template(v-if="hasTickets")
+      v-tab {{ $t('alarm.tabs.ticketsDeclared') }}
+      v-tab-item
+        v-layout.pa-3(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                declared-tickets-list(:tickets="alarm.v.tickets")
+
     v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
       v-layout.pa-3.secondary.lighten-2(row)
@@ -117,6 +126,7 @@ import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permiss
 
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 
 import TimeLine from '../time-line/time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
@@ -125,6 +135,7 @@ import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
 export default {
   components: {
+    DeclaredTicketsList,
     PbehaviorsSimpleList,
     ServiceDependencies,
     TimeLine,
@@ -204,6 +215,10 @@ export default {
 
     hasChildren() {
       return this.alarm.children && !this.hideChildren;
+    },
+
+    hasTickets() {
+      return this.alarm.v.tickets?.length;
     },
 
     hasServiceDependencies() {
