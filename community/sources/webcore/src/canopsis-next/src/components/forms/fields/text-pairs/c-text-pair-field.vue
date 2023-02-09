@@ -68,10 +68,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hints: {
-      type: Array,
-      default: () => [],
-    },
   },
   computed: {
     textValidationRules() {
