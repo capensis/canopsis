@@ -1,8 +1,15 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createAlarmModule, createAuthModule, createEventModule, createMockedStoreModules } from '@unit/utils/store';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import {
+  createAlarmModule,
+  createAuthModule,
+  createDeclareTicketModule,
+  createEventModule,
+  createMockedStoreModules,
+} from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import flushPromises from 'flush-promises';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
@@ -24,8 +31,6 @@ import featuresService from '@/services/features';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'shared-actions-panel': {
@@ -70,10 +75,16 @@ describe('actions-panel', () => {
   };
   const { alarmModule } = createAlarmModule();
   const { eventModule, createEvent } = createEventModule();
+  const {
+    declareTicketRuleModule,
+    bulkCreateDeclareTicketExecution,
+    fetchAssignedDeclareTicketsWithoutStore,
+  } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
     authModule,
     alarmModule,
+    declareTicketRuleModule,
   ]);
 
   const assignedInstructions = [
@@ -115,9 +126,26 @@ describe('actions-panel', () => {
     },
   ];
 
+  const assignedDeclareTicketRules = [
+    {
+      _id: 1,
+      name: 'Name 1',
+    },
+    {
+      _id: 2,
+      name: 'Name 2',
+
+    },
+    {
+      _id: 3,
+      name: 'Name 3',
+    },
+  ];
+
   const alarm = {
     _id: 'alarm-id',
     assigned_instructions: assignedInstructions,
+    assigned_declare_ticket_rules: assignedDeclareTicketRules,
     entity: {},
     v: {
       ack: {},
@@ -143,11 +171,10 @@ describe('actions-panel', () => {
   const refreshAlarmsList = jest.fn();
 
   const factory = generateShallowRenderer(ActionsPanel, {
-    localVue,
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(ActionsPanel, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, { stubs });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -389,16 +416,32 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Declare ticket modal showed after trigger declare action', () => {
+  it('Declare ticket modal showed after trigger declare action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
     };
 
+    const byRules = {
+      rule: {
+        name: 'rule name',
+        alarms: [alarm._id],
+      },
+    };
+    const byAlarms = {
+      [alarm._id]: ['rule name'],
+    };
+
+    fetchAssignedDeclareTicketsWithoutStore.mockResolvedValueOnce({
+      by_rules: byRules,
+      by_alarms: byAlarms,
+    });
+
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
+        declareTicketRuleModule,
       ]),
       propsData: {
         item: alarm,
@@ -408,15 +451,18 @@ describe('actions-panel', () => {
       },
     });
 
-    const declareTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.declareTicket);
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.declareTicket).trigger('click');
 
-    declareTicketAction.trigger('click');
+    await flushPromises();
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createDeclareTicketEvent,
         config: {
           items: [alarm],
+          alarmsByTickets: byRules,
+          ticketsByAlarms: byAlarms,
+          action: expect.any(Function),
           afterSubmit: expect.any(Function),
         },
       },
@@ -424,9 +470,17 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const events = [{ _id: Faker.datatype.string(), alarms: [Faker.datatype.string()] }];
 
-    expect(refreshAlarmsList).toBeCalledTimes(1);
+    config.action(events);
+
+    expect(bulkCreateDeclareTicketExecution).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: events,
+      },
+      undefined,
+    );
   });
 
   it('Associate ticket modal showed after trigger associate ticket action', () => {
@@ -1056,7 +1110,9 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
     const wrapper = snapshotFactory({
-      store,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
       propsData: {
         item: {
           ...alarm,
@@ -1067,6 +1123,25 @@ describe('actions-panel', () => {
               val: ENTITIES_STATUSES.stealthy,
             },
           },
+        },
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          assigned_declare_ticket_rules: undefined,
         },
         widget,
         parentAlarm,
