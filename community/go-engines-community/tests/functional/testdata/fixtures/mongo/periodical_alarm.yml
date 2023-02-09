@@ -2697,7 +2697,7 @@ periodical_alarm:
       connector: test-connector-not-acked-metrics-axe
       connector_name: test-connector-name-not-acked-metrics-axe
       component: test-component-not-acked-metrics-axe
-      resource: test-resource-not-acked-metrics-axe-4   
+      resource: test-resource-not-acked-metrics-axe-4
   alarm_to_test_not_acked_metrics_axe_5:
     <<: *alarm
     _id: test-alarm-to-test-not-acked-metrics-axe-5
@@ -2780,7 +2780,15 @@ periodical_alarm:
       component: test-component-not-acked-metrics-axe
       resource: test-resource-not-acked-metrics-axe-10
       activation_date: <NowUnixAdd(-2h)>
-      
+
+  alarm_manual_correlation_fail_1:
+    <<: *alarm
+    _id: test-alarm-manual-correlation-fail-1
+    d: test-resource-manual-correlation-fail-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-manual-correlation-fail-1
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3
@@ -2855,3 +2863,11 @@ resolved_alarms:
     v:
       <<: *alarm_value
       resource: test-resource-to-stats-executions-get-with-resolved-alarms-resolved
+
+  alarm_manual_correlation_fail_2:
+    <<: *resolved_alarm
+    _id: test-alarm-manual-correlation-fail-2
+    d: test-resource-manual-correlation-fail-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-manual-correlation-fail-1

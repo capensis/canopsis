@@ -4322,6 +4322,7 @@ default_entities:
     _id: test-entity-to-bulk-toggle-service
     impact_level: 1
     name: test-entity-to-bulk-toggle-service-name
+
   connector_to_test_tag_filter:
     <<: *connector
     _id: test-connector-to-alarm-test-tag-filter/test-connector-to-alarm-test-tag-filter-name
@@ -4416,3 +4417,8 @@ default_entities:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-10/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-10
+
+  entity_manual_correlation_fail_1:
+    <<: *resource
+    _id: test-resource-manual-correlation-fail-1/test-component-default
+    name: test-resource-manual-correlation-fail-1

@@ -4,7 +4,6 @@ import {
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
-  MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_EVENT_DEFAULT_ENTITY,
 } from '@/constants';
@@ -78,20 +77,6 @@ import { getNowTimestamp } from '@/helpers/date/date';
  */
 
 /**
- * @typedef {Object} ManualMetaAlarmEvent
- *
- * @property {EventType} event_type
- * @property {string} connector
- * @property {string} connector_name
- * @property {string} component
- * @property {string} source_type
- * @property {number|string} state
- * @property {string} [display_name]
- * @property {string[]} ma_children
- * @property {string[]} [ma_parent]
- */
-
-/**
  * Prepare event by: type, alarm and already prepared data
  *
  * @param {EventType} type
@@ -124,35 +109,15 @@ export const prepareEventByAlarm = (type, alarm, data = {}) => {
 };
 
 /**
- * Prepare manual meta alarm event by: type, alarms and already prepared data
- *
- * @param {EventType} type
- * @param {Alarm[]} alarms
- * @param {Object|ManualMetaAlarmEvent} [data = {}]
- * @return {ManualMetaAlarmEvent[]}
- */
-export const prepareManualMetaAlarmEventByAlarms = (type, alarms, data = {}) => [{
-  ...MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
-
-  event_type: type,
-  ma_children: alarms.map(({ entity }) => entity._id),
-  state: ENTITIES_STATES.minor,
-
-  ...data,
-}];
-
-/**
  * Prepare event by: type, alarms and already prepared data
  *
  * @param {EventType} type
  * @param {Alarm[]} alarms
  * @param {Object|Event} [data]
- * @return {Event[]|ManualMetaAlarmEvent[]}
+ * @return {Event[]}
  */
 export const prepareEventsByAlarms = (type, alarms, data) => (
-  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup, EVENT_ENTITY_TYPES.manualMetaAlarmUpdate].includes(type)
-    ? prepareManualMetaAlarmEventByAlarms(type, alarms, data)
-    : alarms.map(alarm => prepareEventByAlarm(type, alarm, data))
+  alarms.map(alarm => prepareEventByAlarm(type, alarm, data))
 );
 
 /**

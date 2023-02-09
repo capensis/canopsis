@@ -305,11 +305,6 @@ func RegisterRoutes(
 			alarmAPI.GetDetails,
 		)
 		protected.GET(
-			"/manual-meta-alarms",
-			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
-			alarmAPI.ListManual,
-		)
-		protected.GET(
 			"/entityservice-alarms/:id",
 			middleware.Authorize(authPermAlarmRead, permCan, enforcer),
 			alarmAPI.ListByService,
