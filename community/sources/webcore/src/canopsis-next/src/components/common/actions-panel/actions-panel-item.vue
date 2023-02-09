@@ -3,19 +3,22 @@
     template(v-if="isDropDown")
       v-list-tile(:disabled="disabled", @click.stop="method")
         v-list-tile-title
-          v-icon.pr-3(
+          v-progress-circular.mr-3(v-if="loading", :size="16", width="2", indeterminate)
+          v-icon(
+            v-else,
             :color="iconColor",
             :disabled="disabled",
             left,
             small
           ) {{ icon }}
-          span.body-1(:class="cssClass") {{ title }}
+          span.body-1.pl-2(:class="cssClass") {{ title }}
     template(v-else)
       c-action-btn(
         :tooltip="title",
         :disabled="disabled",
         :icon="icon",
         :color="iconColor",
+        :loading="loading",
         :badge-value="badgeValue",
         :badge-tooltip="badgeTooltip",
         @click="method"
@@ -70,6 +73,10 @@ export default {
     },
     badgeTooltip: {
       type: String,
+      required: false,
+    },
+    loading: {
+      type: Boolean,
       required: false,
     },
   },

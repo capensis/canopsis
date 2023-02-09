@@ -7,7 +7,7 @@ import {
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { authMixin } from '@/mixins/auth';
@@ -26,6 +26,11 @@ export const widgetActionsPanelAlarmMixin = {
     entitiesPbehaviorMixin,
     entitiesDeclareTicketRuleMixin,
   ],
+  data() {
+    return {
+      ticketsForAlarmsPending: false,
+    };
+  },
   methods: {
     ...mapActions({
       fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
@@ -60,30 +65,45 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    async showDeclareTicketModal() {
-      const {
-        by_rules: alarmsByTickets,
-        by_alarms: ticketsByAlarms,
-      } = await this.fetchAssignedDeclareTicketsWithoutStore({
-        params: {
-          alarms: [this.item._id],
-        },
-      });
+    async showDeclareTicketModalByAlarmsIds(alarms) {
+      this.ticketsForAlarmsPending = true;
 
-      this.$modals.show({
-        name: MODALS.createDeclareTicketEvent,
-        config: {
-          ...this.modalConfig,
-          alarmsByTickets,
-          ticketsByAlarms,
-          action: async (events) => {
-            await this.bulkCreateDeclareTicketExecution({ data: events });
-            /**
-             * TODO: Declare ticket status modals should be opened
-             */
+      try {
+        const {
+          by_rules: alarmsByTickets,
+          by_alarms: ticketsByAlarms,
+        } = await this.fetchAssignedDeclareTicketsWithoutStore({
+          params: {
+            alarms: mapIds(alarms),
           },
-        },
-      });
+        });
+
+        this.$modals.show({
+          name: MODALS.createDeclareTicketEvent,
+          config: {
+            ...this.modalConfig,
+            alarmsByTickets,
+            ticketsByAlarms,
+            action: (events) => {
+              this.$modals.show({
+                name: MODALS.executeDeclareTickets,
+                config: {
+                  executions: events,
+                  tickets: events.map(({ _id: id }) => ({
+                    _id: id,
+                    name: alarmsByTickets[id].name,
+                  })),
+                  alarms,
+                },
+              });
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.ticketsForAlarmsPending = false;
+      }
     },
 
     showSnoozeModal() {
