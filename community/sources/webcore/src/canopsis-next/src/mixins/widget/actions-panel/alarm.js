@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { get } from 'lodash';
 
 import {
   MODALS,
@@ -8,7 +7,6 @@ import {
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
@@ -16,6 +14,7 @@ import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
@@ -25,6 +24,7 @@ export const widgetActionsPanelAlarmMixin = {
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
+    entitiesDeclareTicketRuleMixin,
   ],
   methods: {
     ...mapActions({
@@ -57,6 +57,32 @@ export const widgetActionsPanelAlarmMixin = {
       return () => this.$modals.show({
         name,
         config: this.modalConfig,
+      });
+    },
+
+    async showDeclareTicketModal() {
+      const {
+        by_rules: alarmsByTickets,
+        by_alarms: ticketsByAlarms,
+      } = await this.fetchAssignedDeclareTicketsWithoutStore({
+        params: {
+          alarms: [this.item._id],
+        },
+      });
+
+      this.$modals.show({
+        name: MODALS.createDeclareTicketEvent,
+        config: {
+          ...this.modalConfig,
+          alarmsByTickets,
+          ticketsByAlarms,
+          action: async (events) => {
+            await this.bulkCreateDeclareTicketExecution({ data: events });
+            /**
+             * TODO: Declare ticket status modals should be opened
+             */
+          },
+        },
       });
     },
 
@@ -168,7 +194,7 @@ export const widgetActionsPanelAlarmMixin = {
 
           title: this.$t('alarm.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [get(this.parentAlarm, 'd')],
+          parentsIds: [this.parentAlarm.d],
         },
       });
     },

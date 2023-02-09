@@ -405,7 +405,7 @@ export default {
           options: this.dateOptions,
         },
         {
-          text: this.$t('common.ticket'),
+          text: this.$tc('common.ticket'),
           value: ALARM_PATTERN_FIELDS.ticket,
           options: this.ticketOptions,
         },

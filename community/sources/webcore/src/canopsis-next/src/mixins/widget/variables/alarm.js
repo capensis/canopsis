@@ -52,7 +52,7 @@ export const alarmVariablesMixin = {
           variables: this.statusVariables,
         },
         {
-          text: this.$t('common.ticket'),
+          text: this.$tc('common.ticket'),
           value: ALARM_TEMPLATE_FIELDS.ticket,
           variables: this.ticketVariables,
         },

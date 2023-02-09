@@ -190,9 +190,6 @@ export default {
   createAckRemove: {
     title: 'Remove ack',
   },
-  createDeclareTicket: {
-    title: 'Declare ticket',
-  },
   createAssociateTicket: {
     title: 'Associate ticket number',
     fields: {
@@ -882,5 +879,8 @@ export default {
     duplicate: {
       title: 'Duplicate a declare ticket rule',
     },
+  },
+  createDeclareTicketEvent: {
+    title: 'Declare ticket',
   },
 };
