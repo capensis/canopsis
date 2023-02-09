@@ -315,6 +315,10 @@ export default {
       });
     },
 
+    showAssociateTicketModal() {
+      this.showAssociateTicketModalByAlarms([this.item]);
+    },
+
     showDeclareTicketModal() {
       this.showDeclareTicketModalByAlarms([this.item]);
     },
