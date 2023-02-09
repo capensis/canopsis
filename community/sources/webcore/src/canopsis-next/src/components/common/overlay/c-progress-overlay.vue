@@ -1,11 +1,17 @@
 <template lang="pug">
-  v-fade-transition
+  v-fade-transition(v-if="transition")
     v-layout.progress(
       v-if="pending",
       :class="backgroundColor",
       :style="{ opacity }"
     )
       v-progress-circular(:color="color", indeterminate)
+  v-layout.progress(
+    v-else-if="pending",
+    :class="backgroundColor",
+    :style="{ opacity }"
+  )
+    v-progress-circular(:color="color", indeterminate)
 </template>
 
 <script>
@@ -26,6 +32,10 @@ export default {
     color: {
       type: String,
       default: 'primary',
+    },
+    transition: {
+      type: Boolean,
+      default: true,
     },
   },
 };

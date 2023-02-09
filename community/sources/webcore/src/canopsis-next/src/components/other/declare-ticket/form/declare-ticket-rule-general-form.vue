@@ -5,7 +5,7 @@
         c-enabled-field(v-field="form.enabled")
       v-flex(xs6)
         c-enabled-field(v-field="form.emit_trigger", :label="$t('common.emitTrigger')", name="emit_trigger")
-    v-layout(row)
+    v-layout.mb-2(row)
       v-flex.mr-3(xs8)
         c-name-field(v-field="form.name", required)
       v-flex(xs4)

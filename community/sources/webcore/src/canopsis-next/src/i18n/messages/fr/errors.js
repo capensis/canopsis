@@ -10,4 +10,5 @@ export default {
   unknownWidgetType: 'Type de widget inconnu: {type}',
   unique: 'Le champ doit être unique',
   codeEditorProblem: 'Problème avec l\'éditeur de code',
+  triggerMustNotUsed: 'Le déclencheur {field} ne doit pas être utilisé | Les déclencheurs {field} ne doivent pas être utilisés',
 };

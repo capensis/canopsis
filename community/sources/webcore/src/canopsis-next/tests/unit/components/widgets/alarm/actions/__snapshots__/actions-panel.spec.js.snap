@@ -573,10 +573,114 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
 </div>
 `;
 
+exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket_rules 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|delete|cancel
+  </button>
+  <button
+    class="action-ackRemove"
+  >
+    Cancel ack|not_interested|ackRemove
+  </button>
+   
+  <button
+    class="drop-down-action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
+  </button>
+  <button
+    class="drop-down-action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="drop-down-action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="drop-down-action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="drop-down-action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="drop-down-action-history"
+  >
+    History|history|history
+  </button>
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-manualMetaAlarmUngroup"
+  >
+    Unlink alarm from manual meta alarm|link_off|manualMetaAlarmUngroup
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    Running instruction in progress...|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+    disabled="disabled"
+  >
+    Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="drop-down-action-executeInstruction"
+  >
+    Resume Paused instruction|assignment|executeInstruction
+  </button>
+</div>
+`;
+
 exports[`actions-panel Renders \`actions-panel\` without entity, instructions, but with status stealthy 1`] = `
 <div
   class="shared-actions-panel"
 >
+  <button
+    class="action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
    
+  <button
+    class="drop-down-action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="drop-down-action-manualMetaAlarmUngroup"
+  >
+    Unlink alarm from manual meta alarm|link_off|manualMetaAlarmUngroup
+  </button>
 </div>
 `;

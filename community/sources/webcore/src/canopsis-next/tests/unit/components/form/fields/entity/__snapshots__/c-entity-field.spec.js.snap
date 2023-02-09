@@ -362,7 +362,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
-  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-focused theme--light primary--text"
+  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-focused theme--light primary--text"
 >
   <div
     class="v-input__control"
@@ -445,7 +445,45 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
           <div
             class="v-list__tile__content"
           >
-            
+            id
+          </div>
+          <span
+            class="ml-4 grey--text"
+          >
+            type1
+          </span>
+        </a>
+      </div>
+      <div
+        class="c-lazy-search-field--tile"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            id 2
+          </div>
+          <span
+            class="ml-4 grey--text"
+          >
+            type2
+          </span>
+        </a>
+      </div>
+      <div
+        class="c-lazy-search-field--tile"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            id 3
           </div>
           <span
             class="ml-4 grey--text"
