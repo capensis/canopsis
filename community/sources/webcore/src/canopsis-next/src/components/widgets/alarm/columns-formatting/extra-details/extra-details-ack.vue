@@ -13,8 +13,9 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -30,7 +31,7 @@ export default {
     },
 
     icon() {
-      return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon;
+      return getEntityEventIcon(EVENT_ENTITY_TYPES.ack);
     },
   },
 };
