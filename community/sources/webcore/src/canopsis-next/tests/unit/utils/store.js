@@ -648,20 +648,24 @@ export const createPbehaviorTimespanModule = () => {
 
 export const createAlarmModule = () => {
   const fetchAlarmItem = jest.fn();
+  const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
+    fetchAlarmItemWithoutStore.mockClear();
   });
 
   const alarmModule = {
     name: 'alarm',
     actions: {
       fetchItem: fetchAlarmItem,
+      fetchItemWithoutStore: fetchAlarmItemWithoutStore,
     },
   };
 
   return {
     fetchAlarmItem,
+    fetchAlarmItemWithoutStore,
     alarmModule,
   };
 };
@@ -687,8 +691,9 @@ export const createEventModule = () => {
 };
 
 export const createDeclareTicketModule = () => {
-  const bulkCreateDeclareTicketExecution = jest.fn();
+  const bulkCreateDeclareTicketExecution = jest.fn().mockResolvedValue([]);
   const fetchAssignedDeclareTicketsWithoutStore = jest.fn().mockResolvedValue({
+    by_rules: {},
     by_alarms: {},
   });
 

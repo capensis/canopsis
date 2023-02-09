@@ -191,7 +191,7 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
       return [
         createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        createAssociateTicketEventByEntity({ entity, ticket: payload.ticket }),
+        createAssociateTicketEventByEntity({ entity, ...payload }),
       ];
     case WEATHER_ACTIONS_TYPES.entityValidate:
       return [

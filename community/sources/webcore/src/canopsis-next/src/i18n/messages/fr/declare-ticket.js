@@ -29,6 +29,7 @@ export default {
   applyRules: 'Appliquer les règles',
   webhookStatus: 'Statut du webhook',
   webhookComplete: 'Webhook terminé',
+  noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement acquitté pour l\'élément sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements acquittés pour les éléments seront envoyés avant.',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
