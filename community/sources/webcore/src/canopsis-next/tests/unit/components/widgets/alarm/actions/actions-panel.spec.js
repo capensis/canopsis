@@ -126,9 +126,26 @@ describe('actions-panel', () => {
     },
   ];
 
+  const assignedDeclareTicketRules = [
+    {
+      _id: 1,
+      name: 'Name 1',
+    },
+    {
+      _id: 2,
+      name: 'Name 2',
+
+    },
+    {
+      _id: 3,
+      name: 'Name 3',
+    },
+  ];
+
   const alarm = {
     _id: 'alarm-id',
     assigned_instructions: assignedInstructions,
+    assigned_declare_ticket_rules: assignedDeclareTicketRules,
     entity: {},
     v: {
       ack: {},
@@ -1124,7 +1141,9 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
     const wrapper = snapshotFactory({
-      store,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
       propsData: {
         item: {
           ...alarm,
@@ -1135,6 +1154,25 @@ describe('actions-panel', () => {
               val: ENTITIES_STATUSES.stealthy,
             },
           },
+        },
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          assigned_declare_ticket_rules: undefined,
         },
         widget,
         parentAlarm,

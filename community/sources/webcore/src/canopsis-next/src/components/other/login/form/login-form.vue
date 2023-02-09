@@ -8,7 +8,6 @@
         :error-messages="errors.collect('username')",
         color="primary",
         name="username",
-        data-test="username",
         autofocus,
         clearable,
         outline
