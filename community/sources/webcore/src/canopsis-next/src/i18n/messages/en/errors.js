@@ -10,4 +10,5 @@ export default {
   unknownWidgetType: 'Unknown widget type: {type}',
   unique: 'Field must be unique',
   codeEditorProblem: 'Problem with code-editor',
+  triggerMustNotUsed: '{field} trigger must not be used | {field} triggers must not be used',
 };

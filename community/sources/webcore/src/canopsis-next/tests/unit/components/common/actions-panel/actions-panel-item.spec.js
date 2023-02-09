@@ -104,7 +104,7 @@ describe('actions-panel-item', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `actions-panel-item` with custom props as dropdown item correctly', () => {
+  it('Renders `actions-panel-item` with custom props as dropdown item correctly 2', () => {
     const wrapper = mount(ActionsPanelItem, {
       localVue,
       stubs: snapshotStubs,
