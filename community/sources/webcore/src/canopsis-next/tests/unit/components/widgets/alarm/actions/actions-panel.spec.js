@@ -486,6 +486,7 @@ describe('actions-panel', () => {
         executions: events,
         alarms: [alarm],
         tickets: [rule],
+        onExecute: expect.any(Function),
       },
     });
   });

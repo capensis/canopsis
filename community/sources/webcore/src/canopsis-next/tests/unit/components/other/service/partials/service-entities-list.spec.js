@@ -537,6 +537,7 @@ describe('service-entities-list', () => {
           executions: events,
           alarms: [{}],
           tickets: [rule],
+          onExecute: expect.any(Function),
         },
       },
     );

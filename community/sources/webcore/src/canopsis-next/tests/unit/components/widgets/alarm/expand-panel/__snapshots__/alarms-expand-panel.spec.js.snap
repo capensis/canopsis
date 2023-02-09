@@ -42,6 +42,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
             Timeline
           </a>
         </div>
+        <!---->
         <div
           class="v-tabs__div"
         >
@@ -239,6 +240,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           <a
             class="v-tabs__item"
           >
+            Tickets declared
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
             Pbehaviors
           </a>
         </div>
@@ -358,6 +368,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 >
                   <time-line-stub
                     steps="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout pa-3 row"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <declared-tickets-list-stub
+                    tickets="[object Object]"
                   />
                 </div>
               </div>
@@ -503,6 +541,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
             Timeline
           </a>
         </div>
+        <!---->
         <div
           class="v-tabs__div"
         >
@@ -710,6 +749,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
             Timeline
           </a>
         </div>
+        <!---->
         <div
           class="v-tabs__div"
         >
