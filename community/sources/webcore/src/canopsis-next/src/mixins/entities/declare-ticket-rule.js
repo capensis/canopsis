@@ -18,6 +18,7 @@ export const entitiesDeclareTicketRuleMixin = {
       updateDeclareTicketRule: 'update',
       removeDeclareTicketRule: 'remove',
       createTestDeclareTicketExecution: 'createTestDeclareTicketExecution',
+      fetchDeclareTicketExecutionWithoutStore: 'fetchDeclareTicketExecutionWithoutStore',
       fetchTestDeclareTicketExecutionWebhooksResponse: 'fetchTestDeclareTicketExecutionWebhooksResponse',
       bulkRemoveDeclareTicketRules: 'bulkRemove',
       bulkCreateDeclareTicketExecution: 'bulkCreateDeclareTicketExecution',

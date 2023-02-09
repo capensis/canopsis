@@ -59,7 +59,6 @@ export default {
       ticketNumber: 'Numéro de ticket',
       parents: 'Causes',
       children: 'Conséquences',
-      rule: 'Règle | Règles',
     },
   },
   timeLine: {
