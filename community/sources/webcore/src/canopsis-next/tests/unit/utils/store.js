@@ -685,3 +685,29 @@ export const createEventModule = () => {
     createEvent,
   };
 };
+
+export const createDeclareTicketModule = () => {
+  const bulkCreateDeclareTicketExecution = jest.fn();
+  const fetchAssignedDeclareTicketsWithoutStore = jest.fn().mockResolvedValue({
+    by_alarms: {},
+  });
+
+  afterEach(() => {
+    bulkCreateDeclareTicketExecution.mockClear();
+    fetchAssignedDeclareTicketsWithoutStore.mockClear();
+  });
+
+  const declareTicketRuleModule = {
+    name: 'declareTicketRule',
+    actions: {
+      bulkCreateDeclareTicketExecution,
+      fetchAssignedTicketsWithoutStore: fetchAssignedDeclareTicketsWithoutStore,
+    },
+  };
+
+  return {
+    declareTicketRuleModule,
+    bulkCreateDeclareTicketExecution,
+    fetchAssignedDeclareTicketsWithoutStore,
+  };
+};
