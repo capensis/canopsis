@@ -94,7 +94,6 @@ export const API_ROUTES = {
   resolvedAlarms: '/api/v4/resolved-alarms',
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
-  manualMetaAlarm: '/api/v4/manual-meta-alarms',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
@@ -243,6 +242,7 @@ export const API_ROUTES = {
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
+  manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
 };
 
 export const COLORS = {
