@@ -425,6 +425,7 @@ export default {
     [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
   },
+
   triggers: {
     [TRIGGERS.create]: {
       text: 'Création d\'alarme',
