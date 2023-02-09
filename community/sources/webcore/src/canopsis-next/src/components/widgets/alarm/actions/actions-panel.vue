@@ -114,7 +114,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarm.actions.titles.associateTicket'),
-          method: this.showActionModal(MODALS.createAssociateTicketEvent),
+          method: this.showAssociateTicketModal,
         },
         cancel: {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
@@ -172,7 +172,7 @@ export default {
     modalConfig() {
       return {
         items: [this.item],
-        afterSubmit: this.refreshAlarmsList,
+        afterSubmit: this.afterSubmit,
       };
     },
     resolvedActions() {
@@ -293,6 +293,10 @@ export default {
     },
   },
   methods: {
+    afterSubmit() {
+      this.refreshAlarmsList();
+    },
+
     showExecuteInstructionModal(assignedInstruction) {
       const refreshAlarm = () => this.refreshAlarmsList();
 
@@ -311,8 +315,12 @@ export default {
       });
     },
 
+    showAssociateTicketModal() {
+      this.showAssociateTicketModalByAlarms([this.item]);
+    },
+
     showDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarmsIds([this.item]);
+      this.showDeclareTicketModalByAlarms([this.item]);
     },
   },
 };
