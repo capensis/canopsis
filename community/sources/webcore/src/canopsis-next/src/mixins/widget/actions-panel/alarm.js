@@ -65,10 +65,6 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarmsIds([this.item]);
-    },
-
     async showDeclareTicketModalByAlarmsIds(alarms) {
       this.ticketsForAlarmsPending = true;
 

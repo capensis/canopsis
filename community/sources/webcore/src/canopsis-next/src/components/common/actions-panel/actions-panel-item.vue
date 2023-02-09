@@ -11,7 +11,7 @@
             left,
             small
           ) {{ icon }}
-          span.body-1.pl-3(:class="cssClass") {{ title }}
+          span.body-1.pl-2(:class="cssClass") {{ title }}
     template(v-else)
       c-action-btn(
         :tooltip="title",
