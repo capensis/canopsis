@@ -69,7 +69,7 @@ export default {
     return {
       alarmsById: {},
       pending: false,
-      pageCount: Infinity,
+      pageCount: 1,
 
       query: {
         page: 1,
