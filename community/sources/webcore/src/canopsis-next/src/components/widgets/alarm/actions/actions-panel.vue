@@ -66,7 +66,7 @@ export default {
   computed: {
     actionsMap() {
       /**
-       * TODO: We need check all features
+       * !!!IMPORTANT!!! TODO: We need check all features
        */
       const featuresActionsMap = featuresService.has('components.alarmListActionPanel.computed.actionsMap')
         ? featuresService.call('components.alarmListActionPanel.computed.actionsMap', this, [])
@@ -309,6 +309,10 @@ export default {
           onExecute: refreshAlarm,
         },
       });
+    },
+
+    showDeclareTicketModal() {
+      this.showDeclareTicketModalByAlarmsIds([this.item]);
     },
   },
 };
