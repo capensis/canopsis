@@ -66,7 +66,7 @@ export default {
   computed: {
     actionsMap() {
       /**
-       * TODO: We need check all features
+       * !!!IMPORTANT!!! TODO: We need check all features
        */
       const featuresActionsMap = featuresService.has('components.alarmListActionPanel.computed.actionsMap')
         ? featuresService.call('components.alarmListActionPanel.computed.actionsMap', this, [])
@@ -182,7 +182,10 @@ export default {
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
-      const { assigned_instructions: assignedInstructions = [] } = this.item;
+      const {
+        assigned_instructions: assignedInstructions = [],
+        assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
+      } = this.item;
 
       const actions = [
         filteredActionsMap.snooze,
@@ -214,10 +217,11 @@ export default {
           );
 
           if (!this.item.v.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
-            actions.unshift(
-              filteredActionsMap.declareTicket,
-              filteredActionsMap.associateTicket,
-            );
+            actions.unshift(filteredActionsMap.associateTicket);
+
+            if (assignedDeclareTicketRules.length) {
+              actions.unshift(filteredActionsMap.declareTicket);
+            }
           }
         } else {
           actions.unshift(
@@ -309,6 +313,10 @@ export default {
           onExecute: refreshAlarm,
         },
       });
+    },
+
+    showDeclareTicketModal() {
+      this.showDeclareTicketModalByAlarms([this.item]);
     },
   },
 };
