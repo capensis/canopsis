@@ -32,6 +32,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 
@@ -52,6 +53,7 @@ export default {
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { alarmsByTickets } = this.modal.config;
@@ -67,10 +69,6 @@ export default {
       if (isFormValid) {
         if (this.config.action) {
           await this.config.action(formToDeclareTicketEvents(this.form));
-        }
-
-        if (this.config.afterSubmit) {
-          await this.config.afterSubmit();
         }
 
         this.$modals.hide();
