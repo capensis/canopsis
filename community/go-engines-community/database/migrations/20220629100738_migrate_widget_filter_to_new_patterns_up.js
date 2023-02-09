@@ -849,6 +849,7 @@ db.widgets.find({
 });
 
 db.userpreferences.aggregate([
+    {$match: {widget: {$ne: null}}},
     {$sort: {updated: -1, _id: 1}},
     {
         $group: {
