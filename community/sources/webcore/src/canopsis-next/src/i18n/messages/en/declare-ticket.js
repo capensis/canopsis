@@ -24,10 +24,14 @@ export default {
   userId: 'User ID',
   actionInitiator: 'Action initiator',
   triggerEventMessage: 'Trigger event message',
+  noRulesForAlarms: 'No rules to apply for the selected alarms',
+  oneTicketForAlarms: 'One ticket for all alarms',
+  applyRules: 'Apply rules',
   webhookStatus: 'Webhook status',
   webhookComplete: 'Webhook complete',
   errors: {
     webhookRequired: 'The webhooks must be added',
     webhookTicketDeclarationRequired: 'Some one webhook ticket declaration must be set',
+    ticketRequired: 'Some one ticket must be add',
   },
 };

@@ -123,7 +123,7 @@ export const entityVariablesMixin = {
           value: ENTITY_TEMPLATE_FIELDS.alarmCreationDate,
         },
         {
-          text: this.$t('common.ticket'),
+          text: this.$tc('common.ticket'),
           value: ENTITY_TEMPLATE_FIELDS.ticket,
           variables: this.ticketVariables,
         },

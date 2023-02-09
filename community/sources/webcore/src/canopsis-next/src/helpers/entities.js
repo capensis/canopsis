@@ -108,6 +108,42 @@ export const filterById = (items, item, idKey = '_id') => items
   .filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
 
 /**
+ * Filter entities by value
+ *
+ * @param {string[] | number[]} items
+ * @param {string | number} removingValue
+ */
+export const filterValue = (items, removingValue) => items.filter(item => item !== removingValue);
+
+/**
+ * Revert grouped values by key
+ *
+ * @example
+ *  revertGroupBy({
+ *    'key1': ['value1', 'value2'],
+ *    'key2': ['value1', 'value2', 'value3'],
+ *    'key3': ['value3'],
+ *  }) -> {
+ *    'value1': ['key1', 'key2'],
+ *    'value2': ['key1', 'key2'],
+ *    'value3': ['key2', 'key3'],
+ *  }
+ * @param {Object.<string, string[]>} obj
+ * @returns {Object.<string, string[]>}
+ */
+export const revertGroupBy = obj => Object.entries(obj).reduce((acc, [id, values]) => {
+  values.forEach((value) => {
+    if (acc[value]) {
+      acc[value].push(id);
+    } else {
+      acc[value] = [id];
+    }
+  });
+
+  return acc;
+}, {});
+
+/**
  * Generate alarm list widget form with default parameters.
  *
  * @return {WidgetForm}
