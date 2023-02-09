@@ -2924,9 +2924,6 @@ definitions:
       description:
         maxLength: 255
         type: string
-      icon_name:
-        maxLength: 255
-        type: string
       name:
         maxLength: 255
         type: string
@@ -2942,7 +2939,6 @@ definitions:
     required:
     - color
     - description
-    - icon_name
     - name
     - priority
     - type
@@ -4729,16 +4725,21 @@ definitions:
         items:
           $ref: '#/definitions/view.WidgetColumn'
         type: array
+      content:
+        type: string
       title:
         maxLength: 255
         type: string
       type:
         enum:
-        - alarm
-        - entity
+        - alarm_columns
+        - entity_columns
+        - alarm_more_infos
+        - weather_item
+        - weather_modal
+        - weather_entity
         type: string
     required:
-    - columns
     - title
     - type
     type: object
@@ -4752,6 +4753,8 @@ definitions:
         items:
           $ref: '#/definitions/view.WidgetColumn'
         type: array
+      content:
+        type: string
       created:
         type: integer
       title:

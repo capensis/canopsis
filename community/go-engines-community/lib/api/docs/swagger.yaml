@@ -10683,12 +10683,12 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.EditRequest'
             examples:
-              alarm:
-                summary: Alarm template
+              alarm_columns:
+                summary: Alarm columns template
                 description: Create a template for alarms list.
                 value: {
                   "title": "Template",
-                  "type": "alarm",
+                  "type": "alarm_columns",
                   "columns": [
                     {
                       "value": "v.resource"
@@ -10701,12 +10701,12 @@ paths:
                     }
                   ]
                 }
-              entity:
-                summary: Entity template
+              entity_columns:
+                summary: Entity columns template
                 description: Create a template for entities list.
                 value: {
                   "title": "Template",
-                  "type": "alarm",
+                  "type": "entity_columns",
                   "columns": [
                     {
                       "value": "_id"
@@ -10715,6 +10715,14 @@ paths:
                       "value": "type"
                     }
                   ]
+                }
+              alarm_more_infos:
+                summary: Alarm more infos template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_more_infos",
+                  "content": "Name: {{ alarm.v.display_name }}"
                 }
         required: true
       responses:
@@ -10782,7 +10790,7 @@ paths:
                 description: Update a template.
                 value: {
                   "title": "Template",
-                  "type": "alarm",
+                  "type": "alarm_columns",
                   "columns": [
                     {
                       "value": "v.resource"

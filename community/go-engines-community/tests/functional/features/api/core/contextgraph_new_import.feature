@@ -240,7 +240,7 @@ Feature: New import entities
       "depends": []
     }
     """
-    
+
   Scenario: given set import request should create component with resource config
     When I am admin
     When I do PUT /api/v4/contextgraph-import?source=test-new-import-set:
