@@ -14,6 +14,7 @@ export default {
   ackMessage: 'Ack message',
   lastCommentAuthor: 'Last comment author',
   lastCommentMessage: 'Last comment message',
+  metaAlarm: 'Meta alarm',
   advancedSearch: '<span>Help on the advanced research :</span>\n'
     + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
     + '<p>The "-" before the research is required</p>\n'
@@ -78,7 +79,11 @@ export default {
       [EVENT_ENTITY_TYPES.statusinc]: 'Status increased',
       [EVENT_ENTITY_TYPES.statusdec]: 'Status decreased',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Ticket associated',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Ticket declared',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Ticket is declared successfully',
+      [EVENT_ENTITY_TYPES.declareTicketFail]: 'Ticket declaration is failed',
+      [EVENT_ENTITY_TYPES.webhookStart]: 'Webhook has started by root',
+      [EVENT_ENTITY_TYPES.webhookComplete]: 'Webhook is executed successfully',
+      [EVENT_ENTITY_TYPES.webhookFail]: 'Webhook is failed',
       [EVENT_ENTITY_TYPES.snooze]: 'Alarm snoozed',
       [EVENT_ENTITY_TYPES.unsooze]: 'Alarm unsnoozed',
       [EVENT_ENTITY_TYPES.changeState]: 'Change and lock severity',
@@ -112,6 +117,7 @@ export default {
     trackSource: 'Track source',
     impactChain: 'Impact chain',
     entityGantt: 'Gantt chart',
+    ticketsDeclared: 'Tickets declared',
   },
   moreInfos: {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',

@@ -209,6 +209,7 @@ export const widgetActionPanelServiceEntityMixin = {
                     name: alarmsByTickets[id].name,
                   })),
                   alarms,
+                  onExecute: () => this.$emit('refresh'),
                 },
               });
             },
