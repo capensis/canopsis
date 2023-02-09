@@ -203,7 +203,7 @@ export default {
     right: 0;
     bottom: 0;
     left: 0;
-    height: 300px;
+    height: 200px;
   }
 
   .v-select__selections {

@@ -57,7 +57,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
               edit
             </i>
             <span
-              class="body-1 pl-3"
+              class="body-1 pl-2"
             >
               Edit title
             </span>
@@ -83,7 +83,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
               delete
             </i>
             <span
-              class="body-1 pl-3"
+              class="body-1 pl-2"
             >
               Delete title
             </span>
@@ -152,7 +152,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
               edit
             </i>
             <span
-              class="body-1 pl-3"
+              class="body-1 pl-2"
             >
               Edit title
             </span>
@@ -178,7 +178,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
               delete
             </i>
             <span
-              class="body-1 pl-3"
+              class="body-1 pl-2"
             >
               Delete title
             </span>
