@@ -69,6 +69,10 @@ export default {
           await this.config.action(formToDeclareTicketEvents(this.form));
         }
 
+        if (this.config.afterSubmit) {
+          await this.config.afterSubmit();
+        }
+
         this.$modals.hide();
       }
     },
