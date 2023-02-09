@@ -102,7 +102,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .variables-list {
   max-height: 400px;
   overflow: auto;

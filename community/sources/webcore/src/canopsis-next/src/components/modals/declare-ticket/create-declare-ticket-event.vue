@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/forms/declare-ticket-event';
 
@@ -32,6 +32,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 
@@ -44,6 +45,7 @@ export default {
   name: MODALS.createDeclareTicketEvent,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { DeclareTicketEventsForm, ModalWrapper },
   mixins: [
@@ -51,6 +53,7 @@ export default {
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { alarmsByTickets } = this.modal.config;
