@@ -268,6 +268,7 @@ export default {
   header: 'Header | Headers',
   headerKey: 'Header key',
   headerValue: 'Header value',
+  rule: 'Rule | Rules',
   copyValue: 'Copy value',
   copyProperty: 'Copy property',
   copyPropertyPath: 'Copy property path',

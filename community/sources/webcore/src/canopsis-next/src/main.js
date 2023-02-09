@@ -537,6 +537,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.entityDependenciesList]: { maxWidth: 1600 },
     [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
     [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
+    [MODALS.executeDeclareTickets]: { maxWidth: 920 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

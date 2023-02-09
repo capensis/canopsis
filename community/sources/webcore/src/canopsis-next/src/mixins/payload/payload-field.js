@@ -75,7 +75,7 @@ export const payloadFieldMixin = {
     },
   },
   created() {
-    this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 100);
+    this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 300);
   },
   mounted() {
     document.addEventListener('selectionchange', this.debouncedOnSelectionChange);

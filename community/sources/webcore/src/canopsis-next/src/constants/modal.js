@@ -5,7 +5,6 @@ export const MODALS = {
   createAssociateTicketEvent: 'create-associate-ticket-event',
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
-  createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
   createEntity: 'create-entity',
@@ -93,5 +92,7 @@ export const MODALS = {
 
   createShareToken: 'create-share-token',
 
+  createDeclareTicketEvent: 'create-declare-ticket-event',
   createDeclareTicketRule: 'create-declare-ticket-rule',
+  executeDeclareTickets: 'execute-declare-tickets',
 };
