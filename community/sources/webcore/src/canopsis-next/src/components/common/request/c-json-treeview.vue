@@ -3,7 +3,7 @@
     template(#prepend="{ item }")
       i.caption.mr-1(v-if="item.children") ({{ $t(`common.variableTypes.${item.isArray ? 'array' : 'object'}`) }})
 
-    template(#label="{ item, leaf }")
+    template(#label="{ item }")
       request-information-content-row(:row="item")
 </template>
 
