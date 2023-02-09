@@ -95,7 +95,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarm.actions.titles.associateTicket'),
-          method: this.showCreateAssociateTicketEventModal,
+          method: this.showCreateAssociateTicketModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.snooze,
@@ -168,19 +168,12 @@ export default {
       });
     },
 
-    showCreateAssociateTicketEventModal() {
-      this.$modals.show({
-        name: MODALS.createAssociateTicketEvent,
-        config: {
-          ...this.modalConfig,
-
-          fastAckOutput: this.widget.parameters.fastAckOutput,
-        },
-      });
+    showCreateAssociateTicketModal() {
+      this.showAssociateTicketModalByAlarms(this.items);
     },
 
     showCreateDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarmsIds(this.items);
+      this.showDeclareTicketModalByAlarms(this.items);
     },
 
     showCreateGroupRequestEventModal() {
