@@ -278,6 +278,7 @@ export const USERS_PERMISSIONS = {
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,

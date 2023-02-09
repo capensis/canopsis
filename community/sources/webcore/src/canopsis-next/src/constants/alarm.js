@@ -205,6 +205,7 @@ export const ALARM_INTERVAL_FIELDS = {
 };
 
 export const ALARM_PATTERN_FIELDS = {
+  id: '_id',
   displayName: 'v.display_name',
   state: 'v.state.val',
   status: 'v.status.val',
@@ -268,4 +269,20 @@ export const ALARM_TEMPLATE_FIELDS = {
   pbehaviorInfo: 'alarm.v.pbehavior_info',
   duration: 'alarm.v.duration',
   eventsCount: 'alarm.v.events_count',
+};
+
+export const ALARM_PAYLOADS_VARIABLES = {
+  alarms: '.Alarms',
+  component: '.Value.Component',
+  resource: '.Value.Resource',
+  stateMessage: '.Value.State.Message',
+  stateValue: '.Value.State.Value',
+  statusValue: '.Value.Status.Value',
+  ticketAuthor: '.Value.Ticket.Author',
+  ticketValue: '.Value.Ticket.Value',
+  ticketMessage: '.Value.Ticket.Message',
+  ackAuthor: '.Value.ACK.Author',
+  ackMessage: '.Value.ACK.Message',
+  lastCommentAuthor: '.Value.LastComment.Author',
+  lastCommentMessage: '.Value.LastComment.Message',
 };

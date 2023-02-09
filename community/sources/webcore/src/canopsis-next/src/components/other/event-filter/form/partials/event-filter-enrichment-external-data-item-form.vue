@@ -19,11 +19,10 @@
                 left
               )
           v-select.ml-2(
-            :value="form.type",
+            v-field="form.type",
             :items="types",
             :label="$t('common.type')",
-            :disabled="disabled",
-            @change="updateType"
+            :disabled="disabled"
           )
           v-btn.mr-0(v-if="!disabled", icon, @click="remove")
             v-icon(color="error") delete
@@ -35,7 +34,7 @@
         )
         request-form(
           v-else,
-          v-field="form",
+          v-field="form.request",
           :name="form.key",
           :disabled="disabled"
         )
@@ -46,9 +45,7 @@ import { EVENT_FILTER_EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import { eventFilterExternalDataItemToForm } from '@/helpers/forms/event-filter';
-
-import RequestForm from '@/components/forms/request-form.vue';
+import RequestForm from '@/components/forms/request/request-form.vue';
 
 import EventFilterEnrichmentExternalDataMongoForm from './event-filter-enrichment-external-data-mongo-form.vue';
 
@@ -92,12 +89,6 @@ export default {
     },
   },
   methods: {
-    updateType(type) {
-      const { reference } = this.form;
-
-      this.updateModel(eventFilterExternalDataItemToForm(reference, { type }));
-    },
-
     remove() {
       this.$emit('remove', this.form);
     },
