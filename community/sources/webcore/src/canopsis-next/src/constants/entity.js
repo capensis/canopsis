@@ -590,3 +590,8 @@ export const ENTITY_TEMPLATE_FIELDS = {
   statsKo: 'entity.stats.ko',
   links: 'entity.linklist',
 };
+
+export const ENTITY_PAYLOAD_VARIABLES = {
+  entity: '.Entity',
+  infosValue: '.Infos.%infos_name%.Value',
+};

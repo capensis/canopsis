@@ -90,5 +90,8 @@ export const MODALS = {
   createFlowchartMap: 'create-flowchart-map',
   createMermaidMap: 'create-mermaid-map',
   createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
+
   createShareToken: 'create-share-token',
+
+  createDeclareTicketRule: 'create-declare-ticket-rule',
 };

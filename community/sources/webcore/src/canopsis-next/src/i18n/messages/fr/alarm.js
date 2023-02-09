@@ -5,6 +5,15 @@ export default {
   alarmCreationDate: 'Date de création de l\'alarme',
   alarmDisplayName: 'Nom d\'affichage de l\'alarme',
   liveReporting: 'Définir un intervalle de dates',
+  stateMessage: 'Message d\'état',
+  stateValue: 'Valeur d\'état',
+  ticketAuthor: 'Auteur du ticket',
+  ticketId: 'ID de billets',
+  ticketMessage: 'Message de billet',
+  ackAuthor: 'Confirmer l\'auteur',
+  ackMessage: 'Message de confirmation',
+  lastCommentAuthor: 'Auteur du dernier commentaire',
+  lastCommentMessage: 'Message du dernier commentaire',
   advancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
     + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
     + '<p>Le "-" avant la recherche est obligatoire</p>\n'

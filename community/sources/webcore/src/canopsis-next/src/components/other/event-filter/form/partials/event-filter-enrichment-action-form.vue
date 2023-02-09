@@ -21,7 +21,7 @@
           )
           v-layout
             v-flex(xs5)
-              c-name-field(v-field="form.name", key="name")
+              c-name-field(v-field="form.name", key="name", required)
             v-flex(xs7)
               v-text-field.ml-2(
                 v-if="isStringValueType",

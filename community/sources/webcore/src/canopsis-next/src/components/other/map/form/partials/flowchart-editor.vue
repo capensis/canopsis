@@ -17,8 +17,14 @@
           :shapes="data",
           :add-on-click="addOnClick"
         )
-      c-help-icon.flowchart-map-editor__help-icon(size="32", color="secondary", icon="help", top)
-        div.pre-wrap(v-html="$t('flowchart.panzoom.helpText')")
+      c-help-icon(
+        :text="$t('flowchart.panzoom.helpText')",
+        size="32",
+        icon-class="flowchart-map-editor__help-icon",
+        color="secondary",
+        icon="help",
+        top
+      )
     v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
 </template>
 

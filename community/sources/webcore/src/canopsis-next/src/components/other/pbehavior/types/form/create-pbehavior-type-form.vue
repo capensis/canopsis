@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     v-text-field(
       v-field="form.description",
       v-validate="'required'",

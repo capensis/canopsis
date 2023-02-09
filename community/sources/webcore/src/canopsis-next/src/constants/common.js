@@ -304,3 +304,14 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
 ];
+
+export const HEADERS = {
+  authorization: 'Authorization',
+  contentType: 'Content-Type',
+};
+
+export const CONTENT_TYPES = {
+  json: 'application/json',
+  javascript: 'application/javascript',
+  xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
+};

@@ -1,24 +1,18 @@
 <template lang="pug">
   v-layout(column)
-    request-form(v-field="webhook", :name="name")
-    h4.ml-1 {{ $t('scenario.declareTicket') }}
-    c-enabled-field(v-model="webhook.empty_response", :label="$t('scenario.emptyResponse')")
-    c-enabled-field(v-model="webhook.is_regexp", :label="$t('scenario.isRegexp')")
-    c-text-pairs-field(
-      v-field="webhook.declare_ticket",
-      :text-label="$t('scenario.key')",
-      :name="name"
-    )
+    request-form(v-field="webhook.request", :name="name")
+    declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
 </template>
 
 <script>
 import { formMixin } from '@/mixins/form';
 
-import RequestForm from '@/components/forms/request-form.vue';
+import RequestForm from '@/components/forms/request/request-form.vue';
+import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { RequestForm },
+  components: { DeclareTicketRuleTicketMappingField, RequestForm },
   mixins: [formMixin],
   model: {
     prop: 'webhook',
@@ -32,16 +26,6 @@ export default {
     name: {
       type: String,
       required: true,
-    },
-  },
-  computed: {
-    withAuth: {
-      set(value) {
-        this.updateField('request.auth', value ? { username: '', password: '' } : undefined);
-      },
-      get() {
-        return !!this.webhook.request.auth;
-      },
     },
   },
 };
