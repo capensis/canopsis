@@ -18,26 +18,13 @@
       )
     v-flex.pl-2(xs5)
       v-layout(row, align-center)
-        v-combobox(
-          ref="combobox",
+        c-payload-text-field(
           v-field="condition.value",
-          :search-input.sync="searchInput",
           :label="$t('common.value')",
-          :items="values",
           :disabled="disabled",
-          :return-object="false",
-          no-filter,
-          clearable,
-          @change="selectValue",
-          @update:searchInput="debouncedOnSelectionChange"
+          :variables="variables",
+          clearable
         )
-          template(#item="{ item, tile }")
-            v-list-tile(
-              v-bind=" { ...tile.props, value: item.value === activeValue }",
-              v-on="tile.on"
-            )
-              v-list-tile-content {{ item.text }}
-              span.ml-4.grey--text {{ item.value }}
         v-btn(
           v-if="!disabled",
           :disabled="disabledRemove",
@@ -49,15 +36,12 @@
 </template>
 
 <script>
-import { debounce } from 'lodash';
-
 import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_VALUES,
 } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
-import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
 
 export default {
   inject: ['$validator'],
@@ -84,19 +68,8 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      searchInput: this.condition.value,
-      showItems: true,
-      activeValue: undefined,
-    };
-  },
   computed: {
-    values() {
-      if (!this.showItems) {
-        return [];
-      }
-
+    variables() {
       return Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_VALUES).map(({ value, text }) => ({
         value,
         text: this.$t(`eventFilter.externalDataValues.${text}`),
@@ -112,75 +85,7 @@ export default {
       return `${this.name}.condition`;
     },
   },
-  created() {
-    this.debouncedOnSelectionChange = debounce(this.onSelectionChange, 50);
-  },
-  mounted() {
-    document.addEventListener('selectionchange', this.debouncedOnSelectionChange);
-  },
-  beforeDestroy() {
-    document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
-  },
   methods: {
-    selectValue(value) {
-      const { selectionStart, selectionEnd } = this;
-
-      this.activeValue = value ?? undefined;
-
-      if (!this.searchInput || this.searchInput === value) {
-        this.updateField('value', value);
-        return;
-      }
-
-      const prefix = this.searchInput.substring(0, Math.max(selectionStart, 0));
-      const suffix = this.searchInput.substring(Math.max(selectionEnd, 0));
-
-      this.selectionStart = prefix.length;
-      this.selectionEnd = this.selectionStart + value.length;
-      this.showItems = false;
-
-      this.updateField('value', `${prefix}${value}${suffix}`);
-    },
-
-    onSelectionChange() {
-      if (!this.$el.contains(document.activeElement) && this.$refs.combobox) {
-        return;
-      }
-
-      if (!this.searchInput) {
-        this.showItems = true;
-        return;
-      }
-
-      const { selectionStart, selectionEnd } = this.$refs.combobox.$refs.input;
-
-      this.selectionStart = selectionStart;
-      this.selectionEnd = selectionEnd;
-
-      const variableGroup = matchPayloadVariableBySelection(this.searchInput, selectionStart, selectionEnd);
-
-      if (!variableGroup) {
-        this.showItems = this.searchInput[selectionStart - 1] === '{';
-
-        if (this.showItems) {
-          const selectionOffset = this.searchInput[selectionStart - 2] === '{' ? 2 : 1;
-
-          this.selectionStart = selectionStart - selectionOffset;
-          this.selectionEnd = selectionStart;
-        }
-
-        this.activeValue = undefined;
-        return;
-      }
-
-      const [value] = variableGroup;
-      this.activeValue = value;
-      this.showItems = true;
-
-      this.selectionStart = variableGroup.index;
-      this.selectionEnd = this.selectionStart + value.length;
-    },
-
     removeCondition() {
       this.$emit('remove', this.condition);
     },

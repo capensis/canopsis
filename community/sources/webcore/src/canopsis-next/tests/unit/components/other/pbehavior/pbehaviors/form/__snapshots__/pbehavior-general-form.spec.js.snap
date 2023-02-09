@@ -5,6 +5,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
   class="layout column"
 >
   <c-name-field-stub
+    required="required"
     value="pbehavior"
   />
   <!---->
@@ -43,6 +44,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
   class="layout column"
 >
   <c-name-field-stub
+    required="required"
     value="pbehavior"
   />
   <c-enabled-field-stub
