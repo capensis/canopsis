@@ -1,22 +1,13 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-text-field(
-        v-field="value.ticket",
-        v-validate="'required'",
-        :error-messages="errors.collect(ticketFieldName)",
-        :name="ticketFieldName",
-        :label="$tc('common.ticket')"
-      )
-    action-note-form(v-field="value")
+  associate-ticket-event-form(v-field="value", :name="name")
 </template>
 
 <script>
-import ActionNoteForm from './action-note-form.vue';
+import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ActionNoteForm },
+  components: { AssociateTicketEventForm },
   model: {
     prop: 'value',
     event: 'input',
@@ -29,15 +20,6 @@ export default {
     name: {
       type: String,
       required: 'parameters',
-    },
-  },
-  computed: {
-    ticketFieldName() {
-      return `${this.name}.ticket`;
-    },
-
-    outputFieldName() {
-      return `${this.name}.output`;
     },
   },
 };

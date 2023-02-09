@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout.mt-1(column)
     v-layout(v-if="title || helpText", row)
       div.subheading.font-weight-bold {{ title }}
       c-help-icon(

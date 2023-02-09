@@ -3,7 +3,7 @@
     template(#title="")
       v-layout(align-center)
         span {{ title }}
-        declare-ticket-rule-execution-status.ml-2(
+        declare-ticket-rule-execution-status.ml-2.declare-ticket-rule-execute-status(
           v-if="modal.minimized",
           :running="isExecutionsRunning",
           :success="isExecutionsSucceeded",
@@ -50,14 +50,15 @@ import DeclareTicketRuleExecutionAlarms from '@/components/other/declare-ticket/
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
- * Modal to declare a ticket
+ * Modal to execute declare tickets
  */
 export default {
   name: MODALS.executeDeclareTickets,
-  $_veeValidate: {
-    validator: 'new',
+  components: {
+    DeclareTicketRuleExecutionAlarms,
+    DeclareTicketRuleExecutionStatus,
+    ModalWrapper,
   },
-  components: { DeclareTicketRuleExecutionAlarms, DeclareTicketRuleExecutionStatus, ModalWrapper },
   mixins: [
     modalInnerMixin,
     entitiesDeclareTicketRuleMixin,
@@ -219,3 +220,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.declare-ticket-rule-execute-status {
+  display: flex;
+  line-height: 24px !important;
+}
+</style>
