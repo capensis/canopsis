@@ -1,8 +1,8 @@
 template:
-  - &tpl_alarm {
+  - &tpl_alarm_columns {
     _id: <UUID()>,
     title: <UniqueName()>,
-    type: alarm,
+    type: alarm_columns,
     author: root,
     created: <NowUnix()>,
     updated: <Current().created>,
@@ -15,10 +15,10 @@ template:
       }
     ]
   }
-  - &tpl_entity {
+  - &tpl_entity_columns {
     _id: <UUID()>,
     title: <UniqueName()>,
-    type: entity,
+    type: entity_columns,
     author: root,
     created: <NowUnix()>,
     updated: <Current().created>,
@@ -31,19 +31,55 @@ template:
       }
     ]
   }
+  - &tpl_alarm_more_infos {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: alarm_more_infos,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    content: <LoremIpsumSentence(3)>
+  }
+  - &tpl_weather_item {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: weather_item,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    content: <LoremIpsumSentence(3)>
+  }
+  - &tpl_weather_modal {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: weather_modal,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    content: <LoremIpsumSentence(3)>
+  }
+  - &tpl_weather_entity {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: weather_entity,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    content: <LoremIpsumSentence(3)>
+  }
 
 widget_templates:
   tpl_to_update_1:
-    <<: *tpl_alarm
+    <<: *tpl_alarm_columns
     _id: test-widgettemplate-to-update-1
     created: 1605263992
 
   tpl_to_delete_1:
-    <<: *tpl_alarm
+    <<: *tpl_alarm_columns
     _id: test-widgettemplate-to-delete-1
 
   tpl_to_get_1:
-    <<: *tpl_alarm
+    <<: *tpl_alarm_columns
     _id: test-widgettemplate-to-get-1
     title: test-widgettemplate-to-get-1-title
     created: 1605263992
@@ -54,7 +90,7 @@ widget_templates:
       - value: extra_details
 
   tpl_to_get_2:
-    <<: *tpl_entity
+    <<: *tpl_entity_columns
     _id: test-widgettemplate-to-get-2
     title: test-widgettemplate-to-get-2-title
     created: 1605263992
@@ -63,8 +99,16 @@ widget_templates:
       - value: _id
       - value: type
 
+  tpl_to_get_3:
+    <<: *tpl_alarm_more_infos
+    _id: test-widgettemplate-to-get-3
+    title: test-widgettemplate-to-get-3-title
+    created: 1605263992
+    updated: 1605263992
+    content: "{{ alarm.v.display_name }}"
+
   tpl_to_widget_edit_1:
-    <<: *tpl_alarm
+    <<: *tpl_alarm_columns
     _id: test-widgettemplate-to-widget-edit-1
     title: test-widgettemplate-to-widget-edit-1-title
     columns:
@@ -73,7 +117,7 @@ widget_templates:
       - value: extra_details
 
   tpl_to_widget_edit_2:
-    <<: *tpl_entity
+    <<: *tpl_entity_columns
     _id: test-widgettemplate-to-widget-edit-2
     title: test-widgettemplate-to-widget-edit-2-title
     columns:
@@ -81,7 +125,7 @@ widget_templates:
       - value: type
 
   tpl_to_widget_widgettemplate_1:
-    <<: *tpl_alarm
+    <<: *tpl_alarm_columns
     _id: test-widgettemplate-to-widget-widgettemplate-1
     title: test-widgettemplate-to-widget-widgettemplate-1-title
     columns:
@@ -90,7 +134,7 @@ widget_templates:
       - value: extra_details
 
   tpl_to_widget_widgettemplate_2:
-    <<: *tpl_entity
+    <<: *tpl_entity_columns
     _id: test-widgettemplate-to-widget-widgettemplate-2
     title: test-widgettemplate-to-widget-widgettemplate-2-title
     columns:
@@ -98,18 +142,42 @@ widget_templates:
       - value: type
 
   tpl_to_widget_widgettemplate_3:
-    <<: *tpl_alarm
+    <<: *tpl_alarm_more_infos
     _id: test-widgettemplate-to-widget-widgettemplate-3
     title: test-widgettemplate-to-widget-widgettemplate-3-title
+    content: "{{ alarm.v.display_name }}"
+
+  tpl_to_widget_widgettemplate_4:
+    <<: *tpl_alarm_columns
+    _id: test-widgettemplate-to-widget-widgettemplate-4
+    title: test-widgettemplate-to-widget-widgettemplate-4-title
     columns:
       - value: v.resource
       - value: v.component
       - value: extra_details
 
-  tpl_to_widget_widgettemplate_4:
-    <<: *tpl_entity
-    _id: test-widgettemplate-to-widget-widgettemplate-4
-    title: test-widgettemplate-to-widget-widgettemplate-4-title
+  tpl_to_widget_widgettemplate_5:
+    <<: *tpl_entity_columns
+    _id: test-widgettemplate-to-widget-widgettemplate-5
+    title: test-widgettemplate-to-widget-widgettemplate-5-title
     columns:
       - value: _id
       - value: type
+
+  tpl_to_widget_widgettemplate_6:
+    <<: *tpl_weather_item
+    _id: test-widgettemplate-to-widget-widgettemplate-6
+    title: test-widgettemplate-to-widget-widgettemplate-6-title
+    content: "{{ entity.name }}"
+
+  tpl_to_widget_widgettemplate_7:
+    <<: *tpl_weather_modal
+    _id: test-widgettemplate-to-widget-widgettemplate-7
+    title: test-widgettemplate-to-widget-widgettemplate-7-title
+    content: "{{ entities name=\"entity._id\" }}"
+
+  tpl_to_widget_widgettemplate_8:
+    <<: *tpl_weather_entity
+    _id: test-widgettemplate-to-widget-widgettemplate-8
+    title: test-widgettemplate-to-widget-widgettemplate-8-title
+    content: "{{ entity.infos.name1.value }}"

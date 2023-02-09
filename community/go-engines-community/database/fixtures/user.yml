@@ -41,18 +41,8 @@ template:
     { value: name },
     { value: type }
   ]
-  - &widget_tpl_alarm {
+  - &widget_tpl {
     _id: <UUID()>,
-    type: alarm,
-    columns: *widget_alarm_columns,
-    created: <NowUnix()>,
-    updated: <Current().created>,
-    author: root
-  }
-  - &widget_tpl_entity {
-    _id: <UUID()>,
-    type: entity,
-    columns: *widget_entity_columns,
     created: <NowUnix()>,
     updated: <Current().created>,
     author: root
@@ -146,12 +136,38 @@ viewtabs:
     position: 0
 
 widget_templates:
-  tpl_alarm:
-    <<: *widget_tpl_alarm
-    title: Default
-  tpl_entity:
-    <<: *widget_tpl_entity
-    title: Default
+  tpl_alarm_columns:
+    <<: *widget_tpl
+    title: Default columns
+    type: alarm_columns
+    columns: *widget_alarm_columns
+  tpl_entity_columns:
+    <<: *widget_tpl
+    title: Default columns
+    type: entity_columns
+    columns: *widget_entity_columns
+  tpl_weather_item:
+    <<: *widget_tpl
+    title: Default item
+    type: weather_item
+    content: |
+      <p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
+      <hr id="null">
+      <p>{{ entity.output }}</p>
+      <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
+  tpl_weather_modal:
+    <<: *widget_tpl
+    title: Default modal
+    type: weather_modal
+    content: {{ entities name="entity._id" }}
+  tpl_weather_entity:
+    <<: *widget_tpl
+    title: Default entity
+    type: weather_entity
+    content: |
+      <ul>
+        <li><strong>Libellé</strong> : {{entity.name}}</li>
+      </ul>
 
 widgets:
   widget_open_alarms:
@@ -160,8 +176,8 @@ widgets:
     type: AlarmsList
     tab: "@tab_open_alarms"
     parameters:
-      widgetColumnsTemplate: "@tpl_alarm"
-      widgetColumnsTemplateTitle: Default
+      widgetColumnsTemplate: "@tpl_alarm_columns"
+      widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
@@ -199,8 +215,8 @@ widgets:
     type: AlarmsList
     tab: "@tab_resolved_alarms"
     parameters:
-      widgetColumnsTemplate: "@tpl_alarm"
-      widgetColumnsTemplateTitle: Default
+      widgetColumnsTemplate: "@tpl_alarm_columns"
+      widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
@@ -238,8 +254,8 @@ widgets:
     type: Context
     tab: "@tab_context_explorer"
     parameters:
-      widgetColumnsTemplate: "@tpl_entity"
-      widgetColumnsTemplateTitle: Default
+      widgetColumnsTemplate: "@tpl_entity_columns"
+      widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_entity_columns
       sort:
         order: ASC

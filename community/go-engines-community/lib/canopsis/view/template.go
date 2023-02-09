@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-var columnsByWidget = map[string][]string{
-	WidgetTemplateTypeAlarm: {
+var columnsByType = map[string][]string{
+	WidgetTemplateTypeAlarmColumns: {
 		"_id",
 		"v.display_name",
 		"v.output",
@@ -54,7 +54,7 @@ var columnsByWidget = map[string][]string{
 		"entity.ko_events",
 		"entity.ok_events",
 	},
-	WidgetTemplateTypeEntity: {
+	WidgetTemplateTypeEntityColumns: {
 		"_id",
 		"name",
 		"category.name",
@@ -74,15 +74,15 @@ var columnsByWidget = map[string][]string{
 	},
 }
 
-var columnsPrefixByWidget = map[string][]string{
-	WidgetTemplateTypeAlarm: {
+var columnsPrefixByType = map[string][]string{
+	WidgetTemplateTypeAlarmColumns: {
 		"v.infos",
 		"links",
 		// Entity
 		"entity.infos",
 		"entity.component_infos",
 	},
-	WidgetTemplateTypeEntity: {
+	WidgetTemplateTypeEntityColumns: {
 		"infos",
 		"component_infos",
 		"links",
@@ -90,55 +90,67 @@ var columnsPrefixByWidget = map[string][]string{
 }
 
 func init() {
-	for _, columns := range columnsByWidget {
+	for _, columns := range columnsByType {
 		sort.Strings(columns)
 	}
 }
 
-func GetWidgetColumnParameters() map[string]map[string][]string {
+func GetWidgetTemplateParameters() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		WidgetTypeAlarmsList: {
-			WidgetTemplateTypeAlarm: {
+			WidgetTemplateTypeAlarmColumns: {
 				"widgetColumns",
 				"widgetGroupColumns",
 			},
-			WidgetTemplateTypeEntity: {
+			WidgetTemplateTypeEntityColumns: {
 				"serviceDependenciesColumns",
+			},
+			WidgetTemplateTypeAlarmMoreInfos: {
+				"moreInfoTemplate",
 			},
 		},
 		WidgetTypeContextExplorer: {
-			WidgetTemplateTypeAlarm: {
+			WidgetTemplateTypeAlarmColumns: {
 				"activeAlarmsColumns",
 				"resolvedAlarmsColumns",
 			},
-			WidgetTemplateTypeEntity: {
+			WidgetTemplateTypeEntityColumns: {
 				"widgetColumns",
 				"serviceDependenciesColumns",
 			},
 		},
 		WidgetTypeServiceWeather: {
-			WidgetTemplateTypeAlarm: {
+			WidgetTemplateTypeAlarmColumns: {
 				"alarmsList.widgetColumns",
 			},
-			WidgetTemplateTypeEntity: {
+			WidgetTemplateTypeEntityColumns: {
 				"serviceDependenciesColumns",
+			},
+			WidgetTemplateTypeServiceWeatherItem: {
+				"blockTemplate",
+			},
+			WidgetTemplateTypeServiceWeatherModal: {
+				"modalTemplate",
+			},
+			WidgetTemplateTypeServiceWeatherEntity: {
+				"entityTemplate",
 			},
 		},
 		WidgetTypeAlarmsCounter: {
-			WidgetTemplateTypeAlarm: {
+			WidgetTemplateTypeAlarmColumns: {
 				"alarmsList.widgetColumns",
 			},
 		},
 		WidgetTypeAlarmsStatsCalendar: {
-			WidgetTemplateTypeAlarm: {
+			WidgetTemplateTypeAlarmColumns: {
 				"alarmsList.widgetColumns",
 			},
 		},
 		WidgetTypeMap: {
-			WidgetTemplateTypeAlarm: {
+			WidgetTemplateTypeAlarmColumns: {
 				"alarmsColumns",
 			},
-			WidgetTemplateTypeEntity: {
+			WidgetTemplateTypeEntityColumns: {
 				"entitiesColumns",
 			},
 		},
@@ -146,7 +158,7 @@ func GetWidgetColumnParameters() map[string]map[string][]string {
 }
 
 func IsValidWidgetColumn(t, column string) bool {
-	columns := columnsByWidget[t]
+	columns := columnsByType[t]
 	if len(columns) == 0 {
 		return false
 	}
@@ -156,7 +168,7 @@ func IsValidWidgetColumn(t, column string) bool {
 		return true
 	}
 
-	prefixes := columnsPrefixByWidget[t]
+	prefixes := columnsPrefixByType[t]
 	for _, prefix := range prefixes {
 		if column == prefix || strings.HasPrefix(column, prefix+".") {
 			return true

@@ -13,7 +13,7 @@ Feature: Get a widget template
         {
           "_id": "test-widgettemplate-to-get-1",
           "title": "test-widgettemplate-to-get-1-title",
-          "type": "alarm",
+          "type": "alarm_columns",
           "columns": [
             {
               "value": "v.resource"
@@ -35,7 +35,7 @@ Feature: Get a widget template
         {
           "_id": "test-widgettemplate-to-get-2",
           "title": "test-widgettemplate-to-get-2-title",
-          "type": "entity",
+          "type": "entity_columns",
           "columns": [
             {
               "value": "_id"
@@ -50,20 +50,32 @@ Feature: Get a widget template
           },
           "created": 1605263992,
           "updated": 1605263992
+        },
+        {
+          "_id": "test-widgettemplate-to-get-3",
+          "title": "test-widgettemplate-to-get-3-title",
+          "type": "alarm_more_infos",
+          "content": "{{ `{{ alarm.v.display_name }}` }}",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
+          "created": 1605263992,
+          "updated": 1605263992
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
 
   Scenario: given filter request should return templates by type
     When I am admin
-    When I do GET /api/v4/widget-templates?search=test-widgettemplate-to-get&sort_by=title&type=alarm
+    When I do GET /api/v4/widget-templates?search=test-widgettemplate-to-get&sort_by=title&type=alarm_columns
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -71,7 +83,7 @@ Feature: Get a widget template
       "data": [
         {
           "_id": "test-widgettemplate-to-get-1",
-          "type": "alarm"
+          "type": "alarm_columns"
         }
       ],
       "meta": {
@@ -101,7 +113,7 @@ Feature: Get a widget template
     {
       "_id": "test-widgettemplate-to-get-1",
       "title": "test-widgettemplate-to-get-1-title",
-      "type": "alarm",
+      "type": "alarm_columns",
       "columns": [
         {
           "value": "v.resource"

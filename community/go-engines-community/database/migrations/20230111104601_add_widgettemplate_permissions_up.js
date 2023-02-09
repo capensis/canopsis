@@ -7,8 +7,8 @@ if (db.widget_templates.count() === 0) {
     db.widget_templates.insertMany([
         {
             "_id": genID(),
-            "type": "alarm",
-            "title": "Default",
+            "type": "alarm_columns",
+            "title": "Default columns",
             "columns": [
                 {
                     "value": "connector"
@@ -41,8 +41,8 @@ if (db.widget_templates.count() === 0) {
         },
         {
             "_id": genID(),
-            "type": "entity",
-            "title": "Default",
+            "type": "entity_columns",
+            "title": "Default columns",
             "columns": [
                 {
                     "value": "name"
@@ -51,6 +51,36 @@ if (db.widget_templates.count() === 0) {
                     "value": "type"
                 }
             ],
+            "created": now,
+            "updated": now,
+            "author": "root"
+        },
+        {
+            "_id": genID(),
+            "type": "weather_item",
+            "title": "Default item",
+            "content": "<p><strong><span style=\"font-size: 18px;\">{{entity.name}}</span></strong></p>\n" +
+                "      <hr id=\"null\">\n" +
+                "      <p>{{ entity.output }}</p>\n" +
+                "      <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>",
+            "created": now,
+            "updated": now,
+            "author": "root"
+        },
+        {
+            "_id": genID(),
+            "type": "weather_modal",
+            "title": "Default modal",
+            "content": "{{ entities name=\"entity._id\" }}",
+            "created": now,
+            "updated": now,
+            "author": "root"
+        },
+        {
+            "_id": genID(),
+            "type": "weather_entity",
+            "title": "Default entity",
+            "content": "<ul><li><strong>Libellé</strong> : {{entity.name}}</li></ul>",
             "created": now,
             "updated": now,
             "author": "root"
