@@ -16,8 +16,9 @@ type ListRequest struct {
 type EditRequest struct {
 	ID      string              `json:"-"`
 	Title   string              `json:"title" binding:"required,max=255"`
-	Type    string              `json:"type" binding:"required,oneof=alarm entity"`
-	Columns []view.WidgetColumn `json:"columns" binding:"required,notblank,dive"`
+	Type    string              `json:"type" binding:"required,oneof=alarm_columns entity_columns alarm_more_infos weather_item weather_modal weather_entity"`
+	Columns []view.WidgetColumn `json:"columns" binding:"dive"`
+	Content string              `json:"content"`
 	Author  string              `json:"author" swaggerignore:"true"`
 }
 
@@ -25,10 +26,11 @@ type Response struct {
 	ID      string              `bson:"_id" json:"_id"`
 	Title   string              `bson:"title" json:"title"`
 	Type    string              `bson:"type" json:"type"`
-	Columns []view.WidgetColumn `bson:"columns" json:"columns"`
-	Author  *author.Author      `bson:"author" json:"author,omitempty"`
-	Created *types.CpsTime      `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime      `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Columns []view.WidgetColumn `bson:"columns" json:"columns,omitempty"`
+	Content string              `bson:"content" json:"content,omitempty"`
+	Author  *author.Author      `bson:"author" json:"author"`
+	Created *types.CpsTime      `bson:"created" json:"created" swaggertype:"integer"`
+	Updated *types.CpsTime      `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type AggregationResult struct {

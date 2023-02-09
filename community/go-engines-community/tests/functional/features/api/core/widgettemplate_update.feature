@@ -8,7 +8,7 @@ Feature: Update a widget template
     """json
     {
       "title": "test-widgettemplate-to-update-1-title",
-      "type": "alarm",
+      "type": "alarm_columns",
       "columns": [
         {
           "value": "v.resource"
@@ -31,7 +31,7 @@ Feature: Update a widget template
         "name": "root"
       },
       "title": "test-widgettemplate-to-update-1-title",
-      "type": "alarm",
+      "type": "alarm_columns",
       "columns": [
         {
           "value": "v.resource"
@@ -62,7 +62,7 @@ Feature: Update a widget template
     """json
     {
       "title": "test-widgettemplate-to-update-notexist",
-      "type": "alarm",
+      "type": "alarm_columns",
       "columns": [
         {
           "value": "v.resource"
@@ -78,7 +78,7 @@ Feature: Update a widget template
     """json
     {
       "title": "test-widgettemplate-to-update-1-title",
-      "type": "entity",
+      "type": "entity_columns",
       "columns": [
         {
           "value": "_id"
@@ -107,8 +107,7 @@ Feature: Update a widget template
     {
       "errors": {
         "title": "Title is missing.",
-        "type": "Type is missing.",
-        "columns": "Columns is missing."
+        "type": "Type is missing."
       }
     }
     """
