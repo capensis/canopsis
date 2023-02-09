@@ -19,7 +19,7 @@ exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as 
           customDropdownIcon
         </i>
         <span
-          class="body-1 pl-3"
+          class="body-1 pl-2"
         >
           Custom dropdown title
         </span>
@@ -29,7 +29,7 @@ exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as 
 </span>
 `;
 
-exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as dropdown item correctly 2`] = `
+exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as dropdown item correctly 2 1`] = `
 <span>
   <div
     class="v-list--disabled"
@@ -51,7 +51,7 @@ exports[`actions-panel-item Renders \`actions-panel-item\` with custom props as 
           disabledCustomDropdownIcon
         </i>
         <span
-          class="body-1 pl-3"
+          class="body-1 pl-2"
         >
           Disabled custom dropdown title
         </span>

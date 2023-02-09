@@ -256,6 +256,7 @@ export default {
   timestamp: 'Horodatage',
   countOfMax: '{count} sur {total}',
   trigger: 'Déclencheur | Déclencheurs',
+  deprecatedTrigger: 'Ce déclencheur n\'est plus pris en charge',
   initialLongOutput: 'Sortie initiale longue',
   totalStateChanges: 'Changements d\'état totaux',
   noReceivedEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
@@ -424,6 +425,7 @@ export default {
     [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
   },
+
   triggers: {
     [TRIGGERS.create]: {
       text: 'Création d\'alarme',
