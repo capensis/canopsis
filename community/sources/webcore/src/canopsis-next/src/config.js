@@ -198,6 +198,7 @@ export const API_ROUTES = {
   patternsCount: '/api/v4/patterns-count',
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
+  templateVars: '/api/v4/template-vars',
 
   /**
    * Cat routes

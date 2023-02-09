@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { difference } from 'lodash';
 import { filterValue, revertGroupBy } from '@/helpers/entities';
 
 import { formMixin } from '@/mixins/form';
@@ -104,8 +105,9 @@ export default {
 
     updateTickets(alarmId, tickets) {
       const oldTickets = this.activeTicketsByAlarms[alarmId] ?? [];
-      const removedTickets = oldTickets.filter(id => !tickets.includes(id));
-      const addedTickets = tickets.filter(id => !oldTickets.includes(id));
+
+      const removedTickets = difference(oldTickets, tickets);
+      const addedTickets = difference(tickets, oldTickets);
 
       const newValue = { ...this.value };
 
@@ -121,11 +123,13 @@ export default {
     },
 
     removeTickets(alarmId) {
-      this.updateModel(Object.entries(this.value).reduce((acc, [ticketId, alarms]) => {
+      const tickets = Object.entries(this.value).reduce((acc, [ticketId, alarms]) => {
         acc[ticketId] = filterValue(alarms, alarmId);
 
         return acc;
-      }, {}));
+      }, {});
+
+      this.updateModel(tickets);
     },
   },
 };
