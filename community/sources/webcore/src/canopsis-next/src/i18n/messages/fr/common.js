@@ -264,12 +264,20 @@ export default {
   noData: 'Aucune donnée',
   noColumns: 'Veuillez sélectionner au moins une colonne',
   systemName: 'Nom du système',
+  emitTrigger: 'Émettre un déclencheur',
+  header: 'En-tête | En-têtes',
+  headerKey: 'Clé d\'en-tête',
+  headerValue: 'Valeur d\'en-tête',
+  copyValue: 'Copier la valeur',
+  copyProperty: 'Copier la propriété',
+  copyPropertyPath: 'Copier le chemin de la propriété',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Tableau',
+    object: 'Object',
   },
   mixedField: {
     types: {
@@ -417,6 +425,7 @@ export default {
     [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
   },
+
   triggers: {
     [TRIGGERS.create]: {
       text: 'Création d\'alarme',
@@ -498,5 +507,19 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
+  },
+  request: {
+    timeout: 'Temps libre',
+    timeoutSettings: 'Paramètres de délai d\'attente',
+    repeatRequest: 'Répéter la demande',
+    skipVerify: 'Ne pas vérifier les certificats HTTPS',
+    headersHelpText: 'Sélectionnez la clé et la valeur de l\'en-tête ou saisissez-les manuellement',
+    emptyHeaders: 'Aucun en-tête ajouté pour le moment',
+    urlHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong>, <strong>.Entity</strong> et <strong>.Children</strong></p>'
+      + '<i>Quelques exemples :</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   },
 };

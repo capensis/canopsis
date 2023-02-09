@@ -82,6 +82,7 @@ export const SOCKET_ROOMS = {
   loggedUserCount: 'logged-user-count',
   broadcastMessages: 'broadcast-messages',
   execution: 'execution',
+  declareticket: 'declareticket',
 };
 
 export const API_ROUTES = {
@@ -244,8 +245,14 @@ export const API_ROUTES = {
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
-  declareTicketRules: '/api/v4/cat/declare-ticket-rules',
-  bulkDeclareTicketRules: '/api/v4/cat/bulk/declare-ticket-rules',
+  declareTicket: {
+    rules: '/api/v4/cat/declare-ticket-rules',
+    bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
+    alarmsAssigned: '/api/v4/cat/declare-ticket-assigned',
+    testExecution: '/api/v4/cat/test-declare-ticket-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-declare-ticket-webhooks',
+    bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-execution',
+  },
 };
 
 export const COLORS = {

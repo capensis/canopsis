@@ -11,21 +11,15 @@
         :disabled="disabled"
       )
     v-flex.pl-2(xs6)
-      v-text-field(
+      c-payload-text-field(
         v-field="request.url",
-        v-validate="'required|url'",
         :label="urlLabel || $t('common.url')",
-        :error-messages="errors.collect(urlFieldName)",
         :name="urlFieldName",
-        :disabled="disabled"
+        :variables="urlVariables",
+        required
       )
         template(v-if="helpText", #append="")
-          c-help-icon(
-            :text="helpText",
-            icon="help",
-            color="grey darken-1",
-            left
-          )
+          c-help-icon(:text="helpText", icon="help", color="grey darken-1", left)
 </template>
 
 <script>
@@ -61,6 +55,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    urlVariables: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {

@@ -14,12 +14,14 @@ import uid from '@/helpers/uid';
 
 import { filterPatternsToForm, formFilterToPatterns } from './filter';
 import {
-  exceptionsToForm, exceptionsToRequest,
-  exdatesToForm, exdatesToRequest,
+  exceptionsToForm,
+  exceptionsToRequest,
+  exdatesToForm,
+  exdatesToRequest,
   formExceptionsToExceptions,
   formExdatesToExdates,
 } from './planning-pbehavior';
-import { formToRequest, formToRetry, requestToForm, retryToForm } from './shared/request';
+import { formToRequest, requestToForm } from './shared/request';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -205,29 +207,20 @@ export const eventFilterExternalDataConditionsToForm = (conditionTypes = [], ite
 export const eventFilterExternalDataItemToForm = (
   reference = '',
   item = { type: EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo },
-) => {
-  const additionalFields = item.type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
-    ? {
-      request: requestToForm(item.request),
-      retry: retryToForm(item),
-    } : {
-      collection: item.collection ?? '',
-      sort_by: item.sort_by,
-      sort: item.sort,
-      conditions: eventFilterExternalDataConditionsToForm(
-        Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES),
-        item,
-      ),
-    };
+) => ({
+  key: uid(),
+  reference,
+  type: item.type,
 
-  return {
-    key: uid(),
-    reference,
-    type: item.type,
-
-    ...additionalFields,
-  };
-};
+  request: requestToForm(item.request),
+  sort_by: item.sort_by,
+  sort: item.sort,
+  collection: item.collection ?? '',
+  conditions: eventFilterExternalDataConditionsToForm(
+    Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES),
+    item,
+  ),
+});
 
 /**
  * Convert event filter enrichment external data to form
@@ -270,7 +263,6 @@ export const formToEventFilterEnrichmentExternalData = (form = []) => (
     const additionalFields = type === EVENT_FILTER_EXTERNAL_DATA_TYPES.api
       ? {
         request: formToRequest(externalData.request),
-        ...formToRetry(externalData.retry),
       } : {
         ...pick(externalData, ['sort', 'sort_by', 'collection']),
         ...formToEventFilterEnrichmentExternalDataConditions(externalData.conditions),

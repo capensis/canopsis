@@ -150,7 +150,7 @@ export default {
   disableDuringPeriods: 'Disable during periods',
   retryDelay: 'Delay',
   retryUnit: 'Unit',
-  retryCount: 'Repeat',
+  retryCount: 'Times to repeat',
   ticket: 'Ticket',
   method: 'Method',
   url: 'URL',
@@ -264,12 +264,20 @@ export default {
   noData: 'No data',
   noColumns: 'You have to select at least 1 column',
   systemName: 'System name',
+  emitTrigger: 'Emit trigger',
+  header: 'Header | Headers',
+  headerKey: 'Header key',
+  headerValue: 'Header value',
+  copyValue: 'Copy value',
+  copyProperty: 'Copy property',
+  copyPropertyPath: 'Copy property path',
   variableTypes: {
     string: 'String',
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
+    object: 'Object',
   },
   mixedField: {
     types: {
@@ -499,5 +507,19 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
     },
+  },
+  request: {
+    timeout: 'Timeout',
+    timeoutSettings: 'Timeout settings',
+    repeatRequest: 'Repeat request',
+    skipVerify: 'Ignore HTTPS certificate verification',
+    headersHelpText: 'Select header key and value or type them manually',
+    emptyHeaders: 'No headers added yet',
+    urlHelp: '<p>The accessible variables are: <strong>.Alarm</strong>, <strong>.Entity</strong> and <strong>.Children</strong></p>'
+      + '<i>For example:</i>'
+      + '<pre>"https://exampleurl.com?resource={{ .Alarm.Value.Resource }}"</pre>'
+      + '<pre>"https://exampleurl.com?entity_id={{ .Entity.ID }}"</pre>'
+      + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
+      + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   },
 };

@@ -11,7 +11,7 @@
       progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
         v-layout(v-if="isFailedJob", row, align-center, justify-center)
           span.error--text {{ $t('common.failed') }}
-          c-help-icon.ml-1.cursor-pointer(:text="job.fail_reason", color="error", size="20", top)
+          c-help-icon(:text="job.fail_reason", icon-class="ml-1 cursor-pointer", color="error", size="20", top)
         span(v-else) {{ job.completed_at | date('long', '-') }}
 </template>
 

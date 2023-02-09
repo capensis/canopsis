@@ -36,8 +36,13 @@
             span {{ $t('map.toggleAddingPointMode') }}
 
         geomap-control(position="bottomright")
-          c-help-icon(size="32", color="secondary", icon="help", top)
-            div.pre-wrap(v-html="$t('geomap.panzoom.helpText')")
+          c-help-icon(
+            :text="$t('geomap.panzoom.helpText')",
+            size="32",
+            color="secondary",
+            icon="help",
+            top
+          )
 
         geomap-tile-layer(
           :name="$t('map.layers.openStreetMap')",

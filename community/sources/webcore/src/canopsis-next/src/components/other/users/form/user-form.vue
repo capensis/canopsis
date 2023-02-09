@@ -5,7 +5,8 @@
       v-field="form.name",
       :label="$t('common.username')",
       :disabled="onlyUserPrefs",
-      browser-autocomplete="new-password"
+      browser-autocomplete="new-password",
+      required
     )
     v-text-field(
       v-field="form.firstname",
@@ -26,13 +27,9 @@
       name="email",
       browser-autocomplete="new-password"
     )
-    v-text-field(
+    c-password-field(
       v-field="form.password",
-      v-validate="passwordRules",
-      :label="$t('common.password')",
-      :error-messages="errors.collect('password')",
-      type="password",
-      name="password",
+      :required="isNew",
       browser-autocomplete="new-password"
     )
     c-role-field(v-field="form.role", :disabled="onlyUserPrefs", required)
@@ -96,12 +93,6 @@ export default {
     },
   },
   computed: {
-    passwordRules() {
-      return {
-        required: this.isNew,
-      };
-    },
-
     groupsNavigationItems() {
       return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
         text: this.$t(`user.navigationTypes.${type}`),
