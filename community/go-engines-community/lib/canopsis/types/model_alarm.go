@@ -348,17 +348,18 @@ func (a *Alarm) RemoveChild(childEID string) {
 	}
 }
 
-func (a *Alarm) AddParent(parentEID string) {
+func (a *Alarm) AddParent(parentEID string) bool {
 	if a.HasParentByEID(parentEID) {
-		return
+		return false
 	}
 
 	a.Value.Parents = append(a.Value.Parents, parentEID)
 	a.parentsUpdate = append(a.parentsUpdate, parentEID)
 	a.AddUpdate("$addToSet", bson.M{"v.parents": bson.M{"$each": a.parentsUpdate}})
+	return true
 }
 
-func (a *Alarm) RemoveParent(parentEID string) {
+func (a *Alarm) RemoveParent(parentEID string) bool {
 	removed := false
 	for idx, parent := range a.Value.Parents {
 		if parent == parentEID {
@@ -369,10 +370,13 @@ func (a *Alarm) RemoveParent(parentEID string) {
 		}
 	}
 
-	if removed {
-		a.parentsRemove = append(a.parentsRemove, parentEID)
-		a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	if !removed {
+		return false
 	}
+
+	a.parentsRemove = append(a.parentsRemove, parentEID)
+	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	return true
 }
 
 func (a *Alarm) SetMeta(meta string) {

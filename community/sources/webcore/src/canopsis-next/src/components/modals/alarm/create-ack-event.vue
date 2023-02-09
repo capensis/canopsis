@@ -116,7 +116,7 @@ export default {
     async createAckEventAndCloseModal() {
       await this.createAckEvent();
 
-      if (this.config && this.config.afterSubmit) {
+      if (this.config.afterSubmit) {
         await this.config.afterSubmit();
       }
 
