@@ -29,7 +29,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 		collection:       dbClient.Collection(mongo.WidgetTemplateMongoCollection),
 		widgetCollection: dbClient.Collection(mongo.WidgetMongoCollection),
 
-		widgetParameters: view.GetWidgetColumnParameters(),
+		widgetParameters: view.GetWidgetTemplateParameters(),
 
 		defaultSearchByFields: []string{"_id", "title", "type", "author.name"},
 		defaultSortBy:         "created",
@@ -192,6 +192,18 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response) error {
 	for widgetType, parametersByType := range s.widgetParameters {
 		parameters := parametersByType[tpl.Type]
 		for _, parameter := range parameters {
+			var val any
+			switch tpl.Type {
+			case view.WidgetTemplateTypeAlarmColumns,
+				view.WidgetTemplateTypeEntityColumns:
+				val = tpl.Columns
+			case view.WidgetTemplateTypeAlarmMoreInfos,
+				view.WidgetTemplateTypeServiceWeatherItem,
+				view.WidgetTemplateTypeServiceWeatherModal,
+				view.WidgetTemplateTypeServiceWeatherEntity:
+				val = tpl.Content
+			}
+
 			_, err := s.widgetCollection.UpdateMany(
 				ctx,
 				bson.M{
@@ -199,7 +211,7 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response) error {
 					"parameters." + parameter + "Template": tpl.ID,
 				},
 				bson.M{"$set": bson.M{
-					"parameters." + parameter:                   tpl.Columns,
+					"parameters." + parameter:                   val,
 					"parameters." + parameter + "TemplateTitle": tpl.Title,
 				}},
 			)
@@ -241,6 +253,7 @@ func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 		Title:   r.Title,
 		Type:    r.Type,
 		Columns: r.Columns,
+		Content: r.Content,
 		Author:  r.Author,
 	}
 }

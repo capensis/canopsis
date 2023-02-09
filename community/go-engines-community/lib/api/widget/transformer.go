@@ -34,7 +34,7 @@ func (t *RequestTransformer) Transform(ctx context.Context, r *EditRequest) erro
 		return err
 	}
 
-	return t.transformColumnFields(ctx, r)
+	return t.transformTemplateFields(ctx, r)
 }
 
 func (t *RequestTransformer) transformPatternFields(ctx context.Context, r *EditRequest) error {
@@ -66,10 +66,10 @@ func (t *RequestTransformer) transformPatternFields(ctx context.Context, r *Edit
 	return nil
 }
 
-func (t *RequestTransformer) transformColumnFields(ctx context.Context, r *EditRequest) error {
-	columnParametersByType := view.GetWidgetColumnParameters()[r.Type]
-	for tplType, columnParameters := range columnParametersByType {
-		for _, parameter := range columnParameters {
+func (t *RequestTransformer) transformTemplateFields(ctx context.Context, r *EditRequest) error {
+	widgetParametersByType := view.GetWidgetTemplateParameters()[r.Type]
+	for tplType, widgetParameters := range widgetParametersByType {
+		for _, parameter := range widgetParameters {
 			parameters := r.Parameters.RemainParameters
 			key := parameter
 			parts := strings.Split(parameter, ".")
@@ -104,7 +104,16 @@ func (t *RequestTransformer) transformColumnFields(ctx context.Context, r *EditR
 			}
 
 			parameters[key+"TemplateTitle"] = tpl.Title
-			parameters[key] = tpl.Columns
+			switch tpl.Type {
+			case view.WidgetTemplateTypeAlarmColumns,
+				view.WidgetTemplateTypeEntityColumns:
+				parameters[key] = tpl.Columns
+			case view.WidgetTemplateTypeAlarmMoreInfos,
+				view.WidgetTemplateTypeServiceWeatherItem,
+				view.WidgetTemplateTypeServiceWeatherModal,
+				view.WidgetTemplateTypeServiceWeatherEntity:
+				parameters[key] = tpl.Content
+			}
 		}
 	}
 

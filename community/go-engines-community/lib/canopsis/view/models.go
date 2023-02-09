@@ -24,8 +24,12 @@ const (
 )
 
 const (
-	WidgetTemplateTypeAlarm  = "alarm"
-	WidgetTemplateTypeEntity = "entity"
+	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
+	WidgetTemplateTypeEntityColumns        = "entity_columns"
+	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
+	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
+	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
+	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
 )
 
 type Group struct {
@@ -175,7 +179,8 @@ type WidgetTemplate struct {
 	ID      string         `bson:"_id,omitempty"`
 	Title   string         `bson:"title"`
 	Type    string         `bson:"type"`
-	Columns []WidgetColumn `bson:"columns"`
+	Columns []WidgetColumn `bson:"columns,omitempty"`
+	Content string         `bson:"content,omitempty"`
 	Author  string         `bson:"author"`
 	Created types.CpsTime  `bson:"created,omitempty"`
 	Updated types.CpsTime  `bson:"updated,omitempty"`

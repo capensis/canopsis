@@ -37,7 +37,7 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 	case view.WidgetTypeMap:
 		validateMapParametersRequest(sl, r.Parameters)
 	}
-	validateColumnParametersRequest(sl, r)
+	validateTemplateParametersRequest(sl, r)
 }
 
 func (v *baseValidator) ValidateFilterRequest(ctx context.Context, sl validator.StructLevel) {
@@ -92,10 +92,10 @@ func validateMapParametersRequest(sl validator.StructLevel, r view.Parameters) {
 	}
 }
 
-func validateColumnParametersRequest(sl validator.StructLevel, r EditRequest) {
-	columnParametersByType := view.GetWidgetColumnParameters()[r.Type]
-	for tplType, columnParameters := range columnParametersByType {
-		for _, parameter := range columnParameters {
+func validateTemplateParametersRequest(sl validator.StructLevel, r EditRequest) {
+	widgetParametersByType := view.GetWidgetTemplateParameters()[r.Type]
+	for tplType, widgetParameters := range widgetParametersByType {
+		for _, parameter := range widgetParameters {
 			parameters := r.Parameters.RemainParameters
 			key := parameter
 			parts := strings.Split(parameter, ".")
@@ -115,6 +115,13 @@ func validateColumnParametersRequest(sl validator.StructLevel, r EditRequest) {
 
 			tplId, ok := parameters[key+"Template"].(string)
 			if ok && tplId != "" {
+				continue
+			}
+
+			switch tplType {
+			case view.WidgetTemplateTypeAlarmColumns,
+				view.WidgetTemplateTypeEntityColumns:
+			default:
 				continue
 			}
 
