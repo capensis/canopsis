@@ -326,11 +326,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
     [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup]:
+    [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup]:
-    USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUpdate]:
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,

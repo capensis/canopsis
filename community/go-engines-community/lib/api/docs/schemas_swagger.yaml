@@ -473,18 +473,13 @@ definitions:
       running:
         type: boolean
     type: object
-  alarm.ManualResponse:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-    type: object
   alarm.MetaAlarmRule:
     properties:
       _id:
         type: string
       name:
+        type: string
+      type:
         type: string
     type: object
   alarm.Pbehavior:
