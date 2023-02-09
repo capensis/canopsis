@@ -1,13 +1,13 @@
 <template lang="pug">
   c-information-block(:title="$t('declareTicket.ticketUrlAndId')")
-    c-name-field(v-field="form.system_name", :label="$t('common.systemName')", name="system_name")
+    c-name-field(v-field="form.system_name", :label="$t('common.systemName')", :name="systemNameFieldName")
     v-layout(row)
       v-flex.mr-3(xs6)
-        declare-ticket-rule-ticket-id-field(v-field="form.ticket_id", required)
+        declare-ticket-rule-ticket-id-field(v-field="form.ticket_id", :name="ticketIdFieldName", required)
       v-flex(xs6)
-        declare-ticket-rule-ticket-url-field(v-field="form.ticket_url")
-    declare-ticket-rule-ticket-custom-fields-field(v-field="form.mapping")
-    c-description-field(v-field="form.output", :label="$tc('common.comment')")
+        declare-ticket-rule-ticket-url-field(v-field="form.ticket_url", :name="ticketUrlFieldName")
+    declare-ticket-rule-ticket-custom-fields-field(v-field="form.mapping", :name="name")
+    c-description-field(v-field="form.output", :label="$tc('common.comment')", :name="commentFieldName")
 </template>
 
 <script>
@@ -29,6 +29,32 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    name: {
+      type: String,
+      required: false,
+    },
+  },
+  computed: {
+    systemNameFieldName() {
+      return this.prepareFieldName('system_name');
+    },
+
+    ticketIdFieldName() {
+      return this.prepareFieldName('ticket_id');
+    },
+
+    ticketUrlFieldName() {
+      return this.prepareFieldName('ticket_url');
+    },
+
+    commentFieldName() {
+      return this.prepareFieldName('comment');
+    },
+  },
+  methods: {
+    prepareFieldName(name) {
+      return [this.name, name].filter(Boolean).join('.');
     },
   },
 };
