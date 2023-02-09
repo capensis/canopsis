@@ -14,6 +14,7 @@ export default {
   ackMessage: 'Message de confirmation',
   lastCommentAuthor: 'Auteur du dernier commentaire',
   lastCommentMessage: 'Message du dernier commentaire',
+  metaAlarm: 'Meta-alarmes',
   advancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
     + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
     + '<p>Le "-" avant la recherche est obligatoire</p>\n'
@@ -78,7 +79,11 @@ export default {
       [EVENT_ENTITY_TYPES.statusinc]: 'Augmentation du statut',
       [EVENT_ENTITY_TYPES.statusdec]: 'Diminution du statut',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Association d\'un ticket',
-      [EVENT_ENTITY_TYPES.declareTicket]: 'Déclaration d\'un ticket',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Le ticket est déclaré avec succès',
+      [EVENT_ENTITY_TYPES.declareTicketFail]: 'La déclaration du ticket a échoué',
+      [EVENT_ENTITY_TYPES.webhookStart]: 'Webhook a démarré par la racine',
+      [EVENT_ENTITY_TYPES.webhookComplete]: 'Webhook est exécuté avec succès',
+      [EVENT_ENTITY_TYPES.webhookFail]: 'Webhook a échoué',
       [EVENT_ENTITY_TYPES.snooze]: 'Alarme mise en veille',
       [EVENT_ENTITY_TYPES.unsooze]: 'Alarme sortie de veille',
       [EVENT_ENTITY_TYPES.changeState]: 'Changement et verrouillage de la criticité',
@@ -112,6 +117,7 @@ export default {
     trackSource: 'Cause racine',
     impactChain: 'Chaîne d\'impact',
     entityGantt: 'Diagramme de Gantt',
+    ticketsDeclared: 'Billets déclarés',
   },
   moreInfos: {
     defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
