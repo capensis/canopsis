@@ -77,11 +77,11 @@ describe('actions-panel', () => {
   const { eventModule, createEvent } = createEventModule();
   const {
     declareTicketRuleModule,
-    bulkCreateDeclareTicketExecution,
     fetchAssignedDeclareTicketsWithoutStore,
   } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
+    eventModule,
     authModule,
     alarmModule,
     declareTicketRuleModule,
@@ -152,6 +152,7 @@ describe('actions-panel', () => {
       status: {
         val: ENTITIES_STATUSES.flapping,
       },
+      state: {},
     },
   };
 
@@ -421,15 +422,19 @@ describe('actions-panel', () => {
       _id: Faker.datatype.string(),
       parameters: {},
     };
+    const rule = {
+      _id: Faker.datatype.string(),
+      name: Faker.datatype.string(),
+    };
 
     const byRules = {
-      rule: {
-        name: 'rule name',
+      [rule._id]: {
+        name: rule.name,
         alarms: [alarm._id],
       },
     };
     const byAlarms = {
-      [alarm._id]: ['rule name'],
+      [alarm._id]: [rule._id],
     };
 
     fetchAssignedDeclareTicketsWithoutStore.mockResolvedValueOnce({
@@ -470,20 +475,22 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    const events = [{ _id: Faker.datatype.string(), alarms: [Faker.datatype.string()] }];
+    const events = [{ _id: rule._id, alarms: [Faker.datatype.string()] }];
 
+    $modals.show.mockReset();
     config.action(events);
 
-    expect(bulkCreateDeclareTicketExecution).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: events,
+    expect($modals.show).toBeCalledWith({
+      name: MODALS.executeDeclareTickets,
+      config: {
+        executions: events,
+        alarms: [alarm],
+        tickets: [rule],
       },
-      undefined,
-    );
+    });
   });
 
-  it('Associate ticket modal showed after trigger associate ticket action', () => {
+  it('Associate ticket modal showed after trigger associate ticket action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -491,6 +498,7 @@ describe('actions-panel', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
+        eventModule,
         authModuleWithAccess,
         alarmModule,
       ]),
@@ -502,9 +510,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const associateTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket);
-
-    associateTicketAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -913,6 +919,7 @@ describe('actions-panel', () => {
       method: jest.fn(),
     };
     const featureHasSpy = jest.spyOn(featuresService, 'has')
+      .mockReturnValueOnce(false)
       .mockReturnValueOnce(true);
     const featureGetSpy = jest.spyOn(featuresService, 'get')
       .mockReturnValueOnce((

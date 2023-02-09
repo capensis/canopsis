@@ -5,7 +5,7 @@
     div.text-md-center
       strong {{ $t('alarm.actions.iconsTitles.grouping') }}
       v-layout(column)
-        div {{ $tc('alarm.actions.iconsFields.rule', rules.length) }}&nbsp;:
+        div {{ $tc('common.rule', rules.length) }}&nbsp;:
         div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
       div {{ $t('alarm.actions.iconsFields.parents') }} : {{ total }}
 </template>
