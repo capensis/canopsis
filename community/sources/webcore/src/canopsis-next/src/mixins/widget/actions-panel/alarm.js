@@ -107,10 +107,6 @@ export const widgetActionsPanelAlarmMixin = {
       }
     },
 
-    showAssociateTicketModal() {
-      this.showAssociateTicketModalByAlarms([this.item]);
-    },
-
     showAssociateTicketModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.createAssociateTicketEvent,
