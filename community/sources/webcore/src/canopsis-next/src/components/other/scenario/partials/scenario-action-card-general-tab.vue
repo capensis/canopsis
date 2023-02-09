@@ -113,15 +113,32 @@ export default {
      * @returns {Object[]}
      */
     getItemsForAssocTicketType() {
-      return [
+      const items = [
         this.outputItem,
-
         {
           icon: 'assignment',
-          label: this.$tc('common.ticket'),
+          label: this.$tc('declareTicket.ticketID'),
           value: this.action.parameters.ticket,
         },
       ];
+
+      if (this.action.parameters.ticket_url) {
+        items.push({
+          icon: 'assignment',
+          label: this.$tc('declareTicket.ticketURL'),
+          value: this.action.parameters.ticket_url,
+        });
+      }
+
+      if (this.action.parameters.ticket_system_name) {
+        items.push({
+          icon: 'assignment',
+          label: this.$tc('common.systemName'),
+          value: this.action.parameters.ticket_system_name,
+        });
+      }
+
+      return items;
     },
 
     /**
