@@ -9,6 +9,7 @@ import {
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { generateDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
@@ -65,7 +66,7 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    async showDeclareTicketModalByAlarmsIds(alarms) {
+    async showDeclareTicketModalByAlarms(alarms) {
       this.ticketsForAlarmsPending = true;
 
       try {
@@ -104,6 +105,32 @@ export const widgetActionsPanelAlarmMixin = {
       } finally {
         this.ticketsForAlarmsPending = false;
       }
+    },
+
+    showAssociateTicketModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createAssociateTicketEvent,
+        config: {
+          items: alarms,
+          action: async (event) => {
+            const itemsWithoutAck = alarms.filter(alarm => !alarm.v.ack);
+
+            const { fastAckOutput } = this.widget.parameters;
+
+            const ackEvents = prepareEventsByAlarms(
+              EVENT_ENTITY_TYPES.ack,
+              itemsWithoutAck,
+              { output: fastAckOutput?.enabled ? fastAckOutput.value : '' },
+            );
+
+            const assocTicketEvents = prepareEventsByAlarms(EVENT_ENTITY_TYPES.assocTicket, alarms, event);
+
+            await this.createEventAction({ data: [...ackEvents, ...assocTicketEvents] });
+
+            this.afterSubmit();
+          },
+        },
+      });
     },
 
     showSnoozeModal() {
