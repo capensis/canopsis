@@ -145,6 +145,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -185,7 +186,7 @@ describe('mass-actions-panel', () => {
     expect(clearItemsEvent).toHaveLength(1);
   });
 
-  it('Ack modal showed after trigger ack action', () => {
+  it('Ack modal showed after trigger ack action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -197,6 +198,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -218,18 +220,18 @@ describe('mass-actions-panel', () => {
         config: {
           isNoteRequired,
           items,
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    config.action({ output: 'OUTPUT', ack_resources: false }, {});
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
+    await flushPromises();
 
-    expect(clearItemsEvent).toHaveLength(1);
+    expect(wrapper).toEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
@@ -333,6 +335,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -379,6 +382,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -444,6 +448,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createAssociateTicketEvent,
         config: {
           items: [alarm],
+          ignoreAck: false,
           action: expect.any(Function),
         },
       },
@@ -517,6 +522,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -562,6 +568,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -608,6 +615,7 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         items,
@@ -648,6 +656,7 @@ describe('mass-actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
+        eventModule,
       ]),
       propsData: {
         widget,
