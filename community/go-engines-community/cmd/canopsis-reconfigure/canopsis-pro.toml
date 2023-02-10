@@ -323,10 +323,6 @@ FlushInterval = "10s"
 # 1h is recommended value since Canopsis UI lowest time sampling 1 hour.
 # Change value for external tools if more accurate metrics are required.
 SliInterval = "1h"
-# If enabled the manual instruction metrics will be gathered
-EnableManualInstructions = false
-# If enabled the not acked metrics will be gathered
-EnableNotAckedMetrics = false
 
 [Canopsis.tech_metrics]
 Enabled = false
