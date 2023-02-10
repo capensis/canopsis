@@ -15,6 +15,12 @@ export default {
   lastCommentAuthor: 'Auteur du dernier commentaire',
   lastCommentMessage: 'Message du dernier commentaire',
   metaAlarm: 'Meta-alarmes',
+  acknowledge: 'Acquitter',
+  ackResources: 'Acquitter les ressources',
+  ackResourcesQuestion: 'Voulez-vous acquitter les ressources liées ?',
+  actionsRequired: 'Actions required',
+  acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+  acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
   advancedSearch: '<span>Aide sur la recherche avancée :</span>\n'
     + '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n'
     + '<p>Le "-" avant la recherche est obligatoire</p>\n'

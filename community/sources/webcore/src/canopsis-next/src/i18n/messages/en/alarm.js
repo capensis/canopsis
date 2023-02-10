@@ -15,6 +15,12 @@ export default {
   lastCommentAuthor: 'Last comment author',
   lastCommentMessage: 'Last comment message',
   metaAlarm: 'Meta alarm',
+  acknowledge: 'Acknowledge',
+  ackResources: 'Ack resources',
+  ackResourcesQuestion: 'Do you want to ack linked resources?',
+  actionsRequired: 'Actions required',
+  acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+  acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
   advancedSearch: '<span>Help on the advanced research :</span>\n'
     + '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n'
     + '<p>The "-" before the research is required</p>\n'

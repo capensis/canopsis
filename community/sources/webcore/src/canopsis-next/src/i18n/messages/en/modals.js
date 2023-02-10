@@ -84,17 +84,6 @@ export default {
       output: 'Note',
     },
   },
-  createAckEvent: {
-    title: 'Ack',
-    tooltips: {
-      ackResources: 'Do you want to ack linked resources?',
-    },
-    fields: {
-      ticket: 'Ticket number',
-      output: 'Note',
-      ackResources: 'Ack resources',
-    },
-  },
   confirmAckWithTicket: {
     continueAndAssociateTicket: 'Continue and associate ticket',
     infoMessage: `A ticket number has been specified.
@@ -879,5 +868,8 @@ export default {
   },
   createAssociateTicketEvent: {
     title: 'Associate ticket number',
+  },
+  createAckEvent: {
+    title: 'Ack',
   },
 };
