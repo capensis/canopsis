@@ -732,3 +732,132 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
+
+  @concurrent
+  Scenario: given alarm pbhenter with active type should not remove not_acked_in_hour_alarms metric
+    Given I am admin
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-not-acked-metrics-axe-10-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-not-acked-metrics-axe-10"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "title": "not_acked_in_hour_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "not_acked_in_four_hours_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        },
+        {
+          "title": "not_acked_in_day_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name":" test-pbehavior-not-acked-metrics-axe-10",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "6s" }},
+      "color": "#FFFFFF",
+      "type": "test-active-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-not-acked-metrics-axe-10"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "pbhenter",
+      "connector" : "test-connector-not-acked-metrics-axe",
+      "connector_name" : "test-connector-name-not-acked-metrics-axe",
+      "source_type" : "resource",
+      "component" : "test-component-not-acked-metrics-axe",
+      "resource" : "test-resource-not-acked-metrics-axe-10"
+    }
+    """
+    When I wait the next periodical process
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "title": "not_acked_in_hour_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 1
+            }
+          ]
+        },
+        {
+          "title": "not_acked_in_four_hours_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        },
+        {
+          "title": "not_acked_in_day_alarms",
+          "data": [
+            {
+              "timestamp": {{ nowDate }},
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
