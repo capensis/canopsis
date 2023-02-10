@@ -60,7 +60,7 @@ export default {
   },
   computed: {
     itemsWithoutAck() {
-      return this.config.items.filter(item => !item.v.ack);
+      return this.config.ignoreAck ? [] : this.config.items.filter(item => !item.v.ack);
     },
 
     alertMessage() {

@@ -108,25 +108,30 @@ export const widgetActionsPanelAlarmMixin = {
       }
     },
 
-    showAssociateTicketModalByAlarms(alarms) {
+    showAssociateTicketModalByAlarms(alarms, ignoreAck = false) {
       this.$modals.show({
         name: MODALS.createAssociateTicketEvent,
         config: {
           items: alarms,
+          ignoreAck,
           action: async (event) => {
-            const itemsWithoutAck = alarms.filter(alarm => !alarm.v.ack);
+            const events = [];
 
-            const { fastAckOutput } = this.widget.parameters;
+            if (!ignoreAck) {
+              const itemsWithoutAck = alarms.filter(alarm => !alarm.v.ack);
 
-            const ackEvents = prepareEventsByAlarms(
-              EVENT_ENTITY_TYPES.ack,
-              itemsWithoutAck,
-              { output: fastAckOutput?.enabled ? fastAckOutput.value : '' },
-            );
+              const { fastAckOutput } = this.widget.parameters;
 
-            const assocTicketEvents = prepareEventsByAlarms(EVENT_ENTITY_TYPES.assocTicket, alarms, event);
+              events.push(...prepareEventsByAlarms(
+                EVENT_ENTITY_TYPES.ack,
+                itemsWithoutAck,
+                { output: fastAckOutput?.enabled ? fastAckOutput.value : '' },
+              ));
+            }
 
-            await this.createEventAction({ data: [...ackEvents, ...assocTicketEvents] });
+            events.push(...prepareEventsByAlarms(EVENT_ENTITY_TYPES.assocTicket, alarms, event));
+
+            await this.createEventAction({ data: events });
 
             this.afterSubmit();
           },
@@ -145,10 +150,35 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showAckModal() {
+      this.showAckModalByAlarms([this.item]);
+    },
+
+    showAckModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.createAckEvent,
         config: {
-          ...this.modalConfig,
+          items: alarms,
+          action: async (event, { needDeclareTicket, needAssociateTicket }) => {
+            const ackEvents = prepareEventsByAlarms(
+              EVENT_ENTITY_TYPES.ack,
+              alarms,
+              event,
+            );
+
+            await this.createEventAction({ data: ackEvents });
+
+            await this.$emit('clear:items');
+            await this.refreshAlarmsList();
+
+            if (needAssociateTicket) {
+              this.showAssociateTicketModalByAlarms(alarms, true);
+            } else if (needDeclareTicket) {
+              const alarmsWithRules = alarms.filter(
+                ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
+              );
+              await this.showDeclareTicketModalByAlarms(alarmsWithRules);
+            }
+          },
 
           isNoteRequired: this.widget.parameters.isAckNoteRequired,
         },
