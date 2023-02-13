@@ -16,7 +16,7 @@ Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues
 
 Les vues peuvent être affichées sous forme de playlists c'est-à-dire les unes après les autres avec un délai associé.
 
-Pour savoir comment utiliser cette fonctionnalité, rendez-vous sur cette [page explicative](./playlists/index.md).
+Pour savoir comment utiliser cette fonctionnalité, rendez-vous sur cette [page explicative](../menu-administration/listes-de-lecture.md).
 
 ## Les widgets
 
