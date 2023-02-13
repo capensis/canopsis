@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
@@ -305,4 +306,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	}, flappingrule.UpdateRequest{})
 
 	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})
+
+	linkRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.LinkRuleMongoCollection, "Name")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		linkrule.ValidateEditRequest(sl)
+		linkRuleUniqueNameValidator.Validate(ctx, sl)
+	}, linkrule.EditRequest{})
 }

@@ -9,6 +9,8 @@ import (
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -32,9 +34,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v1"
 	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v2"
+	linkv1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v1"
+	linkv2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -51,6 +57,7 @@ import (
 
 const chanBuf = 10
 const sessionStoreSessionMaxAge = 24 * time.Hour
+const linkFetchTimeout = 30 * time.Second
 
 //go:embed swaggerui/*
 var docsUiFile embed.FS
@@ -76,6 +83,7 @@ func Default(
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	exportExecutor export.TaskExecutor,
+	linkGenerator link.Generator,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, fs.ReadFileFS, error) {
@@ -253,10 +261,16 @@ func Default(
 		},
 		logger,
 	)
+
 	legacyUrl := GetLegacyURL(logger)
-	legacyUrlStr := ""
-	if legacyUrl != nil {
-		legacyUrlStr = legacyUrl.String()
+	if linkGenerator == nil {
+		linkGenerators := []link.Generator{
+			linkv2.NewGenerator(dbClient, template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider), logger),
+		}
+		if legacyUrl != nil {
+			linkGenerators = append(linkGenerators, linkv1.NewGenerator(legacyUrl.String(), dbClient, &http.Client{Timeout: linkFetchTimeout}, json.NewEncoder(), json.NewDecoder()))
+		}
+		linkGenerator = wrapper.NewGenerator(linkGenerators...)
 	}
 
 	api.AddRouter(func(router gin.IRouter) {
@@ -281,7 +295,7 @@ func Default(
 			router,
 			security,
 			enforcer,
-			legacyUrlStr,
+			linkGenerator,
 			dbClient,
 			pgPoolProvider,
 			p.TimezoneConfigProvider,
@@ -432,6 +446,12 @@ func Default(
 	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
 	api.AddWorker("broadcast message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
+	})
+	api.AddWorker("links", func(ctx context.Context) {
+		err := linkGenerator.Load(ctx)
+		if err != nil {
+			logger.Err(err).Msg("cannot load links")
+		}
 	})
 
 	return api, docsFile, nil
