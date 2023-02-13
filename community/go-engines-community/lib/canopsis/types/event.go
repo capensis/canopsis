@@ -27,6 +27,7 @@ const (
 	SourceTypeComponent = "component"
 	SourceTypeConnector = "connector"
 	SourceTypeService   = "service"
+	SourceTypeMetaAlarm = "metaalarm"
 )
 
 // Event types.
@@ -315,7 +316,7 @@ func (e Event) IsValid() error {
 	switch e.SourceType {
 	case SourceTypeConnector:
 		/*do nothing*/
-	case SourceTypeComponent, SourceTypeService:
+	case SourceTypeComponent, SourceTypeMetaAlarm, SourceTypeService:
 		if e.Component == "" {
 			return errt.NewUnknownError(errors.New("missing component"))
 		}
