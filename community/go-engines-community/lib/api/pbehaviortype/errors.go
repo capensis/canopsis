@@ -2,10 +2,16 @@ package pbehaviortype
 
 import "errors"
 
-type ValidationError error
+type ValidationError struct {
+	Err error
+}
 
-var ErrLinkedTypeToPbehavior = ValidationError(errors.New("type is linked to pbehavior"))
-var ErrLinkedTypeToException = ValidationError(errors.New("type is linked to exception"))
-var ErrLinkedToActionType = ValidationError(errors.New("type is linked to action"))
-var ErrDefaultType = ValidationError(errors.New("type is default"))
-var ErrorDuplicatePriority = ValidationError(errors.New("duplicate priority value"))
+func (e ValidationError) Error() string {
+	return e.Err.Error()
+}
+
+var ErrLinkedTypeToPbehavior = ValidationError{Err: errors.New("type is linked to pbehavior")}
+var ErrLinkedTypeToException = ValidationError{Err: errors.New("type is linked to exception")}
+var ErrLinkedToActionType = ValidationError{Err: errors.New("type is linked to action")}
+var ErrDefaultType = ValidationError{Err: errors.New("type is default")}
+var ErrorDuplicatePriority = ValidationError{Err: errors.New("duplicate priority value")}

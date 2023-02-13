@@ -215,7 +215,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 		"_id":          playlistID,
 		"crecord_name": playlistID,
 		"crecord_type": securitymodel.LineTypeObject,
-		"desc":         fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+		"description":  fmt.Sprintf("%s %s", permissionPrefix, playlistName),
 		"type":         securitymodel.LineObjectTypeRW,
 	})
 	if err != nil {
@@ -269,7 +269,7 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 		},
 		bson.M{
 			"$set": bson.M{
-				"desc": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+				"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
 			},
 		},
 	)
