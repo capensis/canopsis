@@ -83,7 +83,7 @@ export default {
 <style lang="scss" scoped>
   $titleLeftPadding: 36px;
 
-  .expand-permissions-table /deep/ .v-table__overflow {
+  .expand-permissions-table ::v-deep .v-table__overflow {
     tr td {
       &:first-child {
         padding-left: $titleLeftPadding;

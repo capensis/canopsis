@@ -56,7 +56,7 @@ describe('manual-meta-alarm-form', () => {
   test('Meta alarm changed after trigger text field', () => {
     const form = {
       metaAlarm: Faker.datatype.string(),
-      output: Faker.datatype.string(),
+      comment: Faker.datatype.string(),
     };
     const wrapper = factory({
       store,
@@ -74,10 +74,10 @@ describe('manual-meta-alarm-form', () => {
     expect(wrapper).toEmit('input', { ...form, metaAlarm });
   });
 
-  test('Output changed after trigger description field', () => {
+  test('Comment changed after trigger description field', () => {
     const form = {
       metaAlarm: Faker.datatype.string(),
-      output: Faker.datatype.string(),
+      comment: Faker.datatype.string(),
     };
     const wrapper = factory({
       store,
@@ -86,13 +86,13 @@ describe('manual-meta-alarm-form', () => {
       },
     });
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
     const textField = selectTextField(wrapper);
 
-    textField.setValue(output);
+    textField.setValue(comment);
 
-    expect(wrapper).toEmit('input', { ...form, output });
+    expect(wrapper).toEmit('input', { ...form, comment });
   });
 
   test('Renders `manual-meta-alarm-form` with default props', () => {
@@ -101,7 +101,7 @@ describe('manual-meta-alarm-form', () => {
       propsData: {
         form: {
           metaAlarm: 'metaAlarm',
-          output: 'output',
+          comment: 'comment',
         },
       },
     });

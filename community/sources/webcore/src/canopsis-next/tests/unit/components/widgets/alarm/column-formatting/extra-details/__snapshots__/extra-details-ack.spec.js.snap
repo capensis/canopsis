@@ -1,22 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous month 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon purple white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge purple"
     >
-      playlist_add_check
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous month 2`] = `
@@ -49,22 +53,26 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon purple white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge purple"
     >
-      playlist_add_check
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 2`] = `
@@ -97,22 +105,26 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 2`] = `
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon purple white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge purple"
     >
-      playlist_add_check
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 2`] = `
@@ -143,22 +155,26 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 2`] =
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` without message 1`] = `
-<span
-  class="v-tooltip c-extra-details v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon purple white--text c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge purple"
     >
-      playlist_add_check
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
   </span>
-</span>
+</div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` without message 2`] = `
