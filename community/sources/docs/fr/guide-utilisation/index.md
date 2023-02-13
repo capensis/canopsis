@@ -21,19 +21,19 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Scenarios](menu-exploitation/scenarios.md)
 
 ### Menu **Administration**
-<!--
   * [Droits](menu-administration/droits.md)
+<!--
   * [Rôles](menu-administration/roles.md)
   * [Utilisateurs](menu-administration/utilisateurs.md)
   * [Diffusion de messages](menu-administration/diffusion-de-messages.md)
 -->
-  * [Listes de lecture](menu-administration/listes-de-lecture/index.md)
+  * [Listes de lecture](menu-administration/listes-de-lecture.md)
 <!--
   * [Bilan de santé](menu-administration/bilan-de-sante.md)
   * [Cartographie](menu-administration/cartographie.md)
   * [Consignes](menu-administration/consignes.md)
 -->
-  * [KPI](menu-administration/kpi/index.md)
+  * [KPI](menu-administration/kpi.md)
 <!--
   * [Paramètres](menu-administration/paramtres.md)
   * [Planification](menu-administration/planification.md)
