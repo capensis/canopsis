@@ -9,7 +9,7 @@ Canopsis fournit des indicateurs statistiques et des indicateurs de performance 
 1. [Utilisation](#utilisation)<br>
 2. [Graphiques](#graphiques)<br>
  A. [Métriques d’alarmes](#metriques-dalarmes)<br>
- B. [Notations](#notations)<br>
+ B. [Evaluations](#Evaluations)<br>
  C. [SLI](#sli)<br>
 3. [Filtres](#filtres)<br>
 4. [Paramètres d’évaluation](#parametres-devaluation)<br>
@@ -36,7 +36,7 @@ Fonctionnalités disponibles :
 ## Graphiques
 ### Métriques d’alarmes
 
-Les notations permettent de créer des aggrégats en fonction des critères donnés.
+Permet de créer un histogramme en fonction des paramètres
 
 Valeurs configurables :
 
@@ -49,9 +49,9 @@ Valeurs configurables :
 
 ![Métrique d’alarme](./img/kpi_alarmes.png)
 
-### Notations
+### Evaluations
 
-Les notations permettent de créer des aggrégats en fonction des critères donnés.
+Permet d'aggréger les données sous forme de tableau de colonnes.
 
 Valeurs configurables :
 
