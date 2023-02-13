@@ -96,6 +96,8 @@ const (
 	ScenarioMongoCollection          = "action_scenario"
 	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
 	WebhookHistoryMongoCollection    = "webhook_history"
+
+	LinkRuleMongoCollection = "link_rule"
 )
 
 const (

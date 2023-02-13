@@ -34,5 +34,6 @@ type Request struct {
 	//   * `kpi_filter` - export kpi_filter collection
 	//   * `pattern` - export pattern collection
 	//   * `declare_ticket_rule` - export declare_ticket_rule collection
+	//   * `link_rule` - export link_rule collection
 	Exports []string `json:"export"`
 }

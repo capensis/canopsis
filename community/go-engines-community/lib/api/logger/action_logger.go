@@ -65,6 +65,8 @@ const (
 	ValueTypeShareToken = "sharetoken"
 
 	ValueTypeDeclareTicketRule = "declareticketrule"
+
+	ValueTypeLinkRule = "linkrule"
 )
 
 type ActionLogger interface {

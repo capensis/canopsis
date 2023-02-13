@@ -3,7 +3,6 @@ package serviceweather
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
@@ -35,7 +34,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), query)
+	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -61,11 +60,7 @@ func (a *api) EntityList(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	apiKey := ""
-	if key, ok := c.Get(auth.ApiKey); ok {
-		apiKey = key.(string)
-	}
-	aggregationResult, err := a.store.FindEntities(c.Request.Context(), id, apiKey, query)
+	aggregationResult, err := a.store.FindEntities(c, id, query)
 	if err != nil {
 		panic(err)
 	}
