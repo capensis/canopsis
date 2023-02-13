@@ -5873,7 +5873,7 @@ paths:
       tags:
         - saved-patterns
       summary: Get matched alarms
-      description: Get matched alarms by patterns
+      description: Get matched alarms by patterns.
       operationId: get-matched-alarms-by-patterns
       requestBody:
         description: body
@@ -9555,7 +9555,7 @@ paths:
       tags:
         - template-validator
       summary: Validate declare ticket rule template
-      description: Validate declare ticket rule template
+      description: Validate declare ticket rule template.
       operationId: template-validator-declare-ticket-rules
       requestBody:
         description: body
@@ -9589,7 +9589,7 @@ paths:
       tags:
         - template-validator
       summary: Validate scenario template
-      description: Validate scenario template
+      description: Validate scenario template.
       operationId: template-scenario-rules
       requestBody:
         description: body
@@ -9623,7 +9623,7 @@ paths:
       tags:
         - template-validator
       summary: Get template env vars
-      description: Get template env vars
+      description: Get template env vars.
       operationId: template-vars
       responses:
         200:
