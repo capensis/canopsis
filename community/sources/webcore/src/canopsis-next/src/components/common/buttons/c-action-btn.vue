@@ -9,8 +9,17 @@
                 slot(name="badgeIcon", :on="badgeTooltipOn")
                   v-icon(v-on="badgeTooltipOn", color="white") {{ badgeIcon }}
               span {{ badgeTooltip }}
-          v-btn.ma-0.c-action-btn__button(
-            v-on="tooltipOn",
+          span(v-on="tooltipOn")
+            v-btn.ma-0(
+              :disabled="disabled",
+              :loading="loading",
+              :small="small",
+              icon,
+              @click.stop.prevent="$listeners.click"
+            )
+              v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
+        span.mx-1(v-else, v-on="tooltipOn")
+          v-btn.ma-0(
             :disabled="disabled",
             :loading="loading",
             :small="small",
@@ -18,16 +27,6 @@
             @click.stop.prevent="$listeners.click"
           )
             v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-        v-btn.mx-1.c-action-btn__button(
-          v-else,
-          v-on="tooltipOn",
-          :disabled="disabled",
-          :loading="loading",
-          :small="small",
-          icon,
-          @click.stop.prevent="$listeners.click"
-        )
-          v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
     span {{ preparedProps.tooltip }}
 </template>
 
@@ -133,7 +132,7 @@ export default {
 .c-action-btn__badge {
   margin: 6px 4px;
 
-  & /deep/ .v-badge__badge {
+  & ::v-deep .v-badge__badge {
     top: -4px;
     right: -4px;
     height: 16px;

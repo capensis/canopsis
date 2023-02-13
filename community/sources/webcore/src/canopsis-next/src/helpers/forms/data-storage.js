@@ -9,8 +9,9 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageRemediationConfig
- * @property {DurationWithEnabled} accumulate_after
  * @property {DurationWithEnabled} delete_after
+ * @property {DurationWithEnabled} delete_stats_after
+ * @property {DurationWithEnabled} delete_mod_stats_after
  */
 
 /**
@@ -91,11 +92,14 @@ export const dataStorageJunitSettingsToForm = (junitConfig = {}) => ({
  * @return {DataStorageRemediationConfig}
  */
 export const dataStorageRemediationSettingsToForm = (remediationConfig = {}) => ({
-  accumulate_after: remediationConfig.accumulate_after
-    ? durationWithEnabledToForm(remediationConfig.accumulate_after)
-    : { value: 1, unit: TIME_UNITS.day, enabled: false },
   delete_after: remediationConfig.delete_after
     ? durationWithEnabledToForm(remediationConfig.delete_after)
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
+  delete_stats_after: remediationConfig.delete_stats_after
+    ? durationWithEnabledToForm(remediationConfig.delete_stats_after)
+    : { value: 2, unit: TIME_UNITS.day, enabled: false },
+  delete_mod_stats_after: remediationConfig.delete_mod_stats_after
+    ? durationWithEnabledToForm(remediationConfig.delete_mod_stats_after)
     : { value: 2, unit: TIME_UNITS.day, enabled: false },
 });
 
