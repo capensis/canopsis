@@ -59,6 +59,7 @@ require (
 )
 
 require (
+	github.com/dop251/goja v0.0.0-20230203172422-5460598cfa32
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
 	github.com/goccy/go-yaml v1.9.5
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -80,6 +81,7 @@ require (
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
+	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
