@@ -229,6 +229,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("iscolor", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("iscolororempty", trans, func(ut ut.Translator) error {
+		return ut.Add("iscolororempty", "{0} is not valid.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("iscolororempty", fe.StructField())
+		return t
+	})
 	_ = v.RegisterTranslation("metaalarm_config_invalid", trans, func(ut ut.Translator) error {
 		return ut.Add("metaalarm_config_invalid", "Config is not a dict.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {

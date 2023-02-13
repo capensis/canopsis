@@ -3,17 +3,14 @@ package alarm
 import (
 	"context"
 	"errors"
-	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -35,8 +32,6 @@ const (
 
 const InstructionStatusApproved = 0
 
-const manualMetaAlarmsLimit = 100
-
 type Store interface {
 	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
@@ -44,7 +39,6 @@ type Store interface {
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
 	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, apiKey string) (*Alarm, bool, error)
-	FindManual(ctx context.Context, search string) ([]ManualResponse, error)
 	FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error)
 	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
 	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
@@ -241,51 +235,6 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 	}
 
 	return &result.Data[0], true, nil
-}
-
-func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{
-			"v.meta":     bson.M{"$ne": nil},
-			"v.resolved": nil,
-		}},
-	}
-	pipeline = append(pipeline, getMetaAlarmRuleLookup()...)
-	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"meta_alarm_rule.type": correlation.RuleTypeManualGroup,
-	}})
-	if search != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"v.display_name": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", search),
-				Options: "i",
-			},
-		}})
-	}
-	pipeline = append(pipeline,
-		common.GetSortQuery("v.display_name", common.SortAsc),
-		bson.M{"$limit": manualMetaAlarmsLimit},
-		bson.M{"$project": bson.M{
-			"_id":  "$d",
-			"name": "$v.display_name",
-		}},
-	)
-
-	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline)
-	if err != nil {
-		return nil, err
-	}
-	var res []ManualResponse
-	err = cursor.All(ctx, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	if res == nil {
-		res = make([]ManualResponse, 0)
-	}
-
-	return res, nil
 }
 
 func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error) {
