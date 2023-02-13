@@ -14,7 +14,14 @@
     v-divider
     field-opened-resolved-filter(v-model="form.parameters.opened")
     v-divider
-    alarms-list-modal-form(v-model="form.parameters.alarmsList")
+    alarms-list-modal-form(
+      v-model="form.parameters.alarmsList",
+      :templates="preparedWidgetTemplates",
+      :templates-pending="widgetTemplatesPending",
+      :alarm-infos="alarmInfos",
+      :entity-infos="entityInfos",
+      :infos-pending="infosPending"
+    )
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-template(
@@ -61,6 +68,8 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
@@ -91,6 +100,10 @@ export default {
     WidgetSettings,
     WidgetSettingsGroup,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    widgetColumnsInfosMixin,
+    widgetTemplatesMixin,
+  ],
 };
 </script>

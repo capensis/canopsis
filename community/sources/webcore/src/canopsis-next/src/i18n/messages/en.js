@@ -42,7 +42,7 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   ALARM_INTERVAL_FIELDS,
-  ENTITIES_TYPES,
+  WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -1842,6 +1842,9 @@ export default merge({
         title: 'Edit widget template',
       },
     },
+    selectWidgetTemplateType: {
+      title: 'Select widget template type',
+    },
     entityDependenciesList: {
       title: 'Centreon impacted entities',
     },
@@ -3364,8 +3367,14 @@ export default merge({
     downloadDump: 'Download dump',
   },
 
-  entities: {
-    [ENTITIES_TYPES.alarm]: 'Alarm',
-    [ENTITIES_TYPES.entity]: 'Entity',
+  widgetTemplate: {
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Alarm columns',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Entity columns',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Alarm more infos',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Service weather item',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Service weather modal',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Service weather entities',
+    },
   },
 }, featuresService.get('i18n.en'));

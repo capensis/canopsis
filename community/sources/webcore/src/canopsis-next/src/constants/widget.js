@@ -146,4 +146,18 @@ export const EXPORT_STATUSES = {
   failed: 2,
 };
 
-export const CUSTOM_WIDGET_COLUMN_TEMPLATE = Symbol('custom').toString();
+export const WIDGET_TEMPLATES_TYPES = {
+  alarmColumns: 'alarm_columns',
+  entityColumns: 'entity_columns',
+  alarmMoreInfos: 'alarm_more_infos',
+  weatherItem: 'weather_item',
+  weatherModal: 'weather_modal',
+  weatherEntity: 'weather_entity',
+};
+
+export const COLUMNS_WIDGET_TEMPLATES_TYPES = [
+  WIDGET_TEMPLATES_TYPES.alarmColumns,
+  WIDGET_TEMPLATES_TYPES.entityColumns,
+];
+
+export const CUSTOM_WIDGET_TEMPLATE = Symbol('custom').toString();
