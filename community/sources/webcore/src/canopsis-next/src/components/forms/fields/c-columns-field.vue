@@ -26,13 +26,6 @@ import {
   MODALS,
   ENTITIES_TYPES,
   COLOR_INDICATOR_TYPES,
-  DEFAULT_COLUMN_TEMPLATE_VALUE,
-  ALARM_INFOS_FIELDS,
-  ENTITY_INFOS_FIELDS,
-  ALARM_LIST_WIDGET_COLUMNS,
-  CONTEXT_WIDGET_COLUMNS,
-  ALARM_FIELDS_TO_LABELS_KEYS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
 } from '@/constants';
 
 import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
@@ -83,57 +76,7 @@ export default {
       default: false,
     },
   },
-  computed: {
-    isAlarmType() {
-      return this.type === ENTITIES_TYPES.alarm;
-    },
-
-    alarmListAvailableColumns() {
-      return Object.values(ALARM_LIST_WIDGET_COLUMNS).map(value => ({
-        value,
-        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
-      }));
-    },
-
-    contextAvailableColumns() {
-      return Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
-        value,
-        text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
-      }));
-    },
-
-    availableColumns() {
-      return this.isAlarmType
-        ? this.alarmListAvailableColumns
-        : this.contextAvailableColumns;
-    },
-
-    infosFields() {
-      return [
-        ...ALARM_INFOS_FIELDS,
-        ...ENTITY_INFOS_FIELDS,
-      ];
-    },
-  },
-  watch: {
-    type() {
-      const columns = this.columns.map(({ key }) => ({
-        key,
-        column: '',
-      }));
-
-      this.updateModel(columns);
-    },
-  },
   methods: {
-    enableTemplate(index, checked) {
-      const value = checked
-        ? DEFAULT_COLUMN_TEMPLATE_VALUE
-        : null;
-
-      return this.updateFieldInArrayItem(index, 'template', value);
-    },
-
     showEditTemplateModal(index) {
       const column = this.columns[index];
 

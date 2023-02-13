@@ -40,7 +40,7 @@ const stubs = {
   'field-columns': true,
   'field-sort-column': true,
   'field-default-elements-per-page': true,
-  'field-template': true,
+  'field-text-editor-with-template': true,
   'field-grid-size': true,
   'margins-form': true,
   'field-slider': true,
@@ -62,10 +62,10 @@ const selectFieldNumber = wrapper => wrapper.find('field-number-stub');
 const selectFieldColorIndicator = wrapper => wrapper.find('field-color-indicator-stub');
 const selectFieldSortColumn = wrapper => wrapper.find('field-sort-column-stub');
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('field-default-elements-per-page-stub');
-const selectFieldTemplateItems = wrapper => wrapper.findAll('field-template-stub');
-const selectFieldBlockTemplate = wrapper => selectFieldTemplateItems(wrapper).at(0);
-const selectFieldModalTemplate = wrapper => selectFieldTemplateItems(wrapper).at(1);
-const selectFieldEntityTemplate = wrapper => selectFieldTemplateItems(wrapper).at(2);
+const selectFieldTextEditorWithTemplateItems = wrapper => wrapper.findAll('field-text-editor-with-template-stub');
+const selectFieldBlockTemplate = wrapper => selectFieldTextEditorWithTemplateItems(wrapper).at(0);
+const selectFieldModalTemplate = wrapper => selectFieldTextEditorWithTemplateItems(wrapper).at(1);
+const selectFieldEntityTemplate = wrapper => selectFieldTextEditorWithTemplateItems(wrapper).at(2);
 const selectFieldGridSizeItems = wrapper => wrapper.findAll('field-grid-size-stub');
 const selectFieldColumnMobile = wrapper => selectFieldGridSizeItems(wrapper).at(0);
 const selectFieldColumnTablet = wrapper => selectFieldGridSizeItems(wrapper).at(1);
@@ -417,9 +417,10 @@ describe('service-weather', () => {
   test('Block template changed after trigger field template', async () => {
     const wrapper = factory();
 
-    const newTemplate = Faker.datatype.string();
+    const blockTemplate = Faker.datatype.string();
+    const blockTemplateTemplate = Faker.datatype.string();
 
-    selectFieldBlockTemplate(wrapper).vm.$emit('input', newTemplate);
+    selectFieldBlockTemplate(wrapper).vm.$emit('input', blockTemplate, blockTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -427,7 +428,15 @@ describe('service-weather', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'blockTemplate', newTemplate),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            blockTemplate,
+            blockTemplateTemplate,
+          },
+        ),
       },
     });
   });
@@ -435,9 +444,10 @@ describe('service-weather', () => {
   test('Modal template changed after trigger field template', async () => {
     const wrapper = factory();
 
-    const newTemplate = Faker.datatype.string();
+    const modalTemplate = Faker.datatype.string();
+    const modalTemplateTemplate = Faker.datatype.string();
 
-    selectFieldModalTemplate(wrapper).vm.$emit('input', newTemplate);
+    selectFieldModalTemplate(wrapper).vm.$emit('input', modalTemplate, modalTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -445,7 +455,15 @@ describe('service-weather', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'modalTemplate', newTemplate),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            modalTemplate,
+            modalTemplateTemplate,
+          },
+        ),
       },
     });
   });
@@ -453,9 +471,10 @@ describe('service-weather', () => {
   test('Entity template changed after trigger field template', async () => {
     const wrapper = factory();
 
-    const newTemplate = Faker.datatype.string();
+    const entityTemplate = Faker.datatype.string();
+    const entityTemplateTemplate = Faker.datatype.string();
 
-    selectFieldEntityTemplate(wrapper).vm.$emit('input', newTemplate);
+    selectFieldEntityTemplate(wrapper).vm.$emit('input', entityTemplate, entityTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -463,7 +482,15 @@ describe('service-weather', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'entityTemplate', newTemplate),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            entityTemplate,
+            entityTemplateTemplate,
+          },
+        ),
       },
     });
   });

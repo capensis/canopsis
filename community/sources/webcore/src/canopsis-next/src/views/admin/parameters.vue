@@ -34,23 +34,12 @@
                 v-card-text
                   widget-templates
     v-fade-transition
-      c-fab-expand-btn(v-if="hasFabButton", @refresh="refresh", :has-access="hasCreateAnyWidgetTemplateAccess")
-        c-action-fab-btn(
-          :tooltip="$t('modals.createWidgetMoreInfosTemplate.create.title')",
-          color="indigo",
-          icon="description",
-          small,
-          top,
-          @click="showCreateWidgetMoreInfosTemplate"
-        )
-        c-action-fab-btn(
-          :tooltip="$t('modals.createWidgetColumnsTemplate.create.title')",
-          color="deep-purple",
-          icon="view_week",
-          small,
-          top,
-          @click="showCreateWidgetColumnsTemplate"
-        )
+      c-fab-btn(
+        v-if="hasFabButton",
+        @create="showSelectWidgetTemplateTypeModal",
+        @refresh="refresh"
+      )
+        span {{ $t('modals.createWidgetTemplate.create.title') }}
 </template>
 
 <script>
@@ -98,25 +87,11 @@ export default {
       this.fetchWidgetTemplatesListWithPreviousParams();
     },
 
-    showCreateWidgetColumnsTemplate() {
+    showSelectWidgetTemplateTypeModal() {
       this.$modals.show({
-        name: MODALS.createWidgetColumnsTemplate,
+        name: MODALS.selectWidgetTemplateType,
         config: {
-          title: this.$t('modals.createWidgetMoreInfosTemplate.create.title'),
-          action: async (newWidgetTemplate) => {
-            await this.createWidgetTemplate({ data: newWidgetTemplate });
-
-            return this.refresh();
-          },
-        },
-      });
-    },
-
-    showCreateWidgetMoreInfosTemplate() {
-      this.$modals.show({
-        name: MODALS.createWidgetMoreInfosTemplate,
-        config: {
-          title: this.$t('modals.createWidgetColumnsTemplate.create.title'),
+          title: this.$t('modals.createWidgetTemplate.create.title'),
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 

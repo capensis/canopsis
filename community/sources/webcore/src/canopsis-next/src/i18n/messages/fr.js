@@ -42,7 +42,7 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   ALARM_INTERVAL_FIELDS,
-  ENTITIES_TYPES,
+  WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -1842,6 +1842,9 @@ export default merge({
         title: 'Modifier le modèle de widget',
       },
     },
+    selectWidgetTemplateType: {
+      title: 'Sélectionner le type de modèle de widget',
+    },
     entityDependenciesList: {
       title: 'Entités Centreon impactées',
     },
@@ -3364,8 +3367,14 @@ export default merge({
     downloadDump: 'Télécharger le dump',
   },
 
-  entities: {
-    [ENTITIES_TYPES.alarm]: 'Alarm',
-    [ENTITIES_TYPES.entity]: 'Entity',
+  widgetTemplate: {
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Colonnes d\'alarme',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Colonnes d\'entité',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Alarme plus d\'infos',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Élément météo de service',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Service météo modal',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Service météo entités',
+    },
   },
 }, featuresService.get('i18n.fr'));

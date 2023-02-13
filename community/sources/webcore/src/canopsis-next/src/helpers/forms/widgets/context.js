@@ -11,12 +11,8 @@ import {
   SORT_ORDERS,
 } from '@/constants';
 
-import {
-  widgetColumnsToForm,
-  formToWidgetColumns,
-  widgetColumnTemplateToForm,
-  formToWidgetColumnTemplate,
-} from '../shared/widget-column';
+import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 
 /**
  * @typedef {Object} ContextWidgetParameters
@@ -61,11 +57,11 @@ import {
 export const contextWidgetParametersToForm = (parameters = {}) => ({
   mainFilter: parameters.mainFilter ?? null,
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
-  widgetColumnsTemplate: widgetColumnTemplateToForm(parameters.widgetColumnsTemplate),
-  serviceDependenciesColumnsTemplate: widgetColumnTemplateToForm(parameters.serviceDependenciesColumnsTemplate),
-  widgetExportColumnsTemplate: widgetColumnTemplateToForm(parameters.widgetExportColumnsTemplate),
-  resolvedAlarmsColumnsTemplate: widgetColumnTemplateToForm(parameters.resolvedAlarmsColumnsTemplate),
-  activeAlarmsColumnsTemplate: widgetColumnTemplateToForm(parameters.activeAlarmsColumnsTemplate),
+  widgetColumnsTemplate: widgetTemplateValueToForm(parameters.widgetColumnsTemplate),
+  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(parameters.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: widgetTemplateValueToForm(parameters.widgetExportColumnsTemplate),
+  resolvedAlarmsColumnsTemplate: widgetTemplateValueToForm(parameters.resolvedAlarmsColumnsTemplate),
+  activeAlarmsColumnsTemplate: widgetTemplateValueToForm(parameters.activeAlarmsColumnsTemplate),
   widgetColumns:
     widgetColumnsToForm(parameters.widgetColumns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
   serviceDependenciesColumns:
@@ -93,11 +89,11 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
 export const formToContextWidgetParameters = form => ({
   ...form,
 
-  widgetColumnsTemplate: formToWidgetColumnTemplate(form.widgetColumnsTemplate),
-  serviceDependenciesColumnsTemplate: formToWidgetColumnTemplate(form.serviceDependenciesColumnsTemplate),
-  widgetExportColumnsTemplate: formToWidgetColumnTemplate(form.widgetExportColumnsTemplate),
-  resolvedAlarmsColumnsTemplate: formToWidgetColumnTemplate(form.resolvedAlarmsColumnsTemplate),
-  activeAlarmsColumnsTemplate: formToWidgetColumnTemplate(form.activeAlarmsColumnsTemplate),
+  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
+  resolvedAlarmsColumnsTemplate: formToWidgetTemplateValue(form.resolvedAlarmsColumnsTemplate),
+  activeAlarmsColumnsTemplate: formToWidgetTemplateValue(form.activeAlarmsColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
   serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
   resolvedAlarmsColumns: formToWidgetColumns(form.resolvedAlarmsColumns),

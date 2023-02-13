@@ -1,10 +1,10 @@
 <template lang="pug">
   settings-button-field(
     :is-empty="isValueEmpty",
-    addable,
-    removable,
-    @create="showTextEditorModal",
-    @edit="showTextEditorModal",
+    :addable="addable",
+    :removable="removable",
+    @create="showTextEditorWithTemplateModal",
+    @edit="showTextEditorWithTemplateModal",
     @delete="showRemoveTextConfirmationModal"
   )
     template(#title="")
@@ -12,15 +12,12 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
-import { formMixin } from '@/mixins/form';
+import { CUSTOM_WIDGET_TEMPLATE, MODALS } from '@/constants';
 
 import SettingsButtonField from '@/components/sidebars/settings/fields/partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
-  mixins: [formMixin],
   props: {
     value: {
       type: String,
@@ -30,9 +27,25 @@ export default {
       type: String,
       default: '',
     },
+    template: {
+      type: String,
+      required: false,
+    },
+    templates: {
+      type: Array,
+      required: false,
+    },
     variables: {
       type: Array,
       required: false,
+    },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
+    removable: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -41,13 +54,15 @@ export default {
     },
   },
   methods: {
-    showTextEditorModal() {
+    showTextEditorWithTemplateModal() {
       this.$modals.show({
-        name: MODALS.textEditor,
+        name: MODALS.textEditorWithTemplate,
         config: {
           text: this.value,
+          template: this.template,
+          templates: this.templates,
           variables: this.variables,
-          action: value => this.updateModel(value),
+          action: ({ text, template }) => this.$emit('input', text, template),
         },
       });
     },
@@ -56,7 +71,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.updateModel(''),
+          action: () => this.$emit('input', '', CUSTOM_WIDGET_TEMPLATE),
         },
       });
     },

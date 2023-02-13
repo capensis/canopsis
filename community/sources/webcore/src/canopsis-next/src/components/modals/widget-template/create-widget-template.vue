@@ -4,7 +4,18 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        widget-columns-template-form(v-model="form")
+        widget-template-columns-form(
+          v-if="isColumnsType",
+          v-model="form",
+          :alarm-infos="alarmInfos",
+          :entity-infos="entityInfos",
+          :infos-pending="infosPending"
+        )
+        widget-template-text-form(
+          v-else,
+          v-model="form",
+          :entity-infos="entityInfos"
+        )
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn(
@@ -16,31 +27,35 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { COLUMNS_WIDGET_TEMPLATES_TYPES, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/forms/widget-template';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import WidgetColumnsTemplateForm from '@/components/other/widget-template/widget-columns-template-form.vue';
+import WidgetTemplateColumnsForm from '@/components/other/widget-template/form/widget-template-columns-form.vue';
+import WidgetTemplateTextForm from '@/components/other/widget-template/form/widget-template-text-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createWidgetColumnsTemplate,
+  name: MODALS.createWidgetTemplate,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
   components: {
-    WidgetColumnsTemplateForm,
+    WidgetTemplateColumnsForm,
+    WidgetTemplateTextForm,
     ModalWrapper,
   },
   mixins: [
     modalInnerMixin,
+    widgetColumnsInfosMixin,
     submittableMixinCreator(),
     validationErrorsMixinCreator(),
     confirmableModalMixinCreator(),
@@ -53,6 +68,10 @@ export default {
   computed: {
     title() {
       return this.config.title ?? this.$t('modals.createWidgetTemplate.create.title');
+    },
+
+    isColumnsType() {
+      return COLUMNS_WIDGET_TEMPLATES_TYPES.includes(this.form.type);
     },
   },
   methods: {
