@@ -3,7 +3,7 @@
     field-columns(
       v-field="form.widgetColumns",
       :template="form.widgetColumnsTemplate",
-      :templates="templates",
+      :templates="alarmColumnsWidgetTemplates",
       :templates-pending="templatesPending",
       :label="$t('settings.columnNames')",
       :type="$constants.ENTITIES_TYPES.alarm",
@@ -12,7 +12,7 @@
       :infos-pending="infosPending",
       with-html,
       with-state,
-      @update:template="updateTemplate"
+      @update:template="updateColumnsTemplate"
     )
     v-divider
     field-default-elements-per-page(v-field="form.itemsPerPage")
@@ -23,13 +23,22 @@
     )
     v-divider
     field-text-editor(
-      v-field="form.moreInfoTemplate",
-      :title="$t('settings.moreInfosModal')"
+      :value="form.moreInfoTemplate",
+      :template="form.moreInfoTemplateTemplate",
+      :title="$t('settings.moreInfosModal')",
+      :variables="alarmVariables",
+      :templates="alarmMoreInfosWidgetTemplates",
+      @input="updateMoreInfo"
     )
 </template>
 
 <script>
+import { filter } from 'lodash';
+
+import { WIDGET_TEMPLATES_TYPES } from '@/constants';
+
 import { formBaseMixin } from '@/mixins/form';
+import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
 import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
@@ -45,7 +54,10 @@ export default {
     FieldTextEditor,
     FieldDefaultElementsPerPage,
   },
-  mixins: [formBaseMixin],
+  mixins: [
+    formBaseMixin,
+    alarmVariablesMixin,
+  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -80,13 +92,31 @@ export default {
       default: false,
     },
   },
+  computed: {
+    alarmColumnsWidgetTemplates() {
+      return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmColumns });
+    },
+
+    alarmMoreInfosWidgetTemplates() {
+      return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmMoreInfos });
+    },
+  },
   methods: {
-    updateTemplate(template, columns) {
+    updateColumnsTemplate(template, columns) {
       this.updateModel({
         ...this.form,
 
         widgetColumnsTemplate: template,
         widgetColumns: columns,
+      });
+    },
+
+    updateMoreInfo(content, template) {
+      this.updateModel({
+        ...this.form,
+
+        moreInfoTemplate: content,
+        moreInfoTemplateTemplate: template,
       });
     },
   },

@@ -124,7 +124,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-text-editor-stub
+    <field-text-editor-with-template-stub
+      addable="true"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
       title="\\"More Infos\\" Popup"
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -317,7 +321,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-text-editor-stub
+    <field-text-editor-with-template-stub
+      addable="true"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
       title="\\"More Infos\\" Popup"
       value="More info template"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -515,7 +523,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-text-editor-stub
+    <field-text-editor-with-template-stub
+      addable="true"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
       title="\\"More Infos\\" Popup"
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"

@@ -12,7 +12,7 @@
       field-columns(
         v-model="form.parameters.widgetColumns",
         :template="form.parameters.widgetColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="entityColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -25,7 +25,7 @@
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
         :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="entityColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.treeOfDependenciesColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -39,7 +39,7 @@
       field-columns(
         v-model="form.parameters.activeAlarmsColumns",
         :template="form.parameters.activeAlarmsColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.activeAlarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -52,7 +52,7 @@
       field-columns(
         v-model="form.parameters.resolvedAlarmsColumns",
         :template="form.parameters.resolvedAlarmsColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.resolvedAlarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -82,7 +82,7 @@
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="preparedWidgetTemplates",
+        :templates="entityColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending"
       )
     v-divider
@@ -101,7 +101,7 @@ import { getColumnLabel, getSortable } from '@/helpers/widgets';
 import { authMixin } from '@/mixins/auth';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
-import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 
 import FieldTitle from './fields/common/title.vue';
@@ -129,7 +129,7 @@ export default {
     authMixin,
     widgetSettingsMixin,
     widgetColumnsInfosMixin,
-    widgetColumnsTemplatesMixin,
+    widgetTemplatesMixin,
     permissionsWidgetsContextFilters,
   ],
   computed: {

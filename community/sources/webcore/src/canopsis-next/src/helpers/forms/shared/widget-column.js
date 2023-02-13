@@ -1,7 +1,6 @@
 import {
   ALARM_INFOS_FIELDS,
   ALARM_LIST_WIDGET_COLUMNS,
-  CUSTOM_WIDGET_COLUMN_TEMPLATE,
   ENTITY_INFOS_FIELDS,
 } from '@/constants';
 
@@ -115,19 +114,3 @@ export const formToWidgetColumns = (form = []) => form.map(({ key, column, dicti
     value,
   };
 });
-
-/**
- * Convert widget column template to form
- *
- * @param {string} [template]
- * @returns {string | Symbol}
- */
-export const widgetColumnTemplateToForm = template => template || CUSTOM_WIDGET_COLUMN_TEMPLATE;
-
-/**
- * Convert form to widget column template
- *
- * @param {string | Symbol} [template]
- * @returns {string}
- */
-export const formToWidgetColumnTemplate = template => (template === CUSTOM_WIDGET_COLUMN_TEMPLATE ? '' : template);

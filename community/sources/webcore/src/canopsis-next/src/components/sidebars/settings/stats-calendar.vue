@@ -46,7 +46,7 @@ import { SIDE_BARS } from '@/constants';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { formValidationHeaderMixin } from '@/mixins/form';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
-import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
@@ -80,7 +80,7 @@ export default {
     widgetSettingsMixin,
     formValidationHeaderMixin,
     widgetColumnsInfosMixin,
-    widgetColumnsTemplatesMixin,
+    widgetTemplatesMixin,
   ],
 };
 </script>

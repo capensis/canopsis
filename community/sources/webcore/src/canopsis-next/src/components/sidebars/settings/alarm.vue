@@ -14,7 +14,7 @@
       field-columns(
         v-model="form.parameters.widgetColumns",
         :template="form.parameters.widgetColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -30,7 +30,7 @@
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
         :template="form.parameters.widgetGroupColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.groupColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -45,7 +45,7 @@
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
         :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="entityColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.trackColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -93,10 +93,15 @@
         :columns="preparedWidgetColumns"
       )
       v-divider
-      field-text-editor(
-        v-model="form.parameters.moreInfoTemplate",
+      field-text-editor-with-template(
+        :value="form.parameters.moreInfoTemplate",
+        :template="form.parameters.moreInfoTemplateTemplate",
         :title="$t('settings.moreInfosModal')",
-        :variables="alarmVariables"
+        :variables="alarmVariables",
+        :templates="alarmMoreInfosWidgetTemplates",
+        addable,
+        removable,
+        @input="updateMoreInfo"
       )
       v-divider
       field-grid-range-size(
@@ -144,7 +149,7 @@
         :alarm-infos="alarmInfos",
         :entity-infos="entityInfos",
         :infos-pending="infosPending",
-        :templates="preparedWidgetTemplates",
+        :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         datetime-format
       )
@@ -165,7 +170,7 @@ import { getColumnLabel, getSortable } from '@/helpers/widgets';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
-import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -177,7 +182,7 @@ import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldFilters from './fields/common/filters.vue';
-import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldTextEditorWithTemplate from './fields/common/text-editor-with-template.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
 import FieldGridRangeSize from './fields/common/grid-range-size.vue';
@@ -206,7 +211,7 @@ export default {
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,
     FieldFilters,
-    FieldTextEditor,
+    FieldTextEditorWithTemplate,
     FieldSwitcher,
     FieldFastAckOutput,
     FieldGridRangeSize,
@@ -220,7 +225,7 @@ export default {
     widgetSettingsMixin,
     alarmVariablesMixin,
     widgetColumnsInfosMixin,
-    widgetColumnsTemplatesMixin,
+    widgetTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
@@ -251,6 +256,14 @@ export default {
     updateServiceDependenciesColumnsTemplate(template, columns) {
       this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
       this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
+
+    updateMoreInfo(content, template) {
+      this.$set(this.form.parameters, 'moreInfoTemplate', content);
+
+      if (template && template !== this.form.parameters.moreInfoTemplateTemplate) {
+        this.$set(this.form.parameters, 'moreInfoTemplateTemplate', template);
+      }
     },
   },
 };
