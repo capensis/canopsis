@@ -8,23 +8,26 @@
       name="title"
     )
     text-editor-field(
-      v-model="form.text",
+      v-model="form.content",
       v-validate="'required'",
-      :error-messages="errors.collect('text')",
-      :variables="alarmVariables",
-      name="text"
+      :error-messages="errors.collect('content')",
+      :variables="variables",
+      name="content"
     )
 </template>
 
 <script>
+import { WIDGET_TEMPLATES_TYPES } from '@/constants';
+
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
+import { entityVariablesMixin } from '@/mixins/widget/variables/entity';
 
 import TextEditorField from '@/components/common/text-editor/text-editor.vue';
 
 export default {
   inject: ['$validator'],
   components: { TextEditorField },
-  mixins: [alarmVariablesMixin],
+  mixins: [alarmVariablesMixin, entityVariablesMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -33,6 +36,17 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    entityInfos: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  computed: {
+    variables() {
+      return this.form.type === WIDGET_TEMPLATES_TYPES.alarmMoreInfos
+        ? this.alarmVariables
+        : this.entityVariables;
     },
   },
 };

@@ -32,8 +32,10 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     class="v-divider theme--light"
   />
   <field-text-editor-stub
+    templates=""
     title="\\"More Infos\\" Popup"
     value=""
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
 </widget-settings-group-stub>
 `;
@@ -69,8 +71,10 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     class="v-divider theme--light"
   />
   <field-text-editor-stub
+    templates=""
     title="\\"More Infos\\" Popup"
     value=""
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
 </widget-settings-group-stub>
 `;

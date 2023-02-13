@@ -489,7 +489,7 @@ Vue.use(ModalsPlugin, {
   dialogPropsMap: {
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
-    [MODALS.createWidgetTemplate]: { maxWidth: 500, lazy: true },
+    [MODALS.createWidgetTemplate]: { maxWidth: 920, lazy: true },
     [MODALS.alarmsList]: { maxWidth: '95%', lazy: true },
     [MODALS.createFilter]: { maxWidth: 1100, lazy: true },
     [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },

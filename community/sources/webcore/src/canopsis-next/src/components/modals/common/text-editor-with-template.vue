@@ -4,70 +4,75 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        widget-template-form(v-model="form")
+        text-editor-with-template-field(
+          v-model="form",
+          :templates="config.templates",
+          :variables="config.variables",
+          :rules="config.rules",
+          :label="config.label"
+        )
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn(
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
-          type="submit",
-          color="primary"
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/forms/widget-template';
-
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { validationErrorsMixinCreator } from '@/mixins/form';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import WidgetTemplateForm from '@/components/other/widget-template/widget-template-form.vue';
+import TextEditorWithTemplateField from '@/components/common/text-editor/text-editor-with-template.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createWidgetTemplate,
+  name: MODALS.textEditorWithTemplate,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: {
-    WidgetTemplateForm,
-    ModalWrapper,
-  },
+  components: { TextEditorWithTemplateField, ModalWrapper },
   mixins: [
     modalInnerMixin,
     submittableMixinCreator(),
-    validationErrorsMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { text = '', template = '' } = this.modal.config;
+
     return {
-      form: widgetTemplateToForm(this.modal.config.widgetTemplate),
+      form: {
+        text,
+        template,
+      },
     };
   },
   computed: {
     title() {
-      return this.config.title ?? this.$t('modals.createWidgetTemplate.create.title');
+      return this.config.title ?? this.$t('modals.textEditor.title');
     },
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
-      if (!isFormValid) {
-        return;
-      }
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.form);
+        }
 
-      if (this.config.action) {
-        await this.config.action(formToWidgetTemplate(this.form));
+        this.$modals.hide();
       }
-
-      this.$modals.hide();
     },
   },
 };

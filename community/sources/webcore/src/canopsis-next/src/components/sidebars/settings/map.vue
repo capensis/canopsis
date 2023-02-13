@@ -37,7 +37,7 @@
       field-columns(
         v-model="form.parameters.alarmsColumns",
         :template="form.parameters.alarmsColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.alarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
@@ -52,7 +52,7 @@
       field-columns(
         v-model="form.parameters.entitiesColumns",
         :template="form.parameters.entitiesColumnsTemplate",
-        :templates="preparedWidgetTemplates",
+        :templates="entityColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
         :type="$constants.ENTITIES_TYPES.entity",
@@ -72,7 +72,7 @@ import { SIDE_BARS } from '@/constants';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
 import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
-import { widgetColumnsTemplatesMixin } from '@/mixins/widget/columns/templates';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
 
 import FieldTitle from './fields/common/title.vue';
@@ -107,7 +107,7 @@ export default {
     widgetSettingsMixin,
     entityVariablesMixin,
     widgetColumnsInfosMixin,
-    widgetColumnsTemplatesMixin,
+    widgetTemplatesMixin,
     permissionsWidgetsMapFilters,
   ],
   methods: {
