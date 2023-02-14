@@ -10,7 +10,7 @@ L'accès au paramétrage de ces bandeaux d'information nécessite des droits sp�
 
 Faites défiler la liste des droits jusqu'à voir ceux qui concernent les "Broadcast Messages".
 
-![Droits CRUD diffuser des messages](img/droits-crud-broadcast-messages.png)
+![Droits CRUD diffuser des messages](img/broadcast_acces.png)
 
 Cochez les cases nécessaires pour octroyer les droits voulus aux profils désignés :
 
@@ -26,11 +26,11 @@ Cochez les cases nécessaires pour octroyer les droits voulus aux profils désig
 
 L'accès au paramétrage des bandeaux se fait ensuite via le menu Administration dans lequel est apparu une nouvelle entrée.
 
-![Accès CRUD diffuser des messages](img/acces-crud-broadcast-messages.png)
+![Accès CRUD diffuser des messages](img/broadcast_menu.png)
 
 Cliquez sur le bouton `+` en bas à droite de la page pour ouvrir la modale de création d'un nouveau message à diffuser.
 
-![Modale de création nouveau message](img/modale-creation-broadcast-message.png)
+![Modale de création nouveau message](img/broadcast_modal_creation.png)
 
 Un aperçu du résultat final de votre message est disponible en haut de la fenêtre.
 
@@ -54,6 +54,6 @@ Les options de configuration sont les suivantes :
 
 En fonction des dates de début et de fin que vous aurez sélectionnées, 3 statuts de messages seront visibles dans l'interface.
 
-![Affichage des différents types de messages](img/differents-types-de-broadcast-messages.png)
+![Affichage des différents types de messages](img/broadcast_liste_exemple.png)
 
 Vous pouvez voir le message dont le statut est "Actif" apparaître en haut de la page. Les autres statuts sont "Expiré" ou "En attente".
