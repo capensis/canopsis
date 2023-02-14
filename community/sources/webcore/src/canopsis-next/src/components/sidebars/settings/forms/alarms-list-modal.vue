@@ -22,7 +22,7 @@
       :columns="form.widgetColumns"
     )
     v-divider
-    field-text-editor(
+    field-text-editor-with-template(
       :value="form.moreInfoTemplate",
       :template="form.moreInfoTemplateTemplate",
       :title="$t('settings.moreInfosModal')",
@@ -42,7 +42,7 @@ import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
 import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
-import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
+import FieldTextEditorWithTemplate from '@/components/sidebars/settings/fields/common/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
 import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-settings-group.vue';
 
@@ -51,7 +51,7 @@ export default {
     WidgetSettingsGroup,
     FieldColumns,
     FieldInfoPopup,
-    FieldTextEditor,
+    FieldTextEditorWithTemplate,
     FieldDefaultElementsPerPage,
   },
   mixins: [
