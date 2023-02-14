@@ -233,7 +233,6 @@ func (w *worker) parseEntities(
 	componentsToDelete := make(map[string]bool)
 	componentsToDisable := make(map[string]bool)
 
-	createLinks := make(map[string][]string)
 	deletedResources := make(map[string]bool)
 	disabledResources := make(map[string]bool)
 
@@ -255,7 +254,10 @@ func (w *worker) parseEntities(
 		w.fillDefaultFields(&ci, source, now)
 
 		eventType := ""
-		var oldEntity importcontextgraph.EntityConfiguration
+		var oldEntity struct {
+			importcontextgraph.EntityConfiguration `bson:",inline"`
+			Resources                              []string `bson:"resources"`
+		}
 
 		findCriteria := bson.M{"soft_deleted": bson.M{"$exists": false}}
 		if ci.Type == types.EntityTypeService {
@@ -264,16 +266,39 @@ func (w *worker) parseEntities(
 			findCriteria["_id"] = ci.ID
 		}
 
-		err = w.entityCollection.FindOne(ctx, findCriteria).Decode(&oldEntity)
-		if err != nil && err != mongo.ErrNoDocuments {
+		cursor, err := w.entityCollection.Aggregate(ctx, []bson.M{
+			{"$match": findCriteria},
+			{"$graphLookup": bson.M{
+				"from":                    libmongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "component",
+				"as":                      "resources",
+				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		})
+		if err != nil {
+			return res, err
+		}
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&oldEntity)
+			if err != nil {
+				_ = cursor.Close(ctx)
+				return res, err
+			}
+		}
+		err = cursor.Close(ctx)
+		if err != nil {
 			return res, err
 		}
 
 		switch ci.Action {
 		case importcontextgraph.ActionSet:
-			if ci.Type == types.EntityTypeResource {
-				createLinks[ci.Component] = append(createLinks[ci.Component], ci.ID)
-			} else if ci.Type == types.EntityTypeComponent {
+			if ci.Type == types.EntityTypeComponent {
 				componentInfos[ci.ID] = ci.Infos
 				componentsExist[ci.ID] = true
 			}
@@ -288,7 +313,7 @@ func (w *worker) parseEntities(
 
 				updatedIds = append(updatedIds, ci.ID)
 			} else {
-				writeModels = append(writeModels, w.updateEntity(&ci, oldEntity, true))
+				writeModels = append(writeModels, w.updateEntity(&ci, oldEntity.EntityConfiguration, true))
 				if ci.Type == types.EntityTypeResource {
 					componentsExist[ci.Component] = true
 				}
@@ -324,7 +349,7 @@ func (w *worker) parseEntities(
 			} else if ci.Type == types.EntityTypeComponent {
 				componentsToDelete[ci.ID] = true
 
-				for _, resourceID := range oldEntity.Depends {
+				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
 						deletedResources[resourceID] = true
 
@@ -378,7 +403,7 @@ func (w *worker) parseEntities(
 				componentsToDisable[ci.ID] = true
 				componentInfos[ci.ID] = ci.Infos
 
-				for _, resourceID := range oldEntity.Depends {
+				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
 						deletedResources[resourceID] = true
 						writeModels = append(writeModels, w.changeState(resourceID, false, source, now))
@@ -403,7 +428,7 @@ func (w *worker) parseEntities(
 		if withEvents && eventType != "" {
 			switch ci.Type {
 			case types.EntityTypeService:
-				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity, eventType, now))
+				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
 			default:
 				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
 				if err != nil {
@@ -455,11 +480,6 @@ func (w *worker) parseEntities(
 			}
 		}
 
-		resourceIDs, ok := createLinks[componentName]
-		if ok && len(resourceIDs) > 0 {
-			writeModels = append(writeModels, w.createLink(resourceIDs, componentName)...)
-		}
-
 		if len(componentInfos[componentName]) > 0 {
 			writeModels = append(writeModels, w.updateComponentInfos(componentName, componentInfos[componentName]))
 		}
@@ -491,8 +511,8 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 
 		err = w.publisher.SendEvent(ctx, types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
-			Connector:     types.ConnectorEngineService,
-			ConnectorName: types.ConnectorEngineService,
+			Connector:     defaultConnector,
+			ConnectorName: defaultConnectorName,
 			Component:     service.ID,
 			Timestamp:     types.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
@@ -601,23 +621,8 @@ func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, s
 	ci.Imported = now
 }
 
-func (w *worker) createLink(from []string, to string) []mongo.WriteModel {
-	updateTo := bson.M{"$addToSet": bson.M{"depends": bson.M{"$each": from}}}
-	updateFrom := bson.M{"$addToSet": bson.M{"impact": to}}
-
-	return []mongo.WriteModel{
-		mongo.NewUpdateManyModel().
-			SetFilter(bson.M{"_id": to}).
-			SetUpdate(updateTo),
-		mongo.NewUpdateManyModel().
-			SetFilter(bson.M{"_id": bson.M{"$in": from}}).
-			SetUpdate(updateFrom),
-	}
-}
-
 func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.WriteModel {
-	ci.Depends = []string{}
-	ci.Impact = []string{}
+	ci.Services = []string{}
 	ci.EnableHistory = make([]int64, 0)
 
 	if ci.Type == types.EntityTypeComponent {
@@ -639,8 +644,6 @@ func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.W
 }
 
 func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEntity importcontextgraph.EntityConfiguration, mergeInfos bool) mongo.WriteModel {
-	ci.Depends = oldEntity.Depends
-	ci.Impact = oldEntity.Impact
 	ci.EnableHistory = oldEntity.EnableHistory
 
 	if ci.Type == types.EntityTypeComponent {
@@ -698,8 +701,8 @@ func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, e
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
+		Connector:     defaultConnector,
+		ConnectorName: defaultConnectorName,
 		Component:     ci.ID,
 		SourceType:    types.SourceTypeService,
 		Initiator:     types.InitiatorSystem,
