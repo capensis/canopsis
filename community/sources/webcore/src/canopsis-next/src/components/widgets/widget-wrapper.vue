@@ -102,10 +102,11 @@ export default {
 
         case WIDGET_TYPES.map:
           return prepareMapWidget(this.widget);
-
-        default:
-          return this.widget;
       }
+
+      const func = featuresService.get('components.widgetWrapper.preparedWidget');
+
+      return func ? func.call(this) : this.widget;
     },
 
     widgetProps() {
