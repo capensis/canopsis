@@ -23,8 +23,8 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 ### Menu **Administration**
   * [Droits](menu-administration/droits.md)
   * [Rôles](menu-administration/roles.md)
-<!--
   * [Utilisateurs](menu-administration/utilisateurs.md)
+<!--
   * [Diffusion de messages](menu-administration/diffusion-de-messages.md)
 -->
   * [Listes de lecture](menu-administration/listes-de-lecture.md)
