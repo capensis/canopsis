@@ -213,41 +213,6 @@ type Event struct {
 	IsEntityUpdated bool `bson:"-" json:"-"`
 }
 
-// ContextInformation regroup context values necessary for creating a new entity
-type ContextInformation struct {
-	ID      string // Entity ID
-	Name    string
-	Type    string
-	Impacts []string
-	Depends []string
-}
-
-// NewEventFromJSON create an Event from a raw json
-func NewEventFromJSON(body []byte) (Event, error) {
-	var event Event
-	err := json.Unmarshal(body, &event)
-	if err != nil {
-		return event, fmt.Errorf("NewEvent error: %v", err)
-	}
-	event.Format()
-
-	return event, nil
-}
-
-func NewEventFromAlarm(alarm Alarm) Event {
-	event := Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Resource:      alarm.Value.Resource,
-		Component:     alarm.Value.Component,
-		Alarm:         &alarm,
-		Timestamp:     CpsTime{Time: time.Now()},
-	}
-	event.SourceType = event.DetectSourceType()
-
-	return event
-}
-
 // Format an event
 //
 //	"timestamp" is fill with time.Now()
@@ -447,50 +412,6 @@ func (e *Event) GetRequiredKeys() []string {
 	}
 
 	return values
-}
-
-// GenerateContextInformations generate connector, component and resource entity informations.
-// First element is always connector
-// Second element is always component
-// Third element doesnt exists if event is not SourceTypeResource, otherwise it is resource
-func (e *Event) GenerateContextInformations() []ContextInformation {
-	connectorID := e.Connector + "/" + e.ConnectorName
-	componentID := e.Component
-
-	connector := ContextInformation{
-		ID:      connectorID,
-		Name:    e.ConnectorName,
-		Type:    EntityTypeConnector,
-		Impacts: []string{},
-		Depends: []string{componentID},
-	}
-
-	component := ContextInformation{
-		ID:      componentID,
-		Name:    e.Component,
-		Type:    EntityTypeComponent,
-		Impacts: []string{connectorID},
-		Depends: []string{},
-	}
-
-	if e.SourceType != SourceTypeResource {
-		return []ContextInformation{connector, component}
-	}
-
-	resourceID := e.Resource + "/" + e.Component
-
-	connector.Impacts = append(connector.Impacts, resourceID)
-	component.Depends = append(component.Depends, resourceID)
-
-	resource := ContextInformation{
-		ID:      resourceID,
-		Name:    e.Resource,
-		Type:    EntityTypeResource,
-		Impacts: []string{componentID},
-		Depends: []string{connectorID},
-	}
-
-	return []ContextInformation{connector, component, resource}
 }
 
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))

@@ -70,7 +70,7 @@ func (q *MongoQueryBuilder) clear() {
 
 	q.sort = bson.M{}
 	q.computedFields = bson.M{}
-	q.excludedFields = []string{"depends", "impact"}
+	q.excludedFields = []string{"services"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
@@ -97,12 +97,12 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
 	q.clear()
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
-		"_id":     bson.M{"$in": ids},
-		"enabled": true,
+		"services": id,
+		"enabled":  true,
 	}})
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
@@ -110,6 +110,7 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []stri
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
+		{key: "depends_count", pipeline: getDependsCountPipeline()},
 	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
@@ -508,6 +509,14 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				}}},
 			}},
 		}},
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
+		}},
 		{"$addFields": bson.M{
 			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
@@ -522,6 +531,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				},
 			}},
 		}},
+		{"$project": bson.M{"depends": 0}},
 		{"$addFields": bson.M{
 			"icon": bson.M{"$switch": bson.M{
 				"branches": append(
@@ -667,10 +677,22 @@ func getListDependenciesComputedFields() bson.M {
 			),
 			"default": defaultVal,
 		}},
-		"depends_count": bson.M{"$cond": bson.M{
-			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
-			"then": bson.M{"$size": "$depends"},
-			"else": 0,
+	}
+}
+
+func getDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
 		}},
+		{"$addFields": bson.M{
+			"depends_count": bson.M{"$size": "$depends"},
+		}},
+		{"$project": bson.M{"depends": 0}},
 	}
 }

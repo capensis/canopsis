@@ -201,10 +201,10 @@ func (s *service) markServices(parentCtx context.Context, idleSinceMap *Services
 					}
 
 					for _, service := range services {
-						if service.ID == impact && len(service.Impacts) > 0 {
-							wg.Add(len(service.Impacts))
+						if service.ID == impact && len(service.Services) > 0 {
+							wg.Add(len(service.Services))
 							go func(service EntityService) {
-								for _, impact := range service.Impacts {
+								for _, impact := range service.Services {
 									select {
 									case <-ctx.Done():
 										return
@@ -288,7 +288,7 @@ func (s *service) RecomputeIdleSince(parentCtx context.Context) error {
 					}
 
 					if ent.Type == types.EntityTypeResource || ent.Type == types.EntityTypeComponent {
-						s.markServices(ctx, &idleSinceMap, services, ent.Impacts, ent.IdleSince.Unix())
+						s.markServices(ctx, &idleSinceMap, services, ent.Services, ent.IdleSince.Unix())
 					}
 
 					if ent.Type == types.EntityTypeConnector {
