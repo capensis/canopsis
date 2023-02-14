@@ -11,16 +11,16 @@ if (db.widget_templates.count() === 0) {
             "title": "Default columns",
             "columns": [
                 {
-                    "value": "connector"
+                    "value": "v.connector"
                 },
                 {
-                    "value": "connector_name"
+                    "value": "v.connector_name"
                 },
                 {
-                    "value": "component"
+                    "value": "v.component"
                 },
                 {
-                    "value": "resource"
+                    "value": "v.resource"
                 },
                 {
                     "value": "v.output"
