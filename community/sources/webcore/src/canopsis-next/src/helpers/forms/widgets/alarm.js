@@ -263,6 +263,7 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
 export const formToAlarmListWidgetParameters = form => ({
   ...form,
 
+  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
   serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
