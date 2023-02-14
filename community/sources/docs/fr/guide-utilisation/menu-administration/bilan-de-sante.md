@@ -1,7 +1,7 @@
-# Module Healthcheck
+# Bilan de santé
 
 !!! info "Information"
-    Pour le moment, le module Healthcheck de l'interface graphique nécessite une [activation manuelle d'HTTPS](../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) afin d'être pleinement fonctionnel.
+    Pour le moment, le module Healthcheck de l'interface graphique nécessite une [activation manuelle d'HTTPS](../../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx-https.md) afin d'être pleinement fonctionnel.
 
 Le module `Healthcheck` inclus dans Canopsis Edition Pro permet de connaitre l'état de chaque composant technique de Canopsis.  
 Les composants éligibles sont : 
@@ -14,16 +14,16 @@ Les composants éligibles sont :
 
 Le menu `Administration->Bilan de santé` vous permet  d'accéder aux résultats du module Healthcheck.
 
-![module-healthcheck-general](img/module-healthcheck-general.png)
+![module-healthcheck-general](img/sante_general.png)
 
 Chaque pastille représente l'état du composant indiqué et peut être verte, rouge, ou grise.
 
-![module-healthcheck-general2](img/module-healthcheck-general2.png)
+![module-healthcheck-general2](img/sante_general2.png)
 
 Par ailleurs, l'état global ou l'état de chaque composant est mis à disposition dans le bandeau de l'application.
 
-![module-healthcheck-general3](img/module-healthcheck-general3.png)
-![module-healthcheck-general4](img/module-healthcheck-general4.png)
+![module-healthcheck-general3](img/sante_general3.png)
+![module-healthcheck-general4](img/sante_general4.png)
 
 !!! Note
     Le contrôle des composants est effectué une fois par minute.
@@ -37,15 +37,13 @@ En parallèle de l'état de santé des composants, vous avez accès à des graph
 Lorsque l'API de Canopsis est indisponible, vous ne pouvez plus accéder à l'interface graphique.  
 La réponse technique lors de [l'appel à l'API](../../guide-developpement/swagger/#/healthcheck/healthcheck-get) sera de la forme
 
-```html
-<html>
-<head><title>502 Bad Gateway</title></head>
-<body>
-<center><h1>502 Bad Gateway</h1></center>
-<hr><center>nginx</center>
-</body>
-</html>
-```
+    <html>
+    <head><title>502 Bad Gateway</title></head>
+    <body>
+    <center><h1>502 Bad Gateway</h1></center>
+    <hr><center>nginx</center>
+    </body>
+    </html>
 
 Il s'agit en réalité de la réponse renvoyée par le reverse proxy `nginx`.
 
@@ -167,11 +165,11 @@ Le contrôle de bon fonctionnement des moteurs comporte plusieurs volets.
 La transmission d'événements d'un moteur à un moteur respecte un [ordre précis](../../guide-administration/moteurs/schema-enchainement-moteurs). 
 Lorsque l'ordre est respecté, le schéma d'enchainement reste au vert.
 
-![module-healthcheck-engines1](img/module-healthcheck-engines1.png)
+![module-healthcheck-engines1](img/sante_engines1.png)
 
 Si cet ordre n'est pas celui constaté sur l'environnement contrôlé, alors le module de healthcheck réagit.
 
-![module-healthcheck-engines2](img/module-healthcheck-engines2.png)
+![module-healthcheck-engines2](img/sante_engines2.png)
 
 Dans le cas présent, on constate que le moteur `engine-correlation` n'est alimenté par aucun autre moteur.
 
@@ -187,8 +185,8 @@ Il peut alors s'agir d'un problème de performance dégradée ou d'un potentiel 
 
 Le paramètre définissant la limite est un paramètre global à toutes les files d'attente de moteurs. Il est défini dans l'onglet `Paramètres` de la page de Bilan de santé.
 
-![module-healthcheck-engines3](img/module-healthcheck-engines3.png)
-![module-healthcheck-engines4](img/module-healthcheck-engines4.png)
+![module-healthcheck-engines3](img/sante_engines3.png)
+![module-healthcheck-engines4](img/sante_engines4.png)
 
 **Remédiation associée**
 
@@ -206,15 +204,15 @@ Si le nombre minimal d'instances n'est pas respecté, alors un avertissement est
 
 Par exemple, avec la configuration suivante
 
-![module-healthcheck-engines5](img/module-healthcheck-engines5.png)
+![module-healthcheck-engines5](img/sante_engines5.png)
 
 Lorsque deux instances sont en cours d'exécution, le module indique 
 
-![module-healthcheck-engines7](img/module-healthcheck-engines7.png)
+![module-healthcheck-engines7](img/sante_engines7.png)
 
 Si une seule instance est en cours d'exécution, le module indique 
 
-![module-healthcheck-engines6](img/module-healthcheck-engines6.png)
+![module-healthcheck-engines6](img/sante_engines6.png)
 
 Le nombre d'instances optimal n'est pas exploité dans l'interface graphique. Il est à exploiter au travers de l'API.
 
@@ -224,11 +222,11 @@ Dans le menu `Graphiques` du module de bilan de santé, vous accédez
 
 * au graphique montrant le nombre de messages traités dans la dernière heure
 
-![module-healthcheck-graphiques1](img/module-healthcheck-graphiques1.png)
+![module-healthcheck-graphiques1](img/sante_graphiques1.png)
 
 * à l'historique du nombre de messages traités dans Canopsis
 
-![module-healthcheck-graphiques2](img/module-healthcheck-graphiques2.png)
+![module-healthcheck-graphiques2](img/sante_graphiques2.png)
 
 ## Sonde liveness
 
