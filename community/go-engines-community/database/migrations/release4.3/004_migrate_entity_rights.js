@@ -31,6 +31,10 @@
         }
     ]);
     db.default_rights.find({crecord_type: "role"}).forEach(function (doc) {
+        if (!doc.rights) {
+            return ;
+        }
+
         var set = {};
         Object.keys(doc.rights).forEach(function (right) {
             switch (right) {
