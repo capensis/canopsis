@@ -10,11 +10,16 @@ import {
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from './date/date-intervals';
 
 /**
  * WIDGET CONVERTERS
@@ -287,9 +292,11 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
       return convertWeatherUserPreferenceToQuery(userPreference);
     case WIDGET_TYPES.map:
       return convertMapUserPreferenceToQuery(userPreference);
-    default:
-      return {};
   }
+
+  const func = featuresService.get('helpers.query.convertUserPreferenceToQuery');
+
+  return func ? func(userPreference, widgetType) : {};
 }
 
 /**
@@ -310,9 +317,11 @@ export function convertWidgetToQuery(widget) {
       return convertStatsCalendarWidgetToQuery(widget);
     case WIDGET_TYPES.counter:
       return convertCounterWidgetToQuery(widget);
-    default:
-      return {};
   }
+
+  const func = featuresService.get('helpers.query.convertWidgetToQuery');
+
+  return func ? func(widget) : {};
 }
 
 /**
