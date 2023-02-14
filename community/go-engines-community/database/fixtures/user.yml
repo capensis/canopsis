@@ -28,10 +28,10 @@ template:
     author: root
   }
   - &widget_alarm_columns [
-    { value: connector },
-    { value: connector_name },
-    { value: component },
-    { value: resource },
+    { value: v.connector },
+    { value: v.connector_name },
+    { value: v.component },
+    { value: v.resource },
     { value: v.output },
     { value: extra_details },
     { value: v.state.val },
@@ -159,7 +159,7 @@ widget_templates:
     <<: *widget_tpl
     title: Default modal
     type: weather_modal
-    content: {{ entities name="entity._id" }}
+    content: "{{ entities name=\"entity._id\" }}"
   tpl_weather_entity:
     <<: *widget_tpl
     title: Default entity
