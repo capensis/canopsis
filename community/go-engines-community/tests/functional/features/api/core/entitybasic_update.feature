@@ -43,14 +43,6 @@ Feature: Update entity basic
           "value": ["test-entitybasic-to-update-info-6-value", false, 1022, 10.45, null]
         }
       ],
-      "impact": [
-        "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
-        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
-      ],
-      "depends": [
-        "test-entitybasic-to-update-component-1",
-        "test-entitybasic-to-update-component-3"
-      ],
       "coordinates": {
         "lat": 62.34960927573042,
         "lng": 74.02834455685206
@@ -110,135 +102,21 @@ Feature: Update entity basic
       }
     }
     """
-    Then the response array key "changeable_depends" should contain:
-    """json
-    [
-      "test-entitybasic-to-update-component-1",
-      "test-entitybasic-to-update-component-3"
-    ]
-    """
-    Then the response array key "changeable_impact" should contain:
-    """json
-    [
-      "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
-      "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
-    ]
-    """
     When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name
     Then the response code should be 200
     Then the response array key "depends" should contain:
     """json
     [
       "test-entitybasic-to-update-component-1",
-      "test-entitybasic-to-update-component-3"
+      "test-entitybasic-to-update-component-2"
     ]
     """
     Then the response array key "impact" should contain:
     """json
     [
       "test-entitybasic-to-update-resource-1/test-entitybasic-to-update-component-1",
-      "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
+      "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
     ]
-    """
-    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-2
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-entitybasic-to-update-component-2",
-      "changeable_depends": [
-        "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
-      ],
-      "changeable_impact": []
-    }
-    """
-    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-component-2
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "depends": [
-        "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2"
-      ],
-      "impact": []
-    }
-    """
-    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-component-3
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-entitybasic-to-update-component-3",
-      "changeable_depends": [
-        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
-      ],
-      "changeable_impact": [
-        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
-      ]
-    }
-    """
-    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-component-3
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "depends": [
-        "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3"
-      ],
-      "impact": [
-        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
-      ]
-    }
-    """
-    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2",
-      "changeable_depends": [],
-      "changeable_impact": [
-        "test-entitybasic-to-update-component-2"
-      ]
-    }
-    """
-    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-resource-2/test-entitybasic-to-update-component-2
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "depends": [],
-      "impact": [
-        "test-entitybasic-to-update-component-2"
-      ]
-    }
-    """
-    When I do GET /api/v4/entitybasics?_id=test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3",
-      "changeable_depends": [
-        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
-      ],
-      "changeable_impact": [
-        "test-entitybasic-to-update-component-3"
-      ]
-    }
-    """
-    When I do GET /api/v4/entities/context-graph?_id=test-entitybasic-to-update-resource-3/test-entitybasic-to-update-component-3
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "depends": [
-        "test-entitybasic-to-update-connector/test-entitybasic-to-update-connector-name"
-      ],
-      "impact": [
-        "test-entitybasic-to-update-component-3"
-      ]
-    }
     """
 
   Scenario: given invalid update request should return errors
@@ -271,12 +149,6 @@ Feature: Update entity basic
       "sli_avail_state": 4,
       "infos": [
         {}
-      ],
-      "impact": [
-        "test-entity-not-exist"
-      ],
-      "depends": [
-        "test-entity-not-exist"
       ]
     }
     """
@@ -288,58 +160,7 @@ Feature: Update entity basic
         "impact_level": "ImpactLevel should be 10 or less.",
         "sli_avail_state": "SliAvailState should be 3 or less.",
         "category": "Category doesn't exist.",
-        "impact": "Impacts doesn't exist.",
-        "depends": "Depends doesn't exist.",
         "infos.0.name": "Name is missing."
-      }
-    }
-    """
-
-  Scenario: given invalid update request should return errors
-    When I am admin
-    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
-    """json
-    {
-      "impact": [
-        "test-entitybasic-to-edit-impact-1",
-        "test-entitybasic-to-edit-impact-1"
-      ],
-      "depends": [
-        "test-entitybasic-to-edit-impact-2",
-        "test-entitybasic-to-edit-impact-2"
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "depends": "Depends contains duplicate values.",
-        "impact": "Impacts contains duplicate values."
-      }
-    }
-    """
-
-  Scenario: given invalid update request should return errors
-    When I am admin
-    When I do PUT /api/v4/entitybasics?_id=test-entitybasic-to-update:
-    """json
-    {
-      "impact": [
-        "test-entitybasic-to-edit-impact-1"
-      ],
-      "depends": [
-        "test-entitybasic-to-edit-impact-1"
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "depends": "Depends contains duplicate values with Impacts."
       }
     }
     """
@@ -401,9 +222,7 @@ Feature: Update entity basic
       "category": "test-category-to-entitybasic-edit",
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [],
-      "depends": []
+      "infos": []
     }
     """
     Then the response code should be 404

@@ -94,7 +94,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 
 	location := s.timezoneConfigProvider.Get().Location
 	now := libtypes.CpsTime{Time: time.Now().In(location)}
-	pipeline, err := s.getQueryBuilder().CreateListDependenciesAggregationPipeline(service.Depends, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListDependenciesAggregationPipeline(id, r, now)
 	if err != nil {
 		return nil, err
 	}
