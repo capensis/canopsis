@@ -1046,19 +1046,11 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
-      depends:
-        items:
-          type: string
-        type: array
       description:
         maxLength: 255
         type: string
       enabled:
         type: boolean
-      impact:
-        items:
-          type: string
-        type: array
       impact_level:
         maximum: 10
         minimum: 1
@@ -1086,14 +1078,6 @@ definitions:
         type: integer
       category:
         $ref: '#/definitions/entity.Category'
-      changeable_depends:
-        items:
-          type: string
-        type: array
-      changeable_impact:
-        items:
-          type: string
-        type: array
       component:
         type: string
       component_infos:

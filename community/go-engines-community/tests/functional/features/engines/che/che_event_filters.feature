@@ -644,13 +644,7 @@ Feature: modify event on event filter
       "enabled": false,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-che-event-filters-6"
-      ],
-      "depends": [
-        "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
-      ]
+      "infos": []
     }
     """
     Then the response code should be 200
