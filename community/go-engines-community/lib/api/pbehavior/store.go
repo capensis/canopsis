@@ -91,7 +91,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("name", errors.New("Name already exists."))
+			return common.NewValidationError("name", "Name already exists.")
 		}
 
 		_, err = s.dbCollection.InsertOne(ctx, doc)
@@ -311,7 +311,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("name", errors.New("Name already exists."))
+			return common.NewValidationError("name", "Name already exists.")
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -398,7 +398,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 				return err
 			}
 			if err == nil {
-				return common.NewValidationError("name", errors.New("Name already exists."))
+				return common.NewValidationError("name", "Name already exists.")
 			}
 		}
 
