@@ -26,7 +26,7 @@ Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonct
 
 Plusieurs options sont disponibles pour personnaliser l'interface de Canopsis.
 
-Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
+Pour les découvrir, cliquez [ici](../menu-administration/parametres.md)
 
 ## Helpers Handlebars
 

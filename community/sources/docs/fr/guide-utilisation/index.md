@@ -32,7 +32,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 -->
   * [Consignes](menu-administration/consignes.md)
   * [KPI](menu-administration/kpi.md)
+  * [Paramètres](menu-administration/parametres.md)
 <!--
-  * [Paramètres](menu-administration/paramtres.md)
   * [Planification](menu-administration/planification.md)
 -->

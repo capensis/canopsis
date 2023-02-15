@@ -23,7 +23,7 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 ### Administration quotidienne
 
-*  [Stockage des données](stockage-donnees/index.md)
+*  [Stockage des données](../guide-utilisation/menu-administration/parametres#parametres-de-stockage)
 *  [Gestion des composants](gestion-composants/index.md)
 *  [Administration avancée de Canopsis](administration-avancee/index.md)
 *  [Guide de dépannage (Troubleshooting)](../guide-de-depannage/index.md)
