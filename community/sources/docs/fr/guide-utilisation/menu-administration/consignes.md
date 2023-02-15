@@ -1,27 +1,28 @@
-# Mise en œuvre de la remédiation
+# Consignes
+## mise en œuvre de la remédiation
 
-!!! abstract "Pages associées"
-    Cette page fait partie d'une série de trois documentations au sujet de la
-    remédiation dans Canopsis :
+!!! abstract "pages associées"
+    cette page fait partie d'une série de trois documentations au sujet de la
+    remédiation dans canopsis :
     
-    1. La page [La remédiation dans Canopsis][remed-index] présente la
+    1. la page [la remédiation dans canopsis][remed-index] présente la
     fonctionnalité et montre l'exécution d'une consigne pour l'utilisateur
     final ;
-    2. La page en cours décrit la configuration de la remédiation dans Canopsis
+    2. la page en cours décrit la configuration de la remédiation dans canopsis
     pour la gestion des consignes et des jobs ;
-    3. Le guide d'administration
-    [La remédiation et les jobs dans Canopsis][admin-remed] traite de
+    3. le guide d'administration
+    [la remédiation et les jobs dans canopsis][admin-remed] traite de
     l'architecture technique et de la configuration à réaliser pour exécuter des
     jobs dans les ordonnanceurs supportés.
 
 
-## Introduction
+### Introduction
 
 !!! Note
     Disponible à partir de Canopsis 4.0.0
 
-Cette documentation vous permet de mettre en œuvre une remédiation de bout en
-bout.  
+Cette documentation vous permet de mettre en œuvre une remédiation de bout en bout.
+
 Comme expliqué en [préambule][remed-index], l'anatomie d'une remédiation suit le
 schéma ci-après :
 
@@ -38,15 +39,24 @@ graph TD
     E2 -->|3| O6(Opération 3)
 ```
 
-## Les droits
+### Accès
 
-Le module de remédiation est soumis au système de droits sur l'interface et sur
+Le menu `Administratration -> Consignes` vous permet d'accéder à la liste des consignes.  
+![Consignes menu](./img/consignes_menu.png)
+
+La consigne, liste simplement les consignes présentes. Vous pouvez ajouter une consigne vous rendant au chapitre [Créer une consigne](#creer-une-consigne)
+
+![Consigne vue liste](./img/consignes_vue_liste.png)
+
+### Les droits
+
+Le module de remédiation est soumis au [système de droits](./droits.md) sur l'interface et sur
 les API.
 
 **Interface**
 
 Ces droits sont configurés dans le panneau de droits sous l'onglet
-« Technical ».
+« [Technical](./droits.md#technical) ».
 
 | Droits sur l'interface       | Définition                                         |
 |:---------------------------- |:-------------------------------------------------- |
@@ -57,9 +67,9 @@ Ces droits sont configurés dans le panneau de droits sous l'onglet
 
 **API**
 
-Ces droits sont configurés dans le panneau de droits sous l'onglet « API ».
+Ces droits sont configurés dans le panneau de droits sous l'onglet « [API](./droits.md#api) ».
 
-| Droits sur les API      | Définition                                          |
+| Droits sur les API       | Définition                                          |
 |:------------------------ |:--------------------------------------------------- |
 | `Instructions`           | Manipulation des consignes                          |
 | `Runs instructions`      | Exécuter une consigne                               |
@@ -67,29 +77,30 @@ Ces droits sont configurés dans le panneau de droits sous l'onglet « API ».
 | `Job configs`            | Manipulation des configurations des ordonnanceurs   |
 | `Jobs`                   | Manipulation des jobs d'ordonnanceurs               |
 
-## Gestion des consignes
 
 ### Créer une consigne
 
 Pour créer une consigne, rendez-vous dans le menu d'administration de la
 remédiation, onglet « CONSIGNES ».
 
-![Ajout consigne](./img/remediation_instruction_ajout.png)
+![Ajout consigne](./img/consignes_creer_01.png)
 
 Saisissez à présent les différentes étapes et opérations de votre consigne.
 Voici un exemple :
 
 **Nom et description de la consigne**
 
-![Ajout consigne details1](./img/remediation_instruction_ajout_details1.png)
+![Ajout consigne details1](./img/consignes_creer_02.png)
 
 **Étape 1**
 
-![Ajout consigne details2](./img/remediation_instruction_ajout_details2.png)
+![Ajout consigne details2](./img/consignes_creer_03.png)
 
-**Étape 2**
+Puis, ajouter l'**Étape 2**
 
-![Ajout consigne details3](./img/remediation_instruction_ajout_details3.png)
+![Ajout consigne ajout étape](./img/consignes_creer_04.png)
+
+![Ajout consigne details3](./img/consignes_creer_05.png)
 
 !!! Note
     Veuillez noter que les templates des opérations peuvent utiliser des
@@ -99,9 +110,10 @@ Voici un exemple :
 
 Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
-[![Liste consignes](./img/remediation_instruction_liste.png)](./img/remediation_instruction_liste.png){target=_blank}
+![Liste consignes](./img/consignes_creer_06.png)
 
 [templates-payload]: ../../../guide-administration/architecture-interne/templates-golang/#templates-pour-payload
+
 
 ### Assigner une consigne à des alarmes
 
@@ -111,39 +123,28 @@ spécifiques de l'alarme ou de l'entité associée à l'alarme.
 Utilisez pour cela le bouton d'action situé à droite de votre consigne.
 
 
-![Assignation_consigne1](./img/remediation_instruction_assignation1.png)
+![Assignation_consigne1](./img/consignes_tache_association_01.png)
 
 Puis, associez vos alarmes en saisissant les patterns souhaités. Dans notre
 exemple, il s'agit d'assigner la consigne aux alarmes dont la ressource contient
 `ping`.
 
-[![Assignation_consigne2](./img/remediation_instruction_assignation2.png)](./img/remediation_instruction_assignation2.png){target=_blank}
+
+
+![Assignation_consigne2](./img/consignes_tache_association_02.png)
 
 À ce stade, vous pouvez vérifier, dans un bac à alarmes que les alarmes
 sélectionnées par les patterns remplissent bien les conditions de votre consigne.
 
-[![Assignation_consigne3](./img/remediation_instruction_assignation3.png)](./img/remediation_instruction_assignation3.png){target=_blank}
+![Assignation_consigne3](./img/consignes_tache_association_03.png)
 
-### Associer un job à une opération
+## Configuration
 
-!!! attention
-    Pour qu'un job soit disponible, une configuration spécifique est nécessaire.
-    [Consultez ce paragraphe pour cela](#jobs-associes-a-un-ordonnanceur).
+Cet onglet permet de gérer vos ordonnanceurs.  
+![consignes vue configuration](./img/consignes_vue_configuration.png)
 
-Vous avez la possibilité d'associer un job d'ordonnanceur à une opération dans
-une consigne.
 
-Pour cela, dans votre consigne, il vous suffit de sélectionner les jobs qui
-seront présentés à l'utilisateur de la consigne pour exécution.
-
-![Job1](./img/remediation_instruction_job1.png)
-
-Au moment de l'exécution de la consigne, les jobs associés pourront être
-exécutés.
-
-![Job2](./img/remediation_instruction_job2.png)
-
-## Jobs associés à un ordonnanceur
+### Ajouter un ordonnanceur
 
 Pour être en mesure de relier un job à une opération, il est nécessaire de
 définir une configuration d'ordonnanceur, ainsi que le job en lui-même.  
@@ -152,7 +153,7 @@ d'administration des remédiations.
 
 En cliquant sur le « + » en bas à droite, vous accéderez au formulaire suivant :
 
-![Ajout configuration](./img/remediation_configuration_ajout.png)
+![Ajout configuration](./img/consignes_configuration_ajout.png)
 
 Explications sur les champs demandés :
 
@@ -167,6 +168,9 @@ l'ordonnanceur
     expliquée plus en détails dans le
     [guide d'administration de la remédiation][admin-remed].
 
+## Tâches
+
+### Créer une tâche
 Lorsque la configuration d'ordonnanceur est prête, vous pouvez déclarer un
 *job*.
 
@@ -174,7 +178,7 @@ Rendez-vous dans le menu « JOBS » du panneau d'administration des remédiati
 
 En cliquant sur le « + » en bas à droite, vous accéderez au formulaire suivant :
 
-![Ajout jobs](./img/remediation_job_ajout.png)
+![Ajout jobs](./img/consignes_tache_modale_ajout.png)
 
 Explications sur les champs demandés :
 
@@ -188,7 +192,7 @@ l'exécution du job
     L'association de job Rundeck ou AWX est illustrée dans le
     [guide d'administration de la remédiation][admin-remed].
 
-### Payload
+#### Payload
 
 Le *payload* (corps de message) associé à un job permet de variabiliser son
 exécution et ainsi passer des paramètres utiles à l'ordonnanceur de tâches.
@@ -202,6 +206,32 @@ L'utilisation des payloads dans Rundeck et AWX est développée dans le
 [guide d'administration de la remédiation][admin-remed-payloads].
 
 
-[remed-index]: ./index.md
+[remed-index]: ../remediation/index.md
 [admin-remed]: ../../guide-administration/remediation/index.md
 [admin-remed-payloads]: ../../guide-administration/remediation/index.md#utilisation-des-payloads
+
+### Associer un job à une opération
+
+!!! attention
+    Pour qu'un job soit disponible, une configuration spécifique est nécessaire.
+    [Consultez ce paragraphe pour cela](#ajouter-un-ordonnanceur).
+
+Vous avez la possibilité d'associer un job d'ordonnanceur à une opération dans
+une consigne.
+
+Pour cela, dans votre consigne, il vous suffit de sélectionner les jobs qui
+seront présentés à l'utilisateur de la consigne pour exécution.  
+![Job1](./img/consignes_tache_association_01.png)
+
+Pour confirmer que le job est bien associé, la petite pastille s'affiche (**1**).  
+![Job2](./img/consignes_tache_association_02.png)
+
+Au moment de l'exécution de la consigne, les jobs associés pourront être
+exécutés.  
+![Job3](./img/consignes_tache_association_03.png)
+
+
+## Statistiques de remédiation
+
+Cette vue simple, permet d'afficher les statistiques de traitement de vos consignes.  
+![Statistiques vue graphique](./img/consignes_statistiques_liste.png)
