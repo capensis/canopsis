@@ -141,19 +141,15 @@ func (g *generator) runWorkers(
 	ctx context.Context,
 	f func(ctx context.Context, rule parsedRule) (map[string]liblink.LinksByCategory, error),
 ) (map[string]liblink.LinksByCategory, error) {
-	g.rulesMx.RLock()
-	defer g.rulesMx.RUnlock()
-
-	if len(g.rules) == 0 {
-		return nil, nil
-	}
-
 	eg, ctx := errgroup.WithContext(ctx)
 	inCh := make(chan parsedRule)
 	outCh := make(chan map[string]liblink.LinksByCategory)
 
 	go func() {
 		defer close(inCh)
+
+		g.rulesMx.RLock()
+		defer g.rulesMx.RUnlock()
 		for _, rule := range g.rules {
 			select {
 			case <-ctx.Done():
@@ -346,7 +342,6 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			res[alarm.ID], err = g.processCode(ctx, rule.CodeExecutor, arg)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
-				continue
 			}
 
 			continue
@@ -367,7 +362,6 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		res[alarm.ID], err = g.processLinks(rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
-			continue
 		}
 	}
 
@@ -410,7 +404,6 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		})
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
-			continue
 		}
 	}
 
