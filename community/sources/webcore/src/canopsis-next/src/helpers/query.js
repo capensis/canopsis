@@ -283,20 +283,18 @@ export function convertContextUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
-  switch (widgetType) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.context:
-      return convertContextUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.map:
-      return convertMapUserPreferenceToQuery(userPreference);
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
 
-  const func = featuresService.get('helpers.query.convertUserPreferenceToQuery');
+    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+  };
 
-  return func ? func(userPreference, widgetType) : {};
+  const converter = convertersMap[widgetType];
+
+  return converter ? converter(userPreference) : {};
 }
 
 /**
@@ -306,22 +304,19 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.type) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmWidgetToQuery(widget);
-    case WIDGET_TYPES.context:
-      return convertContextWidgetToQuery(widget);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
-    case WIDGET_TYPES.counter:
-      return convertCounterWidgetToQuery(widget);
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
+    [WIDGET_TYPES.context]: convertContextWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
+    [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
 
-  const func = featuresService.get('helpers.query.convertWidgetToQuery');
+    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+  };
 
-  return func ? func(widget) : {};
+  const converter = convertersMap[widget.type];
+
+  return converter ? converter(widget) : {};
 }
 
 /**
