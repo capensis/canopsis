@@ -231,6 +231,7 @@ type Alarm struct {
 type MetaAlarmRule struct {
 	ID   string `bson:"_id" json:"_id"`
 	Name string `bson:"name" json:"name"`
+	Type string `bson:"type" json:"type"`
 }
 
 type AlarmValue struct {
