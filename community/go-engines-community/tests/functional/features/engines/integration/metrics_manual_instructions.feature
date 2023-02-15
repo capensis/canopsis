@@ -456,7 +456,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
 
-  Scenario: given manual instruction and new events should decrease assigned instruction metric on resolve
+  Scenario: given manual instruction and new events should decrease assigned instruction alarms metric on resolve
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -641,7 +641,7 @@ Feature: Metrics should be added on alarm changes
       "data": [
         {
           "timestamp": {{ nowDate }},
-          "assigned": 2,
+          "assigned": 3,
           "executed": 0,
           "ratio": 0
         }
@@ -942,7 +942,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
 
-  Scenario: given manual instruction and new events should decrease executed instruction metrics if alarm is resolved
+  Scenario: given manual instruction and new events should decrease executed instruction metric alarms if alarm is resolved
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -1234,9 +1234,9 @@ Feature: Metrics should be added on alarm changes
       "data": [
         {
           "timestamp": {{ nowDate }},
-          "assigned": 2,
-          "executed": 1,
-          "ratio": 50
+          "assigned": 3,
+          "executed": 2,
+          "ratio": 66.66
         }
       ]
     }
@@ -2676,7 +2676,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
 
-  Scenario: given simplified manual instruction and new events should decrease assigned instruction metric on resolve
+  Scenario: given simplified manual instruction and new events should decrease assigned instruction metric alarms on resolve
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -2856,7 +2856,7 @@ Feature: Metrics should be added on alarm changes
       "data": [
         {
           "timestamp": {{ nowDate }},
-          "assigned": 2,
+          "assigned": 3,
           "executed": 0,
           "ratio": 0
         }
@@ -3422,9 +3422,9 @@ Feature: Metrics should be added on alarm changes
       "data": [
         {
           "timestamp": {{ nowDate }},
-          "assigned": 2,
-          "executed": 1,
-          "ratio": 50
+          "assigned": 3,
+          "executed": 2,
+          "ratio": 66.66
         }
       ]
     }
