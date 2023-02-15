@@ -133,6 +133,18 @@ paths:
           in: query
           schema:
             type: integer
+        - name: alarm_pattern
+          in: query
+          schema:
+            type: string
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+        - name: pbehavior_pattern
+          in: query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -391,6 +403,21 @@ paths:
           in: query
           schema:
             type: integer
+        - in: query
+          name: alarm_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"v.component\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_component\"}}]]"
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
+        - in: query
+          name: pbehavior_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"default_maintenance\"}}]]"
         - name: with_links
           in: query
           description: Links are retrieved from external service so use carefully with big limit.
