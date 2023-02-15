@@ -187,7 +187,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+				return common.NewValidationError("filter", "Filter doesn't exist.")
 			}
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
@@ -195,7 +195,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) == 0 ||
 			len(filter.AlarmPattern) > 0 ||
 			len(filter.PbehaviorPattern) > 0 {
-			return common.NewValidationError("filter", errors.New("Filter cannot be applied."))
+			return common.NewValidationError("filter", "Filter cannot be applied.")
 		}
 
 		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
