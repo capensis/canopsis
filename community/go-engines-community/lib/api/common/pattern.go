@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	ErrNotExistCorporateAlarmPattern     = ValidationError{field: "corporate_alarm_pattern", err: errors.New("CorporateAlarmPattern doesn't exist.")}
-	ErrNotExistCorporateEntityPattern    = ValidationError{field: "corporate_entity_pattern", err: errors.New("CorporateEntityPattern doesn't exist.")}
-	ErrNotExistCorporatePbehaviorPattern = ValidationError{field: "corporate_pbehavior_pattern", err: errors.New("CorporatePbehaviorPattern doesn't exist.")}
+	ErrNotExistCorporateAlarmPattern     = ValidationError{field: "corporate_alarm_pattern", errMsg: "CorporateAlarmPattern doesn't exist."}
+	ErrNotExistCorporateEntityPattern    = ValidationError{field: "corporate_entity_pattern", errMsg: "CorporateEntityPattern doesn't exist."}
+	ErrNotExistCorporatePbehaviorPattern = ValidationError{field: "corporate_pbehavior_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
 )
 
 type AlarmPatternFieldsRequest struct {
