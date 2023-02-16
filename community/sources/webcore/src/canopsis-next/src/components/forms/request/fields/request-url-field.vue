@@ -16,6 +16,7 @@
         :label="urlLabel || $t('common.url')",
         :name="urlFieldName",
         :variables="urlVariables",
+        :error-messages="errors.collect(urlFieldName)",
         required
       )
         template(v-if="helpText", #append="")
