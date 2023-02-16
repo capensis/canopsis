@@ -2,7 +2,7 @@ import flatten from 'flat';
 
 import { DECLARE_TICKET_EXECUTION_STATUSES } from '@/constants';
 
-import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
+import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } from '@/helpers/forms/shared/request';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { removeKeyFromEntities } from '@/helpers/entities';
@@ -228,28 +228,6 @@ export const declareTicketRuleErrorsToForm = (errors, form) => {
 };
 
 /**
- * Convert error structure to form structure
- *
- * @param {Object[]} headersErrors
- * @param {Object[]} headers
- * @return {FlattenErrors}
- */
-export const declareTicketRuleTemplateHeadersVariablesErrorsToForm = (
-  headersErrors,
-  headers,
-) => headersErrors.reduce((acc, { is_valid: isValid, err }, index) => {
-  const header = headers[index];
-
-  if (!isValid) {
-    acc[header.key] = {
-      value: err.message,
-    };
-  }
-
-  return acc;
-}, {});
-
-/**
  * Convert template variables errors structure to form structure
  *
  * @param {Object} errorsObject
@@ -262,24 +240,9 @@ export const declareTicketRuleTemplateVariablesErrorsToForm = (errorsObject, for
   return flatten({
     webhooks: webhooks.reduce((acc, { request }, index) => {
       const webhook = form.webhooks[index];
-      const { url, payload, headers } = request;
-
-      const requestErrors = {};
-
-      if (!url.is_valid) {
-        requestErrors.url = url.err.message;
-      }
-
-      if (!payload.is_valid) {
-        requestErrors.payload = `${payload.err.line}|${payload.err.message}`;
-      }
-
-      if (headers.some(({ is_valid: isValid }) => !isValid)) {
-        requestErrors.headers = declareTicketRuleTemplateHeadersVariablesErrorsToForm(headers, webhook.request.headers);
-      }
 
       acc[webhook.key] = {
-        request: requestErrors,
+        request: requestTemplateVariablesErrorsToForm(request, webhook.request),
       };
 
       return acc;
