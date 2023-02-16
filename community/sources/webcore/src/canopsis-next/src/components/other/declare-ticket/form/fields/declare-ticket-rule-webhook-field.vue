@@ -79,6 +79,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hasAdditionalData: {
+      type: Boolean,
+      default: false,
+    },
     webhookNumber: {
       type: Number,
       required: false,
@@ -203,10 +207,11 @@ export default {
       const variables = [...this.alarmPayloadVariables, ...this.entityPayloadVariables];
 
       if (this.hasPrevious) {
-        variables.push(
-          ...this.payloadVariablesFromPreviousStep,
-          ...this.additionalDataVariables,
-        );
+        variables.push(...this.payloadVariablesFromPreviousStep);
+      }
+
+      if (this.hasAdditionalData) {
+        variables.push(...this.additionalDataVariables);
       }
 
       return variables;
