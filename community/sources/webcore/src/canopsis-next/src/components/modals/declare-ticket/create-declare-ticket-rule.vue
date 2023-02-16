@@ -11,8 +11,11 @@
           flat,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
+        v-btn.orange.white--text(
+          :loading="checking",
+          @click="validateTemplateVariables"
+        ) {{ $t('modals.createDeclareTicketRule.checkSyntax') }}
         v-btn.primary(
-          :disabled="isDisabled",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
@@ -22,14 +25,16 @@
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import {
-  declareTicketRuleErrorsToForm,
   declareTicketRuleToForm,
   formToDeclareTicketRule,
+  declareTicketRuleErrorsToForm,
+  declareTicketRuleTemplateVariablesErrorsToForm,
 } from '@/helpers/forms/declare-ticket-rule';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
 
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 
@@ -44,12 +49,14 @@ export default {
   components: { DeclareTicketRuleForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
+    entitiesTemplateValidatorMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
     return {
       form: declareTicketRuleToForm(this.modal.config.declareTicketRule),
+      checking: false,
     };
   },
   computed: {
@@ -58,8 +65,54 @@ export default {
     },
   },
   methods: {
+    validateRequestHeadersTemplates(headers) {
+      return Promise.all(
+        headers.map(({ value }) => this.validateDeclareTicketRulesVariables({ data: { text: value } })),
+      );
+    },
+
+    async validateRequestTemplates(request) {
+      const [url, payload, headers] = await Promise.all([
+        this.validateDeclareTicketRulesVariables({ data: { text: request.url } }),
+        this.validateDeclareTicketRulesVariables({ data: { text: request.payload } }),
+        this.validateRequestHeadersTemplates(request.headers),
+      ]);
+
+      return {
+        url,
+        payload,
+        headers,
+      };
+    },
+
+    validateWebhooksTemplates(webhooks) {
+      return Promise.all(webhooks.map(async ({ request }) => ({
+        request: await this.validateRequestTemplates(request),
+      })));
+    },
+
+    async validateFormTemplates(form) {
+      return {
+        webhooks: await this.validateWebhooksTemplates(form.webhooks),
+      };
+    },
+
+    async validateTemplateVariables() {
+      this.checking = true;
+
+      try {
+        const errors = await this.validateFormTemplates(this.form);
+
+        this.setFormErrors(declareTicketRuleTemplateVariablesErrorsToForm(errors, this.form));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.checking = false;
+      }
+    },
+
     async submit() {
-      const isFormValid = await this.$validator.validate();
+      const isFormValid = true;
 
       if (isFormValid) {
         try {
