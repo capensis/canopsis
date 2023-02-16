@@ -850,7 +850,6 @@ export default {
     },
   },
   createDeclareTicketRule: {
-    checkSyntax: 'Vérifier la syntaxe',
     create: {
       title: 'Créer une règle de déclaration de ticket',
     },

@@ -850,7 +850,6 @@ export default {
     },
   },
   createDeclareTicketRule: {
-    checkSyntax: 'Check syntax',
     create: {
       title: 'Create a declare ticket rule',
     },

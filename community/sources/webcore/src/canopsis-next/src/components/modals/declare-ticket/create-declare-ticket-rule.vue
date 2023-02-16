@@ -14,7 +14,7 @@
         v-btn.orange.white--text(
           :loading="checking",
           @click="validateTemplateVariables"
-        ) {{ $t('modals.createDeclareTicketRule.checkSyntax') }}
+        ) {{ $t('declareTicket.checkSyntax') }}
         v-btn.primary(
           :loading="submitting",
           type="submit"
