@@ -2,21 +2,21 @@ package pbehaviorexception
 
 import (
 	"context"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"net/http"
 )
 
 func NewApi(
 	transformer ModelTransformer,
 	store Store,
-	computeChan chan<- pbehavior.ComputeTask,
+	computeChan chan<- []string,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) common.CrudAPI {
@@ -32,7 +32,7 @@ func NewApi(
 type api struct {
 	transformer  ModelTransformer
 	store        Store
-	computeChan  chan<- pbehavior.ComputeTask
+	computeChan  chan<- []string
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 }
@@ -198,5 +198,5 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) sendComputeTask() {
-	a.computeChan <- pbehavior.ComputeTask{}
+	a.computeChan <- []string{}
 }

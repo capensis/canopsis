@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
@@ -30,7 +29,7 @@ type API interface {
 
 type api struct {
 	store        Store
-	computeChan  chan<- pbehavior.ComputeTask
+	computeChan  chan<- []string
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 
@@ -39,7 +38,7 @@ type api struct {
 
 func NewApi(
 	store Store,
-	computeChan chan<- pbehavior.ComputeTask,
+	computeChan chan<- []string,
 	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
@@ -221,9 +220,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbh.ID},
-	})
+	a.sendComputeTask([]string{pbh.ID})
 
 	c.JSON(http.StatusCreated, pbh)
 }
@@ -276,9 +273,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbh.ID},
-	})
+	a.sendComputeTask([]string{pbh.ID})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -335,9 +330,7 @@ func (a *api) Patch(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbh.ID},
-	})
+	a.sendComputeTask([]string{pbh.ID})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -363,9 +356,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{id},
-	})
+	a.sendComputeTask([]string{id})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -397,9 +388,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{id},
-	})
+	a.sendComputeTask([]string{id})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -491,9 +480,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		ids = append(ids, pbh.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -591,9 +578,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		ids = append(ids, pbh.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -672,9 +657,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		ids = append(ids, request.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -757,9 +740,7 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 		ids = append(ids, pbh.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -836,15 +817,13 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 		ids = append(ids, id)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-func (a *api) sendComputeTask(task pbehavior.ComputeTask) {
-	a.computeChan <- task
+func (a *api) sendComputeTask(ids []string) {
+	a.computeChan <- ids
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

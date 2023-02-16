@@ -12,9 +12,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/rs/zerolog"
@@ -129,6 +131,33 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			TimezoneConfigProvider:   timezoneConfigProvider,
 			Decoder:                  json.NewDecoder(),
 			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
+		},
+		logger,
+	))
+	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
+		canopsis.PBehaviorConsumerName,
+		canopsis.PBehaviorQueueRecomputeName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		amqpConnection,
+		&recomputeMessageProcessor{
+			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			PbehaviorCollection:      dbClient.Collection(mongo.PbehaviorMongoCollection),
+			EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
+			EventGenerator:           libevent.NewGenerator("engine", "pbehavior"),
+			EventManager:             eventManager,
+			Encoder:                  json.NewEncoder(),
+			Decoder:                  json.NewDecoder(),
+			Publisher:                amqpChannel,
+			Exchange:                 canopsis.FIFOExchangeName,
+			Queue:                    canopsis.FIFOQueueName,
 			Logger:                   logger,
 		},
 		logger,
