@@ -316,7 +316,7 @@ export default {
   },
 };
 ```
-15. If we want we can define widget preparation before displaying main component:
+17. If we want we can define widget preparation before displaying main component:
 ```js
 // file index.js
 export default {
@@ -340,7 +340,7 @@ export default {
   // ...another code
 };
 ```
-16. If we want we can define `vuex` store module and use it in the main widget component:
+18. If we want we can define `vuex` store module and use it in the main widget component:
 ```js
 // file store/index.js
 // ...another code
@@ -377,212 +377,197 @@ export default {
   // ...another code
 };
 ```
-17. Profit!
+19. Profit!
 
 ## Add widget directly into application source code
 Note: *We've added examples of `Counter` widget creation.*
 
 1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
-    ```js
-    // file src/constants/widget.js
+```js
+// file src/constants/widget.js
 
-    export const WIDGET_TYPES = {
-      // ...another widgets
+export const WIDGET_TYPES = {
+  // ...another widgets
 
-      counter: 'Counter', // <-- here. We are using camelCase for keys
-    };
-    ```
-
+  counter: 'Counter', // <-- here. We are using camelCase for keys
+};
+```
 2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/widget.js`:
-    ```js
-    // file src/constants/widget.js
+```js
+// file src/constants/widget.js
 
-    export const WIDGET_ICONS = {
-      // ...another widgets icons
+export const WIDGET_ICONS = {
+  // ...another widgets icons
 
-      [WIDGET_TYPES.counter]: 'view_module', // <-- here. 'view_module' is icon name from material UI
-    };
-    ```
-
+  [WIDGET_TYPES.counter]: 'view_module', // <-- here. 'view_module' is icon name from material UI
+};
+```
 3. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/widget.js`:
-    ```js
-    // file src/constants/widget.js
+```js
+// file src/constants/widget.js
 
-    export const SIDE_BARS = {
-      // ...another widgets
+export const SIDE_BARS = {
+  // ...another widgets
 
-      counterSettings: 'counter-settings', // <-- here. This value should be equal to the component export name in the previous step but in the kebab-kase
-    };
-    ```
-
+  counterSettings: 'counter-settings', // <-- here. This value should be equal to the component export name in the previous step but in the kebab-kase
+};
+```
 4. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/widget.js`:
-    ```js
-    // file src/constants/widget.js
+```js
+// file src/constants/widget.js
 
-    export const SIDE_BARS_BY_WIDGET_TYPES = {
-      // ...another widgets
+export const SIDE_BARS_BY_WIDGET_TYPES = {
+  // ...another widgets
 
-      [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings, // <-- here
-    };
-    ```
-
+  [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings, // <-- here
+};
+```
 5. Create a new component for the widget settings in the `src/components/sidebars/settings`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
-    ```js
-    // file src/components/side-bars/settings/counter.vue
+```js
+// file src/components/side-bars/settings/counter.vue
 
-    import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS } from '@/constants';
    
-    // ...another imports
+// ...another imports
    
-    import { widgetSettingsMixin } from '@/mixins/widget/settings'; // <-- here
+import { widgetSettingsMixin } from '@/mixins/widget/settings'; // <-- here
 
-    export default {
-      name: SIDE_BARS.counter,
+export default {
+  name: SIDE_BARS.counter,
 
-      // ...another code
+  // ...another code
 
-      mixins: [widgetSettingsMixin], // <-- here
-    };
-    ```
-   *Another possible content of the component you can see in another components.*
-
+  mixins: [widgetSettingsMixin], // <-- here
+};
+```
+*Another possible content of the component you can see in another components.*
 6. Include our component into settings. Go to `src/components/sidebars/index.js` and put export for our component (which we've created in the previous step) with `Settings` suffix:
-    ```js
-    // file src/components/sidebars/index.js
+```js
+// file src/components/sidebars/index.js
 
-    // ...another widgets settings exports
-    export { default as CounterSettings } from './settings/counter.vue'; // <-- here
-    ```
-
+// ...another widgets settings exports
+export { default as CounterSettings } from './settings/counter.vue'; // <-- here
+```
 7. Also, we can add special rule for the widget if we have dependency of the canopsis backend `edition`. Example for the `pro` edition:
-    ```js
-    // file src/constants/widget.js
+```js
+// file src/constants/widget.js
 
-    export const WIDGET_TYPES_RULES = {
-      // ..another widgets rules
+export const WIDGET_TYPES_RULES = {
+  // ...another widgets rules
 
-      [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro }, // <-- here. Example for the statsCalendar widget type
-    };
-    ```
-
+  [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro }, // <-- here. Example for the statsCalendar widget type
+};
+```
 8. Put the widget title in the i18n messages `src/i18n/messages/en.js` and `src/i18n/messages/fr.js` (the files has the same structure):
-    ```js
-    export default {
-      // ...another code
+```js
+export default {
+  // ...another code
       
-      modals: {
+  modals: {
+    // ...another code
+       
+    createWidget: {
+      // ...another code
+          
+      types: {
         // ...another code
-        
-        createWidget: {
-          // ...another code
-          
-          types: {
-            // ...another code
             
-            
-            [WIDGET_TYPES.counter]: { // <-- here
-              title: 'Counter',
-            },
-          },
+        [WIDGET_TYPES.counter]: { // <-- here
+          title: 'Counter',
         },
       },
-    };
-    ```
-
+    },
+  },
+};
+```
 9. We should put messages for the widget settings in the i18n messages: `src/i18n/messages/en.js` and `src/i18n/messages/fr.js`:
-    ```js
-    export default {
-      // ...another code
+```js
+export default {
+  // ...another code
       
-      settings: {
-        titles: {
-          // ...another code
-          
-          [SIDE_BARS.counterSettings]: 'Counter settings', // <-- here
-        },
-      },
-    };
-    ```
-
+  settings: {
+    titles: {
+      // ...another code
+      [SIDE_BARS.counterSettings]: 'Counter settings', // <-- here
+    },
+  },
+};
+```
 10. If we need to put default parameters of the widget on creation then we must do the following steps:
-1. Create new file `src/helpers/forms/widgets/counter.js` with parameters preparation
-   ```js
+* Create new file `src/helpers/forms/widgets/counter.js` with parameters preparation
+```js
    // file src/helpers/forms/widgets/counter.js
-
 export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Special parameters preparation for our new widget type
-opened: parameters.opened ?? true,
-blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
-columnSM: parameters.columnSM ?? 6,
-columnMD: parameters.columnMD ?? 4,
-columnLG: parameters.columnLG ?? 3,
-heightFactor: parameters.heightFactor ?? 6,
-margin: parameters.margin
-? { ...parameters.margin }
-: { ...DEFAULT_WIDGET_MARGIN },
-isCorrelationEnabled: parameters.isCorrelationEnabled ?? false,
-levels: parameters.levels
-? cloneDeep(parameters.levels)
-: {
-counter: AVAILABLE_COUNTERS.total,
-colors: { ...ALARM_LEVELS_COLORS },
-values: { ...ALARM_LEVELS },
-},
-alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
+  opened: parameters.opened ?? true,
+  blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
+  columnSM: parameters.columnSM ?? 6,
+  columnMD: parameters.columnMD ?? 4,
+  columnLG: parameters.columnLG ?? 3,
+  heightFactor: parameters.heightFactor ?? 6,
+  margin: parameters.margin
+    ? { ...parameters.margin }
+    : { ...DEFAULT_WIDGET_MARGIN },
+  isCorrelationEnabled: parameters.isCorrelationEnabled ?? false,
+  levels: parameters.levels
+    ? cloneDeep(parameters.levels)
+    : {
+      counter: AVAILABLE_COUNTERS.total,
+      colors: { ...ALARM_LEVELS_COLORS },
+      values: { ...ALARM_LEVELS },
+    },
+  alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
 });
  ```
-2. Put this function call inside `src/helpers/forms/widgets/common.js`:
-   ```js
-   // file src/helpers/forms/widgets/common.js
+* Put this function call inside `src/helpers/forms/widgets/common.js`:
+```js
+// file src/helpers/forms/widgets/common.js
 
-   import { counterWidgetParametersToForm } from './counter';
+import { counterWidgetParametersToForm } from './counter';
 
-   // ...another code
+// ...another code
 
-   export const widgetParametersToForm = ({ type, parameters } = {}) => {
+export const widgetParametersToForm = ({ type, parameters } = {}) => {
    switch (type) {
    // ...another widgets
 
-          case WIDGET_TYPES.counter:
-            return counterWidgetParametersToForm(parameters); // <-- Usage of our function for parameters preparation
-        }
-   };
-   ```
-
+     case WIDGET_TYPES.counter:
+       return counterWidgetParametersToForm(parameters); // <-- Usage of our function for parameters preparation
+   }
+};
+```
 11. Create a folder for the widget components in the `src/components/widgets`. Example: `counter` folder in the `src/components/widgets`.
-
 12. Create a main component for the widget inside our new folder. This component will receive some props: `widget`, `tabId`, `edition`. Example: `counter.vue` in the `src/components/widgets/counter`. Possible content of the component you can see in another components.
-
 13. Put import of our new widget component and put new map value into `widgetProps` in the `src/components/widgets/widget-wrapper.vue`:
-    ```js
-    // file src/components/widgets/widget-wrapper.vue
-    
-    // ...another widgets imports
-    
-    import CounterWidget from './counter/counter.vue'; // <-- here
-    
+```js
+// file src/components/widgets/widget-wrapper.vue
+
+// ...another widgets imports
+
+import CounterWidget from './counter/counter.vue'; // <-- here
+
+// ...another code
+
+export default {
+  components: {
+    // ...another widgets components
+
+    CounterWidget, // <-- here
+  },
+  // ...another code
+  computed: {
     // ...another code
-    
-    export default {
-      components: {
-        // ...another widgets components
-
-        CounterWidget, // <-- here
-      },
+    widgetProps() {
       // ...another code
-      computed: {
-        // ...another code
-        widgetProps() {
-          // ...another code
-        
-          const widgetComponentsMap = {
-            // ...another widgets
 
-            [WIDGET_TYPES.counter]: 'counter-widget', // <-- here
-          };
-        },
-      },
-    };
-    ```
+      const widgetComponentsMap = {
+        // ...another widgets
+
+        [WIDGET_TYPES.counter]: 'counter-widget', // <-- here
+      };
+    },
+  },
+};
+```
 14. If we want to define widget preparer before displaying we can do it in the `src/components/widgets/widget-wrapper.vue` in `preparedWidget` computed property;
 15. Profit!
 
@@ -1133,9 +1118,9 @@ Allows us to add custom modal windows.
 ```js
 // file index.js
 import * as constants from './constants';
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
     modals: {
       components: {
@@ -1143,9 +1128,9 @@ export default {
       },
     },
 
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 
@@ -1155,18 +1140,18 @@ Allows us to add custom dialog props for custom modal windows.
 ```js
 // file index.js
 import * as constants from './constants';
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
     modals: {
-      // ...
+      // ...another code
       dialogPropsMap: {
         [constants.MODALS.customModalWindow]: { maxWidth: 1280, lazy: true },
       },
     },
   },
-  // ...
+  // ...another code
 };
 ```
 #### `components.sidebars.components`
@@ -1175,9 +1160,9 @@ Allows us to add custom sidebar components.
 ```js
 // file index.js
 import * as constants from './constants';
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
     sidebars: {
       components: {
@@ -1186,7 +1171,7 @@ export default {
       },
     },
   },
-  // ...
+  // ...another code
 };
 ```
 
@@ -1196,9 +1181,9 @@ Allows us to add custom main component for custom widget.
 ```js
 // file index.js
 import * as constants from './constants';
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
     widgetWrapper: {
       components: {
@@ -1206,7 +1191,7 @@ export default {
           () => import('./components/widgets/counter-custom.vue'),
       },
     },
-    // ...
+    // ...another code
   },
 };
 ```
@@ -1216,13 +1201,13 @@ Type: `Function`
 Allows us to prepare widget before displaying. **We can use `this` keyword inside this computed property because we have component context here.**
 ```js
 // file index.js
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
-    // ...
+    // ...another code
     widgetWrapper: {
-      // ...
+      // ...another code
       computed: {
         preparedWidget() { // We may use `this` keyword because we have component context here
           if (constants.WIDGET_TYPES.counterCustom !== this.widget.type) {
@@ -1234,9 +1219,9 @@ export default {
         },
       }
     },
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 
@@ -1246,7 +1231,7 @@ Type: `Function`
 Allows us to add custom action into alarms list actions panel. **This computed property must immutably edit received `actions` from arguments and return it.**
 ```js
 // file index.js
-// ...
+// ...another code
 export default {
   components: {
     alarmListActionPanel: {
@@ -1279,7 +1264,7 @@ Type: `Function`
 Allows us to add custom action into alarms list mass actions panel. **This computed property must immutably edit received `actions` from arguments and return it.**
 ```js
 // file index.js
-// ...
+// ...another code
 export default {
   components: {
     alarmListMassActionsPanel: {
@@ -1313,10 +1298,10 @@ Allows us to customize listeners for alarm-list-row component. **This computed p
 ```js
 // file index.js
 import { flow } from 'lodash';
-// ...
+// ...another code
 export default {
   components: {
-    // ...
+    // ...another code
     alarmListRow: {
       computed: {
         listeners(listeners = {}) { // We may use `this` keyword because we have component context here
@@ -1329,12 +1314,12 @@ export default {
             mouseenter: flow([mouseenterListener, listeners.mouseenter].filter(Boolean)),
           };
         },
-        // ...
+        // ...another code
       },
     },
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 
@@ -1343,12 +1328,12 @@ Type: `Function`
 Allows us to customize classes for alarm-list-row component. **This computed property must immutably edit received `classes` from arguments and return it.**
 ```js
 // file index.js
-// ...
+// ...another code
 export default {
   components: {
     alarmListRow: {
       computed: {
-        // ...
+        // ...another code
         classes(classes = {}) { // We may use `this` keyword because we have component context here
           return {
             ...classes,
@@ -1357,9 +1342,9 @@ export default {
         },
       },
     },
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 #### `components.alarmListTable.mixins`
@@ -1368,7 +1353,7 @@ Allows us to define mixins for `alarm-list-table` component. Inside mixin we can
 ```js
 // file mixins/alarm-list-table.js
 export const alarmListTableMixin = {
-  // ...
+  // ...another code
   components: {},
   data() {},
   computed: {},
@@ -1380,20 +1365,20 @@ export const alarmListTableMixin = {
 ```
 ```js
 // file index.js
-// ...
+// ...another code
 import { alarmListTableMixin } from './mixins/alarm-list-table';
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
-    // ...
+    // ...another code
     alarmListTable: {
       mixins: [alarmListTableMixin],
-      // ...
+      // ...another code
     },
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 #### `components.alarmListTable.computed.rowListeners`
@@ -1402,11 +1387,11 @@ Allows us to customize row listeners on `alarm-list-table` component. **This com
 ```js
 // file index.js
 import { flow } from 'lodash';
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
-    // ...
+    // ...another code
     alarmListTable: {
       computed: {
         rowListeners(rowListeners = {}) { // We may use `this` keyword because we have component context here
@@ -1419,12 +1404,12 @@ export default {
             mouseenter: flow([mouseenterListener, listeners.mouseenter].filter(Boolean)),
           };
         },
-        // ...
+        // ...another code
       },
     },
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 #### `components.alarmListTable.computed.additionalComponent`
@@ -1432,14 +1417,14 @@ Type: `Function`
 Allows us to define additional component which will be rendered in the bottom of `alarm-list-table` component.
 ```js
 // file index.js
-// ...
+// ...another code
 export default {
-  // ...
+  // ...another code
   components: {
-    // ...
+    // ...another code
     alarmListTable: {
       computed: {
-        // ...
+        // ...another code
         additionalComponent() { // We may use `this` keyword because we have component context here
           return {
             is: 'special-custom-component', // This component may be async imported in the `alarmListTableMixin`
@@ -1448,12 +1433,12 @@ export default {
             },
           };
         },
-        // ...
+        // ...another code
       },
     },
-    // ...
+    // ...another code
   },
-  // ...
+  // ...another code
 };
 ```
 
