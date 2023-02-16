@@ -16,7 +16,6 @@ export const EVENT_ENTITY_TYPES = {
   changeState: 'changestate',
   declareTicket: 'declareticket',
   snooze: 'snooze',
-  done: 'done',
   validate: 'validate',
   invalidate: 'invalidate',
   pause: 'pause',
@@ -26,9 +25,8 @@ export const EVENT_ENTITY_TYPES = {
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
   comment: 'comment',
-  manualMetaAlarmGroup: 'manual_metaalarm_group',
-  manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
-  manualMetaAlarmUpdate: 'manual_metaalarm_update',
+  createManualMetaAlarm: 'createManualMetaAlarm',
+  removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   stateinc: 'stateinc',
   statedec: 'statedec',
   statusinc: 'statusinc',
@@ -172,138 +170,6 @@ export const ENTITY_STATUS_STYLES = {
   },
 };
 
-export const EVENT_ENTITY_STYLE = {
-  [EVENT_ENTITY_TYPES.ack]: {
-    color: COLORS.entitiesEvents.ack,
-    icon: 'playlist_add_check',
-  },
-  [EVENT_ENTITY_TYPES.fastAck]: {
-    icon: 'check',
-  },
-  [EVENT_ENTITY_TYPES.pbehaviorAdd]: {
-    icon: 'pause',
-  },
-  [EVENT_ENTITY_TYPES.ackRemove]: {
-    color: COLORS.entitiesEvents.ackRemove,
-    icon: 'not_interested',
-  },
-  [EVENT_ENTITY_TYPES.declareTicket]: {
-    color: COLORS.entitiesEvents.declareTicket,
-    icon: 'report_problem',
-  },
-  [EVENT_ENTITY_TYPES.assocTicket]: {
-    icon: 'local_play',
-  },
-  [EVENT_ENTITY_TYPES.delete]: {
-    icon: 'delete',
-  },
-  [EVENT_ENTITY_TYPES.changeState]: {
-    icon: 'thumbs_up_down',
-  },
-  [EVENT_ENTITY_TYPES.snooze]: {
-    color: COLORS.entitiesEvents.snooze,
-    icon: 'alarm',
-  },
-  [EVENT_ENTITY_TYPES.done]: {
-    color: COLORS.entitiesEvents.done,
-    icon: 'assignment_turned_in',
-  },
-  [EVENT_ENTITY_TYPES.validate]: {
-    icon: 'thumb_up',
-  },
-  [EVENT_ENTITY_TYPES.invalidate]: {
-    icon: 'thumb_down',
-  },
-  [EVENT_ENTITY_TYPES.pause]: {
-    icon: 'pause',
-  },
-  [EVENT_ENTITY_TYPES.play]: {
-    icon: 'play_arrow',
-  },
-  [EVENT_ENTITY_TYPES.groupRequest]: {
-    icon: 'note_add',
-  },
-  [EVENT_ENTITY_TYPES.pbhenter]: {
-    color: COLORS.entitiesEvents.pbhenter,
-    icon: 'pause',
-  },
-  [EVENT_ENTITY_TYPES.pbhleave]: {
-    color: COLORS.entitiesEvents.pbhleave,
-    icon: 'play_arrow',
-  },
-  groupChildren: {
-    icon: 'center_focus_strong',
-  },
-  groupParents: {
-    icon: 'center_focus_weak',
-  },
-  [EVENT_ENTITY_TYPES.comment]: {
-    color: COLORS.entitiesEvents.comment,
-    icon: 'comment',
-  },
-  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: {
-    icon: 'center_focus_strong',
-  },
-  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
-    icon: 'link_off',
-  },
-  [EVENT_ENTITY_TYPES.metaalarmattach]: {
-    color: COLORS.entitiesEvents.metaalarmattach,
-    icon: 'center_focus_weak',
-  },
-  [EVENT_ENTITY_TYPES.executeInstruction]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionStart]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionPause]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionResume]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionComplete]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionAbort]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionFail]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionJobStart]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionJobComplete]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionJobAbort]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.instructionJobFail]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.autoInstructionStart]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.autoInstructionComplete]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.autoInstructionFail]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.autoInstructionAlreadyRunning]: {
-    icon: 'assignment',
-  },
-  [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: {
-    icon: 'keyboard_arrow_up',
-  },
-  [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: {
-    icon: 'keyboard_arrow_up',
-  },
-};
-
 export const WEATHER_ACTIONS_TYPES = {
   entityAck: 'entityAck',
   entityAckRemove: 'entityAckRemove',
@@ -336,7 +202,6 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.delete]: 'delete',
   [EVENT_ENTITY_TYPES.changeState]: 'thumbs_up_down',
   [EVENT_ENTITY_TYPES.snooze]: 'alarm',
-  [EVENT_ENTITY_TYPES.done]: 'assignment_turned_in',
   [EVENT_ENTITY_TYPES.validate]: 'thumb_up',
   [EVENT_ENTITY_TYPES.invalidate]: 'thumb_down',
   [EVENT_ENTITY_TYPES.pause]: 'pause',
@@ -345,8 +210,8 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.pbhenter]: 'pause',
   [EVENT_ENTITY_TYPES.pbhleave]: 'play_arrow',
   [EVENT_ENTITY_TYPES.comment]: 'comment',
-  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: 'center_focus_strong',
-  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: 'link_off',
+  [EVENT_ENTITY_TYPES.createManualMetaAlarm]: 'center_focus_strong',
+  [EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
   [EVENT_ENTITY_TYPES.metaalarmattach]: 'center_focus_weak',
   [EVENT_ENTITY_TYPES.executeInstruction]: 'assignment',
   [EVENT_ENTITY_TYPES.instructionStart]: 'assignment',
@@ -366,8 +231,8 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'keyboard_arrow_up',
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'keyboard_arrow_up',
   [EVENT_ENTITY_TYPES.cancel]: 'delete',
-  groupConsequences: 'center_focus_strong',
-  groupCauses: 'center_focus_weak',
+  groupChildren: 'center_focus_strong',
+  groupParents: 'center_focus_weak',
 };
 
 export const EVENT_ENTITY_COLORS_BY_TYPE = {
@@ -375,7 +240,6 @@ export const EVENT_ENTITY_COLORS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.ackRemove]: COLORS.entitiesEvents.ackRemove,
   [EVENT_ENTITY_TYPES.declareTicket]: COLORS.entitiesEvents.declareTicket,
   [EVENT_ENTITY_TYPES.snooze]: COLORS.entitiesEvents.snooze,
-  [EVENT_ENTITY_TYPES.done]: COLORS.entitiesEvents.done,
   [EVENT_ENTITY_TYPES.pbhenter]: COLORS.entitiesEvents.pbhenter,
   [EVENT_ENTITY_TYPES.pbhleave]: COLORS.entitiesEvents.pbhleave,
   [EVENT_ENTITY_TYPES.comment]: COLORS.entitiesEvents.comment,

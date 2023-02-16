@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorreason"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -19,7 +21,7 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
+	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author.name enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
 }
 
 type EntitiesListRequest struct {
@@ -38,7 +40,7 @@ type EditRequest struct {
 	Type       string                             `json:"type" binding:"required"`
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
-	Color      string                             `json:"color" binding:"required,iscolor"`
+	Color      string                             `json:"color" binding:"iscolororempty"`
 
 	common.EntityPatternFieldsRequest
 }
@@ -88,8 +90,8 @@ type FindByEntityIDRequest struct {
 
 type Response struct {
 	ID            string                         `bson:"_id" json:"_id"`
-	Author        string                         `bson:"author" json:"author"`
-	Comments      pbehavior.Comments             `bson:"comments" json:"comments"`
+	Author        *author.Author                 `bson:"author" json:"author"`
+	Comments      []pbehaviorcomment.Response    `bson:"comments" json:"comments"`
 	Enabled       bool                           `bson:"enabled" json:"enabled"`
 	Name          string                         `bson:"name" json:"name"`
 	Reason        *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
@@ -199,7 +201,7 @@ type BulkEntityCreateRequestItem struct {
 	Start   *types.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
 	Stop    *types.CpsTime `json:"tstop" swaggertype:"integer"`
 	Type    string         `json:"type" binding:"required"`
-	Color   string         `json:"color" binding:"required,iscolor"`
+	Color   string         `json:"color" binding:"iscolororempty"`
 	Comment string         `json:"comment"`
 }
 

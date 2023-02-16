@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -16,13 +17,13 @@ import (
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
-	FindViewIds(ctx context.Context, ids []string) ([]string, error)
+	FindViewId(ctx context.Context, id string) (string, error)
 	FindViewIdByWidget(ctx context.Context, widgetId string) (string, error)
 	GetOneBy(ctx context.Context, id, userId string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id, userId string) (bool, error)
-	UpdatePositions(ctx context.Context, filters []string, userId string) (bool, error)
+	UpdatePositions(ctx context.Context, filters []string, widgetId, userId string, isPrivate bool) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
@@ -41,9 +42,9 @@ type store struct {
 	userPrefCollection mongo.DbCollection
 }
 
-func (s *store) FindViewIds(ctx context.Context, ids []string) ([]string, error) {
+func (s *store) FindViewId(ctx context.Context, id string) (string, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
 			"from":         mongo.WidgetMongoCollection,
 			"localField":   "widget",
@@ -63,24 +64,23 @@ func (s *store) FindViewIds(ctx context.Context, ids []string) ([]string, error)
 		}},
 	})
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	defer cursor.Close(ctx)
-	views := make([]string, 0)
-	for cursor.Next(ctx) {
+	if cursor.Next(ctx) {
 		doc := struct {
 			View string `bson:"view"`
 		}{}
 		err = cursor.Decode(&doc)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 
-		views = append(views, doc.View)
+		return doc.View, nil
 	}
 
-	return views, nil
+	return "", nil
 }
 
 func (s *store) FindViewIdByWidget(ctx context.Context, widgetId string) (string, error) {
@@ -154,6 +154,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 		r.Query,
 		pipeline,
 		sort,
+		author.Pipeline(),
 	))
 
 	if err != nil {
@@ -175,7 +176,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 }
 
 func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, error) {
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"_id": id,
 			"$or": bson.A{
@@ -183,7 +184,9 @@ func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, err
 				bson.M{"is_private": false},
 			}},
 		},
-	})
+	}
+	pipeline = append(pipeline, author.Pipeline()...)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -312,75 +315,49 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 	return res, err
 }
 
-func (s *store) UpdatePositions(ctx context.Context, ids []string, userId string) (bool, error) {
+func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, userId string, isPrivate bool) (bool, error) {
 	res := false
+	notFoundIds := make(map[string]struct{}, len(ids))
+	for _, id := range ids {
+		notFoundIds[id] = struct{}{}
+	}
+	if len(ids) != len(notFoundIds) {
+		return false, nil
+	}
+
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
 
-		cursor, err := s.collection.Aggregate(ctx, []bson.M{
-			{"$match": bson.M{"_id": bson.M{"$in": ids}}},
-			{"$group": bson.M{
-				"_id": bson.M{
-					"widget":     "$widget",
-					"is_private": "$is_private",
-				},
-				"users": bson.M{"$addToSet": "$author"},
-				"count": bson.M{"$sum": 1},
-			}},
-			{"$project": bson.M{
-				"widget":     "$_id.widget",
-				"is_private": "$_id.is_private",
-				"users":      1,
-				"count":      1,
-			}},
-		})
+		match := bson.M{
+			"widget":     widgetId,
+			"is_private": isPrivate,
+		}
+		if isPrivate {
+			match["author"] = userId
+		}
+
+		cursor, err := s.collection.Find(ctx, match)
 		if err != nil {
 			return err
 		}
 		defer cursor.Close(ctx)
 
-		doc := struct {
-			Widget    string   `bson:"widget"`
-			IsPrivate bool     `bson:"is_private"`
-			Users     []string `bson:"users"`
-			Count     int      `bson:"count"`
-		}{}
-		if cursor.Next(ctx) {
-			err = cursor.Decode(&doc)
+		for cursor.Next(ctx) {
+			filter := view.WidgetFilter{}
+			err = cursor.Decode(&filter)
 			if err != nil {
 				return err
 			}
 
-			if cursor.Next(ctx) {
-				return ValidationErr{error: errors.New("filters are related to different widgets")}
+			if _, ok := notFoundIds[filter.ID]; ok {
+				delete(notFoundIds, filter.ID)
+			} else {
+				return ValidationErr{error: errors.New("filters are related to different widgets or users")}
 			}
-
-			if doc.IsPrivate {
-				if len(doc.Users) != 1 {
-					return ValidationErr{error: errors.New("filters are related to different users")}
-				}
-				if doc.Users[0] != userId {
-					return nil
-				}
-			}
-
-			if doc.Count != len(ids) {
-				return nil
-			}
-		} else {
-			return nil
 		}
 
-		match := bson.M{"widget": doc.Widget, "is_private": doc.IsPrivate}
-		if doc.IsPrivate {
-			match["author"] = userId
-		}
-		count, err := s.collection.CountDocuments(ctx, match)
-		if err != nil {
-			return err
-		}
-		if count != int64(len(ids)) {
-			return ValidationErr{error: errors.New("filters are missing")}
+		if len(notFoundIds) > 0 {
+			return ValidationErr{error: errors.New("filters are related to different widgets or users")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(ids))

@@ -633,7 +633,7 @@ export default {
     overflow: hidden;
   }
 
-  &.error--text /deep/ .jodit_container {
+  &.error--text ::v-deep .jodit_container {
     margin-bottom: 8px;
 
     .jodit_workplace {
@@ -641,11 +641,11 @@ export default {
     }
   }
 
-  & /deep/ .jodit_toolbar_popup {
+  & ::v-deep .jodit_toolbar_popup {
     z-index: 25;
   }
 
-  & /deep/ .jodit_error_box_for_messages .error {
+  & ::v-deep .jodit_error_box_for_messages .error {
      color: white;
   }
 }

@@ -207,63 +207,15 @@ func (c *center) UpdateEntityInfos(ctx context.Context, entity *types.Entity) (U
 	return updatedServices, nil
 }
 
-func (c *center) getConnectorImpactedServices(ctx context.Context, dependencies []string) ([]string, error) {
-	cursor, err := c.dbCollection.Aggregate(
-		ctx,
-		[]bson.M{
-			{
-				"$match": bson.M{
-					"type":    types.EntityTypeService,
-					"depends": bson.M{"$in": dependencies},
-				},
-			},
-			{
-				"$project": bson.M{
-					"_id": 1,
-				},
-			},
-		},
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	var ids []string
-	for cursor.Next(ctx) {
-		var serviceIdDoc struct {
-			ID string `bson:"_id"`
-		}
-
-		err = cursor.Decode(&serviceIdDoc)
-		if err != nil {
-			return nil, err
-		}
-
-		ids = append(ids, serviceIdDoc.ID)
-	}
-
-	return ids, nil
-}
-
 func (c *center) UpdateImpactedServices(ctx context.Context) error {
-	cursor, err := c.dbCollection.Aggregate(
-		ctx,
-		[]bson.M{
-			{
-				"$match": bson.M{"type": types.EntityTypeConnector},
-			},
-			{
-				"$project": bson.M{
-					"_id":     1,
-					"impact":  1,
-					"depends": 1,
-				},
-			},
-		},
-	)
+	cursor, err := c.dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"connector": bson.M{"$nin": bson.A{nil, ""}}}},
+		{"$unwind": "$services"},
+		{"$group": bson.M{
+			"_id":               "$connector",
+			"impacted_services": bson.M{"$addToSet": "$services"},
+		}},
+	})
 	if err != nil {
 		return err
 	}
@@ -276,9 +228,8 @@ func (c *center) UpdateImpactedServices(ctx context.Context) error {
 
 	for cursor.Next(ctx) {
 		var info struct {
-			ID      string   `bson:"_id"`
-			Impact  []string `bson:"impact"`
-			Depends []string `bson:"depends"`
+			ID               string   `bson:"_id"`
+			ImpactedServices []string `bson:"impacted_services"`
 		}
 
 		err = cursor.Decode(&info)
@@ -286,14 +237,9 @@ func (c *center) UpdateImpactedServices(ctx context.Context) error {
 			return err
 		}
 
-		impServs, err := c.getConnectorImpactedServices(ctx, append(info.Impact, info.Depends...))
-		if err != nil {
-			return err
-		}
-
-		if len(impServs) > 0 {
+		if len(info.ImpactedServices) > 0 {
 			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
-				"$set": bson.M{"impacted_services": impServs},
+				"$set": bson.M{"impacted_services": info.ImpactedServices},
 			})
 		} else {
 			newModel = mongo.NewUpdateOneModel().SetFilter(bson.M{"_id": info.ID}).SetUpdate(bson.M{
@@ -405,11 +351,10 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	connector := types.Entity{
 		ID:            connectorID,
 		Name:          event.ConnectorName,
-		Impacts:       []string{},
-		Depends:       []string{componentID},
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeConnector,
+		Services:      []string{},
 		Infos:         map[string]types.Info{},
 		ImpactLevel:   types.EntityDefaultImpactLevel,
 		Created:       now,
@@ -418,11 +363,10 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	component := types.Entity{
 		ID:            componentID,
 		Name:          event.Component,
-		Impacts:       []string{connectorID},
-		Depends:       []string{},
 		EnableHistory: []types.CpsTime{now},
 		Enabled:       true,
 		Type:          types.EntityTypeComponent,
+		Services:      []string{},
 		Connector:     connectorID,
 		Component:     event.Component,
 		Infos:         map[string]types.Info{},
@@ -431,23 +375,18 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 	}
 	if resourceID == "" {
 		component.LastEventDate = &now
-	} else {
-		connector.Impacts = append(connector.Impacts, resourceID)
-		component.Depends = append(component.Depends, resourceID)
 	}
 
 	var entities []types.Entity
 
 	if entity != nil {
-		if event.SourceType == types.SourceTypeResource && !entity.HasDepend(connectorID) {
+		if event.SourceType == types.SourceTypeResource && (entity.SoftDeleted != nil || entity.Connector != connectorID) {
 			entity.Connector = connectorID
-			entity.Depends = append(entity.Depends, connectorID)
 			entities = []types.Entity{connector, component, *entity}
 		}
 
-		if event.SourceType == types.SourceTypeComponent && !entity.HasImpact(connectorID) {
+		if event.SourceType == types.SourceTypeComponent && (entity.SoftDeleted != nil || entity.Connector != connectorID) {
 			entity.Connector = connectorID
-			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
 		}
 	} else {
@@ -456,11 +395,10 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 			resource := types.Entity{
 				ID:            resourceID,
 				Name:          event.Resource,
-				Impacts:       []string{componentID},
-				Depends:       []string{connectorID},
 				EnableHistory: []types.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
+				Services:      []string{},
 				Connector:     connectorID,
 				Component:     componentID,
 				Infos:         map[string]types.Info{},

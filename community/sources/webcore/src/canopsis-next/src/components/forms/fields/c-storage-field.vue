@@ -2,8 +2,17 @@
   v-layout(row)
     template(v-if="value")
       v-text-field.mt-0.pt-0(:value="value", :disabled="disabled", readonly, hide-details)
-      c-action-btn.ml-2(:disabled="disabled", type="edit", @click="$emit('edit', value)")
-      c-action-btn(:disabled="disabled", type="delete", @click="$emit('remove')")
+      c-action-btn(
+        :disabled="disabled",
+        type="edit",
+        btn-class="ml-2",
+        @click="$emit('edit', value)"
+      )
+      c-action-btn(
+        :disabled="disabled",
+        type="delete",
+        @click="$emit('remove')"
+      )
     v-btn.ml-0(
       v-else,
       :disabled="disabled",
@@ -13,8 +22,11 @@
 </template>
 
 <script>
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
+
 export default {
   inject: ['$validator'],
+  mixins: [validationAttachRequiredMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -28,10 +40,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    required: {
-      type: Boolean,
-      default: false,
-    },
     name: {
       type: String,
       default: 'storage',
@@ -42,38 +50,23 @@ export default {
       this.$validator.validate(this.name);
     },
 
-    disabled(value, oldValue) {
-      if (value && !oldValue) {
-        this.detachRequiredRule();
-      } else {
-        this.attachRequiredRule();
-      }
+    disabled: {
+      immediate: true,
+      handler(disabled) {
+        if (disabled) {
+          this.detachRequiredRule();
+        } else {
+          this.attachRequiredRule(this.requiredRuleGetter);
+        }
+      },
     },
-  },
-  created() {
-    if (!this.disabled) {
-      this.attachRequiredRule();
-    }
   },
   beforeDestroy() {
     this.detachRequiredRule();
   },
   methods: {
-    attachRequiredRule() {
-      const oldField = this.$validator.fields.find({ name: this.name });
-
-      if (!oldField) {
-        this.$validator.attach({
-          name: this.name,
-          rules: 'required:true',
-          getter: () => this.value.length > 0,
-          vm: this,
-        });
-      }
-    },
-
-    detachRequiredRule() {
-      this.$validator.detach(this.name);
+    requiredRuleGetter() {
+      return this.value.length > 0;
     },
   },
 };

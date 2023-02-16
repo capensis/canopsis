@@ -391,6 +391,36 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
 </div>
 `;
 
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: createManualMetaAlarm 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="px-1"
+        >
+          createManualMetaAlarm20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
 exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicket 1`] = `
 <div
   class="chip-container"
@@ -444,36 +474,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
           class="px-1"
         >
           delete20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: done 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          done20
         </span>
       </span>
     </transition-stub>
@@ -991,96 +991,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestSuiteUpdate 
 </div>
 `;
 
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmGroup 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          manual_metaalarm_group20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmUngroup 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          manual_metaalarm_ungroup20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: manualMetaAlarmUpdate 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          manual_metaalarm_update20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
 exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: metaalarmattach 1`] = `
 <div
   class="chip-container"
@@ -1284,6 +1194,36 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
           class="px-1"
         >
           play20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromManualMetaAlarm 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="px-1"
+        >
+          removeAlarmsFromManualMetaAlarm20
         </span>
       </span>
     </transition-stub>

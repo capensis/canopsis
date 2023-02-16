@@ -71,6 +71,7 @@ Feature: Account auth user
       "source": "",
       "ui_groups_navigation_type": "side-bar",
       "ui_language": "en",
+      "ui_theme": "canopsis",
       "ui_tours": {
         "test-tour-to-get-user-1": true
       }

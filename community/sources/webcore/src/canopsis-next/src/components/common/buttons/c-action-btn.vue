@@ -1,15 +1,32 @@
 <template lang="pug">
   v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left")
-    slot(slot="activator", name="button")
-      v-btn.mx-1.c-action-btn__button(
-        :disabled="disabled",
-        :data-test="$attrs['data-test']",
-        :loading="loading",
-        :small="small",
-        icon,
-        @click.stop.prevent="$listeners.click"
-      )
-        v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
+    template(#activator="{ on: tooltipOn }")
+      slot(name="button", :on="tooltipOn")
+        v-badge.c-action-btn__badge(v-if="badgeValue", :color="badgeColor", overlap)
+          template(#badge="")
+            v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left", :disabled="!badgeTooltip")
+              template(#activator="{ on: badgeTooltipOn }")
+                slot(name="badgeIcon", :on="badgeTooltipOn")
+                  v-icon(v-on="badgeTooltipOn", color="white") {{ badgeIcon }}
+              span {{ badgeTooltip }}
+          span(v-on="tooltipOn")
+            v-btn.ma-0(
+              :disabled="disabled",
+              :loading="loading",
+              :small="small",
+              icon,
+              @click.stop.prevent="$listeners.click"
+            )
+              v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
+        span.mx-1(v-else, v-on="tooltipOn")
+          v-btn.ma-0(
+            :disabled="disabled",
+            :loading="loading",
+            :small="small",
+            icon,
+            @click.stop.prevent="$listeners.click"
+          )
+            v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
     span {{ preparedProps.tooltip }}
 </template>
 
@@ -64,6 +81,22 @@ export default {
       type: Boolean,
       required: false,
     },
+    badgeValue: {
+      type: Boolean,
+      default: false,
+    },
+    badgeIcon: {
+      type: String,
+      default: 'priority_high',
+    },
+    badgeColor: {
+      type: String,
+      default: 'error',
+    },
+    badgeTooltip: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     preparedProps() {
@@ -94,3 +127,20 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-action-btn__badge {
+  margin: 6px 4px;
+
+  & ::v-deep .v-badge__badge {
+    top: -4px;
+    right: -4px;
+    height: 16px;
+    width: 16px;
+
+    .v-icon {
+      font-size: 11px;
+    }
+  }
+}
+</style>

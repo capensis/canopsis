@@ -257,11 +257,11 @@ export default {
   .calender-wrapper {
     position: relative;
 
-    & /deep/ .ds-calendar-event {
+    & ::v-deep .ds-calendar-event {
       font-size: 14px;
     }
 
-    & /deep/ .ds-calendar-app.stats-calendar-app {
+    & ::v-deep .ds-calendar-app.stats-calendar-app {
       .ds-calendar-event {
         cursor: pointer !important;
       }
@@ -305,7 +305,7 @@ export default {
       }
 
       &:not(.single) {
-        & /deep/ .ds-calendar-event-menu {
+        & ::v-deep .ds-calendar-event-menu {
           position: relative;
           height: 20px;
 
@@ -320,13 +320,13 @@ export default {
       }
     }
 
-    & /deep/ .ds-week-view {
+    & ::v-deep .ds-week-view {
       .ds-ev-title {
         display: block;
       }
     }
 
-    & /deep/ .ds-day {
+    & ::v-deep .ds-day {
       position: relative;
 
       .ds-dom {

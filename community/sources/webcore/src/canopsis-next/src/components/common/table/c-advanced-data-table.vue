@@ -23,7 +23,7 @@
       )
       v-flex(v-if="hasMassActionsSlot", xs12)
         v-expand-transition
-          v-layout(v-if="selected.length")
+          v-layout.px-3(v-if="selected.length")
             slot(
               name="mass-actions",
               :selected="selected",
@@ -273,7 +273,7 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-data-table {
-  /deep/ thead th {
+  ::v-deep thead th {
     vertical-align: middle;
   }
 
