@@ -1,5 +1,3 @@
-import { merge } from 'lodash';
-
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -45,9 +43,7 @@ import {
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
-import featuresService from '@/services/features';
-
-export default merge({
+export default {
   common: {
     ok: 'Ok',
     undefined: 'Not defined',
@@ -3377,4 +3373,4 @@ export default merge({
       [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Service weather entities',
     },
   },
-}, featuresService.get('i18n.en'));
+};
