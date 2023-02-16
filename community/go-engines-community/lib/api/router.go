@@ -94,7 +94,7 @@ func RegisterRoutes(
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
-	pbhComputeChan chan<- libpbehavior.ComputeTask,
+	pbhComputeChan chan<- []string,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
 	runInfoManager engine.RunInfoManager,
