@@ -3,25 +3,25 @@
     mq-layout(mq="xl")
       v-layout(row, align-center)
         actions-panel-item(
-          v-for="(action, index) in actions",
+          v-for="action in inlineActions",
           v-bind="action",
-          :key="`main-${index}`"
+          :key="action.type"
         )
-        v-menu(v-if="dropDownActions.length", bottom, left, @click.native.stop="")
+        v-menu(v-if="dropdownActions.length", bottom, left, @click.native.stop="")
           template(#activator="{ on }")
             v-btn.mr-0(v-on="on", icon)
               v-icon more_vert
           v-list
             actions-panel-item(
-              v-for="(action, index) in dropDownActions",
+              v-for="action in dropdownActions",
               v-bind="action",
               is-drop-down,
-              :key="`drop-down-${index}`"
+              :key="action.type"
             )
     mq-layout(:mq="['m', 't', 'l']")
       v-layout
         v-menu(
-          v-if="actions.length || dropDownActions.length",
+          v-if="actions.length",
           bottom,
           left,
           @click.native.stop=""
@@ -31,16 +31,10 @@
               v-icon more_vert
           v-list
             actions-panel-item(
-              v-for="(action, index) in actions",
+              v-for="action in actions",
               v-bind="action",
               is-drop-down,
-              :key="`mobile-main-${index}`"
-            )
-            actions-panel-item(
-              v-for="(action, index) in dropDownActions",
-              v-bind="action",
-              is-drop-down,
-              :key="`mobile-drop-down-${index}`"
+              :key="action.type"
             )
 </template>
 
@@ -53,7 +47,6 @@ import ActionsPanelItem from './actions-panel-item.vue';
  * @module alarm
  *
  * @prop {Array} [actions=[]] - Actions object
- * @prop {Array} [dropDownActions=[]] - Drop down actions object
  */
 export default {
   components: { ActionsPanelItem },
@@ -62,9 +55,18 @@ export default {
       type: Array,
       default: () => [],
     },
-    dropDownActions: {
-      type: Array,
-      default: () => [],
+    inlineCount: {
+      type: Number,
+      default: 3,
+    },
+  },
+  computed: {
+    inlineActions() {
+      return this.actions.slice(0, this.inlineCount);
+    },
+
+    dropdownActions() {
+      return this.actions.slice(this.inlineCount);
     },
   },
 };
