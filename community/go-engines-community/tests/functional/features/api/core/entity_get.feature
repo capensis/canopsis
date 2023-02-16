@@ -13,12 +13,10 @@ Feature: Get entities
           "_id": "test-component-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-2",
-            "name": "test-category-to-entity-get-2-name",
-            "author": "test-category-to-entity-get-2-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-2-name"
           },
           "enabled": true,
+          "old_entity_patterns": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "impact_level": 2,
           "infos": {},
@@ -35,12 +33,10 @@ Feature: Get entities
           "_id": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-1",
-            "name": "test-category-to-entity-get-1-name",
-            "author": "test-category-to-entity-get-1-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-1-name"
           },
           "enabled": true,
+          "old_entity_patterns": null,
           "impact_level": 1,
           "infos": {},
           "name": "test-connector-name-to-entity-get",
@@ -56,13 +52,11 @@ Feature: Get entities
           "_id": "test-resource-to-entity-get-1/test-component-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-2",
-            "name": "test-category-to-entity-get-2-name",
-            "author": "test-category-to-entity-get-2-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-2-name"
           },
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,
+          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 3,
           "infos": {
@@ -120,6 +114,7 @@ Feature: Get entities
           "category": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,
+          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 1,
           "infos": {},

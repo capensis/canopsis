@@ -27,7 +27,6 @@ const (
 	DefaultBulkSize                 = 1000
 	DefaultBulkBytesSize            = 16000000 // < MongoDB limit (16 megabytes)
 	DefaultEventAuthor              = "system"
-	DoneAutosolveDelay              = 15 * 60
 	DynamicInfosEngineName          = "engine-dynamic-infos"
 	DynamicInfosQueueName           = "Engine_dynamic_infos"
 	DynamicInfosConsumerName        = "dynamic-infos"
@@ -65,4 +64,6 @@ const (
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
 
 	TechMetricsFlushInterval = time.Second * 10
+
+	EngineConnector = "engine"
 )

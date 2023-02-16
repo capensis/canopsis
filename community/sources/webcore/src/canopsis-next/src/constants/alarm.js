@@ -29,9 +29,9 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
   history: 'history',
   groupRequest: 'groupRequest',
-  manualMetaAlarmGroup: 'manualMetaAlarmGroup',
-  manualMetaAlarmUngroup: 'manualMetaAlarmUngroup',
-  manualMetaAlarmUpdate: 'manualMetaAlarmUpdate',
+  createManualMetaAlarm: 'createManualMetaAlarm',
+  removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
+  updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
 
   ...featuresService.get('constants.ALARM_LIST_ACTIONS_TYPES'),
@@ -155,13 +155,6 @@ export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   },
 ];
 
-export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
-  component: 'metaalarm',
-  connector: 'engine',
-  connector_name: 'correlation',
-  source_type: 'metaalarm',
-};
-
 export const ALARMS_OPENED_VALUES = {
   opened: true,
   all: null,
@@ -199,10 +192,9 @@ export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;
 
 export const ALARM_INTERVAL_FIELDS = {
   timestamp: 't',
-  creationDate: 'creation_date',
-  resolved: 'resolved',
-  lastUpdateDate: 'last_update_date',
-  lastEventDate: 'last_event_date',
+  resolved: 'v.resolved',
+  lastUpdateDate: 'v.last_update_date',
+  lastEventDate: 'v.last_event_date',
 };
 
 export const ALARM_PATTERN_FIELDS = {
@@ -223,6 +215,8 @@ export const ALARM_PATTERN_FIELDS = {
   ack: 'v.ack',
   ackAt: 'v.ack.t',
   ackBy: 'v.ack.a',
+  ackMessage: 'v.ack.m',
+  ackInitiator: 'v.ack.initiator',
   resolvedAt: 'v.resolved',
   ticket: 'v.ticket',
   canceled: 'v.canceled',
@@ -231,8 +225,15 @@ export const ALARM_PATTERN_FIELDS = {
   longOutput: 'v.long_output',
   initialOutput: 'v.initial_output',
   initialLongOutput: 'v.initial_long_output',
+  totalStateChanges: 'v.total_state_changes',
   tags: 'tags',
   activated: 'activated',
+};
+
+export const ALARM_ACK_INITIATORS = {
+  user: 'user',
+  system: 'system',
+  external: 'external',
 };
 
 export const ALARM_STEP_FIELDS = {

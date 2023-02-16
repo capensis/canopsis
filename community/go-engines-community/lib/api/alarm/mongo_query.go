@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -133,7 +134,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now)
-	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.depends", "entity.impact"}
+	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
@@ -191,14 +192,21 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	ctx context.Context,
-	match bson.M,
+	alarmMatch bson.M,
+	entityMatch bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
 	filterRequest FilterRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
-	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+	if len(alarmMatch) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmMatch})
+	}
+	if len(entityMatch) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
+	}
 
 	err := q.handleFilter(ctx, filterRequest)
 	if err != nil {
@@ -995,7 +1003,7 @@ func getEntityCategoryLookup() []bson.M {
 }
 
 func getPbehaviorLookup() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
@@ -1007,13 +1015,6 @@ func getPbehaviorLookup() []bson.M {
 			"pbehavior.last_comment": bson.M{"$arrayElemAt": bson.A{"$pbehavior.comments", -1}},
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.author",
-			"as":           "pbehavior.author",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.reason",
@@ -1021,6 +1022,19 @@ func getPbehaviorLookup() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
+
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+		"pbehavior.last_comment": bson.M{
+			"$cond": bson.M{
+				"if":   "$pbehavior.last_comment._id",
+				"then": "$pbehavior.last_comment",
+				"else": "$$REMOVE",
+			},
+		},
+	}})
+	return pipeline
 }
 
 func getPbehaviorTypeLookup() []bson.M {
@@ -1239,21 +1253,20 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$entity.impact",
-			"connectFromField":        "entity.impact",
-			"connectToField":          "_id",
-			"as":                      "service_impacts",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
-			"maxDepth":                0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "depends",
 		}},
 		{"$addFields": bson.M{
-			"entity.depends_count": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$eq": bson.A{"$entity.type", types.EntityTypeService}},
-				"then": bson.M{"$size": "$entity.depends"},
-				"else": 0,
-			}},
+			"entity.depends_count": bson.M{"$size": "$depends"},
 			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
 		}},
 		{"$project": bson.M{"service_impacts": 0}},

@@ -129,17 +129,6 @@ meta_alarm_rules:
               - test-resource-to-alarm-correlation-get-2-1
               - test-resource-to-alarm-correlation-get-2-3
 
-  metaalarm_rule_alarm_correlation_get_3:
-    <<: *metaaalarm_rule_attribute
-    _id: test-metaalarm-rule-alarm-correlation-get-3
-    name: test-metaalarm-rule-alarm-correlation-get-3-name
-    entity_pattern:
-    alarm_pattern:
-      - - field: v.resource
-          cond:
-            type: eq
-            value: test-resource-to-alarm-correlation-get-3-1
-
   metaalarm_rule_alarm_correlation_get_7:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarm-rule-alarm-correlation-get-7
@@ -237,7 +226,7 @@ meta_alarm_rules:
   meta_alarm_rules_6:
     <<: *metaaalarm_rule_complex
     _id: test-metaalarm-to-get-1
-    author: test-metaalarm-to-get-1-author
+    author: root
     name: Test alarm get
     alarm_pattern:
     entity_pattern:
@@ -332,7 +321,7 @@ meta_alarm_rules:
   meta_alarm_rules_15:
     <<: *metaaalarm_rule_complex
     _id: test-metaalarm-to-get-2
-    author: test-metaalarm-to-get-2-author
+    author: root
     name: Test alarm get
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
     created: 1592215337

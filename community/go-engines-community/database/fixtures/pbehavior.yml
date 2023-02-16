@@ -15,12 +15,14 @@ pbehavior_type:
     description: Default inactive
     icon_name: brightness_3
     type: inactive
+    color: "#979797"
 
   default_active:
     <<: *pbehavior_type
     name: Default active
     description: Default active
     type: active
+    color: "#2FAB63"
 
   default_maintenance:
     <<: *pbehavior_type
@@ -28,6 +30,7 @@ pbehavior_type:
     description: Default maintenance
     icon_name: build
     type: maintenance
+    color: "#BF360C"
 
   default_pause:
     <<: *pbehavior_type
@@ -35,6 +38,7 @@ pbehavior_type:
     description: Default pause
     icon_name: pause
     type: pause
+    color: "#5A6D80"
 
 pbehavior_reason:
   default_reason:

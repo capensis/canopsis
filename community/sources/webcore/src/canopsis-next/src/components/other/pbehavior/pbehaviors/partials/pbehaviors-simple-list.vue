@@ -21,7 +21,7 @@
     v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending", :dense="dense")
       template(#items="{ item }")
         td {{ item.name }}
-        td {{ item.author }}
+        td {{ item.author.name }}
         td
           c-enabled(:value="item.enabled")
         td {{ item.tstart | timezone($system.timezone) }}
@@ -102,7 +102,7 @@ export default {
     headers() {
       const headers = [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author' },
+        { text: this.$t('common.author'), value: 'author.name' },
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehaviors.begins'), value: 'tstart' },
         { text: this.$t('pbehaviors.ends'), value: 'tstop' },

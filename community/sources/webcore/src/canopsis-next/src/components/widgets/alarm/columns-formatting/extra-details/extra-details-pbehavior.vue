@@ -1,10 +1,9 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.secondary.accent-2.white--text(
-        small,
-        slot="activator"
-      ) {{ pbehaviorInfo.icon_name }}
+      template(#activator="{ on }")
+        span.c-extra-details__badge(v-on="on", :style="{ backgroundColor: color }")
+          v-icon(:color="iconColor", small) {{ pbehaviorInfo.icon_name }}
       div
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
@@ -16,12 +15,14 @@
             template(v-if="pbehavior.tstop") &nbsp;- {{ tstop }}
           div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
           div(v-if="pbehavior.last_comment") {{ $t('common.lastComment') }}:
-            div.ml-2 - {{ pbehavior.last_comment.author }}: {{ pbehavior.last_comment.message }}
+            div.ml-2 - {{ pbehavior.last_comment.author.name }}: {{ pbehavior.last_comment.message }}
           v-divider
 </template>
 
 <script>
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
 
 export default {
   props: {
@@ -35,6 +36,14 @@ export default {
     },
   },
   computed: {
+    color() {
+      return getPbehaviorColor(this.pbehavior);
+    },
+
+    iconColor() {
+      return getMostReadableTextColor(this.color, { level: 'AA', size: 'large' });
+    },
+
     tstart() {
       return convertDateToStringWithFormatForToday(this.pbehavior.tstart);
     },

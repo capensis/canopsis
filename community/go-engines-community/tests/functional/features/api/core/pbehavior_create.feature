@@ -49,7 +49,10 @@ Feature: create a PBehavior
     """json
     {
       "enabled": true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "name": "test-pbehavior-to-create-1",
       "tstart": 1591172881,
       "tstop": 1591536400,
@@ -92,8 +95,11 @@ Feature: create a PBehavior
     Then the response body should contain:
     """json
     {
-      "author": "root",
-      "comments": null,
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "comments": [],
       "color": "#FFFFFF",
       "enabled": true,
       "exceptions": [
@@ -191,7 +197,10 @@ Feature: create a PBehavior
     """json
     {
       "enabled": true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "name": "test-pbehavior-to-create-2",
       "tstart": 1591172881,
       "tstop": 1591536400,
@@ -242,7 +251,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-3-name",
       "tstart": 1591172881,
       "tstop": 1591536400,
-      "color": "#FFFFFF",
+      "color": "",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -280,7 +289,7 @@ Feature: create a PBehavior
       "name": "test-pbehavior-to-create-4",
       "tstart": 1591172881,
       "tstop": 1591536400,
-      "color": "#FFFFFF",
+      "color": "",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -394,7 +403,10 @@ Feature: create a PBehavior
     """json
     {
       "enabled":true,
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "name": "test-pbehavior-to-create-5",
       "tstart": 1591172881,
       "tstop": null,
@@ -444,7 +456,6 @@ Feature: create a PBehavior
     """json
     {
       "errors": {
-        "color": "Color is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
         "entity_pattern": "EntityPattern is missing.",
@@ -781,3 +792,21 @@ Feature: create a PBehavior
     Then the response code should be 201
     When I do DELETE /api/v4/pbehaviors/{{ .lastResponse._id}}
     Then the response code should be 204
+
+  Scenario: given invalid create request with invalid color should return error
+    When I am admin
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "color": "notcolor"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "color": "Color is not valid."
+      }
+    }
+    """

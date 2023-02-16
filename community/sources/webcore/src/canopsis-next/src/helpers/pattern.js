@@ -18,6 +18,8 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_OPERATORS,
   SERVICE_WEATHER_PATTERN_FIELDS,
+  OLD_PATTERNS_FIELDS,
+  OLD_PATTERN_FIELDS_TO_NEW_FIELDS,
 } from '@/constants';
 
 import { isValidDateInterval } from '@/helpers/date/date';
@@ -502,3 +504,19 @@ export const createEntityIdPatternByValue = value => [[{
     value,
   },
 }]];
+
+/**
+ * Check if pattern for source is old (was not migrated)
+ *
+ * @param {Object} source
+ * @param {string[]} [oldFields = OLD_PATTERNS_FIELDS.mongoQuery]
+ * @returns {boolean}
+ */
+export const isOldPattern = (source, oldFields = [OLD_PATTERNS_FIELDS.mongoQuery]) => {
+  const notEmptyOldFields = oldFields.filter(field => source[field]);
+
+  return !!notEmptyOldFields.length
+    && notEmptyOldFields.every(field => (
+      OLD_PATTERN_FIELDS_TO_NEW_FIELDS[field].every(newField => !source[newField]?.length)
+    ));
+};

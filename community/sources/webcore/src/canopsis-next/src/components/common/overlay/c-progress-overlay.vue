@@ -44,7 +44,7 @@ export default {
     right: 0;
     z-index: 2;
 
-    & /deep/ .v-progress-circular {
+    & ::v-deep .v-progress-circular {
       top: 50%;
       left: 50%;
       margin-top: -16px;

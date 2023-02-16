@@ -2,11 +2,14 @@ package entity
 
 import (
 	"context"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type DisabledCleaner interface {
@@ -14,23 +17,23 @@ type DisabledCleaner interface {
 }
 
 type worker struct {
-	store              Store
-	dataStorageAdapter datastorage.Adapter
-	metricMetaUpdater  metrics.MetaUpdater
-	logger             zerolog.Logger
+	dataStorageAdapter        datastorage.Adapter
+	dataStorageConfigProvider config.DataStorageConfigProvider
+	metricMetaUpdater         metrics.MetaUpdater
+	logger                    zerolog.Logger
 }
 
 func NewDisabledCleaner(
-	store Store,
 	adapter datastorage.Adapter,
+	dataStorageConfigProvider config.DataStorageConfigProvider,
 	metricMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) DisabledCleaner {
 	return &worker{
-		store:              store,
-		dataStorageAdapter: adapter,
-		metricMetaUpdater:  metricMetaUpdater,
-		logger:             logger,
+		dataStorageAdapter:        adapter,
+		dataStorageConfigProvider: dataStorageConfigProvider,
+		metricMetaUpdater:         metricMetaUpdater,
+		logger:                    logger,
 	}
 }
 
@@ -44,46 +47,66 @@ func (w *worker) RunCleanerProcess(ctx context.Context, ch <-chan CleanTask) {
 				return
 			}
 
-			if *task.Archive {
-				archived, err := w.store.ArchiveDisabledEntities(ctx, task.ArchiveDependencies)
-				if err != nil {
-					w.logger.Err(err).Msg("Failed to archive entities")
-					continue
-				}
-
-				err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
-					Time:     types.CpsTime{Time: time.Now()},
-					Archived: archived,
-				})
-				if err != nil {
-					w.logger.Err(err).Msg("Failed to update entity history")
-					continue
-				}
-
-				if archived > 0 {
-					w.metricMetaUpdater.UpdateAll(ctx)
-				}
-
-				w.logger.Info().Int64("alarm number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
-				continue
-			}
-
-			deleted, err := w.store.DeleteArchivedEntities(ctx)
-			if err != nil {
-				w.logger.Err(err).Msg("Failed to delete archived entities")
-				continue
-			}
-
-			err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
-				Time:    types.CpsTime{Time: time.Now()},
-				Deleted: deleted,
-			})
-			if err != nil {
-				w.logger.Err(err).Msg("Failed to update entity history")
-				continue
-			}
-
-			w.logger.Info().Int64("alarm number", deleted).Str("user", task.UserID).Msg("archived entities have been deleted")
+			w.processTask(ctx, task)
 		}
 	}
+}
+
+func (w *worker) processTask(ctx context.Context, task CleanTask) {
+	dbClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+		w.dataStorageConfigProvider.Get().MongoClientTimeout, w.logger)
+	if err != nil {
+		w.logger.Err(err).Msg("cannot connect to mongo")
+		return
+	}
+
+	defer func() {
+		err = dbClient.Disconnect(ctx)
+		if err != nil {
+			w.logger.Err(err).Msg("cannot disconnect from mongo")
+		}
+	}()
+
+	arch := NewArchiver(dbClient)
+
+	if *task.Archive {
+		archived, err := arch.ArchiveDisabledEntities(ctx, task.ArchiveDependencies)
+		if err != nil {
+			w.logger.Err(err).Msg("Failed to archive entities")
+			return
+		}
+
+		err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
+			Time:     types.CpsTime{Time: time.Now()},
+			Archived: archived,
+		})
+		if err != nil {
+			w.logger.Err(err).Msg("Failed to update entity history")
+			return
+		}
+
+		if archived > 0 {
+			w.metricMetaUpdater.UpdateAll(ctx)
+		}
+
+		w.logger.Info().Int64("entities_number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
+		return
+	}
+
+	deleted, err := arch.DeleteArchivedEntities(ctx)
+	if err != nil {
+		w.logger.Err(err).Msg("Failed to delete archived entities")
+		return
+	}
+
+	err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
+		Time:    types.CpsTime{Time: time.Now()},
+		Deleted: deleted,
+	})
+	if err != nil {
+		w.logger.Err(err).Msg("Failed to update entity history")
+		return
+	}
+
+	w.logger.Info().Int64("alarm_number", deleted).Str("user", task.UserID).Msg("archived entities have been deleted")
 }
