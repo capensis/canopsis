@@ -46,7 +46,7 @@ export default {
     color: inherit;
     text-decoration: none;
 
-  &.router-link-active /deep/ .v-card {
+  &.router-link-active ::v-deep .v-card {
      background-color: #73879a !important;
      border-color: #73879a !important;
    }

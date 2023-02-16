@@ -3,18 +3,18 @@ package executor
 import (
 	"context"
 
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func NewResolveDoneExecutor() operationlib.Executor {
-	return &resolveDoneExecutor{}
+func NewResolveDeletedExecutor() operation.Executor {
+	return &resolveDeletedExecutor{}
 }
 
-type resolveDoneExecutor struct {
+type resolveDeletedExecutor struct {
 }
 
-func (e *resolveDoneExecutor) Exec(
+func (e *resolveDeletedExecutor) Exec(
 	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
@@ -22,16 +22,17 @@ func (e *resolveDoneExecutor) Exec(
 	_ types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
-	if alarm.Value.Resolved != nil || alarm.Value.Done == nil {
+	if alarm.Value.Resolved != nil || entity.SoftDeleted == nil {
 		return "", nil
 	}
+
+	entity.IdleSince = nil
+	entity.LastIdleRuleApply = ""
 
 	err := alarm.PartialUpdateResolve(types.NewCpsTime())
 	if err != nil {
 		return "", err
 	}
-	entity.IdleSince = nil
-	entity.LastIdleRuleApply = ""
 
 	return types.AlarmChangeTypeResolve, nil
 }

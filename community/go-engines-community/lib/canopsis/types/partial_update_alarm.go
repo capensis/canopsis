@@ -184,7 +184,7 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 		"Pbehavior %s. Type: %s. Reason: %s.",
 		a.Value.PbehaviorInfo.Name,
 		a.Value.PbehaviorInfo.TypeName,
-		a.Value.PbehaviorInfo.Reason,
+		a.Value.PbehaviorInfo.ReasonName,
 	)
 
 	leaveStep := NewAlarmStep(AlarmStepPbhLeave, timestamp, author, leaveOutput, userID, role, initiator)
@@ -314,25 +314,6 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 		"v.current_state_duration": a.Value.CurrentStateDuration,
 		"v.active_duration":        a.Value.ActiveDuration,
 	})
-
-	return nil
-}
-
-func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, userID, role, initiator string) error {
-	if a.Value.Done != nil {
-		return nil
-	}
-
-	newStep := NewAlarmStep(AlarmStepDone, timestamp, author, output, userID, role, initiator)
-	a.Value.Done = &newStep
-
-	err := a.Value.Steps.Add(newStep)
-	if err != nil {
-		return err
-	}
-
-	a.AddUpdate("$set", bson.M{"v.done": a.Value.Done})
-	a.AddUpdate("$push", bson.M{"v.steps": a.Value.Done})
 
 	return nil
 }

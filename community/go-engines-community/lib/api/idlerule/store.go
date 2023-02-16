@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
@@ -37,13 +38,13 @@ func NewStore(db mongo.DbClient) Store {
 		collection:            db.Collection(mongo.IdleRuleMongoCollection),
 		entityCollection:      db.Collection(mongo.EntityMongoCollection),
 		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
-		defaultSearchByFields: []string{"_id", "name", "description", "author"},
+		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
 		defaultSortBy:         "created",
 	}
 }
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	pipeline := author.Pipeline()
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -78,6 +79,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 		{"$match": bson.M{"_id": id}},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	pipeline = append(pipeline, author.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

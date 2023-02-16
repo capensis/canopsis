@@ -61,7 +61,7 @@ Feature: execute request on event
             "password": "test"
           },
           "headers": {"Content-Type": "application/json"},
-          "payload": "{\"name\":\"test-scenario-webhook-rpc-2\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"test-scenario-webhook-rpc-2-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+          "payload": "{\"priority\": 10068,\"name\":\"test-scenario-webhook-rpc-2\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"test-scenario-webhook-rpc-2-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
         },
         "declare_ticket": {
           "empty_response": false,
@@ -179,13 +179,13 @@ Feature: execute request on event
             "password": "test"
           },
           "headers": {"Content-Type": "application/json"},
-          "payload": "{\"name\":\"test-scenario-webhook-rpc-3\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"test-scenario-webhook-rpc-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+          "payload": "{\"priority\": 10069,\"name\":\"test-scenario-webhook-rpc-3\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"test-scenario-webhook-rpc-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
         },
         "declare_ticket": {
           "empty_response": false,
           "is_regexp": true,
           "ticket_id": ".*id.*",
-          "scenario_name": ".*name.*"
+          "scenario_name": "^name$"
         }
       }
     }

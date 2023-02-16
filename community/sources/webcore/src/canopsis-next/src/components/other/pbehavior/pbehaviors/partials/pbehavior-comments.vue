@@ -6,7 +6,7 @@
     template(v-for="(comment, index) in comments")
       v-list-tile(:key="comment._id")
         v-list-tile-content
-          v-list-tile-title {{ comment.author }}
+          v-list-tile-title {{ comment.author.name }}
           v-list-tile-sub-title {{ comment.message }}
       v-divider(v-if="index < comments.length - 1", :key="`divider-${index}`")
 </template>
@@ -24,7 +24,7 @@ export default {
 
 <style lang="scss" scoped>
   .comments-list {
-    & /deep/ .v-list__tile {
+    & ::v-deep .v-list__tile {
       height: auto;
 
       &__sub-title {

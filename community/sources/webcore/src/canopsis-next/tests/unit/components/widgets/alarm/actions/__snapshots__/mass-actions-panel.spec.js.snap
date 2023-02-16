@@ -45,9 +45,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     Suggest group request for meta alarm|note_add|groupRequest
   </button>
   <button
-    class="action-manualMetaAlarmGroup"
+    class="action-createManualMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|manualMetaAlarmGroup
+    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
   </button>
 </div>
 `;
@@ -97,9 +97,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     Suggest group request for meta alarm|note_add|groupRequest
   </button>
   <button
-    class="action-manualMetaAlarmGroup"
+    class="action-createManualMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|manualMetaAlarmGroup
+    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
   </button>
 </div>
 `;

@@ -3,7 +3,7 @@ Feature: Create a widget filter
   Only admin should be able to create a widget filter
 
   Scenario: given create public request should return ok
-    When I am admin
+    When I am test-role-to-widget-filter-edit-2
     When I do POST /api/v4/widget-filters:
     """json
     {
@@ -49,7 +49,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "test-user-to-widget-filter-edit-2",
+        "name": "test-user-to-widget-filter-edit-2"
+      },
       "title": "test-widgetfilter-to-create-1-title",
       "is_private": false,
       "alarm_pattern": [
@@ -92,7 +95,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "test-user-to-widget-filter-edit-2",
+        "name": "test-user-to-widget-filter-edit-2"
+      },
       "title": "test-widgetfilter-to-create-1-title",
       "is_private": false,
       "alarm_pattern": [
@@ -132,7 +138,7 @@ Feature: Create a widget filter
     """
 
   Scenario: given create private request should return ok
-    When I am test-role-to-widget-filter-edit
+    When I am test-role-to-widget-filter-edit-1
     When I do POST /api/v4/widget-filters:
     """json
     {
@@ -178,7 +184,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "test-user-to-widget-filter-edit",
+      "author": {
+        "_id": "test-user-to-widget-filter-edit-1",
+        "name": "test-user-to-widget-filter-edit-1"
+      },
       "title": "test-widgetfilter-to-create-4-title",
       "is_private": true,
       "alarm_pattern": [
@@ -221,7 +230,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "test-user-to-widget-filter-edit",
+      "author": {
+        "_id": "test-user-to-widget-filter-edit-1",
+        "name": "test-user-to-widget-filter-edit-1"
+      },
       "title": "test-widgetfilter-to-create-4-title",
       "is_private": true,
       "alarm_pattern": [
@@ -277,7 +289,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-2-title",
       "is_private": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -326,7 +341,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-2-title",
       "is_private": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -388,7 +406,10 @@ Feature: Create a widget filter
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "title": "test-widgetfilter-to-create-3-title",
       "is_private": true,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-4",
@@ -466,7 +487,7 @@ Feature: Create a widget filter
     Then the response code should be 403
 
   Scenario: given create private request and auth user without view permission should not allow access
-    When I am test-role-to-widget-filter-edit
+    When I am test-role-to-widget-filter-edit-1
     When I do POST /api/v4/widget-filters:
     """json
     {

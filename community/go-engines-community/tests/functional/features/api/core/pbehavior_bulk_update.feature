@@ -124,7 +124,7 @@ Feature: Bulk update a pbehaviors
         "name": "test-pbehavior-to-bulk-update-2-name-updated",
         "tstart": 1591172881,
         "tstop": 1591536400,
-        "color": "#FFFFFF",
+        "color": "",
         "type": "test-type-to-pbh-edit-1",
         "reason": "test-reason-to-pbh-edit",
         "entity_pattern": [
@@ -252,7 +252,6 @@ Feature: Bulk update a pbehaviors
           "name": "Name is missing.",
           "entity_pattern": "EntityPattern is missing.",
           "tstart": "Start is missing.",
-          "color": "Color is missing.",
           "reason": "Reason is missing.",
           "type": "Type is missing."
         }
@@ -298,7 +297,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-2-name-updated",
           "tstart": 1591172881,
           "tstop": 1591536400,
-          "color": "#FFFFFF",
+          "color": "",
           "type": "test-type-to-pbh-edit-1",
           "reason": "test-reason-to-pbh-edit",
           "entity_pattern": [
@@ -368,7 +367,10 @@ Feature: Bulk update a pbehaviors
               "_id": "test-exception-to-pbh-edit"
             }
           ],
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1592215337
         },
         {
@@ -377,7 +379,7 @@ Feature: Bulk update a pbehaviors
           "name": "test-pbehavior-to-bulk-update-2-name-updated",
           "tstart": 1591172881,
           "tstop": 1591536400,
-          "color": "#FFFFFF",
+          "color": "",
           "type": {
             "_id": "test-type-to-pbh-edit-1"
           },
@@ -409,7 +411,10 @@ Feature: Bulk update a pbehaviors
               "_id": "test-exception-to-pbh-edit"
             }
           ],
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1592215337
         }
       ],

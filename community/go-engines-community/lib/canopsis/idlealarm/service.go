@@ -56,7 +56,7 @@ type baseService struct {
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	now := types.NewCpsTime()
-	eventGenerator := libevent.NewGenerator(s.entityAdapter)
+	eventGenerator := libevent.NewGenerator("engine", "axe")
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
@@ -179,7 +179,7 @@ func (s *baseService) applyRules(
 				Entity: entity,
 			}, now)
 			if err != nil {
-				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				s.logger.Error().Err(err).Str("idle_rule", rule.ID).Msg("match idle rule returned error, skip")
 				continue
 			}
 
@@ -189,7 +189,7 @@ func (s *baseService) applyRules(
 		case idlerule.RuleTypeEntity:
 			matched, err := rule.Matches(types.AlarmWithEntity{Entity: entity}, now)
 			if err != nil {
-				s.logger.Error().Err(err).Str("idle rule", rule.ID).Msg("match idle rule returned error, skip")
+				s.logger.Error().Err(err).Str("idle_rule", rule.ID).Msg("match idle rule returned error, skip")
 				continue
 			}
 
@@ -316,7 +316,7 @@ func (s *baseService) applyEntityRule(
 	event := types.Event{}
 	if alarm == nil {
 		var err error
-		event, err = eventGenerator.Generate(ctx, entity)
+		event, err = eventGenerator.Generate(entity)
 		if err != nil {
 			return nil, err
 		}

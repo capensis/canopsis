@@ -42,9 +42,10 @@ import {
   EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
+  ALARM_INTERVAL_FIELDS,
 } from '@/constants';
 
-import featureService from '@/services/features';
+import featuresService from '@/services/features';
 
 export default merge({
   common: {
@@ -264,6 +265,8 @@ export default merge({
     acked: 'Acquitté',
     ackedAt: 'Acquitté à',
     ackedBy: 'Acquitté par',
+    ackMessage: 'Message de l\'acquittement',
+    ackInitiator: 'Origine de l\'acquittement',
     resolvedAt: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
@@ -294,6 +297,7 @@ export default merge({
     timestamp: 'Horodatage',
     trigger: 'Déclencheur | Déclencheurs',
     initialLongOutput: 'Sortie initiale longue',
+    totalStateChanges: 'Changements d\'état totaux',
     theme: 'Thème | Thèmes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -464,10 +468,6 @@ export default merge({
       [TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
       },
-      [TRIGGERS.done]: {
-        text: 'Alarme en statut "done"',
-        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
-      },
       [TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
       },
@@ -631,8 +631,8 @@ export default merge({
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour méta-alarmes',
-        manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
-        manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
+        createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
+        removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
@@ -727,7 +727,7 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Nombre d\'alarmes avec acquittement',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: 'Number of active alarms with acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: 'Nombre d\'accusés de réception annulés',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre d\'alarmes actives avec tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre d\'alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '% d\'alarmes corrélées',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '% d\'alarmes avec remédiation automatique',
@@ -1149,6 +1149,9 @@ export default merge({
             message: 'Message',
           },
         },
+        color: {
+          label: 'Utiliser une couleur spéciale pour cet événement ?',
+        },
       },
       errors: {
         invalid: 'Invalide',
@@ -1488,6 +1491,12 @@ export default merge({
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
+      },
+      canonicalTypes: {
+        [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+        [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+        [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -2366,7 +2375,7 @@ export default merge({
 
   pbehaviorTypes: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
-    defaultType: 'Le type par défaut ne peut pas être modifié.',
+    defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
@@ -2629,7 +2638,7 @@ export default merge({
 
   remediationInstructionStats: {
     alarmsTimeline: 'Chronologie des alarmes',
-    executedAt: 'Exécuté à',
+    executedAt: 'Fin execution à',
     lastExecutedOn: 'Dernière exécution le',
     modifiedOn: 'Dernière modification le',
     averageCompletionTime: 'Temps moyen\nd\'achèvement',
@@ -2877,9 +2886,12 @@ export default merge({
     },
     remediation: {
       title: 'Stockage des données de consigne',
-      accumulateAfter: 'Accumuler les statistiques des consignes après',
-      deleteAfter: 'Supprimer les données des consignes après',
-      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+      deleteAfter: 'Supprimer les données de la chronologie des instructions après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
+      deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
+      deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
+      deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
+      deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -2924,6 +2936,12 @@ export default merge({
   quickRanges: {
     title: 'Valeurs usuelles',
     timeField: 'Champ de temps',
+    intervalFields: {
+      [ALARM_INTERVAL_FIELDS.timestamp]: 'Date de création',
+      [ALARM_INTERVAL_FIELDS.resolved]: 'Résolu à',
+      [ALARM_INTERVAL_FIELDS.lastUpdateDate]: 'Date de la dernière mise à jour',
+      [ALARM_INTERVAL_FIELDS.lastEventDate]: 'Date du dernier événement',
+    },
     types: {
       [QUICK_RANGES.custom.value]: 'Personnalisé',
       [QUICK_RANGES.last15Minutes.value]: '15 dernières minutes',
@@ -3126,7 +3144,7 @@ export default merge({
       [ALARM_METRIC_PARAMETERS.ackAlarms]: '{value} alarmes avec ack',
       [ALARM_METRIC_PARAMETERS.ackActiveAlarms]: '{value} alarmes actives avec acks',
       [ALARM_METRIC_PARAMETERS.cancelAckAlarms]: '{value} alarmes avec acquittement annulé',
-      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec acks',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: '{value} alarmes actives avec tickets',
       [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: '{value} alarmes actives sans tickets',
       [ALARM_METRIC_PARAMETERS.ratioCorrelation]: '{value}% d\'alarmes avec correction automatique',
       [ALARM_METRIC_PARAMETERS.ratioInstructions]: '{value}% d\'alarmes avec consigne',
@@ -3178,6 +3196,7 @@ export default merge({
     noData: 'Aucun modèle. Cliquez sur \'@:pattern.addGroup\' pour ajouter des champs au modèle',
     noDataDisabled: 'Aucun modèle.',
     discard: 'Effacer le motif',
+    oldPatternTooltip: 'Les modèles de filtre ne sont pas migrés',
     types: {
       [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
       [PATTERN_TYPES.entity]: 'Modèle d\'entité',
@@ -3190,11 +3209,8 @@ export default merge({
       countOverLimit: 'Le modèle que vous avez défini cible {count} éléments. Cela peut affecter les performances, en êtes-vous sûr ?',
       oldPattern: 'Le modèle de filtre actuel est défini dans l\'ancien format. Veuillez utiliser l\'éditeur avancé pour l\'afficher. Les filtres dans l\'ancien format seront bientôt obsolètes. Veuillez créer de nouveaux modèles dans notre interface mise à jour.',
       existExcluded: 'Les règles incluent la règle exclue.',
+      required: 'Au moins un modèle doit être défini. Veuillez définir des modèles de filtre pour la règle',
     },
-  },
-
-  filter: {
-    oldPattern: 'Ancien format de filtre',
   },
 
   map: {
@@ -3321,4 +3337,4 @@ export default merge({
     generateDump: 'Générer un nouveau dump',
     downloadDump: 'Télécharger le dump',
   },
-}, featureService.get('i18n.fr'));
+}, featuresService.get('i18n.fr'));

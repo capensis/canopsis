@@ -6,37 +6,40 @@
     :total-items="totalItems",
     :pagination="pagination",
     :is-disabled-item="isDisabledType",
-    :select-all="deletable",
+    :select-all="removable",
     expand,
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(#toolbar="{ selected }")
-      v-flex(v-show="deletable && selected.length", xs4)
-        c-action-btn(type="delete", @click="$emit('remove-selected', selected)")
+    template(#mass-actions="{ selected }")
+      c-action-btn(
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
     template(#icon_name="{ item }")
-      span.pbehavior-type-icon.secondary(v-if="item.icon_name")
-        v-icon(color="white", size="18") {{ item.icon_name }}
+      v-chip.pbehavior-type-icon(:color="item.color")
+        v-icon(:color="getIconColor(item.color)", size="18") {{ item.icon_name }}
     template(#actions="{ item }")
       v-layout
         c-action-btn(
-          :disabled="!item.editable",
-          :tooltip="item.editable ? $t('common.edit') : $t('pbehaviorTypes.defaultType')",
           type="edit",
           @click="$emit('edit', item)"
         )
         c-action-btn(
           :disabled="!item.deletable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('pbehaviorTypes.defaultType')",
+          :tooltip="item.deletable ? $t('common.delete') : $t('pbehaviorTypes.usingType')",
           type="delete",
           @click="$emit('remove', item._id)"
         )
     template(#expand="{ item }")
-      pbehavior-types-list-expand-panel(:pbehaviorType="item")
+      pbehavior-types-list-expand-panel(:pbehavior-type="item")
 </template>
 
 <script>
+import { getMostReadableTextColor } from '@/helpers/color';
+
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
 
 export default {
@@ -60,7 +63,7 @@ export default {
       type: Object,
       required: true,
     },
-    deletable: {
+    removable: {
       type: Boolean,
       required: true,
     },
@@ -93,14 +96,17 @@ export default {
     isDisabledType({ deletable }) {
       return !deletable;
     },
+
+    getIconColor(color) {
+      return getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
   .pbehavior-type-icon {
-    display: inline-flex;
-    padding: 2px 10px;
-    border-radius: 10px;
+    width: 42px;
+    height: 24px;
   }
 </style>

@@ -202,6 +202,15 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: comment 1`] = `
 </i>
 `;
 
+exports[`time-line-flag Renders \`time-line-flag\` with type: createManualMetaAlarm 1`] = `
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  center_focus_strong
+</i>
+`;
+
 exports[`time-line-flag Renders \`time-line-flag\` with type: declareTicket 1`] = `
 <i
   aria-hidden="true"
@@ -218,16 +227,6 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: delete 1`] = `
   class="v-icon material-icons theme--light"
 >
   delete
-</i>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: done 1`] = `
-<i
-  aria-hidden="true"
-  class="v-icon material-icons theme--light"
-  style="color: rgb(0, 166, 90); caret-color: #00a65a;"
->
-  assignment_turned_in
 </i>
 `;
 
@@ -384,33 +383,6 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestSuiteUpda
 </i>
 `;
 
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmGroup 1`] = `
-<i
-  aria-hidden="true"
-  class="v-icon material-icons theme--light"
->
-  center_focus_strong
-</i>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUngroup 1`] = `
-<i
-  aria-hidden="true"
-  class="v-icon material-icons theme--light"
->
-  link_off
-</i>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUpdate 1`] = `
-<i
-  aria-hidden="true"
-  class="v-icon material-icons theme--light black--text"
->
-  clear
-</i>
-`;
-
 exports[`time-line-flag Renders \`time-line-flag\` with type: metaalarmattach 1`] = `
 <i
   aria-hidden="true"
@@ -474,6 +446,15 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: play 1`] = `
   class="v-icon material-icons theme--light"
 >
   play_arrow
+</i>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: removeAlarmsFromManualMetaAlarm 1`] = `
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  link_off
 </i>
 `;
 

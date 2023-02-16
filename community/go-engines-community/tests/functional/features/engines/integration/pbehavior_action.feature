@@ -7,6 +7,7 @@ Feature: no execute action when entity is inactive
     """json
     {
       "name": "test-scenario-pbehavior-action-1-name",
+      "priority": 10060,
       "enabled": true,
       "triggers": ["stateinc"],
       "disable_during_periods": ["maintenance"],
@@ -156,6 +157,7 @@ Feature: no execute action when entity is inactive
     """json
     {
       "name": "test-scenario-pbehavior-action-2-name",
+      "priority": 10061,
       "enabled": true,
       "triggers": ["create"],
       "delay": {
@@ -370,6 +372,7 @@ Feature: no execute action when entity is inactive
     """json
     {
       "name": "test-scenario-pbehavior-action-3-name",
+      "priority": 10062,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -487,6 +490,7 @@ Feature: no execute action when entity is inactive
     """json
     {
       "name": "test-scenario-pbehavior-action-4-name",
+      "priority": 10063,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -607,6 +611,7 @@ Feature: no execute action when entity is inactive
     """json
     {
       "name": "test-scenario-pbehavior-action-5-name",
+      "priority": 10064,
       "enabled": true,
       "priority": 75,
       "triggers": ["stateinc"],
@@ -742,6 +747,7 @@ Feature: no execute action when entity is inactive
     """json
     {
       "name": "test-scenario-pbehavior-action-6-name",
+      "priority": 10065,
       "enabled": true,
       "triggers": ["stateinc"],
       "actions": [

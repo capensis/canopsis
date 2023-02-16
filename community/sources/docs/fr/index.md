@@ -24,6 +24,12 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 ### Dernières versions
 
 <!-- du plus récent au plus ancien -->
+*  [Canopsis 22.10.6](notes-de-version/22.10.6.md), publié le 26 janvier 2023.
+*  [Canopsis 22.10.5](notes-de-version/22.10.5.md), publié le 24 janvier 2023. (**Attention** : authentifications LDAP et SAML impossibles sur cette version. Veuillez utiliser Canopsis 22.10.6)
+*  [Canopsis 4.6.3](notes-de-version/4.6.3.md), publié le 23 janvier 2023.
+*  [Canopsis 22.10.4](notes-de-version/22.10.4.md), publié le 13 janvier 2023.
+*  [Canopsis 4.5.13](notes-de-version/4.5.13.md), publié le 9 janvier 2023.
+*  [Canopsis 22.10.3](notes-de-version/22.10.3.md), publié le 16 décembre 2022.
 *  [Canopsis 22.10.2](notes-de-version/22.10.2.md), publié le 8 décembre 2022.
 *  [Canopsis 22.10.1](notes-de-version/22.10.1.md), publié le 29 novembre 2022.
 *  [Canopsis 4.5.11](notes-de-version/4.5.11.md), publié le 28 novembre 2022.
