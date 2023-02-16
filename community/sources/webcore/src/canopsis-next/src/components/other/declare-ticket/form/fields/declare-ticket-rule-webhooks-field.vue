@@ -58,10 +58,6 @@ export default {
     },
   },
   computed: {
-    isTicketIdExist() {
-      return this.webhooks.some(webhook => webhook.declare_ticket.ticket_id);
-    },
-
     isSomeOneDeclareTicketEnabled() {
       return this.webhooks.some(webhook => webhook.declare_ticket.enabled);
     },

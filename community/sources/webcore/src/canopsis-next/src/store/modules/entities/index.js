@@ -51,6 +51,7 @@ import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
+import templateValidatorModule from './template-validator';
 
 export default {
   alarm: alarmModule,
@@ -106,4 +107,5 @@ export default {
   techMetrics: techMetricsModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
+  templateValidator: templateValidatorModule,
 };

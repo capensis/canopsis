@@ -1,3 +1,5 @@
+import flatten from 'flat';
+
 import { DECLARE_TICKET_EXECUTION_STATUSES } from '@/constants';
 
 import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
@@ -223,4 +225,64 @@ export const declareTicketRuleErrorsToForm = (errors, form) => {
   };
 
   return flattenErrorMap(errors, prepareWebhooksErrors);
+};
+
+/**
+ * Convert error structure to form structure
+ *
+ * @param {Object[]} headersErrors
+ * @param {Object[]} headers
+ * @return {FlattenErrors}
+ */
+export const declareTicketRuleTemplateHeadersVariablesErrorsToForm = (
+  headersErrors,
+  headers,
+) => headersErrors.reduce((acc, { is_valid: isValid, err }, index) => {
+  const header = headers[index];
+
+  if (!isValid) {
+    acc[header.key] = {
+      value: err.message,
+    };
+  }
+
+  return acc;
+}, {});
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {DeclareTicketRuleForm} form
+ * @return {FlattenErrors}
+ */
+export const declareTicketRuleTemplateVariablesErrorsToForm = (errorsObject, form) => {
+  const { webhooks } = errorsObject;
+
+  return flatten({
+    webhooks: webhooks.reduce((acc, { request }, index) => {
+      const webhook = form.webhooks[index];
+      const { url, payload, headers } = request;
+
+      const requestErrors = {};
+
+      if (!url.is_valid) {
+        requestErrors.url = url.err.message;
+      }
+
+      if (!payload.is_valid) {
+        requestErrors.payload = `${payload.err.line}|${payload.err.message}`;
+      }
+
+      if (headers.some(({ is_valid: isValid }) => !isValid)) {
+        requestErrors.headers = declareTicketRuleTemplateHeadersVariablesErrorsToForm(headers, webhook.request.headers);
+      }
+
+      acc[webhook.key] = {
+        request: requestErrors,
+      };
+
+      return acc;
+    }, {}),
+  });
 };

@@ -9,7 +9,7 @@
     :disabled="disabled",
     :return-object="false",
     :menu-props="{ value: !!variables.length && variablesShown }",
-    :error-messages="errorMessages",
+    :error-messages="fieldErrors",
     :clearable="clearable",
     :name="name",
     no-filter,
@@ -54,6 +54,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    errorMessages: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     rules() {
@@ -62,8 +66,11 @@ export default {
       };
     },
 
-    errorMessages() {
-      return this.errors.collect(this.name);
+    fieldErrors() {
+      return [
+        ...this.errorMessages,
+        ...this.errors.collect(this.name),
+      ];
     },
   },
   methods: {
