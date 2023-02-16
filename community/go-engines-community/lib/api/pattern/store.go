@@ -44,7 +44,7 @@ type store struct {
 	defaultSearchByFields []string
 	defaultSortBy         string
 
-	pbhComputeChan chan<- pbehavior.ComputeTask
+	pbhComputeChan chan<- []string
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
@@ -53,7 +53,7 @@ type store struct {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	pbhComputeChan chan<- pbehavior.ComputeTask,
+	pbhComputeChan chan<- []string,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	logger zerolog.Logger,
 ) Store {
@@ -246,9 +246,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	})
 
 	if len(pbhIds) > 0 {
-		s.pbhComputeChan <- pbehavior.ComputeTask{
-			PbehaviorIds: pbhIds,
-		}
+		s.pbhComputeChan <- pbhIds
 	}
 
 	if len(serviceIds) > 0 {
