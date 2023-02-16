@@ -66,18 +66,6 @@ export const requestToForm = (request = {}) => ({
 });
 
 /**
- * Convert retry parameters to form object
- *
- * @param {RetryParameters} parameters
- * @returns {RetryDuration}
- */
-export const retryToForm = (parameters = {}) => (
-  parameters.retry_delay
-    ? { count: parameters.retry_count, ...durationToForm(parameters.retry_delay) }
-    : { count: '', unit: '', value: '' }
-);
-
-/**
  * Convert form object to request field
  *
  * @param {RequestForm} form
