@@ -1,7 +1,5 @@
 import { COLORS } from '@/config';
 
-import featuresService from '@/services/features';
-
 export const ALARM_FIELDS = {
   id: '_id',
   displayName: 'v.display_name',
@@ -106,8 +104,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   manualMetaAlarmUngroup: 'manualMetaAlarmUngroup',
   manualMetaAlarmUpdate: 'manualMetaAlarmUpdate',
   comment: 'comment',
-
-  ...featuresService.get('constants.ALARM_LIST_ACTIONS_TYPES'),
 
   links: 'links',
 
