@@ -104,7 +104,7 @@ Cet onglet permet de changer les valeurs relatifs aux états des services canops
 ## Paramètres de notifications
 
 Cet onglet vous permet d'éditer les notifications relatifs aux consignes.  
-![Onglet paramètres de notifications](img/parametres_notifications)
+![Onglet paramètres de notifications](img/parametres_notifications.png)
 
 ## Paramètres de stockage
 
