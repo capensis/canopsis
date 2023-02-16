@@ -1,3 +1,4 @@
 # Groupement d'alarmes par corrélation
 
-Page en cours de rédaction.
+Il existe différents [types de groupements](../../../guide-administration/moteurs/moteur-correlation/#types-de-groupements) d'alarmes disponibles dans Canopsis.
+
