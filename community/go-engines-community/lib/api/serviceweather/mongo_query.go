@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -69,7 +70,7 @@ func (q *MongoQueryBuilder) clear() {
 
 	q.sort = bson.M{}
 	q.computedFields = bson.M{}
-	q.excludedFields = []string{"depends", "impact"}
+	q.excludedFields = []string{"services"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
@@ -96,12 +97,12 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
 	q.clear()
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
-		"_id":     bson.M{"$in": ids},
-		"enabled": true,
+		"services": id,
+		"enabled":  true,
 	}})
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
@@ -109,6 +110,7 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []stri
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
+		{key: "depends_count", pipeline: getDependsCountPipeline()},
 	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
@@ -350,7 +352,7 @@ func getAlarmLookup() []bson.M {
 }
 
 func getPbehaviorLookup() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "pbehavior_info.id",
@@ -365,13 +367,6 @@ func getPbehaviorLookup() []bson.M {
 			"pbehavior.comments": 0,
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.author",
-			"as":           "pbehavior.author",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.type_",
@@ -385,7 +380,28 @@ func getPbehaviorLookup() []bson.M {
 			"as":           "pbehavior.reason",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
+	}
+
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$addFields": bson.M{
+			"pbehavior.last_comment": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior.last_comment._id",
+					"then": "$pbehavior.last_comment",
+					"else": "$$REMOVE",
+				},
+			}}},
+		bson.M{"$addFields": bson.M{
+			"pbehavior": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior._id",
+					"then": "$pbehavior",
+					"else": "$$REMOVE",
+				},
+			}}},
+		bson.M{"$addFields": bson.M{
 			// todo keep array for backward compatibility
 			"pbehaviors": bson.M{"$cond": bson.M{
 				"if":   "$pbehavior._id",
@@ -393,7 +409,8 @@ func getPbehaviorLookup() []bson.M {
 				"else": bson.A{},
 			}},
 		}},
-	}
+	)
+	return pipeline
 }
 
 func getPbehaviorInfoTypeLookup() []bson.M {
@@ -491,6 +508,14 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				}}},
 			}},
 		}},
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
+		}},
 		{"$addFields": bson.M{
 			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
@@ -505,6 +530,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				},
 			}},
 		}},
+		{"$project": bson.M{"depends": 0}},
 		{"$addFields": bson.M{
 			"icon": bson.M{"$switch": bson.M{
 				"branches": append(
@@ -650,10 +676,22 @@ func getListDependenciesComputedFields() bson.M {
 			),
 			"default": defaultVal,
 		}},
-		"depends_count": bson.M{"$cond": bson.M{
-			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
-			"then": bson.M{"$size": "$depends"},
-			"else": 0,
+	}
+}
+
+func getDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
 		}},
+		{"$addFields": bson.M{
+			"depends_count": bson.M{"$size": "$depends"},
+		}},
+		{"$project": bson.M{"depends": 0}},
 	}
 }

@@ -1,6 +1,10 @@
 <template lang="pug">
-  v-expansion-panel.c-collapse-panel
-    v-expansion-panel-content(:class="{ error: hasError }", :style="{ backgroundColor: color }", :lazy="lazy")
+  v-expansion-panel.c-collapse-panel(:style="panelStyle")
+    v-expansion-panel-content(
+      :class="panelContentClass",
+      :style="panelContentStyle",
+      :lazy="lazy"
+    )
       template(#actions="")
         v-icon(color="white") {{ icon }}
       template(#header="")
@@ -32,6 +36,10 @@ export default {
       type: String,
       default: 'grey',
     },
+    outlineColor: {
+      type: String,
+      required: false,
+    },
     icon: {
       type: String,
       default: '$vuetify.icons.expand',
@@ -46,6 +54,18 @@ export default {
     },
   },
   computed: {
+    panelStyle() {
+      return { outlineColor: this.outlineColor };
+    },
+
+    panelContentClass() {
+      return { error: this.hasError };
+    },
+
+    panelContentStyle() {
+      return { backgroundColor: this.color };
+    },
+
     hasError() {
       return this.error || this.hasChildrenError;
     },
@@ -57,5 +77,6 @@ export default {
 .c-collapse-panel {
   border-radius: 5px;
   overflow: hidden;
+  outline: 3px solid transparent;
 }
 </style>

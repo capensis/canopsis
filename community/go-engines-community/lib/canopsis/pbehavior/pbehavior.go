@@ -26,6 +26,7 @@ type Type struct {
 	Type        string `bson:"type" json:"type"`
 	Priority    int    `bson:"priority" json:"priority"`
 	IconName    string `bson:"icon_name" json:"icon_name"`
+	Color       string `bson:"color" json:"color"`
 }
 
 type Comments []*Comment

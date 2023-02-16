@@ -2,6 +2,10 @@ function genID() {
     return UUID().toString().split('"')[1];
 }
 
+function isInt(value) {
+    return typeof value === "number" || value instanceof NumberLong;
+}
+
 function migrateOldMongoQueryForAlarmList(oldMongoQuery) {
     if (!oldMongoQuery || oldMongoQuery === "") {
         return null;
@@ -258,7 +262,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                     type: "eq",
                     value: value,
                 };
-            } else if (typeof value === "object" && value) {
+            } else if (typeof value === "object" && value && Object.keys(value).length === 1) {
                 if (value["$regex"] && typeof value["$regex"] === "string") {
                     strCond = {
                         type: "regexp",
@@ -273,6 +277,41 @@ function migrateOldGroupForAlarmList(oldGroup) {
                     strCond = {
                         type: "neq",
                         value: value["$ne"],
+                    };
+                }
+            }
+
+            var intCond = null;
+            if (isInt(value)) {
+                intCond = {
+                    type: "eq",
+                    value: value,
+                };
+            } else if (typeof value === "object" && value && Object.keys(value).length === 1) {
+                if (value["$ne"] && isInt(value["$ne"])) {
+                    intCond = {
+                        type: "neq",
+                        value: value["$ne"],
+                    };
+                } else if (value["$gt"] && isInt(value["$gt"])) {
+                    intCond = {
+                        type: "gt",
+                        value: value["$gt"],
+                    };
+                } else if (value["$lt"] && isInt(value["$lt"])) {
+                    intCond = {
+                        type: "lt",
+                        value: value["$lt"],
+                    };
+                } else if (value["$gte"] && isInt(value["$gte"])) {
+                    intCond = {
+                        type: "gt",
+                        value: value["$gte"] - 1,
+                    };
+                } else if (value["$lte"] && isInt(value["$lte"])) {
+                    intCond = {
+                        type: "lt",
+                        value: value["$lte"] + 1,
                     };
                 }
             }
@@ -299,6 +338,14 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.connector_name":
                 case "v.resource":
                 case "v.component":
+                case "v.display_name":
+                case "v.output":
+                case "v.long_output":
+                case "v.initial_output":
+                case "v.initial_long_output":
+                case "v.ack.a":
+                case "v.ack.m":
+                case "v.ack.initiator":
                     if (strCond === null) {
                         return null;
                     }
@@ -319,9 +366,18 @@ function migrateOldGroupForAlarmList(oldGroup) {
                         cond: strCond,
                     });
                     break;
+                case "v.total_state_changes":
+                    if (intCond === null) {
+                        return null;
+                    }
+                    newAlarmGroup.push({
+                        field: field,
+                        cond: intCond,
+                    });
+                    break;
                 case "v.state.val":
                 case "v.status.val":
-                    if (typeof value === "number") {
+                    if (isInt(value)) {
                         newAlarmGroup.push({
                             field: field,
                             cond: {
@@ -329,7 +385,7 @@ function migrateOldGroupForAlarmList(oldGroup) {
                                 value: value,
                             },
                         });
-                    } else if (typeof value === "object" && value && typeof value["$ne"] === "number") {
+                    } else if (typeof value === "object" && value && isInt(value["$ne"])) {
                         newAlarmGroup.push({
                             field: field,
                             cond: {
@@ -793,6 +849,7 @@ db.widgets.find({
 });
 
 db.userpreferences.aggregate([
+    {$match: {widget: {$ne: null}}},
     {$sort: {updated: -1, _id: 1}},
     {
         $group: {

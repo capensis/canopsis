@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -19,12 +20,6 @@ type Adapter interface {
 
 	GetByID(ctx context.Context, id string) (*EntityService, error)
 
-	AddDepends(ctx context.Context, id string, depends []string) (bool, error)
-
-	RemoveDepends(ctx context.Context, id string, depends []string) (bool, error)
-
-	RemoveDependByQuery(ctx context.Context, query interface{}, depend string) ([]string, error)
-
 	// UpdateCounters saves service counters to storage.
 	UpdateCounters(context.Context, string, AlarmCounters) error
 
@@ -34,6 +29,11 @@ type Adapter interface {
 	GetServiceDependencies(ctx context.Context, serviceID string) (mongo.Cursor, error)
 
 	GetDependenciesCount(ctx context.Context, serviceID string) (int64, error)
+
+	AddToService(ctx context.Context, serviceId string, ids []string) error
+	RemoveFromService(ctx context.Context, serviceId string, ids []string) error
+	AddToServiceByQuery(ctx context.Context, serviceId string, query bson.M) (int64, error)
+	RemoveFromServiceByQuery(ctx context.Context, serviceId string, query bson.M) (int64, error)
 }
 
 // Manager is used to implement context graph modifier for entity service.

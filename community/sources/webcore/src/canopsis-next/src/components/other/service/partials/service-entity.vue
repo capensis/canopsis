@@ -179,13 +179,13 @@ export default {
 
 <style lang="scss" scoped>
 .weather-service-entity-expansion-panel {
-  & /deep/ .v-expansion-panel__header {
+  & ::v-deep .v-expansion-panel__header {
     padding: 0 16px;
     height: auto;
   }
 
-  & /deep/ .v-expansion-panel__header__icon .v-icon,
-  & /deep/ .v-expansion-panel__header .v-input .v-icon {
+  & ::v-deep .v-expansion-panel__header__icon .v-icon,
+  & ::v-deep .v-expansion-panel__header .v-input .v-icon {
     color: white !important;
   }
 }

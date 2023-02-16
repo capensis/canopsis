@@ -51,16 +51,7 @@ export default {
      * @return {Array}
      */
     availableTypes() {
-      return [
-        WIDGET_TYPES.alarmList,
-        WIDGET_TYPES.context,
-        WIDGET_TYPES.serviceWeather,
-        WIDGET_TYPES.statsCalendar,
-        WIDGET_TYPES.text,
-        WIDGET_TYPES.counter,
-        WIDGET_TYPES.testingWeather,
-        WIDGET_TYPES.map,
-      ].filter((widgetType) => {
+      return Object.values(WIDGET_TYPES).filter((widgetType) => {
         const rules = WIDGET_TYPES_RULES[widgetType];
 
         if (!rules) {
@@ -69,10 +60,6 @@ export default {
 
         return rules.edition && rules.edition === this.edition;
       });
-    },
-
-    tabWidgets() {
-      return this.config.tab?.widgets ?? [];
     },
   },
   methods: {

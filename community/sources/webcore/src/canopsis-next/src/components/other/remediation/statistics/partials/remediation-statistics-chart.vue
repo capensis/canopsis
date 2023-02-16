@@ -46,21 +46,8 @@ export default {
       return this.dataType === REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent;
     },
 
-    maxValueBySampling() {
-      return {
-        [SAMPLINGS.hour]: 60,
-        [SAMPLINGS.day]: 24,
-        [SAMPLINGS.week]: 7,
-        [SAMPLINGS.month]: 31,
-      }[this.sampling];
-    },
-
     maxValueByType() {
-      if (this.isPercentDataType) {
-        return 100;
-      }
-
-      return this.maxValueBySampling;
+      return this.isPercentDataType ? 100 : null;
     },
 
     samplingUnit() {
@@ -103,13 +90,13 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediationStatistic.labels.remediated'),
+        label: this.$t('remediationStatistic.labels.notRemediated'),
         order: 2,
         data: assigned,
       }, {
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticExecutedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediationStatistic.labels.notRemediated'),
+        label: this.$t('remediationStatistic.labels.remediated'),
         order: 1,
         data: executed,
       }];

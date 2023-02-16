@@ -131,17 +131,18 @@ Feature: Import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-import-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "impact": [
-        "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1"
-      ],
-      "depends": [
-        "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
-        "test-resource-contextgraph-import-1-2/test-component-contextgraph-import-1"
-      ]
-    }
+    [
+      "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+      "test-resource-contextgraph-import-1-2/test-component-contextgraph-import-1"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1
     Then the response code should be 200
@@ -766,17 +767,18 @@ Feature: Import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-entity-contextgraph-import-component-to-link
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link",
-        "test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link"
-      ],
-      "impact": [
-        "test-entity-contextgraph-import-connector-to-link"
-      ]
-    }
+    [
+      "test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link",
+      "test-entity-contextgraph-import-resource-to-link-2/test-entity-contextgraph-import-component-to-link"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-entity-contextgraph-import-connector-to-link"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=test-entity-contextgraph-import-resource-to-link-1/test-entity-contextgraph-import-component-to-link
     Then the response code should be 200
@@ -1355,15 +1357,12 @@ Feature: Import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=SC004C
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "script_import_service/SC004C",
-        "script_import_service_2/SC004C"
-      ],
-      "impact": []
-    }
+    [
+      "script_import_service/SC004C",
+      "script_import_service_2/SC004C"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=script_import_service/SC004C
     Then the response code should be 200
@@ -1378,15 +1377,12 @@ Feature: Import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_import_service/SC004C until response code is 200 and body is:
+    When I do GET /api/v4/entities/context-graph?_id=script_import_service/SC004C until response code is 200 and response array key "impact" contains:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "SC004C",
-        "test-entityservice-service-import"
-      ]
-    }
+    [
+      "SC004C",
+      "test-entityservice-service-import"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=script_import_service/SC004C
     Then the response code should be 200
@@ -1401,15 +1397,12 @@ Feature: Import entities
       "type": "resource"
     }
     """
-    When I do GET /api/v4/entities/context-graph?_id=script_import_service/SC004C until response code is 200 and body is:
+    When I do GET /api/v4/entities/context-graph?_id=script_import_service/SC004C until response code is 200 and response array key "impact" contains:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "SC004C",
-        "test-entityservice-service-import"
-      ]
-    }
+    [
+      "SC004C",
+      "test-entityservice-service-import"
+    ]
     """
     When I do GET /api/v4/entitybasics?_id=script_import_service_2/SC004C
     Then the response code should be 200
@@ -1426,15 +1419,12 @@ Feature: Import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=script_import_service_2/SC004C
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "impact" should contain:
     """json
-    {
-      "depends": [],
-      "impact": [
-        "SC004C",
-        "test-entityservice-service-import"
-      ]
-    }
+    [
+      "SC004C",
+      "test-entityservice-service-import"
+    ]
     """
     When I do GET /api/v4/entityservices/test-entityservice-service-import
     Then the response code should be 200
@@ -1462,15 +1452,12 @@ Feature: Import entities
     """
     When I do GET /api/v4/entities/context-graph?_id=test-entityservice-service-import
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "script_import_service/SC004C",
-        "script_import_service_2/SC004C"
-      ],
-      "impact": []
-    }
+    [
+      "script_import_service/SC004C",
+      "script_import_service_2/SC004C"
+    ]
     """
 
   Scenario: import with action create, same links with different actions

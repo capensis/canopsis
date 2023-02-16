@@ -63,7 +63,7 @@ export default {
   $checkboxCellWidth: 112px;
   $cellPadding: 8px 8px;
 
-  .permissions-table-wrapper /deep/ {
+  .permissions-table-wrapper ::v-deep {
     .v-table__overflow {
       overflow: visible;
 

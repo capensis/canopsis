@@ -37,7 +37,7 @@ func NewStore(
 		collection:     dbClient.Collection(mongo.ShareTokenMongoCollection),
 		tokenGenerator: tokenGenerator,
 
-		defaultSearchByFields: []string{"value", "user", "description"},
+		defaultSearchByFields: []string{"value", "user.name", "role.name", "description"},
 		defaultSortBy:         "created",
 	}
 }
@@ -97,7 +97,7 @@ func (s *store) Insert(ctx context.Context, userId string, r EditRequest) (*Resp
 }
 
 func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	pipeline := getUserPipeline()
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -121,7 +121,6 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 			}},
 		}},
 	}
-	project = append(project, getUserPipeline()...)
 
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
@@ -170,5 +169,9 @@ func getUserPipeline() []bson.M {
 			"as":           "role",
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"user.name": "$user.crecord_name",
+			"role.name": "$role.crecord_name",
+		}},
 	}
 }

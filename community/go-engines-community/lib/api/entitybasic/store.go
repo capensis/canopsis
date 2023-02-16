@@ -2,8 +2,10 @@ package entitybasic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -35,8 +37,9 @@ func NewStore(db mongo.DbClient) Store {
 func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{
-			"_id":  id,
-			"type": bson.M{"$in": s.basicTypes},
+			"_id":          id,
+			"type":         bson.M{"$in": s.basicTypes},
+			"soft_deleted": bson.M{"$exists": false},
 		}},
 		// Find category
 		{"$lookup": bson.M{
@@ -46,56 +49,13 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"as":           "category",
 		}},
 		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-		// Find links to basic entities
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$impact",
-			"connectFromField":        "impact",
-			"connectToField":          "_id",
-			"as":                      "changeable_impact",
-			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
-			"maxDepth":                0,
-		}},
-		{"$addFields": bson.M{
-			"changeable_impact": bson.M{"$map": bson.M{"input": "$changeable_impact", "as": "each", "in": "$$each._id"}},
-		}},
-		{"$project": bson.M{"_id": "$_id", "changeable_impact": "$changeable_impact", "data": "$$ROOT", "depends": "$depends"}},
-		{"$project": bson.M{"data.changeable_impact": 0}},
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$depends",
-			"connectFromField":        "depends",
-			"connectToField":          "_id",
-			"as":                      "changeable_depends",
-			"restrictSearchWithMatch": bson.M{"type": bson.M{"$in": s.basicTypes}},
-			"maxDepth":                0,
-		}},
-		{"$addFields": bson.M{
-			"changeable_depends": bson.M{"$map": bson.M{"input": "$changeable_depends", "as": "each", "in": "$$each._id"}},
-		}},
-		{"$project": bson.M{"depends": 0}},
-		{"$replaceRoot": bson.M{
-			"newRoot": bson.M{"$mergeObjects": bson.A{
-				"$data",
-				bson.M{
-					"changeable_impact": bson.M{"$map": bson.M{
-						"input": "$changeable_impact",
-						"as":    "i",
-						"in":    "$$i",
-					}},
-					"changeable_depends": bson.M{"$map": bson.M{
-						"input": "$changeable_depends",
-						"as":    "d",
-						"in":    "$$d",
-					}},
-				},
-			}},
-		}},
 	}
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
+
+	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
 		res := Entity{}
@@ -111,11 +71,6 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error) {
-	entity, err := s.GetOneBy(ctx, r.ID)
-	if err != nil || entity == nil {
-		return nil, false, err
-	}
-
 	set := bson.M{
 		"description":     r.Description,
 		"enabled":         *r.Enabled,
@@ -132,170 +87,152 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	}
 	update["$set"] = set
 
+	var isToggled bool
 	var updatedEntity *Entity
 
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		isToggled = false
 		updatedEntity = nil
+
+		oldEntity := Entity{}
+		cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": r.ID}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "component",
+				"as":                      "resources",
+				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
+				"maxDepth":                0,
+			}},
+			{"$project": bson.M{
+				"_id":       1,
+				"enabled":   1,
+				"type":      1,
+				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		})
+		if err != nil {
+			return err
+		}
+
+		defer cursor.Close(ctx)
+
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&oldEntity)
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
-		err = s.removeEntityLinks(ctx, *entity, r)
-		if err != nil {
-			return err
-		}
-		err = s.addEntityLinks(ctx, *entity, r)
+
+		updatedEntity, err = s.GetOneBy(ctx, r.ID)
 		if err != nil {
 			return err
 		}
 
-		updatedEntity, err = s.GetOneBy(ctx, r.ID)
-		return err
+		isToggled = updatedEntity.Enabled != oldEntity.Enabled
+		updatedEntity.Resources = oldEntity.Resources
+		return nil
 	})
 
 	if err != nil || updatedEntity == nil {
 		return nil, false, err
 	}
 
-	isToggled := updatedEntity.Enabled != entity.Enabled
+	if isToggled && !updatedEntity.Enabled && updatedEntity.Type == types.EntityTypeComponent {
+		depLen := len(updatedEntity.Resources)
+		from := 0
+
+		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
+			_, err = s.dbCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": updatedEntity.Resources[from:to]}},
+				bson.M{"$set": bson.M{"enabled": updatedEntity.Enabled}},
+			)
+			if err != nil {
+				return nil, false, err
+			}
+
+			from = to
+		}
+
+		if from < depLen {
+			_, err = s.dbCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": updatedEntity.Resources[from:depLen]}},
+				bson.M{"$set": bson.M{"enabled": updatedEntity.Enabled}},
+			)
+			if err != nil {
+				return nil, false, err
+			}
+		}
+	}
 
 	return updatedEntity, isToggled, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := s.dbCollection.FindOne(ctx, bson.M{
-		"_id":  id,
-		"type": bson.M{"$in": s.basicTypes},
+	res := false
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		entity := &types.Entity{}
+		err := s.dbCollection.FindOne(ctx, bson.M{
+			"_id":  id,
+			"type": bson.M{"$in": s.basicTypes},
+		}).Decode(&entity)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
+		}
+
+		if entity.Type == types.EntityTypeComponent {
+			c, err := s.dbCollection.CountDocuments(ctx, bson.M{"component": entity.ID, "type": types.EntityTypeResource})
+			if err != nil {
+				return err
+			}
+			if c > 0 {
+				return ErrComponent
+			}
+		}
+
+		err = s.alarmDbCollection.FindOne(ctx, bson.M{
+			"d":          entity.ID,
+			"v.resolved": nil,
+		}).Err()
+		if err == nil {
+			return ErrLinkedEntityToAlarm
+		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
+			"_id":  id,
+			"type": bson.M{"$in": s.basicTypes},
+		})
+		if err != nil || deleted == 0 {
+			return err
+		}
+
+		if entity.Type == types.EntityTypeConnector {
+			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID}, bson.M{"$unset": bson.M{"connector": ""}})
+			return err
+		}
+
+		res = true
+		return nil
 	})
-	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return false, nil
-		}
-		return false, err
-	}
 
-	entity := &types.Entity{}
-	err := res.Decode(entity)
-	if err != nil {
-		return false, err
-	}
-
-	alarmRes := s.alarmDbCollection.FindOne(ctx, bson.M{
-		"d":          entity.ID,
-		"v.resolved": nil,
-	})
-	if err := alarmRes.Err(); err == nil {
-		return false, ErrLinkedEntityToAlarm
-	} else if err != mongodriver.ErrNoDocuments {
-		return false, err
-	}
-
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
-		"_id":  id,
-		"type": bson.M{"$in": s.basicTypes},
-	})
-	if err != nil {
-		return false, err
-	}
-
-	if deleted == 0 {
-		return false, nil
-	}
-
-	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"impact": id},
-		bson.M{"$pull": bson.M{"impact": id}})
-	if err != nil {
-		return false, err
-	}
-	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"depends": id},
-		bson.M{"$pull": bson.M{"depends": id}})
-	if err != nil {
-		return false, err
-	}
-	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": id},
-		bson.M{"$unset": bson.M{"connector": ""}})
-	if err != nil {
-		return false, err
-	}
-	_, err = s.dbCollection.UpdateMany(ctx, bson.M{"component": id},
-		bson.M{"$unset": bson.M{"component": ""}})
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
-func (s *store) removeEntityLinks(ctx context.Context, entity Entity, r EditRequest) error {
-	impacts := diffSlices(entity.ChangeableImpacts, r.Impacts)
-	depends := diffSlices(entity.ChangeableDepends, r.Depends)
-	models := make([]mongodriver.WriteModel, 0)
-	pull := bson.M{}
-
-	if len(impacts) > 0 {
-		pull["impact"] = impacts
-		for _, impact := range impacts {
-			models = append(models, mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": impact}).
-				SetUpdate(bson.M{"$pull": bson.M{"depends": entity.ID}}))
-		}
-	}
-	if len(depends) > 0 {
-		pull["depends"] = depends
-		for _, depend := range depends {
-			models = append(models, mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": depend}).
-				SetUpdate(bson.M{"$pull": bson.M{"impact": entity.ID}}))
-		}
-	}
-	if len(pull) > 0 {
-		models = append(models, mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": entity.ID}).
-			SetUpdate(bson.M{"$pullAll": pull}))
-	}
-
-	if len(models) > 0 {
-		_, err := s.dbCollection.BulkWrite(ctx, models)
-		return err
-	}
-
-	return nil
-}
-
-func (s *store) addEntityLinks(ctx context.Context, entity Entity, r EditRequest) error {
-	impacts := diffSlices(r.Impacts, entity.ChangeableImpacts)
-	depends := diffSlices(r.Depends, entity.ChangeableDepends)
-	models := make([]mongodriver.WriteModel, 0)
-
-	addToSet := bson.M{}
-	if len(impacts) > 0 {
-		addToSet["impact"] = bson.M{"$each": impacts}
-		for _, impact := range impacts {
-			models = append(models, mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": impact}).
-				SetUpdate(bson.M{"$addToSet": bson.M{"depends": entity.ID}}))
-		}
-	}
-	if len(depends) > 0 {
-		addToSet["depends"] = bson.M{"$each": depends}
-		for _, depend := range depends {
-			models = append(models, mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": depend}).
-				SetUpdate(bson.M{"$addToSet": bson.M{"impact": entity.ID}}))
-		}
-	}
-	if len(addToSet) > 0 {
-		models = append(models, mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": entity.ID}).
-			SetUpdate(bson.M{"$addToSet": addToSet}))
-	}
-
-	if len(models) > 0 {
-		_, err := s.dbCollection.BulkWrite(ctx, models)
-		return err
-	}
-
-	return nil
+	return res, err
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {
@@ -309,24 +246,4 @@ func transformInfos(request EditRequest) map[string]types.Info {
 	}
 
 	return infos
-}
-
-func diffSlices(l, r []string) []string {
-	diff := make([]string, 0)
-
-	for _, lv := range l {
-		found := false
-		for _, rv := range r {
-			if lv == rv {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			diff = append(diff, lv)
-		}
-	}
-
-	return diff
 }

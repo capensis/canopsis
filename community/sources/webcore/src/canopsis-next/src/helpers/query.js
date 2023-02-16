@@ -380,6 +380,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_instructions: true,
     opened: widget.parameters.opened,
     steps: {
+      reversed: true,
       page: 1,
       limit: PAGINATION_LIMIT,
     },

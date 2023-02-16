@@ -142,6 +142,7 @@ Utilisation générique :
 Ce helper attend un unique paramètre :
 
 *  `nombre-de-secondes` (obligatoire). Une variable, ou un entier positif correspondant à un [timestamp Unix](https://fr.wikipedia.org/wiki/Heure_Unix) réglé sur UTC. Si la variable est vide, le helper n'affichera rien.
+*  `format` (optionnel). Seul le format `long` est pris en charge. Il s'agit d'afficher la date au format long `30/03/1987 10:00:00` même si le timestamp correspond à la date du jour.
 
 #### Exemple d'utilisation du helper `timestamp`
 
@@ -149,6 +150,7 @@ Afficher le timestamp Unix de `544089600` secondes (correspondant au 30 mars 
 
 ```handlebars
 {{timestamp 544089600}}
+{{timestamp 544089600 format='long'}}
 ```
 
 ### Helper `request`
@@ -166,6 +168,7 @@ Ce helper accepte les attributs suivants :
 *  `url` (obligatoire). URL de l'API JSON à interroger.
 *  `headers` (optionnel). Entêtes HTTP, au format JSON (`{"Nom-Entete": "valeur"}`), à intégrer lors de l'envoi de la requête.
     *  **Note :** tout entête envoyé doit apparaître dans la directive `Access-Control-Allow-Headers` du [serveur Nginx intégré à Canopsis](../../../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx.md#configuration-de-nginx).
+*  `data` (optionnel). Payload d'une requête POST, au format JSON (`{"Nom": "valeur"}`).
 *  `username` (optionnel). Utilisateur pour l'authentification basique.
 *  `password` (optionnel). Mot de passe pour l'authentification basique.
     *  **Attention :** la requête étant exécutée par le navigateur client, ces identifiants peuvent être interceptés par un utilisateur.
@@ -201,6 +204,23 @@ Afficher une liste des identifiants d'utilisateurs inscrits à GitHub :
      {{#each users}}
        <li>{{login}}</li>
      {{/each}}
+{{/request}}
+</ul>
+```
+
+Ajouter un `todo` sur le site `https://jsonplaceholder.typicode.com`
+
+```handlebars
+<ul>
+{{#request 
+  method="post" 
+  url="https://jsonplaceholder.typicode.com/todos" 
+  variable="post" 
+  headers='{ "Content-Type": "application/json" }' 
+  data='{ "userId": "1", "title": "TEST321", "completed": false }'}}
+    {{#each post}}
+        <li><strong>{{@key}}</strong>: {{this}}</li>
+    {{/each}}
 {{/request}}
 </ul>
 ```
