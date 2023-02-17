@@ -2,6 +2,7 @@ Feature: Get alarm metrics
   I need to be able to get alarm metrics
   Only admin should be able to get alarm metrics
 
+  @concurrent
   Scenario: given get created_alarms hour request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -118,6 +119,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms day request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -155,6 +157,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms week request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -192,6 +195,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms month request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -229,6 +233,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms request with empty interval should return metrics with zeros
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -258,6 +263,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms request with filter by entity infos should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get-by-entity-infos
@@ -295,6 +301,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms hour request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -408,6 +415,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms day request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -445,6 +453,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms week request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -482,6 +491,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms month request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -519,6 +529,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets hour request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -632,6 +643,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets day request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -669,6 +681,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets week request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -706,6 +719,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets month request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -743,6 +757,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get request with invalid query params should return bad request
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm
@@ -799,15 +814,18 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/cat/metrics/alarm
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/cat/metrics/alarm
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request with all parameters should return all metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-all-alarm-metrics-get
@@ -1109,6 +1127,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given filter with old pattern should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&kpi_filter=test-kpi-filter-to-alarm-metrics-get-by-old-pattern
@@ -1225,6 +1244,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms hour request should return metrics by widget filter
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get-1
@@ -1341,6 +1361,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms hour request should return metrics by widget filters
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get-2&widget_filters[]=test-widget-filter-to-alarm-metrics-get-1
@@ -1457,6 +1478,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms hour request with both metrics and widget filters should return error
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get&kpi_filter=test-kpi-filter-to-alarm-metrics-get
@@ -1470,6 +1492,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms hour request with not exist widget filter should return error
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-not-exist
@@ -1483,6 +1506,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms hour request with invalid widget filter should return error
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get-3
