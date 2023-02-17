@@ -22,7 +22,7 @@ import { isEqual } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
-import { convertWidgetToQuery, convertWidgetQueryToRequest } from '@/helpers/query';
+import { convertAlarmWidgetToQuery, convertWidgetQueryToRequest } from '@/helpers/query';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
@@ -45,10 +45,7 @@ export default {
       pending: false,
       alarms: [],
       meta: {},
-      query: {
-        page: 1,
-        ...convertWidgetToQuery(config.widget),
-      },
+      query: convertAlarmWidgetToQuery(config.widget),
     };
   },
   computed: {
