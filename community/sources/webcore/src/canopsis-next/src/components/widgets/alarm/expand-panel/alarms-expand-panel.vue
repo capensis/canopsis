@@ -66,7 +66,8 @@
                   :widget="widget",
                   :editing="editing",
                   :pending="pending",
-                  :query.sync="childrenQuery"
+                  :query.sync="childrenQuery",
+                  :refresh-alarms-list="fetchList"
                 )
     template(v-if="hasServiceDependencies")
       v-tab {{ $t('alarm.tabs.trackSource') }}

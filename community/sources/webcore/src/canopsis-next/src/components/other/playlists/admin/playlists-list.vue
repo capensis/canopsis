@@ -20,7 +20,7 @@
       v-layout(row)
         c-action-btn(:tooltip="$t('common.play')")
           template(#button="")
-            v-btn.mx-1(
+            v-btn.mx-1.ma-0(
               :to="getPlaylistRouteById(item._id, true)",
               icon
             )

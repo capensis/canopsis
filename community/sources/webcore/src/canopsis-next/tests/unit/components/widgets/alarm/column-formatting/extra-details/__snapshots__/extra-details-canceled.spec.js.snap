@@ -7,7 +7,8 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with date in 
     <div>Date : 07/08/2013 19:00:00</div>
     <div class="c-extra-details__message">Comment : cancelled-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light" style="font-size: 16px;">delete</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge blue-grey"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">delete</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-canceled Renders \`extra-details-canceled\` with full canceled 1`] = `
@@ -17,7 +18,8 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` with full can
     <div>Date : 6:00:00</div>
     <div class="c-extra-details__message">Comment : cancelled-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light" style="font-size: 16px;">delete</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge blue-grey"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">delete</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-canceled Renders \`extra-details-canceled\` without message 1`] = `
@@ -27,5 +29,6 @@ exports[`extra-details-canceled Renders \`extra-details-canceled\` without messa
     <div>Date : 6:00:00</div>
     <!---->
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge blue-grey white--text material-icons theme--light" style="font-size: 16px;">delete</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge blue-grey"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">delete</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;

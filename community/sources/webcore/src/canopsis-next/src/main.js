@@ -116,6 +116,7 @@ import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue'
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
 import CColorPickerField from '@/components/forms/fields/color/c-color-picker-field.vue';
+import CEnabledColorPickerField from '@/components/forms/fields/color/c-enabled-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/entity/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/entity/c-impact-level-field.vue';
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
@@ -127,6 +128,8 @@ import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
 import CColumnsField from '@/components/forms/fields/columns/c-columns-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
+import CColorChromePickerField from '@/components/forms/fields/color/c-color-chrome-picker-field.vue';
+import CColorCompactPickerField from '@/components/forms/fields/color/c-color-compact-picker-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
@@ -228,11 +231,11 @@ Vue.use(VueResizeText);
 Vue.use(PortalVue);
 Vue.use(Filters);
 Vue.use(Vuetify, {
-  iconfont: 'md',
-  theme: {
-    primary: config.COLORS.primary,
-    secondary: config.COLORS.secondary,
+  options: {
+    customProperties: true,
   },
+  iconfont: 'md',
+  theme: config.THEMES.canopsis.colors,
   icons: {
     bullhorn: {
       component: BullhornIcon,
@@ -391,6 +394,7 @@ Vue.component('c-mixed-input-field', CMixedInputField);
 Vue.component('c-input-type-field', CInputTypeField);
 Vue.component('c-array-text-field', CArrayTextField);
 Vue.component('c-color-picker-field', CColorPickerField);
+Vue.component('c-enabled-color-picker-field', CEnabledColorPickerField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);
@@ -401,6 +405,8 @@ Vue.component('c-storage-field', CStorageField);
 Vue.component('c-file-name-mask-field', CFileNameMaskField);
 Vue.component('c-percents-field', CPercentsField);
 Vue.component('c-color-indicator-field', CColorIndicatorField);
+Vue.component('c-color-chrome-picker-field', CColorChromePickerField);
+Vue.component('c-color-compact-picker-field', CColorCompactPickerField);
 Vue.component('c-columns-field', CColumnsField);
 Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
@@ -549,6 +555,7 @@ Vue.use(SidebarPlugin, {
 
   components: {
     ...sidebarsComponents,
+    ...featuresService.get('components.sidebars.components'),
   },
 });
 Vue.use(SetSeveralPlugin);

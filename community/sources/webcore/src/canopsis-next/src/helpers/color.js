@@ -115,13 +115,6 @@ export const colorToHex = color => tinycolor(color).toHexString();
 export const isValidColor = color => tinycolor(color).isValid();
 
 /**
- * Generate random hex color
- *
- * @return {string}
- */
-export const getRandomHexColor = () => tinycolor.random().toHexString();
-
-/**
  * Get color for metric
  *
  * @param {string} metric

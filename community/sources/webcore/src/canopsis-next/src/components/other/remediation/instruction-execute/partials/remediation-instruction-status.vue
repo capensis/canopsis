@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.my-2.black--text(:class="{ 'error--text': isFailedStatus }", row, align-center)
+  v-layout.my-2(:class="{ 'error--text': isFailedStatus }", row, align-center)
     v-icon.mr-1(:color="iconColor") alarm
     span {{ label }}
 </template>
@@ -33,7 +33,7 @@ export default {
     },
 
     iconColor() {
-      return this.isFailedStatus ? 'error' : 'black';
+      return this.isFailedStatus ? 'error' : '';
     },
 
     completedLabel() {

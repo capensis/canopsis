@@ -15,7 +15,8 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
       <hr class="v-divider theme--light">
     </div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light" style="font-size: 16px;"></i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge" style="background-color: rgb(43, 62, 79);"><i aria-hidden="true" class="v-icon icon icon-name theme--light white--text" style="font-size: 16px;"></i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehavior started in previous month 1`] = `
@@ -33,7 +34,8 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
       <hr class="v-divider theme--light">
     </div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge secondary accent-2 white--text material-icons theme--light" style="font-size: 16px;"></i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge" style="background-color: rgb(43, 62, 79);"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;"></i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 1`] = `
@@ -51,7 +53,8 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
       <hr class="v-divider theme--light">
     </div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light" style="font-size: 16px;"></i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge" style="background-color: rgb(43, 62, 79);"><i aria-hidden="true" class="v-icon icon icon-name theme--light white--text" style="font-size: 16px;"></i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without reason 1`] = `
@@ -69,7 +72,8 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
       <hr class="v-divider theme--light">
     </div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light" style="font-size: 16px;"></i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge" style="background-color: rgb(43, 62, 79);"><i aria-hidden="true" class="v-icon icon icon-name theme--light white--text" style="font-size: 16px;"></i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rrule 1`] = `
@@ -87,7 +91,8 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
       <hr class="v-divider theme--light">
     </div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light" style="font-size: 16px;"></i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge" style="background-color: rgb(43, 62, 79);"><i aria-hidden="true" class="v-icon icon icon-name theme--light white--text" style="font-size: 16px;"></i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tstop 1`] = `
@@ -107,5 +112,6 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
       <hr class="v-divider theme--light">
     </div>
   </div>
-</div><i aria-hidden="true" class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light" style="font-size: 16px;"></i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge" style="background-color: rgb(43, 62, 79);"><i aria-hidden="true" class="v-icon icon icon-name theme--light white--text" style="font-size: 16px;"></i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;

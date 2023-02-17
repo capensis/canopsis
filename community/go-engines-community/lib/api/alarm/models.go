@@ -117,15 +117,6 @@ type SortRequest struct {
 	SortBy    string   `form:"sort_by" json:"sort_by"`
 }
 
-type ManualRequest struct {
-	Search string `form:"search" json:"search"`
-}
-
-type ManualResponse struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"name" json:"name"`
-}
-
 type DetailsRequest struct {
 	ID               string               `json:"_id" binding:"required"`
 	Opened           *bool                `json:"opened"`
@@ -235,12 +226,12 @@ type Alarm struct {
 type MetaAlarmRule struct {
 	ID   string `bson:"_id" json:"_id"`
 	Name string `bson:"name" json:"name"`
+	Type string `bson:"type" json:"type"`
 }
 
 type AlarmValue struct {
 	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *common.AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`

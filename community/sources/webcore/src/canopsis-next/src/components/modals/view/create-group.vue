@@ -27,6 +27,8 @@
             div.ml-2(v-on="on")
               v-btn.error(
                 :disabled="submitting || !group.deletable",
+                :outline="$system.dark",
+                color="error",
                 @click="remove"
               ) {{ $t('common.delete') }}
           span {{ $t('modals.group.errors.isNotEmpty') }}
@@ -50,6 +52,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { ModalWrapper },
   mixins: [
     modalInnerMixin,

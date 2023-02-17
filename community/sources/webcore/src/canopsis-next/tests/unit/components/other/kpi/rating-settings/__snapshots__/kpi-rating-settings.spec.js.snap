@@ -5,7 +5,7 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with default props 
   class="layout column"
 >
   <span
-    class="pl-4 subheading grey--text text--darken-2"
+    class="pl-4 subheading"
   >
     The list of parameters to use for rating.
   </span>
@@ -22,7 +22,7 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with full permissio
   class="layout column"
 >
   <span
-    class="pl-4 subheading grey--text text--darken-2"
+    class="pl-4 subheading"
   >
     The list of parameters to use for rating.
   </span>

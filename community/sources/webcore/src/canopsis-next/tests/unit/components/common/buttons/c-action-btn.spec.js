@@ -51,7 +51,7 @@ describe('c-action-btn', () => {
     const tooltip = Faker.datatype.string();
     const wrapper = factory({ propsData: { tooltip, type: 'duplicate' } });
 
-    const tooltipContentElement = wrapper.find('span');
+    const tooltipContentElement = wrapper.find('span:last-of-type');
 
     expect(tooltipContentElement.text()).toBe(tooltip);
   });
@@ -72,7 +72,7 @@ describe('c-action-btn', () => {
     const wrapper = factory({ propsData: { color, icon, tooltip } });
 
     const iconElement = wrapper.find('v-icon-stub');
-    const tooltipContentElement = wrapper.find('span');
+    const tooltipContentElement = wrapper.find('span:last-of-type');
 
     expect(iconElement.text()).toBe(icon);
     expect(tooltipContentElement.text()).toBe(tooltip);
