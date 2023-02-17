@@ -274,7 +274,6 @@ export const TRIGGERS = {
   cancel: 'cancel',
   uncancel: 'uncancel',
   comment: 'comment',
-  done: 'done',
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',

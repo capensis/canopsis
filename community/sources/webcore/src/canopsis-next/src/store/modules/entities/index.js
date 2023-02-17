@@ -49,6 +49,7 @@ import mapModule from './map';
 import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
+import manualMetaAlarmModule from './manual-meta-alarm';
 
 export default {
   alarm: alarmModule,
@@ -102,4 +103,5 @@ export default {
   alarmTag: alarmTagModule,
   shareToken: shareTokenModule,
   techMetrics: techMetricsModule,
+  manualMetaAlarm: manualMetaAlarmModule,
 };

@@ -3,7 +3,7 @@
     template(#activator="")
       v-list-tile
         div(:class="validationHeaderClass") {{ title }}
-    v-list.grey.lighten-4.px-2.py-0(expand)
+    v-list.grey.px-2.py-0(:class="{ 'darken-2': $vuetify.dark, 'lighten-4': !$vuetify.dark }", expand)
       slot
 </template>
 

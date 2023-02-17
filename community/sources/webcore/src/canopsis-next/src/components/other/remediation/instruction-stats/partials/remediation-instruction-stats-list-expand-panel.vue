@@ -3,7 +3,8 @@
     v-tabs(v-model="activeTab", color="secondary lighten-1", slider-color="primary", dark, centered)
       v-tab {{ $t('common.summary') }}
       v-tab {{ $t('common.statistics') }}
-      v-tab(v-if="remediationInstruction.execution_count") {{ $t('remediation.instructionStat.alarmsTimeline') }}
+      v-tab(v-if="remediationInstructionStatsItem.has_executions")
+        | {{ $t('remediation.instructionStat.alarmsTimeline') }}
       v-tab {{ $tc('common.rating') }}
     v-layout.pa-3.secondary.lighten-2
       v-flex(xs12)
@@ -18,7 +19,7 @@
                   :remediation-instruction="remediationInstruction",
                   :interval="interval"
                 )
-            v-tab-item(v-if="remediationInstruction.execution_count", lazy)
+            v-tab-item(v-if="remediationInstructionStatsItem.has_executions", lazy)
               remediation-instruction-stats-alarms-timeline-tab(
                 :remediation-instruction="remediationInstruction",
                 :interval="interval"
@@ -48,8 +49,8 @@ export default {
   },
   mixins: [entitiesRemediationInstructionStatsMixin],
   props: {
-    remediationInstructionStatsId: {
-      type: String,
+    remediationInstructionStatsItem: {
+      type: Object,
       required: true,
     },
     interval: {
@@ -64,8 +65,7 @@ export default {
     };
   },
   watch: {
-    remediationInstructionStatsId: 'fetchRemediationInstructionStatsSummary',
-    interval: 'fetchRemediationInstructionStatsSummary',
+    remediationInstructionStatsItem: 'fetchRemediationInstructionStatsSummary',
   },
   mounted() {
     this.fetchRemediationInstructionStatsSummary();
@@ -73,11 +73,7 @@ export default {
   methods: {
     async fetchRemediationInstructionStatsSummary() {
       this.remediationInstruction = await this.fetchRemediationInstructionStatsSummaryWithoutStore({
-        id: this.remediationInstructionStatsId,
-        params: {
-          from: this.interval.from,
-          to: this.interval.to,
-        },
+        id: this.remediationInstructionStatsItem._id,
       });
     },
   },

@@ -12,9 +12,12 @@ export default {
   },
   remediation: {
     title: 'Stockage des données de consigne',
-    accumulateAfter: 'Accumuler les statistiques des consignes après',
-    deleteAfter: 'Supprimer les données des consignes après',
-    deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+    deleteAfter: 'Supprimer les données de la chronologie des instructions après',
+    deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
+    deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
+    deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
+    deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
+    deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
   },
   entity: {
     title: 'Stockage des données des entités',

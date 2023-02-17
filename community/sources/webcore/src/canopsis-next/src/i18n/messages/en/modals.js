@@ -1,4 +1,4 @@
-import { WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -174,6 +174,9 @@ export default {
         fields: {
           message: 'Message',
         },
+      },
+      color: {
+        label: 'Use special color for this event?',
       },
     },
     errors: {
@@ -507,6 +510,12 @@ export default {
       type: 'Type',
       priority: 'Priority',
       iconName: 'Icon name',
+    },
+    canonicalTypes: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {
