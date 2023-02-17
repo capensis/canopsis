@@ -1,17 +1,16 @@
 <template lang="pug">
-  v-card.secondary.lighten-2(flat)
-    v-card-text
-      v-layout(row, wrap)
-        v-flex(xs3)
-          v-text-field(v-model="searchingText", :label="$t('context.infosSearchLabel')", dark)
-      v-data-table(
-        :items="items",
-        :headers="headers",
-        :search="searchingText",
-        item-key="name"
-      )
-        template(#items="{ item }")
-          td(v-for="column in headers", :key="column.value") {{ item | get(column.value) }}
+  v-layout(column)
+    v-layout(row, wrap)
+      v-flex(xs4)
+        c-search-field(v-model="searchingText")
+    v-data-table(
+      :items="items",
+      :headers="headers",
+      :search="searchingText",
+      item-key="name"
+    )
+      template(#items="{ item }")
+        td(v-for="column in headers", :key="column.value") {{ item | get(column.value) }}
 </template>
 
 <script>

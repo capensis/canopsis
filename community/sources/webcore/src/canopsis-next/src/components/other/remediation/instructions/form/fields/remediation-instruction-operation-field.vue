@@ -13,7 +13,7 @@
             c-expand-btn.operation-expand(
               v-if="!disabled",
               v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
+              :color="!expanded && hasChildrenError ? 'error' : ''"
             )
             v-layout(column)
               v-text-field(

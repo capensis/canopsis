@@ -7,7 +7,6 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import ClickOutside from '@/services/click-outside';
-import { COLORS } from '@/config';
 
 import CreatePbehavior from '@/components/modals/pbehavior/create-pbehavior.vue';
 
@@ -36,7 +35,7 @@ describe('create-pbehavior', () => {
   const defaultPbehavior = {
     _id: expect.any(String),
     name: '',
-    color: COLORS.secondary,
+    color: '',
     comments: [],
     enabled: true,
     entity_pattern: [],

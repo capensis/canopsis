@@ -622,6 +622,35 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: comment 1`] = `
 </span>
 `;
 
+exports[`time-line-flag Renders \`time-line-flag\` with type: createManualMetaAlarm 1`] = `
+<span
+  class="v-badge time-line-flag v-badge--overlap"
+>
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light"
+  >
+    center_focus_strong
+  </i>
+  <transition-stub
+    name="fab-transition"
+  >
+    <span
+      class="v-badge__badge transparent"
+      style="display: none;"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon time-line-flag__badge-icon material-icons theme--light error--text"
+        style="font-size: 14px;"
+      >
+        error
+      </i>
+    </span>
+  </transition-stub>
+</span>
+`;
+
 exports[`time-line-flag Renders \`time-line-flag\` with type: declareTicket 1`] = `
 <span
   class="v-badge time-line-flag v-badge--overlap"
@@ -688,36 +717,6 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: delete 1`] = `
     class="v-icon material-icons theme--light"
   >
     delete
-  </i>
-  <transition-stub
-    name="fab-transition"
-  >
-    <span
-      class="v-badge__badge transparent"
-      style="display: none;"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon time-line-flag__badge-icon material-icons theme--light error--text"
-        style="font-size: 14px;"
-      >
-        error
-      </i>
-    </span>
-  </transition-stub>
-</span>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: done 1`] = `
-<span
-  class="v-badge time-line-flag v-badge--overlap"
->
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light"
-    style="color: rgb(0, 166, 90); caret-color: #00a65a;"
-  >
-    assignment_turned_in
   </i>
   <transition-stub
     name="fab-transition"
@@ -1231,93 +1230,6 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestSuiteUpda
 </span>
 `;
 
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmGroup 1`] = `
-<span
-  class="v-badge time-line-flag v-badge--overlap"
->
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light"
-  >
-    center_focus_strong
-  </i>
-  <transition-stub
-    name="fab-transition"
-  >
-    <span
-      class="v-badge__badge transparent"
-      style="display: none;"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon time-line-flag__badge-icon material-icons theme--light error--text"
-        style="font-size: 14px;"
-      >
-        error
-      </i>
-    </span>
-  </transition-stub>
-</span>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUngroup 1`] = `
-<span
-  class="v-badge time-line-flag v-badge--overlap"
->
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light"
-  >
-    link_off
-  </i>
-  <transition-stub
-    name="fab-transition"
-  >
-    <span
-      class="v-badge__badge transparent"
-      style="display: none;"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon time-line-flag__badge-icon material-icons theme--light error--text"
-        style="font-size: 14px;"
-      >
-        error
-      </i>
-    </span>
-  </transition-stub>
-</span>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUpdate 1`] = `
-<span
-  class="v-badge time-line-flag v-badge--overlap"
->
-  <i
-    aria-hidden="true"
-    class="v-icon material-icons theme--light black--text"
-  >
-    clear
-  </i>
-  <transition-stub
-    name="fab-transition"
-  >
-    <span
-      class="v-badge__badge transparent"
-      style="display: none;"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon time-line-flag__badge-icon material-icons theme--light error--text"
-        style="font-size: 14px;"
-      >
-        error
-      </i>
-    </span>
-  </transition-stub>
-</span>
-`;
-
 exports[`time-line-flag Renders \`time-line-flag\` with type: metaalarmattach 1`] = `
 <span
   class="v-badge time-line-flag v-badge--overlap"
@@ -1504,6 +1416,35 @@ exports[`time-line-flag Renders \`time-line-flag\` with type: play 1`] = `
     class="v-icon material-icons theme--light"
   >
     play_arrow
+  </i>
+  <transition-stub
+    name="fab-transition"
+  >
+    <span
+      class="v-badge__badge transparent"
+      style="display: none;"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon time-line-flag__badge-icon material-icons theme--light error--text"
+        style="font-size: 14px;"
+      >
+        error
+      </i>
+    </span>
+  </transition-stub>
+</span>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: removeAlarmsFromManualMetaAlarm 1`] = `
+<span
+  class="v-badge time-line-flag v-badge--overlap"
+>
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light"
+  >
+    link_off
   </i>
   <transition-stub
     name="fab-transition"

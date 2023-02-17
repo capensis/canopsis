@@ -363,7 +363,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scenario-action-card-general-tab /deep/ .v-input {
+.scenario-action-card-general-tab ::v-deep .v-input {
   padding-left: 16px;
 
   textarea {

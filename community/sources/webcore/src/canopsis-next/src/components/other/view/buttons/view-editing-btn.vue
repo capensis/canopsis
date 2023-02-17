@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-tooltip(left)
-    v-btn(
+  v-tooltip.view-editing-btn(left)
+    v-btn.view-editing-btn__button(
       slot="activator",
       :input-value="editing",
       :loading="editingProcess",
@@ -23,3 +23,17 @@ export default {
   mixins: [activeViewMixin],
 };
 </script>
+
+<style lang="scss">
+.view-editing-btn {
+  &__button  {
+    border-color: #212121 !important;
+    background-color: #212121 !important;
+
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
+  }
+}
+</style>

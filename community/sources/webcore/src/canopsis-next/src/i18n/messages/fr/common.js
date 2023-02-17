@@ -1,3 +1,4 @@
+import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -264,6 +265,7 @@ export default {
   clearSearch: 'Ne plus appliquer cette recherche',
   noData: 'Aucune donnée',
   noColumns: 'Veuillez sélectionner au moins une colonne',
+  theme: 'Thème | Thèmes',
   systemName: 'Nom du système',
   emitTrigger: 'Émettre un déclencheur',
   header: 'En-tête | En-têtes',
@@ -440,10 +442,6 @@ export default {
     [TRIGGERS.comment]: {
       text: 'Commentaire sur une alarme',
     },
-    [TRIGGERS.done]: {
-      text: 'Alarme en statut "done"',
-      helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
-    },
     [TRIGGERS.declareticket]: {
       text: 'Déclaration de ticket depuis l\'interface graphique',
     },
@@ -489,6 +487,12 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
+  },
+  themes: {
+    [THEMES_NAMES.canopsis]: 'Canopsis',
+    [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
+    [THEMES_NAMES.colorBlind]: 'Daltonien',
+    [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
   },
   request: {
     timeout: 'Temps libre',

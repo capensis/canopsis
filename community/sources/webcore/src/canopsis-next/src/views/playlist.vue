@@ -174,7 +174,6 @@ export default {
     toggleFullScreenMode() {
       this.$fullscreen.toggle(this.$refs.playlistTabsWrapper, {
         fullscreenClass: 'full-screen',
-        background: 'white',
         callback: value => this.isFullscreenMode = value,
       });
     },
@@ -194,8 +193,8 @@ export default {
     height: 100%;
     left: 0;
     top: 0;
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.8);
+    z-index: 3;
+    background: rgba(255, 255, 255, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;

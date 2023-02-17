@@ -3,7 +3,7 @@
 exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`] = `
 <div>
   <div
-    class="layout white row wrap justify-space-between align-center"
+    class="layout row wrap justify-space-between align-center"
   >
     <div
       class="flex"
@@ -113,7 +113,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
 exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 <div>
   <div
-    class="layout white row wrap justify-space-between align-center"
+    class="layout row wrap justify-space-between align-center"
   >
     <div
       class="flex"
@@ -205,7 +205,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 exports[`alarms-list Renders \`alarms-list\` with default props and user filter permission 1`] = `
 <div>
   <div
-    class="layout white row wrap justify-space-between align-center"
+    class="layout row wrap justify-space-between align-center"
   >
     <div
       class="flex"
