@@ -1,7 +1,7 @@
 <template lang="pug">
   div.tree-of-dependencies__preview
     c-zoom-overlay
-      network-graph.fill-height(
+      network-graph.fill-height.black--text(
         ref="networkGraph",
         :options="options",
         :node-html-label-options="nodeHtmlLabelsOptions",
