@@ -49,13 +49,7 @@ Feature: entity disable
     {
       "enabled": false,
       "impact_level": 3,
-      "sli_avail_state": 1,
-      "impact": [
-        "test-component-entity-disable-1"
-      ],
-      "depends": [
-        "test-connector-entity-disable-1/test-connector-name-entity-disable-1"
-      ]
+      "sli_avail_state": 1
     }
     """
     Then the response code should be 200
@@ -180,14 +174,7 @@ Feature: entity disable
     {
       "enabled": false,
       "impact_level": 3,
-      "sli_avail_state": 1,
-      "depends": [
-        "test-resource-entity-disable-2-1/test-component-entity-disable-2",
-        "test-resource-entity-disable-2-2/test-component-entity-disable-2"
-      ],
-      "impact": [
-        "test-connector-entity-disable-2/test-connector-name-entity-disable-2"
-      ]
+      "sli_avail_state": 1
     }
     """
     Then the response code should be 200
@@ -316,14 +303,7 @@ Feature: entity disable
     {
       "enabled": false,
       "impact_level": 3,
-      "sli_avail_state": 1,
-      "depends": [
-        "test-resource-entity-disable-3-1/test-component-entity-disable-3",
-        "test-resource-entity-disable-3-2/test-component-entity-disable-3"
-      ],
-      "impact": [
-        "test-connector-entity-disable-3/test-connector-name-entity-disable-3"
-      ]
+      "sli_avail_state": 1
     }
     """
     Then the response code should be 200
@@ -378,14 +358,7 @@ Feature: entity disable
     {
       "enabled": true,
       "impact_level": 3,
-      "sli_avail_state": 1,
-      "depends": [
-        "test-resource-entity-disable-3-1/test-component-entity-disable-3",
-        "test-resource-entity-disable-3-2/test-component-entity-disable-3"
-      ],
-      "impact": [
-        "test-connector-entity-disable-3/test-connector-name-entity-disable-3"
-      ]
+      "sli_avail_state": 1
     }
     """
     Then the response code should be 200

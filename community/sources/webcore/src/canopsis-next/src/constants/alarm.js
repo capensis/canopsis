@@ -102,9 +102,9 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
   history: 'history',
   groupRequest: 'groupRequest',
-  manualMetaAlarmGroup: 'manualMetaAlarmGroup',
-  manualMetaAlarmUngroup: 'manualMetaAlarmUngroup',
-  manualMetaAlarmUpdate: 'manualMetaAlarmUpdate',
+  createManualMetaAlarm: 'createManualMetaAlarm',
+  removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
+  updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
 
   ...featuresService.get('constants.ALARM_LIST_ACTIONS_TYPES'),
@@ -181,13 +181,6 @@ export const DEFAULT_CONTEXT_WIDGET_ACTIVE_ALARM_COLUMNS = [
   { value: ALARM_FIELDS.state },
   { value: ALARM_FIELDS.status },
 ];
-
-export const MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS = {
-  component: 'metaalarm',
-  connector: 'engine',
-  connector_name: 'correlation',
-  source_type: 'metaalarm',
-};
 
 export const ALARMS_OPENED_VALUES = {
   opened: true,

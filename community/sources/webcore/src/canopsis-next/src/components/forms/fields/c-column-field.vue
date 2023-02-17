@@ -17,7 +17,7 @@
             v-icon arrow_downward
       v-flex.text-xs-right.pr-2(xs3)
         v-btn(icon, @click.prevent="$emit('remove')")
-          v-icon(color="red") close
+          v-icon(color="error") close
     v-layout.px-3.pb-3(justify-center, column)
       v-select(
         v-field="column.column",

@@ -39,7 +39,6 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
-          :disabled="!item.editable",
           :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
           :badge-value="isOldPattern(item)",
           :badge-tooltip="$t('pattern.oldPatternTooltip')",

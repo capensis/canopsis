@@ -110,8 +110,6 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 			"enable_history":  entity.EnableHistory,
 			"category":        entity.Category,
 			"impact_level":    entity.ImpactLevel,
-			"impact":          entity.Impacts,
-			"depends":         entity.Depends,
 			"infos":           entity.Infos,
 			"created":         entity.Created,
 			"last_event_date": entity.LastEventDate,
@@ -157,18 +155,11 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 			}
 		}
 
-		update := bson.M{
-			"$addToSet": bson.M{
-				"impact":  bson.M{"$each": entity.Impacts},
-				"depends": bson.M{"$each": entity.Depends},
-			},
-		}
 		if len(set) > 0 {
-			update["$set"] = set
+			updateModels = append(updateModels, mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": entity.ID, "enabled": true}).
+				SetUpdate(bson.M{"$set": set}))
 		}
-		updateModels = append(updateModels, mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": entity.ID, "enabled": true}).
-			SetUpdate(update))
 	}
 
 	if len(updateModels) > 0 {
@@ -179,117 +170,6 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 	}
 
 	return upsertedIDs, nil
-}
-
-func (a *mongoAdapter) AddImpacts(ctx context.Context, ids []string, impacts []string) error {
-	writeModels := make([]mongodriver.WriteModel, len(ids))
-	for i, id := range ids {
-		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{
-				"$push": bson.M{
-					"impact": bson.M{"$each": impacts},
-				},
-			})
-	}
-
-	_, err := a.dbCollection.BulkWrite(ctx, writeModels)
-
-	return err
-}
-
-func (a *mongoAdapter) RemoveImpacts(ctx context.Context, ids []string, impacts []string) error {
-	writeModels := make([]mongodriver.WriteModel, len(ids))
-	for i, id := range ids {
-		writeModels[i] = mongodriver.NewUpdateOneModel().
-			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{
-				"$pullAll": bson.M{
-					"impact": impacts,
-				},
-			})
-	}
-
-	_, err := a.dbCollection.BulkWrite(ctx, writeModels)
-
-	return err
-}
-
-func (a *mongoAdapter) AddImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error) {
-	res, err := a.dbCollection.Find(
-		ctx,
-		bson.M{"$and": []interface{}{
-			bson.M{"enabled": true},
-			query,
-			bson.M{"impact": bson.M{"$nin": bson.A{impact}}},
-		}},
-		options.Find().SetProjection(bson.M{"_id": 1}))
-	if err != nil {
-		return nil, err
-	}
-
-	newEntities := make([]types.Entity, 0)
-	err = res.All(ctx, &newEntities)
-	if err != nil {
-		return nil, err
-	}
-
-	newIDs := make([]string, len(newEntities))
-	for i := range newEntities {
-		newIDs[i] = newEntities[i].ID
-	}
-
-	if len(newIDs) > 0 {
-		_, err = a.dbCollection.UpdateMany(
-			ctx,
-			bson.M{"_id": bson.M{"$in": newIDs}},
-			bson.M{"$addToSet": bson.M{"impact": impact}},
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return newIDs, nil
-}
-
-func (a *mongoAdapter) RemoveImpactByQuery(ctx context.Context, query interface{}, impact string) ([]string, error) {
-	and := []interface{}{bson.M{"enabled": true}}
-	if query != nil {
-		and = append(and, query)
-	}
-	and = append(and, bson.M{"impact": bson.M{"$in": bson.A{impact}}})
-	res, err := a.dbCollection.Find(
-		ctx,
-		bson.M{"$and": and},
-		options.Find().SetProjection(bson.M{"_id": 1}))
-	if err != nil {
-		return nil, err
-	}
-
-	removedEntities := make([]types.Entity, 0)
-	err = res.All(ctx, &removedEntities)
-	if err != nil {
-		return nil, err
-	}
-
-	removedIDs := make([]string, len(removedEntities))
-	for i := range removedEntities {
-		removedIDs[i] = removedEntities[i].ID
-	}
-
-	if len(removedIDs) > 0 {
-		_, err = a.dbCollection.UpdateMany(
-			ctx,
-			bson.M{"_id": bson.M{"$in": removedIDs}},
-			bson.M{"$pull": bson.M{"impact": impact}},
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return removedIDs, nil
 }
 
 func (a *mongoAdapter) AddInfos(ctx context.Context, id string, infos map[string]types.Info) (bool, error) {
@@ -353,15 +233,14 @@ func (a *mongoAdapter) UpdateComponentInfosByComponent(ctx context.Context, comp
 		}},
 		{"$graphLookup": bson.M{
 			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$depends",
-			"connectFromField":        "depends",
-			"connectToField":          "_id",
+			"startWith":               "$_id",
+			"connectFromField":        "_id",
+			"connectToField":          "component",
 			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
 			"as":                      "resources",
 		}},
 		{"$project": bson.M{
-			"infos":   1,
-			"depends": 1,
+			"infos": 1,
 			"resources": bson.M{"$map": bson.M{
 				"input": "$resources",
 				"as":    "each",
@@ -495,129 +374,6 @@ func (a *mongoAdapter) GetAllWithLastUpdateDateBefore(
 	})
 }
 
-func (a *mongoAdapter) FindConnectorForComponent(ctx context.Context, id string) (*types.Entity, error) {
-	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"_id": id,
-		}},
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$impact",
-			"connectFromField":        "impact",
-			"connectToField":          "_id",
-			"as":                      "connector",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeConnector},
-			"maxDepth":                0,
-		}},
-		{"$unwind": "$connector"},
-		{"$replaceRoot": bson.M{
-			"newRoot": "$connector",
-		}},
-		{"$project": bson.M{
-			"impact": 0, "depends": 0,
-		}},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		res := types.Entity{}
-		err := cursor.Decode(&res)
-		if err != nil {
-			return nil, err
-		}
-
-		return &res, nil
-	}
-
-	return nil, nil
-}
-
-func (a *mongoAdapter) FindConnectorForResource(ctx context.Context, id string) (*types.Entity, error) {
-	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"_id": id,
-		}},
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$depends",
-			"connectFromField":        "depends",
-			"connectToField":          "_id",
-			"as":                      "connector",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeConnector},
-			"maxDepth":                0,
-		}},
-		{"$unwind": "$connector"},
-		{"$replaceRoot": bson.M{
-			"newRoot": "$connector",
-		}},
-		{"$project": bson.M{
-			"impact": 0, "depends": 0,
-		}},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		res := types.Entity{}
-		err := cursor.Decode(&res)
-		if err != nil {
-			return nil, err
-		}
-
-		return &res, nil
-	}
-
-	return nil, nil
-}
-
-func (a *mongoAdapter) FindComponentForResource(ctx context.Context, id string) (*types.Entity, error) {
-	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"_id": id,
-		}},
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$impact",
-			"connectFromField":        "impact",
-			"connectToField":          "_id",
-			"as":                      "component",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeComponent},
-			"maxDepth":                0,
-		}},
-		{"$unwind": "$component"},
-		{"$replaceRoot": bson.M{
-			"newRoot": "$component",
-		}},
-		{"$project": bson.M{
-			"impact": 0, "depends": 0,
-		}},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		res := types.Entity{}
-		err := cursor.Decode(&res)
-		if err != nil {
-			return nil, err
-		}
-
-		return &res, nil
-	}
-
-	return nil, nil
-}
-
 func (a *mongoAdapter) GetWithIdleSince(ctx context.Context) (mongo.Cursor, error) {
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: "idle_since", Value: 1}})
@@ -651,58 +407,7 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbeh
 
 	opts := &options.FindOptions{}
 	return a.dbCollection.Find(ctx, filter,
-		opts.SetProjection(bson.M{"depends": 0, "impact": 0}))
-}
-
-func (a *mongoAdapter) GetImpactedServicesInfo(ctx context.Context) (mongo.Cursor, error) {
-	return a.dbCollection.Aggregate(ctx, []bson.M{
-		{
-			"$match": bson.M{
-				"type": types.EntityTypeConnector,
-			},
-		},
-		{
-			"$addFields": bson.M{
-				"dependencies": bson.M{
-					"$concatArrays": bson.A{"$depends", "$impact"},
-				},
-			},
-		},
-		{
-			"$project": bson.M{
-				"dependencies": 1,
-			},
-		},
-		{
-			"$lookup": bson.M{
-				"from":         mongo.EntityMongoCollection,
-				"localField":   "dependencies",
-				"foreignField": "depends",
-				"as":           "impacted_services",
-			},
-		},
-		{
-			"$addFields": bson.M{
-				"impacted_services": bson.M{
-					"$map": bson.M{
-						"input": bson.M{
-							"$filter": bson.M{
-								"input": "$impacted_services",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type", types.EntityTypeService}},
-							}},
-						"as": "item",
-						"in": "$$item._id",
-					},
-				},
-			},
-		},
-		{
-			"$project": bson.M{
-				"_id":               1,
-				"impacted_services": 1,
-			},
-		},
-	})
+		opts.SetProjection(bson.M{"services": 0}))
 }
 
 func (a *mongoAdapter) UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error {
@@ -713,4 +418,78 @@ func (a *mongoAdapter) UpdatePbehaviorInfo(ctx context.Context, id string, info 
 
 	_, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"pbehavior_info": info}})
 	return err
+}
+
+func (a *mongoAdapter) FindConnector(ctx context.Context, id string) (*types.Entity, error) {
+	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"_id": id,
+		}},
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$connector",
+			"connectFromField": "connector",
+			"connectToField":   "_id",
+			"as":               "connector",
+			"maxDepth":         0,
+		}},
+		{"$unwind": "$connector"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$connector",
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		res := types.Entity{}
+		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+
+		return &res, nil
+	}
+
+	return nil, nil
+}
+
+func (a *mongoAdapter) FindComponent(ctx context.Context, id string) (*types.Entity, error) {
+	cursor, err := a.dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"_id": id,
+		}},
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$component",
+			"connectFromField": "component",
+			"connectToField":   "_id",
+			"as":               "component",
+			"maxDepth":         0,
+		}},
+		{"$unwind": "$component"},
+		{"$replaceRoot": bson.M{
+			"newRoot": "$component",
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		res := types.Entity{}
+		err := cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+
+		return &res, nil
+	}
+
+	return nil, nil
 }
