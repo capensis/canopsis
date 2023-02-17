@@ -49,6 +49,7 @@ func NewImportWorker(
 		filePattern: conf.ImportCtx.FilePattern,
 		workerV1:    workerV1,
 		workerV2:    workerV2,
+		logger:      logger,
 	}
 
 	thdWarnMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdWarnMinPerImport)

@@ -51,7 +51,6 @@
           :loading="downloading",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
-          color="black",
           @click="exportContextList"
         )
 </template>

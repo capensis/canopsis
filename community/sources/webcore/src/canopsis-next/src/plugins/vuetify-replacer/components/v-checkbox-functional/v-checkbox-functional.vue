@@ -1,6 +1,6 @@
 <template lang="pug">
-  div.v-input.v-input--selection-controls.v-input--checkbox.theme--light(
-    :class="{ 'v-input--is-disabled': disabled, 'v-input--hide-details': hideDetails }"
+  div.v-input.v-input--selection-controls.v-input--checkbox(
+    :class="[{ 'v-input--is-disabled': disabled, 'v-input--hide-details': hideDetails }, themeClasses]"
   )
     div.v-input__control
       div.v-input__slot
@@ -14,17 +14,21 @@
             type="checkbox"
           )
           div.v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
-          i.v-icon.material-icons.theme--light(
-            :class="{ 'primary--text': inputValue }"
+          i.v-icon.material-icons(
+            :class="[{ 'primary--text': inputValue }, themeClasses]"
           ) {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}
-        label.v-label.theme--light(
+        label.v-label(
           v-show="label !== ''",
+          :class="themeClasses",
           @click="change"
         ) {{ label }}
 </template>
 
 <script>
+import Themeable from 'vuetify/es5/mixins/themeable';
+
 export default {
+  mixins: [Themeable],
   model: {
     prop: 'inputValue',
     event: 'change',

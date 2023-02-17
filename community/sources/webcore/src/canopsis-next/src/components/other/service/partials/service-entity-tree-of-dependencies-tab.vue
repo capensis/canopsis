@@ -2,7 +2,6 @@
   service-dependencies(
     :root="entity",
     :columns="columns",
-    light,
     openable-root
   )
 </template>

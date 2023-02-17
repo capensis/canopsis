@@ -1,5 +1,6 @@
 import { merge } from 'lodash';
 
+import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -288,11 +289,14 @@ export default merge({
     column: 'Colonne | Colonnes',
     countOfTotal: '{count} sur {total}',
     rule: 'Règle',
+    initialLongOutput: 'Sortie initiale longue',
+    totalStateChanges: 'Changements d\'état totaux',
+    theme: 'Thème | Thèmes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',
-      reportIncident: 'Signaler un incident',
+      reportIncident: 'Déclarer un incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
       [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
       [EVENT_ENTITY_TYPES.validate]: 'Valider',
@@ -308,7 +312,7 @@ export default merge({
     acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
     saveChanges: 'Sauvegarder',
-    reportIncident: 'Signaler un incident',
+    reportIncident: 'Déclarer un incident',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -503,6 +507,12 @@ export default merge({
         text: 'Consigne automatique terminée',
       },
     },
+    themes: {
+      [THEMES_NAMES.canopsis]: 'Canopsis',
+      [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
+      [THEMES_NAMES.colorBlind]: 'Daltonien',
+      [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
+    },
   },
   variableTypes: {
     string: 'Chaîne de caractères',
@@ -612,8 +622,8 @@ export default merge({
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour méta-alarmes',
-        manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
-        manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
+        createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
+        removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
@@ -781,7 +791,7 @@ export default merge({
     columnNames: 'Nom des colonnes',
     exportColumnNames: 'Nom des colonnes à exporter',
     groupColumnNames: 'Nom des colonnes des méta-alarmes',
-    trackColumnNames: 'Suivre les colonnes de source d\'alarme',
+    trackColumnNames: 'Colonnes pour le suivi de cause racine',
     treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
