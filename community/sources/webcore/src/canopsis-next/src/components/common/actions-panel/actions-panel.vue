@@ -1,55 +1,46 @@
 <template lang="pug">
   div
-    mq-layout(mq="xl")
-      v-layout(row, align-center)
-        actions-panel-item(
-          v-for="action in inlineActions",
-          v-bind="action",
-          :key="action.type"
-        )
-        v-menu(v-if="dropdownActions.length", bottom, left, @click.native.stop="")
-          template(#activator="{ on }")
-            v-btn.mr-0(v-on="on", icon)
-              v-icon more_vert
-          v-list
-            actions-panel-item(
-              v-for="action in dropdownActions",
-              v-bind="action",
-              is-drop-down,
-              :key="action.type"
-            )
-    mq-layout(:mq="['m', 't', 'l']")
-      v-layout
+    v-layout(row, align-center)
+      c-action-btn(
+        v-for="(action, index) in preparedActions.inline",
+        :key="index",
+        :tooltip="action.title",
+        :disabled="action.disabled",
+        :icon="action.icon",
+        :color="action.iconColor",
+        :badge-value="action.badgeValue",
+        :badge-tooltip="action.badgeTooltip",
+        @click="action.method"
+      )
+      span.ml-1(v-if="preparedActions.dropDown.length")
         v-menu(
-          v-if="actions.length",
+          key="dropdown-menu",
           bottom,
           left,
           @click.native.stop=""
         )
           template(#activator="{ on }")
-            v-btn(v-on="on", icon)
+            v-btn.ma-0(v-on="on", icon)
               v-icon more_vert
           v-list
-            actions-panel-item(
-              v-for="action in actions",
-              v-bind="action",
-              is-drop-down,
-              :key="action.type"
+            v-list-tile(
+              v-for="(action, index) in preparedActions.dropDown",
+              :key="index",
+              :disabled="action.disabled",
+              @click.stop="action.method"
             )
+              v-list-tile-title
+                v-icon.pr-3(
+                  :color="action.iconColor",
+                  :disabled="action.disabled",
+                  left,
+                  small
+                ) {{ action.icon }}
+                span.body-1(:class="action.cssClass") {{ action.title }}
 </template>
 
 <script>
-import ActionsPanelItem from './actions-panel-item.vue';
-
-/**
- * Component to regroup actions (actions-panel-item) for each alarm on the alarms list
- *
- * @module alarm
- *
- * @prop {Array} [actions=[]] - Actions object
- */
 export default {
-  components: { ActionsPanelItem },
   props: {
     actions: {
       type: Array,
@@ -61,12 +52,18 @@ export default {
     },
   },
   computed: {
-    inlineActions() {
-      return this.actions.slice(0, this.inlineCount);
-    },
+    preparedActions() {
+      if (this.$mq === 'xl') {
+        return {
+          inline: this.actions.slice(0, this.inlineCount),
+          dropDown: this.actions.slice(this.inlineCount),
+        };
+      }
 
-    dropdownActions() {
-      return this.actions.slice(this.inlineCount);
+      return {
+        inline: [],
+        dropDown: this.actions,
+      };
     },
   },
 };
