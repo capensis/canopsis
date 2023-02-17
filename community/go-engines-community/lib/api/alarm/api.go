@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -33,11 +32,10 @@ type API interface {
 }
 
 type api struct {
-	store                  Store
-	exportExecutor         export.TaskExecutor
-	defaultExportFields    export.Fields
-	exportSeparators       map[string]rune
-	timezoneConfigProvider config.TimezoneConfigProvider
+	store               Store
+	exportExecutor      export.TaskExecutor
+	defaultExportFields export.Fields
+	exportSeparators    map[string]rune
 
 	logger zerolog.Logger
 }
@@ -45,7 +43,6 @@ type api struct {
 func NewApi(
 	store Store,
 	executor export.TaskExecutor,
-	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
@@ -64,8 +61,7 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
-		timezoneConfigProvider: timezoneConfigProvider,
-		logger:                 logger,
+		logger: logger,
 	}
 }
 
@@ -82,7 +78,7 @@ func (a *api) List(c *gin.Context) {
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), apiKey, r)
+	aggregationResult, err := a.store.Find(c, apiKey, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -105,7 +101,7 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	alarm, err := a.store.GetByID(c.Request.Context(), c.Param("id"), apiKey)
+	alarm, err := a.store.GetByID(c, c.Param("id"), apiKey)
 	if err != nil {
 		panic(err)
 	}
@@ -127,7 +123,7 @@ func (a *api) GetOpen(c *gin.Context) {
 		return
 	}
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	alarm, ok, err := a.store.GetOpenByEntityID(c.Request.Context(), r.ID, apiKey)
+	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID, apiKey)
 	if err != nil {
 		panic(err)
 	}
@@ -219,7 +215,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			continue
 		}
 
-		details, err := a.store.GetDetails(c.Request.Context(), apiKey, request)
+		details, err := a.store.GetDetails(c, apiKey, request)
 		if err != nil {
 			response[idx].ID = request.ID
 			response[idx].Status = http.StatusInternalServerError
@@ -255,7 +251,7 @@ func (a *api) ListByService(c *gin.Context) {
 	}
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindByService(c.Request.Context(), c.Param("id"), apiKey, r)
+	aggregationResult, err := a.store.FindByService(c, c.Param("id"), apiKey, r)
 	if err != nil {
 		panic(err)
 	}
@@ -286,7 +282,7 @@ func (a *api) ListByComponent(c *gin.Context) {
 	}
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r, apiKey)
+	aggregationResult, err := a.store.FindByComponent(c, r, apiKey)
 	if err != nil {
 		panic(err)
 	}
@@ -317,7 +313,7 @@ func (a *api) ResolvedList(c *gin.Context) {
 	}
 
 	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindResolved(c.Request.Context(), r, apiKey)
+	aggregationResult, err := a.store.FindResolved(c, r, apiKey)
 	if err != nil {
 		panic(err)
 	}
@@ -346,7 +342,7 @@ func (a *api) Count(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.Count(c.Request.Context(), r)
+	res, err := a.store.Count(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -365,27 +361,29 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	separator := a.exportSeparators[r.Separator]
-	exportFields := r.Fields
-	if len(exportFields) == 0 {
-		exportFields = a.defaultExportFields
+	if len(r.Fields) == 0 {
+		r.Fields = a.defaultExportFields
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
+	params, err := json.Marshal(r.ExportFetchParameters)
+	if err != nil {
+		panic(err)
+	}
 
-	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
-		Filename:     "alarms",
-		ExportFields: exportFields,
-		Separator:    separator,
-		DataFetcher: getDataFetcher(a.store, apiKey, r, exportFields.Fields(),
-			a.timezoneConfigProvider.Get().Location),
+	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
+		Type:           "alarm",
+		Parameters:     string(params),
+		Fields:         r.Fields,
+		Separator:      separator,
+		FilenamePrefix: "alarms",
 	})
 	if err != nil {
 		panic(err)
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
-		ID:     taskID,
-		Status: export.TaskStatusRunning,
+		ID:     task.ID,
+		Status: task.Status,
 	})
 }
 
@@ -393,7 +391,7 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -411,7 +409,7 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}

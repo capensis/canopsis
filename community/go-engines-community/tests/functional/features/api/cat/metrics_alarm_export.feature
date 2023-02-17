@@ -10,7 +10,7 @@ Feature: Export alarm metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -34,7 +34,7 @@ Feature: Export alarm metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -56,7 +56,7 @@ Feature: Export alarm metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -93,7 +93,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "filter": "filter \"not-exist\" not found"
+        "filter": "Filter doesn't exist."
       }
     }
     """
@@ -103,7 +103,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "parameter \"not-exist\" is not supported"
+        "parameters.0": "Parameter doesn't exist."
       }
     }
     """
@@ -113,7 +113,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "parameter \"total_user_activity\" is not supported"
+        "parameters.0": "Parameter doesn't exist."
       }
     }
     """
@@ -145,7 +145,7 @@ Feature: Export alarm metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download

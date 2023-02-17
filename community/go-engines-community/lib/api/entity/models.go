@@ -58,10 +58,11 @@ type CleanTask struct {
 type ExportResponse struct {
 	ID string `json:"_id"`
 	// Possible values.
-	//   * `0` - Running
-	//   * `1` - Succeeded
-	//   * `2` - Failed
-	Status int `json:"status"`
+	//   * `0` - Created
+	//   * `1` - Running
+	//   * `2` - Succeeded
+	//   * `3` - Failed
+	Status int64 `json:"status"`
 }
 
 type Entity struct {

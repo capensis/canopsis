@@ -10,7 +10,7 @@ Feature: Export SLI metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -31,7 +31,7 @@ Feature: Export SLI metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -55,7 +55,7 @@ Feature: Export SLI metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -73,7 +73,7 @@ Feature: Export SLI metrics
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -119,7 +119,7 @@ Feature: Export SLI metrics
     """json
     {
       "errors": {
-        "filter": "filter \"not-exist\" not found"
+        "filter": "Filter doesn't exist."
       }
     }
     """

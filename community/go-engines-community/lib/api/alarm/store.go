@@ -2,11 +2,15 @@ package alarm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sort"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -45,6 +49,7 @@ type Store interface {
 	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
 	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
+	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 }
 
 type store struct {
@@ -58,10 +63,17 @@ type store struct {
 
 	linksFetcher common.LinksFetcher
 
+	timezoneConfigProvider config.TimezoneConfigProvider
+
 	logger zerolog.Logger
 }
 
-func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolog.Logger) Store {
+func NewStore(
+	dbClient mongo.DbClient,
+	linksFetcher common.LinksFetcher,
+	timezoneConfigProvider config.TimezoneConfigProvider,
+	logger zerolog.Logger,
+) Store {
 	return &store{
 		dbClient:                         dbClient,
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
@@ -72,6 +84,8 @@ func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger 
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
 
 		linksFetcher: linksFetcher,
+
+		timezoneConfigProvider: timezoneConfigProvider,
 
 		logger: logger,
 	}
@@ -533,6 +547,56 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error) {
 	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	return m, err
+}
+
+func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
+	r := ExportFetchParameters{}
+	err := json.Unmarshal([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+		FilterRequest: FilterRequest{
+			BaseFilterRequest: r.BaseFilterRequest,
+			SearchBy:          t.Fields.Fields(),
+		},
+	}, now)
+	if err != nil {
+		return nil, err
+	}
+
+	project := make(bson.M, len(t.Fields))
+	for _, field := range t.Fields {
+		found := false
+		for anotherField := range project {
+			if strings.HasPrefix(field.Name, anotherField) {
+				found = true
+				break
+			} else if strings.HasPrefix(anotherField, field.Name) {
+				delete(project, anotherField)
+				break
+			}
+		}
+		if !found {
+			project[field.Name] = 1
+		}
+	}
+
+	pipeline = append(pipeline, bson.M{"$project": project})
+	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	location := s.timezoneConfigProvider.Get().Location
+	return export.NewMongoCursor(cursor, t.Fields.Fields(), transformExportField(common.GetRealFormatTime(r.TimeFormat), location)), nil
 }
 
 func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, bson.M, error) {
