@@ -155,12 +155,12 @@ export default {
   .grid-layout-wrapper {
     padding-bottom: 500px;
 
-    & /deep/ .vue-grid-layout {
+    & ::v-deep .vue-grid-layout {
       margin: auto;
       background-color: rgba(60, 60, 60, .05);
     }
 
-    & /deep/ .vue-grid-item {
+    & ::v-deep .vue-grid-item {
       overflow: hidden;
       transition: none !important;
 
@@ -207,7 +207,7 @@ export default {
       }
     }
 
-    & /deep/ .v-card {
+    & ::v-deep .v-card {
       position: relative;
       min-height: 100%;
     }

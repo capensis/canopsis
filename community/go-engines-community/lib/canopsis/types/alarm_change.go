@@ -23,7 +23,6 @@ const (
 	AlarmChangeTypeSnooze            AlarmChangeType = "snooze"
 	AlarmChangeTypeUnsnooze          AlarmChangeType = "unsnooze"
 	AlarmChangeTypeResolve           AlarmChangeType = "resolve"
-	AlarmChangeTypeDone              AlarmChangeType = "done"
 	AlarmChangeTypeComment           AlarmChangeType = "comment"
 	AlarmChangeTypeChangeState       AlarmChangeType = "changestate"
 	AlarmChangeTypePbhEnter          AlarmChangeType = "pbhenter"

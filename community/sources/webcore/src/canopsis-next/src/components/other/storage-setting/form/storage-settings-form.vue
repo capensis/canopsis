@@ -29,21 +29,28 @@
         color="primary"
       )
         template(#append="")
-          c-help-icon(:text="$t('storageSetting.entity.archiveDependenciesHelp')", max-width="300", top)
+          c-help-icon(:text="$t('storageSetting.entity.archiveDependenciesHelp')", color="info", max-width="300", top)
       v-flex
         v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
-    c-information-block(:title="$t('storageSetting.remediation.title')")
+    c-information-block(:title="$t('storageSettings.remediation.title')")
       template(v-if="history.remediation", #subtitle="") {{ remediationSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.remediation.accumulate_after",
-        :label="$t('storageSetting.remediation.accumulateAfter')",
-        :name="remediationAccumulateAfterFieldName"
-      )
       c-enabled-duration-field(
         v-field="form.remediation.delete_after",
         :label="$t('storageSetting.remediation.deleteAfter')",
         :help-text="$t('storageSetting.remediation.deleteAfterHelpText')",
         :name="remediationDeleteAfterFieldName"
+      )
+      c-enabled-duration-field(
+        v-field="form.remediation.delete_stats_after",
+        :label="$t('storageSettings.remediation.deleteStatsAfter')",
+        :help-text="$t('storageSettings.remediation.deleteStatsAfterHelpText')",
+        :name="remediationDeleteStatsAfterFieldName"
+      )
+      c-enabled-duration-field(
+        v-field="form.remediation.delete_mod_stats_after",
+        :label="$t('storageSettings.remediation.deleteModStatsAfter')",
+        :help-text="$t('storageSettings.remediation.deleteModStatsAfterHelpText')",
+        :name="remediationDeleteModStatsAfterFieldName"
       )
     c-information-block(:title="$t('storageSetting.pbehavior.title')")
       template(v-if="history.pbehavior", #subtitle="") {{ pbehaviorSubTitle }}
@@ -104,12 +111,16 @@ export default {
       return 'alarm.delete_after';
     },
 
-    remediationAccumulateAfterFieldName() {
-      return 'remediation.accumulate_after';
-    },
-
     remediationDeleteAfterFieldName() {
       return 'remediation.delete_after';
+    },
+
+    remediationDeleteStatsAfterFieldName() {
+      return 'remediation.delete_stats_after';
+    },
+
+    remediationDeleteModStatsAfterFieldName() {
+      return 'remediation.delete_mod_stats_after';
     },
 
     pbehaviorDeleteAfterFieldName() {

@@ -74,12 +74,8 @@ export default {
       if (isFormValid) {
         const data = { ...this.form };
 
-        switch (this.config.eventType) {
-          case EVENT_ENTITY_TYPES.cancel:
-            data.cancel = 1;
-            break;
-          case EVENT_ENTITY_TYPES.manualMetaAlarmUngroup:
-            data.ma_parents = this.config.parentsIds;
+        if (this.config.eventType === EVENT_ENTITY_TYPES.cancel) {
+          data.cancel = 1;
         }
 
         await this.createEvent(this.config.eventType, this.items, data);

@@ -7,7 +7,8 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in prev
     <div>Date : 07/08/2013 19:00:00</div>
     <div>Ticket number : ticket-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 1`] = `
@@ -17,7 +18,8 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 
     <div>Date : 6:00:00</div>
     <div>Ticket number : ticket-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 1`] = `
@@ -27,5 +29,6 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 1`]
     <div>Date : 6:00:00</div>
     <!---->
   </div>
-</div><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;

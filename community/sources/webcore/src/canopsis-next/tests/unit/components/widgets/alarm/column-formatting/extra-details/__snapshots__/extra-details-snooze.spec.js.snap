@@ -9,7 +9,8 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with date in prev
     <div>Initiator : snooze-initiator</div>
     <div class="c-extra-details__message">Comment : snooze-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge pink"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">alarm</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 1`] = `
@@ -21,7 +22,8 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` with full snooze 
     <div>Initiator : snooze-initiator</div>
     <div class="c-extra-details__message">Comment : snooze-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge pink"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">alarm</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator 1`] = `
@@ -33,7 +35,8 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without initiator
     <!---->
     <div class="c-extra-details__message">Comment : snooze-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge pink"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">alarm</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1`] = `
@@ -45,5 +48,6 @@ exports[`extra-details-snooze Renders \`extra-details-snooze\` without message 1
     <div>Initiator : snooze-initiator</div>
     <!---->
   </div>
-</div><i aria-hidden="true" class="v-icon pink white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">alarm</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge pink"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">alarm</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;

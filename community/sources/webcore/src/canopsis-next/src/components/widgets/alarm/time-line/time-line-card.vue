@@ -1,30 +1,29 @@
 <template lang="pug">
-  div
-    template(v-if="step._t !== 'statecounter'")
-      div.header
+  div.time-line-card
+    div.time-line-card__header
+      template(v-if="isStateCounter")
         c-alarm-chip.chips.pr-2(
           v-if="!isStepTypeAction",
           :value="step.val",
           :type="stepType"
         )
         p {{ stepTitle }}
-      div.content
+      p(v-else) {{ $t('alarm.timeLine.stateCounter.header') }}
+
+    div.time-line-card__content
+      template(v-if="isStateCounter")
         p(v-if="isHtmlEnabled", v-html="step.m")
         p(v-else) {{ step.m }}
-    template(v-else)
-      div.header
-        p {{ $t('alarm.timeLine.stateCounter.header') }}
-      div.content
-        table
-          tr
-            td {{ $t('alarm.timeLine.stateCounter.stateIncreased') }} :
-            td {{ step.val.stateinc }}
-          tr
-            td {{ $t('alarm.timeLine.stateCounter.stateDecreased') }} :
-            td {{ step.val.statedec }}
-          tr(v-for="state in states")
-            td {{ $t('common.state') }} {{ state.text }} :
-            td {{ state.value }}
+      table(v-else)
+        tr
+          td {{ $t('alarm.timeLine.stateCounter.stateIncreased') }} :
+          td {{ step.val.stateinc }}
+        tr
+          td {{ $t('alarm.timeLine.stateCounter.stateDecreased') }} :
+          td {{ step.val.statedec }}
+        tr(v-for="state in states")
+          td {{ $t('common.state') }} {{ state.text }} :
+          td {{ state.value }}
 </template>
 
 <script>
@@ -42,13 +41,19 @@ export default {
       default: false,
     },
   },
+  computed: {
+    isStateCounter() {
+      return this.step._t !== 'statecounter';
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-  $border_line: #DDDDE0;
+$border_line: #DDDDE0;
 
-  .content {
+.time-line-card {
+  &__content {
     padding-left: 20px;
     padding-top: 20px;
     overflow-wrap: break-word;
@@ -58,8 +63,7 @@ export default {
     overflow-y: auto;
   }
 
-  .header {
-    color: #686868;
+  &__header {
     display: flex;
     align-items: baseline;
     font-weight: bold;
@@ -79,6 +83,14 @@ export default {
         text-transform: uppercase;
       }
     }
+
+    .theme--light & {
+      color: #686868;
+    }
+
+    .theme--dark & {
+      color: #989898;
+    }
   }
 
   p {
@@ -87,4 +99,5 @@ export default {
     text-overflow: ellipsis;
     width: 90%;
   }
+}
 </style>

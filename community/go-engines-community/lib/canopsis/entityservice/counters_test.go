@@ -371,7 +371,7 @@ func getGetAlarmCountersFromEventDataSets() map[string]getAlarmCountersFromEvent
 		},
 		"given resolve event should return isChanged true": {
 			event: types.Event{
-				EventType: types.EventTypeResolveDone,
+				EventType: types.EventTypeResolveCancel,
 				Alarm:     &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 				Entity:    &types.Entity{PbehaviorInfo: maintenancePbhInfo},
 				AlarmChange: &types.AlarmChange{

@@ -240,7 +240,7 @@ func getNestedObjectsPipeline() []bson.M {
 				"in": bson.M{
 					"_id":         "$$each._id",
 					"name":        "$$each.crecord_name",
-					"description": "$$each.desc",
+					"description": "$$each.description",
 					"type":        "$$each.type",
 					"bitmask": bson.M{"$arrayElemAt": bson.A{
 						bson.M{"$map": bson.M{

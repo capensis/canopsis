@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     mq-layout(mq="xl")
-      v-layout
+      v-layout(row, align-center)
         actions-panel-item(
           v-for="(action, index) in actions",
           v-bind="action",

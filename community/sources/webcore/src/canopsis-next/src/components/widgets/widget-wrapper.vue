@@ -1,7 +1,7 @@
 <template lang="pug">
   div(:style="widgetWrapperStyles")
     template(v-if="widget.title || editing")
-      v-card-title.widget-title.white.pa-2
+      v-card-title.widget-title.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
             h4.ml-2.font-weight-regular {{ widget.title }}
@@ -20,6 +20,8 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
+
+import featuresService from '@/services/features';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
@@ -42,6 +44,8 @@ export default {
     TextWidget,
     CounterWidget,
     MapWidget,
+
+    ...featuresService.get('components.widgetWrapper.components', {}),
   },
   props: {
     widget: {
@@ -80,6 +84,8 @@ export default {
         [WIDGET_TYPES.counter]: 'counter-widget',
         [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
         [WIDGET_TYPES.map]: 'map-widget',
+
+        ...featuresService.get('components.widgetWrapper.widgetProps.widgetComponentsMap', {}),
       };
       let widgetSpecificsProp = {};
 
