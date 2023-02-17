@@ -216,7 +216,7 @@ export default {
 
 <style lang="scss" scoped>
   .view-tabs.hidden {
-    & /deep/ > .v-tabs__bar {
+    & ::v-deep > .v-tabs__bar {
       display: none;
     }
   }
@@ -228,12 +228,12 @@ export default {
     .tabs-editing & {
       cursor: move;
 
-      & /deep/ .v-tabs__item {
+      & ::v-deep .v-tabs__item {
         cursor: move;
       }
     }
 
-    & /deep/ .v-tabs__item--disabled {
+    & ::v-deep .v-tabs__item--disabled {
       color: #fff;
       opacity: 1;
 

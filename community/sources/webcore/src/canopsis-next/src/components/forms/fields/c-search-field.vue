@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.c-search-field.white(row, align-center)
+  v-layout.c-search-field(row, align-center)
     v-text-field.ma-0(
       :value="localValue",
       :label="$t('common.search')",

@@ -8,7 +8,7 @@
           span.pre-line(v-html="config.text")
         div.my-3
           p.mb-2 {{ config.phraseText }}
-          pre.grey.lighten-2.d-inline.pa-1 {{ originalPhrase }}
+          pre.black--text.grey.lighten-2.d-inline.pa-1 {{ originalPhrase }}
         v-text-field.mt-2(v-model="phrase", :label="$t('modals.confirmationPhrase.phrase')")
       template(#actions="")
         v-btn(@click="$modals.hide", flat) {{ $t('common.cancel') }}

@@ -4,8 +4,6 @@
     :headers="headers",
     :loading="hasActivePending",
     :load-children="loadChildren",
-    :dark="dark",
-    :light="light",
     item-key="key"
   )
     template(#expand="{ item }")
@@ -86,14 +84,6 @@ export default {
     columns: {
       type: Array,
       required: false,
-    },
-    dark: {
-      type: Boolean,
-      default: false,
-    },
-    light: {
-      type: Boolean,
-      default: false,
     },
     impact: {
       type: Boolean,
@@ -273,7 +263,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.service-dependencies /deep/ .v-treeview-node__label {
+.service-dependencies ::v-deep .v-treeview-node__label {
   &, .expand-append {
     display: inline-flex;
     align-items: center;

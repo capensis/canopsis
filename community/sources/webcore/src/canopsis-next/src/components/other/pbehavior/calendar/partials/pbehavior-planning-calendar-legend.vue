@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
+import { getMostReadableTextColor } from '@/helpers/color';
 
 export default {
   props: {
@@ -33,20 +33,12 @@ export default {
       type: Array,
       default: () => [],
     },
-    colorsToTypes: {
-      type: Object,
-      default: () => ({}),
-    },
   },
   methods: {
     getStyleForType(type = {}) {
-      const backgroundColor = type.color
-        || this.colorsToTypes[type._id]
-        || getRandomHexColor();
-
       return {
-        backgroundColor,
-        color: getMostReadableTextColor(backgroundColor, { level: 'AA', size: 'large' }),
+        backgroundColor: type.color,
+        color: getMostReadableTextColor(type.color, { level: 'AA', size: 'large' }),
       };
     },
   },

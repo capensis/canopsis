@@ -15,6 +15,9 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
     form="[object Object]"
     withexdatetype="true"
   />
+  <c-enabled-color-picker-field-stub
+    label="Use special color for this event?"
+  />
 </div>
 `;
 
@@ -35,6 +38,9 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
   <pbehavior-recurrence-rule-field-stub
     form="[object Object]"
     withexdatetype="true"
+  />
+  <c-enabled-color-picker-field-stub
+    label="Use special color for this event?"
   />
 </div>
 `;

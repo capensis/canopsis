@@ -7,7 +7,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -16,7 +16,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -35,7 +35,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
     </li>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
         style="display: none;"
       >
         <div
@@ -45,7 +45,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -66,7 +66,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -75,7 +75,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -96,7 +96,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -105,7 +105,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -124,7 +124,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
     </li>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
         style="display: none;"
       >
         <div
@@ -134,7 +134,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -155,7 +155,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -164,7 +164,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -185,7 +185,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -194,7 +194,7 @@ exports[`time-line Renders \`time-line\` with isHtmlEnabled 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -227,7 +227,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -236,7 +236,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -254,7 +254,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
     </li>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
         style="display: none;"
       >
         <div
@@ -264,7 +264,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -284,7 +284,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -293,7 +293,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -313,7 +313,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -322,7 +322,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -340,7 +340,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
     </li>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
         style="display: none;"
       >
         <div
@@ -350,7 +350,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -370,7 +370,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -379,7 +379,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"
@@ -399,7 +399,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
   <ul>
     <li>
       <div
-        class="timeline-item"
+        class="timeline-date"
       >
         <div
           class="date"
@@ -408,7 +408,7 @@ exports[`time-line Renders \`time-line\` with required props 1`] = `
         </div>
       </div>
       <div
-        class="timeline-item"
+        class="timeline-card"
       >
         <div
           class="time"

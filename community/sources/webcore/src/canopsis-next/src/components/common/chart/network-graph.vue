@@ -272,7 +272,6 @@ export default {
     position: relative;
     width: inherit;
     height: inherit;
-    background: white;
     cursor: grabbing;
 
     &--pointer {

@@ -585,7 +585,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup);
+    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm);
 
     ackRemoveAction.trigger('click');
 

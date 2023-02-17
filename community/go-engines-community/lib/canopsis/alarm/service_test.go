@@ -10,7 +10,6 @@ import (
 	mock_alarmstatus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarmstatus"
 	mock_resolverule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/resolverule"
 
-	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -19,120 +18,6 @@ import (
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	"github.com/golang/mock/gomock"
 )
-
-func TestService_ResolveDone(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	var dataSets = []struct {
-		testName     string
-		findAlarms   []types.Alarm
-		findError    error
-		expectedDone int
-	}{
-		{
-			"given no alarms should return empty result",
-			[]types.Alarm{},
-			nil,
-			0,
-		},
-		{
-			"given done alarms with done time < DoneAutosolveDelay should return empty result",
-			[]types.Alarm{
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-			},
-			nil,
-			0,
-		},
-		{
-			"given done alarms and done alarms with time > DoneAutosolveDelay should return count of alarms with time > DoneAutosolveDelay",
-			[]types.Alarm{
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now(),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-			},
-			nil,
-			2,
-		},
-		{
-			"given done alarms with valid time should return count of alarms",
-			[]types.Alarm{
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-			},
-			nil,
-			3,
-		},
-		{
-			"given find error should return error",
-			[]types.Alarm{
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-				newDoneAlarm(types.CpsTime{
-					Time: time.Now().Add(-cps.DoneAutosolveDelay * time.Second),
-				}),
-			},
-			fmt.Errorf("not found"),
-			0,
-		},
-	}
-
-	for _, dataset := range dataSets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
-			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
-			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
-			mockAlarmAdapter.
-				EXPECT().
-				GetAlarmsWithDoneMark(gomock.Any()).
-				Return(dataset.findAlarms, dataset.findError)
-
-			service := alarm.NewService(
-				mockAlarmAdapter,
-				mockResolveRuleAdapter,
-				mockAlarmStatusService,
-				log.NewLogger(true),
-			)
-
-			doneAlarms, err := service.ResolveDone(context.Background())
-			if err != nil {
-				expectedErr := fmt.Sprintf("done alarms error: %v", dataset.findError.Error())
-				if errors.Is(err, errors.New(expectedErr)) {
-					t.Errorf("expected err %v but got %v", expectedErr, err)
-				}
-			}
-
-			if len(doneAlarms) != dataset.expectedDone {
-				t.Errorf("expected %d done alarms but got %d", dataset.expectedDone, len(doneAlarms))
-			}
-		})
-	}
-}
 
 func TestService_ResolveCancels(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -244,7 +129,7 @@ func TestService_ResolveCancels(t *testing.T) {
 			}
 
 			if len(cancelAlarms) != dataset.expectedCancel {
-				t.Errorf("expected %d done alarms but got %d", dataset.expectedCancel, len(cancelAlarms))
+				t.Errorf("expected %d cancel alarms but got %d", dataset.expectedCancel, len(cancelAlarms))
 			}
 		})
 	}
@@ -359,17 +244,6 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				t.Errorf("expected %d unsnoozed alarms but got %d", dataset.expectedUnsnoozes, len(unsnoozedAlarms))
 			}
 		})
-	}
-}
-
-func newDoneAlarm(time types.CpsTime) types.Alarm {
-	return types.Alarm{
-		Value: types.AlarmValue{
-			Done: &types.AlarmStep{
-				Type:      types.AlarmStepDone,
-				Timestamp: time,
-			},
-		},
 	}
 }
 
