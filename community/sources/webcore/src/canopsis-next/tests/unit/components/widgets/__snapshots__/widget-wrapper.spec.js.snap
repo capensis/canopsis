@@ -196,42 +196,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core ed
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type CounterCustom and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="Unknown widget type: CounterCustom"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type CounterCustom and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
 exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat edition 1`] = `
 <div
   style="min-height: 40px;"
