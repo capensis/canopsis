@@ -158,7 +158,7 @@ describe('actions-panel', () => {
   };
 
   const parentAlarm = {
-    rule: {
+    meta_alarm_rule: {
       type: META_ALARMS_RULE_TYPES.manualgroup,
     },
     d: 'parent-d',
