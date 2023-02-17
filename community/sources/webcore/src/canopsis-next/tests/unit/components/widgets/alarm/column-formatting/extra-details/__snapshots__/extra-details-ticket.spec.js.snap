@@ -17,7 +17,10 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with date in prev
   <div class="mt-2">
     <!---->
   </div>
-</div><span class="v-badge time-line-flag v-badge--overlap"><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub></span><span class="v-tooltip extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="v-badge time-line-flag v-badge--overlap"><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span>
+  <transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub>
+  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 1`] = `
@@ -37,7 +40,10 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full ticket 
   <div class="mt-2">
     <!---->
   </div>
-</div><span class="v-badge time-line-flag v-badge--overlap"><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub></span><span class="v-tooltip extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="v-badge time-line-flag v-badge--overlap"><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span>
+  <transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub>
+  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 1`] = `
@@ -57,5 +63,8 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` without value 1`]
   <div class="mt-2">
     <!---->
   </div>
-</div><span class="v-badge time-line-flag v-badge--overlap"><i aria-hidden="true" class="v-icon blue white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">report_problem</i><transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub></span><span class="v-tooltip extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="v-badge time-line-flag v-badge--overlap"><span class="c-extra-details__badge blue"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">report_problem</i></span>
+  <transition-stub name="fab-transition"><span class="v-badge__badge transparent"><i aria-hidden="true" class="v-icon extra-details-ticket__badge-icon material-icons theme--light error--text" style="font-size: 14px;">error</i></span></transition-stub>
+  </span><span class="v-tooltip c-extra-details extra-details-ticket v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
