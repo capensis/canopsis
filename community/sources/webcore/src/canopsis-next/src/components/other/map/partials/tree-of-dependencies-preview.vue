@@ -590,6 +590,8 @@ export default {
   position: relative;
   height: 800px;
   width: 100%;
+  border-radius: 5px;
+  background: white;
 
   & ::v-deep canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
     display: none;

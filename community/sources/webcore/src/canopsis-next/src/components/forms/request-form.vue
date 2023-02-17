@@ -46,10 +46,7 @@
       :disabled="disabled"
     )
       template(#append="")
-        v-tooltip(left)
-          template(#activator="{ bind, on }")
-            v-icon(v-bind="bind", v-on="on") help
-          div(v-html="$t('scenario.payloadHelp')")
+        c-help-icon(icon="help", :text="$t('scenario.payloadHelp')", left)
 </template>
 
 <script>
