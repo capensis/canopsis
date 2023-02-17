@@ -35,7 +35,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -114,7 +114,7 @@ Feature: Metrics should be added on alarm changes
       "test-instruction-metrics-axe-2-2-name"
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -212,7 +212,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -272,7 +272,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -348,7 +348,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -421,7 +421,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -471,7 +471,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -555,7 +555,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -592,7 +592,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -692,7 +692,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -777,7 +777,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 1
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 1
     Then the response body should contain:
     """json
     {
@@ -866,7 +866,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -998,7 +998,7 @@ Feature: Metrics should be added on alarm changes
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1137,7 +1137,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=correlation_alarms&parameters[]=ratio_correlation&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1337,7 +1337,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1412,7 +1412,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1449,7 +1449,7 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1543,5 +1543,5 @@ Feature: Metrics should be added on alarm changes
       "resource" : "test-resource-metrics-axe-14"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=min_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 2
-    When I do GET /api/v4/cat/metrics/alarm?kpi_filter={{ .filterID }}&parameters[]=max_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 4
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=min_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=max_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 4
