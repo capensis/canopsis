@@ -540,7 +540,6 @@ Feature: run a job
                 },
                 {
                   "fail_reason": "see {{ .dummyApiURL }}/rundeck/execution/show/test-job-execution-failed",
-                  "output": "test-job-execution-failed-output",
                   "status": 2
                 }
               ]
