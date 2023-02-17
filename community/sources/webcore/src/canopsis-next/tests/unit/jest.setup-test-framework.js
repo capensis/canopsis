@@ -21,6 +21,12 @@ Object.defineProperty(HTMLElement.prototype, 'innerText', {
   },
 });
 
+jest.mock('@/services/features', () => ({
+  get() {},
+  call() {},
+  has() {},
+}));
+
 expect.extend({
   toMatchImageSnapshot,
   toMatchCanvasSnapshot(canvas, options, ...args) {
