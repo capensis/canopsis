@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    v-messages(v-if="errors.has(name)", :value="errors.collect(name)", color="error")
     c-column-field.my-2(
       v-for="(column, index) in columns",
       v-field="columns[index]",
