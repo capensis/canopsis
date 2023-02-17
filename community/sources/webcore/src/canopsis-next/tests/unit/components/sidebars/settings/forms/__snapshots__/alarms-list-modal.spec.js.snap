@@ -12,8 +12,9 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     label="Column names"
     templates=""
     type="alarm"
-    with-state="with-state"
+    withcolorindicator="true"
     withhtml="true"
+    withtemplate="true"
   />
   <hr
     class="v-divider theme--light"
@@ -51,8 +52,9 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     label="Column names"
     templates=""
     type="alarm"
-    with-state="with-state"
+    withcolorindicator="true"
     withhtml="true"
+    withtemplate="true"
   />
   <hr
     class="v-divider theme--light"
