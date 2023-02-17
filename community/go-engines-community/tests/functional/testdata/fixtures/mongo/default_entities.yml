@@ -1048,6 +1048,34 @@ default_entities:
     component: test-junit-entity-to-get-entity-gantt-not-linked-to-test-suite
     connector: junit/junit
 
+  resource_to_alarm_export_1:
+    <<: *resource
+    _id: test-resource-to-alarm-export-1/test-component-default
+    name: test-resource-to-alarm-export-1
+    infos:
+      test-resource-to-alarm-export-1-info-1:
+        description: test-resource-to-alarm-export-1-info-1-description
+        name: test-resource-to-alarm-export-1-info-1-name
+        value: test-resource-to-alarm-export-1-info-1-value
+  resource_to_alarm_export_2:
+    <<: *resource
+    _id: test-resource-to-alarm-export-2/test-component-default
+    name: test-resource-to-alarm-export-2
+
+  resource_to_export_1:
+    <<: *resource
+    _id: test-resource-to-export-1/test-component-default
+    name: test-resource-to-export-1
+    infos:
+      test-resource-to-export-1-info-1:
+        description: test-resource-to-export-1-info-1-description
+        name: test-resource-to-export-1-info-1-name
+        value: test-resource-to-export-1-info-1-value
+  resource_to_export_2:
+    <<: *resource
+    _id: test-resource-to-export-2/test-component-default
+    name: test-resource-to-export-2
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
@@ -1338,34 +1366,6 @@ default_entities:
     infos: { }
     measurements: null
     name: test-idle-since-integration-2-resource-1
-    type: resource
-  default_entities_133:
-    _id: test-entity-to-export-resource-1/test-entity-to-export-component
-    component: test-entity-to-export-component
-    connector: test-entity-to-export-connector/test-entity-to-export-connector-name
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact_level: 1
-    infos:
-      test-entity-to-export-resource-1-info-1:
-        description: test-entity-to-export-resource-1-info-1-description
-        name: test-entity-to-export-resource-1-info-1-name
-        value: test-entity-to-export-resource-1-info-1-value
-    measurements: null
-    name: test-entity-to-export-resource-1
-    type: resource
-  default_entities_134:
-    _id: test-entity-to-export-resource-2/test-entity-to-export-component
-    component: test-entity-to-export-component
-    connector: test-entity-to-export-connector/test-entity-to-export-connector-name
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-to-export-resource-2
     type: resource
   default_entities_149:
     _id: test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually
