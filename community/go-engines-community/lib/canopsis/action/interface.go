@@ -99,6 +99,8 @@ type AdditionalData struct {
 	User            string                `json:"user"`
 	Initiator       string                `json:"initiator"`
 	Output          string                `json:"event_output"`
+
+	RuleName string `json:"rule_name"`
 }
 
 type Execution struct {
