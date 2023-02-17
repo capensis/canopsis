@@ -534,6 +534,34 @@ Feature: Get alarm metrics
     """
 
   @concurrent
+  Scenario: given get aggregated metric with invalid function should return error
+    When I am admin
+    When I do POST /api/v4/cat/metrics/aggregate:
+    """
+    {
+      "from": {{ parseTime "23-11-2021 00:00" }},
+      "to": {{ parseTime "23-11-2021 00:00" }},
+      "sampling": "hour",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
+      "parameters": [
+        {
+          "metric": "without_ticket_active_alarms",
+          "aggregate_func": "qwe"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum avg min max] or empty."
+      }
+    }
+    """
+
+  @concurrent
   Scenario: given get aggregated ratio metric with aggregate function should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
