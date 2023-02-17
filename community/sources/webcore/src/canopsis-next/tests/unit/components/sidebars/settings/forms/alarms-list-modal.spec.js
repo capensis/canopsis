@@ -12,7 +12,7 @@ const stubs = {
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
-  'field-text-editor': true,
+  'field-text-editor-with-template': true,
 };
 
 const snapshotStubs = {
@@ -20,13 +20,13 @@ const snapshotStubs = {
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
-  'field-text-editor': true,
+  'field-text-editor-with-template': true,
 };
 
 const selectFieldColumns = wrapper => wrapper.find('field-columns-stub');
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('field-default-elements-per-page-stub');
 const selectFieldInfoPopup = wrapper => wrapper.find('field-info-popup-stub');
-const selectFieldTextEditor = wrapper => wrapper.find('field-text-editor-stub');
+const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('field-text-editor-with-template-stub');
 
 describe('alarms-list-modal', () => {
   const form = {
@@ -117,7 +117,7 @@ describe('alarms-list-modal', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    selectFieldTextEditor(wrapper).vm.$emit('input', newTemplate);
+    selectFieldTextEditorWithTemplate(wrapper).vm.$emit('input', newTemplate);
 
     expect(wrapper).toEmit('input', { ...form, moreInfoTemplate: newTemplate });
   });
