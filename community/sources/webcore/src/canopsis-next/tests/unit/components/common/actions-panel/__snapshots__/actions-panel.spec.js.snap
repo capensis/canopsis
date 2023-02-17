@@ -4,7 +4,7 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the e
 <div>
   <div>
     <div
-      class="layout"
+      class="layout row align-center"
     >
       <span>
         <c-action-btn-stub
@@ -132,7 +132,7 @@ exports[`actions-panel Renders \`actions-panel\` with default props correctly on
 <div>
   <div>
     <div
-      class="layout"
+      class="layout row align-center"
     >
       <!---->
     </div>
@@ -162,7 +162,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
 <div>
   <div>
     <div
-      class="layout"
+      class="layout row align-center"
     >
       <button
         class="mr-0 v-btn v-btn--icon theme--light"

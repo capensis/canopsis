@@ -12,9 +12,12 @@ export default {
   },
   remediation: {
     title: 'Instructions data storage',
-    accumulateAfter: 'Accumulate instructions statistics after',
-    deleteAfter: 'Delete instructions data after',
-    deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+    deleteAfter: 'Delete instructions timeline data after',
+    deleteAfterHelpText: 'When switched on, the instructions timelines data will be deleted after the defined time period.',
+    deleteStatsAfter: 'Delete instruction statistics data after',
+    deleteStatsAfterHelpText: 'When switched on, the instruction statistics will be deleted after the defined time period.',
+    deleteModStatsAfter: 'Delete instructions summary data after',
+    deleteModStatsAfterHelpText: 'When switched on, the instructions summary data will be deleted after the defined time period.',
   },
   entity: {
     title: 'Entities data storage',

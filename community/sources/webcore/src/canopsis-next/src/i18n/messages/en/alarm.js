@@ -49,8 +49,8 @@ export default {
       variablesHelp: 'List of available variables',
       history: 'History',
       groupRequest: 'Suggest group request for meta alarm',
-      manualMetaAlarmGroup: 'Manual meta alarm management',
-      manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
+      createManualMetaAlarm: 'Manual meta alarm management',
+      removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       comment: 'Comment',
     },
     iconsTitles: {

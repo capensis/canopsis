@@ -1,8 +1,6 @@
 <template lang="pug">
-  div
-    span.theme--light.v-label.text-editor__label.mb-2(
-      v-show="label"
-    ) {{ label }}
+  div.text-editor
+    v-label(v-show="label") {{ label }}
     div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
       div(ref="textEditor")
       variables-menu(
@@ -16,9 +14,7 @@
         @close="closeVariablesMenu"
       )
       div.text-editor__details
-        div.v-messages.theme--light.error--text
-          div.v-messages__wrapper
-            div.v-messages__message(v-for="errorMessage in errorMessages") {{ errorMessage }}
+        v-messages(:value="errorMessages", color="error")
 </template>
 
 <script>
@@ -111,6 +107,10 @@ export default {
       type: Array,
       required: false,
     },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -166,6 +166,10 @@ export default {
         config.buttonsXS = this.buttons;
       }
 
+      if (this.dark && !this.config.theme) {
+        config.theme = 'dark';
+      }
+
       config.extraButtons = [];
 
       if (this.variables) {
@@ -213,6 +217,10 @@ export default {
     },
   },
   watch: {
+    editorConfig() {
+      this.destroyJodit();
+      this.createJodit();
+    },
     value(newValue) {
       if (this.$editor.value !== newValue) {
         this.$editor.setEditorValue(newValue);
@@ -220,17 +228,25 @@ export default {
     },
   },
   mounted() {
-    this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
-    this.$editor.setEditorValue(this.value);
-    this.$editor.events.on('change', this.onChange);
+    this.createJodit();
   },
   beforeDestroy() {
-    this.$editor.events.off('change', this.onChange);
-    this.$editor.destruct();
-
-    delete this.$editor;
+    this.destroyJodit();
   },
   methods: {
+    createJodit() {
+      this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
+      this.$editor.setEditorValue(this.value);
+      this.$editor.events.on('change', this.onChange);
+    },
+
+    destroyJodit() {
+      this.$editor.events.off('change', this.onChange);
+      this.$editor.destruct();
+
+      delete this.$editor;
+    },
+
     selectVariableValueByCursor() {
       const selection = this.$editor.selection.sel;
       const { anchorNode, anchorOffset, focusOffset } = selection;
@@ -589,6 +605,10 @@ export default {
       height: 100%;
       color: black;
       font-size: 15px;
+
+      .jodit_dark_theme & {
+        color: silver;
+      }
     }
   }
 }
@@ -596,9 +616,10 @@ export default {
 
 <style lang="scss" scoped>
 .text-editor {
-  &__label {
+  .v-label {
     font-size: .85em;
     display: block;
+    margin-bottom: 8px;
   }
 
   &__details {
@@ -612,7 +633,7 @@ export default {
     overflow: hidden;
   }
 
-  &.error--text /deep/ .jodit_container {
+  &.error--text ::v-deep .jodit_container {
     margin-bottom: 8px;
 
     .jodit_workplace {
@@ -620,11 +641,11 @@ export default {
     }
   }
 
-  & /deep/ .jodit_toolbar_popup {
+  & ::v-deep .jodit_toolbar_popup {
     z-index: 25;
   }
 
-  & /deep/ .jodit_error_box_for_messages .error {
+  & ::v-deep .jodit_error_box_for_messages .error {
      color: white;
   }
 }

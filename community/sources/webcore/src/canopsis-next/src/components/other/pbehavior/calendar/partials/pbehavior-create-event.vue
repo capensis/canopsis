@@ -4,6 +4,7 @@
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
+        :outline="$system.dark",
         @click="remove"
       ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(
@@ -11,7 +12,11 @@
         flat,
         @click="cancel"
       ) {{ $t('common.cancel') }}
-      v-btn.mr-0.mb-0.primary.white--text(type="submit") {{ $t('common.submit') }}
+      v-btn.mr-0.mb-0(
+        :disabled="errors.any()",
+        color="primary",
+        type="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>

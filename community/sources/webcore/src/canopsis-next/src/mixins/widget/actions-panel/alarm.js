@@ -264,19 +264,6 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showManualMetaAlarmUngroupModal() {
-      this.$modals.show({
-        name: MODALS.createEvent,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('alarm.actions.titles.manualMetaAlarmUngroup'),
-          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [this.parentAlarm.d],
-        },
-      });
-    },
-
     actionsAccessFilterHandler({ type }) {
       const permission = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[type];
 

@@ -1,7 +1,7 @@
 <template lang="pug">
   div.tree-of-dependencies__preview
     c-zoom-overlay
-      network-graph.fill-height(
+      network-graph.fill-height.black--text(
         ref="networkGraph",
         :options="options",
         :node-html-label-options="nodeHtmlLabelsOptions",
@@ -596,12 +596,14 @@ export default {
   position: relative;
   height: 800px;
   width: 100%;
+  border-radius: 5px;
+  background: white;
 
-  & /deep/ canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
+  & ::v-deep canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
     display: none;
   }
 
-  & /deep/ .v-badge__badge {
+  & ::v-deep .v-badge__badge {
     top: -7px;
     right: -7px;
 
@@ -610,12 +612,12 @@ export default {
     }
   }
 
-  & /deep/ .v-progress-circular {
+  & ::v-deep .v-progress-circular {
     width: 20px;
     height: 20px;
   }
 
-  & /deep/ .tree-of-dependencies__node-icon {
+  & ::v-deep .tree-of-dependencies__node-icon {
     font-size: 30px;
 
     svg {
@@ -623,7 +625,7 @@ export default {
     }
   }
 
-  & /deep/ .tree-of-dependencies__fetch-dependencies {
+  & ::v-deep .tree-of-dependencies__fetch-dependencies {
     width: 100%;
     height: 100%;
     border-radius: 50%;
