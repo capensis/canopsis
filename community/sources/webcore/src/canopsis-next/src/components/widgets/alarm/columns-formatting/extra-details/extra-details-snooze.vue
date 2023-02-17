@@ -1,19 +1,22 @@
 <template lang="pug">
-  v-tooltip(top)
-    template(#activator="{ on }")
-      v-icon.pink.white--text.c-extra-details__badge(v-on="on", small) {{ icon }}
-    div.text-md-center
-      strong {{ $t('alarm.actions.iconsTitles.snooze') }}
-      div {{ $t('common.by') }} : {{ snooze.a }}
-      div {{ $t('common.date') }} : {{ date }}
-      div {{ $t('common.end') }} : {{ end }}
-      div(v-if="snooze.initiator") {{ $t('common.initiator') }} : {{ snooze.initiator }}
-      div.c-extra-details__message(v-if="snooze.m") {{ $tc('common.comment') }} : {{ snooze.m }}
+  div
+    v-tooltip.c-extra-details(top)
+      template(#activator="{ on }")
+        span.c-extra-details__badge.pink(v-on="on")
+          v-icon(color="white", small) {{ icon }}
+      div.text-md-center
+        strong {{ $t('alarm.actions.iconsTitles.snooze') }}
+        div {{ $t('common.by') }} : {{ snooze.a }}
+        div {{ $t('common.date') }} : {{ date }}
+        div {{ $t('common.end') }} : {{ end }}
+        div(v-if="snooze.initiator") {{ $t('common.initiator') }} : {{ snooze.initiator }}
+        div.c-extra-details__message(v-if="snooze.m") {{ $tc('common.comment') }} : {{ snooze.m }}
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -33,7 +36,7 @@ export default {
     },
 
     icon() {
-      return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon;
+      return getEntityEventIcon(EVENT_ENTITY_TYPES.snooze);
     },
   },
 };

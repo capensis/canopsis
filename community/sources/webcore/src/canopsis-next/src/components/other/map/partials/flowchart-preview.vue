@@ -115,5 +115,7 @@ export default {
   position: relative;
   height: 800px;
   width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
 }
 </style>

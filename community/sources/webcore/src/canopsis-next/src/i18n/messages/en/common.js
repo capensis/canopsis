@@ -1,3 +1,4 @@
+import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -264,6 +265,7 @@ export default {
   clearSearch: 'Clear search input',
   noData: 'No data',
   noColumns: 'You have to select at least 1 column',
+  theme: 'Theme | Themes',
   systemName: 'System name',
   emitTrigger: 'Emit trigger',
   header: 'Header | Headers',
@@ -440,10 +442,6 @@ export default {
     [TRIGGERS.comment]: {
       text: 'Alarm has been commented',
     },
-    [TRIGGERS.done]: {
-      text: 'Alarm is "done"',
-      helpText: 'Probably legacy, because there is no such action in the UI, but it\'s possible to send a done event via API',
-    },
     [TRIGGERS.declareticket]: {
       text: 'Ticket has been declared by the UI action',
     },
@@ -489,6 +487,12 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
     },
+  },
+  themes: {
+    [THEMES_NAMES.canopsis]: 'Canopsis',
+    [THEMES_NAMES.canopsisDark]: 'Canopsis dark',
+    [THEMES_NAMES.colorBlind]: 'Color blind',
+    [THEMES_NAMES.colorBlindDark]: 'Color blind dark',
   },
   request: {
     timeout: 'Timeout',

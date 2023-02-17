@@ -1593,13 +1593,19 @@ Feature: update a PBehavior
       "color": ""
     }
     """
-    Then the response code should be 400
-    Then the response body should be:
+    Then the response code should be 200
+    Then the response body should contain:
     """json
     {
-      "errors": {
-        "color": "Color is missing."
-      }
+      "color": ""
+    }
+    """
+    When I do GET /api/v4/pbehaviors/test-pbehavior-to-patch-14
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "color": ""
     }
     """
     When I do PATCH /api/v4/pbehaviors/test-pbehavior-to-patch-14:

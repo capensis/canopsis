@@ -2282,7 +2282,7 @@ Feature: create and update meta alarm
       "data": [
         {
           "v": {
-            "output": "",
+            "output": "test-output-axe-correlation-15",
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",

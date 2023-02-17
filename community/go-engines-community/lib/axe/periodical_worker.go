@@ -81,13 +81,6 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		return
 	}
 
-	// Resolve the alarms marked as done.
-	doneResolved, err := w.AlarmService.ResolveDone(ctx)
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot resolve done alarms")
-		return
-	}
-
 	// Process the flapping alarms.
 	// Note that this may change the status of some alarms, but it will not
 	// resolve any.
@@ -147,23 +140,6 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 		}
 		eventResolveCancel.SourceType = eventResolveCancel.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventResolveCancel)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot publish event")
-		}
-	}
-
-	eventsCount += len(doneResolved)
-	for _, alarm := range doneResolved {
-		eventResolveDone := types.Event{
-			Connector:     alarm.Value.Connector,
-			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
-			EventType:     types.EventTypeResolveDone,
-		}
-		eventResolveDone.SourceType = eventResolveDone.DetectSourceType()
-		err = w.publishToEngineFIFO(ctx, eventResolveDone)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot publish event")
 		}

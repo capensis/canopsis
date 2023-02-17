@@ -49,6 +49,7 @@ import mapModule from './map';
 import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
+import manualMetaAlarmModule from './manual-meta-alarm';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
 
@@ -104,6 +105,7 @@ export default {
   alarmTag: alarmTagModule,
   shareToken: shareTokenModule,
   techMetrics: techMetricsModule,
+  manualMetaAlarm: manualMetaAlarmModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
 };

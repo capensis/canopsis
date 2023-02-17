@@ -35,7 +35,7 @@
         v-layout(row, justify-end)
           c-action-btn(
             v-if="item.rate_notify",
-            :tooltip="$t('remediationInstructionStats.actions.needRate')",
+            :tooltip="$t('remediation.instructionStat.actions.needRate')",
             icon="notification_important",
             color="error",
             @click="$emit('rate', item)"
@@ -49,7 +49,7 @@
       template(#expand="{ item }")
         remediation-instruction-stats-list-expand-panel(
           :interval="interval",
-          :remediation-instruction-stats-id="item._id"
+          :remediation-instruction-stats-item="item"
         )
 </template>
 

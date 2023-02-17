@@ -58,7 +58,6 @@
       template(#append-outer="")
         c-help-icon(
           :text="$t('remediation.instructionsFilter.selectedInstructionsHelp')",
-          color="grey darken-1",
           icon="help",
           left
         )
