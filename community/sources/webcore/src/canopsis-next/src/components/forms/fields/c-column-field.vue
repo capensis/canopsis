@@ -2,7 +2,7 @@
   v-card
     v-layout.pt-2(justify-space-between)
       v-flex(xs3)
-        v-layout.text-xs-center.pl-2(justify-space-between)
+        span.pl-2
           v-btn(
             :disabled="disabledUp",
             icon,

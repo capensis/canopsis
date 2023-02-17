@@ -45,7 +45,7 @@ export default {
       this.$modals.show({
         name: MODALS.createWidgetTemplate,
         config: {
-          title: this.$t('modals.createWidgetTemplate.title'),
+          title: this.$t('modals.createWidgetTemplate.create.title'),
           widgetTemplate: { type },
           action: this.config.action,
         },
