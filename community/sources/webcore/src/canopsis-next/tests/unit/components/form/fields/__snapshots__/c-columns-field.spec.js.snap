@@ -71,7 +71,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -177,7 +177,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -283,7 +283,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -389,7 +389,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -495,7 +495,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -601,7 +601,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with all columns type corre
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -724,7 +724,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -1004,7 +1004,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -1284,7 +1284,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -1570,7 +1570,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -1856,7 +1856,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -2142,7 +2142,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props correctly
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -2469,7 +2469,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -2688,7 +2688,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -2907,7 +2907,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -3132,7 +3132,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>
@@ -3357,7 +3357,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with errors correctly 1`] =
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light red--text"
+                class="v-icon material-icons theme--light error--text"
               >
                 close
               </i>

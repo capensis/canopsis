@@ -446,6 +446,52 @@ export const COLORS = {
   },
 };
 
+export const THEMES_NAMES = {
+  canopsis: 'canopsis',
+  canopsisDark: 'canopsisDark',
+  colorBlind: 'colorBlind',
+  colorBlindDark: 'colorBlindDark',
+};
+
+const CANOPSIS_THEME_COLORS = {
+  primary: COLORS.primary,
+  secondary: COLORS.secondary,
+};
+
+const CANOPSIS_DARK_THEME_COLORS = {
+  ...CANOPSIS_THEME_COLORS,
+  error: '#ff8b8b',
+};
+
+const COLOR_BLIND_THEME_COLORS = {
+  primary: '#2196f3',
+  secondary: COLORS.secondary,
+};
+
+const COLOR_BLIND_DARK_THEME_COLORS = {
+  ...COLOR_BLIND_THEME_COLORS,
+  error: CANOPSIS_DARK_THEME_COLORS.error,
+};
+
+export const THEMES = {
+  [THEMES_NAMES.canopsis]: {
+    dark: false,
+    colors: CANOPSIS_THEME_COLORS,
+  },
+  [THEMES_NAMES.canopsisDark]: {
+    dark: true,
+    colors: CANOPSIS_DARK_THEME_COLORS,
+  },
+  [THEMES_NAMES.colorBlind]: {
+    dark: false,
+    colors: COLOR_BLIND_THEME_COLORS,
+  },
+  [THEMES_NAMES.colorBlindDark]: {
+    dark: true,
+    colors: COLOR_BLIND_DARK_THEME_COLORS,
+  },
+};
+
 export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';

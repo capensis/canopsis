@@ -1,5 +1,6 @@
 import { merge } from 'lodash';
 
+import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -297,6 +298,7 @@ export default merge({
     trigger: 'Déclencheur | Déclencheurs',
     initialLongOutput: 'Sortie initiale longue',
     totalStateChanges: 'Changements d\'état totaux',
+    theme: 'Thème | Thèmes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
@@ -511,6 +513,12 @@ export default merge({
       [TRIGGERS.autoinstructioncomplete]: {
         text: 'Consigne automatique terminée',
       },
+    },
+    themes: {
+      [THEMES_NAMES.canopsis]: 'Canopsis',
+      [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
+      [THEMES_NAMES.colorBlind]: 'Daltonien',
+      [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
     },
   },
   variableTypes: {
