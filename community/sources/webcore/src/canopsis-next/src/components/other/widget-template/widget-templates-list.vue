@@ -10,6 +10,7 @@
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#updated="{ item }") {{ item.updated | date }}
+    template(#type="{ item }") {{ $t(`widgetTemplate.types.${item.type}`) }}
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
