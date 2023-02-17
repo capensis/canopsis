@@ -3,7 +3,7 @@
     td.pa-0
       v-layout(row, align-center)
         v-btn.primary(
-          v-if="hasExecuteJobListener",
+          v-if="executable",
           :disabled="isRunningJob || isFailedJob",
           round,
           small,
@@ -13,18 +13,19 @@
         span.body-1(v-else) {{ job.name }}
 
         v-tooltip(v-if="isFailedJob || isCompletedJob", :disabled="!hasStatusMessage", max-width="400", right)
-          v-btn.mr-1(
-            slot="activator",
-            :loading="outputPending",
-            icon,
-            small,
-            @click="toggleExpanded"
-          )
-            v-icon(:color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
-          div(v-if="job.fail_reason")
-            span {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
-            span.pre-wrap(v-html="job.fail_reason")
-        v-tooltip(v-show="isRunningJob && hasJobsInQueue", top)
+          template(#activator="{ on }")
+            v-btn.mr-1(
+              v-on="on",
+              :loading="outputPending",
+              icon,
+              small,
+              @click="toggleExpanded"
+            )
+              v-icon(:color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
+            div(v-if="job.fail_reason")
+              span {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
+              span.pre-wrap(v-html="job.fail_reason")
+        v-tooltip(v-if="cancelable && isRunningJob && hasJobsInQueue", top)
           template(#activator="{ on }")
             v-btn.error.ml-2(
               v-on="on",
@@ -65,6 +66,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    executable: {
+      type: Boolean,
+      default: false,
+    },
+    cancelable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -72,10 +81,6 @@ export default {
     };
   },
   computed: {
-    hasExecuteJobListener() {
-      return this.$listeners?.['execute-job'];
-    },
-
     isRunningJob() {
       return isJobExecutionRunning(this.job);
     },

@@ -32,7 +32,7 @@
           c-help-icon(:text="$t('storageSetting.entity.archiveDependenciesHelp')", color="info", max-width="300", top)
       v-flex
         v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
-    c-information-block(:title="$t('storageSettings.remediation.title')")
+    c-information-block(:title="$t('storageSetting.remediation.title')")
       template(v-if="history.remediation", #subtitle="") {{ remediationSubTitle }}
       c-enabled-duration-field(
         v-field="form.remediation.delete_after",
@@ -42,14 +42,14 @@
       )
       c-enabled-duration-field(
         v-field="form.remediation.delete_stats_after",
-        :label="$t('storageSettings.remediation.deleteStatsAfter')",
-        :help-text="$t('storageSettings.remediation.deleteStatsAfterHelpText')",
+        :label="$t('storageSetting.remediation.deleteStatsAfter')",
+        :help-text="$t('storageSetting.remediation.deleteStatsAfterHelpText')",
         :name="remediationDeleteStatsAfterFieldName"
       )
       c-enabled-duration-field(
         v-field="form.remediation.delete_mod_stats_after",
-        :label="$t('storageSettings.remediation.deleteModStatsAfter')",
-        :help-text="$t('storageSettings.remediation.deleteModStatsAfterHelpText')",
+        :label="$t('storageSetting.remediation.deleteModStatsAfter')",
+        :help-text="$t('storageSetting.remediation.deleteModStatsAfterHelpText')",
         :name="remediationDeleteModStatsAfterFieldName"
       )
     c-information-block(:title="$t('storageSetting.pbehavior.title')")
