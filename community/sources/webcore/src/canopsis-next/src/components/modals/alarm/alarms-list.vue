@@ -19,11 +19,10 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { convertWidgetQueryToRequest } from '@/helpers/query';
+import { convertWidgetToQuery, convertWidgetQueryToRequest } from '@/helpers/query';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
@@ -48,7 +47,7 @@ export default {
       meta: {},
       query: {
         page: 1,
-        limit: config.widget?.parameters?.itemsPerPage ?? PAGINATION_LIMIT,
+        ...convertWidgetToQuery(config.widget),
       },
     };
   },
