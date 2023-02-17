@@ -53,6 +53,7 @@ import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-
 /**
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
+ * @property {WidgetSort} sort
  * @property {string} moreInfoTemplate
  * @property {string} moreInfoTemplateTemplate
  * @property {WidgetInfoPopup[]} infoPopups
@@ -143,9 +144,10 @@ export const widgetSortToForm = (sort = {}) => ({
  * Convert alarm list base parameters (we are using it inside another widgets with alarmList) to form
  *
  * @param {AlarmListBaseParameters} [alarmListParameters = {}]
- * @return {AlarmListBaseParameters}
+ * @return {AlarmListBaseParametersForm}
  */
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
+  sort: widgetSortToForm(alarmListParameters.sort),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
   moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),

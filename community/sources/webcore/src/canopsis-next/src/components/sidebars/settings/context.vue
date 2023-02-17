@@ -16,9 +16,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
@@ -29,9 +26,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.treeOfDependenciesColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         with-color-indicator,
         @update:template="updateServiceDependenciesColumnsTemplate"
       )
@@ -43,9 +37,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.activeAlarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         @update:template="updateActiveAlarmsColumnsTemplate"
       )
       v-divider
@@ -56,9 +47,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.resolvedAlarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         @update:template="updateResolvedAlarmsColumnsTemplate"
       )
       v-divider
@@ -79,9 +67,6 @@
       export-csv-form(
         v-model="form.parameters",
         :type="$constants.ENTITIES_TYPES.entity",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         :templates="entityColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending"
       )
@@ -100,7 +85,7 @@ import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 
@@ -128,7 +113,7 @@ export default {
   mixins: [
     authMixin,
     widgetSettingsMixin,
-    widgetColumnsInfosMixin,
+    entitiesInfosMixin,
     widgetTemplatesMixin,
     permissionsWidgetsContextFilters,
   ],
@@ -144,6 +129,9 @@ export default {
     sortablePreparedWidgetColumns() {
       return this.preparedWidgetColumns.filter(column => getSortable(column, ENTITY_UNSORTABLE_FIELDS));
     },
+  },
+  mounted() {
+    this.fetchInfos();
   },
   methods: {
     updateWidgetColumnsTemplate(template, columns) {

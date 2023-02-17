@@ -680,22 +680,24 @@ export const createWidgetTemplateModule = () => {
   };
 };
 
-export const createDynamicInfoModule = () => {
-  const fetchDynamicInfosKeysWithoutStore = jest.fn()
-    .mockReturnValue({
-      meta: { total_count: 0 },
-      data: [],
-    }); // TODO: finish it in the future
+export const createInfosModule = () => {
+  const fetchItems = jest.fn();
 
-  const dynamicInfoModule = {
-    name: 'dynamicInfo',
+  const infosModule = {
+    name: 'infos',
+    getters: {
+      alarmInfos: () => [], // TODO: finish it in the future
+      alarmInfosRules: () => [],
+      entityInfos: () => [],
+      pending: () => [],
+    },
     actions: {
-      fetchInfosKeysWithoutStore: fetchDynamicInfosKeysWithoutStore,
+      fetch: fetchItems,
     },
   };
 
   return {
-    fetchDynamicInfosKeysWithoutStore,
-    dynamicInfoModule,
+    fetchItems,
+    infosModule,
   };
 };

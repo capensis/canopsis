@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card
     v-layout.pt-2(justify-space-between)
-      v-flex(xs3)
+      v-flex(xs5)
         span.pl-2
           v-btn(
             :disabled="disabledUp",
@@ -27,8 +27,15 @@
         :error-messages="errors.collect(`${name}.column`)",
         :name="`${name}.column`"
       )
+      c-alarm-infos-attribute-field(
+        v-if="isAlarmInfos",
+        v-field="column",
+        :rules="alarmInfosRules",
+        :pending="infosPending",
+        :name="`${name}.column`"
+      )
       c-infos-attribute-field(
-        v-if="isInfos",
+        v-else-if="isInfos",
         v-field="column",
         :items="infosItems",
         :pending="infosPending",
@@ -105,16 +112,20 @@ import {
   ALARM_LIST_WIDGET_COLUMNS,
   CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS_TO_LABELS_KEYS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
+  ENTITY_FIELDS_TO_LABELS_KEYS, ALARM_FIELDS,
 } from '@/constants';
 
 import { isLinksWidgetColumn } from '@/helpers/forms/shared/widget-column';
 
 import { formMixin } from '@/mixins/form';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
+  mixins: [
+    formMixin,
+    entitiesInfosMixin,
+  ],
   model: {
     prop: 'column',
     event: 'input',
@@ -137,18 +148,6 @@ export default {
       default: false,
     },
     withColorIndicator: {
-      type: Boolean,
-      default: false,
-    },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    infosPending: {
       type: Boolean,
       default: false,
     },
@@ -184,6 +183,10 @@ export default {
 
     isLinks() {
       return isLinksWidgetColumn(this.column?.column);
+    },
+
+    isAlarmInfos() {
+      return ALARM_FIELDS.infos === this.column?.column;
     },
 
     isInfos() {

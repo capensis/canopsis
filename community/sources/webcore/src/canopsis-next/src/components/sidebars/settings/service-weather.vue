@@ -19,10 +19,7 @@
     alarms-list-modal-form(
       v-model="form.parameters.alarmsList",
       :templates="preparedWidgetTemplates",
-      :templates-pending="widgetTemplatesPending",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending"
+      :templates-pending="widgetTemplatesPending"
     )
     v-divider
     field-number(v-model="form.parameters.limit", :title="$t('settings.limit')")
@@ -36,9 +33,6 @@
       :templates-pending="widgetTemplatesPending",
       :label="$t('settings.treeOfDependenciesColumnNames')",
       :type="$constants.ENTITIES_TYPES.entity",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending",
       with-color-indicator,
       @input="updateWidgetColumnsTemplate"
     )
@@ -105,7 +99,7 @@
 import { ENTITY_FIELDS, ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
@@ -155,7 +149,7 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    widgetColumnsInfosMixin,
+    entitiesInfosMixin,
     widgetTemplatesMixin,
     entityVariablesMixin,
     permissionsWidgetsServiceWeatherFilters,
@@ -179,6 +173,9 @@ export default {
 
       return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
     },
+  },
+  mounted() {
+    this.fetchInfos();
   },
   methods: {
     updateServiceDependenciesColumnsTemplate(template, columns) {

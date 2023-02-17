@@ -184,6 +184,7 @@ import CPatternEditorField from '@/components/forms/fields/pattern/c-pattern-edi
 import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
+import CAlarmInfosAttributeField from '@/components/forms/fields/alarm/c-alarm-infos-attribute-field.vue';
 import CAlarmTagField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
@@ -455,6 +456,7 @@ Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-runtime-template', CRuntimeTemplate);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
+Vue.component('c-alarm-infos-attribute-field', CAlarmInfosAttributeField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);

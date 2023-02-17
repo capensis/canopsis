@@ -287,6 +287,7 @@ export default merge({
     trigger: 'Déclencheur | Déclencheurs',
     column: 'Colonne | Colonnes',
     countOfTotal: '{count} sur {total}',
+    rule: 'Règle',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',

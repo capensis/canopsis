@@ -41,9 +41,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.alarmsColumns')",
         :type="$constants.ENTITIES_TYPES.alarm",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         with-template,
         with-html,
         @update:template="updateAlarmsColumnsTemplate"
@@ -56,9 +53,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
         :type="$constants.ENTITIES_TYPES.entity",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         with-html,
         with-color-indicator,
         @update:template="updateEntitiesColumnsTemplate"
@@ -71,7 +65,7 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
-import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
 
@@ -106,10 +100,13 @@ export default {
   mixins: [
     widgetSettingsMixin,
     entityVariablesMixin,
-    widgetColumnsInfosMixin,
+    entitiesInfosMixin,
     widgetTemplatesMixin,
     permissionsWidgetsMapFilters,
   ],
+  mounted() {
+    this.fetchInfos();
+  },
   methods: {
     updateAlarmsColumnsTemplate(template, columns) {
       this.$set(this.form.parameters, 'alarmsColumnsTemplate', template);
