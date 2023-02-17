@@ -191,6 +191,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get aggregated duration metric by hour request should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
