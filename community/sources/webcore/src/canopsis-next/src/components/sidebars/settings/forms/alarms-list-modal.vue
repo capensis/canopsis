@@ -2,11 +2,18 @@
   v-list-group
     v-list-tile(slot="activator") {{ $t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`) }}
     v-list.grey.lighten-4.px-2.py-0(expand)
+      field-default-sort-column(
+        v-field="form.sort",
+        :columns="form.widgetColumns",
+        :columns-label="$t('settings.columnName')"
+      )
+      v-divider
       field-columns(
         v-field="form.widgetColumns",
         :label="$t('settings.columnNames')",
+        :with-template="columnsWithTemplate",
         with-html,
-        with-state
+        with-color-indicator
       )
       v-divider
       field-default-elements-per-page(v-field="form.itemsPerPage")
@@ -23,6 +30,7 @@
 </template>
 
 <script>
+import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
 import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
 import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
@@ -30,6 +38,7 @@ import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/c
 
 export default {
   components: {
+    FieldDefaultSortColumn,
     FieldColumns,
     FieldInfoPopup,
     FieldTextEditor,
@@ -43,6 +52,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    columnsWithTemplate: {
+      type: Boolean,
+      required: false,
     },
   },
 };
