@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { get, pickBy, compact } from 'lodash';
+import { pickBy, compact } from 'lodash';
 
 import {
   MODALS,
@@ -153,7 +153,7 @@ export default {
   },
   computed: {
     isParentAlarmManualMetaAlarm() {
-      return isManualGroupMetaAlarmRuleType(get(this.parentAlarm, 'rule.type'));
+      return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
