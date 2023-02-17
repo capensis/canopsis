@@ -17,32 +17,6 @@ type RPCServiceResultEvent struct {
 	Error *RPCError `json:"error"`
 }
 
-type RPCPBehaviorEvent struct {
-	Alarm  *Alarm                 `json:"alarm"`
-	Entity *Entity                `json:"entity"`
-	Params RPCPBehaviorParameters `json:"params"`
-}
-
-type RPCPBehaviorParameters struct {
-	Author         string            `json:"author"`
-	UserID         string            `json:"user"`
-	Name           string            `json:"name"`
-	Reason         string            `json:"reason"`
-	Type           string            `json:"type"`
-	RRule          string            `json:"rrule"`
-	Tstart         *CpsTime          `json:"tstart,omitempty"`
-	Tstop          *CpsTime          `json:"tstop,omitempty"`
-	StartOnTrigger *bool             `json:"start_on_trigger,omitempty"`
-	Duration       *DurationWithUnit `json:"duration,omitempty"`
-}
-
-type RPCPBehaviorResultEvent struct {
-	Alarm    *Alarm    `json:"alarm"`
-	Entity   *Entity   `json:"entity"`
-	PbhEvent Event     `json:"event"`
-	Error    *RPCError `json:"error"`
-}
-
 type RPCError struct {
 	Error error
 }
