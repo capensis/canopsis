@@ -11,7 +11,8 @@
       :entity-infos="entityInfos",
       :infos-pending="infosPending",
       with-html,
-      with-state,
+      with-template,
+      with-color-indicator,
       @update:template="updateColumnsTemplate"
     )
     v-divider
