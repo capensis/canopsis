@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"reflect"
 	"regexp"
 	"sync"
 	"text/template"
@@ -15,7 +14,6 @@ import (
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -139,7 +137,7 @@ func (g *generator) GenerateForAllAlarms(ctx context.Context, ids []string) ([]l
 
 func (g *generator) runWorkers(
 	ctx context.Context,
-	f func(ctx context.Context, rule parsedRule) (map[string]liblink.LinksByCategory, error),
+	f func(context.Context, parsedRule) (map[string]liblink.LinksByCategory, error),
 ) (map[string]liblink.LinksByCategory, error) {
 	eg, ctx := errgroup.WithContext(ctx)
 	inCh := make(chan parsedRule)
@@ -652,22 +650,22 @@ func (g *generator) processCode(
 		return nil, err
 	}
 
-	v := libreflect.UnwrapPointer(reflect.ValueOf(r))
-	if v.Kind() != reflect.Slice {
+	s, ok := r.([]any)
+	if !ok {
 		return nil, fmt.Errorf("generate returns not slice")
 	}
 
 	res := make(liblink.LinksByCategory)
-	for i := 0; i < v.Len(); i++ {
-		item := libreflect.UnwrapPointer(v.Index(i))
-		if item.Kind() != reflect.Map {
+	for i := 0; i < len(s); i++ {
+		item, ok := s[i].(map[string]any)
+		if !ok {
 			return nil, fmt.Errorf("generate returns not slice of map")
 		}
 
-		category := g.getMapStringItem(item, "category")
-		label := g.getMapStringItem(item, "label")
-		iconName := g.getMapStringItem(item, "icon_name")
-		url := g.getMapStringItem(item, "url")
+		category, _ := item["category"].(string)
+		label, _ := item["label"].(string)
+		iconName, _ := item["icon_name"].(string)
+		url, _ := item["url"].(string)
 		if url == "" {
 			return nil, fmt.Errorf("generate returns no url")
 		}
@@ -683,13 +681,4 @@ func (g *generator) processCode(
 	}
 
 	return res, nil
-}
-
-func (g *generator) getMapStringItem(v reflect.Value, k string) string {
-	val := libreflect.UnwrapPointer(v.MapIndex(reflect.ValueOf(k)))
-	if val.Kind() == reflect.String {
-		return val.String()
-	}
-
-	return ""
 }
