@@ -826,7 +826,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"priority\": 10020,\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10020,\"name\": \"{{ `test-scenario-action-webhook-6-1-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}] [{{ .AdditionalData.RuleName}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -864,7 +864,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"priority\": 10021,\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10021,\"name\": \"{{ `test-scenario-action-webhook-6-1-action-2 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}] [{{ .AdditionalData.RuleName}}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -913,7 +913,7 @@ Feature: execute action on trigger
               "headers": {
                 "Content-Type": "application/json"
               },
-              "payload": "{\"priority\": 10023,\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10023,\"name\": \"{{ `test-scenario-action-webhook-6-2-action-1 [{{ .AdditionalData.AlarmChangeType }}] [{{ .AdditionalData.Author }}] [{{ .AdditionalData.Initiator }}] [{{ .AdditionalData.User }}] [{{ .AdditionalData.RuleName }}]` }}\", \"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"alarm_pattern\":[[{\"field\":\"v.resource\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-webhook-6-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "empty_response": false,
@@ -1001,7 +1001,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "data": {
-                "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []"
+                "scenario_name_3": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] [] [test-scenario-action-webhook-6-2-name]"
               }
             },
             "connector": "test-connector-action-webhook-6",
@@ -1079,7 +1079,7 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root]",
+          "name": "test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root] [test-scenario-action-webhook-6-1-name]",
           "enabled": true,
           "triggers": [
             "create"
@@ -1116,7 +1116,7 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-6-1-action-2 [declareticketwebhook] [system] [user] []",
+          "name": "test-scenario-action-webhook-6-1-action-2 [declareticketwebhook] [system] [user] [] [test-scenario-action-webhook-6-1-name]",
           "enabled": true,
           "triggers": [
             "create"
@@ -1153,7 +1153,7 @@ Feature: execute action on trigger
     {
       "data": [
         {
-          "name": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] []",
+          "name": "test-scenario-action-webhook-6-2-action-1 [declareticketwebhook] [test-scenario-action-webhook-6-2-action-1-author] [user] [] [test-scenario-action-webhook-6-2-name]",
           "enabled": true,
           "triggers": [
             "create"

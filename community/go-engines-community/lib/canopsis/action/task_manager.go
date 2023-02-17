@@ -508,6 +508,8 @@ func (e *redisBasedManager) startExecution(
 		)
 	}
 
+	data.RuleName = scenario.Name
+
 	executionID, err := e.executionStorage.Create(ctx, ScenarioExecution{
 		ScenarioID:       scenario.ID,
 		AlarmID:          alarm.ID,
