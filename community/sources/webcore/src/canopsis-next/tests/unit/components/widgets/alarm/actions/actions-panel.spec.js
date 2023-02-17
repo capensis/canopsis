@@ -166,7 +166,7 @@ describe('actions-panel', () => {
   };
 
   const parentAlarm = {
-    rule: {
+    meta_alarm_rule: {
       type: META_ALARMS_RULE_TYPES.manualgroup,
     },
     d: 'parent-d',
@@ -811,7 +811,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Manual meta alarm modal showed after trigger manual meta alarm ungroup action', () => {
+  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -835,20 +835,19 @@ describe('actions-panel', () => {
 
     const manualMetaAlarmUngroupAction = selectDropDownActionByType(
       wrapper,
-      ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup,
+      ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
     );
 
     manualMetaAlarmUngroupAction.trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.createEvent,
+        name: MODALS.removeAlarmsFromManualMetaAlarm,
         config: {
           items: [alarm],
           afterSubmit: expect.any(Function),
           title: 'Unlink alarm from manual meta alarm',
-          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [parentAlarm.d],
+          parentAlarm,
         },
       },
     );

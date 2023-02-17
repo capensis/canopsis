@@ -65,6 +65,11 @@ const snapshotStubs = {
 const factory = (options = {}) => shallowMount(AlarmsList, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -72,6 +77,11 @@ const factory = (options = {}) => shallowMount(AlarmsList, {
 const snapshotFactory = (options = {}) => mount(AlarmsList, {
   localVue,
   stubs: snapshotStubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });

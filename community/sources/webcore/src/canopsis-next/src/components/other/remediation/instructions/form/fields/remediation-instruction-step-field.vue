@@ -12,7 +12,7 @@
           v-layout
             c-expand-btn.step-expand(
               v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
+              :color="!expanded && hasChildrenError ? 'error' : ''"
             )
             v-layout(column)
               v-layout(row)

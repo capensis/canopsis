@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//Alarm states
+// Alarm states
 const (
 	AlarmStateOK = iota
 	AlarmStateMinor
@@ -26,7 +26,7 @@ const (
 	AlarmStateTitleCritical = "critical"
 )
 
-//Alarm statuses
+// Alarm statuses
 const (
 	AlarmStatusOff = iota
 	AlarmStatusOngoing
@@ -44,7 +44,7 @@ const (
 	AlarmStatusTitleCancelled = "cancelled"
 )
 
-//Alarm steps
+// Alarm steps
 const (
 	AlarmStepStateIncrease   = "stateinc"
 	AlarmStepStateDecrease   = "statedec"
@@ -340,17 +340,18 @@ func (a *Alarm) RemoveChild(childEID string) {
 	}
 }
 
-func (a *Alarm) AddParent(parentEID string) {
+func (a *Alarm) AddParent(parentEID string) bool {
 	if a.HasParentByEID(parentEID) {
-		return
+		return false
 	}
 
 	a.Value.Parents = append(a.Value.Parents, parentEID)
 	a.parentsUpdate = append(a.parentsUpdate, parentEID)
 	a.AddUpdate("$addToSet", bson.M{"v.parents": bson.M{"$each": a.parentsUpdate}})
+	return true
 }
 
-func (a *Alarm) RemoveParent(parentEID string) {
+func (a *Alarm) RemoveParent(parentEID string) bool {
 	removed := false
 	for idx, parent := range a.Value.Parents {
 		if parent == parentEID {
@@ -361,10 +362,13 @@ func (a *Alarm) RemoveParent(parentEID string) {
 		}
 	}
 
-	if removed {
-		a.parentsRemove = append(a.parentsRemove, parentEID)
-		a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	if !removed {
+		return false
 	}
+
+	a.parentsRemove = append(a.parentsRemove, parentEID)
+	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	return true
 }
 
 func (a *Alarm) SetMeta(meta string) {

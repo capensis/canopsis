@@ -41,6 +41,8 @@ const stubs = {
         }
       },
 
+      blur() {},
+
       keyupHandler(event) {
         if (this.$listeners.keyup) {
           this.$listeners.keyup(event);
@@ -48,6 +50,10 @@ const stubs = {
       },
     },
   },
+  'c-help-icon': true,
+};
+const snapshotStubs = {
+  'c-help-icon': true,
 };
 
 const entityCategories = [
@@ -146,6 +152,7 @@ const factory = (options = {}) => shallowMount(CEntityCategoryField, {
 
 const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
   localVue,
+  stubs: snapshotStubs,
   store: createMockedStoreModules([{
     name: 'entityCategory',
     getters: {
@@ -169,17 +176,6 @@ const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
 
 describe('c-entity-category-field', () => {
   const name = 'category';
-  const CEntityCategoryFieldCopy = {
-    ...CEntityCategoryField,
-
-    methods: {
-      ...CEntityCategoryField.methods,
-
-      clearCategory() {
-        this.newCategory = '';
-      },
-    },
-  };
 
   it('Check fetch list call', () => {
     const fetchListMock = jest.fn();
@@ -246,15 +242,7 @@ describe('c-entity-category-field', () => {
     const [category] = entityCategories;
     const fetchListMock = jest.fn();
     const createMock = jest.fn(() => category);
-    const wrapper = shallowMount(CEntityCategoryFieldCopy, {
-      localVue,
-      stubs,
-
-      parentComponent: {
-        $_veeValidate: {
-          validator: 'new',
-        },
-      },
+    const wrapper = factory({
       propsData: {
         addable: true,
       },
@@ -290,22 +278,14 @@ describe('c-entity-category-field', () => {
     expect(fetchListMock).toBeCalledTimes(2);
     expect(inputEvents).toHaveLength(1);
     expect(eventData).toBe(category);
-    expect(textField.element.value).toBe('');
+    expect(textField.vm.value).toBe('');
   });
 
   it('Check clearing by blur', async () => {
     const categoryName = 'test';
     const fetchListMock = jest.fn();
     const createMock = jest.fn();
-    const wrapper = shallowMount(CEntityCategoryFieldCopy, {
-      localVue,
-      stubs,
-
-      parentComponent: {
-        $_veeValidate: {
-          validator: 'new',
-        },
-      },
+    const wrapper = factory({
       propsData: {
         addable: true,
       },
@@ -338,7 +318,7 @@ describe('c-entity-category-field', () => {
 
     expect(fetchListMock).toBeCalledTimes(1);
     expect(inputEvents).toBe(undefined);
-    expect(textField.element.value).toBe('');
+    expect(textField.vm.value).toBe('');
   });
 
   it('Renders `c-entity-category-field` with default props correctly', () => {

@@ -21,7 +21,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
   style="min-height: 40px;"
 >
   <div
-    class="v-card__title widget-title white pa-2"
+    class="v-card__title widget-title pa-2"
   >
     <div
       class="layout justify-space-between align-center"
@@ -60,7 +60,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
   style="min-height: 40px;"
 >
   <div
-    class="v-card__title widget-title white pa-2"
+    class="v-card__title widget-title pa-2"
   >
     <div
       class="layout justify-space-between align-center"
@@ -371,7 +371,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
   style="min-height: 40px;"
 >
   <div
-    class="v-card__title widget-title white pa-2"
+    class="v-card__title widget-title pa-2"
   >
     <div
       class="layout justify-space-between align-center"
