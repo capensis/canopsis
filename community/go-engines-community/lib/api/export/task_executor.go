@@ -15,76 +15,27 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-)
-
-const (
-	TaskStatusRunning = iota
-	TaskStatusSucceeded
-	TaskStatusFailed
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const fileNameTimeLayout = "2006-01-02T15-04-05-MST"
 
 // TaskExecutor is used to implement export task executor.
 type TaskExecutor interface {
-	// StartExecute creates new export task.
-	StartExecute(ctx context.Context, t Task) (string, error)
+	RegisterType(t string, fetch FetchData)
 	// Execute receives tasks from channel and save its result to storage.
 	Execute(ctx context.Context)
-	// GetStatus returns export task status.
-	GetStatus(ctx context.Context, id string) (*TaskStatus, error)
+	// StartExecute creates new export task.
+	StartExecute(ctx context.Context, t TaskParameters) (*Task, error)
+	Get(ctx context.Context, id string) (*Task, error)
 }
 
-type Task struct {
-	Filename     string
-	ExportFields Fields
-	Separator    rune
-	DataFetcher  DataFetcher
-	DataCursor   DataCursor
-}
-
-type Fields []Field
-
-type Field struct {
-	Name  string `json:"name"`
-	Label string `json:"label"`
-}
-
-func (f *Fields) Fields() []string {
-	fields := make([]string, len(*f))
-	for i, field := range *f {
-		fields[i] = field.Name
-	}
-
-	return fields
-}
-
-func (f *Fields) Labels() []string {
-	labels := make([]string, len(*f))
-	for i, field := range *f {
-		labels[i] = field.Label
-	}
-
-	return labels
-}
-
-type DataFetcher func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error)
+type FetchData func(ctx context.Context, t Task) (DataCursor, error)
 
 type DataCursor interface {
 	Next(ctx context.Context) bool
-	Scan(*map[string]string) error
-	Close()
-}
-
-type taskWithID struct {
-	Task
-	ID string
-}
-
-type TaskStatus struct {
-	Status   int    `bson:"status"`
-	File     string `bson:"file"`
-	Filename string `bson:"filename"`
+	Scan(*map[string]any) error
+	Close(ctx context.Context) error
 }
 
 func NewTaskExecutor(
@@ -93,33 +44,52 @@ func NewTaskExecutor(
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
-		client:         client,
-		collection:     client.Collection(mongo.ExportTaskMongoCollection),
-		logger:         logger,
-		workerCount:    10,
-		removeInterval: 5 * time.Minute,
+		client:      client,
+		collection:  client.Collection(mongo.ExportTaskMongoCollection),
+		logger:      logger,
+		workerCount: 10,
+
+		abandonedInterval:         time.Minute,
+		abandonedLaunchedInterval: 5 * time.Minute,
+		removeInterval:            5 * time.Minute,
+
+		fetches: make(map[string]FetchData),
 
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
 
 type taskExecutor struct {
-	client         mongo.DbClient
-	collection     mongo.DbCollection
-	logger         zerolog.Logger
-	workerCount    int
-	removeInterval time.Duration
-	taskCh         chan<- taskWithID
-	taskChMx       sync.Mutex
+	client      mongo.DbClient
+	collection  mongo.DbCollection
+	workerCount int
+	logger      zerolog.Logger
+
+	fetches map[string]FetchData
+
+	abandonedInterval         time.Duration
+	abandonedLaunchedInterval time.Duration
+	removeInterval            time.Duration
+
+	taskCh   chan<- string
+	taskChMx sync.Mutex
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+}
+
+func (e *taskExecutor) RegisterType(t string, fetch FetchData) {
+	if _, ok := e.fetches[t]; ok {
+		panic(fmt.Errorf("type %q is already registered", t))
+	}
+
+	e.fetches[t] = fetch
 }
 
 func (e *taskExecutor) Execute(parentCtx context.Context) {
 	ctx, cancel := context.WithCancel(parentCtx)
 	defer cancel()
 
-	ch := make(chan taskWithID)
+	ch := make(chan string)
 	e.taskChMx.Lock()
 	e.taskCh = ch
 	e.taskChMx.Unlock()
@@ -147,11 +117,35 @@ func (e *taskExecutor) Execute(parentCtx context.Context) {
 						return
 					}
 
-					e.executeTask(ctx, t)
+					err := e.executeTask(ctx, t)
+					if err != nil {
+						e.logger.Err(err).Msg("cannot execute export task")
+					}
 				}
 			}
 		}()
 	}
+
+	// Fetch tasks
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := e.fetchTasks(ctx)
+				if err != nil {
+					e.logger.Err(err).Msg("cannot fetch export tasks")
+				}
+			}
+		}
+	}()
 
 	// Run delete worker
 	wg.Add(1)
@@ -166,7 +160,10 @@ func (e *taskExecutor) Execute(parentCtx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				e.deleteTasks(ctx)
+				err := e.deleteTasks(ctx)
+				if err != nil {
+					e.logger.Err(err).Msg("cannot delete export tasks")
+				}
 			}
 		}
 	}()
@@ -174,35 +171,41 @@ func (e *taskExecutor) Execute(parentCtx context.Context) {
 	wg.Wait()
 }
 
-func (e *taskExecutor) StartExecute(ctx context.Context, t Task) (string, error) {
+func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) (*Task, error) {
 	e.taskChMx.Lock()
 	defer e.taskChMx.Unlock()
 
 	if e.taskCh == nil {
-		return "", errors.New("execute is not running")
+		return nil, errors.New("execute is not running")
 	}
 
-	id := utils.NewID()
-	now := time.Now().UTC()
 	location := e.timezoneConfigProvider.Get().Location
-	filename := fmt.Sprintf("%s-%s.csv", t.Filename, now.In(location).Format(fileNameTimeLayout))
-	_, err := e.collection.InsertOne(ctx, bson.M{
-		"_id":      id,
-		"status":   TaskStatusRunning,
-		"created":  types.CpsTime{Time: now},
-		"filename": filename,
-	})
-	if err != nil {
-		e.logger.Err(err).Msg("cannot save export task")
-		return "", err
+	now := types.NewCpsTime().In(location)
+	t := Task{
+		ID:         utils.NewID(),
+		Status:     TaskStatusCreated,
+		Type:       params.Type,
+		Parameters: params.Parameters,
+		Fields:     params.Fields,
+		Separator:  params.Separator,
+		Filename:   params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) + ".csv",
+		Created:    now,
 	}
 
-	e.taskCh <- taskWithID{Task: t, ID: id}
+	_, err := e.collection.InsertOne(ctx, t)
+	if err != nil {
+		return nil, err
+	}
 
-	return id, nil
+	select {
+	case e.taskCh <- t.ID:
+	default:
+	}
+
+	return &t, nil
 }
 
-func (e *taskExecutor) GetStatus(ctx context.Context, id string) (*TaskStatus, error) {
+func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	res := e.collection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -212,7 +215,7 @@ func (e *taskExecutor) GetStatus(ctx context.Context, id string) (*TaskStatus, e
 		return nil, err
 	}
 
-	t := TaskStatus{}
+	t := Task{}
 	err := res.Decode(&t)
 	if err != nil {
 		return nil, err
@@ -221,48 +224,128 @@ func (e *taskExecutor) GetStatus(ctx context.Context, id string) (*TaskStatus, e
 	return &t, nil
 }
 
-func (e *taskExecutor) executeTask(ctx context.Context, t taskWithID) {
-	var err error
-	var fileName string
-
-	if t.DataFetcher != nil {
-		fileName, err = ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher)
-	} else {
-		fileName, err = ExportCsvByCursor(ctx, t.ExportFields, t.Separator, t.DataCursor)
+func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
+	t := Task{}
+	err := e.collection.FindOneAndUpdate(
+		ctx,
+		bson.M{
+			"_id":    id,
+			"status": bson.M{"$in": bson.A{TaskStatusCreated, TaskStatusRunning}},
+		},
+		bson.M{"$set": bson.M{
+			"status":   TaskStatusRunning,
+			"launched": types.NewCpsTime(),
+		}},
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&t)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil
+		}
+		return err
 	}
 
-	if err != nil {
-		e.logger.Err(err).Msg("cannot export data")
-
-		_, err := e.collection.UpdateOne(ctx, bson.M{"_id": t.ID}, bson.M{"$set": bson.M{
-			"status":    TaskStatusFailed,
-			"completed": types.CpsTime{Time: time.Now()},
+	updateFilter := bson.M{
+		"_id":    id,
+		"status": TaskStatusRunning,
+	}
+	fetch := e.fetches[t.Type]
+	if fetch == nil {
+		_, err := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
+			"status":      TaskStatusFailed,
+			"completed":   types.NewCpsTime(),
+			"fail_reason": "unknown type",
 		}})
-		if err != nil {
-			e.logger.Err(err).Msg("cannot update export task")
-			return
+		return err
+	}
+
+	cursor, err := fetch(ctx, t)
+	if err != nil {
+		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
+			"status":      TaskStatusFailed,
+			"completed":   types.NewCpsTime(),
+			"fail_reason": "cannot fetch data",
+		}})
+		if updateErr != nil {
+			e.logger.Err(updateErr).Msg("cannot update export task")
 		}
 
-		return
+		return err
 	}
 
-	_, err = e.collection.UpdateOne(ctx, bson.M{"_id": t.ID}, bson.M{"$set": bson.M{
-		"status": TaskStatusSucceeded,
-		"file":   fileName, "completed": types.CpsTime{Time: time.Now()},
+	fileName, err := ToCsv(ctx, t.Fields, t.Separator, cursor)
+	if err != nil {
+		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
+			"status":      TaskStatusFailed,
+			"completed":   types.NewCpsTime(),
+			"fail_reason": "cannot fetch data",
+		}})
+		if updateErr != nil {
+			e.logger.Err(updateErr).Msg("cannot update export task")
+		}
+
+		return fmt.Errorf("cannot export data: %w", err)
+	}
+
+	_, err = e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
+		"status":    TaskStatusSucceeded,
+		"file":      fileName,
+		"completed": types.NewCpsTime(),
 	}})
 	if err != nil {
-		e.logger.Err(err).Msg("cannot update export task")
-		return
+		return fmt.Errorf("cannot update export task: %w", err)
 	}
+
+	return nil
 }
 
-func (e *taskExecutor) deleteTasks(ctx context.Context) {
+func (e *taskExecutor) fetchTasks(ctx context.Context) error {
+	e.taskChMx.Lock()
+	defer e.taskChMx.Unlock()
+
+	if e.taskCh == nil {
+		return errors.New("execute is not running")
+	}
+
+	cursor, err := e.collection.Find(ctx, bson.M{"$or": []bson.M{
+		{
+			"status":  TaskStatusCreated,
+			"started": bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedInterval)}},
+		},
+		{
+			"status":   TaskStatusRunning,
+			"launched": bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedLaunchedInterval)}},
+		},
+	}})
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		t := Task{}
+		err = cursor.Decode(&t)
+		if err != nil {
+			return err
+		}
+
+		select {
+		case <-ctx.Done():
+			return nil
+		case e.taskCh <- t.ID:
+		}
+	}
+
+	return nil
+}
+
+func (e *taskExecutor) deleteTasks(ctx context.Context) error {
 	cursor, err := e.collection.Find(ctx, bson.M{
+		"status":    bson.M{"$in": bson.A{TaskStatusSucceeded, TaskStatusFailed}},
 		"completed": bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.removeInterval)}},
 	})
 	if err != nil {
-		e.logger.Err(err).Msg("cannot find export tasks to delete")
-		return
+		return fmt.Errorf("cannot find export tasks to delete: %w", err)
 	}
 
 	defer cursor.Close(ctx)
@@ -276,8 +359,7 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 
 		err := cursor.Decode(&t)
 		if err != nil {
-			e.logger.Err(err).Msg("cannot decode export task")
-			return
+			return fmt.Errorf("cannot decode export task: %w", err)
 		}
 
 		if t.File != "" {
@@ -292,14 +374,15 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) {
 	}
 
 	if len(ids) == 0 {
-		return
+		return nil
 	}
 
 	_, err = e.collection.DeleteMany(ctx, bson.M{
 		"_id": bson.M{"$in": ids},
 	})
 	if err != nil {
-		e.logger.Err(err).Msg("cannot delete export tasks")
-		return
+		return fmt.Errorf("cannot delete export tasks: %w", err)
 	}
+
+	return nil
 }
