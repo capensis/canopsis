@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -17,7 +20,6 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
 type rpcServerMessageProcessor struct {
@@ -33,7 +35,7 @@ type rpcServerMessageProcessor struct {
 
 func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
 	msg := d.Body
-	var event types.RPCPBehaviorEvent
+	var event rpc.PbehaviorEvent
 	err := p.Decoder.Decode(msg, &event)
 	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "invalid event", msg)
@@ -62,7 +64,7 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 		pbhEvent.Entity = event.Entity
 	}
 
-	return p.getRpcEvent(types.RPCPBehaviorResultEvent{
+	return p.getRpcEvent(rpc.PbehaviorResultEvent{
 		Alarm:    event.Alarm,
 		Entity:   event.Entity,
 		PbhEvent: *pbhEvent,
@@ -73,7 +75,7 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
-	params types.RPCPBehaviorParameters,
+	params rpc.PbehaviorParameters,
 ) (*types.Event, error) {
 	pbehavior, err := p.createPbehavior(ctx, params, entity)
 	if err != nil {
@@ -102,7 +104,7 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 
 func (p *rpcServerMessageProcessor) createPbehavior(
 	ctx context.Context,
-	params types.RPCPBehaviorParameters,
+	params rpc.PbehaviorParameters,
 	entity types.Entity,
 ) (*libpbehavior.PBehavior, error) {
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
@@ -194,11 +196,11 @@ func (p *rpcServerMessageProcessor) getResolveResult(
 }
 
 func (p *rpcServerMessageProcessor) getErrRpcEvent(err error) []byte {
-	msg, _ := p.getRpcEvent(types.RPCPBehaviorResultEvent{Error: &types.RPCError{Error: err}})
+	msg, _ := p.getRpcEvent(rpc.PbehaviorResultEvent{Error: &rpc.Error{Error: err}})
 	return msg
 }
 
-func (p *rpcServerMessageProcessor) getRpcEvent(event types.RPCPBehaviorResultEvent) ([]byte, error) {
+func (p *rpcServerMessageProcessor) getRpcEvent(event rpc.PbehaviorResultEvent) ([]byte, error) {
 	msg, err := p.Encoder.Encode(event)
 	if err != nil {
 		p.Logger.Err(err).Msg("cannot encode event")
