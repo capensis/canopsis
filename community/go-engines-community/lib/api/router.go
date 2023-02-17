@@ -246,8 +246,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linksFetcher, logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider, logger)
+		alarmStore := alarm.NewStore(dbClient, linksFetcher, timezoneConfigProvider, logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -291,6 +291,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.Count,
 		)
+		exportExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
 		{
 			alarmExportRouter.POST(
@@ -318,8 +319,9 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
+		entityStore := entity.NewStore(dbClient, timezoneConfigProvider)
 		entityAPI := entity.NewApi(
-			entity.NewStore(dbClient, timezoneConfigProvider),
+			entityStore,
 			exportExecutor,
 			entityCleanerTaskChan,
 			entityPublChan,
@@ -328,6 +330,7 @@ func RegisterRoutes(
 			logger,
 		)
 
+		exportExecutor.RegisterType("entity", entityStore.Export)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(

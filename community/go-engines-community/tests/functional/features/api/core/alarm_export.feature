@@ -27,7 +27,7 @@ Feature: Export alarms
     When I do GET /api/v4/alarm-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/alarm-export/{{ .exportID }}/download
@@ -35,8 +35,8 @@ Feature: Export alarms
     Then the response raw body should be:
     """csv
     ID,Entity,Not found field,State,Status,Date,Ack date,Infos,Not found infos,Not found links
-    test-alarm-to-export-2,test-entity-to-export-resource-2/test-entity-to-export-component,,minor,ongoing,10 Aug 2020 05:30 CEST,,{},,
-    test-alarm-to-export-1,test-entity-to-export-resource-1/test-entity-to-export-component,,critical,ongoing,09 Aug 2020 05:12 CEST,10 Aug 2020 06:17 CEST,"{""test-entity-to-export-resource-1-info-1"":{""name"":""test-entity-to-export-resource-1-info-1-name"",""description"":""test-entity-to-export-resource-1-info-1-description"",""value"":""test-entity-to-export-resource-1-info-1-value""}}",,
+    test-alarm-to-export-2,test-resource-to-alarm-export-2/test-component-default,,minor,ongoing,10 Aug 2020 05:30 CEST,,{},,
+    test-alarm-to-export-1,test-resource-to-alarm-export-1/test-component-default,,critical,ongoing,09 Aug 2020 05:12 CEST,10 Aug 2020 06:17 CEST,"{""test-resource-to-alarm-export-1-info-1"":{""description"":""test-resource-to-alarm-export-1-info-1-description"",""name"":""test-resource-to-alarm-export-1-info-1-name"",""value"":""test-resource-to-alarm-export-1-info-1-value""}}",,
 
     """
 
@@ -66,7 +66,7 @@ Feature: Export alarms
     When I do GET /api/v4/alarm-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/alarm-export/{{ .exportID }}/download

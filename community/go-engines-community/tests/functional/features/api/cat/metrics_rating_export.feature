@@ -10,7 +10,7 @@ Feature: Export metrics rating
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -32,7 +32,7 @@ Feature: Export metrics rating
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 1
+       "status": 2
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -65,7 +65,7 @@ Feature: Export metrics rating
     """json
     {
       "errors": {
-        "metric": "metric \"not-exist\" is not supported"
+        "metric": "Metric doesn't exist."
       }
     }
     """
@@ -75,7 +75,7 @@ Feature: Export metrics rating
     """json
     {
       "errors": {
-        "criteria": "criteria 1000000 not found"
+        "criteria": "Criteria doesn't exist."
       }
     }
     """
@@ -85,7 +85,7 @@ Feature: Export metrics rating
     """json
     {
       "errors": {
-        "filter": "filter \"not-exist\" not found"
+        "filter": "Filter doesn't exist."
       }
     }
     """
@@ -95,7 +95,7 @@ Feature: Export metrics rating
     """json
     {
       "errors": {
-        "criteria": "criteria \"username\" is not supported by metric \"created_alarms\""
+        "criteria": "Criteria doesn't exist."
       }
     }
     """
@@ -105,7 +105,7 @@ Feature: Export metrics rating
     """json
     {
       "errors": {
-        "criteria": "criteria \"name\" is not supported by metric \"total_user_activity\""
+        "criteria": "Criteria doesn't exist."
       }
     }
     """
@@ -115,7 +115,7 @@ Feature: Export metrics rating
     """json
     {
       "errors": {
-        "metric": "metric \"total_user_activity\" doesn't support filter"
+        "filter": "Filter is not empty."
       }
     }
     """

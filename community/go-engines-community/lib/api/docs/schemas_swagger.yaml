@@ -447,9 +447,10 @@ definitions:
       status:
         description: |-
           Possible values.
-            * `0` - Running
-            * `1` - Succeeded
-            * `2` - Failed
+            * `0` - Created
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
         type: integer
     type: object
   alarm.InstructionFilterRequest:
@@ -1025,9 +1026,10 @@ definitions:
       status:
         description: |-
           Possible values.
-            * `0` - Running
-            * `1` - Succeeded
-            * `2` - Failed
+            * `0` - Created
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
         type: integer
     type: object
   entity.Info:
