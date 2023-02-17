@@ -112,7 +112,8 @@ import {
   ALARM_LIST_WIDGET_COLUMNS,
   CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS_TO_LABELS_KEYS,
-  ENTITY_FIELDS_TO_LABELS_KEYS, ALARM_FIELDS,
+  ENTITY_FIELDS_TO_LABELS_KEYS,
+  ALARM_FIELDS,
 } from '@/constants';
 
 import { isLinksWidgetColumn } from '@/helpers/forms/shared/widget-column';
