@@ -2,13 +2,15 @@
   v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
     v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
-      v-card.secondary.lighten-2(flat)
-        v-card-text
-          pbehaviors-simple-list(
-            :entity="item",
-            :removable="hasDeleteAnyPbehaviorAccess",
-            :updatable="hasUpdateAnyPbehaviorAccess"
-          )
+      v-layout.pa-3(row)
+        v-flex(xs12)
+          v-card
+            v-card-text
+              pbehaviors-simple-list(
+                :entity="item",
+                :removable="hasDeleteAnyPbehaviorAccess",
+                :updatable="hasUpdateAnyPbehaviorAccess"
+              )
 
     template(v-if="item.type !== $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.impactDepends') }}
@@ -17,28 +19,44 @@
 
     v-tab {{ $t('common.infos') }}
     v-tab-item(lazy)
-      infos-tab(:infos="item.infos", :columns-filters="columnsFilters")
+      v-layout.pa-3(row)
+        v-flex(xs12)
+          v-card
+            v-card-text
+              infos-tab(:infos="item.infos", :columns-filters="columnsFilters")
 
     template(v-if="item.type === $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.treeOfDependencies') }}
       v-tab-item(lazy)
-        tree-of-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
+        v-layout.pa-3(row)
+          v-flex(xs12)
+            v-card
+              v-card-text
+                tree-of-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
 
     v-tab {{ $t('context.impactChain') }}
     v-tab-item(lazy)
-      impact-chain-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
+      v-layout.pa-3(row)
+        v-flex(xs12)
+          v-card
+            v-card-text.pa-0
+              impact-chain-dependencies-tab(:item="item", :columns="serviceDependenciesColumns")
 
     v-tab {{ $t('context.activeAlarm') }}
     v-tab-item(lazy)
-      v-card.secondary.lighten-2(flat)
-        v-card-text
-          entity-alarms-list-table.pa-4(:entity="item", :columns="activeAlarmsColumns")
+      v-layout.pa-3(row)
+        v-flex(xs12)
+          v-card
+            v-card-text
+              entity-alarms-list-table(:entity="item", :columns="activeAlarmsColumns")
 
     v-tab {{ $t('context.resolvedAlarms') }}
     v-tab-item(lazy)
-      v-card.secondary.lighten-2(flat)
-        v-card-text
-          entity-alarms-list-table.pa-4(:entity="item", :columns="resolvedAlarmsColumns", resolved)
+      v-layout.pa-3(row)
+        v-flex(xs12)
+          v-card
+            v-card-text
+              entity-alarms-list-table(:entity="item", :columns="resolvedAlarmsColumns", resolved)
 </template>
 
 <script>

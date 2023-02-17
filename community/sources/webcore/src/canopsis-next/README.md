@@ -1,5 +1,38 @@
-# Prerequisite
-* Node v14
+# UI environment setup
+## Pre requirements
+* **Node.js** version `^14.18.1` ([Node.js releases](https://nodejs.org/en/blog/release/))
+* **Yarn** version `^1.22.17` ([Yarn releases](https://github.com/yarnpkg/yarn/releases))
+
+## Steps to run UI in development mode
+
+Install all dependencies:
+```bash
+yarn install
+```
+
+Configure .env.local file:
+```bash
+cp .env .env.local
+
+# You should set into VUE_APP_API_HOST correct path to API server. The server must be in HTTPS.
+# Example https://localhost:8082/backend
+
+# You can do it with command
+sed -i "1s/.*/VUE_APP_API_HOST=https:\/\/localhost:8082\/backend/" .env.local
+
+# Or manually
+nano .env.local
+```
+
+Run the development server in watch mode:
+```bash
+yarn serve
+
+# If you want to run server on specific host or port you can use special arguments
+yarn serve --port 8089 --host 0.0.0.0
+```
+
+At this point you can go with a browser to the URL indicated by the last command and use the Canopsis UI.
 
 # Test the project :
 * Checkout on the branch you want : ` git checkout branch-name`
@@ -9,9 +42,23 @@
 * Open the link provided by yarn in chrome
 
 # How can I create a new widget type ?
+There are two ways to do it:
+1. Add widget by feature
+2. Add widget directly into source code
 
-**If you want to add new widget type you must follow the instruction.**
 
+## Add widget by feature
+In order to make it easier to create a widget in this way, we created [widget template](https://git.canopsis.net/cat/widget-template)
+
+Steps to install:
+1. Go to `src/features` folder
+2. Clone the [widget template](https://git.canopsis.net/cat/widget-template) repository to this folder
+3. Rebuild/restart application
+4. You will see `AlarmsListCustom` widget in the `Create new widget` modal window
+
+*For more information about **writing** new widget in this way you can read [Custom feature repository](#custom-feature-repo) paragraph and README.md in the [widget template](https://git.canopsis.net/cat/widget-template) repository.*
+
+## Add widget directly into application source code
 Note: *We've added examples of `Counter` widget creation.*
 
 1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
@@ -398,6 +445,7 @@ export default {
 *Example: We've added featuresService using in the alarms list widget actions. But if you need to customize context widget actions you must to put `featuresService` by yourself.*
 
 ## Custom feature repository
+<a name="custom-feature-repo"></a>
 Feature repository must contain `index.js` file with configurations. Here we should define the points which we want to customize.
 
 `index.js` should have the special structure:

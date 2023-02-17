@@ -164,7 +164,7 @@ func (w *periodicalWorker) processEntities(
 
 	defer cursor.Close(ctx)
 
-	eventGenerator := libevent.NewGenerator(w.EntityAdapter)
+	eventGenerator := libevent.NewGenerator("engine", "pbehavior")
 
 	ech := make(chan PublishEventMsg, 1)
 	defer close(ech)
@@ -206,7 +206,7 @@ func (w *periodicalWorker) processEntities(
 		}
 
 		if lastAlarm == nil {
-			event, err = eventGenerator.Generate(ctx, entity)
+			event, err = eventGenerator.Generate(entity)
 			if err != nil {
 				w.Logger.Err(err).Msg("cannot generate event")
 				return eventsCount

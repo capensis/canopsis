@@ -1,19 +1,22 @@
 <template lang="pug">
-  v-tooltip(top)
-    template(#activator="{ on }")
-      v-icon.blue.white--text.c-extra-details__badge(v-on="on", small) {{ icon }}
-    div.text-md-center
-      strong {{ $t('alarm.actions.iconsTitles.declareTicket') }}
-      div {{ $t('common.by') }} : {{ ticket.a }}
-      div {{ $t('common.date') }} : {{ date }}
-      div(
-        v-if="ticket.val"
-      ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.val }}
+  div
+    v-tooltip.c-extra-details(top)
+      template(#activator="{ on }")
+        span.c-extra-details__badge.blue(v-on="on")
+          v-icon(color="white", small) {{ icon }}
+      div.text-md-center
+        strong {{ $t('alarm.actions.iconsTitles.declareTicket') }}
+        div {{ $t('common.by') }} : {{ ticket.a }}
+        div {{ $t('common.date') }} : {{ date }}
+        div(
+          v-if="ticket.val"
+        ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.val }}
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -29,7 +32,7 @@ export default {
     },
 
     icon() {
-      return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon;
+      return getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket);
     },
   },
 };

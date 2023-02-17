@@ -32,8 +32,8 @@ export default {
       variablesHelp: 'Liste des variables disponibles',
       history: 'Historique',
       groupRequest: 'Proposition de regroupement pour méta-alarmes',
-      manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
-      manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
+      createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
+      removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
       comment: 'Commenter l\'alarme',
     },
     iconsTitles: {

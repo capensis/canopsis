@@ -115,7 +115,7 @@ Feature: get a PBehavior
             "name": "root"
           },
           "comments": [],
-          "color": "#FFFFFF",
+          "color": "",
           "created": 1592215337,
           "updated": 1592215337,
           "enabled": true,
@@ -392,6 +392,7 @@ Feature: get a PBehavior
                 "_id": "test-type-to-pbh-edit-1",
                 "description": "Pbh edit 1 State type",
                 "icon_name": "test-to-pbh-edit-1-icon",
+                "color": "#2FAB63",
                 "name": "Pbh edit 1 State",
                 "priority": 11,
                 "type": "active"
@@ -408,6 +409,7 @@ Feature: get a PBehavior
             "_id": "test-type-to-pbh-edit-1",
             "description": "Pbh edit 1 State type",
             "icon_name": "test-to-pbh-edit-1-icon",
+            "color": "#2FAB63",
             "name": "Pbh edit 1 State",
             "priority": 11,
             "type": "active"
@@ -438,6 +440,7 @@ Feature: get a PBehavior
         "_id": "test-type-to-pbh-edit-1",
         "description": "Pbh edit 1 State type",
         "icon_name": "test-to-pbh-edit-1-icon",
+        "color": "#2FAB63",
         "name": "Pbh edit 1 State",
         "priority": 11,
         "type": "active"

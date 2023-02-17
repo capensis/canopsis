@@ -31,7 +31,7 @@ export default {
 .category {
   display: inline-block;
 
-  &-list-tile /deep/ .v-list__tile {
+  &-list-tile ::v-deep .v-list__tile {
     height: unset !important;
   }
 

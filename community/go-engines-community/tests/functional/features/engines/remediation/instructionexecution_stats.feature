@@ -1,6 +1,7 @@
 Feature: update an instruction statistics
   I need to be able to update an instruction statistics
 
+  @concurrent
   Scenario: given manual instruction execution should update statistics
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -54,7 +55,7 @@ Feature: update an instruction statistics
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
     When I save response creationTime={{ .lastResponse.last_modified }}
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-1",
@@ -67,7 +68,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-1"
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-1",
@@ -80,7 +81,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-1"
     }
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-1-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
@@ -96,13 +96,27 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "component": "test-component-to-stats-update-1",
+      "resource": "test-resource-to-stats-update-1-1"
+    }
+    """
     When I wait 2s
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I save response execution1Time={{ .lastResponse.completed_at }}
-    When I wait the end of event processing
-    When I send an event:
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructioncompleted",
+      "component": "test-component-to-stats-update-1",
+      "resource": "test-resource-to-stats-update-1-1"
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-1",
@@ -115,7 +129,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-1"
     }
     """
-    When I wait the end of event processing
     When I wait 5s
     When I do POST /api/v4/cat/executions:
     """json
@@ -126,12 +139,26 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "component": "test-component-to-stats-update-1",
+      "resource": "test-resource-to-stats-update-1-2"
+    }
+    """
     When I wait 1s
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I save response execution2Time={{ .lastResponse.completed_at }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructioncompleted",
+      "component": "test-component-to-stats-update-1",
+      "resource": "test-resource-to-stats-update-1-2"
+    }
+    """
     When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
@@ -254,17 +281,13 @@ Feature: update an instruction statistics
               ]
             }
           }
-        },
-        {
-          "executed_on": {{ .creationTime }},
-          "alarm": null
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -283,6 +306,7 @@ Feature: update an instruction statistics
     }
     """
 
+  @concurrent
   Scenario: given auto instruction execution should update statistics
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -329,7 +353,7 @@ Feature: update an instruction statistics
     When I save response instructionID={{ .lastResponse._id }}
     When I save response creationTime={{ .lastResponse.last_modified }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-2",
@@ -342,11 +366,10 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-2-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-2",
@@ -359,9 +382,23 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-2",
+        "resource": "test-resource-to-stats-update-2-1"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-2",
+        "resource": "test-resource-to-stats-update-2-1"
+      }
+    ]
+    """
     When I wait 5s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-2",
@@ -374,7 +411,21 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-2"
     }
     """
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-2",
+        "resource": "test-resource-to-stats-update-2-2"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-2",
+        "resource": "test-resource-to-stats-update-2-2"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-2-2
     Then the response code should be 200
     When I save response alarm2ID={{ (index .lastResponse.data 0)._id }}
@@ -454,17 +505,13 @@ Feature: update an instruction statistics
           "alarm": {
             "_id": "{{ .alarm1ID }}"
           }
-        },
-        {
-          "executed_on": {{ .creationTime }},
-          "alarm": null
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -550,6 +597,7 @@ Feature: update an instruction statistics
     """
     Then the response key "data.0.last_executed_on" should not be "0"
 
+  @concurrent
   Scenario: given failed execution of manual instruction should update statistics
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -603,7 +651,7 @@ Feature: update an instruction statistics
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
     When I save response creationTime={{ .lastResponse.last_modified }}
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-3",
@@ -616,7 +664,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-3"
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-3",
@@ -629,7 +677,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-3"
     }
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-3-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
@@ -645,13 +692,27 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "component": "test-component-to-stats-update-3",
+      "resource": "test-resource-to-stats-update-3-1"
+    }
+    """
     When I wait 2s
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I save response execution1Time={{ .lastResponse.completed_at }}
-    When I wait the end of event processing
-    When I send an event:
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructioncompleted",
+      "component": "test-component-to-stats-update-3",
+      "resource": "test-resource-to-stats-update-3-1"
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-3",
@@ -664,7 +725,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-3"
     }
     """
-    When I wait the end of event processing
     When I wait 5s
     When I do POST /api/v4/cat/executions:
     """json
@@ -675,7 +735,14 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "component": "test-component-to-stats-update-3",
+      "resource": "test-resource-to-stats-update-3-2"
+    }
+    """
     When I wait 1s
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step:
     """json
@@ -685,7 +752,14 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response execution2Time={{ .lastResponse.completed_at }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionfailed",
+      "component": "test-component-to-stats-update-3",
+      "resource": "test-resource-to-stats-update-3-2"
+    }
+    """
     When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
@@ -707,7 +781,7 @@ Feature: update an instruction statistics
       "ok_alarm_states": 1,
       "execution_count": 2,
       "successful": 1,
-      "avg_complete_time": 0,
+      "avg_complete_time": 2,
       "last_executed_on": {{ .execution1Time }},
       "name": "test-instruction-to-stats-update-3-name",
       "type": 0
@@ -737,7 +811,7 @@ Feature: update an instruction statistics
           "ok_alarm_states": 1,
           "execution_count": 2,
           "successful": 1,
-          "avg_complete_time": 0,
+          "avg_complete_time": 2,
           "modified_on": {{ .creationTime }}
         }
       ],
@@ -784,17 +858,13 @@ Feature: update an instruction statistics
               ]
             }
           }
-        },
-        {
-          "executed_on": {{ .creationTime }},
-          "alarm": null
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -813,6 +883,7 @@ Feature: update an instruction statistics
     }
     """
 
+  @concurrent
   Scenario: given failed execution of auto instruction should update statistics
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -859,7 +930,7 @@ Feature: update an instruction statistics
     When I save response instructionID={{ .lastResponse._id }}
     When I save response creationTime={{ .lastResponse.last_modified }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-4",
@@ -872,11 +943,25 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-4"
     }
     """
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-4",
+        "resource": "test-resource-to-stats-update-4-1"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-4",
+        "resource": "test-resource-to-stats-update-4-1"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-4-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-4",
@@ -889,9 +974,8 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-4"
     }
     """
-    When I wait the end of event processing
     When I wait 5s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-4",
@@ -904,7 +988,21 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-4"
     }
     """
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-4",
+        "resource": "test-resource-to-stats-update-4-2"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-4",
+        "resource": "test-resource-to-stats-update-4-2"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-4-2
     Then the response code should be 200
     When I save response alarm2ID={{ (index .lastResponse.data 0)._id }}
@@ -976,18 +1074,12 @@ Feature: update an instruction statistics
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "executed_on": {{ .creationTime }},
-          "duration": 0,
-          "alarm": null
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
@@ -1006,6 +1098,7 @@ Feature: update an instruction statistics
     """
     Then the response key "data.0.last_executed_on" should not exist
 
+  @concurrent
   Scenario: given simplified manual instruction execution should update statistics
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -1049,7 +1142,7 @@ Feature: update an instruction statistics
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
     When I save response creationTime={{ .lastResponse.last_modified }}
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-5",
@@ -1062,7 +1155,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-5"
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-5",
@@ -1075,7 +1168,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-5"
     }
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-5-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
@@ -1091,8 +1183,22 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
-    When I send an event:
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "component": "test-component-to-stats-update-5",
+        "resource": "test-resource-to-stats-update-5-1"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-5",
+        "resource": "test-resource-to-stats-update-5-1"
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-5",
@@ -1105,7 +1211,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-5"
     }
     """
-    When I wait the end of event processing
     When I wait 5s
     When I do POST /api/v4/cat/executions:
     """json
@@ -1116,7 +1221,21 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "component": "test-component-to-stats-update-5",
+        "resource": "test-resource-to-stats-update-5-2"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-5",
+        "resource": "test-resource-to-stats-update-5-2"
+      }
+    ]
+    """
     When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
@@ -1269,6 +1388,7 @@ Feature: update an instruction statistics
     }
     """
 
+  @concurrent
   Scenario: given failed execution of simplified manual instruction should update statistics
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -1312,7 +1432,7 @@ Feature: update an instruction statistics
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
     When I save response creationTime={{ .lastResponse.last_modified }}
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-6",
@@ -1325,7 +1445,7 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-6"
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-stats-update-6",
@@ -1338,7 +1458,6 @@ Feature: update an instruction statistics
       "output": "test-output-to-stats-update-6"
     }
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-to-stats-update-6-1
     Then the response code should be 200
     When I save response alarm1ID={{ (index .lastResponse.data 0)._id }}
@@ -1354,7 +1473,21 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "component": "test-component-to-stats-update-6",
+        "resource": "test-resource-to-stats-update-6-1"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-6",
+        "resource": "test-resource-to-stats-update-6-1"
+      }
+    ]
+    """
     When I wait 5s
     When I do POST /api/v4/cat/executions:
     """json
@@ -1365,7 +1498,21 @@ Feature: update an instruction statistics
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "component": "test-component-to-stats-update-6",
+        "resource": "test-resource-to-stats-update-6-2"
+      },
+      {
+        "event_type": "trigger",
+        "component": "test-component-to-stats-update-6",
+        "resource": "test-resource-to-stats-update-6-2"
+      }
+    ]
+    """
     When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/summary until response code is 200 and body contains:
     """json
     {
@@ -1434,18 +1581,12 @@ Feature: update an instruction statistics
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "executed_on": {{ .creationTime }},
-          "duration": 0,
-          "alarm": null
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
