@@ -11,7 +11,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "created_alarms",
@@ -70,7 +70,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "active_alarms",
@@ -120,7 +120,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-all-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "parameters": [
         {
           "metric": "without_ticket_active_alarms",
@@ -169,7 +169,7 @@ Feature: Get alarm metrics
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
       "parameters": [
         {
@@ -199,7 +199,7 @@ Feature: Get alarm metrics
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
-      "kpi_filter": "test-kpi-filter-to-all-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "parameters": [
         {
           "metric": "time_to_ack",
@@ -318,7 +318,7 @@ Feature: Get alarm metrics
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "created_alarms",
@@ -345,7 +345,7 @@ Feature: Get alarm metrics
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "total_user_activity",
@@ -372,7 +372,7 @@ Feature: Get alarm metrics
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
-      "kpi_filter": "test-kpi-filter-not-found",
+      "filter": "test-kpi-filter-not-found",
       "parameters": [
         {
           "metric": "created_alarms",
@@ -386,7 +386,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "kpi_filter": "filter \"test-kpi-filter-not-found\" not found"
+        "filter": "filter \"test-kpi-filter-not-found\" not found"
       }
     }
     """
@@ -428,7 +428,7 @@ Feature: Get alarm metrics
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "widget_filters": [
         "test-widget-filter-to-alarm-metrics-get-1"
       ],
@@ -459,7 +459,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "active_alarms"
@@ -486,7 +486,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "active_alarms",
@@ -514,7 +514,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "without_ticket_active_alarms",
@@ -542,7 +542,7 @@ Feature: Get alarm metrics
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "sampling": "hour",
-      "kpi_filter": "test-kpi-filter-to-alarm-metrics-get",
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
           "metric": "ratio_tickets",
