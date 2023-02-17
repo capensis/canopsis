@@ -114,7 +114,7 @@ describe('map', () => {
     userPreferenceModule,
     serviceModule,
     widgetTemplateModule,
-    dynamicInfoModule,
+    infosModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -138,7 +138,7 @@ describe('map', () => {
     widgetModule,
     authModule,
     widgetTemplateModule,
-    dynamicInfoModule,
+    infosModule,
   ]);
 
   afterEach(() => {
@@ -366,7 +366,7 @@ describe('map', () => {
         widgetModule,
         authModule,
         widgetTemplateModule,
-        dynamicInfoModule,
+        infosModule,
       ]),
       propsData: {
         sidebar,
