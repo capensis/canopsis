@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
@@ -25,6 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -34,6 +35,7 @@ import (
 	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -45,6 +47,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -101,7 +104,7 @@ func Default(
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
-	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
+	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
@@ -146,10 +149,8 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
 	}
 	// Create pbehavior computer.
-	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
+	pbhComputeChan := make(chan []string, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhService := libpbehavior.NewService(dbClient, libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
-		pbhStore, libredis.NewLockClient(pbhRedisSession), logger)
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
@@ -347,19 +348,7 @@ func Default(
 	api.AddWorker("enforce policy load", func(ctx context.Context) {
 		enforcer.StartAutoLoadPolicy(ctx)
 	})
-	api.AddWorker("pbehavior compute", func(ctx context.Context) {
-		pbhComputer := libpbehavior.NewCancelableComputer(
-			pbhService,
-			dbClient,
-			amqpChannel,
-			libpbehavior.NewEventManager(),
-			json.NewDecoder(),
-			json.NewEncoder(),
-			canopsis.FIFOQueueName,
-			logger,
-		)
-		pbhComputer.Compute(ctx, pbhComputeChan)
-	})
+	api.AddWorker("pbehavior compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 	api.AddWorker("entity event publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
 	})
@@ -501,6 +490,46 @@ func updateConfig(
 				userInterfaceConfigProvider.Update(userInterfaceConfig)
 			case <-ctx.Done():
 				return
+			}
+		}
+	}
+}
+
+func sendPbhRecomputeEvents(
+	pbhComputeChan <-chan []string,
+	encoder encoding.Encoder,
+	publisher libamqp.Publisher,
+	logger zerolog.Logger,
+) func(ctx context.Context) {
+	return func(ctx context.Context) {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case ids, ok := <-pbhComputeChan:
+				if !ok {
+					return
+				}
+
+				body, err := encoder.Encode(rpc.PbehaviorRecomputeEvent{Ids: ids})
+				if err != nil {
+					logger.Err(err).Msg("cannot encode event")
+				}
+				err = publisher.PublishWithContext(
+					ctx,
+					"",
+					canopsis.PBehaviorQueueRecomputeName,
+					false,
+					false,
+					amqp.Publishing{
+						ContentType:  canopsis.JsonContentType,
+						Body:         body,
+						DeliveryMode: amqp.Persistent,
+					},
+				)
+				if err != nil {
+					logger.Err(err).Msg("cannot send event")
+				}
 			}
 		}
 	}
