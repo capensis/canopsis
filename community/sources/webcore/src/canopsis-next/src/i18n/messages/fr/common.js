@@ -285,7 +285,7 @@ export default {
     acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
     saveChanges: 'Sauvegarder',
-    reportIncident: 'Signaler un incident',
+    reportIncident: 'Déclarer un incident',
     [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
     [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
     [EVENT_ENTITY_TYPES.validate]: 'Valider',
@@ -301,7 +301,7 @@ export default {
   acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
   acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
   saveChanges: 'Sauvegarder',
-  reportIncident: 'Signaler un incident',
+  reportIncident: 'Déclarer un incident',
   times: {
     second: 'seconde | secondes',
     minute: 'minute | minutes',
