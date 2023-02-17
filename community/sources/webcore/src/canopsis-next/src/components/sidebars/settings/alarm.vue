@@ -18,9 +18,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         with-template,
         with-html,
         with-color-indicator,
@@ -34,9 +31,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.groupColumnNames')",
         :type="$constants.ENTITIES_TYPES.alarm",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         with-html,
         with-color-indicator,
         @update:template="updateWidgetGroupColumnsTemplate"
@@ -49,9 +43,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.trackColumnNames')",
         :type="$constants.ENTITIES_TYPES.entity",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         with-color-indicator,
         @update:template="updateServiceDependenciesColumnsTemplate"
       )
@@ -146,9 +137,6 @@
       export-csv-form(
         v-model="form.parameters",
         :type="$constants.ENTITIES_TYPES.alarm",
-        :alarm-infos="alarmInfos",
-        :entity-infos="entityInfos",
-        :infos-pending="infosPending",
         :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
         datetime-format
@@ -168,8 +156,8 @@ import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
 import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
-import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
@@ -223,8 +211,8 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
+    entitiesInfosMixin,
     alarmVariablesMixin,
-    widgetColumnsInfosMixin,
     widgetTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
@@ -241,6 +229,9 @@ export default {
     sortablePreparedWidgetColumns() {
       return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
     },
+  },
+  mounted() {
+    this.fetchInfos();
   },
   methods: {
     updateWidgetColumnsTemplate(template, columns) {

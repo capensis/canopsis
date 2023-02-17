@@ -16,8 +16,6 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
   />
   <!---->
   <alarms-list-modal-form-stub
-    alarminfos=""
-    entityinfos=""
     form="[object Object]"
     templates=""
   />
@@ -38,9 +36,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     class="v-divider theme--light"
   />
   <field-columns-stub
-    alarminfos=""
     columns="[object Object],[object Object]"
-    entityinfos=""
     label="Column names for tree of dependencies"
     template="Symbol(custom)"
     templates=""
@@ -178,8 +174,6 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   />
   <!---->
   <alarms-list-modal-form-stub
-    alarminfos=""
-    entityinfos=""
     form="[object Object]"
     templates=""
   />
@@ -200,9 +194,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     class="v-divider theme--light"
   />
   <field-columns-stub
-    alarminfos=""
     columns="[object Object],[object Object]"
-    entityinfos=""
     label="Column names for tree of dependencies"
     template="Symbol(custom)"
     templates=""

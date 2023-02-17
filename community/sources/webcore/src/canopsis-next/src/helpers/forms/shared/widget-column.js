@@ -1,4 +1,5 @@
 import {
+  ALARM_FIELDS,
   ALARM_INFOS_FIELDS,
   ALARM_LIST_WIDGET_COLUMNS,
   ENTITY_INFOS_FIELDS,
@@ -23,6 +24,7 @@ import uid from '@/helpers/uid';
  * @typedef {Object} WidgetColumnForm
  * @property {string} key
  * @property {string} column
+ * @property {string} [rule]
  * @property {string} [dictionary]
  * @property {string} [field]
  * @property {string} [label]
@@ -34,21 +36,21 @@ import uid from '@/helpers/uid';
 /**
  * Check if column is infos
  *
- * @param {string} [column = '']
+ * @param {string} [value = '']
  * @returns {string}
  */
-export const getInfosWidgetColumn = (column = '') => [
+export const getInfosWidgetColumn = (value = '') => [
   ...ALARM_INFOS_FIELDS,
   ...ENTITY_INFOS_FIELDS,
-].find(constantField => column.startsWith(constantField));
+].find(constantField => value.startsWith(constantField));
 
 /**
  * Check if column is links
  *
- * @param {string} [column = '']
+ * @param {string} [value = '']
  * @returns {boolean}
  */
-export const isLinksWidgetColumn = (column = '') => column.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
+export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
  * Convert widget column to form
@@ -69,7 +71,13 @@ export const widgetColumnToForm = ({ value = '', label = '', ...rest } = {}) => 
 
   const infosColumn = getInfosWidgetColumn(value) ?? '';
 
-  if (infosColumn) {
+  if (infosColumn === ALARM_FIELDS.infos) {
+    const [rule, dictionary] = value.replace(`${infosColumn}.`, '').split('.');
+
+    result.column = infosColumn;
+    result.rule = rule;
+    result.dictionary = dictionary;
+  } else if (infosColumn) {
     const [dictionary, field] = value.replace(`${infosColumn}.`, '').split('.');
 
     result.column = infosColumn;
@@ -99,10 +107,12 @@ export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToF
  * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}
  */
-export const formToWidgetColumns = (form = []) => form.map(({ key, column, dictionary, field, ...rest }) => {
+export const formToWidgetColumns = (form = []) => form.map(({ key, column, dictionary, field, rule, ...rest }) => {
   let value = column;
 
-  if (getInfosWidgetColumn(column)) {
+  if (column === ALARM_FIELDS.infos) {
+    value = `${column}.${rule}.${dictionary}`;
+  } else if (getInfosWidgetColumn(column)) {
     value = `${column}.${dictionary}.${field}`;
   } else if (isLinksWidgetColumn(column) && field) {
     value = `${column}.${field}`;

@@ -6,10 +6,7 @@
       template(#text="")
         widget-template-columns-form(
           v-if="isColumnsType",
-          v-model="form",
-          :alarm-infos="alarmInfos",
-          :entity-infos="entityInfos",
-          :infos-pending="infosPending"
+          v-model="form"
         )
         widget-template-text-form(
           v-else,
@@ -32,7 +29,7 @@ import { COLUMNS_WIDGET_TEMPLATES_TYPES, MODALS, VALIDATION_DELAY } from '@/cons
 import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/forms/widget-template';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -55,7 +52,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    widgetColumnsInfosMixin,
+    entitiesInfosMixin,
     submittableMixinCreator(),
     validationErrorsMixinCreator(),
     confirmableModalMixinCreator(),
@@ -73,6 +70,9 @@ export default {
     isColumnsType() {
       return COLUMNS_WIDGET_TEMPLATES_TYPES.includes(this.form.type);
     },
+  },
+  mounted() {
+    this.fetchInfos({ withRules: true });
   },
   methods: {
     async submit() {

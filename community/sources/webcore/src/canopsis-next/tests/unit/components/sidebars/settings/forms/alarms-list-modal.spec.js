@@ -9,6 +9,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-group': true,
+  'field-default-sort-column': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
@@ -17,6 +18,7 @@ const stubs = {
 
 const snapshotStubs = {
   'widget-settings-group': true,
+  'field-default-sort-column': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,

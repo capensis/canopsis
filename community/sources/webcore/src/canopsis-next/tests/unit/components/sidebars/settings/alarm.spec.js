@@ -154,7 +154,7 @@ describe('alarm', () => {
     userPreferenceModule,
     widgetTemplateModule,
     serviceModule,
-    dynamicInfoModule,
+    infosModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -180,7 +180,7 @@ describe('alarm', () => {
     userPreferenceModule,
     widgetTemplateModule,
     serviceModule,
-    dynamicInfoModule,
+    infosModule,
   ]);
 
   afterEach(() => {
@@ -542,7 +542,7 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
-        dynamicInfoModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -590,7 +590,7 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
-        dynamicInfoModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -638,7 +638,7 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
-        dynamicInfoModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -1154,7 +1154,7 @@ describe('alarm', () => {
         widgetModule,
         userPreferenceModule,
         widgetTemplateModule,
-        dynamicInfoModule,
+        infosModule,
         serviceModule,
         {
           ...authModule,

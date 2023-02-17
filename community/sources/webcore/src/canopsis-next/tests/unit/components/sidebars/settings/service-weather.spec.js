@@ -95,7 +95,7 @@ describe('service-weather', () => {
     userPreferenceModule,
     serviceModule,
     widgetTemplateModule,
-    dynamicInfoModule,
+    infosModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -117,7 +117,7 @@ describe('service-weather', () => {
     activeViewModule,
     serviceModule,
     widgetTemplateModule,
-    dynamicInfoModule,
+    infosModule,
     widgetModule,
     authModule,
   ]);
@@ -283,7 +283,7 @@ describe('service-weather', () => {
         activeViewModule,
         serviceModule,
         widgetTemplateModule,
-        dynamicInfoModule,
+        infosModule,
         widgetModule,
         authModule,
       ]),

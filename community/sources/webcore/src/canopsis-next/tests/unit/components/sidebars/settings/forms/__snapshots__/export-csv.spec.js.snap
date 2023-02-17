@@ -191,8 +191,6 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
             Export column names
           </h4>
           <c-columns-with-template-field-stub
-            alarm-infos=""
-            entity-infos=""
             label="Export column names"
             templates=""
             type="alarm"
@@ -509,8 +507,6 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
             Export column names
           </h4>
           <c-columns-with-template-field-stub
-            alarm-infos=""
-            entity-infos=""
             label="Export column names"
             templates=""
             type="alarm"

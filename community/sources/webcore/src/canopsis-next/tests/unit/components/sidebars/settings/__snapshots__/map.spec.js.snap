@@ -50,9 +50,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
-      alarminfos=""
       columns="[object Object]"
-      entityinfos=""
       label="Alarm list columns"
       template="Symbol(custom)"
       templates=""
@@ -64,9 +62,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
-      alarminfos=""
       columns="[object Object]"
-      entityinfos=""
       label="Context explorer columns"
       template="Symbol(custom)"
       templates=""
@@ -133,9 +129,7 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
-      alarminfos=""
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      entityinfos=""
       label="Alarm list columns"
       template="Symbol(custom)"
       templates=""
@@ -147,9 +141,7 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-columns-stub
-      alarminfos=""
       columns="[object Object],[object Object]"
-      entityinfos=""
       label="Context explorer columns"
       template="Symbol(custom)"
       templates=""
