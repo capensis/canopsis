@@ -41,6 +41,9 @@ import { filter } from 'lodash';
 
 import { ALARM_FIELDS_TO_LABELS_KEYS, ALARM_UNSORTABLE_FIELDS, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
+import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
+import { getColumnLabel, getSortable } from '@/helpers/widgets';
+
 import { formBaseMixin } from '@/mixins/form';
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
@@ -50,8 +53,6 @@ import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-pop
 import FieldTextEditorWithTemplate from '@/components/sidebars/settings/fields/common/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
 import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-settings-group.vue';
-import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
-import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 export default {
   components: {
