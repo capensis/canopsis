@@ -16,7 +16,7 @@
         v-flex.d-flex(xs3)
           div.text-xs-right.pr-2
             v-btn(icon, @click.prevent="removeItemFromArray(index)")
-              v-icon(color="red") close
+              v-icon(color="error") close
       v-layout(justify-center, wrap)
         v-flex(xs11)
           v-text-field(

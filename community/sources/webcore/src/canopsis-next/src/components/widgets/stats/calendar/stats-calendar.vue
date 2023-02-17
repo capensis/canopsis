@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout.white.calender-wrapper
+    v-layout.calender-wrapper
       c-progress-overlay(:pending="pending")
       c-alert-overlay(
         :value="hasError",
@@ -338,6 +338,10 @@ export default {
 
         &.ds-today-dom {
           background-color: #4285f4;
+        }
+
+        .theme--dark & {
+          background-color: black;
         }
       }
 

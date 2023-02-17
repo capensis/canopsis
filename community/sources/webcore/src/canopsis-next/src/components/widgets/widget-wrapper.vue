@@ -1,7 +1,7 @@
 <template lang="pug">
   div(:style="widgetWrapperStyles")
     template(v-if="widget.title || editing")
-      v-card-title.widget-title.white.pa-2
+      v-card-title.widget-title.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
             h4.ml-2.font-weight-regular {{ widget.title }}

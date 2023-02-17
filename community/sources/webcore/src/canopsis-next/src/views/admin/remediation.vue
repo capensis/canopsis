@@ -3,7 +3,7 @@
     c-page-header
     v-layout(row, wrap)
       v-flex(xs12)
-        v-card.ma-2
+        v-card.ma-4.mt-0
           v-tabs(v-model="activeTab", slider-color="primary", fixed-tabs)
             template(v-if="hasReadAnyRemediationInstructionAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('common.instructions') }}

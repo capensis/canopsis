@@ -10,6 +10,7 @@
           :label="config.label",
           :error-messages="errors.collect('text')",
           :variables="variables",
+          :dark="$system.dark",
           name="text"
         )
       template(#actions="")
@@ -32,15 +33,16 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import TextEditorField from '@/components/common/text-editor/text-editor.vue';
-
 import ModalWrapper from '../modal-wrapper.vue';
+
+const TextEditorField = () => import(/* webpackChunkName: "TextEditor" */ '@/components/common/text-editor/text-editor.vue');
 
 export default {
   name: MODALS.textEditor,
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { TextEditorField, ModalWrapper },
   mixins: [
     modalInnerMixin,
