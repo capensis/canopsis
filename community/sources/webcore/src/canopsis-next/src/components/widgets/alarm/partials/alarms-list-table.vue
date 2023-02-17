@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-flex.white(v-resize="changeHeaderPositionOnResize")
+  v-flex(v-resize="changeHeaderPositionOnResize")
     c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
@@ -509,6 +509,10 @@ export default {
 
       tr {
         background: white;
+
+        .theme--dark & {
+          background: #424242;
+        }
       }
     }
 

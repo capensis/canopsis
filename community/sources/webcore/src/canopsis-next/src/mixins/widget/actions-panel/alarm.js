@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { get } from 'lodash';
 
 import {
   MODALS,
@@ -158,19 +157,6 @@ export const widgetActionsPanelAlarmMixin = {
           fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
             params: { ...params, _id: this.item.entity._id },
           }),
-        },
-      });
-    },
-
-    showManualMetaAlarmUngroupModal() {
-      this.$modals.show({
-        name: MODALS.createEvent,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
-          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [get(this.parentAlarm, 'd')],
         },
       });
     },

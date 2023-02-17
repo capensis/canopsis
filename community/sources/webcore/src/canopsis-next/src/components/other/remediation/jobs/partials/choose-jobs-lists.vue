@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :headers="headers",
     :items="jobsItems",
     :loading="pending",
@@ -9,13 +9,13 @@
     select-all,
     advanced-pagination
   )
-    template(slot="toolbar", slot-scope="props")
+    template(#toolbar="props")
       v-layout(row)
         c-search-field(@submit="props.updateSearch", @clear="props.clearSearch")
-    template(slot="actions", slot-scope="props")
+    template(#actions="props")
       v-btn(:disabled="props.disabled", icon, small, @click="$emit('select', [props.item])")
         v-icon add
-    template(slot="mass-actions", slot-scope="props")
+    template(#mass-actions="props")
       v-btn.ma-2(
         outline,
         color="primary",
