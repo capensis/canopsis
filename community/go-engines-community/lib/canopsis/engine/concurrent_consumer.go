@@ -4,14 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
-// NewDefaultConsumer creates consumer.
-func NewDefaultConsumer(
+const workers = 10
+
+func NewConcurrentConsumer(
 	name, queue string,
 	consumePrefetchCount, consumePrefetchSize int,
 	purgeQueue bool,
@@ -20,7 +23,7 @@ func NewDefaultConsumer(
 	processor MessageProcessor,
 	logger zerolog.Logger,
 ) Consumer {
-	return &defaultConsumer{
+	return &concurrentConsumer{
 		name:                 name,
 		queue:                queue,
 		consumePrefetchCount: consumePrefetchCount,
@@ -36,8 +39,7 @@ func NewDefaultConsumer(
 	}
 }
 
-// defaultConsumer implements AMQP consumer.
-type defaultConsumer struct {
+type concurrentConsumer struct {
 	// name is consumer name.
 	name string
 	// queue is name of AMQP queue from where consumer receives messages.
@@ -58,7 +60,7 @@ type defaultConsumer struct {
 	logger     zerolog.Logger
 }
 
-func (c *defaultConsumer) Consume(ctx context.Context) error {
+func (c *concurrentConsumer) Consume(ctx context.Context) error {
 	consumeCh, msgs, err := getConsumeChannel(c.connection, c.name, c.queue,
 		c.consumePrefetchCount, c.consumePrefetchSize, c.purgeQueue)
 	if err != nil {
@@ -80,24 +82,44 @@ func (c *defaultConsumer) Consume(ctx context.Context) error {
 		}
 	}()
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case d, ok := <-msgs:
-			if !ok {
-				return errors.New("the rabbitmq channel has been closed")
-			}
+	g, ctx := errgroup.WithContext(ctx)
+	for i := 0; i < workers; i++ {
+		g.Go(func() (resErr error) {
+			defer func() {
+				if r := recover(); r != nil {
+					var err error
+					var ok bool
+					if err, ok = r.(error); !ok {
+						err = fmt.Errorf("%v", r)
+					}
 
-			err := c.processMessage(ctx, d, consumeCh, publishCh)
-			if err != nil {
-				return err
+					c.logger.Err(err).Msgf("consumer recovered from panic\n%s\n", debug.Stack())
+					resErr = fmt.Errorf("consumer recovered from panic: %w", err)
+				}
+			}()
+
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				case d, ok := <-msgs:
+					if !ok {
+						return errors.New("the rabbitmq channel has been closed")
+					}
+
+					err := c.processMessage(ctx, d, consumeCh, publishCh)
+					if err != nil {
+						return err
+					}
+				}
 			}
-		}
+		})
 	}
+
+	return g.Wait()
 }
 
-func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, consumeCh, publishCh libamqp.Channel) error {
+func (c *concurrentConsumer) processMessage(ctx context.Context, d amqp.Delivery, consumeCh, publishCh libamqp.Channel) error {
 	c.logger.Debug().
 		Str("consumer", c.name).Str("queue", c.queue).
 		Str("msg", string(d.Body)).
@@ -131,58 +153,4 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, c
 	}
 
 	return nil
-}
-
-func getConsumeChannel(
-	connection libamqp.Connection,
-	name, queue string,
-	consumePrefetchCount, consumePrefetchSize int,
-	purgeQueue bool,
-) (libamqp.Channel, <-chan amqp.Delivery, error) {
-	channel, err := connection.Channel()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	err = channel.Qos(consumePrefetchCount, consumePrefetchSize, false)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if purgeQueue {
-		_, err := channel.QueuePurge(queue, false)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error while purging queue: %v", err)
-		}
-	}
-
-	msgs, err := channel.Consume(
-		queue, // queue
-		name,  // consumer
-		false, // auto-ack
-		false, // exclusive
-		false, // no-local
-		false, // no-wait
-		nil,   // args
-	)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return channel, msgs, nil
-}
-
-func publishToChannel(ctx context.Context, channel libamqp.Channel, exchange, queue string, body []byte) error {
-	return channel.PublishWithContext(
-		ctx,
-		exchange,
-		queue,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  "application/json",
-			Body:         body,
-			DeliveryMode: amqp.Persistent,
-		},
-	)
 }
