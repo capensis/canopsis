@@ -287,6 +287,7 @@ export default merge({
     trigger: 'Trigger | Triggers',
     column: 'Column | Columns',
     countOfTotal: '{count} of {total}',
+    rule: 'Rule',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',

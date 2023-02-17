@@ -13,9 +13,6 @@
     c-columns-field(
       v-field="form.columns",
       :type="entityType",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending",
       with-color-indicator,
       with-template,
       with-html,
@@ -39,18 +36,6 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
-    },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    infosPending: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
