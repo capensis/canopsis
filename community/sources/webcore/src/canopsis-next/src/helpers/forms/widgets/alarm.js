@@ -50,6 +50,7 @@ import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration'
 
 /**
  * @typedef {Object} AlarmListBaseParameters
+ * @property {WidgetSort} sort
  * @property {number} itemsPerPage
  * @property {string} moreInfoTemplate
  * @property {WidgetInfoPopup[]} infoPopups
@@ -145,6 +146,7 @@ export const widgetSortToForm = (sort = {}) => ({
  * @return {AlarmListBaseParameters}
  */
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
+  sort: widgetSortToForm(alarmListParameters.sort),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
@@ -278,6 +280,7 @@ export const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup
  * @return {AlarmListBaseParameters}
  */
 export const formToAlarmListBaseParameters = (form = {}) => ({
+  sort: formSortToWidgetSort(form.sort),
   itemsPerPage: form.itemsPerPage,
   moreInfoTemplate: form.moreInfoTemplate,
   infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
