@@ -784,7 +784,7 @@ export default {
 ## Available places for customization
 ### Store
 #### `store.modules`
-Type: `Object`
+Type: `Object`<br>
 Allows us to add custom modules to application `Vuex` store.
 ```js
 // index.js
@@ -815,7 +815,7 @@ export default {
 
 ### Internationalization
 #### `i18n`
-Type: `Object`
+Type: `Object`<br>
 Allows us to add custom translations for `en` and `fr` languages. We will have possibility to use this words in the components.
 ```js
 // index.js
@@ -863,7 +863,7 @@ export default {
 ```
 
 #### `constants.WIDGET_TYPES`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define new widget type.
 ```js
 // constants.js
@@ -873,7 +873,7 @@ export const WIDGET_TYPE = {
 };
 ```
 #### `constants.COMPONENTS_BY_WIDGET_TYPES`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define relation between new widget type and component for this new widget type. Works in the pair with `WIDGET_TYPE`.
 ```js
 // constants.js
@@ -883,7 +883,7 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
 };
 ```
 #### `constants.WIDGET_ICONS`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define icon for new widget type.
 ```js
 // constants.js
@@ -894,7 +894,7 @@ export const WIDGET_ICONS = {
 ```
 
 #### `constants.SIDE_BARS`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define new sidebar type (for example: for settings for new widget type).
 ```js
 // constants.js
@@ -904,7 +904,7 @@ export const SIDE_BARS = {
 };
 ```
 #### `constants.SIDE_BARS_BY_WIDGET_TYPES`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define relation between `WIDGET_TYPES` and `SIDE_BARS`
 ```js
 // constants.js
@@ -914,7 +914,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
 };
 ```
 #### `constants.WIDGET_TYPES_RULES`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define special criterias for our widgets. Here we can put criterias only for `edition` and `stack`.
 ```js
 // constants.js
@@ -924,7 +924,7 @@ export const WIDGET_TYPES_RULES = {
 };
 ```
 #### `constants.USERS_PERMISSIONS.business.alarmsList.actions`
-Type: `Object`
+Type: `Object`<br>
 Allows us to define special permissions for custom actions for `AlarmList` widget.
 ```js
 // constants.js
@@ -941,7 +941,7 @@ export const USERS_PERMISSIONS = {
 ```
 ### Helpers
 #### `helpers.forms.widgets.widgetParametersToForm.widgetsMap`
-Type: `Object<string, Function>`
+Type: `Object<string, Function>`<br>
 Allows us to add preparer for new widget type parameters or change exists preparer for another widget to form.
 `key` should be as widget type. Value must be a function which receive `widget.parameters` object in arguments.
 **We should define this function only if we need to put special preparation from `parameters` to `form`.**
@@ -977,7 +977,7 @@ export default {
 };
 ```
 #### `helpers.forms.widgets.formToWidgetParameters.widgetsMap`
-Type: `Object<string, Function>`
+Type: `Object<string, Function>`<br>
 Allows us to add preparer for new widget type form or change exists preparer for another widget to parameters.
 `key` should be as widget type. Value must be a function which receive `form` object in arguments.
 **We should define this function if we need to put special preparation from `form` to `parameters`.**
@@ -1013,7 +1013,7 @@ export default {
 };
 ```
 #### `helpers.query.convertUserPreferenceToQuery.convertersMap`
-Type: `Object<string, Function>`
+Type: `Object<string, Function>`<br>
 Allows us to add converter for user preferences for new widget type or change exists preparer for another widget to query.
 **Key** should be as widget type. **Value** must be a function which receive `userPreference` object in arguments.
 **We should define this function if we need to put special preparation for query. For example, if we are using `fetchQueryMixins` (`'@/mixins/widget/fetch-query'`)**
@@ -1046,7 +1046,7 @@ export default {
 };
 ```
 #### `helpers.query.convertWidgetToQuery.convertersMap`
-Type: `Object<string, Function>`
+Type: `Object<string, Function>`<br>
 Allows us to add converter for new widget type or change exists preparer for another widget to query.
 **Key** should be as widget type. **Value** must be a function which receive `widget` object in arguments.
 **We should define this function if we need to put special preparation for query. For example, if we are using `fetchQueryMixins` (`'@/mixins/widget/fetch-query'`)**
@@ -1113,7 +1113,7 @@ export default {
 };
 ```
 #### `components.modals.components`
-Type: `Object<string, Function>`
+Type: `Object<string, Function>`<br>
 Allows us to add custom modal windows.
 ```js
 // file index.js
@@ -1135,7 +1135,7 @@ export default {
 ```
 
 #### `components.modals.dialogPropsMap`
-Type: `Object`
+Type: `Object`<br>
 Allows us to add custom dialog props for custom modal windows.
 ```js
 // file index.js
@@ -1155,7 +1155,7 @@ export default {
 };
 ```
 #### `components.sidebars.components`
-Type: `Object`
+Type: `Object`<br>
 Allows us to add custom sidebar components.
 ```js
 // file index.js
@@ -1176,7 +1176,7 @@ export default {
 ```
 
 #### `components.widgetWrapper.components`
-Type: `Object`
+Type: `Object`<br>
 Allows us to add custom main component for custom widget.
 ```js
 // file index.js
@@ -1197,7 +1197,7 @@ export default {
 ```
 
 #### `components.widgetWrapper.computed.preparedWidget`
-Type: `Function`
+Type: `Function`<br>
 Allows us to prepare widget before displaying. **We can use `this` keyword inside this computed property because we have component context here.**
 ```js
 // file index.js
@@ -1227,7 +1227,7 @@ export default {
 
 ### Alarms list widget
 #### `components.alarmListActionPanel.computed.actions`
-Type: `Function`
+Type: `Function`<br>
 Allows us to add custom action into alarms list actions panel. **This computed property must immutably edit received `actions` from arguments and return it.**
 ```js
 // file index.js
@@ -1260,7 +1260,7 @@ export default {
 };
 ```
 #### `components.alarmListMassActionsPanel.computed.actions`
-Type: `Function`
+Type: `Function`<br>
 Allows us to add custom action into alarms list mass actions panel. **This computed property must immutably edit received `actions` from arguments and return it.**
 ```js
 // file index.js
@@ -1293,7 +1293,7 @@ export default {
 };
 ```
 #### `components.alarmListRow.computed.listeners`
-Type: `Function`
+Type: `Function`<br>
 Allows us to customize listeners for alarm-list-row component. **This computed property must immutably edit received `listeners` from arguments and return it.**
 ```js
 // file index.js
@@ -1324,7 +1324,7 @@ export default {
 ```
 
 #### `components.alarmListRow.computed.classes`
-Type: `Function`
+Type: `Function`<br>
 Allows us to customize classes for alarm-list-row component. **This computed property must immutably edit received `classes` from arguments and return it.**
 ```js
 // file index.js
@@ -1348,7 +1348,7 @@ export default {
 };
 ```
 #### `components.alarmListTable.mixins`
-Type: `Array<Object>`
+Type: `Array<Object>`<br>
 Allows us to define mixins for `alarm-list-table` component. Inside mixin we can customize all functionality which we want (lifecycle methods, data, computed properties and etc.).
 ```js
 // file mixins/alarm-list-table.js
@@ -1382,7 +1382,7 @@ export default {
 };
 ```
 #### `components.alarmListTable.computed.rowListeners`
-Type: `Function`
+Type: `Function`<br>
 Allows us to customize row listeners on `alarm-list-table` component. **This computed property must immutably edit received `rowListeners` from arguments and return it.**
 ```js
 // file index.js
@@ -1413,7 +1413,7 @@ export default {
 };
 ```
 #### `components.alarmListTable.computed.additionalComponent`
-Type: `Function`
+Type: `Function`<br>
 Allows us to define additional component which will be rendered in the bottom of `alarm-list-table` component.
 ```js
 // file index.js
