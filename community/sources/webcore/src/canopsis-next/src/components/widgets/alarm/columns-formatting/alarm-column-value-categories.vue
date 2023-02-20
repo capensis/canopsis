@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.alarm-column-value-categories
+  div.alarm-column-value-categories(:class="{ 'alarm-column-value-categories--dense': dense }")
     categories-list(v-if="asList", :categories="filteredCategories", :limit="limit")
     v-menu(
       v-else,
@@ -80,7 +80,7 @@ export default {
 
 <style lang="scss">
 .alarm-column-value-categories {
-  &__button {
+  &--dense &__button {
     height: 20px;
   }
 }
