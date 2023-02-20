@@ -62,65 +62,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
 </aside>
 `;
 
-exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-list-custom-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                Alarm list custom settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
@@ -208,65 +149,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
                 class="v-list__tile__title white--text"
               >
                 Context table settings
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
-      </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
-  </div>
-  <div
-    class="v-navigation-drawer__border"
-  />
-</aside>
-`;
-
-exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-custom-settings 1`] = `
-<aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
->
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
-      <div
-        class="v-toolbar__content"
-        style="height: 64px;"
-      >
-        <div
-          class="v-list theme--light"
-          role="list"
-        >
-          <div
-            role="listitem"
-          >
-            <div
-              class="v-list__tile theme--light"
-            >
-              <div
-                class="v-list__tile__title white--text"
-              >
-                Counter custom settings
               </div>
             </div>
           </div>
