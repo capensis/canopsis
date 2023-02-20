@@ -1,6 +1,6 @@
 <template lang="pug">
   v-chip.c-alarm-tag-chip(
-    :class="{ 'c-alarm-tag-chip--closable': close, 'c-alarm-tag-chip--dense': small }",
+    :class="{ 'c-alarm-tag-chip--closable': close, 'c-alarm-tag-chip--dense': dense }",
     :color="color",
     small,
     @click="$emit('click')"
