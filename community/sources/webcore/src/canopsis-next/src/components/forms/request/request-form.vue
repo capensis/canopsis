@@ -46,7 +46,8 @@
       :label="$t('common.payload')",
       :line-height="16",
       :disabled="disabled",
-      :variables="payloadVariables"
+      :variables="payloadVariables",
+      :name="`${name}.payload`"
     )
 </template>
 

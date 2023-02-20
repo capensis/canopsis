@@ -1,6 +1,8 @@
+import flatten from 'flat';
+
 import { DECLARE_TICKET_EXECUTION_STATUSES } from '@/constants';
 
-import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
+import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } from '@/helpers/forms/shared/request';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { removeKeyFromEntities } from '@/helpers/entities';
@@ -223,4 +225,27 @@ export const declareTicketRuleErrorsToForm = (errors, form) => {
   };
 
   return flattenErrorMap(errors, prepareWebhooksErrors);
+};
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {DeclareTicketRuleForm} form
+ * @return {FlattenErrors}
+ */
+export const declareTicketRuleTemplateVariablesErrorsToForm = (errorsObject, form) => {
+  const { webhooks } = errorsObject;
+
+  return flatten({
+    webhooks: webhooks.reduce((acc, { request }, index) => {
+      const webhook = form.webhooks[index];
+
+      acc[webhook.key] = {
+        request: requestTemplateVariablesErrorsToForm(request, webhook.request),
+      };
+
+      return acc;
+    }, {}),
+  });
 };
