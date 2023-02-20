@@ -1,8 +1,9 @@
 <template lang="pug">
-  c-expand-btn(
+  c-expand-btn.alarms-expand-panel-btn(
     :class="expandButtonClass",
     :expanded="expanded",
     :loading="pending",
+    :dense="dense",
     @expand="showExpandPanel"
   )
 </template>
@@ -39,14 +40,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     expandButtonClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 1);
-      }
-
-      return '';
+      return {
+        [getStepClass(TOURS.alarmsExpandPanel, 1)]: this.isTourEnabled,
+        'alarms-expand-panel-btn--dense': this.dense,
+      };
     },
   },
   methods: {
@@ -66,3 +70,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarms-expand-panel-btn {
+  &--dense {
+    width: 22px;
+    max-width: 22px;
+    height: 22px;
+  }
+}
+</style>
