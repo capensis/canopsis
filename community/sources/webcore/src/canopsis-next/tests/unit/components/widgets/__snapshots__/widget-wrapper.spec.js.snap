@@ -94,37 +94,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmListCustom and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <!---->
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmListCustom and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
 exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -220,37 +189,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core ed
     <counter-widget-stub
       message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type CounterCustom and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <!---->
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type CounterCustom and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
       value="true"
       widget="[object Object]"
     />
