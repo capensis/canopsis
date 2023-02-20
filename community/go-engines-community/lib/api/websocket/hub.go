@@ -51,7 +51,7 @@ type Hub interface {
 	RoomHasConnection(room string) bool
 	// GetUsers returns users from all connections with their tokens.
 	GetUsers() map[string][]string
-	GetAuthConnectionsCount() int
+	GetConnections() []UserConnection
 }
 
 func NewHub(
@@ -84,6 +84,12 @@ type WMessage struct {
 	Error int    `json:"error,omitempty"`
 }
 
+type UserConnection struct {
+	ID     string
+	UserID string
+	Token  string
+}
+
 type hub struct {
 	upgrader   Upgrader
 	roomsMx    sync.RWMutex
@@ -114,23 +120,12 @@ loop:
 		case <-ctx.Done():
 			break loop
 		case <-ticker.C:
-			updated := false
 			closedConns := h.pingConnections()
 			h.closeConnections(closedConns...)
-			if len(closedConns) > 0 {
-				updated = true
-			}
 
 			closedConns, connsToDisconnect := h.checkAuth(ctx)
 			h.closeConnections(closedConns...)
 			h.disconnectConnections(connsToDisconnect...)
-			if len(closedConns) > 0 || len(connsToDisconnect) > 0 {
-				updated = true
-			}
-
-			if updated {
-				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
-			}
 		}
 	}
 
@@ -182,7 +177,6 @@ func (h *hub) Send(room string, b any) {
 	})
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
-		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 	}
 }
 
@@ -217,7 +211,6 @@ func (h *hub) CloseRoomAndNotify(room string) error {
 	})
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
-		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 	}
 
 	return h.CloseRoom(room)
@@ -251,20 +244,22 @@ func (h *hub) GetUsers() map[string][]string {
 	return users
 }
 
-func (h *hub) GetAuthConnectionsCount() int {
+func (h *hub) GetConnections() []UserConnection {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
-	uniqueTokens := make(map[string]struct{})
-	for _, conn := range h.conns {
-		if conn.token != "" {
-			if _, ok := uniqueTokens[conn.token]; !ok {
-				uniqueTokens[conn.token] = struct{}{}
-			}
+	conns := make([]UserConnection, 0, len(h.conns))
+	for connId, conn := range h.conns {
+		if conn.userId != "" {
+			conns = append(conns, UserConnection{
+				ID:     connId,
+				UserID: conn.userId,
+				Token:  conn.token,
+			})
 		}
 	}
 
-	return len(uniqueTokens)
+	return conns
 }
 
 func (h *hub) join(connId, room string) (closed bool) {
@@ -604,7 +599,6 @@ func (h *hub) listen(connId string, conn Connection) {
 	for {
 		if closed {
 			h.closeConnections(connId)
-			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -640,7 +634,6 @@ func (h *hub) listen(connId string, conn Connection) {
 				h.disconnectConnections(connId)
 			}
 
-			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -675,7 +668,6 @@ func (h *hub) listen(connId string, conn Connection) {
 			} else {
 				h.setConnAuth(connId, userId, msg.Token)
 				closed = h.sendToConn(connId, WMessage{Type: WMessageAuthSuccess})
-				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			}
 		case RMessageJoin:
 			if msg.Room == "" {
