@@ -1,6 +1,6 @@
 <template lang="pug">
   v-chip.c-alarm-tag-chip(
-    :class="{ 'c-alarm-tag-chip--closable': close, 'c-alarm-tag-chip--small': small }",
+    :class="{ 'c-alarm-tag-chip--closable': close, 'c-alarm-tag-chip--dense': small }",
     :color="color",
     small,
     @click="$emit('click')"
@@ -25,7 +25,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    small: {
+    dense: {
       type: Boolean,
       default: false,
     },
@@ -44,7 +44,7 @@ export default {
     }
   }
 
-  &--small {
+  &--dense {
     height: 20px !important;
     margin: 2px !important;
   }
