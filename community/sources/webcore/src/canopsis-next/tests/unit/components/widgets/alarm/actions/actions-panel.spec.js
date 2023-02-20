@@ -161,7 +161,9 @@ describe('actions-panel', () => {
     meta_alarm_rule: {
       type: META_ALARMS_RULE_TYPES.manualgroup,
     },
-    d: 'parent-d',
+    entity: {
+      _id: 'entity-id',
+    },
   };
 
   const refreshAlarmsList = jest.fn();
@@ -835,7 +837,7 @@ describe('actions-panel', () => {
           afterSubmit: expect.any(Function),
           title: 'Unlink alarm from manual meta alarm',
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [parentAlarm.d],
+          parentsIds: [parentAlarm.entity._id],
         },
       },
     );
