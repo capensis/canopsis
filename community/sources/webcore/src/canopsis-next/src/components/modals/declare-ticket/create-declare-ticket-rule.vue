@@ -112,7 +112,7 @@ export default {
     },
 
     async submit() {
-      const isFormValid = true;
+      const isFormValid = await this.$validator.validate();
 
       if (isFormValid) {
         try {
