@@ -4,7 +4,7 @@
       v-for="tag in inlineTags",
       :key="tag",
       :color="getTagColor(tag)",
-      :small="dense",
+      :dense="dense",
       @click="selectTag(tag)"
     ) {{ tag }}
     v-menu(
