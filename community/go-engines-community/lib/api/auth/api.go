@@ -28,7 +28,7 @@ func NewApi(
 	tokenService apisecurity.TokenService,
 	tokenProviders []security.TokenProvider,
 	providers []security.Provider,
-	websocketHub websocket.Hub,
+	websocketStore websocket.Store,
 	cookieName string,
 	cookieMaxAge int,
 	logger zerolog.Logger,
@@ -37,7 +37,7 @@ func NewApi(
 		tokenService:   tokenService,
 		tokenProviders: tokenProviders,
 		providers:      providers,
-		websocketHub:   websocketHub,
+		websocketStore: websocketStore,
 		logger:         logger,
 
 		cookieName:     cookieName,
@@ -51,7 +51,7 @@ type api struct {
 	tokenService   apisecurity.TokenService
 	tokenProviders []security.TokenProvider
 	providers      []security.Provider
-	websocketHub   websocket.Hub
+	websocketStore websocket.Store
 	logger         zerolog.Logger
 
 	cookieName     string
@@ -125,8 +125,12 @@ func (a *api) Logout(c *gin.Context) {
 // GetLoggedUserCount
 // @Success 200 {object} LoggedUserCountResponse
 func (a *api) GetLoggedUserCount(c *gin.Context) {
+	count, err := a.websocketStore.GetActiveConnections(c)
+	if err != nil {
+		panic(err)
+	}
 	c.JSON(http.StatusOK, LoggedUserCountResponse{
-		Count: int64(a.websocketHub.GetAuthConnectionsCount()),
+		Count: count,
 	})
 }
 
