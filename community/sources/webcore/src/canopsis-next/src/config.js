@@ -198,6 +198,10 @@ export const API_ROUTES = {
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
   templateVars: '/api/v4/template-vars',
+  templateValidator: {
+    declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
+    scenarios: '/api/v4/template-validator/scenarios',
+  },
 
   /**
    * Cat routes

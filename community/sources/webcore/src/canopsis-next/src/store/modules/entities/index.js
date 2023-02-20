@@ -52,6 +52,7 @@ import techMetricsModule from './tech-metrics';
 import manualMetaAlarmModule from './manual-meta-alarm';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
+import templateValidatorModule from './template-validator';
 
 export default {
   alarm: alarmModule,
@@ -108,4 +109,5 @@ export default {
   manualMetaAlarm: manualMetaAlarmModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
+  templateValidator: templateValidatorModule,
 };

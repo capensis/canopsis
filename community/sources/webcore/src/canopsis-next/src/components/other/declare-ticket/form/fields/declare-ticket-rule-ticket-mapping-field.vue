@@ -68,10 +68,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    isTicketIdExist: {
-      type: Boolean,
-      default: false,
-    },
     isDeclareTicketExist: {
       type: Boolean,
       default: false,
@@ -88,6 +84,15 @@ export default {
 
     ticketUrlFieldName() {
       return `${this.name}.ticket_url`;
+    },
+  },
+  watch: {
+    isDeclareTicketExist() {
+      this.$validator.validate(this.name);
+    },
+
+    value() {
+      this.$validator.validate(this.name);
     },
   },
   created() {
