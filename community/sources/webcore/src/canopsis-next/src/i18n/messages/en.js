@@ -1,3 +1,5 @@
+import { THEMES_NAMES } from '@/config';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -283,6 +285,10 @@ export default {
     trigger: 'Trigger | Triggers',
     column: 'Column | Columns',
     countOfTotal: '{count} of {total}',
+    rule: 'Rule',
+    initialLongOutput: 'Long initial output',
+    totalStateChanges: 'Total state changes',
+    theme: 'Theme | Themes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -498,6 +504,12 @@ export default {
         text: 'Auto instruction is completed',
       },
     },
+    themes: {
+      [THEMES_NAMES.canopsis]: 'Canopsis',
+      [THEMES_NAMES.canopsisDark]: 'Canopsis dark',
+      [THEMES_NAMES.colorBlind]: 'Color blind',
+      [THEMES_NAMES.colorBlindDark]: 'Color blind dark',
+    },
   },
   variableTypes: {
     string: 'String',
@@ -607,8 +619,8 @@ export default {
         variablesHelp: 'List of available variables',
         history: 'History',
         groupRequest: 'Suggest group request for meta alarm',
-        manualMetaAlarmGroup: 'Manual meta alarm management',
-        manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
+        createManualMetaAlarm: 'Manual meta alarm management',
+        removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
       },
       iconsTitles: {

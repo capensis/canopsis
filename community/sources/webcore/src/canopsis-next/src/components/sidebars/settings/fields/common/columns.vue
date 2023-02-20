@@ -9,9 +9,6 @@
       :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending",
       @update:template="updateTemplate"
     )
 </template>
@@ -59,18 +56,6 @@ export default {
       default: false,
     },
     withColorIndicator: {
-      type: Boolean,
-      default: false,
-    },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    infosPending: {
       type: Boolean,
       default: false,
     },

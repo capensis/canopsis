@@ -23,7 +23,6 @@ type API interface {
 	Get(c *gin.Context)
 	GetOpen(c *gin.Context)
 	GetDetails(c *gin.Context)
-	ListManual(c *gin.Context)
 	ListByService(c *gin.Context)
 	ListByComponent(c *gin.Context)
 	ResolvedList(c *gin.Context)
@@ -242,23 +241,6 @@ func (a *api) GetDetails(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusMultiStatus, response)
-}
-
-// ListManual
-// @Success 200 {array} ManualResponse
-func (a *api) ListManual(c *gin.Context) {
-	var r ManualRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
-		return
-	}
-
-	alarms, err := a.store.FindManual(c.Request.Context(), r.Search)
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(http.StatusOK, alarms)
 }
 
 // ListByService

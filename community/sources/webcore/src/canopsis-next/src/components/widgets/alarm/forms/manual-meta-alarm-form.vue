@@ -18,7 +18,7 @@
           v-list-tile-content
             v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
     v-text-field(
-      v-field="form.output",
+      v-field="form.comment",
       :label="$t('common.note')"
     )
 </template>

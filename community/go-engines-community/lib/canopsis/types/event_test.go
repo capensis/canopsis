@@ -143,54 +143,6 @@ func TestListTypeFields(t *testing.T) {
 	})
 }
 
-func TestGenerateContextIds(t *testing.T) {
-
-	Convey("Given an event", t, func() {
-		e := getEvent()
-
-		Convey("The generated context informations are corrects", func() {
-			infos := e.GenerateContextInformations()
-			So(infos[0].ID, ShouldEqual, "red/is")
-			So(infos[0].Impacts, ShouldResemble, []string{"adieu_yourï/dead"})
-			So(infos[0].Depends, ShouldResemble, []string{"dead"})
-			So(infos[1].ID, ShouldEqual, "dead")
-			So(infos[1].Impacts, ShouldResemble, []string{"red/is"})
-			So(infos[1].Depends, ShouldResemble, []string{"adieu_yourï/dead"})
-			So(infos[2].ID, ShouldEqual, "adieu_yourï/dead")
-			So(infos[2].Type, ShouldEqual, types.SourceTypeResource)
-			So(infos[2].Impacts, ShouldResemble, []string{"dead"})
-			So(infos[2].Depends, ShouldResemble, []string{"red/is"})
-		})
-
-		Convey("The generated context informations are corrects, event without resource", func() {
-			e.SourceType = types.SourceTypeComponent
-			e.Resource = ""
-
-			infos := e.GenerateContextInformations()
-			So(infos[0].ID, ShouldEqual, "red/is")
-			So(infos[0].Impacts, ShouldResemble, []string{})
-			So(infos[0].Depends, ShouldResemble, []string{"dead"})
-			So(infos[1].ID, ShouldEqual, "dead")
-			So(infos[1].Type, ShouldEqual, types.SourceTypeComponent)
-			So(infos[1].Impacts, ShouldResemble, []string{"red/is"})
-			So(infos[1].Depends, ShouldResemble, []string{})
-		})
-	})
-}
-
-var ctxInfos []types.ContextInformation
-
-func BenchmarkGenerateContextInformations(b *testing.B) {
-	e := getEvent()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		ctxInfos = e.GenerateContextInformations()
-		if len(ctxInfos) == 0 {
-			b.Fatal("no infos")
-		}
-	}
-}
-
 func TestInjectExtraInfos(t *testing.T) {
 	Convey("Setup", t, func() {
 		evt := `{
