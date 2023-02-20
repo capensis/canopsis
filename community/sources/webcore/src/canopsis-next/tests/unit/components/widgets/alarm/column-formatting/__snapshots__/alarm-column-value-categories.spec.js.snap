@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\` with custom props 1`] = `
-<div>
+<div
+  class="alarm-column-value-categories"
+>
   <categories-list-stub
     categories="[object Object],[object Object],[object Object]"
     limit="2"
@@ -26,24 +28,22 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
 `;
 
 exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\` with custom props without access to categories 2`] = `
-<div>
+<div
+  class="alarm-column-value-categories"
+>
   <div
-    class="v-menu v-menu--inline"
+    class="v-menu"
   >
-    <div
-      class="v-menu__activator"
+    <button
+      class="ma-0 alarm-column-value-categories__button v-btn v-btn--depressed v-btn--small theme--light"
+      type="button"
     >
-      <button
-        class="v-btn v-btn--depressed v-btn--small theme--light"
-        type="button"
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Links
-        </div>
-      </button>
-    </div>
+        Links
+      </div>
+    </button>
     <transition-stub
       name="v-menu-transition"
     />
@@ -68,25 +68,23 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
 `;
 
 exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\` with default props 2`] = `
-<div>
+<div
+  class="alarm-column-value-categories"
+>
   <div
-    class="v-menu v-menu--inline"
+    class="v-menu"
   >
-    <div
-      class="v-menu__activator v-menu__activator--disabled"
+    <button
+      class="ma-0 alarm-column-value-categories__button v-btn v-btn--disabled v-btn--depressed v-btn--small theme--light"
+      disabled="disabled"
+      type="button"
     >
-      <button
-        class="v-btn v-btn--disabled v-btn--depressed v-btn--small theme--light"
-        disabled="disabled"
-        type="button"
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Links
-        </div>
-      </button>
-    </div>
+        Links
+      </div>
+    </button>
     <transition-stub
       name="v-menu-transition"
     />

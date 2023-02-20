@@ -153,6 +153,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
+              dense="true"
               expandable="true"
               hideactions="true"
               istourenabled="true"
@@ -175,6 +176,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
+              dense="true"
               expandable="true"
               hideactions="true"
               parentalarm="[object Object]"
@@ -196,6 +198,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
+              dense="true"
               expandable="true"
               hideactions="true"
               parentalarm="[object Object]"
@@ -217,6 +220,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
+              dense="true"
               expandable="true"
               hideactions="true"
               parentalarm="[object Object]"
@@ -238,6 +242,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
+              dense="true"
               expandable="true"
               hideactions="true"
               parentalarm="[object Object]"

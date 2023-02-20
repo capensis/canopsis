@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.actions-panel(:class="{ 'actions-panel--dense': dense }")
     mq-layout(mq="xl")
       v-layout(row, align-center)
         actions-panel-item(
@@ -66,6 +66,25 @@ export default {
       type: Array,
       default: () => [],
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.actions-panel {
+  &--dense {
+    .v-btn--icon {
+      width: 24px;
+      height: 24px;
+
+      .v-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+</style>
