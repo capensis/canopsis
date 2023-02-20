@@ -85,4 +85,4 @@ Timezone = "Europe/Paris"
 
 Vous trouverez la documentation d'administration de la planification dans la documentation du menu d'administration.
 
-[Guide utilisation - Menu administration - Planification](/guide-utilisation/menu-administration/planification)
+[Guide utilisation - Menu administration - Planification](../../guide-utilisation/menu-administration/planification.md)
