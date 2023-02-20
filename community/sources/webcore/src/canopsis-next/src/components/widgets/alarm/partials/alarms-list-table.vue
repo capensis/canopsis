@@ -70,6 +70,7 @@
             :selecting="selecting",
             :selected-tag="selectedTag",
             :hide-actions="hideActions",
+            :dense="dense",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")

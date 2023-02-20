@@ -7,15 +7,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(245, 105, 84); caret-color: #f56954;"
-    >
-      warning
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(245, 105, 84); caret-color: #f56954;"
+  >
+    warning
+  </i>
 </span>
 `;
 
@@ -26,15 +24,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(255, 153, 0); caret-color: #ff9900;"
-    >
-      warning
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(255, 153, 0); caret-color: #ff9900;"
+  >
+    warning
+  </i>
 </span>
 `;
 
@@ -45,15 +41,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(252, 220, 0); caret-color: #fcdc00;"
-    >
-      warning
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(252, 220, 0); caret-color: #fcdc00;"
+  >
+    warning
+  </i>
 </span>
 `;
 
@@ -64,15 +58,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(0, 166, 90); caret-color: #00a65a;"
-    >
-      warning
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(0, 166, 90); caret-color: #00a65a;"
+  >
+    warning
+  </i>
 </span>
 `;
 
@@ -83,15 +75,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(117, 117, 117); caret-color: #757575;"
-    >
-      highlight_off
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(117, 117, 117); caret-color: #757575;"
+  >
+    highlight_off
+  </i>
 </span>
 `;
 
@@ -102,15 +92,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(47, 171, 99); caret-color: #2fab63;"
-    >
-      check_circle_outline
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(47, 171, 99); caret-color: #2fab63;"
+  >
+    check_circle_outline
+  </i>
 </span>
 `;
 
@@ -121,15 +109,13 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(43, 62, 79); caret-color: #2b3E4F;"
-    >
-      swap_vert
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(43, 62, 79); caret-color: #2b3E4F;"
+  >
+    swap_vert
+  </i>
 </span>
 `;
 
@@ -149,14 +135,12 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(117, 117, 117); caret-color: #757575;"
-    >
-      swap_vert
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light"
+    style="color: rgb(117, 117, 117); caret-color: #757575;"
+  >
+    swap_vert
+  </i>
 </span>
 `;
