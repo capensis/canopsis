@@ -257,6 +257,7 @@ export default {
 $densePadding: 6px;
 $denseCellHeight: 24px;
 $denseColorIndicatorPadding: 1px 5px;
+$denseTreeviewCellHeight: 32px;
 
 table.v-datatable {
   transition: background-color .3s cubic-bezier(.25,.8,.5,1);
@@ -285,17 +286,6 @@ table.v-datatable {
   }
 
   &--dense.v-datatable {
-    .service-dependencies .v-treeview-node__root {
-      min-height: $denseCellHeight;
-      height: $denseCellHeight;
-
-      .v-btn {
-        width: $denseCellHeight - 4;
-        height: $denseCellHeight - 4;
-        margin: 2px;
-      }
-    }
-
     tbody, thead {
       td, th {
         padding: 0 $densePadding;
@@ -315,6 +305,23 @@ table.v-datatable {
 
         .color-indicator {
           padding: $denseColorIndicatorPadding;
+        }
+      }
+    }
+
+    .service-dependencies {
+      td:not(.v-datatable__expand-col) {
+        height: $denseTreeviewCellHeight;
+      }
+
+      .v-treeview-node__root {
+        min-height: $denseTreeviewCellHeight;
+        height: $denseTreeviewCellHeight;
+
+        .v-btn {
+          width: $denseTreeviewCellHeight - 4;
+          height: $denseTreeviewCellHeight - 4;
+          margin: 2px;
         }
       }
     }
