@@ -1105,9 +1105,7 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 func (s *store) fillInstructionExecutionStatusesAndIcon(ctx context.Context, result *AggregationResult, assignedInstructions map[string][]AssignedInstruction) error {
 	alarmIDs := make([]string, len(result.Data))
 	for i, item := range result.Data {
-		if item.Value.Resolved == nil {
-			alarmIDs[i] = item.ID
-		}
+		alarmIDs[i] = item.ID
 	}
 	if len(alarmIDs) == 0 {
 		return nil
