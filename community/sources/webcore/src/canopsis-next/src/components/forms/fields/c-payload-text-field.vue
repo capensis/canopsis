@@ -9,7 +9,7 @@
     :disabled="disabled",
     :return-object="false",
     :menu-props="{ value: !!variables.length && variablesShown }",
-    :error-messages="errorMessages",
+    :error-messages="errors.collect(name)",
     :clearable="clearable",
     :name="name",
     no-filter,
@@ -60,10 +60,6 @@ export default {
       return {
         required: this.required,
       };
-    },
-
-    errorMessages() {
-      return this.errors.collect(this.name);
     },
   },
   methods: {

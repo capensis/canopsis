@@ -8,9 +8,10 @@
     :rows="rows",
     :readonly="readonly",
     :disabled="disabled",
-    :error-messages="errors.collect(name)",
+    :error-messages="payloadErrors.inline",
     :row-height="lineHeight",
     :style="textareaStyle",
+    :error="!!linesErrors.length",
     auto-grow,
     @blur="handleBlur",
     @input="debouncedOnSelectionChange"
@@ -79,10 +80,6 @@ export default {
       type: Number,
       default: 18,
     },
-    linesErrors: {
-      type: Array,
-      default: () => [],
-    },
     required: {
       type: Boolean,
       default: false,
@@ -128,8 +125,29 @@ export default {
       return undefined;
     },
 
+    payloadErrors() {
+      return this.errors.collect(this.name, null, false).reduce((acc, item) => {
+        if (item.msg.includes('|')) {
+          const [line, message] = item.msg.split('|');
+
+          acc.lines.push({ line, message });
+        } else {
+          acc.inline.push(item.msg);
+        }
+
+        return acc;
+      }, {
+        lines: [],
+        inline: [],
+      });
+    },
+
+    linesErrors() {
+      return this.payloadErrors.lines;
+    },
+
     linesErrorsByLineNumber() {
-      return keyBy(this.linesErrors, 'lineNumber');
+      return keyBy(this.linesErrors, 'line');
     },
 
     lineHeightPixel() {
