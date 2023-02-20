@@ -98,7 +98,7 @@ type User struct {
 	Source                 string `bson:"source" json:"source"`
 	AuthApiKey             string `bson:"authkey" json:"authkey"`
 
-	ActiveConnects *int `bson:"-" json:"active_connects,omitempty"`
+	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
 }
 
 type Role struct {
