@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { get } from 'lodash';
 
 import {
   MODALS,
@@ -168,7 +167,7 @@ export const widgetActionsPanelAlarmMixin = {
 
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [get(this.parentAlarm, 'd')],
+          parentsIds: [this.parentAlarm?.entity?._id],
         },
       });
     },
