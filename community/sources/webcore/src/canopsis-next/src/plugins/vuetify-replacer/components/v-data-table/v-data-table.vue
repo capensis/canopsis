@@ -255,7 +255,7 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
-$denseCellHeight: 22px;
+$denseCellHeight: 24px;
 $denseColorIndicatorPadding: 1px 5px;
 
 table.v-datatable {
