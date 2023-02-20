@@ -17,7 +17,7 @@
           with-service-weather
         )
         v-divider
-      alarms-list-modal-form(v-model="form.parameters.alarmsList")
+      alarms-list-modal-form(v-model="form.parameters.alarmsList", columns-with-template)
       v-divider
       field-number(
         v-model="form.parameters.limit",
