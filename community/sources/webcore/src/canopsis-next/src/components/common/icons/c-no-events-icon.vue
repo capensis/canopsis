@@ -40,7 +40,7 @@ export default {
       required: false,
     },
     size: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
   },
