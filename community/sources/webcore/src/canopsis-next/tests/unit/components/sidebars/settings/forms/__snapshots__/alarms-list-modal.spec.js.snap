@@ -5,15 +5,22 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   title="Alarm list settings"
   value="[object Object]"
 >
-  <field-columns-stub
-    alarminfos=""
+  <field-default-sort-column-stub
     columns=""
-    entityinfos=""
+    columnslabel="Column name"
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-columns-stub
+    columns=""
     label="Column names"
     templates=""
     type="alarm"
-    with-state="with-state"
+    withcolorindicator="true"
     withhtml="true"
+    withtemplate="true"
   />
   <hr
     class="v-divider theme--light"
@@ -31,7 +38,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   <hr
     class="v-divider theme--light"
   />
-  <field-text-editor-stub
+  <field-text-editor-with-template-stub
     templates=""
     title="\\"More Infos\\" Popup"
     value=""
@@ -44,15 +51,22 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
 <widget-settings-group-stub
   title="Alarm list settings"
 >
-  <field-columns-stub
-    alarminfos=""
+  <field-default-sort-column-stub
     columns=""
-    entityinfos=""
+    columnslabel="Column name"
+    value="[object Object]"
+  />
+  <hr
+    class="v-divider theme--light"
+  />
+  <field-columns-stub
+    columns=""
     label="Column names"
     templates=""
     type="alarm"
-    with-state="with-state"
+    withcolorindicator="true"
     withhtml="true"
+    withtemplate="true"
   />
   <hr
     class="v-divider theme--light"
@@ -70,7 +84,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
   <hr
     class="v-divider theme--light"
   />
-  <field-text-editor-stub
+  <field-text-editor-with-template-stub
     templates=""
     title="\\"More Infos\\" Popup"
     value=""

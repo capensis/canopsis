@@ -2,10 +2,10 @@ package entityservice
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"sync"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -19,29 +19,26 @@ const (
 // NewManager creates new manager.
 func NewManager(
 	adapter Adapter,
-	entityAdapter entity.Adapter,
 	storage Storage,
 	logger zerolog.Logger,
 ) Manager {
 	return &manager{
-		storage:       storage,
-		adapter:       adapter,
-		entityAdapter: entityAdapter,
-		logger:        logger,
+		storage: storage,
+		adapter: adapter,
+		logger:  logger,
 	}
 }
 
 type manager struct {
-	storage       Storage
-	adapter       Adapter
-	entityAdapter entity.Adapter
-	logger        zerolog.Logger
+	storage Storage
+	adapter Adapter
+	logger  zerolog.Logger
 }
 
 func (m *manager) LoadServices(ctx context.Context) error {
 	data, err := m.storage.ReloadAll(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot load services: %w", err)
 	}
 
 	ids := make([]string, len(data))
@@ -61,7 +58,7 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 
 	services, err := m.storage.GetAll(ctx)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot get services: %w", err)
 	}
 
 	workerCh := make(chan ServiceData, len(services))
@@ -84,7 +81,7 @@ func (m *manager) UpdateServices(ctx context.Context, entities []types.Entity) (
 func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []string, error) {
 	data, isNew, isDisabled, err := m.storage.Reload(ctx, serviceID)
 	if err != nil {
-		return false, nil, err
+		return false, nil, fmt.Errorf("cannot reload service: %w", err)
 	}
 
 	// Change context graph only for completely removed service.
@@ -106,46 +103,36 @@ func (m *manager) UpdateService(ctx context.Context, serviceID string) (bool, []
 		m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
 	}
 	// Do not ignore empty negativeQuery to remove service from context graph.
-	removedIDs, err := m.entityAdapter.RemoveImpactByQuery(ctx, negativeQuery, data.ID)
+	removed, err := m.adapter.RemoveFromServiceByQuery(ctx, data.ID, negativeQuery)
 	if err != nil {
-		return false, nil, err
+		return false, nil, fmt.Errorf("cannot remove from service: %w", err)
 	}
 
-	var addedIDs []string
+	var added int64
 	// Ignore empty query to not add service to context graph.
 	if query != nil {
-		addedIDs, err = m.entityAdapter.AddImpactByQuery(ctx, query, data.ID)
+		added, err = m.adapter.AddToServiceByQuery(ctx, data.ID, query)
 		if err != nil {
-			return false, nil, err
+			return false, nil, fmt.Errorf("cannot add to service: %w", err)
 		}
 	}
 
-	if len(removedIDs) > 0 {
-		_, err := m.adapter.RemoveDepends(ctx, data.ID, removedIDs)
-		if err != nil {
-			return false, nil, err
-		}
-	}
-
-	if len(addedIDs) > 0 {
-		_, err := m.adapter.AddDepends(ctx, data.ID, addedIDs)
-		if err != nil {
-			return false, nil, err
-		}
-	}
-
-	return isNew || len(removedIDs) > 0 || len(addedIDs) > 0, nil, nil
+	return isNew || removed > 0 || added > 0, nil, nil
 }
 
 func (m *manager) ReloadService(ctx context.Context, serviceID string) error {
 	_, _, _, err := m.storage.Reload(ctx, serviceID)
-	return err
+	if err != nil {
+		return fmt.Errorf("cannot reload service: %w", err)
+	}
+
+	return nil
 }
 
 func (m *manager) HasEntityServiceByComponentInfos(ctx context.Context) (bool, error) {
 	services, err := m.storage.GetAll(ctx)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("cannot get services: %w", err)
 	}
 
 	for _, s := range services {
@@ -220,7 +207,7 @@ func (m *manager) runWorkers(
 
 						r, err := m.processService(ctx, data, entities)
 						if err != nil {
-							errCh <- err
+							errCh <- fmt.Errorf("cannot process service: %w", err)
 							return
 						}
 
@@ -254,8 +241,8 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 		found := false
 		enabled := e.Enabled
 
-		for _, impact := range e.Impacts {
-			if impact == data.ID {
+		for _, entityService := range e.Services {
+			if entityService == data.ID {
 				found = true
 				break
 			}
@@ -291,43 +278,29 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 
 	res := make([]serviceUpdate, 0)
 	if len(added) > 0 {
-		ok, err := m.adapter.AddDepends(ctx, data.ID, added)
+		err := m.adapter.AddToService(ctx, data.ID, added)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cannot add to service: %w", err)
 		}
 
-		if ok {
-			err := m.entityAdapter.AddImpacts(ctx, added, []string{data.ID})
-			if err != nil {
-				return nil, err
-			}
-
-			res = append(res, serviceUpdate{
-				ID:       data.ID,
-				Entities: added,
-				IsAdded:  true,
-			})
-		}
+		res = append(res, serviceUpdate{
+			ID:       data.ID,
+			Entities: added,
+			IsAdded:  true,
+		})
 	}
 
 	if len(removed) > 0 {
-		ok, err := m.adapter.RemoveDepends(ctx, data.ID, removed)
+		err := m.adapter.RemoveFromService(ctx, data.ID, removed)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cannot remove from service: %w", err)
 		}
 
-		if ok {
-			err := m.entityAdapter.RemoveImpacts(ctx, removed, []string{data.ID})
-			if err != nil {
-				return nil, err
-			}
-
-			res = append(res, serviceUpdate{
-				ID:       data.ID,
-				Entities: removed,
-				IsAdded:  false,
-			})
-		}
+		res = append(res, serviceUpdate{
+			ID:       data.ID,
+			Entities: removed,
+			IsAdded:  false,
+		})
 	}
 
 	return res, nil
@@ -335,36 +308,24 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 
 // removeService removes service from cache and context graph.
 func (m *manager) removeService(ctx context.Context, serviceID string) ([]string, error) {
-	_, err := m.entityAdapter.RemoveImpactByQuery(ctx, bson.M{"impact": serviceID}, serviceID)
+	_, err := m.adapter.RemoveFromServiceByQuery(ctx, serviceID, bson.M{"services": serviceID})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot remove from service: %w", err)
 	}
 
-	ids, err := m.adapter.RemoveDependByQuery(ctx, bson.M{"depends": serviceID}, serviceID)
+	s, err := m.adapter.GetByID(ctx, serviceID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot get service: %w", err)
+	}
+	if s == nil {
+		return nil, nil
 	}
 
-	removedFromIDs := make([]string, 0)
-	data, err := m.storage.GetAll(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, id := range ids {
-		for _, s := range data {
-			if s.ID == id {
-				removedFromIDs = append(removedFromIDs, id)
-				break
-			}
-		}
-	}
-
-	return removedFromIDs, nil
+	return s.Services, nil
 }
 
-func getServiceQueries(data ServiceData) (interface{}, interface{}, error) {
-	var query, negativeQuery interface{}
+func getServiceQueries(data ServiceData) (bson.M, bson.M, error) {
+	var query, negativeQuery bson.M
 	var err error
 
 	if len(data.EntityPattern) > 0 {

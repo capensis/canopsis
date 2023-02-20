@@ -5,29 +5,30 @@
     div.mb-3.text-xs-center(v-if="hasAnyError")
       v-chip(color="error", dark)
         span.subheading {{ $t('healthcheck.systemStatusChipError') }}
-    v-tabs(v-model="activeTab", centered, slider-color="primary")
-      v-tab {{ $t('common.systemStatus') }}
-      v-tab {{ $tc('common.graph', 2) }}
-      v-tab {{ $tc('common.parameter', 2) }}
-      v-tab(v-if="hasAccessToTechMetrics") {{ $t('common.enginesMetrics') }}
-    v-tabs-items.white.healthcheck__tabs(v-model="activeTab")
-      v-tab-item.healthcheck__graph-tab
-        healthcheck-network-graph.healthcheck__graph(
-          v-if="!pending && !hasServerError",
-          :services="services",
-          :engines-graph="enginesGraph",
-          :engines-parameters="enginesParameters",
-          :has-invalid-engines-order="hasInvalidEnginesOrder",
-          :max-queue-length="maxQueueLength",
-          show-description
-        )
-        h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
-      v-tab-item(lazy)
-        healthcheck-graphs(:max-queue-length="maxQueueLength")
-      v-tab-item(lazy)
-        healthcheck-parameters
-      v-tab-item(lazy)
-        healthcheck-engines-metrics
+    v-sheet
+      v-tabs(v-model="activeTab", centered, slider-color="primary")
+        v-tab {{ $t('common.systemStatus') }}
+        v-tab {{ $tc('common.graph', 2) }}
+        v-tab {{ $tc('common.parameter', 2) }}
+        v-tab(v-if="hasAccessToTechMetrics") {{ $t('common.enginesMetrics') }}
+      v-tabs-items.healthcheck__tabs(v-model="activeTab")
+        v-tab-item.healthcheck__graph-tab
+          healthcheck-network-graph.healthcheck__graph(
+            v-if="!pending && !hasServerError",
+            :services="services",
+            :engines-graph="enginesGraph",
+            :engines-parameters="enginesParameters",
+            :has-invalid-engines-order="hasInvalidEnginesOrder",
+            :max-queue-length="maxQueueLength",
+            show-description
+          )
+          h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
+        v-tab-item(lazy)
+          healthcheck-graphs(:max-queue-length="maxQueueLength")
+        v-tab-item(lazy)
+          healthcheck-parameters
+        v-tab-item(lazy)
+          healthcheck-engines-metrics
 </template>
 
 <script>
@@ -144,7 +145,6 @@ $networkGraphMinHeight: 100px;
 .healthcheck {
   display: flex;
   flex-direction: column;
-  height: 100%;
 
   &__tabs {
     flex: 1;

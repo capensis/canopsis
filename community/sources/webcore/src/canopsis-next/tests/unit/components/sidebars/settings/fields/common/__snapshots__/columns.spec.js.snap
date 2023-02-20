@@ -5,8 +5,6 @@ exports[`columns Renders \`columns\` with custom props 1`] = `
   title="Custom label"
 >
   <c-columns-with-template-field-stub
-    alarm-infos=""
-    entity-infos=""
     templates=""
     type="alarm"
     value=""
@@ -21,8 +19,6 @@ exports[`columns Renders \`columns\` with default and required props 1`] = `
   title="Custom label"
 >
   <c-columns-with-template-field-stub
-    alarm-infos=""
-    entity-infos=""
     templates=""
     type="alarm"
     value=""

@@ -19,7 +19,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type API interface {
@@ -54,7 +53,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
-	fields := []string{"_id", "name", "type", "enabled", "depends", "impact"}
+	fields := []string{"_id", "name", "type", "enabled", "connector", "component", "services"}
 	defaultExportFields := make(export.Fields, len(fields))
 	for i, field := range fields {
 		defaultExportFields[i] = export.Field{
@@ -292,13 +291,13 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 
 		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, enabled)
 		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
-				continue
-			}
-
 			a.logger.Err(err).Msg("cannot update entity")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
+		if simplifiedEntity.ID == "" {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
 			continue
 		}
 
@@ -310,8 +309,8 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			}
 
 			if !enabled && simplifiedEntity.Type == types.EntityTypeComponent {
-				msg.Resources = make([]string, len(simplifiedEntity.Depends))
-				copy(msg.Resources, simplifiedEntity.Depends)
+				msg.Resources = make([]string, len(simplifiedEntity.Resources))
+				copy(msg.Resources, simplifiedEntity.Resources)
 			}
 
 			a.sendChangeMessage(msg)
@@ -336,7 +335,7 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 
 		a.metricMetaUpdater.UpdateById(c, simplifiedEntity.ID)
 		if isToggled && simplifiedEntity.Type == types.EntityTypeComponent {
-			a.metricMetaUpdater.UpdateById(c, simplifiedEntity.Depends...)
+			a.metricMetaUpdater.UpdateById(c, simplifiedEntity.Resources...)
 		}
 	}
 

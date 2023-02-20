@@ -6,7 +6,7 @@
     draggable(
       v-field="operations",
       :options="draggableOptions",
-      :class="{ 'grey lighten-2': isDragging }",
+      :class="{ 'grey lighten-1': isDragging }",
       @start="startDragging",
       @end="endDragging"
     )
@@ -85,7 +85,7 @@ export default {
         disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.operation-drag-handler',
-        ghostClass: 'white',
+        ghostClass: 'grey',
         group: {
           name: 'remediation-instruction-operations',
           pull: false,
