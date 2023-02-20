@@ -6,9 +6,6 @@
       :key="column.key",
       :name="column.key",
       :type="type",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending",
       :with-html="withHtml",
       :with-template="withTemplate",
       :with-color-indicator="withColorIndicator",
@@ -60,18 +57,6 @@ export default {
       default: false,
     },
     withColorIndicator: {
-      type: Boolean,
-      default: false,
-    },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    infosPending: {
       type: Boolean,
       default: false,
     },

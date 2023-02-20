@@ -399,9 +399,9 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     List of available variables|help|variablesHelp
   </button>
   <button
-    class="drop-down-action-manualMetaAlarmUngroup"
+    class="drop-down-action-removeAlarmsFromManualMetaAlarm"
   >
-    Unlink alarm from manual meta alarm|link_off|manualMetaAlarmUngroup
+    Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
   </button>
   <button
     class="drop-down-action-executeInstruction"
@@ -463,9 +463,9 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     List of available variables|help|variablesHelp
   </button>
   <button
-    class="drop-down-action-manualMetaAlarmUngroup"
+    class="drop-down-action-removeAlarmsFromManualMetaAlarm"
   >
-    Unlink alarm from manual meta alarm|link_off|manualMetaAlarmUngroup
+    Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
   </button>
   <button
     class="drop-down-action-executeInstruction"
