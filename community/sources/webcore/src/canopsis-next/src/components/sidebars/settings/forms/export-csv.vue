@@ -24,9 +24,6 @@
           :templates-pending="templatesPending",
           :label="$t('settings.exportColumnNames')",
           :type="type",
-          :alarm-infos="alarmInfos",
-          :entity-infos="entityInfos",
-          :infos-pending="infosPending",
           @update:template="updateTemplate"
         )
 </template>
@@ -62,18 +59,6 @@ export default {
       default: () => [],
     },
     templatesPending: {
-      type: Boolean,
-      default: false,
-    },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    infosPending: {
       type: Boolean,
       default: false,
     },

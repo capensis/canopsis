@@ -17,10 +17,7 @@
     alarms-list-modal-form(
       v-model="form.parameters.alarmsList",
       :templates="preparedWidgetTemplates",
-      :templates-pending="widgetTemplatesPending",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending"
+      :templates-pending="widgetTemplatesPending"
     )
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
@@ -68,7 +65,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { widgetColumnsInfosMixin } from '@/mixins/widget/columns/infos';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 
 import FieldTitle from './fields/common/title.vue';
@@ -102,8 +99,11 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    widgetColumnsInfosMixin,
+    entitiesInfosMixin,
     widgetTemplatesMixin,
   ],
+  mounted() {
+    return this.fetchInfos();
+  },
 };
 </script>

@@ -126,6 +126,8 @@ import CColumnField from '@/components/forms/fields/c-column-field.vue';
 import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
 import CColumnsWithTemplateField from '@/components/forms/fields/c-columns-with-template-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
+import CColorChromePickerField from '@/components/forms/fields/color/c-color-chrome-picker-field.vue';
+import CColorCompactPickerField from '@/components/forms/fields/color/c-color-compact-picker-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
@@ -184,6 +186,7 @@ import CPatternEditorField from '@/components/forms/fields/pattern/c-pattern-edi
 import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
+import CAlarmInfosAttributeField from '@/components/forms/fields/alarm/c-alarm-infos-attribute-field.vue';
 import CAlarmTagField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
@@ -223,11 +226,11 @@ Vue.use(VueResizeText);
 Vue.use(PortalVue);
 Vue.use(Filters);
 Vue.use(Vuetify, {
-  iconfont: 'md',
-  theme: {
-    primary: config.COLORS.primary,
-    secondary: config.COLORS.secondary,
+  options: {
+    customProperties: true,
   },
+  iconfont: 'md',
+  theme: config.THEMES.canopsis.colors,
   icons: {
     bullhorn: {
       component: BullhornIcon,
@@ -393,6 +396,8 @@ Vue.component('c-storage-field', CStorageField);
 Vue.component('c-file-name-mask-field', CFileNameMaskField);
 Vue.component('c-percents-field', CPercentsField);
 Vue.component('c-color-indicator-field', CColorIndicatorField);
+Vue.component('c-color-chrome-picker-field', CColorChromePickerField);
+Vue.component('c-color-compact-picker-field', CColorCompactPickerField);
 Vue.component('c-column-field', CColumnField);
 Vue.component('c-columns-field', CColumnsField);
 Vue.component('c-columns-with-template-field', CColumnsWithTemplateField);
@@ -455,6 +460,7 @@ Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-runtime-template', CRuntimeTemplate);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
+Vue.component('c-alarm-infos-attribute-field', CAlarmInfosAttributeField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);

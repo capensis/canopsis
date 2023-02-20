@@ -8,7 +8,8 @@
     :query="query",
     :columns="widget.parameters.widgetGroupColumns",
     :editing="editing",
-    :loading="pending"
+    :loading="pending",
+    :refresh-alarms-list="refreshAlarmsList"
   )
 </template>
 
@@ -47,6 +48,10 @@ export default {
     pending: {
       type: Boolean,
       default: false,
+    },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => () => {},
     },
   },
   computed: {

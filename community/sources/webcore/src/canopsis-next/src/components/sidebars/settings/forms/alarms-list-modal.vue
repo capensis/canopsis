@@ -1,5 +1,11 @@
 <template lang="pug">
   widget-settings-group(:title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)")
+    field-default-sort-column(
+      v-model="form.sort",
+      :columns="sortablePreparedWidgetColumns",
+      :columns-label="$t('settings.columnName')"
+    )
+    v-divider
     field-columns(
       v-field="form.widgetColumns",
       :template="form.widgetColumnsTemplate",
@@ -7,11 +13,9 @@
       :templates-pending="templatesPending",
       :label="$t('settings.columnNames')",
       :type="$constants.ENTITIES_TYPES.alarm",
-      :alarm-infos="alarmInfos",
-      :entity-infos="entityInfos",
-      :infos-pending="infosPending",
       with-html,
-      with-state,
+      with-template,
+      with-color-indicator,
       @update:template="updateColumnsTemplate"
     )
     v-divider
@@ -35,11 +39,15 @@
 <script>
 import { filter } from 'lodash';
 
-import { WIDGET_TEMPLATES_TYPES } from '@/constants';
+import { ALARM_FIELDS_TO_LABELS_KEYS, ALARM_UNSORTABLE_FIELDS, WIDGET_TEMPLATES_TYPES } from '@/constants';
+
+import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
+import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { formBaseMixin } from '@/mixins/form';
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
+import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
 import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/settings/fields/common/text-editor-with-template.vue';
@@ -49,6 +57,7 @@ import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-
 export default {
   components: {
     WidgetSettingsGroup,
+    FieldDefaultSortColumn,
     FieldColumns,
     FieldInfoPopup,
     FieldTextEditorWithTemplate,
@@ -75,18 +84,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    alarmInfos: {
-      type: Array,
-      default: () => [],
-    },
-    entityInfos: {
-      type: Array,
-      default: () => [],
-    },
-    infosPending: {
-      type: Boolean,
-      default: false,
-    },
     datetimeFormat: {
       type: Boolean,
       default: false,
@@ -99,6 +96,18 @@ export default {
 
     alarmMoreInfosWidgetTemplates() {
       return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmMoreInfos });
+    },
+
+    preparedWidgetColumns() {
+      return formToWidgetColumns(this.form.widgetColumns).map(column => ({
+        ...column,
+
+        text: getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      }));
+    },
+
+    sortablePreparedWidgetColumns() {
+      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
     },
   },
   methods: {
