@@ -129,8 +129,6 @@ export default {
     };
   },
   computed: {
-    ...featuresService.get('components.alarmListRow.computed', {}),
-
     alarm() {
       return this.row.item;
     },

@@ -23,6 +23,7 @@ import {
   WIDGET_TYPES,
   WIDGET_TYPES_RULES,
   WIDGET_GRID_ROW_HEIGHT,
+  COMPONENTS_BY_WIDGET_TYPES,
 } from '@/constants';
 
 import {
@@ -102,26 +103,16 @@ export default {
 
         case WIDGET_TYPES.map:
           return prepareMapWidget(this.widget);
-
-        default:
-          return this.widget;
       }
+
+      const preparer = featuresService.get('components.widgetWrapper.computed.preparedWidget');
+
+      return preparer ? preparer.call(this) : this.widget;
     },
 
     widgetProps() {
       const { type } = this.widget;
-      const widgetComponentsMap = {
-        [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
-        [WIDGET_TYPES.context]: 'entities-list-widget',
-        [WIDGET_TYPES.serviceWeather]: 'service-weather-widget',
-        [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
-        [WIDGET_TYPES.text]: 'text-widget',
-        [WIDGET_TYPES.counter]: 'counter-widget',
-        [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
-        [WIDGET_TYPES.map]: 'map-widget',
-
-        ...featuresService.get('components.widgetWrapper.widgetProps.widgetComponentsMap', {}),
-      };
+      const widgetComponentsMap = { ...COMPONENTS_BY_WIDGET_TYPES };
       let widgetSpecificsProp = {};
 
       Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
