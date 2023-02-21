@@ -27,7 +27,7 @@ Feature: Export alarms
     When I do GET /api/v4/alarm-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 2
+       "status": 1
     }
     """
     When I do GET /api/v4/alarm-export/{{ .exportID }}/download
@@ -66,7 +66,7 @@ Feature: Export alarms
     When I do GET /api/v4/alarm-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 2
+       "status": 1
     }
     """
     When I do GET /api/v4/alarm-export/{{ .exportID }}/download
