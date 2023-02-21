@@ -1,6 +1,6 @@
 <template lang="pug">
   v-flex(v-resize="changeHeaderPositionOnResize")
-    c-empty-data-table-columns(v-if="!hasColumns")
+    c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
         v-if="totalItems && (densable || !hideActions || !hidePagination)",
@@ -62,8 +62,7 @@
             :expandable="expandable",
             :row="props",
             :widget="widget",
-            :columns="columns",
-            :columns-filters="columnsFilters",
+            :columns="preparedColumns",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
@@ -103,7 +102,7 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -126,7 +125,7 @@ export default {
     ...featuresService.get('components.alarmListTable.components', {}),
   },
   mixins: [
-    entitiesAlarmColumnsFiltersMixin,
+    widgetColumnsAlarmMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -139,10 +138,6 @@ export default {
       type: Array,
       required: true,
     },
-    columns: {
-      type: Array,
-      required: true,
-    },
     totalItems: {
       type: Number,
       required: false,
@@ -150,6 +145,10 @@ export default {
     pagination: {
       type: Object,
       default: () => ({}),
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
     isTourEnabled: {
       type: Boolean,
@@ -211,9 +210,7 @@ export default {
 
     return {
       selecting: false,
-      columnsFilters: [],
       selected: [],
-      columnsFiltersPending: false,
 
       ...data,
     };
@@ -222,10 +219,6 @@ export default {
   computed: {
     unresolvedSelected() {
       return this.selected.filter(item => !isResolvedAlarm(item));
-    },
-
-    hasColumns() {
-      return this.columns.length > 0;
     },
 
     expanded() {
@@ -237,14 +230,16 @@ export default {
     },
 
     headers() {
-      const headers = [...this.columns];
+      const headers = [...this.preparedColumns];
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
       }
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
-        // We need it for the expand panel open button
+        /**
+         * We need it for the expand panel open button
+         */
         headers.unshift({ sortable: false });
       }
 
@@ -329,10 +324,6 @@ export default {
     if (featuresService.has('components.alarmListTable.mounted')) {
       featuresService.call('components.alarmListTable.mounted', this, {});
     }
-
-    this.columnsFiltersPending = true;
-    this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
-    this.columnsFiltersPending = false;
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);

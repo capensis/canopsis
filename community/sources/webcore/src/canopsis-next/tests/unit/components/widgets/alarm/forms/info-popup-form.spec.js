@@ -4,6 +4,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
+import { ALARM_FIELDS } from '@/constants';
 
 const localVue = createVueInstance();
 
@@ -100,8 +101,7 @@ describe('info-popup-form', () => {
         },
         columns: [
           {
-            value: 'value',
-            label: 'label',
+            value: ALARM_FIELDS.entityName,
           },
         ],
       },

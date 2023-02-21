@@ -313,6 +313,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("longitude", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("invalid", trans, func(ut ut.Translator) error {
+		return ut.Add("invalid", "{0} is invalid.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("invalid", fe.StructField())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.

@@ -15,16 +15,7 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list v-list--dense theme--dark"
-    role="list"
-  >
-    <categories-list-stub
-      categories=""
-    />
-  </div>
-</div>
+/>
 `;
 
 exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\` with custom props without access to categories 2`] = `
@@ -46,7 +37,12 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
     </button>
     <transition-stub
       name="v-menu-transition"
-    />
+    >
+      <div
+        class="v-menu__content theme--light "
+        style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+      />
+    </transition-stub>
   </div>
 </div>
 `;
@@ -55,16 +51,7 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-list v-list--dense theme--dark"
-    role="list"
-  >
-    <categories-list-stub
-      categories=""
-    />
-  </div>
-</div>
+/>
 `;
 
 exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\` with default props 2`] = `
@@ -87,7 +74,12 @@ exports[`alarm-column-value-categories Renders \`alarm-column-value-categories\`
     </button>
     <transition-stub
       name="v-menu-transition"
-    />
+    >
+      <div
+        class="v-menu__content theme--light "
+        style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+      />
+    </transition-stub>
   </div>
 </div>
 `;

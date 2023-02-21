@@ -21,7 +21,6 @@
         :alarm="alarm",
         :widget="widget",
         :column="column",
-        :columns-filters="columnsFilters",
         :selected-tag="selectedTag",
         :dense="dense",
         @activate="activateRow",

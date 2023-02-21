@@ -4,6 +4,7 @@
     :position-x="positionX",
     :position-y="positionY",
     :close-on-content-click="false",
+    max-height="300",
     ref="menu",
     @input="$emit('close')"
   )

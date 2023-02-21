@@ -4,6 +4,7 @@
     v-menu(
       v-else,
       :disabled="isDisabled",
+      lazy,
       @input="$emit('activate', $event)",
       @click.native.stop=""
     )
