@@ -5,5 +5,6 @@ export default {
     stateSettings: 'State settings',
     storageSettings: 'Storage settings',
     notificationsSettings: 'Notifications settings',
+    widgetTemplates: 'Widget templates',
   },
 };

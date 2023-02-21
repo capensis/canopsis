@@ -54,6 +54,7 @@ import flowchart from './flowchart';
 import treeOfDependencies from './tree-of-dependencies';
 import shareToken from './share-token';
 import techMetric from './tech-metric';
+import widgetTemplate from './widget-template';
 
 export default merge({
   common,
@@ -108,4 +109,5 @@ export default merge({
   treeOfDependencies,
   shareToken,
   techMetric,
+  widgetTemplate,
 }, featureService.get('i18n.fr'));

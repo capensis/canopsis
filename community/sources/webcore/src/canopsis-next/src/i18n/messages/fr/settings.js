@@ -39,7 +39,6 @@ export default {
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
   open: 'Ouverte',
-  resolved: 'Résolue',
   filters: 'Filtres',
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
@@ -134,8 +133,8 @@ export default {
       both: 'Les deux',
     },
   },
-  templateEditor: 'Modèle',
   columns: {
+    customLabel: 'Étiquette personnalisée',
     isHtml: 'Est-ce du HTML ?',
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
