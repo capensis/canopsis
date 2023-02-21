@@ -399,10 +399,14 @@ definitions:
     type: object
   alarm.ExportRequest:
     properties:
+      alarm_pattern:
+        type: string
       category:
         type: string
       correlation:
         type: boolean
+      entity_pattern:
+        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -417,6 +421,8 @@ definitions:
         type: array
       opened:
         type: boolean
+      pbehavior_pattern:
+        type: string
       search:
         type: string
       separator:
@@ -2832,9 +2838,6 @@ definitions:
       description:
         maxLength: 255
         type: string
-      icon_name:
-        maxLength: 255
-        type: string
       name:
         maxLength: 255
         type: string
@@ -2849,7 +2852,6 @@ definitions:
         type: string
     required:
     - description
-    - icon_name
     - name
     - priority
     - type
