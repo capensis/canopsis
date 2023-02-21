@@ -15,7 +15,6 @@
               c-help-icon(
                 :text="$t('eventFilter.tooltips.reference')",
                 icon="help",
-                color="grey darken-1",
                 left
               )
           v-select.ml-2(

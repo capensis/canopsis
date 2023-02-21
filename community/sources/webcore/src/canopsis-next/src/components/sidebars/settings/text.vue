@@ -4,7 +4,7 @@
     v-divider
     field-text-editor(
       v-model="form.parameters.template",
-      :title="$t('settings.templateEditor')"
+      :title="$t('common.template')"
     )
     v-divider
 </template>

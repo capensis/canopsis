@@ -9,7 +9,7 @@
         :name="enabledFieldName",
         color="primary"
       )
-        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
+        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", color="info", top)
     v-flex(xs2)
       c-number-field(
         v-field="value.limit",
@@ -19,9 +19,7 @@
         :required="value.enabled"
       )
     v-flex(xs9)
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(v-for="error in errors.collect(name)", :key="error") {{ error }}
+      v-messages(:value="errors.collect(name)", color="error")
 </template>
 
 <script>

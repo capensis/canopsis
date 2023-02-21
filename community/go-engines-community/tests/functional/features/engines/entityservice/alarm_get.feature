@@ -280,13 +280,7 @@ Feature: Get alarms
       "category": "test-category-to-entityservice-alarm-get-2",
       "enabled": true,
       "impact_level": 1,
-      "sli_avail_state": 0,
-      "impact": [
-        "test-component-to-alarm-service-get-2-1"
-      ],
-      "depends": [
-        "test-connector-to-alarm-service-get-2/test-connector-name-to-alarm-service-get-2"
-      ]
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
@@ -297,13 +291,7 @@ Feature: Get alarms
       "category": "test-category-to-entityservice-alarm-get-2",
       "enabled": true,
       "impact_level": 1,
-      "sli_avail_state": 0,
-      "impact": [
-        "test-component-to-alarm-service-get-2-2"
-      ],
-      "depends": [
-        "test-connector-to-alarm-service-get-2/test-connector-name-to-alarm-service-get-2"
-      ]
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200
