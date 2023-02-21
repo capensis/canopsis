@@ -26,7 +26,7 @@
               )
                 v-icon keyboard_arrow_left
             span {{ prevLabel }}
-          calendar-app-period-picker(:calendar="calendar")
+          calendar-app-period-picker(:calendar="calendar", @change="selectPeriod")
           v-tooltip(bottom)
             template(#activator="{ on }")
               v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
@@ -309,6 +309,16 @@ export default {
       };
 
       this.setState(input, ignoreTriggerChange);
+    },
+
+    selectPeriod(diff) {
+      if (this.removeEventsBeforeMove) {
+        this.calendar.removeEvents(null, true);
+      }
+
+      this.calendar.move(diff);
+
+      this.triggerChange();
     },
 
     next() {

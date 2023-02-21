@@ -5,6 +5,7 @@
     :pending="pending",
     :meta="meta",
     :query.sync="query",
+    :columns="columns",
     selectable
   )
     template(#toolbar="")
@@ -21,20 +22,16 @@
 <script>
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
 import EntitiesListTableWithPagination from '../../widgets/context/partials/entities-list-table-with-pagination.vue';
 
 export default {
-  components: {
-    EntitiesListTableWithPagination,
-  },
+  components: { EntitiesListTableWithPagination },
   mixins: [
     authMixin,
     localQueryMixin,
-    widgetColumnsContextMixin,
     entitiesEntityDependenciesMixin,
     permissionsWidgetsContextCategory,
   ],
@@ -51,6 +48,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    columns: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -58,18 +59,6 @@ export default {
       entities: [],
       meta: {},
     };
-  },
-  computed: {
-    headers() {
-      if (this.hasColumns) {
-        return [
-          ...this.columns,
-          { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ];
-      }
-
-      return [];
-    },
   },
   mounted() {
     this.fetchList();
