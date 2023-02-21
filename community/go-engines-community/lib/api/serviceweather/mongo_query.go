@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -88,6 +89,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handlePatterns(r)
 	if err != nil {
 		return nil, err
 	}
@@ -222,34 +227,18 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			return common.NewValidationError("filter", "Filter cannot be applied.")
 		}
 
-		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
+		err = q.handleEntityPattern(filter.EntityPattern)
 		if err != nil {
 			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
 		}
 
-		if len(entityPatternQuery) > 0 {
-			q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
-		}
-
-		weatherPatternQuery, err := filter.WeatherServicePattern.ToMongoQuery("")
+		err = q.handleWeatherServicePattern(filter.WeatherServicePattern)
 		if err != nil {
 			return fmt.Errorf("invalid weather service pattern in widget filter id=%q: %w", filter.ID, err)
 		}
-		if len(weatherPatternQuery) > 0 {
-			q.lookupsForAdditionalMatch["alarm"] = true
 
-			if filter.WeatherServicePattern.HasField("is_grey") ||
-				filter.WeatherServicePattern.HasField("icon") ||
-				filter.WeatherServicePattern.HasField("secondary_icon") {
-				q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
-				q.lookupsForAdditionalMatch["counters"] = true
-			}
-			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
-		}
-
-		if len(entityPatternQuery) == 0 && len(weatherPatternQuery) == 0 &&
-			len(filter.OldMongoQuery) > 0 {
-			var query map[string]interface{}
+		if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) > 0 {
+			var query map[string]any
 			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
 			if err != nil {
 				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
@@ -261,6 +250,68 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 
 			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
 		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
+	if r.EntityPattern != "" {
+		var entityPattern pattern.Entity
+		err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+		err = q.handleEntityPattern(entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+	}
+
+	if r.WeatherServicePattern != "" {
+		var weatherPattern view.WeatherServicePattern
+		err := json.Unmarshal([]byte(r.WeatherServicePattern), &weatherPattern)
+		if err != nil {
+			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
+		}
+		err = q.handleWeatherServicePattern(weatherPattern)
+		if err != nil {
+			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
+		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
+	entityPatternQuery, err := entityPattern.ToMongoQuery("")
+	if err != nil {
+		return err
+	}
+
+	if len(entityPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern view.WeatherServicePattern) error {
+	weatherPatternQuery, err := weatherServicePattern.ToMongoQuery("")
+	if err != nil {
+		return err
+	}
+
+	if len(weatherPatternQuery) > 0 {
+		q.lookupsForAdditionalMatch["alarm"] = true
+
+		if weatherServicePattern.HasField("is_grey") ||
+			weatherServicePattern.HasField("icon") ||
+			weatherServicePattern.HasField("secondary_icon") {
+			q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
+			q.lookupsForAdditionalMatch["counters"] = true
+		}
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
 	}
 
 	return nil
