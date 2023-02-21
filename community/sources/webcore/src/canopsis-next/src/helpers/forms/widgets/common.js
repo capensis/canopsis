@@ -176,7 +176,7 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  * @param {WidgetParameters} [parameters = {}]
  * @return {WidgetParametersForm}
  */
-export const widgetParametersToForm = ({ type, parameters } = {}) => {
+export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: alarmListWidgetParametersToForm,
     [WIDGET_TYPES.context]: contextWidgetParametersToForm,
@@ -192,11 +192,7 @@ export const widgetParametersToForm = ({ type, parameters } = {}) => {
 
   const preparer = widgetsMap[type];
 
-  if (preparer) {
-    return preparer(parameters);
-  }
-
-  return parameters ? cloneDeep(parameters) : {};
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
@@ -261,7 +257,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
 
   const preparer = widgetsMap[type];
 
-  return preparer ? preparer(parameters) : parameters;
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
