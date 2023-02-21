@@ -3,8 +3,7 @@ package export
 import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 
 const (
-	TaskStatusCreated = iota
-	TaskStatusRunning
+	TaskStatusRunning = iota
 	TaskStatusSucceeded
 	TaskStatusFailed
 )
