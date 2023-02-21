@@ -255,10 +255,13 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
-$denseCellHeight: 32px;
+$denseCellHeight: 24px;
 $denseColorIndicatorPadding: 1px 5px;
+$denseTreeviewCellHeight: 32px;
 
 table.v-datatable {
+  transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+
   .v-datatable-header__sort-badge {
     display: inline-flex;
     justify-content: center;
@@ -269,20 +272,22 @@ table.v-datatable {
     min-height: 18px;
     height: 18px;
     width: 18px;
-    background-color: rgba(0, 0, 0, .12);
-    color: rgba(0, 0, 0, .87);
+    margin-left: 4px;
+
+    .theme--light & {
+      background-color: rgba(black, .12);
+      color: rgba(black, .87);
+    }
+
+    .theme--dark & {
+      background-color: rgba(white, .12);
+      color: rgba(white, .87);
+    }
   }
 
   &--dense.v-datatable {
-    .service-dependencies .v-treeview-node__root {
-      min-height: $denseCellHeight;
+    thead tr {
       height: $denseCellHeight;
-
-      .v-btn {
-        width: $denseCellHeight - 4;
-        height: $denseCellHeight - 4;
-        margin: 2px;
-      }
     }
 
     tbody, thead {
@@ -304,6 +309,23 @@ table.v-datatable {
 
         .color-indicator {
           padding: $denseColorIndicatorPadding;
+        }
+      }
+    }
+
+    .service-dependencies {
+      td:not(.v-datatable__expand-col) {
+        height: $denseTreeviewCellHeight;
+      }
+
+      .v-treeview-node__root {
+        min-height: $denseTreeviewCellHeight;
+        height: $denseTreeviewCellHeight;
+
+        .v-btn {
+          width: $denseTreeviewCellHeight - 4;
+          height: $denseTreeviewCellHeight - 4;
+          margin: 2px;
         }
       }
     }
