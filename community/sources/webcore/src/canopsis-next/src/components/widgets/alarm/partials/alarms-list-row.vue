@@ -2,9 +2,9 @@
   tr.alarm-list-row(v-on="listeners", :class="classes")
     td.pr-0(v-if="hasRowActions")
       v-layout(row, align-center, justify-space-between)
-        v-layout.alarm-list-row__checkbox
+        v-layout.alarm-list-row__checkbox(:class="{ 'alarm-list-row__checkbox--dense': dense }")
           template(v-if="selectable")
-            v-checkbox-functional(v-if="!isResolvedAlarm", v-field="selected", hide-details)
+            v-checkbox-functional.ma-0(v-if="!isResolvedAlarm", v-field="selected", hide-details)
             v-checkbox-functional(v-else, disabled, hide-details)
         v-layout(v-if="hasAlarmInstruction", align-center, justify-center)
           alarms-list-row-icon(:alarm="alarm")
@@ -13,7 +13,8 @@
           v-model="row.expanded",
           :alarm="alarm",
           :widget="widget",
-          :is-tour-enabled="isTourEnabled"
+          :is-tour-enabled="isTourEnabled",
+          :dense="dense"
         )
     td(v-for="column in columns")
       alarm-column-value(
@@ -22,6 +23,7 @@
         :column="column",
         :columns-filters="columnsFilters",
         :selected-tag="selectedTag",
+        :dense="dense",
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
       )
@@ -31,7 +33,8 @@
         :widget="widget",
         :is-resolved-alarm="isResolvedAlarm",
         :parent-alarm="parentAlarm",
-        :refresh-alarms-list="refreshAlarmsList"
+        :refresh-alarms-list="refreshAlarmsList",
+        :dense="dense"
       )
 </template>
 
@@ -115,6 +118,10 @@ export default {
     selectedTag: {
       type: String,
       default: '',
+    },
+    dense: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
