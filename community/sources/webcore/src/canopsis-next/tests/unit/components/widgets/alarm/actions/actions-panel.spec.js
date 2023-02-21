@@ -22,6 +22,7 @@ import {
 import featuresService from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { prepareAlarmListWidget } from '@/helpers/widgets';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
@@ -665,7 +666,7 @@ describe('actions-panel', () => {
   });
 
   it('History modal showed after trigger history action', () => {
-    const widgetData = {
+    const widgetData = prepareAlarmListWidget({
       _id: Faker.datatype.string(),
       parameters: {
         widgetColumns: [
@@ -675,7 +676,8 @@ describe('actions-panel', () => {
           },
         ],
       },
-    };
+    });
+
     const entity = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
@@ -700,7 +702,7 @@ describe('actions-panel', () => {
 
     historyAction.trigger('click');
 
-    const defaultWidget = generateDefaultAlarmListWidget();
+    const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
     expect($modals.show).toBeCalledWith(
       {
@@ -710,10 +712,14 @@ describe('actions-panel', () => {
           fetchList: expect.any(Function),
           widget: {
             ...defaultWidget,
+
             _id: expect.any(String),
             parameters: {
               ...defaultWidget.parameters,
+
               widgetColumns: widgetData.parameters.widgetColumns,
+              widgetGroupColumns: widgetData.parameters.widgetGroupColumns,
+              serviceDependenciesColumns: widgetData.parameters.serviceDependenciesColumns,
             },
           },
         },
