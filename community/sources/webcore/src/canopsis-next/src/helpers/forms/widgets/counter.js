@@ -35,10 +35,15 @@ import {
  */
 
 /**
+ * @typedef {Object} CounterWidgetParametersForm
+ * @property {AlarmListBaseParametersForm} alarmsList
+ */
+
+/**
  * Convert counter widget parameters to form
  *
  * @param {CounterWidgetParameters} [parameters = {}]
- * @return {CounterWidgetParameters}
+ * @return {CounterWidgetParametersForm}
  */
 export const counterWidgetParametersToForm = (parameters = {}) => ({
   opened: parameters.opened ?? true,
@@ -64,7 +69,7 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({
 /**
  * Convert form to counter widget parameters
  *
- * @param {CounterWidgetParameters} form
+ * @param {CounterWidgetParametersForm} form
  * @return {CounterWidgetParameters}
  */
 export const formToCounterWidgetParameters = form => ({
