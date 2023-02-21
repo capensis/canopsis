@@ -16,7 +16,9 @@ import {
 import { COLOR_INDICATOR_TYPES, SIDE_BARS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
+
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import MapSettings from '@/components/sidebars/settings/map.vue';
 
@@ -111,6 +113,8 @@ describe('map', () => {
     authModule,
     userPreferenceModule,
     serviceModule,
+    widgetTemplateModule,
+    infosModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -133,6 +137,8 @@ describe('map', () => {
     serviceModule,
     widgetModule,
     authModule,
+    widgetTemplateModule,
+    infosModule,
   ]);
 
   afterEach(() => {
@@ -359,6 +365,8 @@ describe('map', () => {
         serviceModule,
         widgetModule,
         authModule,
+        widgetTemplateModule,
+        infosModule,
       ]),
       propsData: {
         sidebar,
@@ -430,12 +438,12 @@ describe('map', () => {
 
     const fieldColumns = selectAlarmsColumns(wrapper);
 
-    const newColumns = [
-      {
-        label: Faker.datatype.string(),
-        value: Faker.datatype.string(),
-      },
-    ];
+    const newColumns = [{
+      ...widgetColumnToForm(),
+
+      label: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
 
     fieldColumns.vm.$emit('input', newColumns);
 
@@ -445,7 +453,7 @@ describe('map', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'alarms_columns', newColumns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'alarmsColumns', formToWidgetColumns(newColumns)),
       },
     });
   });
@@ -463,12 +471,12 @@ describe('map', () => {
 
     const fieldColumns = selectEntitiesColumns(wrapper);
 
-    const newColumns = [
-      {
-        label: Faker.datatype.string(),
-        value: Faker.datatype.string(),
-      },
-    ];
+    const newColumns = [{
+      ...widgetColumnToForm(),
+
+      label: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
 
     fieldColumns.vm.$emit('input', newColumns);
 
@@ -478,7 +486,7 @@ describe('map', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'entities_columns', newColumns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'entitiesColumns', formToWidgetColumns(newColumns)),
       },
     });
   });
@@ -520,8 +528,8 @@ describe('map', () => {
                 entities_under_pbehavior_enabled: true,
                 filters: [{}],
                 entity_info_template: '<div>TEMPLATE</div>',
-                alarms_columns: [{}],
-                entities_columns: [{}],
+                alarmsColumns: [{}],
+                entitiesColumns: [{}],
               },
             },
           },

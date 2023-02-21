@@ -7,7 +7,7 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import { ENTITY_TYPES, MAP_TYPES, MODALS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
 
 import MapWidget from '@/components/widgets/map/map.vue';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 const localVue = createVueInstance();
 
@@ -59,7 +59,7 @@ describe('map', () => {
     _id: widgetId,
     parameters: {
       map: mapId,
-      alarms_columns: alarmsColumns,
+      alarmsColumns,
     },
   };
 
@@ -395,7 +395,7 @@ describe('map', () => {
       },
     });
 
-    const alarmsListWidget = generateDefaultAlarmListWidget();
+    const alarmsListWidget = generatePreparedDefaultAlarmListWidget();
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.alarmsList,

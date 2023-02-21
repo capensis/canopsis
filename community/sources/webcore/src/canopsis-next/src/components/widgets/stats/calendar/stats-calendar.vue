@@ -33,7 +33,7 @@ import { MODALS, MAX_LIMIT } from '@/constants';
 
 import { convertDateToTimestamp } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
@@ -162,7 +162,7 @@ export default {
     },
 
     showAlarmsListModal(meta) {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,
