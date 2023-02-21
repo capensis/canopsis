@@ -3387,5 +3387,8 @@ export default merge({
       [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Météo des services : Modèle de modale',
       [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Météo des services : Modèle d\'entité',
     },
+    errors: {
+      columnsRequired: 'Vous devez ajouter au moins une colonne.',
+    },
   },
 }, featuresService.get('i18n.fr'));
