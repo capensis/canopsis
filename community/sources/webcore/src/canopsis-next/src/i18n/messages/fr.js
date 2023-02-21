@@ -1,6 +1,5 @@
-import { merge } from 'lodash';
-
 import { THEMES_NAMES } from '@/config';
+
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -46,9 +45,7 @@ import {
   WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
-import featuresService from '@/services/features';
-
-export default merge({
+export default {
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
@@ -3391,4 +3388,4 @@ export default merge({
       columnsRequired: 'Vous devez ajouter au moins une colonne.',
     },
   },
-}, featuresService.get('i18n.fr'));
+};
