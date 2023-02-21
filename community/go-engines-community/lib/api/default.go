@@ -208,6 +208,7 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
@@ -301,6 +302,7 @@ func Default(
 			scenarioPriorityIntervals,
 			cfg.File.Upload,
 			websocketHub,
+			websocketStore,
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
@@ -367,57 +369,16 @@ func Default(
 	api.AddWorker("tech metrics export", func(ctx context.Context) {
 		techMetricsTaskExecutor.Run(ctx)
 	})
-	api.AddWorker("auth token activity", func(ctx context.Context) {
-		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
-		defer ticker.Stop()
-		tokenStore := token.NewMongoStore(dbClient, logger)
-		shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				for _, tokens := range websocketHub.GetUsers() {
-					for _, t := range tokens {
-						err := tokenStore.Access(ctx, t)
-						if err != nil {
-							logger.Err(err).Msg("cannot update token access")
-						}
-						err = shareTokenStore.Access(ctx, t)
-						if err != nil {
-							logger.Err(err).Msg("cannot update share token access")
-						}
-					}
-				}
-			}
-		}
-	})
-	api.AddWorker("auth token expiration", func(ctx context.Context) {
-		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
-		defer ticker.Stop()
-		tokenStore := token.NewMongoStore(dbClient, logger)
-		shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				err := tokenStore.DeleteExpired(ctx)
-				if err != nil {
-					logger.Err(err).Msg("cannot delete expired tokens")
-				}
-				err = shareTokenStore.DeleteExpired(ctx)
-				if err != nil {
-					logger.Err(err).Msg("cannot delete expired share tokens")
-				}
-			}
-		}
-	})
+	tokenStore := token.NewMongoStore(dbClient, logger)
+	shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
+	api.AddWorker("auth token activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
+		websocketHub, logger))
+	api.AddWorker("auth token expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
+		logger))
 	api.AddWorker("websocket", func(ctx context.Context) {
 		websocketHub.Start(ctx)
 	})
+	api.AddWorker("websocket conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
 	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
 	api.AddWorker("broadcast message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
@@ -495,12 +456,106 @@ func updateConfig(
 	}
 }
 
+func updateTokenActivity(
+	interval time.Duration,
+	tokenStore *token.MongoStore,
+	shareTokenStore *sharetoken.MongoStore,
+	websocketHub websocket.Hub,
+	logger zerolog.Logger,
+) func(context.Context) {
+	return func(ctx context.Context) {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				for _, tokens := range websocketHub.GetUsers() {
+					for _, t := range tokens {
+						err := tokenStore.Access(ctx, t)
+						if err != nil {
+							logger.Err(err).Msg("cannot update token access")
+						}
+						err = shareTokenStore.Access(ctx, t)
+						if err != nil {
+							logger.Err(err).Msg("cannot update share token access")
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func removeExpiredTokens(
+	interval time.Duration,
+	tokenStore *token.MongoStore,
+	shareTokenStore *sharetoken.MongoStore,
+	logger zerolog.Logger,
+) func(context.Context) {
+	return func(ctx context.Context) {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := tokenStore.DeleteExpired(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot delete expired tokens")
+				}
+				err = shareTokenStore.DeleteExpired(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot delete expired share tokens")
+				}
+			}
+		}
+	}
+}
+
+func updateWebsocketConns(
+	interval time.Duration,
+	websocketHub websocket.Hub,
+	websocketStore websocket.Store,
+	logger zerolog.Logger,
+) func(context.Context) {
+	return func(ctx context.Context) {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := websocketStore.UpdateConnections(ctx, websocketHub.GetConnections())
+				if err != nil {
+					logger.Err(err).Msg("cannot update websocket connections")
+					return
+				}
+
+				c, err := websocketStore.GetActiveConnections(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot get active websocket connections")
+					return
+				}
+
+				websocketHub.Send(websocket.RoomLoggedUserCount, c)
+			}
+		}
+	}
+}
+
 func sendPbhRecomputeEvents(
 	pbhComputeChan <-chan []string,
 	encoder encoding.Encoder,
 	publisher libamqp.Publisher,
 	logger zerolog.Logger,
-) func(ctx context.Context) {
+) func(context.Context) {
 	return func(ctx context.Context) {
 		for {
 			select {

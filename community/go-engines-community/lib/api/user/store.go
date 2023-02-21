@@ -28,7 +28,7 @@ type Store interface {
 	BulkDelete(ctx context.Context, ids []string) error
 }
 
-func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websocketHub websocket.Hub) Store {
+func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websocketStore websocket.Store) Store {
 	return &store{
 		client:                 dbClient,
 		collection:             dbClient.Collection(mongo.RightsMongoCollection),
@@ -38,7 +38,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websock
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 
 		passwordEncoder: passwordEncoder,
-		websocketHub:    websocketHub,
+		websocketStore:  websocketStore,
 
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
@@ -54,7 +54,7 @@ type store struct {
 	shareTokenCollection   mongo.DbCollection
 
 	passwordEncoder password.Encoder
-	websocketHub    websocket.Hub
+	websocketStore  websocket.Store
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -111,9 +111,17 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		}
 	}
 
-	activeUsers := s.websocketHub.GetUsers()
+	ids := make([]string, len(res.Data))
+	for i, v := range res.Data {
+		ids[i] = v.ID
+	}
+	conns, err := s.websocketStore.GetConnections(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
 	for i := range res.Data {
-		activeConnects := len(activeUsers[res.Data[i].ID])
+		activeConnects := conns[res.Data[i].ID]
 		res.Data[i].ActiveConnects = &activeConnects
 	}
 
