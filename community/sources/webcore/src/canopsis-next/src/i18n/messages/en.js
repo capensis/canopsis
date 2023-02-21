@@ -3387,5 +3387,8 @@ export default merge({
       [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Service Weather : Modal template',
       [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Service Weather : Entity template',
     },
+    errors: {
+      columnsRequired: 'You should add at least one column.',
+    },
   },
 }, featuresService.get('i18n.en'));
