@@ -27,6 +27,26 @@ template:
     updated: <Current().created>,
     author: root
   }
+  - &widget_alarm_columns [
+    { value: v.connector },
+    { value: v.connector_name },
+    { value: v.component },
+    { value: v.resource },
+    { value: v.output },
+    { value: extra_details },
+    { value: v.state.val },
+    { value: v.status.val }
+  ]
+  - &widget_entity_columns [
+    { value: name },
+    { value: type }
+  ]
+  - &widget_tpl {
+    _id: <UUID()>,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    author: root
+  }
   - &filter {
     _id: <UUID()>,
     is_private: false,
@@ -115,6 +135,40 @@ viewtabs:
     view: "@view_context_explorer"
     position: 0
 
+widget_templates:
+  tpl_alarm_columns:
+    <<: *widget_tpl
+    title: Default columns
+    type: alarm_columns
+    columns: *widget_alarm_columns
+  tpl_entity_columns:
+    <<: *widget_tpl
+    title: Default columns
+    type: entity_columns
+    columns: *widget_entity_columns
+  tpl_weather_item:
+    <<: *widget_tpl
+    title: Default item
+    type: weather_item
+    content: |
+      <p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
+      <hr id="null">
+      <p>{{ entity.output }}</p>
+      <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
+  tpl_weather_modal:
+    <<: *widget_tpl
+    title: Default modal
+    type: weather_modal
+    content: "{{ entities name=\"entity._id\" }}"
+  tpl_weather_entity:
+    <<: *widget_tpl
+    title: Default entity
+    type: weather_entity
+    content: |
+      <ul>
+        <li><strong>Libellé</strong> : {{entity.name}}</li>
+      </ul>
+
 widgets:
   widget_open_alarms:
     <<: *widget
@@ -122,23 +176,9 @@ widgets:
     type: AlarmsList
     tab: "@tab_open_alarms"
     parameters:
-      widgetColumns:
-        - value: v.connector
-          label: Connector
-        - value: v.connector_name
-          label: Connector name
-        - value: v.component
-          label: Component
-        - value: v.resource
-          label: Resource
-        - value: v.output
-          label: Output
-        - value: extra_details
-          label: Extra details
-        - value: v.state.val
-          label: State
-        - value: v.status.val
-          label: Status
+      widgetColumnsTemplate: "@tpl_alarm_columns"
+      widgetColumnsTemplateTitle: Default columns
+      widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -175,23 +215,9 @@ widgets:
     type: AlarmsList
     tab: "@tab_resolved_alarms"
     parameters:
-      widgetColumns:
-        - value: v.connector
-          label: Connector
-        - value: v.connector_name
-          label: Connector name
-        - value: v.component
-          label: Component
-        - value: v.resource
-          label: Resource
-        - value: v.output
-          label: Output
-        - value: extra_details
-          label: Extra details
-        - value: v.state.val
-          label: State
-        - value: v.status.val
-          label: Status
+      widgetColumnsTemplate: "@tpl_alarm_columns"
+      widgetColumnsTemplateTitle: Default columns
+      widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -228,11 +254,9 @@ widgets:
     type: Context
     tab: "@tab_context_explorer"
     parameters:
-      widgetColumns:
-        - value: name
-          label: Name
-        - value: type
-          label: Type
+      widgetColumnsTemplate: "@tpl_entity_columns"
+      widgetColumnsTemplateTitle: Default columns
+      widgetColumns: *widget_entity_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -484,6 +508,11 @@ default_rights:
     _id: models_techmetrics
     crecord_name: <Current()._id>
     description: "Tech metrics"
+  permission_models_widgetTemplate:
+    <<: *permission_crud
+    _id: models_widgetTemplate
+    crecord_name: <Current()._id>
+    description: "Widget templates"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -891,6 +920,11 @@ default_rights:
     _id: api_view
     crecord_name: <Current()._id>
     description: Views
+  api_widgettemplate:
+    <<: *permission_crud
+    _id: api_widgettemplate
+    crecord_name: <Current()._id>
+    description: Widget templates
   permission_api_pbehavior:
     <<: *permission_crud
     _id: api_pbehavior
@@ -1188,6 +1222,8 @@ default_rights:
         checksum: 15
       "@permission_models_techmetrics":
         checksum: 1
+      "@permission_models_widgetTemplate":
+        checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
       "@permission_listalarm_fastAck":
@@ -1360,6 +1396,9 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_view":
+        checksum: 15
+        crecord_type: right
+      "@api_widgettemplate":
         checksum: 15
         crecord_type: right
       "@permission_api_pbehavior":
