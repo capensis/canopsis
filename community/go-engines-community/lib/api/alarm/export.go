@@ -1,13 +1,10 @@
 package alarm
 
 import (
-	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"strconv"
+	"strings"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 var stateTitles = map[int]string{
@@ -24,57 +21,50 @@ var statusTitles = map[int]string{
 	types.AlarmStatusCancelled: types.AlarmStatusTitleCancelled,
 }
 
-func getDataFetcher(
-	store Store,
-	apiKey string,
-	r ExportRequest,
-	exportFields []string,
+func transformExportField(
+	timeFormat string,
 	location *time.Location,
-) export.DataFetcher {
-	return func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
-		res, err := store.Find(ctx, apiKey, ListRequestWithPagination{
-			Query: pagination.Query{Page: page, Limit: limit, Paginate: true},
-			ListRequest: ListRequest{
-				FilterRequest: FilterRequest{
-					BaseFilterRequest: r.BaseFilterRequest,
-					SearchBy:          exportFields,
-				},
-			},
-		})
-		if err != nil {
-			return nil, 0, err
-		}
-
-		data, err := export.ConvertToMap(res.Data, exportFields,
-			common.GetRealFormatTime(r.TimeFormat), location)
-		if err != nil {
-			return nil, 0, err
-		}
-
-		for i := range data {
-			if v, ok := data[i]["v.state.val"]; ok {
-				key := stringToInt(v)
-				if key >= 0 {
-					data[i]["v.state.val"] = stateTitles[key]
-				}
+) func(k string, v any) any {
+	return func(k string, v any) any {
+		switch k {
+		case "v.state.val":
+			if i, ok := getInt64(v); ok {
+				return stateTitles[int(i)]
 			}
-			if v, ok := data[i]["v.status.val"]; ok {
-				key := stringToInt(v)
-				if key >= 0 {
-					data[i]["v.status.val"] = statusTitles[key]
+		case "v.status.val":
+			if i, ok := getInt64(v); ok {
+				return statusTitles[int(i)]
+			}
+		case "t",
+			"v.creation_date",
+			"v.activation_date",
+			"v.last_update_date",
+			"v.last_event_date",
+			"v.resolved":
+			if i, ok := getInt64(v); ok {
+				return types.NewCpsTime(i).In(location).Time.Format(timeFormat)
+			}
+		default:
+			if strings.HasSuffix(k, ".t") {
+				if i, ok := getInt64(v); ok {
+					return types.NewCpsTime(i).In(location).Time.Format(timeFormat)
 				}
 			}
 		}
 
-		return data, res.TotalCount, nil
+		return v
 	}
 }
 
-func stringToInt(i string) int {
-	key, err := strconv.Atoi(i)
-	if err != nil {
-		return -1
+func getInt64(v any) (int64, bool) {
+	switch i := v.(type) {
+	case int64:
+		return i, true
+	case int32:
+		return int64(i), true
+	case int:
+		return int64(i), true
+	default:
+		return 0, false
 	}
-
-	return key
 }
