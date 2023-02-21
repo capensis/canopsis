@@ -15,10 +15,15 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  */
 
 /**
+ * @typedef {StatsCalendarWidgetParameters} StatsCalendarWidgetParametersForm
+ * @property {AlarmListBaseParametersForm} alarmsList
+ */
+
+/**
  * Convert stats calendar widget parameters to form
  *
  * @param {StatsCalendarWidgetParameters} [parameters = {}]
- * @return {StatsCalendarWidgetParameters}
+ * @return {StatsCalendarWidgetParametersForm}
  */
 export const statsCalendarWidgetParametersToForm = (parameters = {}) => ({
   filters: parameters.filters
@@ -38,7 +43,7 @@ export const statsCalendarWidgetParametersToForm = (parameters = {}) => ({
 /**
  * Convert form to stats calendar widget parameters
  *
- * @param {StatsCalendarWidgetParameters} form
+ * @param {StatsCalendarWidgetParametersForm} form
  * @return {StatsCalendarWidgetParameters}
  */
 export const formToStatsCalendarWidgetParameters = form => ({

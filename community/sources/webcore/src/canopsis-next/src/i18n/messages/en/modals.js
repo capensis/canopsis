@@ -858,6 +858,20 @@ export default {
       title: 'Create share token',
     },
   },
+  createWidgetTemplate: {
+    create: {
+      title: 'Create widget template',
+    },
+    edit: {
+      title: 'Edit widget template',
+    },
+  },
+  selectWidgetTemplateType: {
+    title: 'Select widget template type',
+  },
+  entityDependenciesList: {
+    title: 'Centreon impacted entities',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Create a declare ticket rule',

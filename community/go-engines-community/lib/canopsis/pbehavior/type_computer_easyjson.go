@@ -4,7 +4,6 @@ package pbehavior
 
 import (
 	json "encoding/json"
-
 	pattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"

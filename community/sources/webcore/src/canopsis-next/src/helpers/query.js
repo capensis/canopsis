@@ -4,14 +4,12 @@ import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
   WIDGET_TYPES,
   QUICK_RANGES,
-  ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
   DATETIME_FORMATS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
-import { defaultColumnsToColumns } from './entities';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
@@ -80,7 +78,7 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    widgetColumns,
+    widgetColumns = [],
     itemsPerPage,
     sort,
     mainFilter,
@@ -106,12 +104,15 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  if (widgetColumns) {
-    query.active_columns = widgetColumns.map(v => (ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP[v.value] || v.value));
+  if (widgetColumns.length) {
+    query.active_columns = widgetColumns.map(v => v.value);
   }
 
   if (sort && sort.column && sort.order) {
-    query.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+    query.multiSortBy.push({
+      sortBy: sort.column,
+      descending: sort.order === SORT_ORDERS.desc,
+    });
   }
 
   return query;
@@ -374,7 +375,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
   const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+    : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
     _id: alarm._id,

@@ -4,7 +4,7 @@
       v-flex
         c-advanced-search-field(
           :query.sync="query",
-          :columns="columns",
+          :columns="widget.parameters.widgetColumns",
           :tooltip="$t('alarm.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
@@ -74,7 +74,7 @@
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
       :hide-children="!query.correlation",
-      :columns="columns",
+      :columns="widget.parameters.widgetColumns",
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
       :refresh-alarms-list="fetchList",
@@ -102,7 +102,6 @@ import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -145,7 +144,6 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsAlarmMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
@@ -331,7 +329,7 @@ export default {
     },
 
     async fetchList() {
-      if (this.hasColumns) {
+      if (this.widget.parameters.widgetColumns.length) {
         const params = this.getQuery();
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
@@ -364,7 +362,7 @@ export default {
       return {
         ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
-        fields: columns.map(({ label, value }) => ({ label, name: value })),
+        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**

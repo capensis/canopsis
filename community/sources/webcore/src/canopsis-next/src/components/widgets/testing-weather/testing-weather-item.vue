@@ -33,8 +33,6 @@ import {
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-
 import { authMixin } from '@/mixins/auth';
 
 import TestSuiteStatistics from './test-suite-statistics.vue';
@@ -83,12 +81,9 @@ export default {
 
     showAlarmListModal() {
       try {
-        const widget = generateDefaultAlarmListWidget();
-
         this.$modals.show({
           name: MODALS.alarmsList,
           config: {
-            widget,
             title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
             fetchList: params => this.fetchComponentAlarmsListWithoutStore({
               params: { ...params, _id: this.testSuite.entity_id },
