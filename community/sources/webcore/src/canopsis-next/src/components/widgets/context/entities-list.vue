@@ -5,13 +5,14 @@
     :pending="contextEntitiesPending",
     :meta="contextEntitiesMeta",
     :query.sync="query",
+    :columns="widget.parameters.widgetColumns",
     selectable
   )
     template(#toolbar="")
       v-flex
         c-advanced-search-field(
           :query.sync="query",
-          :columns="columns",
+          :columns="widget.parameters.widgetColumns",
           :tooltip="$t('context.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
@@ -63,7 +64,6 @@ import { USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
@@ -86,7 +86,6 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsContextMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     permissionsWidgetsContextFilters,
@@ -108,17 +107,6 @@ export default {
     };
   },
   computed: {
-    headers() {
-      if (this.hasColumns) {
-        return [
-          ...this.columns,
-          { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ];
-      }
-
-      return [];
-    },
-
     hasAccessToCreateEntity() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
     },
@@ -157,7 +145,7 @@ export default {
     },
 
     fetchList() {
-      if (this.hasColumns) {
+      if (this.widget.parameters.widgetColumns.length) {
         const params = this.getQuery();
 
         params.with_flags = true;
@@ -180,7 +168,7 @@ export default {
       const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
-        fields: columns.map(({ label, value }) => ({ label, name: value })),
+        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
         search: query.search,
         category: query.category,
         filters: query.filters,
