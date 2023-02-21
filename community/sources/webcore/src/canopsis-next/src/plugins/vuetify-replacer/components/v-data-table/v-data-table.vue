@@ -286,6 +286,10 @@ table.v-datatable {
   }
 
   &--dense.v-datatable {
+    thead tr {
+      height: $denseCellHeight;
+    }
+
     tbody, thead {
       td, th {
         padding: 0 $densePadding;
