@@ -226,16 +226,16 @@ loop:
 }
 
 type ValidationError struct {
-	field string
-	err   error
+	field  string
+	errMsg string
 }
 
-func NewValidationError(field string, err error) ValidationError {
-	return ValidationError{field: field, err: err}
+func NewValidationError(field, errMsg string) ValidationError {
+	return ValidationError{field: field, errMsg: errMsg}
 }
 
 func (v ValidationError) Error() string {
-	return v.err.Error()
+	return v.errMsg
 }
 
 func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
