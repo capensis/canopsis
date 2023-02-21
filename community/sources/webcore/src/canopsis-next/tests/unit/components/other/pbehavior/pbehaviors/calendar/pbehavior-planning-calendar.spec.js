@@ -4,8 +4,9 @@ import { Day } from 'dayspan';
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import { convertDateToMoment } from '@/helpers/date/date';
+
+import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 

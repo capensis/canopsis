@@ -3,7 +3,15 @@ import flushPromises from 'flush-promises';
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { ENTITY_TYPES, MODALS } from '@/constants';
+
+import {
+  ENTITY_FIELDS,
+  ENTITY_FIELDS_TO_LABELS_KEYS,
+  ENTITY_TYPES,
+  MODALS,
+} from '@/constants';
+
+import { getColumnLabel } from '@/helpers/widgets';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
@@ -94,15 +102,15 @@ describe('service-dependencies', () => {
     },
   };
   const columns = [
-    {
-      label: 'common.name',
-      value: 'entity.name',
-    },
-    {
-      label: 'common.type',
-      value: 'type',
-    },
-  ];
+    { value: ENTITY_FIELDS.name },
+    { value: ENTITY_FIELDS.type },
+  ].map(column => ({
+    ...column,
+
+    value: `entity.${column.value}`,
+    sortable: false,
+    text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+  }));
 
   const store = createMockedStoreModules([
     serviceModule,
@@ -115,6 +123,7 @@ describe('service-dependencies', () => {
     factory({
       store,
       propsData: {
+        columns,
         root: entity,
       },
     });
@@ -138,6 +147,7 @@ describe('service-dependencies', () => {
     const wrapper = factory({
       store,
       propsData: {
+        columns,
         root: entity,
       },
     });
@@ -176,6 +186,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         root: entity,
       },
     });
@@ -213,6 +224,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         root: entity,
       },
       mocks: {
@@ -232,7 +244,7 @@ describe('service-dependencies', () => {
     expect($modals.show).toBeCalledWith({
       name: MODALS.serviceDependencies,
       config: {
-        columns: undefined,
+        columns,
         impact: false,
         root: {
           ...entityWithDeps,
@@ -250,6 +262,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         root: entity,
       },
       mocks: {
@@ -271,6 +284,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
+        columns,
         root: entity,
       },
     });
@@ -294,14 +308,20 @@ describe('service-dependencies', () => {
         impact: true,
         columns: [
           {
-            label: 'common.name',
-            value: 'entity.name',
+            label: 'Custom name label',
+            value: ENTITY_FIELDS.name,
           },
           {
-            label: 'common.type',
-            value: 'entity.type',
+            label: 'Custom type label',
+            value: ENTITY_FIELDS.type,
           },
-        ],
+        ].map(column => ({
+          ...column,
+
+          value: `entity.${column.value}`,
+          sortable: false,
+          text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+        })),
         root: entity,
       },
     });
@@ -319,16 +339,7 @@ describe('service-dependencies', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        columns: [
-          {
-            label: 'common.name',
-            value: 'entity.name',
-          },
-          {
-            label: 'common.type',
-            value: 'entity.type',
-          },
-        ],
+        columns,
         root: entity,
       },
     });

@@ -53,9 +53,12 @@ import { get, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { MODALS, ENTITY_TYPES, DEFAULT_SERVICE_DEPENDENCIES_COLUMNS, COLOR_INDICATOR_TYPES } from '@/constants';
+import {
+  MODALS,
+  ENTITY_TYPES,
+  COLOR_INDICATOR_TYPES,
+} from '@/constants';
 
-import { defaultColumnsToColumns } from '@/helpers/entities';
 import { getIconByEntityType } from '@/helpers/entities/entity';
 import { getEntityColor } from '@/helpers/color';
 import {
@@ -133,19 +136,10 @@ export default {
     },
 
     headers() {
-      const columns = this.columns || defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS);
-      const headers = columns.map(({ label, value, colorIndicator }) => ({
-        colorIndicator,
-
-        sortable: false,
-        text: label,
-        value: value.startsWith('entity.') ? value : `entity.${value}`,
-      }));
-
       return [
         { sortable: false, text: '', value: 'no-events-icon' },
 
-        ...headers,
+        ...this.columns,
       ];
     },
 
