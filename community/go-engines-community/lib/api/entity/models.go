@@ -61,7 +61,7 @@ type ExportResponse struct {
 	//   * `0` - Running
 	//   * `1` - Succeeded
 	//   * `2` - Failed
-	Status int `json:"status"`
+	Status int64 `json:"status"`
 }
 
 type Entity struct {

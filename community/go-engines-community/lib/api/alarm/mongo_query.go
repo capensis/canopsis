@@ -288,6 +288,32 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
+func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
+	ctx context.Context,
+	r ListRequest,
+	now types.CpsTime,
+) ([]bson.M, error) {
+	q.clear(now)
+
+	err := q.handleWidgetFilter(ctx, r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleFilter(ctx, r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleSort(r.SortRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+	pipeline := append(beforeLimit, q.sort)
+	pipeline = append(pipeline, afterLimit...)
+	return pipeline, nil
+}
+
 func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination.Query) []bson.M {
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 
