@@ -1,6 +1,6 @@
 <template lang="pug">
   v-chip.c-alarm-tag-chip(
-    :class="{ 'c-alarm-tag-chip--closable': close }",
+    :class="{ 'c-alarm-tag-chip--closable': close, 'c-alarm-tag-chip--dense': dense }",
     :color="color",
     small,
     @click="$emit('click')"
@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -38,6 +42,11 @@ export default {
     .v-chip__content {
       padding-right: 4px;
     }
+  }
+
+  &--dense {
+    height: 20px !important;
+    margin: 2px !important;
   }
 
   .v-datatable thead th.column.sortable & .v-icon {

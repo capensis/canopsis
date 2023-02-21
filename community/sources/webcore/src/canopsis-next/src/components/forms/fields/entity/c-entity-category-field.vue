@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select(
+  v-select.mt-0(
     v-validate="rules",
     v-field="category",
     :label="$t('common.category')",
@@ -8,6 +8,7 @@
     :items="entityCategories",
     :error-messages="errors.collect(name)",
     :name="name",
+    :hide-details="hideDetails",
     :clearable="!required",
     item-text="name",
     item-value="_id",
@@ -58,6 +59,10 @@ export default {
       default: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },

@@ -10,6 +10,7 @@
       :alarm="alarm",
       :widget="widget",
       :column="column",
+      :dense="dense",
       :columns-filters="columnsFilters",
       :selected-tag="selectedTag",
       @activate="$emit('activate', $event)",
@@ -53,6 +54,10 @@ export default {
     columnsFilters: {
       type: Array,
       default: () => [],
+    },
+    dense: {
+      type: Boolean,
+      default: false,
     },
   },
   asyncComputed: {
