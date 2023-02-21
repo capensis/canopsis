@@ -1,7 +1,7 @@
 <template lang="pug">
   div(:style="widgetWrapperStyles")
     template(v-if="widget.title || editing")
-      v-card-title.widget-title.white.pa-2
+      v-card-title.widget-title.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
             h4.ml-2.font-weight-regular {{ widget.title }}
@@ -10,7 +10,7 @@
     v-card-text.pa-0.position-relative
       component(
         v-bind="widgetProps",
-        :widget="widget",
+        :widget="preparedWidget",
         :tab-id="tab._id",
         :editing="editing"
       )
@@ -19,7 +19,19 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
+import {
+  WIDGET_TYPES,
+  WIDGET_TYPES_RULES,
+  WIDGET_GRID_ROW_HEIGHT,
+} from '@/constants';
+
+import {
+  prepareAlarmListWidget,
+  prepareContextWidget,
+  prepareServiceWeatherWidget,
+  prepareStatsCalendarAndCounterWidget,
+  prepareMapWidget,
+} from '@/helpers/widgets';
 
 import featuresService from '@/services/features';
 
@@ -71,6 +83,29 @@ export default {
      */
     widgetWrapperStyles() {
       return { minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px` };
+    },
+
+    preparedWidget() {
+      switch (this.widget.type) {
+        case WIDGET_TYPES.alarmList:
+          return prepareAlarmListWidget(this.widget);
+
+        case WIDGET_TYPES.context:
+          return prepareContextWidget(this.widget);
+
+        case WIDGET_TYPES.serviceWeather:
+          return prepareServiceWeatherWidget(this.widget);
+
+        case WIDGET_TYPES.statsCalendar:
+        case WIDGET_TYPES.counter:
+          return prepareStatsCalendarAndCounterWidget(this.widget);
+
+        case WIDGET_TYPES.map:
+          return prepareMapWidget(this.widget);
+
+        default:
+          return this.widget;
+      }
     },
 
     widgetProps() {

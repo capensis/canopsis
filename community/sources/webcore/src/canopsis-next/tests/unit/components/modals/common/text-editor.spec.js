@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { mount, shallowMount } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -10,8 +10,6 @@ import { createFormStub } from '@unit/stubs/form';
 import ClickOutside from '@/services/click-outside';
 
 import TextEditor from '@/components/modals/common/text-editor.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -26,7 +24,6 @@ const snapshotStubs = {
 };
 
 const factory = (options = {}) => shallowMount(TextEditor, {
-  localVue,
   stubs,
   attachTo: document.body,
 
@@ -36,6 +33,7 @@ const factory = (options = {}) => shallowMount(TextEditor, {
     },
     provide: {
       $clickOutside: new ClickOutside(),
+      $system: {},
     },
   },
 
@@ -43,7 +41,6 @@ const factory = (options = {}) => shallowMount(TextEditor, {
 });
 
 const snapshotFactory = (options = {}) => mount(TextEditor, {
-  localVue,
   stubs: snapshotStubs,
 
   parentComponent: {
@@ -52,6 +49,7 @@ const snapshotFactory = (options = {}) => mount(TextEditor, {
     },
     provide: {
       $clickOutside: new ClickOutside(),
+      $system: {},
     },
   },
 
@@ -336,7 +334,7 @@ describe('text-editor', () => {
     expect($modals.hide).toBeCalled();
   });
 
-  test('Renders `text-editor` with empty modal', () => {
+  test('Renders `text-editor` with empty modal', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
@@ -349,10 +347,12 @@ describe('text-editor', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `text-editor` with all parameters', () => {
+  test('Renders `text-editor` with all parameters', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
@@ -371,6 +371,8 @@ describe('text-editor', () => {
         $popups,
       },
     });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

@@ -31,7 +31,6 @@
         c-help-icon(
           slot="append",
           :text="$t('userInterface.tooltips.maxMatchedItems')",
-          color="grey darken-1",
           icon="help",
           left
         )
@@ -45,7 +44,6 @@
         c-help-icon(
           slot="append",
           :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
-          color="grey darken-1",
           icon="help",
           left
         )
@@ -75,7 +73,7 @@
         )
     v-layout.mt-3(row)
       v-flex
-        span.theme--light.v-label.file-selector__label {{ $t('userInterface.logo') }}
+        span.v-label.file-selector__label {{ $t('userInterface.logo') }}
         v-layout(row)
           file-selector.mt-1(
             ref="fileSelector",

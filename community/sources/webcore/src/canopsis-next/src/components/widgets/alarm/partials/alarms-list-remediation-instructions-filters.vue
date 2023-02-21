@@ -56,7 +56,7 @@ export default {
       return this.filters.length || this.lockedFilters.filter(filter => !filter.disabled).length;
     },
     buttonIconColor() {
-      return this.hasAnyEnabledFilters ? 'primary' : 'black';
+      return this.hasAnyEnabledFilters ? 'primary' : '';
     },
   },
   methods: {

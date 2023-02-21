@@ -2,6 +2,43 @@ import { COLORS } from '@/config';
 
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
+export const ENTITY_FIELDS = {
+  id: '_id',
+  name: 'name',
+  categoryName: 'category.name',
+  type: 'type',
+  component: 'component',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  resource: 'resource',
+  impactLevel: 'impact_level',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  koEvents: 'ko_events',
+  okEvents: 'ok_events',
+  statsOk: 'stats.ok',
+  statsKo: 'stats.ko',
+  pbehaviorInfo: 'pbehavior_info',
+  state: 'state',
+  impactState: 'impact_state',
+  status: 'status',
+  idleSince: 'idle_since',
+  enabled: 'enabled',
+  infos: 'infos',
+  componentInfos: 'component_infos',
+  links: 'links',
+  alarmDisplayName: 'alarm_display_name',
+  alarmCreationDate: 'alarm_creation_date',
+
+  /**
+   * OBJECTS
+   */
+  ack: 'ack',
+  category: 'category',
+  ticket: 'ticket',
+  snooze: 'snooze',
+};
+
 export const EVENT_ENTITY_TYPES = {
   ack: 'ack',
   check: 'check',
@@ -282,60 +319,11 @@ export const WEATHER_ACK_EVENT_OUTPUT = {
 };
 
 export const DEFAULT_CONTEXT_WIDGET_COLUMNS = [
-  {
-    labelKey: 'common.name',
-    value: 'name',
-  },
-  {
-    labelKey: 'common.type',
-    value: 'type',
-  },
+  { value: ENTITY_FIELDS.name },
+  { value: ENTITY_FIELDS.type },
 ];
 
-export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [
-  {
-    labelKey: 'common.name',
-    value: 'entity.name',
-  },
-  {
-    labelKey: 'common.type',
-    value: 'entity.type',
-  },
-];
-
-export const DEFAULT_CONTEXT_RESOLVED_ALARMS_COLUMNS = [
-  {
-    labelKey: 'common.alarmId',
-    value: '_id',
-  },
-  {
-    labelKey: 'common.created',
-    value: 'v.creation_date',
-  },
-  {
-    labelKey: 'common.updated',
-    value: 'v.last_update_date',
-  },
-];
-
-export const DEFAULT_CONTEXT_ACTIVE_ALARM_COLUMNS = [
-  {
-    labelKey: 'common.displayName',
-    value: 'v.display_name',
-  },
-  {
-    labelKey: 'common.output',
-    value: 'v.output',
-  },
-  {
-    labelKey: 'common.state',
-    value: 'v.state.val',
-  },
-  {
-    labelKey: 'common.status',
-    value: 'v.status.val',
-  },
-];
+export const DEFAULT_SERVICE_DEPENDENCIES_COLUMNS = [...DEFAULT_CONTEXT_WIDGET_COLUMNS];
 
 export const AVAILABLE_COUNTERS = {
   total: 'total',
@@ -403,54 +391,92 @@ export const COUNTER_ACTIONS_TYPES = {
   variablesHelp: 'variablesHelp',
 };
 
-export const CONTEXT_COLUMN_INFOS_PREFIX = 'infos.';
-
-export const CONTEXT_COLUMNS_WITH_SORTABLE = [ // TODO: We should receive it from backend side in the future
-  '_id',
-  'name',
-  'type',
-  'category',
-  'impact_level',
-  'category.name',
-  'idle_since',
-  'enabled',
-  'last_event_date',
+export const ENTITY_INFOS_FIELDS = [
+  ENTITY_FIELDS.infos,
+  ENTITY_FIELDS.componentInfos,
 ];
 
+const { ack, category, ticket, snooze, ...contextWidgetColumns } = ENTITY_FIELDS;
+
+export const CONTEXT_WIDGET_COLUMNS = contextWidgetColumns;
+
 export const ENTITY_PATTERN_FIELDS = {
-  id: '_id',
-  name: 'name',
-  type: 'type',
-  component: 'component',
-  connector: 'connector',
-  infos: 'infos',
-  componentInfos: 'component_infos',
-  category: 'category',
-  impactLevel: 'impact_level',
-  lastEventDate: 'last_event_date',
+  id: ENTITY_FIELDS.id,
+  name: ENTITY_FIELDS.name,
+  type: ENTITY_FIELDS.type,
+  component: ENTITY_FIELDS.component,
+  connector: ENTITY_FIELDS.connector,
+  infos: ENTITY_FIELDS.infos,
+  componentInfos: ENTITY_FIELDS.componentInfos,
+  category: ENTITY_FIELDS.category,
+  impactLevel: ENTITY_FIELDS.impactLevel,
+  lastEventDate: ENTITY_FIELDS.lastEventDate,
 };
 
 export const ENTITY_TEMPLATE_FIELDS = {
-  id: 'entity._id',
-  name: 'entity.name',
-  infos: 'entity.infos',
-  connector: 'entity.connector',
-  connectorName: 'entity.connector_name',
-  component: 'entity.component',
-  resource: 'entity.resource',
-  state: 'entity.state',
-  status: 'entity.status',
-  snooze: 'entity.snooze',
-  ack: 'entity.ack',
-  lastUpdateDate: 'entity.last_update_date',
-  impactLevel: 'entity.impact_level',
-  impactState: 'entity.impact_state',
-  categoryName: 'entity.category.name',
-  alarmDisplayName: 'entity.alarm_display_name',
-  pbehaviorInfo: 'entity.pbehavior_info',
-  alarmCreationDate: 'entity.alarm_creation_date',
-  ticket: 'entity.ticket',
-  statsOk: 'entity.stats.ok',
-  statsKo: 'entity.stats.ko',
-  links: 'entity.linklist',
+  id: `entity.${ENTITY_FIELDS.id}`,
+  name: `entity.${ENTITY_FIELDS.name}`,
+  infos: `entity.${ENTITY_FIELDS.infos}`,
+  connector: `entity.${ENTITY_FIELDS.connector}`,
+  connectorName: `entity.${ENTITY_FIELDS.connectorName}`,
+  component: `entity.${ENTITY_FIELDS.component}`,
+  resource: `entity.${ENTITY_FIELDS.resource}`,
+  state: `entity.${ENTITY_FIELDS.state}`,
+  status: `entity.${ENTITY_FIELDS.status}`,
+  snooze: `entity.${ENTITY_FIELDS.snooze}`,
+  ack: `entity.${ENTITY_FIELDS.ack}`,
+  lastUpdateDate: `entity.${ENTITY_FIELDS.lastUpdateDate}`,
+  impactLevel: `entity.${ENTITY_FIELDS.impactLevel}`,
+  impactState: `entity.${ENTITY_FIELDS.impactState}`,
+  categoryName: `entity.${ENTITY_FIELDS.categoryName}`,
+  alarmDisplayName: `entity.${ENTITY_FIELDS.alarmDisplayName}`,
+  pbehaviorInfo: `entity.${ENTITY_FIELDS.pbehaviorInfo}`,
+  alarmCreationDate: `entity.${ENTITY_FIELDS.alarmCreationDate}`,
+  ticket: `entity.${ENTITY_FIELDS.ticket}`,
+  statsOk: `entity.${ENTITY_FIELDS.statsOk}`,
+  statsKo: `entity.${ENTITY_FIELDS.statsKo}`,
+  links: `entity.${ENTITY_FIELDS.links}`,
 };
+
+export const ENTITY_FIELDS_TO_LABELS_KEYS = {
+  [ENTITY_FIELDS.id]: 'common.id',
+  [ENTITY_FIELDS.name]: 'common.name',
+  [ENTITY_FIELDS.categoryName]: 'entity.fields.categoryName',
+  [ENTITY_FIELDS.type]: 'common.type',
+  [ENTITY_FIELDS.component]: 'common.component',
+  [ENTITY_FIELDS.connector]: 'common.connector',
+  [ENTITY_FIELDS.connectorName]: 'common.connectorName',
+  [ENTITY_FIELDS.resource]: 'common.resource',
+  [ENTITY_FIELDS.impactLevel]: 'common.impactLevel',
+  [ENTITY_FIELDS.lastEventDate]: 'common.lastEventDate',
+  [ENTITY_FIELDS.lastUpdateDate]: 'common.updated',
+  [ENTITY_FIELDS.koEvents]: 'entity.fields.koEvents',
+  [ENTITY_FIELDS.okEvents]: 'entity.fields.okEvents',
+  [ENTITY_FIELDS.statsOk]: 'entity.fields.statsOk',
+  [ENTITY_FIELDS.statsKo]: 'entity.fields.statsKo',
+  [ENTITY_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
+  [ENTITY_FIELDS.state]: 'common.state',
+  [ENTITY_FIELDS.impactState]: 'common.impactState',
+  [ENTITY_FIELDS.status]: 'common.status',
+  [ENTITY_FIELDS.idleSince]: 'entity.fields.idleSince',
+  [ENTITY_FIELDS.enabled]: 'common.enabled',
+  [ENTITY_FIELDS.infos]: 'common.infos',
+  [ENTITY_FIELDS.componentInfos]: 'entity.fields.componentInfos',
+  [ENTITY_FIELDS.links]: 'common.link',
+  [ENTITY_FIELDS.alarmDisplayName]: 'entity.fields.alarmDisplayName',
+  [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
+
+  /**
+   * OBJECTS
+   */
+  [ENTITY_FIELDS.ack]: 'common.ack',
+  [ENTITY_FIELDS.category]: 'common.category',
+  [ENTITY_FIELDS.ticket]: 'common.ticket',
+  [ENTITY_FIELDS.snooze]: 'common.snooze',
+  [ENTITY_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
+};
+
+export const ENTITY_UNSORTABLE_FIELDS = [
+  ENTITY_FIELDS.links,
+  ENTITY_FIELDS.pbehaviorInfo,
+];

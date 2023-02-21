@@ -20,7 +20,6 @@
         :alarm="alarm",
         :widget="widget",
         :column="column",
-        :columns-filters="columnsFilters",
         :selected-tag="selectedTag",
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
