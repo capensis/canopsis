@@ -4,11 +4,17 @@
     v-menu(
       v-else,
       :disabled="isDisabled",
+      lazy,
       @input="$emit('activate', $event)",
       @click.native.stop=""
     )
       template(#activator="{ on }")
-        v-btn(v-on="on", :disabled="isDisabled", depressed, small) {{ $tc('common.link', 2) }}
+        v-btn(
+          v-on="on",
+          :disabled="isDisabled",
+          depressed,
+          small
+        ) {{ $tc('common.link', 2) }}
       v-list(dark, dense)
         categories-list(:categories="filteredCategories")
 </template>
@@ -41,7 +47,7 @@ export default {
   },
   computed: {
     filteredCategories() {
-      return harmonizeCategories(this.links, () => true);
+      return harmonizeCategories(this.links, this.checkAccessForSpecialCategory);
     },
 
     /**

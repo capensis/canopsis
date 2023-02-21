@@ -54,6 +54,7 @@ import flowchart from './flowchart';
 import treeOfDependencies from './tree-of-dependencies';
 import shareToken from './share-token';
 import techMetric from './tech-metric';
+import widgetTemplate from './widget-template';
 import declareTicket from './declare-ticket';
 
 export default merge({
@@ -109,5 +110,6 @@ export default merge({
   treeOfDependencies,
   shareToken,
   techMetric,
+  widgetTemplate,
   declareTicket,
 }, featureService.get('i18n.en'));

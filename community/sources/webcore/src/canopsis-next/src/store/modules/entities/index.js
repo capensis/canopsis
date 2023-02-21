@@ -20,6 +20,7 @@ import userModule from './user';
 import permissionModule from './permission';
 import eventFilterModule from './event-filter';
 import infoModule from './info';
+import infosModule from './infos';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import dynamicInfoModule from './dynamic-info';
@@ -49,6 +50,7 @@ import mapModule from './map';
 import alarmTagModule from './alarm-tag';
 import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
+import widgetTemplateModule from './widget-template';
 import manualMetaAlarmModule from './manual-meta-alarm';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
@@ -70,6 +72,7 @@ export default {
   permission: permissionModule,
   eventFilter: eventFilterModule,
   info: infoModule,
+  infos: infosModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   dynamicInfo: dynamicInfoModule,
@@ -106,6 +109,7 @@ export default {
   alarmTag: alarmTagModule,
   shareToken: shareTokenModule,
   techMetrics: techMetricsModule,
+  widgetTemplate: widgetTemplateModule,
   manualMetaAlarm: manualMetaAlarmModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,

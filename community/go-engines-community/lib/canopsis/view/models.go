@@ -10,12 +10,26 @@ import (
 )
 
 const (
-	WidgetTypeJunit = "Junit"
-	WidgetTypeMap   = "Map"
+	WidgetTypeAlarmsList          = "AlarmsList"
+	WidgetTypeContextExplorer     = "Context"
+	WidgetTypeServiceWeather      = "ServiceWeather"
+	WidgetTypeAlarmsCounter       = "Counter"
+	WidgetTypeAlarmsStatsCalendar = "StatsCalendar"
+	WidgetTypeJunit               = "Junit"
+	WidgetTypeMap                 = "Map"
 
 	WidgetInternalParamJunitTestSuites = "test_suites"
 
 	JunitReportFileRegexpSubexpName = "name"
+)
+
+const (
+	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
+	WidgetTemplateTypeEntityColumns        = "entity_columns"
+	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
+	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
+	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
+	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
 )
 
 type Group struct {
@@ -52,16 +66,16 @@ type Tab struct {
 }
 
 type Widget struct {
-	ID                 string                 `bson:"_id" json:"_id,omitempty"`
-	Tab                string                 `bson:"tab" json:"-"`
-	Title              string                 `bson:"title" json:"title"`
-	Type               string                 `bson:"type" json:"type"`
-	GridParameters     map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
-	Parameters         Parameters             `bson:"parameters" json:"parameters"`
-	InternalParameters InternalParameters     `bson:"internal_parameters,omitempty" json:"-"`
-	Author             string                 `bson:"author" json:"author,omitempty"`
-	Created            types.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated            types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID                 string             `bson:"_id" json:"_id,omitempty"`
+	Tab                string             `bson:"tab" json:"-"`
+	Title              string             `bson:"title" json:"title"`
+	Type               string             `bson:"type" json:"type"`
+	GridParameters     map[string]any     `bson:"grid_parameters" json:"grid_parameters"`
+	Parameters         Parameters         `bson:"parameters" json:"parameters"`
+	InternalParameters InternalParameters `bson:"internal_parameters,omitempty" json:"-"`
+	Author             string             `bson:"author" json:"author,omitempty"`
+	Created            types.CpsTime      `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated            types.CpsTime      `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type Parameters struct {
@@ -79,7 +93,7 @@ type Parameters struct {
 	// Map
 	Map string `bson:"map,omitempty" json:"map,omitempty"`
 
-	RemainParameters map[string]interface{} `bson:",inline" json:"-"`
+	RemainParameters map[string]any `bson:",inline" json:"-"`
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {
@@ -89,7 +103,7 @@ func (p Parameters) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 	err = json.Unmarshal(b, &m)
 	if err != nil {
 		return nil, err
@@ -108,7 +122,7 @@ func (p *Parameters) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 	err = json.Unmarshal(b, &m)
 	if err != nil {
 		return err
@@ -133,7 +147,7 @@ type InternalParameters struct {
 	// Junit
 	TestSuites []string `bson:"test_suites,omitempty"`
 
-	RemainParameters map[string]interface{} `bson:",inline"`
+	RemainParameters map[string]any `bson:",inline"`
 }
 
 func (p InternalParameters) IsZero() bool {
@@ -159,4 +173,23 @@ type WidgetFilter struct {
 	OldMongoQuery string `bson:"old_mongo_query,omitempty"`
 
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
+}
+
+type WidgetTemplate struct {
+	ID      string         `bson:"_id,omitempty"`
+	Title   string         `bson:"title"`
+	Type    string         `bson:"type"`
+	Columns []WidgetColumn `bson:"columns,omitempty"`
+	Content string         `bson:"content,omitempty"`
+	Author  string         `bson:"author"`
+	Created types.CpsTime  `bson:"created,omitempty"`
+	Updated types.CpsTime  `bson:"updated,omitempty"`
+}
+
+type WidgetColumn struct {
+	Value          string `bson:"value," json:"value" binding:"required"`
+	Label          string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
+	IsHtml         bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
+	ColorIndicator string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
+	Template       string `bson:"template,omitempty" json:"template,omitempty"`
 }
