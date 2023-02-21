@@ -136,7 +136,7 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `
 <c-no-events-icon-stub
   class="mr-1"
-  color="red"
+  color="error"
   top="top"
   value="1386435600000"
 />

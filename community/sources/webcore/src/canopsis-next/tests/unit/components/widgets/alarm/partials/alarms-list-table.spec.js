@@ -7,7 +7,7 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 
@@ -117,7 +117,7 @@ describe('alarms-list-table', () => {
     associativeTableModule,
   ]);
 
-  const defaultWidget = generateDefaultAlarmListWidget();
+  const defaultWidget = generatePreparedDefaultAlarmListWidget();
 
   const columns = [{
     label: 'Label-1',

@@ -9,7 +9,7 @@
         :title="playlist.name",
         :to="{ name: $constants.ROUTES_NAMES.playlist, params: { id: playlist._id } }"
       )
-        v-card.secondary.lighten-2
+        v-card.secondary.lighten-2.sidebar-playlists__button
           v-card-text
             v-layout(align-center, justify-space-between)
               v-flex
@@ -36,6 +36,10 @@ export default {
   .sidebar-playlists {
     padding: 10px;
     box-shadow: none;
+
+    &__button {
+      border-radius: 0;
+    }
   }
 
   a {

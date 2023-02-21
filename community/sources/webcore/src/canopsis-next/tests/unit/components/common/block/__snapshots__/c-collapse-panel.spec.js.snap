@@ -86,15 +86,11 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom title 1`] = `
         style="display: none;"
       >
         <div
-          class="white"
+          class="v-card v-sheet theme--light"
         >
           <div
-            class="v-card v-sheet theme--light"
-          >
-            <div
-              class="v-card__text"
-            />
-          </div>
+            class="v-card__text"
+          />
         </div>
       </div>
     </transition-stub>
@@ -143,15 +139,11 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with default props 1`] = 
         style="display: none;"
       >
         <div
-          class="white"
+          class="v-card v-sheet theme--light"
         >
           <div
-            class="v-card v-sheet theme--light"
-          >
-            <div
-              class="v-card__text"
-            />
-          </div>
+            class="v-card__text"
+          />
         </div>
       </div>
     </transition-stub>
@@ -200,15 +192,11 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with errors 1`] = `
         style="display: none;"
       >
         <div
-          class="white"
+          class="v-card v-sheet theme--light"
         >
           <div
-            class="v-card v-sheet theme--light"
-          >
-            <div
-              class="v-card__text"
-            />
-          </div>
+            class="v-card__text"
+          />
         </div>
       </div>
     </transition-stub>

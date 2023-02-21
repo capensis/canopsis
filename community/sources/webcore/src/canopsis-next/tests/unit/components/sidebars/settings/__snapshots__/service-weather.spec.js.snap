@@ -17,6 +17,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
   <!---->
   <alarms-list-modal-form-stub
     form="[object Object]"
+    templates=""
   />
   <hr
     class="v-divider theme--light"
@@ -37,6 +38,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
   <field-columns-stub
     columns="[object Object],[object Object]"
     label="Column names for tree of dependencies"
+    template="Symbol(custom)"
+    templates=""
+    type="entity"
     withcolorindicator="true"
   />
   <hr
@@ -59,7 +63,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <hr
       class="v-divider theme--light"
     />
-    <field-template-stub
+    <field-text-editor-with-template-stub
+      template="Symbol(custom)"
+      templates=""
       title="Template - Weather item"
       value=<div>block-template</div>
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -67,7 +73,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <hr
       class="v-divider theme--light"
     />
-    <field-template-stub
+    <field-text-editor-with-template-stub
+      template="Symbol(custom)"
+      templates=""
       title="Template - Modal"
       value=<div>modal-template</div>
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -75,7 +83,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     <hr
       class="v-divider theme--light"
     />
-    <field-template-stub
+    <field-text-editor-with-template-stub
+      template="Symbol(custom)"
+      templates=""
       title="Template - Entities"
       value=<div>entity-template</div>
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -165,6 +175,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   <!---->
   <alarms-list-modal-form-stub
     form="[object Object]"
+    templates=""
   />
   <hr
     class="v-divider theme--light"
@@ -185,6 +196,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   <field-columns-stub
     columns="[object Object],[object Object]"
     label="Column names for tree of dependencies"
+    template="Symbol(custom)"
+    templates=""
+    type="entity"
     withcolorindicator="true"
   />
   <hr
@@ -207,7 +221,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <hr
       class="v-divider theme--light"
     />
-    <field-template-stub
+    <field-text-editor-with-template-stub
+      template="Symbol(custom)"
+      templates=""
       title="Template - Weather item"
       value=<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
 <hr id="null">
@@ -218,7 +234,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <hr
       class="v-divider theme--light"
     />
-    <field-template-stub
+    <field-text-editor-with-template-stub
+      template="Symbol(custom)"
+      templates=""
       title="Template - Modal"
       value="{{ entities name=\\"entity._id\\" }}"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -226,7 +244,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     <hr
       class="v-divider theme--light"
     />
-    <field-template-stub
+    <field-text-editor-with-template-stub
+      template="Symbol(custom)"
+      templates=""
       title="Template - Entities"
       value=<ul>
   <li><strong>Libellé</strong> : {{entity.name}}</li>
