@@ -9717,6 +9717,16 @@ paths:
           description: category
           schema:
             type: string
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"infos.info1\",\"field_type\":\"string\",\"cond\":{\"type\":\"eq\",\"value\":\"val1\"}}]]"
+        - in: query
+          name: weather_service_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"icon\",\"cond\":{\"type\":\"neq\",\"value\":\"ok\"}}]]"
       responses:
         200:
           description: OK
