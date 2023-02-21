@@ -4,8 +4,8 @@
       v-field="form.column",
       v-validate="'required'",
       :items="columns",
+      :label="$tc('common.column', 1)",
       :error-messages="errors.collect('column')",
-      item-text="label",
       name="column"
     )
     text-editor-field(
