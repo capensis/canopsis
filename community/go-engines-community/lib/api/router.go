@@ -107,6 +107,7 @@ func RegisterRoutes(
 	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
 	websocketHub websocket.Hub,
+	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -120,7 +121,7 @@ func RegisterRoutes(
 		security.GetTokenService(),
 		security.GetTokenProviders(),
 		security.GetAuthProviders(),
-		websocketHub,
+		websocketStore,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		logger,
@@ -168,7 +169,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketHub), actionLogger, logger,
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore), actionLogger, logger,
 			metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
