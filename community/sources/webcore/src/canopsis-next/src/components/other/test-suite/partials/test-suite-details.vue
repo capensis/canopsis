@@ -45,7 +45,7 @@ export default {
       return [
         { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.status'), value: 'status' },
-        { text: this.$t('testSuite.timeTaken'), value: 'time' },
+        { text: this.$t('common.timeTaken'), value: 'time' },
       ];
     },
   },

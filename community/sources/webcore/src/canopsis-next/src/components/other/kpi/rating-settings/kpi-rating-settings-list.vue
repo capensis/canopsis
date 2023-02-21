@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :pagination="pagination",
     :items="ratingSettings",
     :loading="pending",

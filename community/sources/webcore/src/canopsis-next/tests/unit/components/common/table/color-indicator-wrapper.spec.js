@@ -1,6 +1,6 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
 
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, ENTITIES_STATES } from '@/constants';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -23,7 +23,7 @@ describe('color-indicator-wrapper', () => {
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: ENTITIES_STATES.major,
             },
           },
         },
@@ -47,7 +47,7 @@ describe('color-indicator-wrapper', () => {
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: ENTITIES_STATES.critical,
             },
           },
         },
@@ -105,7 +105,7 @@ describe('color-indicator-wrapper', () => {
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: ENTITIES_STATES.minor,
             },
           },
         },

@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.white.treeview-data-table
+  v-sheet.treeview-data-table
     v-layout(row)
       div.treeview-data-table--tree.mr-4
         v-treeview(
