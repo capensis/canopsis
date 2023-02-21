@@ -45,11 +45,12 @@ const (
 	ValueAssociativeTable       = "associativetable"
 	ValueTypeIdleRule           = "idlerule"
 
-	ValueTypeView         = "view"
-	ValueTypeViewTab      = "viewtab"
-	ValueTypeWidget       = "widget"
-	ValueTypeWidgetFilter = "widgetfilter"
-	ValueTypeViewGroup    = "viewgroup"
+	ValueTypeView           = "view"
+	ValueTypeViewTab        = "viewtab"
+	ValueTypeWidget         = "widget"
+	ValueTypeWidgetFilter   = "widgetfilter"
+	ValueTypeWidgetTemplate = "widgettemplate"
+	ValueTypeViewGroup      = "viewgroup"
 
 	ValueTypeResolveRule  = "resolverule"
 	ValueTypeFlappingRule = "flappingrule"

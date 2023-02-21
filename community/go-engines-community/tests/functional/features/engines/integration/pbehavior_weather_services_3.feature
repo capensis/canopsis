@@ -195,13 +195,7 @@ Feature: get service weather
       "enabled": false,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-pbehavior-weather-service-third-1"
-      ],
-      "depends": [
-        "test-connector-pbehavior-weather-service-third-1/test-connector-name-pbehavior-weather-service-third-1"
-      ]
+      "infos": []
     }
     """
     When I wait the end of events processing which contain:
@@ -265,13 +259,7 @@ Feature: get service weather
       "enabled": true,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-pbehavior-weather-service-third-1"
-      ],
-      "depends": [
-        "test-connector-pbehavior-weather-service-third-1/test-connector-name-pbehavior-weather-service-third-1"
-      ]
+      "infos": []
     }
     """
     When I wait the end of events processing which contain:
@@ -347,13 +335,7 @@ Feature: get service weather
       "enabled": false,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-pbehavior-weather-service-third-1"
-      ],
-      "depends": [
-        "test-connector-pbehavior-weather-service-third-1/test-connector-name-pbehavior-weather-service-third-1"
-      ]
+      "infos": []
     }
     """
     When I wait the end of events processing which contain:
@@ -417,13 +399,7 @@ Feature: get service weather
       "enabled": true,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-pbehavior-weather-service-third-1"
-      ],
-      "depends": [
-        "test-connector-pbehavior-weather-service-third-1/test-connector-name-pbehavior-weather-service-third-1"
-      ]
+      "infos": []
     }
     """
     When I wait the end of events processing which contain:
@@ -729,13 +705,7 @@ Feature: get service weather
       "enabled": false,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-pbehavior-weather-service-third-2"
-      ],
-      "depends": [
-        "test-connector-pbehavior-weather-service-third-2/test-connector-name-pbehavior-weather-service-third-2"
-      ]
+      "infos": []
     }
     """
     When I wait the end of event processing which contains:
@@ -804,13 +774,7 @@ Feature: get service weather
       "enabled": true,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-pbehavior-weather-service-third-2"
-      ],
-      "depends": [
-        "test-connector-pbehavior-weather-service-third-2/test-connector-name-pbehavior-weather-service-third-2"
-      ]
+      "infos": []
     }
     """
     When I wait the end of event processing which contains:

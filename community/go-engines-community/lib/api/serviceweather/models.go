@@ -18,6 +18,9 @@ type ListRequest struct {
 	HideGrey bool     `form:"hide_grey" json:"hide_grey"`
 	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
 	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+
+	EntityPattern         string `form:"entity_pattern" json:"entity_pattern"`
+	WeatherServicePattern string `form:"weather_service_pattern" json:"weather_service_pattern"`
 }
 
 type EntitiesListRequest struct {

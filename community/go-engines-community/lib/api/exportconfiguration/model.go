@@ -24,6 +24,7 @@ type Request struct {
 	//   * `view_tab` - export viewtabs collection
 	//   * `widget` - export widgets collection
 	//   * `widget_filter` - export widget_filters collection
+	//   * `widget_template` - export widget_templates collection
 	//   * `view_group` - export viewgroups collection
 	//   * `instruction` - export instruction collection
 	//   * `job_config` - export job_config collection

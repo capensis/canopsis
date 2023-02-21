@@ -26,7 +26,7 @@ type Store interface {
 	GetImpacts(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error)
 	Create(ctx context.Context, request CreateRequest) (*Response, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
-	Delete(ctx context.Context, id string) (bool, *types.Alarm, error)
+	Delete(ctx context.Context, id string) (bool, error)
 }
 
 type ServiceChanges struct {
@@ -98,7 +98,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*Co
 		return nil, err
 	}
 	now := types.NewCpsTime()
-	match := bson.M{"_id": bson.M{"$in": service.Depends}}
+	match := bson.M{"services": service.ID}
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -127,7 +127,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*Co
 func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
 	e := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"impact": 1})).
+		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"services": 1})).
 		Decode(&e)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -137,7 +137,7 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*Context
 	}
 
 	match := bson.M{
-		"_id":  bson.M{"$in": e.Impacts},
+		"_id":  bson.M{"$in": e.Services},
 		"type": types.EntityTypeService,
 	}
 	now := types.NewCpsTime()
@@ -179,12 +179,11 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		Entity: types.Entity{
 			ID:            utils.NewID(),
 			Name:          request.Name,
-			Depends:       []string{},
-			Impacts:       []string{},
 			EnableHistory: []types.CpsTime{},
 			Enabled:       enabled,
 			Infos:         transformInfos(request.EditRequest),
 			Type:          types.EntityTypeService,
+			Services:      []string{},
 			Category:      request.Category,
 			ImpactLevel:   request.ImpactLevel,
 			SliAvailState: sliAvailState,
@@ -283,45 +282,20 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 	return service, serviceChanges, err
 }
 
-func (s *store) Delete(ctx context.Context, id string) (bool, *types.Alarm, error) {
-	res := false
-	var alarm *types.Alarm
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		res = false
-		alarm = nil
-		deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{
-			"_id":  id,
-			"type": types.EntityTypeService,
-		})
-		if err != nil || deleted == 0 {
-			return err
-		}
+func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{
+		"_id":          id,
+		"type":         types.EntityTypeService,
+		"soft_deleted": nil,
+	}, bson.M{"$set": bson.M{
+		"enabled":      false,
+		"soft_deleted": types.NewCpsTime(),
+	}})
+	if err != nil || updateRes.MatchedCount == 0 {
+		return false, err
+	}
 
-		// Delete open alarm.
-		alarm = &types.Alarm{}
-		err = s.alarmDbCollection.FindOneAndDelete(ctx, bson.M{"d": id, "v.resolved": nil}).Decode(alarm)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				alarm = nil
-			} else {
-				return err
-			}
-		}
-		// Delete resolved alarms.
-		_, err = s.alarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
-		if err != nil {
-			return err
-		}
-		_, err = s.resolvedAlarmDbCollection.DeleteMany(ctx, bson.M{"d": id})
-		if err != nil {
-			return err
-		}
-
-		res = true
-		return nil
-	})
-
-	return res, alarm, err
+	return true, nil
 }
 
 func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregationResult) error {

@@ -59,7 +59,6 @@ func NewEngine(
 		mongoClient,
 		entityservice.NewManager(
 			entityServiceAdapter,
-			entityAdapter,
 			entityservice.NewStorage(entityServiceAdapter, serviceRedisSession, json.NewEncoder(), json.NewDecoder(), logger),
 			logger,
 		),

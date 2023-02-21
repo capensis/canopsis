@@ -34,14 +34,6 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links categ
 />
 `;
 
-exports[`alarm-column-cell Renders \`alarm-column-cell\` with column priority 1`] = `
-<color-indicator-wrapper-stub
-  alarm="[object Object]"
-  entity="[object Object]"
-  type="impact_state"
-/>
-`;
-
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `
 <alarm-column-value-state-stub
   alarm="[object Object]"

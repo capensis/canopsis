@@ -327,7 +327,6 @@ func benchmarkMessageProcessorWithConfig(
 			dbClient,
 			entityservice.NewManager(
 				entityservice.NewAdapter(dbClient),
-				entity.NewAdapter(dbClient),
 				entityservice.NewStorage(
 					entityservice.NewAdapter(dbClient),
 					redisClient,
