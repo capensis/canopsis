@@ -39,7 +39,6 @@ export default {
   elementsPerPage: 'Elements per page',
   filterOnOpenResolved: 'Filter on Open/Resolved',
   open: 'Open',
-  resolved: 'Resolved',
   filters: 'Filters',
   filterEditor: 'Filter',
   isAckNoteRequired: 'Note field required when ack?',
@@ -134,8 +133,8 @@ export default {
       both: 'Both',
     },
   },
-  templateEditor: 'Template',
   columns: {
+    customLabel: 'Custom label',
     isHtml: 'Is it HTML?',
     withTemplate: 'Custom template',
     isState: 'Displayed as severity?',

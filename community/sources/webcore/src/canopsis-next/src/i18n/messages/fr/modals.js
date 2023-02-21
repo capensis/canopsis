@@ -858,6 +858,20 @@ export default {
       title: 'Créer un jeton de partage',
     },
   },
+  createWidgetTemplate: {
+    create: {
+      title: 'Créer un modèle de widget',
+    },
+    edit: {
+      title: 'Modifier le modèle de widget',
+    },
+  },
+  selectWidgetTemplateType: {
+    title: 'Sélectionner le type de modèle de widget',
+  },
+  entityDependenciesList: {
+    title: 'Entités Centreon impactées',
+  },
   createDeclareTicketRule: {
     create: {
       title: 'Créer une règle de déclaration de ticket',

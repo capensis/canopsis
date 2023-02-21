@@ -129,6 +129,7 @@ export const API_ROUTES = {
     filters: '/api/v4/widget-filters',
     filterPositions: '/api/v4/widget-filter-positions',
   },
+  widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
   roles: '/api/v4/roles',

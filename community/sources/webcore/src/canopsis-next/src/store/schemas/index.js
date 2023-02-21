@@ -160,6 +160,8 @@ export const alarmTagSchema = new schema.Entity(ENTITIES_TYPES.alarmTag, {}, { i
 
 export const shareTokenSchema = new schema.Entity(ENTITIES_TYPES.shareToken, {}, { idAttribute: '_id' });
 
+export const widgetTemplateSchema = new schema.Entity(ENTITIES_TYPES.widgetTemplate, {}, { idAttribute: '_id' });
+
 export const declareTicketRuleSchema = new schema.Entity(ENTITIES_TYPES.declareTicketRule, {}, { idAttribute: '_id' });
 
 export default {
@@ -203,6 +205,7 @@ export default {
   [ENTITIES_TYPES.map]: mapSchema,
   [ENTITIES_TYPES.alarmTag]: alarmTagSchema,
   [ENTITIES_TYPES.shareToken]: shareTokenSchema,
+  [ENTITIES_TYPES.widgetTemplate]: widgetTemplateSchema,
   [ENTITIES_TYPES.declareTicketRule]: declareTicketRuleSchema,
 
   ...featuresService.get('schemas', {}),
