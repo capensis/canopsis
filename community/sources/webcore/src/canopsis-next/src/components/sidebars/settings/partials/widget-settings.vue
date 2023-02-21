@@ -4,13 +4,14 @@
       slot
     v-btn.primary(
       :loading="submitting",
-      :disabled="submitting",
+      :disabled="submitting || errors.any()",
       type="submit"
     ) {{ $t('common.save') }}
 </template>
 
 <script>
 export default {
+  inject: ['$validator'],
   props: {
     submitting: {
       type: Boolean,
