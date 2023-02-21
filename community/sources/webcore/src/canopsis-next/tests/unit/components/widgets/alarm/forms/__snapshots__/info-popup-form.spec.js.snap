@@ -17,10 +17,18 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
         <div
           class="v-select__slot"
         >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Column
+          </label>
           <div
             class="v-select__selections"
           >
             <input
+              aria-label="Column"
               aria-readonly="false"
               autocomplete="on"
               name="column"
@@ -94,7 +102,7 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 2`] = `
             <div
               class="v-list__tile__title"
             >
-              label
+              [object Object]
             </div>
           </div>
         </a>
@@ -121,10 +129,18 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
         <div
           class="v-select__slot"
         >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Column
+          </label>
           <div
             class="v-select__selections"
           >
             <input
+              aria-label="Column"
               aria-readonly="false"
               autocomplete="on"
               name="column"

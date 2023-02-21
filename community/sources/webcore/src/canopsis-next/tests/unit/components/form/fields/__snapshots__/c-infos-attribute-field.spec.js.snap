@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 1`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 1`] = `
 <div
   class="layout"
 >
   <div
-    class="flex xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
     >
       <div
         class="v-input__control"
@@ -53,14 +53,27 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="flex pl-3 xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
+      class="v-input v-text-field v-select v-input--is-disabled theme--light"
       role="combobox"
     >
       <div
@@ -111,13 +124,24 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 2`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -152,15 +176,15 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 3`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 3`] = `
 <div
   class="layout"
 >
   <div
-    class="flex xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
     >
       <div
         class="v-input__control"
@@ -205,14 +229,27 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="flex pl-3 xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
+      class="v-input v-text-field v-select v-input--is-disabled theme--light"
       role="combobox"
     >
       <div
@@ -263,13 +300,24 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 4`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with custom props 4`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -304,15 +352,15 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 1`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 1`] = `
 <div
   class="layout"
 >
   <div
-    class="flex xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-input--hide-details theme--light"
+      class="v-input v-text-field theme--light"
     >
       <div
         class="v-input__control"
@@ -337,14 +385,25 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             />
           </div>
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="flex pl-3 xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
+      class="v-input v-text-field v-select v-input--is-disabled theme--light"
       role="combobox"
     >
       <div
@@ -395,13 +454,24 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 2`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
@@ -452,15 +522,15 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 1`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 1`] = `
 <div
   class="layout"
 >
   <div
-    class="flex xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-autocomplete v-input--hide-details theme--light"
+      class="v-input v-text-field v-select v-autocomplete theme--light"
     >
       <div
         class="v-input__control"
@@ -504,14 +574,27 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="flex pl-3 xs6"
+    class="flex"
   >
     <div
-      class="v-input v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
+      class="v-input v-text-field v-select v-input--is-disabled theme--light"
       role="combobox"
     >
       <div
@@ -562,13 +645,24 @@ exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-fie
             class="v-menu"
           />
         </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-pattern-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 2`] = `
+exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` with default props and combobox 2`] = `
 <div
   class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"

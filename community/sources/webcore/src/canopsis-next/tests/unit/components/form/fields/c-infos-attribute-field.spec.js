@@ -2,7 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
+import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
 
 const localVue = createVueInstance();
 
@@ -11,13 +11,13 @@ const stubs = {
   'v-combobox': createSelectInputStub('v-combobox'),
 };
 
-const factory = (options = {}) => shallowMount(CPatternInfosAttributeField, {
+const factory = (options = {}) => shallowMount(CInfosAttributeField, {
   localVue,
   stubs,
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternInfosAttributeField, {
+const snapshotFactory = (options = {}) => mount(CInfosAttributeField, {
   localVue,
   ...options,
 });
@@ -25,7 +25,7 @@ const snapshotFactory = (options = {}) => mount(CPatternInfosAttributeField, {
 const selectDictionarySelect = wrapper => wrapper.find('select.v-combobox');
 const selectFieldSelect = wrapper => wrapper.find('select.v-select');
 
-describe('c-pattern-infos-attribute-field', () => {
+describe('c-infos-attribute-field', () => {
   it('Dictionary changed after trigger the dictionary select', () => {
     const value = {
       dictionary: 'test',

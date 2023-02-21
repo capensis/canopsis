@@ -16,7 +16,11 @@
         with-service-weather
       )
       v-divider
-    alarms-list-modal-form(v-model="form.parameters.alarmsList")
+    alarms-list-modal-form(
+      v-model="form.parameters.alarmsList",
+      :templates="preparedWidgetTemplates",
+      :templates-pending="widgetTemplatesPending"
+    )
     v-divider
     field-number(v-model="form.parameters.limit", :title="$t('settings.limit')")
     v-divider
@@ -24,8 +28,13 @@
     v-divider
     field-columns(
       v-model="form.parameters.serviceDependenciesColumns",
+      :template="form.parameters.serviceDependenciesColumnsTemplate",
+      :templates="entityColumnsWidgetTemplates",
+      :templates-pending="widgetTemplatesPending",
       :label="$t('settings.treeOfDependenciesColumnNames')",
-      with-color-indicator
+      :type="$constants.ENTITIES_TYPES.entity",
+      with-color-indicator,
+      @input="updateWidgetColumnsTemplate"
     )
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
@@ -36,22 +45,31 @@
       v-divider
       field-default-elements-per-page(v-model="form.parameters.modalItemsPerPage", :sub-title="$t('settings.modal')")
       v-divider
-      field-template(
-        v-model="form.parameters.blockTemplate",
+      field-text-editor-with-template(
+        :value="form.parameters.blockTemplate",
+        :template="form.parameters.blockTemplateTemplate",
+        :templates="weatherItemWidgetTemplates",
         :variables="blockTemplateVariables",
-        :title="$t('settings.weatherTemplate')"
+        :title="$t('settings.weatherTemplate')",
+        @input="updateBlockTemplate"
       )
       v-divider
-      field-template(
-        v-model="form.parameters.modalTemplate",
-        :variables="modalTemplateVariables",
-        :title="$t('settings.modalTemplate')"
+      field-text-editor-with-template(
+        :value="form.parameters.modalTemplate",
+        :template="form.parameters.modalTemplateTemplate",
+        :templates="weatherModalWidgetTemplates",
+        :variables="blockTemplateVariables",
+        :title="$t('settings.modalTemplate')",
+        @input="updateModalTemplate"
       )
       v-divider
-      field-template(
-        v-model="form.parameters.entityTemplate",
+      field-text-editor-with-template(
+        :value="form.parameters.entityTemplate",
+        :template="form.parameters.entityTemplateTemplate",
+        :templates="weatherEntityWidgetTemplates",
         :variables="entityVariables",
-        :title="$t('settings.entityTemplate')"
+        :title="$t('settings.entityTemplate')",
+        @input="updateEntityTemplate"
       )
       v-divider
       field-grid-size(v-model="form.parameters.columnMobile", :title="$t('settings.columnMobile')", mobile)
@@ -78,9 +96,11 @@
 </template>
 
 <script>
-import { ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
+import { ENTITY_FIELDS, ENTITY_TEMPLATE_FIELDS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 
@@ -90,7 +110,7 @@ import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
-import FieldTemplate from './fields/common/template.vue';
+import FieldTextEditorWithTemplate from './fields/common/text-editor-with-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
@@ -113,7 +133,7 @@ export default {
     FieldFilters,
     FieldColumns,
     FieldDefaultSortColumn,
-    FieldTemplate,
+    FieldTextEditorWithTemplate,
     FieldGridSize,
     FieldSlider,
     FieldSwitcher,
@@ -129,14 +149,16 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
+    entitiesInfosMixin,
+    widgetTemplatesMixin,
     entityVariablesMixin,
     permissionsWidgetsServiceWeatherFilters,
   ],
   computed: {
     sortColumns() {
       return [
-        { label: this.$t('common.name'), value: 'name' },
-        { label: this.$t('common.state'), value: 'state' },
+        { label: this.$t('common.name'), value: ENTITY_FIELDS.name },
+        { label: this.$t('common.state'), value: ENTITY_FIELDS.state },
       ];
     },
 
@@ -151,9 +173,43 @@ export default {
 
       return this.entityVariables.filter(({ value }) => !excludeFields.includes(value));
     },
+  },
+  mounted() {
+    this.fetchInfos();
+  },
+  methods: {
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
 
-    modalTemplateVariables() {
-      return this.blockTemplateVariables;
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
+
+    updateBlockTemplate(text, template) {
+      this.$set(this.form.parameters, 'blockTemplate', text);
+
+      if (template && template !== this.form.parameters.blockTemplateTemplate) {
+        this.$set(this.form.parameters, 'blockTemplateTemplate', template);
+      }
+    },
+
+    updateModalTemplate(text, template) {
+      this.$set(this.form.parameters, 'modalTemplate', text);
+
+      if (template && template !== this.form.parameters.modalTemplateTemplate) {
+        this.$set(this.form.parameters, 'modalTemplateTemplate', template);
+      }
+    },
+
+    updateEntityTemplate(text, template) {
+      this.$set(this.form.parameters, 'entityTemplate', text);
+
+      if (template && template !== this.form.parameters.entityTemplateTemplate) {
+        this.$set(this.form.parameters, 'entityTemplateTemplate', template);
+      }
     },
   },
 };
