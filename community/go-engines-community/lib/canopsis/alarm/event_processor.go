@@ -168,11 +168,13 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
-
+	changeType := types.AlarmChangeTypeNone
 	operation := s.createOperationFromEvent(event)
-	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
-	if err != nil {
-		return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+	if operation.Type != "" {
+		changeType, err = s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
+		if err != nil {
+			return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+		}
 	}
 
 	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
@@ -480,6 +482,7 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 }
 
 func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
+	t := event.EventType
 	parameters := types.OperationParameters{
 		TicketInfo:  event.TicketInfo,
 		Output:      event.Output,
@@ -498,10 +501,16 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 		parameters.State = &event.State
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
 		parameters.PbehaviorInfo = &event.PbehaviorInfo
+	case types.EventTypeRecomputeEntityService:
+		if event.Entity.SoftDeleted == nil {
+			return types.Operation{}
+		}
+
+		t = types.EventTypeResolveDeleted
 	}
 
 	return types.Operation{
-		Type:       event.EventType,
+		Type:       t,
 		Parameters: parameters,
 	}
 }

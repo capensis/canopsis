@@ -1,14 +1,15 @@
 <template lang="pug">
   div
     c-page-header
-    broadcast-messages-list(
-      :broadcast-messages="broadcastMessages",
-      :pending="broadcastMessagesPending",
-      :pagination.sync="pagination",
-      :total-items="broadcastMessagesMeta.total_count",
-      @edit="showEditBroadcastMessageModal",
-      @remove="showRemoveBroadcastMessageModal"
-    )
+    v-card.ma-4.mt-0
+      broadcast-messages-list(
+        :broadcast-messages="broadcastMessages",
+        :pending="broadcastMessagesPending",
+        :pagination.sync="pagination",
+        :total-items="broadcastMessagesMeta.total_count",
+        @edit="showEditBroadcastMessageModal",
+        @remove="showRemoveBroadcastMessageModal"
+      )
     c-fab-btn(
       :has-access="hasCreateAnyBroadcastMessageAccess",
       @refresh="fetchList",

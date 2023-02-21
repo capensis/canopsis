@@ -41,6 +41,7 @@
       v-if="mapState",
       :is="component",
       :map="mapState",
+      :columns="widget.parameters.entitiesColumns",
       :popup-template="widget.parameters.entity_info_template",
       :color-indicator="widget.parameters.color_indicator",
       :pbehavior-enabled="widget.parameters.entities_under_pbehavior_enabled",
@@ -56,7 +57,7 @@ import { pick } from 'lodash';
 
 import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
@@ -198,9 +199,9 @@ export default {
     },
 
     showAlarmListModal(point) {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
-      widget.parameters.widgetColumns = this.widget.parameters.alarms_columns;
+      widget.parameters.widgetColumns = this.widget.parameters.alarmsColumns;
 
       this.$modals.show({
         name: MODALS.alarmsList,

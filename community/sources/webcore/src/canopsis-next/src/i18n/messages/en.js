@@ -1,5 +1,6 @@
 import { merge } from 'lodash';
 
+import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -42,6 +43,7 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   ALARM_INTERVAL_FIELDS,
+  WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -81,7 +83,6 @@ export default merge({
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
-    lastComment: 'Last comment',
     start: 'Start',
     end: 'End',
     message: 'Message',
@@ -162,13 +163,11 @@ export default merge({
     payload: 'Payload',
     note: 'Note',
     output: 'Output',
-    displayName: 'Display name',
     created: 'Creation date',
     updated: 'Last update date',
     expired: 'Expired date',
     accessed: 'Accessed at',
     lastEventDate: 'Last event date',
-    activationDate: 'Activation date',
     activated: 'Activated',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
@@ -259,14 +258,8 @@ export default merge({
     connectorName: 'Connector name',
     component: 'Component',
     resource: 'Resource',
-    extraDetail: 'Extra detail | Extra details',
     ack: 'Ack',
     acked: 'Acked',
-    ackedAt: 'Acked at',
-    ackedBy: 'Acked by',
-    ackMessage: 'Ack message',
-    ackInitiator: 'Ack initiator',
-    resolvedAt: 'Resolved at',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Custom',
     eventType: 'Event type',
@@ -291,12 +284,14 @@ export default merge({
     close: 'Close',
     alarmId: 'Alarm ID',
     longOutput: 'Long output',
-    initialOutput: 'Initial output',
-    longInitialOutput: 'Long initial output',
     timestamp: 'Timestamp',
     trigger: 'Trigger | Triggers',
+    column: 'Column | Columns',
+    countOfTotal: '{count} of {total}',
+    rule: 'Rule',
     initialLongOutput: 'Long initial output',
     totalStateChanges: 'Total state changes',
+    theme: 'Theme | Themes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
@@ -512,6 +507,12 @@ export default merge({
         text: 'Auto instruction is completed',
       },
     },
+    themes: {
+      [THEMES_NAMES.canopsis]: 'Canopsis',
+      [THEMES_NAMES.canopsisDark]: 'Canopsis dark',
+      [THEMES_NAMES.colorBlind]: 'Color blind',
+      [THEMES_NAMES.colorBlindDark]: 'Color blind dark',
+    },
   },
   variableTypes: {
     string: 'String',
@@ -607,8 +608,6 @@ export default merge({
     },
   },
   alarmList: {
-    alarmCreationDate: 'Alarm creation date',
-    alarmDisplayName: 'Alarm display name',
     actions: {
       titles: {
         ack: 'Ack',
@@ -800,7 +799,6 @@ export default merge({
     elementsPerPage: 'Elements per page',
     filterOnOpenResolved: 'Filter on Open/Resolved',
     open: 'Open',
-    resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack?',
@@ -895,8 +893,8 @@ export default merge({
         both: 'Both',
       },
     },
-    templateEditor: 'Template',
     columns: {
+      customLabel: 'Custom label',
       isHtml: 'Is it HTML?',
       withTemplate: 'Custom template',
       isState: 'Displayed as severity?',
@@ -1261,13 +1259,6 @@ export default merge({
         add: 'Add a group',
         edit: 'Edit a group',
       },
-    },
-    addStat: {
-      title: {
-        add: 'Add a stat',
-        edit: 'Edit a stat',
-      },
-      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {
@@ -1854,6 +1845,20 @@ export default merge({
         title: 'Create share token',
       },
     },
+    createWidgetTemplate: {
+      create: {
+        title: 'Create widget template',
+      },
+      edit: {
+        title: 'Edit widget template',
+      },
+    },
+    selectWidgetTemplateType: {
+      title: 'Select widget template type',
+    },
+    entityDependenciesList: {
+      title: 'Centreon impacted entities',
+    },
   },
   tables: {
     noData: 'No data',
@@ -2158,6 +2163,7 @@ export default merge({
       stateSettings: 'State settings',
       storageSettings: 'Storage settings',
       notificationsSettings: 'Notifications settings',
+      widgetTemplates: 'Widget templates',
     },
   },
   view: {
@@ -2757,7 +2763,40 @@ export default merge({
   },
 
   alarm: {
-    eventsCount: 'Events count',
+    fields: {
+      displayName: 'Display name',
+      initialOutput: 'Initial output',
+      initialLongOutput: 'Initial long output',
+      lastComment: 'Last comment',
+      ackBy: 'Acked by',
+      ackMessage: 'Acked message',
+      ackInitiator: 'Acked initiator',
+      stateMessage: 'State message',
+      statusMessage: 'Status message',
+      totalStateChanges: 'Total state changes',
+      ackAt: 'Acked at',
+      stateAt: 'State changed at',
+      statusAt: 'Status changed at',
+      resolved: 'Resolved at',
+      activationDate: 'Activation date',
+      currentStateDuration: 'Current state duration',
+      snoozeDuration: 'Snooze duration',
+      pbhInactiveDuration: 'Pbehavior inactive duration',
+      activeDuration: 'Active duration',
+      eventsCount: 'Events count',
+      extraDetails: 'Extra details',
+      entityId: 'Entity ID',
+      entityName: 'Entity name',
+      entityCategoryName: 'Entity category name',
+      entityType: 'Entity type',
+      entityComponent: 'Entity component',
+      entityConnector: 'Entity connector',
+      entityImpactLevel: 'Entity impact level',
+      entityKoEvents: 'Entity KO events',
+      entityOkEvents: 'Entity OK events',
+      entityInfos: 'Entity infos',
+      entityComponentInfos: 'Entity component infos',
+    },
   },
 
   entity: {
@@ -2768,13 +2807,22 @@ export default merge({
     addInformation: 'Add Information',
     emptyInfos: 'No information',
     availabilityState: 'Hi availability state',
-    okEvents: 'OK events',
-    koEvents: 'KO events',
     types: {
       [ENTITY_TYPES.component]: 'Component',
       [ENTITY_TYPES.connector]: 'Connector',
       [ENTITY_TYPES.resource]: 'Resource',
       [ENTITY_TYPES.service]: 'Service',
+    },
+    fields: {
+      categoryName: 'Category name',
+      koEvents: 'KO events',
+      okEvents: 'OK events',
+      statsKo: 'Stats KO',
+      statsOk: 'Stats OK',
+      idleSince: 'Idle since',
+      componentInfos: 'Component infos',
+      alarmDisplayName: 'Alarm display name',
+      alarmCreationDate: 'Alarm creation date',
     },
   },
 
@@ -3328,5 +3376,19 @@ export default merge({
     metricsDisabled: 'Engine\'s metrics are disabled',
     generateDump: 'Generate a new dump',
     downloadDump: 'Download dump',
+  },
+
+  widgetTemplate: {
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'General : Alarms columns',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'General : Entities columns',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Alarm list : More Infos template',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Service Weather : Tile template',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Service Weather : Modal template',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Service Weather : Entity template',
+    },
+    errors: {
+      columnsRequired: 'You should add at least one column.',
+    },
   },
 }, featuresService.get('i18n.en'));

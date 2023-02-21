@@ -238,7 +238,7 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, alarm, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id)
 
 	if err != nil {
 		panic(err)
@@ -253,7 +253,6 @@ func (a *api) Delete(c *gin.Context) {
 		ID:                      id,
 		EntityType:              types.EntityTypeService,
 		IsServicePatternChanged: true,
-		ServiceAlarm:            alarm,
 	})
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
@@ -511,7 +510,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, alarm, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot delete entity service")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -527,7 +526,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 			ID:                      request.ID,
 			EntityType:              types.EntityTypeService,
 			IsServicePatternChanged: true,
-			ServiceAlarm:            alarm,
 		})
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))

@@ -119,7 +119,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 
 	event := types.Event{
 		Component: alarm.EntityID,
-		Entity:    &types.Entity{ID: alarm.EntityID, Impacts: []string{serviceID}},
+		Entity:    &types.Entity{ID: alarm.EntityID, Services: []string{serviceID}},
 		Alarm:     &alarm,
 		AlarmChange: &types.AlarmChange{
 			Type:          types.AlarmChangeTypeStateIncrease,
@@ -236,7 +236,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 
 	event := types.Event{
 		Component:   alarm.EntityID,
-		Entity:      &types.Entity{ID: alarm.EntityID, Impacts: []string{serviceID}},
+		Entity:      &types.Entity{ID: alarm.EntityID, Services: []string{serviceID}},
 		Alarm:       &alarm,
 		AlarmChange: &types.AlarmChange{},
 	}
@@ -320,7 +320,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	)
 
 	event := types.Event{
-		Entity: &types.Entity{Impacts: []string{serviceID}},
+		Entity: &types.Entity{Services: []string{serviceID}},
 		Alarm:  &alarm,
 		AlarmChange: &types.AlarmChange{
 			Type:          types.AlarmChangeTypeStateIncrease,

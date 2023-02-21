@@ -2,6 +2,7 @@ package entity
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -9,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -72,15 +74,37 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		isToggled = false
 		oldSimplifiedEntity = SimplifiedEntity{}
 
-		err := s.mainCollection.FindOneAndUpdate(
-			ctx,
-			bson.M{"_id": id},
-			bson.M{"$set": bson.M{"enabled": enabled}},
-			options.
-				FindOneAndUpdate().
-				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1, "depends": 1}).
-				SetReturnDocument(options.Before),
-		).Decode(&oldSimplifiedEntity)
+		cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": id}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "component",
+				"as":                      "resources",
+				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
+				"maxDepth":                0,
+			}},
+			{"$project": bson.M{
+				"_id":       1,
+				"enabled":   1,
+				"type":      1,
+				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		})
+		if err != nil {
+			return err
+		}
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&oldSimplifiedEntity)
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+
+		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"enabled": enabled}})
 		if err != nil {
 			return err
 		}
@@ -89,14 +113,18 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		return nil
 	})
 
+	if oldSimplifiedEntity.ID == "" {
+		return false, SimplifiedEntity{}, nil
+	}
+
 	if isToggled && !enabled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
-		depLen := len(oldSimplifiedEntity.Depends)
+		depLen := len(oldSimplifiedEntity.Resources)
 		from := 0
 
 		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
-				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:to]}},
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:to]}},
 				bson.M{"$set": bson.M{"enabled": enabled}},
 			)
 			if err != nil {
@@ -109,7 +137,7 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		if from < depLen {
 			_, err = s.mainCollection.UpdateMany(
 				ctx,
-				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Depends[from:depLen]}},
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:depLen]}},
 				bson.M{"$set": bson.M{"enabled": enabled}},
 			)
 			if err != nil {
@@ -122,68 +150,186 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 }
 
 func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error) {
-	res := ContextGraphResponse{}
+	entity := Entity{}
+	err := s.mainCollection.
+		FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"type": 1})).
+		Decode(&entity)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
 
-	cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
-		{
-			"$match": bson.M{"_id": id},
-		},
-		{
-			"$graphLookup": bson.M{
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	switch entity.Type {
+	case types.EntityTypeResource:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
 				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$impact",
-				"connectFromField":        "impact",
+				"startWith":               "$component",
+				"connectFromField":        "component",
+				"connectToField":          "_id",
+				"as":                      "component",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$connector",
+				"connectFromField":        "connector",
+				"connectToField":          "_id",
+				"as":                      "connector",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "services",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact": bson.M{"$concatArrays": bson.A{
+					bson.M{"$map": bson.M{"input": "$component", "in": "$$this._id"}},
+					bson.M{"$map": bson.M{"input": "$services", "in": "$$this._id"}},
+				}},
+				"depends": bson.M{"$map": bson.M{"input": "$connector", "in": "$$this._id"}},
+			}},
+		}...)
+	case types.EntityTypeComponent:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":             mongo.EntityMongoCollection,
+				"startWith":        "$_id",
+				"connectFromField": "_id",
+				"connectToField":   "component",
+				"as":               "resources",
+				"restrictSearchWithMatch": bson.M{
+					"type":         types.EntityTypeResource,
+					"soft_deleted": bson.M{"$exists": false},
+				},
+				"maxDepth": 0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$connector",
+				"connectFromField":        "connector",
+				"connectToField":          "_id",
+				"as":                      "connector",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "services",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact": bson.M{"$concatArrays": bson.A{
+					bson.M{"$map": bson.M{"input": "$connector", "in": "$$this._id"}},
+					bson.M{"$map": bson.M{"input": "$services", "in": "$$this._id"}},
+				}},
+				"depends": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		}...)
+	case types.EntityTypeConnector:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":             mongo.EntityMongoCollection,
+				"startWith":        "$_id",
+				"connectFromField": "_id",
+				"connectToField":   "connector",
+				"as":               "resources",
+				"restrictSearchWithMatch": bson.M{
+					"type":         types.EntityTypeResource,
+					"soft_deleted": bson.M{"$exists": false},
+				},
+				"maxDepth": 0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":             mongo.EntityMongoCollection,
+				"startWith":        "$_id",
+				"connectFromField": "_id",
+				"connectToField":   "connector",
+				"as":               "components",
+				"restrictSearchWithMatch": bson.M{
+					"type":         types.EntityTypeComponent,
+					"soft_deleted": bson.M{"$exists": false},
+				},
+				"maxDepth": 0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "services",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact": bson.M{"$concatArrays": bson.A{
+					bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+					bson.M{"$map": bson.M{"input": "$services", "in": "$$this._id"}},
+				}},
+				"depends": bson.M{"$map": bson.M{"input": "$components", "in": "$$this._id"}},
+			}},
+		}...)
+	case types.EntityTypeService:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "services",
+				"as":                      "depends",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
 				"connectToField":          "_id",
 				"as":                      "impact",
 				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
 				"maxDepth":                0,
-			},
-		},
-		{
-			"$addFields": bson.M{
-				"impact": bson.M{"$map": bson.M{"input": "$impact", "as": "each", "in": "$$each._id"}},
-			},
-		},
-		{
-			"$graphLookup": bson.M{
-				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$depends",
-				"connectFromField":        "depends",
-				"connectToField":          "_id",
-				"as":                      "depends",
-				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
-				"maxDepth":                0,
-			},
-		},
-		{
-			"$addFields": bson.M{
-				"depends": bson.M{"$map": bson.M{"input": "$depends", "as": "each", "in": "$$each._id"}},
-			},
-		},
-		{
-			"$project": bson.M{
-				"impact":  1,
-				"depends": 1,
-			},
-		},
-	})
+			}},
+			{"$addFields": bson.M{
+				"impact":  bson.M{"$map": bson.M{"input": "$impact", "in": "$$this._id"}},
+				"depends": bson.M{"$map": bson.M{"input": "$depends", "in": "$$this._id"}},
+			}},
+		}...)
+	}
 
+	pipeline = append(pipeline, bson.M{"$project": bson.M{
+		"impact":  1,
+		"depends": 1,
+	}})
+	cursor, err := s.mainCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
-
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
+		res := ContextGraphResponse{}
 		err = cursor.Decode(&res)
 		if err != nil {
 			return nil, err
 		}
-	} else {
-		return nil, nil
+		return &res, nil
 	}
 
-	return &res, nil
+	return nil, nil
 }
 
 func (s *store) fillConnectorType(result *AggregationResult) {
