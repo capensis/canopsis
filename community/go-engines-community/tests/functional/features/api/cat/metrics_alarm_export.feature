@@ -93,7 +93,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "filter": "filter \"not-exist\" not found"
+        "filter": "Filter doesn't exist."
       }
     }
     """
@@ -103,7 +103,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "parameter \"not-exist\" is not supported"
+        "parameters.0": "Parameter doesn't exist."
       }
     }
     """
@@ -113,7 +113,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "parameter \"total_user_activity\" is not supported"
+        "parameters.0": "Parameter doesn't exist."
       }
     }
     """

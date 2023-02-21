@@ -111,34 +111,21 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	separator := a.exportSeparators[r.Separator]
-	exportFields := r.Fields
-	if len(exportFields) == 0 {
-		exportFields = a.defaultExportFields
+	if len(r.Fields) == 0 {
+		r.Fields = a.defaultExportFields
 	}
 
-	fields := exportFields.Fields()
-	taskID, err := a.exportExecutor.StartExecute(c, export.Task{
-		Filename:     "entities",
-		ExportFields: exportFields,
-		Separator:    separator,
-		DataFetcher: func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
-			res, err := a.store.Find(ctx, ListRequestWithPagination{
-				Query: pagination.Query{Paginate: true, Page: page, Limit: limit},
-				ListRequest: ListRequest{
-					BaseFilterRequest: r.BaseFilterRequest,
-					SearchBy:          fields,
-				},
-			})
-			if err != nil {
-				return nil, 0, err
-			}
-			data, err := export.ConvertToMap(res.Data, fields, "", nil)
-			if err != nil {
-				return nil, 0, err
-			}
+	params, err := json.Marshal(r.BaseFilterRequest)
+	if err != nil {
+		panic(err)
+	}
 
-			return data, res.TotalCount, err
-		},
+	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
+		Type:           "entity",
+		Parameters:     string(params),
+		Fields:         r.Fields,
+		Separator:      separator,
+		FilenamePrefix: "entities",
 	})
 
 	if err != nil {
@@ -146,8 +133,8 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
-		ID:     taskID,
-		Status: export.TaskStatusRunning,
+		ID:     task.ID,
+		Status: task.Status,
 	})
 }
 
@@ -155,7 +142,7 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c, id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -173,7 +160,7 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c, id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
