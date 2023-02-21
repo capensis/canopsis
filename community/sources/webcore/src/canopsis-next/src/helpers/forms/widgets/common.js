@@ -14,6 +14,7 @@ import {
 } from './alarm';
 import {
   contextWidgetParametersToForm,
+  formToContextWidgetParameters,
 } from './context';
 import {
   serviceWeatherWidgetParametersToForm,
@@ -248,6 +249,7 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
 export const formToWidgetParameters = ({ type, parameters }) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
+    [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,

@@ -1,5 +1,8 @@
 <template lang="pug">
-  tree-of-dependencies-preview.tree-of-dependencies-expand-panel(:map="map")
+  tree-of-dependencies-preview.tree-of-dependencies-expand-panel(
+    :map="map",
+    :columns="columns"
+  )
 </template>
 
 <script>
@@ -11,6 +14,10 @@ export default {
     map: {
       type: Object,
       required: true,
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
   },
 };
