@@ -92,6 +92,11 @@ default_rights:
     _id: api_view
     crecord_name: <Current()._id>
     description: Views
+  permission_api_widgettemplate:
+    <<: *permission_crud
+    _id: api_widgettemplate
+    crecord_name: <Current()._id>
+    description: Widget templates
   permission_api_pbehavior:
     <<: *permission_crud
     _id: api_pbehavior
@@ -1168,6 +1173,9 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_view":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_widgettemplate":
         checksum: 15
         crecord_type: right
       "@permission_api_pbehavior":
