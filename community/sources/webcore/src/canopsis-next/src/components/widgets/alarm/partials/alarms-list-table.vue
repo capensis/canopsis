@@ -120,8 +120,6 @@ export default {
     AlarmHeaderCell,
     AlarmsExpandPanel,
     AlarmsListRow,
-
-    ...featuresService.get('components.alarmListTable.components', {}),
   },
   mixins: [
     widgetColumnsAlarmMixin,
@@ -203,15 +201,9 @@ export default {
     },
   },
   data() {
-    const data = featuresService.has('components.alarmListTable.data')
-      ? featuresService.call('components.alarmListTable.data', this, {})
-      : {};
-
     return {
       selecting: false,
       selected: [],
-
-      ...data,
     };
   },
 
@@ -272,7 +264,7 @@ export default {
 
     additionalComponent() {
       if (featuresService.has('components.alarmListTable.computed.additionalComponent')) {
-        return featuresService.call('components.alarmListTable.computed.additionalComponent', this, {});
+        return featuresService.call('components.alarmListTable.computed.additionalComponent', this);
       }
 
       return {};
@@ -288,8 +280,6 @@ export default {
   },
 
   watch: {
-    ...featuresService.get('components.alarmListTable.watch', {}),
-
     stickyHeader(stickyHeader) {
       if (stickyHeader) {
         this.calculateHeaderOffsetPosition();
@@ -319,24 +309,14 @@ export default {
       window.addEventListener('keydown', this.enableSelecting);
       window.addEventListener('keyup', this.disableSelecting);
     }
-
-    if (featuresService.has('components.alarmListTable.mounted')) {
-      featuresService.call('components.alarmListTable.mounted', this, {});
-    }
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
     window.removeEventListener('keydown', this.enableSelecting);
     window.removeEventListener('keyup', this.disableSelecting);
-
-    if (featuresService.has('components.alarmListTable.beforeDestroy')) {
-      featuresService.call('components.alarmListTable.beforeDestroy', this, {});
-    }
   },
 
   methods: {
-    ...featuresService.get('components.alarmListTable.methods', {}),
-
     clearSelected() {
       this.selected = [];
     },
