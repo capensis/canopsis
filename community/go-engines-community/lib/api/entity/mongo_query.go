@@ -259,7 +259,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+				return common.NewValidationError("filter", "Filter doesn't exist.")
 			}
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
