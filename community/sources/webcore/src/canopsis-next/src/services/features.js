@@ -6,7 +6,7 @@ class Features {
   constructor() {
     const features = require.context('../features/', true, /index\.js$/);
 
-    this.features = {} || features
+    this.features = features
       .keys()
       .map(key => features(key).default)
       .reduce((acc, plugin) => mergeWith(acc, plugin, (objValue, srcValue) => {

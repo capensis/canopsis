@@ -61,7 +61,7 @@ export default {
       border-radius: 10px;
     }
 
-    & ::v-deep .v-badge--overlap .v-badge__badge {
+    & /deep/ .v-badge--overlap .v-badge__badge {
       font-size: 10px;
       border-radius: 5px;
       min-width: 16px;
@@ -80,7 +80,7 @@ export default {
         font-size: 12px;
       }
 
-      & ::v-deep .v-badge--overlap {
+      & /deep/ .v-badge--overlap {
         display: block;
 
         .v-badge__badge {
