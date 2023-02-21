@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import featuresService from '@/services/features';
 
 import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.vue';
@@ -62,9 +63,19 @@ describe('alarms-list-row', () => {
     },
   };
 
+  const featureHasSpy = jest.spyOn(featuresService, 'has')
+    .mockReturnValueOnce(true);
+  const featureGetSpy = jest.spyOn(featuresService, 'get')
+    .mockReturnValueOnce(undefined);
+  const featureCallSpy = jest.spyOn(featuresService, 'call')
+    .mockReturnValueOnce(() => {});
+
   afterEach(() => {
     updateQuery.mockClear();
     fetchItem.mockClear();
+    featureHasSpy.mockClear();
+    featureGetSpy.mockClear();
+    featureCallSpy.mockClear();
   });
 
   it('Alarm selected after trigger checkbox', () => {
