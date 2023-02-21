@@ -9,7 +9,7 @@
     )
     span.body-2.my-2 {{ $tc('common.column', 2) }}
     v-flex(xs12)
-      v-alert(:value="!form.columns.length", color="info") You should add at least one column.
+      v-alert(:value="!form.columns.length", color="info") {{ $t('widgetTemplate.errors.columnsRequired') }}
     c-columns-field(
       v-field="form.columns",
       :type="entityType",
