@@ -10,7 +10,7 @@ Feature: Export metrics rating
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 2
+       "status": 1
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download
@@ -32,7 +32,7 @@ Feature: Export metrics rating
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
     """json
     {
-       "status": 2
+       "status": 1
     }
     """
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }}/download

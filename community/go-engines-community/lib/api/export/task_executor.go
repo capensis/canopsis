@@ -183,7 +183,7 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 	now := types.NewCpsTime().In(location)
 	t := Task{
 		ID:         utils.NewID(),
-		Status:     TaskStatusCreated,
+		Status:     TaskStatusRunning,
 		Type:       params.Type,
 		Parameters: params.Parameters,
 		Fields:     params.Fields,
@@ -230,10 +230,9 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 		ctx,
 		bson.M{
 			"_id":    id,
-			"status": bson.M{"$in": bson.A{TaskStatusCreated, TaskStatusRunning}},
+			"status": TaskStatusRunning,
 		},
 		bson.M{"$set": bson.M{
-			"status":   TaskStatusRunning,
 			"launched": types.NewCpsTime(),
 		}},
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
@@ -309,12 +308,16 @@ func (e *taskExecutor) fetchTasks(ctx context.Context) error {
 
 	cursor, err := e.collection.Find(ctx, bson.M{"$or": []bson.M{
 		{
-			"status":  TaskStatusCreated,
-			"started": bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedInterval)}},
+			"status":   TaskStatusRunning,
+			"launched": nil,
+			"started":  bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedInterval)}},
 		},
 		{
-			"status":   TaskStatusRunning,
-			"launched": bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedLaunchedInterval)}},
+			"status": TaskStatusRunning,
+			"launched": bson.M{
+				"$gt":  0,
+				"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedLaunchedInterval)},
+			},
 		},
 	}})
 	if err != nil {
