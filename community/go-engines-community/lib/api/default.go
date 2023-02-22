@@ -123,6 +123,11 @@ func Default(
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
+	lockRedisSession, err := libredis.NewSession(ctx, libredis.EngineLockStorage, logger,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
+	}
 	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot load security config: %w", err)
@@ -179,6 +184,7 @@ func Default(
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
+		lockRedisSession,
 		datastorage.NewAdapter(dbClient),
 		p.DataStorageConfigProvider,
 		metricsEntityMetaUpdater,
@@ -243,6 +249,11 @@ func Default(
 			}
 
 			err = engineRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = lockRedisSession.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
