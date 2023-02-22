@@ -8,8 +8,7 @@
         :error-messages="errors.collect(textFieldName)",
         :disabled="disabled",
         :items="textHints",
-        :name="textFieldName",
-        autofocus
+        :name="textFieldName"
       )
     v-flex(xs6)
       v-combobox(

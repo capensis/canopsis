@@ -59,6 +59,7 @@ import { requestToForm, formToRequest } from './shared/request';
  * @property {Request} request
  * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
+ * @property {boolean} skip_for_child
  * @property {string} [author]
  */
 
@@ -114,6 +115,14 @@ import { requestToForm, formToRequest } from './shared/request';
 export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
 
 /**
+ * Check action type is webhook
+ *
+ * @param {ActionType} type
+ * @return {boolean}
+ */
+export const isWebhookActionType = type => type === ACTION_TYPES.webhook;
+
+/**
  * Convert action parameters to form
  *
  * @param {ActionForwardAuthorParameters | {}} [parameters = {}]
@@ -145,6 +154,7 @@ const webhookActionParametersToForm = (parameters = {}) => ({
   ...defaultActionForwardAuthorToForm(parameters),
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
   request: requestToForm(parameters.request),
+  skip_for_child: parameters.skip_for_child ?? false,
 });
 
 /**
@@ -273,6 +283,7 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
 export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
   request: formToRequest(parameters.request),
+  skip_for_child: parameters.skip_for_child,
 });
 
 /**

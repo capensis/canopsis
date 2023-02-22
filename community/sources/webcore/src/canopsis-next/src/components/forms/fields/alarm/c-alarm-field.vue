@@ -10,6 +10,7 @@
     :item-text="itemText",
     :item-value="itemValue",
     :disabled="disabled",
+    :no-data-text="$t('alarm.noAlarmFound')",
     name="alarms",
     clearable,
     autocomplete,
@@ -89,6 +90,13 @@ export default {
 
     hasMoreAlarms() {
       return this.pageCount > this.query.page;
+    },
+  },
+  watch: {
+    params() {
+      this.query.page = 1;
+
+      this.fetchAlarms();
     },
   },
   methods: {
