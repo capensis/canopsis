@@ -56,6 +56,7 @@ import shareToken from './share-token';
 import techMetric from './tech-metric';
 import widgetTemplate from './widget-template';
 import declareTicket from './declare-ticket';
+import linkRule from './link-rule';
 
 export default merge({
   common,
@@ -112,4 +113,5 @@ export default merge({
   techMetric,
   widgetTemplate,
   declareTicket,
+  linkRule,
 }, featureService.get('i18n.en'));

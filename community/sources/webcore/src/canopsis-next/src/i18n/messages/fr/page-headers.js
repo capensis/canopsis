@@ -57,6 +57,11 @@ export default {
     // message: '', // TODO: need to put description
   },
 
+  [USERS_PERMISSIONS.technical.exploitation.linkRule]: {
+    title: 'Générateur de liens',
+    // message: '', // TODO: need to put description
+  },
+
   /**
    * Admin access
    */
