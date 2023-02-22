@@ -61,6 +61,7 @@ $minimizedDialogMaxWidth: 360px;
         .v-dialog {
           margin: 0;
           box-shadow: none;
+          transition: none;
 
           .v-card {
             &.fill-min-height {
