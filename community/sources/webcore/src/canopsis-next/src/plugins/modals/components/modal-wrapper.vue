@@ -34,7 +34,7 @@ export default {
       },
     },
     dialogProps() {
-      const defaultDialogProps = { maxWidth: 700, lazy: true };
+      const defaultDialogProps = { maxWidth: 700, lazy: true, attach: '.modals-wrapper', absolute: true };
       const { dialogPropsMap = {} } = this.$modals;
       const { name, dialogProps, minimized } = this.modal;
 
@@ -51,7 +51,7 @@ export default {
 
         hideOverlay: props.hideOverlay || minimized,
         ignoreClickOutside: props.ignoreClickOutside || minimized,
-        contentClass: minimized ? `v-dialog--minimized ${props.contentClass}` : props.contentClass,
+        contentWrapperClass: minimized ? 'v-dialog__content--minimized' : '',
       };
     },
   },
@@ -62,37 +62,12 @@ export default {
 </script>
 
 <style lang="scss">
-$minimizedDialogMaxWidth: 360px;
-
 .v-dialog {
+  transition: all .1s linear;
+
   .v-card__title {
     .headline {
       word-break: break-word;
-    }
-  }
-
-  &.v-dialog--minimized {
-    position: fixed;
-    bottom: 0;
-    max-width: $minimizedDialogMaxWidth !important;
-    margin-bottom: 0 !important;
-    transition: all .1s linear;
-    top: auto;
-    left: auto;
-    right: auto;
-    height: auto;
-
-    .v-card__title {
-      padding: 0 10px;
-      transition: all .1s linear;
-
-      .headline {
-        font-size: 16px !important;
-      }
-    }
-
-    .v-card.fill-min-height {
-      min-height: auto;
     }
   }
 }
