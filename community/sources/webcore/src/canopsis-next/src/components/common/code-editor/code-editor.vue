@@ -6,6 +6,8 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import initEditor from 'monaco-mermaid';
 
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
+
 export default {
   props: {
     value: {
