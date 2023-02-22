@@ -62,13 +62,9 @@ export default {
 </script>
 
 <style lang="scss">
-.v-dialog {
-  transition: all .1s linear;
-
-  .v-card__title {
-    .headline {
-      word-break: break-word;
-    }
+.v-dialog .v-card__title {
+  .headline {
+    word-break: break-word;
   }
 }
 </style>
