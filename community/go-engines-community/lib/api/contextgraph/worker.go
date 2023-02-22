@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -16,9 +17,12 @@ const (
 	defaultThdWarnMinPerImport = 30 * time.Minute
 	defaultThdCritMinPerImport = 60 * time.Minute
 
-	queueCheckTickInterval  = time.Second
-	reportCleanTickInterval = time.Hour
-	reportCleanInterval     = 24 * time.Hour
+	queueCheckTickInterval     = time.Second
+	reportCleanTickInterval    = time.Hour
+	reportCleanInterval        = 24 * time.Hour
+	checkAbandonedTickInterval = time.Minute
+	abandonedInterval          = time.Minute
+	launchedAbandonedInterval  = 5 * time.Minute
 )
 
 type worker struct {
@@ -71,84 +75,144 @@ func NewImportWorker(
 }
 
 func (w *worker) Run(ctx context.Context) {
-	ticker := time.NewTicker(queueCheckTickInterval)
-	defer ticker.Stop()
-	cleanTicker := time.NewTicker(reportCleanTickInterval)
-	defer cleanTicker.Stop()
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 
-	for {
-		select {
-		case <-ctx.Done():
+		ticker := time.NewTicker(queueCheckTickInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				job := w.importQueue.Pop()
+				if job.ID == "" {
+					continue
+				}
+
+				w.processJob(ctx, job)
+			}
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		ticker := time.NewTicker(reportCleanTickInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := w.reporter.Clean(ctx, reportCleanInterval)
+				if err != nil {
+					w.logger.Err(err).Msg("Import-ctx: Failed to clean import reports")
+				}
+			}
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		ticker := time.NewTicker(checkAbandonedTickInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				jobs, err := w.reporter.GetAbandoned(ctx, abandonedInterval, launchedAbandonedInterval)
+				if err != nil {
+					w.logger.Err(err).Msg("Import-ctx: Failed to check abandoned import reports")
+					continue
+				}
+
+				for _, job := range jobs {
+					w.importQueue.Push(job)
+				}
+			}
+		}
+	}()
+
+	wg.Wait()
+}
+
+func (w *worker) processJob(ctx context.Context, job ImportJob) {
+	ok, err := w.reporter.ReportOngoing(ctx, job)
+	if err != nil {
+		w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+
+		err = w.publisher.SendImportResultEvent(ctx, job.ID, 0, types.AlarmStateCritical)
+		if err != nil {
+			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
+		}
+
+		return
+	}
+
+	if !ok {
+		return
+	}
+
+	startTime := time.Now()
+	stats, err := w.doJob(ctx, job)
+	stats.ExecTime = time.Since(startTime)
+
+	resultState := types.AlarmStateOK
+	if err != nil {
+		w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Error during the import.")
+
+		resultState = types.AlarmStateCritical
+		if errors.Is(err, importcontextgraph.ErrNotImplemented) {
+			resultState = types.AlarmStateMinor
+		}
+
+		ok, err = w.reporter.ReportError(ctx, job, stats.ExecTime, err)
+		if err != nil {
+			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+		}
+		if !ok {
 			return
-		case <-cleanTicker.C:
-			err := w.reporter.Clean(ctx, reportCleanInterval)
-			if err != nil {
-				w.logger.Err(err).Msg("Import-ctx: Failed to clean import reports")
-			}
-		case <-ticker.C:
-			job := w.importQueue.Pop()
-			if job.ID == "" {
-				continue
-			}
+		}
+	} else {
+		w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: import done")
 
-			err := w.reporter.ReportOngoing(ctx, job)
-			if err != nil {
-				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+		ok, err = w.reporter.ReportDone(ctx, job, stats)
+		if err != nil {
+			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+		}
+		if !ok {
+			return
+		}
+	}
 
-				err = w.publisher.SendImportResultEvent(ctx, job.ID, 0, types.AlarmStateCritical)
-				if err != nil {
-					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
-				}
+	perfDataState := types.AlarmStateOK
+	if stats.ExecTime > w.thdCritMinPerImport {
+		perfDataState = types.AlarmStateMajor
+	} else if stats.ExecTime > w.thdWarnMinPerImport {
+		perfDataState = types.AlarmStateMinor
+	}
 
-				continue
-			}
+	if perfDataState != types.AlarmStateOK {
+		err = w.publisher.SendPerfDataEvent(ctx, job.ID, stats, types.CpsNumber(perfDataState))
+		if err != nil {
+			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
+		}
+	}
 
-			startTime := time.Now()
-			stats, err := w.doJob(ctx, job)
-			stats.ExecTime = time.Since(startTime)
-
-			resultState := types.AlarmStateOK
-			if err != nil {
-				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Error during the import.")
-
-				resultState = types.AlarmStateCritical
-				if errors.Is(err, importcontextgraph.ErrNotImplemented) {
-					resultState = types.AlarmStateMinor
-				}
-
-				err = w.reporter.ReportError(ctx, job, stats.ExecTime, err)
-				if err != nil {
-					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
-				}
-			} else {
-				w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: import done")
-
-				err = w.reporter.ReportDone(ctx, job, stats)
-				if err != nil {
-					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
-				}
-			}
-
-			perfDataState := types.AlarmStateOK
-			if stats.ExecTime > w.thdCritMinPerImport {
-				perfDataState = types.AlarmStateMajor
-			} else if stats.ExecTime > w.thdWarnMinPerImport {
-				perfDataState = types.AlarmStateMinor
-			}
-
-			if perfDataState != types.AlarmStateOK {
-				err = w.publisher.SendPerfDataEvent(ctx, job.ID, stats, types.CpsNumber(perfDataState))
-				if err != nil {
-					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
-				}
-			}
-
-			if resultState != types.AlarmStateOK {
-				err = w.publisher.SendImportResultEvent(ctx, job.ID, stats.ExecTime, types.CpsNumber(resultState))
-				if err != nil {
-					w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
-				}
-			}
+	if resultState != types.AlarmStateOK {
+		err = w.publisher.SendImportResultEvent(ctx, job.ID, stats.ExecTime, types.CpsNumber(resultState))
+		if err != nil {
+			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
 		}
 	}
 }

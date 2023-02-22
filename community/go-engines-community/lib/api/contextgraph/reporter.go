@@ -11,6 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const timeFormat = "15:04:05"
+
 type mongoReporter struct {
 	collection libmongo.DbCollection
 }
@@ -22,30 +24,62 @@ func NewMongoStatusReporter(client libmongo.DbClient) StatusReporter {
 }
 
 func (r *mongoReporter) ReportCreate(ctx context.Context, job *ImportJob) error {
-	return r.create(ctx, job)
+	job.ID = utils.NewID()
+
+	_, err := r.collection.InsertOne(ctx, job)
+	return err
 }
 
-func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) error {
-	job.Status = StatusOngoing
-	return r.update(ctx, job)
+func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) (bool, error) {
+	res, err := r.collection.UpdateOne(ctx, bson.M{
+		"_id":    job.ID,
+		"status": bson.M{"$in": bson.A{StatusPending, StatusOngoing}},
+	}, bson.M{"$set": bson.M{
+		"status":   StatusOngoing,
+		"launched": time.Now(),
+	}})
+	if err != nil {
+		return false, err
+	}
+
+	return res.MatchedCount > 0, nil
 }
 
-func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) error {
-	job.Status = StatusDone
+func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) (bool, error) {
 	t := time.Time{}
-	job.ExecTime = t.Add(stats.ExecTime).Format("15:04:05")
-	job.Stats = stats
+	execTime := t.Add(stats.ExecTime).Format(timeFormat)
+	res, err := r.collection.UpdateOne(ctx, bson.M{
+		"_id":    job.ID,
+		"status": StatusOngoing,
+	}, bson.M{"$set": bson.M{
+		"status":    StatusDone,
+		"exec_time": execTime,
+		"stats":     stats,
+	}})
+	if err != nil {
+		return false, err
+	}
 
-	return r.update(ctx, job)
+	return res.MatchedCount > 0, nil
 }
 
-func (r *mongoReporter) ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) error {
-	job.Status = StatusFailed
+func (r *mongoReporter) ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) (bool, error) {
 	t := time.Time{}
-	job.ExecTime = t.Add(execDuration).Format("15:04:05")
-	job.Info = err.Error()
+	execTime := t.Add(execDuration).Format(timeFormat)
 
-	return r.update(ctx, job)
+	res, err := r.collection.UpdateOne(ctx, bson.M{
+		"_id":    job.ID,
+		"status": StatusOngoing,
+	}, bson.M{"$set": bson.M{
+		"status":    StatusFailed,
+		"exec_time": execTime,
+		"info":      err.Error(),
+	}})
+	if err != nil {
+		return false, err
+	}
+
+	return res.MatchedCount > 0, nil
 }
 
 func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, error) {
@@ -64,22 +98,33 @@ func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, er
 	return status, err
 }
 
-func (r *mongoReporter) Clean(ctx context.Context, interval time.Duration) error {
-	_, err := r.collection.DeleteMany(ctx, bson.M{"$or": []bson.M{
-		{"creation": bson.M{"$lt": time.Now().Add(-interval)}},
-		{"creation": bson.M{"$type": "string"}},
+func (r *mongoReporter) GetAbandoned(ctx context.Context, createdInterval, launchedInterval time.Duration) ([]ImportJob, error) {
+	cursor, err := r.collection.Find(ctx, bson.M{"$or": []bson.M{
+		{
+			"status":   StatusPending,
+			"creation": bson.M{"$lt": time.Now().Add(-createdInterval)},
+		},
+		{
+			"status":   StatusOngoing,
+			"launched": bson.M{"$lt": time.Now().Add(-launchedInterval)},
+		},
 	}})
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]ImportJob, 0)
+	err = cursor.All(ctx, &res)
+	return res, err
 }
 
-func (r *mongoReporter) create(ctx context.Context, job *ImportJob) error {
-	job.ID = utils.NewID()
-
-	_, err := r.collection.InsertOne(ctx, job)
-	return err
-}
-
-func (r *mongoReporter) update(ctx context.Context, job ImportJob) error {
-	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": job.ID}, bson.M{"$set": job})
+func (r *mongoReporter) Clean(ctx context.Context, interval time.Duration) error {
+	_, err := r.collection.DeleteMany(ctx, bson.M{
+		"status": bson.M{"$in": bson.A{StatusDone, StatusFailed}},
+		"$or": []bson.M{
+			{"creation": bson.M{"$lt": time.Now().Add(-interval)}},
+			{"creation": bson.M{"$type": "string"}},
+		}},
+	)
 	return err
 }
