@@ -23,10 +23,11 @@ type EventPublisher interface {
 type StatusReporter interface {
 	GetStatus(ctx context.Context, id string) (ImportJob, error)
 	ReportCreate(ctx context.Context, job *ImportJob) error
-	ReportOngoing(ctx context.Context, job ImportJob) error
-	ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) error
-	ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) error
+	ReportOngoing(ctx context.Context, job ImportJob) (bool, error)
+	ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) (bool, error)
+	ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) (bool, error)
 	Clean(ctx context.Context, interval time.Duration) error
+	GetAbandoned(ctx context.Context, createdInterval, launchedInterval time.Duration) ([]ImportJob, error)
 }
 
 type ImportWorker interface {
