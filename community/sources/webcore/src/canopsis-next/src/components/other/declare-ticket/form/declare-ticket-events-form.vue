@@ -27,7 +27,7 @@
           disable-tickets,
           @input="updateGroup(group.ticketId, $event)"
         )
-      c-information-block(:title="$t('declareTicket.noRulesForAlarms')")
+      c-information-block(v-if="alarmsWithoutTickets.length", :title="$t('declareTicket.noRulesForAlarms')")
         declare-ticket-event-alarms-tickets-field(:alarms="alarmsWithoutTickets", hide-tickets)
     c-alert(v-if="hasErrors", type="error") {{ $t('declareTicket.errors.ticketRequired') }}
 </template>

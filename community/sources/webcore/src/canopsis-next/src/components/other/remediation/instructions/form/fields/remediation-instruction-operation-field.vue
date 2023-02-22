@@ -52,7 +52,8 @@
                     :jobs="operation.jobs"
                   )
                   jobs-select(v-if="!disabled", v-field="operation.jobs")
-        c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
+        span
+          c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
 <script>
