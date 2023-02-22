@@ -1,7 +1,7 @@
 <template lang="pug">
   c-lazy-search-field(
     v-field="value",
-    :label="$t('alarm.alarmDisplayName')",
+    :label="$t('entity.fields.alarmDisplayName')",
     :loading="pending",
     :items="alarms",
     :name="name",
@@ -23,8 +23,9 @@
 import { createNamespacedHelpers } from 'vuex';
 import { isArray, keyBy, pick } from 'lodash';
 
+import { ALARM_FIELDS } from '@/constants';
+
 import { formArrayMixin } from '@/mixins/form';
-import { ALARM_PATTERN_FIELDS } from '@/constants';
 
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
@@ -64,6 +65,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    params: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -94,7 +99,8 @@ export default {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
-        type: this.entityTypes,
+        active_columns: [ALARM_FIELDS.id, ALARM_FIELDS.displayName],
+        ...this.params,
       };
     },
 
@@ -103,12 +109,7 @@ export default {
         this.pending = true;
 
         const { data, meta } = await this.fetchAlarmsListWithoutStore({
-          params: {
-            limit: this.limit,
-            page: this.query.page,
-            search: this.query.search,
-            active_columns: [ALARM_PATTERN_FIELDS.id, ALARM_PATTERN_FIELDS.displayName],
-          },
+          params: this.getQuery(),
         });
 
         this.pageCount = meta.page_count;
