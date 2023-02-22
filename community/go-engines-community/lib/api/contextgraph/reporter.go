@@ -2,6 +2,7 @@ package contextgraph
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
@@ -9,16 +10,19 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const timeFormat = "15:04:05"
 
 type mongoReporter struct {
+	client     libmongo.DbClient
 	collection libmongo.DbCollection
 }
 
 func NewMongoStatusReporter(client libmongo.DbClient) StatusReporter {
 	return &mongoReporter{
+		client:     client,
 		collection: client.Collection(libmongo.ImportJobMongoCollection),
 	}
 }
@@ -30,19 +34,64 @@ func (r *mongoReporter) ReportCreate(ctx context.Context, job *ImportJob) error 
 	return err
 }
 
-func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) (bool, error) {
-	res, err := r.collection.UpdateOne(ctx, bson.M{
-		"_id":    job.ID,
-		"status": bson.M{"$in": bson.A{StatusPending, StatusOngoing}},
-	}, bson.M{"$set": bson.M{
-		"status":   StatusOngoing,
-		"launched": time.Now(),
-	}})
-	if err != nil {
-		return false, err
-	}
+func (r *mongoReporter) GetFirst(ctx context.Context, abandonedInterval time.Duration) (ImportJob, error) {
+	job := ImportJob{}
+	err := r.client.WithTransaction(ctx, func(ctx context.Context) error {
+		job = ImportJob{}
 
-	return res.MatchedCount > 0, nil
+		ongoingJob := ImportJob{}
+		err := r.collection.FindOne(ctx, bson.M{"status": StatusOngoing}).Decode(&ongoingJob)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return err
+		}
+		if ongoingJob.ID != "" {
+			if ongoingJob.LastPing != nil && ongoingJob.LastPing.After(time.Now().Add(-abandonedInterval)) {
+				return nil
+			}
+
+			now := time.Now()
+			ongoingJob.LastPing = &now
+			_, err = r.collection.UpdateOne(ctx, bson.M{"_id": ongoingJob.ID}, bson.M{"$set": bson.M{
+				"last_ping": ongoingJob.LastPing,
+			}})
+			if err != nil {
+				return err
+			}
+
+			job = ongoingJob
+			return nil
+		}
+
+		err = r.collection.FindOneAndUpdate(
+			ctx,
+			bson.M{"status": StatusPending},
+			bson.M{"$set": bson.M{
+				"status":    StatusOngoing,
+				"last_ping": time.Now(),
+			}},
+			options.FindOneAndUpdate().
+				SetSort(bson.M{"creation": 1}).
+				SetReturnDocument(options.After),
+		).Decode(&job)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return err
+		}
+
+		return nil
+	})
+
+	return job, err
+}
+
+func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) error {
+	_, err := r.collection.UpdateOne(ctx, bson.M{
+		"_id":    job.ID,
+		"status": StatusOngoing,
+	}, bson.M{"$set": bson.M{
+		"last_ping": time.Now(),
+	}})
+
+	return err
 }
 
 func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) (bool, error) {
@@ -60,7 +109,7 @@ func (r *mongoReporter) ReportDone(ctx context.Context, job ImportJob, stats imp
 		return false, err
 	}
 
-	return res.MatchedCount > 0, nil
+	return res.ModifiedCount > 0, nil
 }
 
 func (r *mongoReporter) ReportError(ctx context.Context, job ImportJob, execDuration time.Duration, err error) (bool, error) {
@@ -79,7 +128,7 @@ func (r *mongoReporter) ReportError(ctx context.Context, job ImportJob, execDura
 		return false, err
 	}
 
-	return res.MatchedCount > 0, nil
+	return res.ModifiedCount > 0, nil
 }
 
 func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, error) {
@@ -96,26 +145,6 @@ func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, er
 	}
 
 	return status, err
-}
-
-func (r *mongoReporter) GetAbandoned(ctx context.Context, createdInterval, launchedInterval time.Duration) ([]ImportJob, error) {
-	cursor, err := r.collection.Find(ctx, bson.M{"$or": []bson.M{
-		{
-			"status":   StatusPending,
-			"creation": bson.M{"$lt": time.Now().Add(-createdInterval)},
-		},
-		{
-			"status":   StatusOngoing,
-			"launched": bson.M{"$lt": time.Now().Add(-launchedInterval)},
-		},
-	}})
-	if err != nil {
-		return nil, err
-	}
-
-	res := make([]ImportJob, 0)
-	err = cursor.All(ctx, &res)
-	return res, err
 }
 
 func (r *mongoReporter) Clean(ctx context.Context, interval time.Duration) error {
