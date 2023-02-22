@@ -12,8 +12,7 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
       left="left"
     >
       <button
-        class="v-btn--minimize my-0 v-btn v-btn--disabled v-btn--icon theme--light"
-        disabled="disabled"
+        class="v-btn--minimize my-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
