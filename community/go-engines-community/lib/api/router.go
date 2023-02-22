@@ -102,7 +102,6 @@ func RegisterRoutes(
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
-	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
@@ -1052,7 +1051,7 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		contextGraphRouter := protected.Group("/contextgraph")
 		{
 			contextGraphRouter.PUT(
@@ -1072,7 +1071,7 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),

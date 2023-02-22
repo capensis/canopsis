@@ -16,7 +16,7 @@ const (
 type ImportJob struct {
 	ID       string     `bson:"_id" json:"_id"`
 	Creation time.Time  `bson:"creation" json:"creation"`
-	Launched *time.Time `bson:"launched,omitempty" json:"launched"`
+	LastPing *time.Time `bson:"last_ping,omitempty" json:"last_ping"`
 	Status   string     `bson:"status" json:"status"`
 	Info     string     `bson:"info,omitempty" json:"info"`
 	ExecTime string     `bson:"exec_time,omitempty" json:"exec_time"`
