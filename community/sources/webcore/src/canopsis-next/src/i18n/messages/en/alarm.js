@@ -33,6 +33,7 @@ export default {
     + '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n'
     + '</dl>',
   otherTickets: 'Other tickets are available in the expand panel',
+  noAlarmFound: 'No alarms is found according to the patterns defined',
   actions: {
     titles: {
       ack: 'Ack',
