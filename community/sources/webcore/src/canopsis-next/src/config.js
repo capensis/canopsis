@@ -203,6 +203,7 @@ export const API_ROUTES = {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
     scenarios: '/api/v4/template-validator/scenarios',
   },
+  linkRule: '/api/v4/link-rules',
 
   /**
    * Cat routes
