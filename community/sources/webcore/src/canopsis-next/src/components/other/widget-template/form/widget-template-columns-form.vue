@@ -50,7 +50,7 @@ export default {
     },
   },
   mounted() {
-    this.attachRequiredRule(() => !this.form.columns.length);
+    this.attachRequiredRule(() => this.form.columns.length > 0);
   },
   beforeDestroy() {
     this.detachRequiredRule();
