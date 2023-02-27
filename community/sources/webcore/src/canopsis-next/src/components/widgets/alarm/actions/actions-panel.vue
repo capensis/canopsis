@@ -217,7 +217,7 @@ export default {
             filteredActionsMap.changeState,
           );
 
-          if (!this.item.v.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
+          if (!this.item.v?.tickets?.length || this.widget.parameters.isMultiDeclareTicketEnabled) {
             actions.unshift(filteredActionsMap.associateTicket);
 
             if (assignedDeclareTicketRules.length) {

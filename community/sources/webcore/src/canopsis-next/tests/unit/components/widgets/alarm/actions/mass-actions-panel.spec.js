@@ -48,9 +48,11 @@ describe('mass-actions-panel', () => {
     entity: {
       _id: 'alarm-entity-id',
     },
+    assigned_declare_ticket_rules: [{}],
     v: {
       state: {},
       status: {},
+      tickets: [],
     },
   };
 
@@ -60,9 +62,11 @@ describe('mass-actions-panel', () => {
     entity: {
       _id: 'meta-alarm-entity-id',
     },
+    assigned_declare_ticket_rules: [{}],
     v: {
       state: {},
       status: {},
+      tickets: [],
     },
   };
   const fastAckAlarms = range(2).map(index => ({
@@ -659,6 +663,7 @@ describe('mass-actions-panel', () => {
         eventModule,
       ]),
       propsData: {
+        items,
         widget,
       },
     });
@@ -672,6 +677,7 @@ describe('mass-actions-panel', () => {
         authModuleWithAccess,
       ]),
       propsData: {
+        items,
         widget,
       },
     });
