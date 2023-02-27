@@ -2,24 +2,30 @@ package websocket
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
+
+var ErrNotFoundRoom = errors.New("no room")
 
 // Authorizer is used to implement websocket room authentication and authorization.
 type Authorizer interface {
 	// Authenticate authenticates user by token.
 	Authenticate(ctx context.Context, token string) (string, error)
 	// Authorize checks if user has access to room.
-	Authorize(userId, room string) (bool, error)
+	Authorize(ctx context.Context, userId, room string) (bool, error)
 	// AddRoom adds room with permissions.
 	AddRoom(room string, perms []string) error
-	// RemoveRoom removes room.
-	RemoveRoom(room string) error
-	HasRoom(room string) bool
+	AddGroup(group string, perms []string, check GroupCheck) error
+	GetGroupIds(group string) []string
+	RemoveGroupRoom(group, id string) error
 }
+
+type GroupCheck func(ctx context.Context, id string) (bool, error)
 
 func NewAuthorizer(
 	enforcer security.Enforcer,
@@ -29,14 +35,20 @@ func NewAuthorizer(
 		enforcer:       enforcer,
 		tokenProviders: tokenProviders,
 		roomPerms:      make(map[string][]string),
+		groupPerms:     make(map[string][]string),
+		groupChecks:    make(map[string]GroupCheck),
+		roomsByGroup:   make(map[string][]string),
 	}
 }
 
 type authorizer struct {
 	enforcer       security.Enforcer
 	tokenProviders []security.TokenProvider
-	roomPermsMx    sync.RWMutex
+	mx             sync.RWMutex
 	roomPerms      map[string][]string
+	groupPerms     map[string][]string
+	groupChecks    map[string]GroupCheck
+	roomsByGroup   map[string][]string
 }
 
 func (a *authorizer) Authenticate(ctx context.Context, token string) (string, error) {
@@ -54,35 +66,22 @@ func (a *authorizer) Authenticate(ctx context.Context, token string) (string, er
 	return "", nil
 }
 
-func (a *authorizer) Authorize(userId, room string) (bool, error) {
-	a.roomPermsMx.RLock()
-	defer a.roomPermsMx.RUnlock()
-	perms, ok := a.roomPerms[room]
-	// Return unauthorized if room is missing.
-	if !ok {
-		return false, nil
+func (a *authorizer) Authorize(ctx context.Context, userId, room string) (bool, error) {
+	ok, err := a.authorizeRoom(userId, room)
+	if err != nil {
+		if errors.Is(err, ErrNotFoundRoom) {
+			return a.authorizeGroupRoom(ctx, userId, room)
+		}
+
+		return false, err
 	}
 
-	// Return authorized if room doesn't have permissions.
-	if len(perms) == 0 {
-		return true, nil
-	}
-
-	if userId == "" {
-		return false, nil
-	}
-
-	vals := []interface{}{userId}
-	for _, v := range perms {
-		vals = append(vals, v)
-	}
-
-	return a.enforcer.Enforce(vals...)
+	return ok, nil
 }
 
 func (a *authorizer) AddRoom(room string, perms []string) error {
-	a.roomPermsMx.Lock()
-	defer a.roomPermsMx.Unlock()
+	a.mx.Lock()
+	defer a.mx.Unlock()
 
 	if _, ok := a.roomPerms[room]; ok {
 		return fmt.Errorf("%q room already exists", room)
@@ -92,22 +91,120 @@ func (a *authorizer) AddRoom(room string, perms []string) error {
 	return nil
 }
 
-func (a *authorizer) RemoveRoom(room string) error {
-	a.roomPermsMx.Lock()
-	defer a.roomPermsMx.Unlock()
+func (a *authorizer) AddGroup(group string, perms []string, check GroupCheck) error {
+	a.mx.Lock()
+	defer a.mx.Unlock()
 
+	if _, ok := a.groupPerms[group]; ok {
+		return fmt.Errorf("%q group already exists", group)
+	}
+
+	a.groupPerms[group] = perms
+	a.groupChecks[group] = check
+	return nil
+}
+
+func (a *authorizer) GetGroupIds(group string) []string {
+	a.mx.RLock()
+	defer a.mx.RUnlock()
+
+	return a.roomsByGroup[group]
+}
+
+func (a *authorizer) RemoveGroupRoom(group, id string) error {
+	a.mx.Lock()
+	defer a.mx.Unlock()
+
+	room := group + id
 	if _, ok := a.roomPerms[room]; !ok {
 		return fmt.Errorf("%q room doesn't exists", room)
 	}
 
 	delete(a.roomPerms, room)
+
+	k := 0
+	for _, v := range a.roomsByGroup[group] {
+		if id != v {
+			a.roomsByGroup[group][k] = v
+			k++
+		}
+	}
+
+	a.roomsByGroup[group] = a.roomsByGroup[group][:k]
 	return nil
 }
 
-func (a *authorizer) HasRoom(room string) bool {
-	a.roomPermsMx.RLock()
-	defer a.roomPermsMx.RUnlock()
+func (a *authorizer) authorizeRoom(userId, room string) (bool, error) {
+	a.mx.RLock()
+	defer a.mx.RUnlock()
 
-	_, ok := a.roomPerms[room]
-	return ok
+	if perms, ok := a.roomPerms[room]; ok {
+		// Return authorized if room doesn't have permissions.
+		if len(perms) == 0 {
+			return true, nil
+		}
+
+		if userId == "" {
+			return false, nil
+		}
+
+		vals := []any{userId}
+		for _, v := range perms {
+			vals = append(vals, v)
+		}
+
+		return a.enforcer.Enforce(vals...)
+	}
+
+	return false, ErrNotFoundRoom
+}
+
+func (a *authorizer) authorizeGroupRoom(ctx context.Context, userId, room string) (bool, error) {
+	a.mx.Lock()
+	defer a.mx.Unlock()
+
+	for group, perms := range a.groupPerms {
+		if !strings.HasPrefix(room, group) {
+			continue
+		}
+
+		id := room[len(group):]
+		if check, ok := a.groupChecks[group]; ok {
+			ok, err := check(ctx, id)
+			if err != nil {
+				return false, err
+			}
+			if !ok {
+				return false, ErrNotFoundRoom
+			}
+		}
+
+		// Return authorized if room doesn't have permissions.
+		if len(perms) == 0 {
+			a.roomPerms[room] = perms
+			a.roomsByGroup[group] = append(a.roomsByGroup[group], id)
+			return true, nil
+		}
+
+		if userId == "" {
+			return false, nil
+		}
+
+		vals := []any{userId}
+		for _, v := range perms {
+			vals = append(vals, v)
+		}
+
+		ok, err := a.enforcer.Enforce(vals...)
+		if err != nil || !ok {
+			return false, err
+		}
+
+		a.roomPerms[room] = perms
+		a.roomsByGroup[group] = append(a.roomsByGroup[group], id)
+
+		return true, nil
+	}
+
+	return false, ErrNotFoundRoom
 }
