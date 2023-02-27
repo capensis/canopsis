@@ -1,13 +1,14 @@
 <template lang="pug">
   v-layout(column)
-    v-flex(xs12)
-      v-alert.mb-3(:value="!form.length", type="info") {{ $t('eventFilter.noExternalData') }}
-    event-filter-enrichment-external-data-item-form.mb-3(
+    v-flex.mb-3(xs12)
+      v-alert(:value="!form.length", type="info") {{ $t('externalData.empty') }}
+    external-data-item-form.mb-3(
       v-for="(item, index) in form",
       v-field="form[index]",
       :name="item.key",
       :key="item.key",
       :disabled="disabled",
+      :types="types",
       @remove="removeItemFromArray(index)"
     )
     v-flex(v-if="!disabled")
@@ -15,19 +16,19 @@
         color="primary",
         outline,
         @click="addItem"
-      ) {{ $t('eventFilter.addExternalData') }}
+      ) {{ $t('externalData.add') }}
 </template>
 
 <script>
-import { eventFilterExternalDataItemToForm } from '@/helpers/forms/event-filter';
+import { externalDataItemToForm } from '@/helpers/forms/shared/external-data';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import EventFilterEnrichmentExternalDataItemForm from './event-filter-enrichment-external-data-item-form.vue';
+import ExternalDataItemForm from './external-data-item-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EventFilterEnrichmentExternalDataItemForm },
+  components: { ExternalDataItemForm },
   mixins: [formArrayMixin],
   model: {
     prop: 'form',
@@ -38,6 +39,10 @@ export default {
       type: Array,
       required: true,
     },
+    types: {
+      type: Array,
+      default: () => [],
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -45,7 +50,7 @@ export default {
   },
   methods: {
     addItem() {
-      this.addItemIntoArray(eventFilterExternalDataItemToForm());
+      this.addItemIntoArray(externalDataItemToForm());
     },
   },
 };
