@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ultraDense: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeItems() {
@@ -40,6 +44,7 @@ export default {
         'v-datatable v-table': true,
         'v-datatable--select-all': this.selectAll !== false,
         'v-datatable--dense': this.dense,
+        'v-datatable--ultra-dense': this.ultraDense,
         [this.tableClass]: !!this.tableClass,
         ...this.themeClasses,
       };
@@ -255,9 +260,12 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
-$denseCellHeight: 24px;
-$denseColorIndicatorPadding: 1px 5px;
+
+$denseCellHeight: 32px;
+$ultraDenseCellHeight: 24px;
 $denseTreeviewCellHeight: 32px;
+
+$denseColorIndicatorPadding: 1px 5px;
 
 table.v-datatable {
   transition: background-color .3s cubic-bezier(.25,.8,.5,1);
@@ -297,18 +305,41 @@ table.v-datatable {
 
       td:not(.v-datatable__expand-col) {
         height: $denseCellHeight;
+      }
+    }
+  }
+
+  &--ultra-dense.v-datatable {
+    thead tr {
+      height: $ultraDenseCellHeight;
+    }
+
+    tbody, thead {
+      td:not(.v-datatable__expand-col) {
+        height: $ultraDenseCellHeight;
+      }
+    }
+  }
+
+  &--dense.v-datatable,
+  &--ultra-dense.v-datatable {
+    tbody, thead {
+      td:not(.v-datatable__expand-col) {
+        td, th {
+          padding: 0 $densePadding;
+        }
 
         .v-btn {
           margin-top: 0;
           margin-bottom: 0;
         }
 
-        .c-action-btn__button {
-          margin: 0 !important;
-        }
-
         .color-indicator {
           padding: $denseColorIndicatorPadding;
+        }
+
+        .c-action-btn__button {
+          margin: 0 !important;
         }
       }
     }

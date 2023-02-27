@@ -3,7 +3,6 @@
     :class="expandButtonClass",
     :expanded="expanded",
     :loading="pending",
-    :dense="dense",
     @expand="showExpandPanel"
   )
 </template>
@@ -40,7 +39,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
@@ -49,7 +48,7 @@ export default {
     expandButtonClass() {
       return {
         [getStepClass(TOURS.alarmsExpandPanel, 1)]: this.isTourEnabled,
-        'alarms-expand-panel-btn--dense': this.dense,
+        'alarms-expand-panel-btn--small': this.small,
       };
     },
   },
@@ -73,7 +72,7 @@ export default {
 
 <style lang="scss">
 .alarms-expand-panel-btn {
-  &--dense {
+  &--small {
     width: 22px;
     max-width: 22px;
     height: 22px;
