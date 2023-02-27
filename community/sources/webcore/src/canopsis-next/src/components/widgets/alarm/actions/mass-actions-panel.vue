@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { difference } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -84,26 +85,35 @@ export default {
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
-          title: this.$t('alarm.actions.titles.declareTicket'),
-          loading: this.ticketsForAlarmsPending,
-          method: this.showCreateDeclareTicketModal,
-        },
-        {
+      ];
+
+      if (this.hasAlarmsWithoutTickets || this.widget.parameters.isMultiDeclareTicketEnabled) {
+        if (this.alarmsWithAssignedDeclareTicketRules.length) {
+          actions.push({
+            type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
+            title: this.$t('alarm.actions.titles.declareTicket'),
+            loading: this.ticketsForAlarmsPending,
+            method: this.showCreateDeclareTicketModal,
+          });
+        }
+
+        actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           title: this.$t('alarm.actions.titles.associateTicket'),
           method: this.showCreateAssociateTicketModal,
-        },
+        });
+      }
+
+      actions.push(
         {
           type: ALARM_LIST_ACTIONS_TYPES.snooze,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
           title: this.$t('alarm.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
-      ];
+      );
 
       if (!this.hasMetaAlarm) {
         actions.push(
@@ -131,6 +141,22 @@ export default {
 
     filteredActions() {
       return this.actions.filter(this.actionsAccessFilterHandler);
+    },
+
+    alarmsWithAssignedDeclareTicketRules() {
+      return this.items.filter(item => item.assigned_declare_ticket_rules?.length);
+    },
+
+    alarmsWithTickets() {
+      return this.items.filter(item => item.v?.tickets?.length);
+    },
+
+    alarmsWithoutTickets() {
+      return difference(this.items, this.alarmsWithTickets);
+    },
+
+    hasAlarmsWithoutTickets() {
+      return !!this.alarmsWithoutTickets.length;
     },
 
     hasMetaAlarm() {
@@ -169,11 +195,19 @@ export default {
     },
 
     showCreateAssociateTicketModal() {
-      this.showAssociateTicketModalByAlarms(this.items);
+      this.showAssociateTicketModalByAlarms(
+        this.widget.parameters.isMultiDeclareTicketEnabled
+          ? this.items
+          : this.alarmsWithoutTickets,
+      );
     },
 
     showCreateDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarms(this.items);
+      this.showDeclareTicketModalByAlarms(
+        this.widget.parameters.isMultiDeclareTicketEnabled
+          ? this.items
+          : this.alarmsWithoutTickets,
+      );
     },
 
     showAckModal() {

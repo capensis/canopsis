@@ -187,7 +187,7 @@ const changeStateActionParametersToForm = (parameters = {}) => ({
  */
 const assocTicketActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  ...eventToAssociateTicketForm(parameters),
+  ...omit(eventToAssociateTicketForm(parameters), ['ticket_comment']),
 });
 
 /**

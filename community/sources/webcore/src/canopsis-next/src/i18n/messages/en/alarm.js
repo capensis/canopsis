@@ -34,6 +34,7 @@ export default {
     + '</dl>',
   otherTickets: 'Other tickets are available in the expand panel',
   noAlarmFound: 'No alarms is found according to the patterns defined',
+  associateTicketResource: 'Associate ticket for resource',
   actions: {
     titles: {
       ack: 'Ack',
