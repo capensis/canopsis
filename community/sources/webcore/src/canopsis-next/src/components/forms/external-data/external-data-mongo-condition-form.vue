@@ -37,8 +37,8 @@
 
 <script>
 import {
-  EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
-  EVENT_FILTER_EXTERNAL_DATA_CONDITION_VALUES,
+  EXTERNAL_DATA_CONDITION_TYPES,
+  EXTERNAL_DATA_CONDITION_VALUES,
 } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
@@ -70,15 +70,15 @@ export default {
   },
   computed: {
     variables() {
-      return Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_VALUES).map(({ value, text }) => ({
+      return Object.values(EXTERNAL_DATA_CONDITION_VALUES).map(({ value, text }) => ({
         value,
-        text: this.$t(`eventFilter.externalDataValues.${text}`),
+        text: this.$t(`externalData.conditionValues.${text}`),
       }));
     },
 
     conditionTypes() {
-      return Object.values(EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES)
-        .map(type => ({ text: this.$t(`eventFilter.externalDataConditionTypes.${type}`), value: type }));
+      return Object.values(EXTERNAL_DATA_CONDITION_TYPES)
+        .map(type => ({ text: this.$t(`externalData.conditionTypes.${type}`), value: type }));
     },
 
     conditionFieldName() {
