@@ -40,7 +40,9 @@
 </template>
 
 <script>
-import { MODALS, ACK_MODAL_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
+import { MODALS, ACK_MODAL_ACTIONS_TYPES } from '@/constants';
+
+import { isEntityComponentType } from '@/helpers/entities/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -82,7 +84,7 @@ export default {
     },
 
     isAllComponentAlarms() {
-      return this.config.items.every(({ entity }) => entity.type === ENTITY_TYPES.component);
+      return this.config.items.every(({ entity }) => isEntityComponentType(entity.type));
     },
 
     actionTypes() {

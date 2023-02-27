@@ -10,6 +10,7 @@
         :form="commonValue",
         :alarms="alarms",
         :tickets-by-alarms="ticketsByAlarms",
+        :hide-ticket-resource="hideTicketResource",
         hide-remove,
         @input="updateCommonValue"
       )
@@ -24,6 +25,7 @@
           :form="group.value",
           :alarms="group.alarms",
           :tickets-by-alarms="group.ticketsByAlarms",
+          :hide-ticket-resource="hideTicketResource",
           disable-tickets,
           @input="updateGroup(group.ticketId, $event)"
         )
@@ -70,6 +72,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    hideTicketResource: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -111,6 +117,7 @@ export default {
       return {
         alarms_by_tickets: this.form.alarms_by_tickets,
         comment: Object.values(this.form.comments_by_tickets)[0] ?? '',
+        ticket_resources: Object.values(this.form.ticket_resources_by_tickets)[0] ?? false,
       };
     },
 
@@ -124,6 +131,7 @@ export default {
           value: {
             alarms_by_tickets: pick(this.form.alarms_by_tickets, [ticketId]),
             comment: this.form.comments_by_tickets[ticketId],
+            ticket_resources: this.form.ticket_resources_by_tickets[ticketId],
           },
           name,
           ticketId,
@@ -179,20 +187,24 @@ export default {
       );
     },
 
-    updateCommonValue({ comment, alarms_by_tickets: alarmsByTickets }) {
+    updateCommonValue({ comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources }) {
       this.updateModel(
         {
           alarms_by_tickets: alarmsByTickets,
-          comments_by_tickets: Object.keys(this.form.comments_by_tickets).reduce((acc, ticketId) => {
-            acc[ticketId] = comment;
+          ...Object.keys(this.form.comments_by_tickets).reduce((acc, ticketId) => {
+            acc.comments_by_tickets[ticketId] = comment;
+            acc.ticket_resources_by_tickets[ticketId] = ticketResources;
 
             return acc;
-          }, {}),
+          }, {
+            comments_by_tickets: {},
+            ticket_resources_by_tickets: {},
+          }),
         },
       );
     },
 
-    updateGroup(ticketId, { comment, alarms_by_tickets: alarmsByTickets }) {
+    updateGroup(ticketId, { comment, alarms_by_tickets: alarmsByTickets, ticket_resources: ticketResources }) {
       this.updateModel(
         {
           alarms_by_tickets: {
@@ -202,6 +214,10 @@ export default {
           comments_by_tickets: {
             ...this.form.comments_by_tickets,
             [ticketId]: comment,
+          },
+          ticket_resources_by_tickets: {
+            ...this.form.ticket_resources_by_tickets,
+            [ticketId]: ticketResources,
           },
         },
       );

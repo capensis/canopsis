@@ -83,7 +83,7 @@ export const widgetActionsPanelAlarmMixin = {
         this.$modals.show({
           name: MODALS.createDeclareTicketEvent,
           config: {
-            ...this.modalConfig,
+            items: alarms,
             alarmsByTickets,
             ticketsByAlarms,
             action: (events) => {
