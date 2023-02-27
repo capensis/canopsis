@@ -10,7 +10,7 @@
       :alarm="alarm",
       :widget="widget",
       :column="column",
-      :dense="dense",
+      :small="small",
       :columns-filters="columnsFilters",
       :selected-tag="selectedTag",
       @activate="$emit('activate', $event)",
@@ -55,7 +55,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },

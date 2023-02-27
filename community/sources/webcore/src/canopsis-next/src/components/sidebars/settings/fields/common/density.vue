@@ -4,33 +4,17 @@
       v-list-tile
         div {{ $t('settings.density.title') }}
     v-container
-      v-radio-group.density-radio-group(v-field="value", :name="name")
-        v-layout.mb-3(row)
-          v-flex(xs6)
-            v-radio(
-              :value="false",
-              :label="$t('settings.density.comfort')",
-              color="primary"
-            )
-          v-flex(xs6)
-            v-icon.density-icon $vuetify.icons.density_medium
-        v-layout(row)
-          v-flex(xs6)
-            v-radio(
-              :value="true",
-              :label="$t('settings.density.compact')",
-              color="primary"
-            )
-          v-flex(xs6)
-            v-icon.density-icon $vuetify.icons.density_small
+      c-density-btn-toggle(v-field="value", :name="name", column)
 </template>
 
 <script>
+import { ALARM_DENSE_TYPES } from '@/constants';
+
 export default {
   props: {
     value: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: ALARM_DENSE_TYPES.large,
     },
     name: {
       type: String,

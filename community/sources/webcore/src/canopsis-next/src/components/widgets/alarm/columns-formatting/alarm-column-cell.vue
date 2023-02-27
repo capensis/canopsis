@@ -84,7 +84,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
@@ -150,14 +150,14 @@ export default {
           bind: {
             is: 'alarm-column-value-state',
             alarm: this.alarm,
-            dense: this.dense,
+            small: this.small,
           },
         },
         [ALARM_ENTITY_FIELDS.status]: {
           bind: {
             is: 'alarm-column-value-status',
             alarm: this.alarm,
-            dense: this.dense,
+            small: this.small,
           },
         },
         [ALARM_ENTITY_FIELDS.priority]: {
@@ -182,7 +182,7 @@ export default {
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
             links: this.alarm.links ?? {},
-            dense: this.dense,
+            small: this.small,
           },
           on: {
             activate: this.$listeners.activate,
@@ -192,7 +192,7 @@ export default {
           bind: {
             is: 'alarm-column-value-extra-details',
             alarm: this.alarm,
-            dense: this.dense,
+            small: this.small,
           },
         },
         [ALARM_ENTITY_FIELDS.tags]: {
@@ -200,7 +200,7 @@ export default {
             is: 'c-alarm-tags-chips',
             alarm: this.alarm,
             selectedTag: this.selectedTag,
-            dense: this.dense,
+            small: this.small,
           },
           on: {
             select: this.$listeners['select:tag'],
