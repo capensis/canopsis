@@ -67,7 +67,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.1
 	github.com/pelletier/go-toml/v2 v2.0.5
 	github.com/rabbitmq/amqp091-go v1.5.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -120,6 +119,7 @@ require (
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // No effect on the real canopsis-community repo, but necessary when it's part of the canopsis-pro monorepo
