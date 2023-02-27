@@ -367,3 +367,9 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.links,
   ALARM_FIELDS.tags,
 ];
+
+export const ALARM_DENSE_TYPES = {
+  large: 0,
+  medium: 1,
+  small: 2,
+};
