@@ -4,7 +4,7 @@
       v-for="tag in inlineTags",
       :key="tag",
       :color="getTagColor(tag)",
-      :dense="dense",
+      :small="small",
       @click="selectTag(tag)"
     ) {{ tag }}
     v-menu(
@@ -43,7 +43,7 @@ export default {
       type: [Number, String],
       default: 2,
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },

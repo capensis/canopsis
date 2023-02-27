@@ -10,7 +10,7 @@
       :alarm="alarm",
       :widget="widget",
       :column="column",
-      :dense="dense",
+      :small="small",
       :selected-tag="selectedTag",
       @activate="$emit('activate', $event)",
       @select:tag="$emit('select:tag', $event)"
@@ -20,7 +20,7 @@
     :alarm="alarm",
     :widget="widget",
     :column="column",
-    :dense="dense",
+    :small="small",
     :selected-tag="selectedTag",
     @activate="$emit('activate', $event)",
     @select:tag="$emit('select:tag', $event)"
@@ -58,7 +58,7 @@ export default {
       type: String,
       default: '',
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
