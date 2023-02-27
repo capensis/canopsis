@@ -3,12 +3,12 @@
     v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
     v-tab-item
       link-rule-general-form.mt-2(ref="general", v-field="form")
-    v-tab(:class="{ 'error--text': hasSimpleError }") {{ $t('linkRule.simpleMode') }}
+    v-tab(:class="{ 'error--text': hasSimpleError }", :disabled="sourceCodeWasChanged") {{ $t('linkRule.simpleMode') }}
     v-tab-item
-      link-rule-simple-form.mt-2(ref="simple", v-field="form")
+      link-rule-simple-form.mt-2(ref="simple", v-field="form.links")
     v-tab(:class="{ 'error--text': hasAdvancedError }") {{ $t('linkRule.advancedMode') }}
     v-tab-item
-      link-rule-advanced-form.mt-2(ref="advanced", v-field="form.code")
+      link-rule-advanced-form.mt-2(ref="advanced", v-field="form.source_code")
 </template>
 
 <script>
@@ -38,6 +38,11 @@ export default {
       hasSimpleError: false,
       hasAdvancedError: false,
     };
+  },
+  computed: {
+    sourceCodeWasChanged() {
+      return !!this.form.source_code;
+    },
   },
   mounted() {
     this.$watch(() => this.$refs.general.hasAnyError, (value) => {

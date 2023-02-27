@@ -20,6 +20,8 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { linkRuleToForm, formToLinkRule } from '@/helpers/forms/link-rule';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -41,8 +43,10 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { linkRule = {} } = this.modal.config;
+
     return {
-      form: {},
+      form: linkRuleToForm(linkRule),
       checking: false,
     };
   },
@@ -57,7 +61,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToLinkRule(this.form));
         }
 
         this.$modals.hide();
