@@ -498,7 +498,7 @@ export default {
 ```js
    // file src/helpers/forms/widgets/counter.js
 export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Special parameters preparation for our new widget type
-  opened: openedToForm(parameters.opened),
+  opened: isBoolean(opened) || isNull(opened) ? parameters.opened : true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
   columnSM: parameters.columnSM ?? 6,
   columnMD: parameters.columnMD ?? 4,
