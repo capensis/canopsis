@@ -15,7 +15,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           class="layout row align-center justify-start"
         >
           <c-density-btn-toggle-stub
-            value="true"
+            value="1"
           />
           <transition-stub
             name="fade-transition"
@@ -153,10 +153,10 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
-              dense="true"
               expandable="true"
               hideactions="true"
               istourenabled="true"
+              medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -176,9 +176,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
-              dense="true"
               expandable="true"
               hideactions="true"
+              medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -198,9 +198,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
-              dense="true"
               expandable="true"
               hideactions="true"
+              medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -220,9 +220,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
-              dense="true"
               expandable="true"
               hideactions="true"
+              medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
@@ -242,9 +242,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             <alarms-list-row-stub
               columns="[object Object]"
               columnsfilters=""
-              dense="true"
               expandable="true"
               hideactions="true"
+              medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"

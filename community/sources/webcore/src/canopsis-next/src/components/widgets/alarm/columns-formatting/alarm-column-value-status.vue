@@ -17,14 +17,14 @@ export default {
       type: Object,
       required: true,
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
     iconSize() {
-      return this.dense ? 24 : undefined;
+      return this.small ? 24 : undefined;
     },
 
     statusValue() {

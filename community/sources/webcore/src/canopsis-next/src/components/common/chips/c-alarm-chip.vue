@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.chip-container(:class="{ 'chip-container--dense': dense }")
+  div.chip-container(:class="{ 'chip-container--small': small }")
     v-badge(:value="!!badgeValue", color="secondary", overlap)
       template(#badge="")
         span.px-1 {{ badgeValue }}
@@ -33,7 +33,7 @@ export default {
       type: [Number, String],
       default: 0,
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
@@ -71,7 +71,7 @@ export default {
       right: -6px;
     }
 
-    &--dense {
+    &--small {
       line-height: 1;
 
       .chip {
