@@ -1,20 +1,22 @@
 <template lang="pug">
-  v-layout(column)
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
-    c-enabled-field(v-field="form.enabled")
+  link-rule-links-form(v-field="links")
 </template>
 
 <script>
+import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
+
+import LinkRuleLinksForm from './partials/link-rule-links-form.vue';
+
 export default {
   inject: ['$validator'],
+  components: { LinkRuleLinksForm },
+  mixins: [formValidationHeaderMixin],
+  model: {
+    prop: 'links',
+    event: 'input',
+  },
   props: {
-    form: {
+    links: {
       type: Object,
       default: () => ({}),
     },

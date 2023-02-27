@@ -3,7 +3,7 @@
     v-text-field(
       v-field="form.collection",
       v-validate="'required'",
-      :label="$t('eventFilter.collection')",
+      :label="$t('externalData.fields.collection')",
       :name="collectionFieldName",
       :error-messages="errors.collect(collectionFieldName)",
       :disabled="disabled"
@@ -12,7 +12,7 @@
       v-flex(xs6)
         v-text-field(
           v-field="form.sort_by",
-          :label="$t('eventFilter.sortBy')",
+          :label="$t('externalData.fields.sortBy')",
           :name="sortByFieldName",
           :error-messages="errors.collect(sortByFieldName)",
           :disabled="disabled"
@@ -21,13 +21,13 @@
         v-select(
           v-field="form.sort",
           :items="sortOrders",
-          :label="$t('eventFilter.sort')",
+          :label="$t('externalData.fields.sort')",
           :name="sortFieldName",
           :error-messages="errors.collect(sortFieldName)",
           :disabled="disabled",
           clearable
         )
-    event-filter-enrichment-external-data-mongo-condition-form(
+    external-data-mongo-condition-form(
       v-for="(condition, index) in form.conditions",
       v-field="form.conditions[index]",
       :key="condition.key",
@@ -43,16 +43,15 @@
 <script>
 import { SORT_ORDERS } from '@/constants';
 
-import { eventFilterExternalDataConditionItemToForm } from '@/helpers/forms/event-filter';
+import { externalDataItemConditionAttributeToForm } from '@/helpers/forms/shared/external-data';
 
 import { formMixin } from '@/mixins/form';
 
-import EventFilterEnrichmentExternalDataMongoConditionForm
-  from './event-filter-enrichment-external-data-mongo-condition-form.vue';
+import ExternalDataMongoConditionForm from './external-data-mongo-condition-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EventFilterEnrichmentExternalDataMongoConditionForm },
+  components: { ExternalDataMongoConditionForm },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -98,7 +97,7 @@ export default {
       this.updateField('conditions', [
         ...this.form.conditions,
 
-        eventFilterExternalDataConditionItemToForm(),
+        externalDataItemConditionAttributeToForm(),
       ]);
     },
 

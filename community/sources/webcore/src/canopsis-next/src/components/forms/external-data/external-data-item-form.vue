@@ -6,14 +6,14 @@
           v-text-field.mr-2(
             v-field="form.reference",
             v-validate="'required'",
-            :label="$t('eventFilter.reference')",
+            :label="$t('externalData.fields.reference')",
             :error-messages="errors.collect(referenceFieldName)",
             :name="referenceFieldName",
             :disabled="disabled"
           )
             template(#append="")
               c-help-icon(
-                :text="$t('eventFilter.tooltips.reference')",
+                :text="$t('externalData.tooltips.reference')",
                 icon="help",
                 left
               )
@@ -25,7 +25,7 @@
           )
           v-btn.mr-0(v-if="!disabled", icon, @click="remove")
             v-icon(color="error") delete
-        event-filter-enrichment-external-data-mongo-form(
+        external-data-mongo-form(
           v-if="isMongoType",
           v-field="form",
           :name="form.key",
@@ -40,20 +40,17 @@
 </template>
 
 <script>
-import { EVENT_FILTER_EXTERNAL_DATA_TYPES } from '@/constants';
+import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 
-import EventFilterEnrichmentExternalDataMongoForm from './event-filter-enrichment-external-data-mongo-form.vue';
+import ExternalDataMongoForm from './external-data-mongo-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: {
-    RequestForm,
-    EventFilterEnrichmentExternalDataMongoForm,
-  },
+  components: { RequestForm, ExternalDataMongoForm },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -72,15 +69,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    types: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
-    types() {
-      return Object.values(EVENT_FILTER_EXTERNAL_DATA_TYPES)
-        .map(type => ({ text: this.$t(`eventFilter.externalDataTypes.${type}`), value: type }));
+    availableTypes() {
+      return this.types.length
+        ? this.types
+        : Object.values(EXTERNAL_DATA_TYPES)
+          .map(type => ({ text: this.$t(`externalData.types.${type}`), value: type }));
     },
 
     isMongoType() {
-      return this.form.type === EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo;
+      return this.form.type === EXTERNAL_DATA_TYPES.mongo;
     },
 
     referenceFieldName() {
