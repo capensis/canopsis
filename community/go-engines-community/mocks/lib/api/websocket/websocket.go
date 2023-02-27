@@ -195,6 +195,20 @@ func (m *MockAuthorizer) EXPECT() *MockAuthorizerMockRecorder {
 	return m.recorder
 }
 
+// AddGroup mocks base method.
+func (m *MockAuthorizer) AddGroup(arg0 string, arg1 []string, arg2 websocket.GroupCheck) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddGroup", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddGroup indicates an expected call of AddGroup.
+func (mr *MockAuthorizerMockRecorder) AddGroup(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGroup", reflect.TypeOf((*MockAuthorizer)(nil).AddGroup), arg0, arg1, arg2)
+}
+
 // AddRoom mocks base method.
 func (m *MockAuthorizer) AddRoom(arg0 string, arg1 []string) error {
 	m.ctrl.T.Helper()
@@ -225,46 +239,46 @@ func (mr *MockAuthorizerMockRecorder) Authenticate(arg0, arg1 interface{}) *gomo
 }
 
 // Authorize mocks base method.
-func (m *MockAuthorizer) Authorize(arg0, arg1 string) (bool, error) {
+func (m *MockAuthorizer) Authorize(arg0 context.Context, arg1, arg2 string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Authorize", arg0, arg1)
+	ret := m.ctrl.Call(m, "Authorize", arg0, arg1, arg2)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Authorize indicates an expected call of Authorize.
-func (mr *MockAuthorizerMockRecorder) Authorize(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockAuthorizerMockRecorder) Authorize(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorize", reflect.TypeOf((*MockAuthorizer)(nil).Authorize), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorize", reflect.TypeOf((*MockAuthorizer)(nil).Authorize), arg0, arg1, arg2)
 }
 
-// HasRoom mocks base method.
-func (m *MockAuthorizer) HasRoom(arg0 string) bool {
+// GetGroupIds mocks base method.
+func (m *MockAuthorizer) GetGroupIds(arg0 string) []string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasRoom", arg0)
-	ret0, _ := ret[0].(bool)
+	ret := m.ctrl.Call(m, "GetGroupIds", arg0)
+	ret0, _ := ret[0].([]string)
 	return ret0
 }
 
-// HasRoom indicates an expected call of HasRoom.
-func (mr *MockAuthorizerMockRecorder) HasRoom(arg0 interface{}) *gomock.Call {
+// GetGroupIds indicates an expected call of GetGroupIds.
+func (mr *MockAuthorizerMockRecorder) GetGroupIds(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasRoom", reflect.TypeOf((*MockAuthorizer)(nil).HasRoom), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIds", reflect.TypeOf((*MockAuthorizer)(nil).GetGroupIds), arg0)
 }
 
-// RemoveRoom mocks base method.
-func (m *MockAuthorizer) RemoveRoom(arg0 string) error {
+// RemoveGroupRoom mocks base method.
+func (m *MockAuthorizer) RemoveGroupRoom(arg0, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveRoom", arg0)
+	ret := m.ctrl.Call(m, "RemoveGroupRoom", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// RemoveRoom indicates an expected call of RemoveRoom.
-func (mr *MockAuthorizerMockRecorder) RemoveRoom(arg0 interface{}) *gomock.Call {
+// RemoveGroupRoom indicates an expected call of RemoveGroupRoom.
+func (mr *MockAuthorizerMockRecorder) RemoveGroupRoom(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveRoom", reflect.TypeOf((*MockAuthorizer)(nil).RemoveRoom), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveGroupRoom", reflect.TypeOf((*MockAuthorizer)(nil).RemoveGroupRoom), arg0, arg1)
 }
 
 // MockHub is a mock of Hub interface.
@@ -290,32 +304,32 @@ func (m *MockHub) EXPECT() *MockHubMockRecorder {
 	return m.recorder
 }
 
-// CloseRoom mocks base method.
-func (m *MockHub) CloseRoom(arg0 string) error {
+// CloseGroupRoom mocks base method.
+func (m *MockHub) CloseGroupRoom(arg0, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseRoom", arg0)
+	ret := m.ctrl.Call(m, "CloseGroupRoom", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CloseRoom indicates an expected call of CloseRoom.
-func (mr *MockHubMockRecorder) CloseRoom(arg0 interface{}) *gomock.Call {
+// CloseGroupRoom indicates an expected call of CloseGroupRoom.
+func (mr *MockHubMockRecorder) CloseGroupRoom(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseRoom", reflect.TypeOf((*MockHub)(nil).CloseRoom), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseGroupRoom", reflect.TypeOf((*MockHub)(nil).CloseGroupRoom), arg0, arg1)
 }
 
-// CloseRoomAndNotify mocks base method.
-func (m *MockHub) CloseRoomAndNotify(arg0 string) error {
+// CloseGroupRoomAndNotify mocks base method.
+func (m *MockHub) CloseGroupRoomAndNotify(arg0, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseRoomAndNotify", arg0)
+	ret := m.ctrl.Call(m, "CloseGroupRoomAndNotify", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CloseRoomAndNotify indicates an expected call of CloseRoomAndNotify.
-func (mr *MockHubMockRecorder) CloseRoomAndNotify(arg0 interface{}) *gomock.Call {
+// CloseGroupRoomAndNotify indicates an expected call of CloseGroupRoomAndNotify.
+func (mr *MockHubMockRecorder) CloseGroupRoomAndNotify(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseRoomAndNotify", reflect.TypeOf((*MockHub)(nil).CloseRoomAndNotify), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseGroupRoomAndNotify", reflect.TypeOf((*MockHub)(nil).CloseGroupRoomAndNotify), arg0, arg1)
 }
 
 // Connect mocks base method.
@@ -332,6 +346,20 @@ func (mr *MockHubMockRecorder) Connect(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockHub)(nil).Connect), arg0, arg1)
 }
 
+// GetConnectedGroupIds mocks base method.
+func (m *MockHub) GetConnectedGroupIds(arg0 string) []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetConnectedGroupIds", arg0)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetConnectedGroupIds indicates an expected call of GetConnectedGroupIds.
+func (mr *MockHubMockRecorder) GetConnectedGroupIds(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConnectedGroupIds", reflect.TypeOf((*MockHub)(nil).GetConnectedGroupIds), arg0)
+}
+
 // GetConnections mocks base method.
 func (m *MockHub) GetConnections() []websocket.UserConnection {
 	m.ctrl.T.Helper()
@@ -346,6 +374,20 @@ func (mr *MockHubMockRecorder) GetConnections() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConnections", reflect.TypeOf((*MockHub)(nil).GetConnections))
 }
 
+// GetGroupIds mocks base method.
+func (m *MockHub) GetGroupIds(arg0 string) []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGroupIds", arg0)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetGroupIds indicates an expected call of GetGroupIds.
+func (mr *MockHubMockRecorder) GetGroupIds(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIds", reflect.TypeOf((*MockHub)(nil).GetGroupIds), arg0)
+}
+
 // GetUsers mocks base method.
 func (m *MockHub) GetUsers() map[string][]string {
 	m.ctrl.T.Helper()
@@ -358,6 +400,25 @@ func (m *MockHub) GetUsers() map[string][]string {
 func (mr *MockHubMockRecorder) GetUsers() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockHub)(nil).GetUsers))
+}
+
+// RegisterGroup mocks base method.
+func (m *MockHub) RegisterGroup(arg0 string, arg1 websocket.GroupCheck, arg2 ...string) error {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RegisterGroup", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RegisterGroup indicates an expected call of RegisterGroup.
+func (mr *MockHubMockRecorder) RegisterGroup(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterGroup", reflect.TypeOf((*MockHub)(nil).RegisterGroup), varargs...)
 }
 
 // RegisterRoom mocks base method.
@@ -379,20 +440,6 @@ func (mr *MockHubMockRecorder) RegisterRoom(arg0 interface{}, arg1 ...interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterRoom", reflect.TypeOf((*MockHub)(nil).RegisterRoom), varargs...)
 }
 
-// RoomHasConnection mocks base method.
-func (m *MockHub) RoomHasConnection(arg0 string) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RoomHasConnection", arg0)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// RoomHasConnection indicates an expected call of RoomHasConnection.
-func (mr *MockHubMockRecorder) RoomHasConnection(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RoomHasConnection", reflect.TypeOf((*MockHub)(nil).RoomHasConnection), arg0)
-}
-
 // Send mocks base method.
 func (m *MockHub) Send(arg0 string, arg1 interface{}) {
 	m.ctrl.T.Helper()
@@ -403,6 +450,18 @@ func (m *MockHub) Send(arg0 string, arg1 interface{}) {
 func (mr *MockHubMockRecorder) Send(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockHub)(nil).Send), arg0, arg1)
+}
+
+// SendGroupRoom mocks base method.
+func (m *MockHub) SendGroupRoom(arg0, arg1 string, arg2 interface{}) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendGroupRoom", arg0, arg1, arg2)
+}
+
+// SendGroupRoom indicates an expected call of SendGroupRoom.
+func (mr *MockHubMockRecorder) SendGroupRoom(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoom", reflect.TypeOf((*MockHub)(nil).SendGroupRoom), arg0, arg1, arg2)
 }
 
 // Start mocks base method.

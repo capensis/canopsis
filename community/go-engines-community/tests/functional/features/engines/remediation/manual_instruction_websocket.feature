@@ -178,6 +178,8 @@ Feature: get an execution status
       ]
     }
     """
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
 
   @concurrent
   Scenario: given simplified manual instruction should get jobs statuses from websocket room
