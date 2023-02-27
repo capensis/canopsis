@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.actions-panel(:class="{ 'actions-panel--dense': dense }")
+  div.actions-panel(:class="{ 'actions-panel--small': small }")
     v-layout(row, align-center)
       c-action-btn(
         v-for="(action, index) in preparedActions.inline",
@@ -50,7 +50,7 @@ export default {
       type: Number,
       default: 3,
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
@@ -75,7 +75,7 @@ export default {
 
 <style lang="scss">
 .actions-panel {
-  &--dense {
+  &--small {
     .v-btn--icon {
       width: 24px;
       height: 24px;

@@ -2,16 +2,15 @@ import { range } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
+import { ALARM_DENSE_TYPES } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'mass-actions-panel': true,
@@ -23,22 +22,6 @@ const stubs = {
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
 };
-
-const factory = (options = {}) => shallowMount(AlarmsListTable, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmsListTable, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  ...options,
-});
 
 const selectTable = wrapper => wrapper.find('v-data-table-stub');
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
@@ -123,6 +106,15 @@ describe('alarms-list-table', () => {
     label: 'Label-1',
     value: 'label',
   }];
+
+  const factory = generateShallowRenderer(AlarmsListTable, {
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(AlarmsListTable, {
+    stubs,
+    attachTo: document.body,
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -479,7 +471,7 @@ describe('alarms-list-table', () => {
         loading: true,
         selectable: true,
         hideChildren: true,
-        dense: true,
+        dense: ALARM_DENSE_TYPES.medium,
         expandable: true,
         stickyHeader: true,
         densable: true,
@@ -525,7 +517,7 @@ describe('alarms-list-table', () => {
           parameters: {
             ...defaultWidget.parameters,
 
-            dense: true,
+            dense: ALARM_DENSE_TYPES.medium,
           },
         },
         alarms: [],

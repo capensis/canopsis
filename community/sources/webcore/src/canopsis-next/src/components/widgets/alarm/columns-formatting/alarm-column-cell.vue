@@ -72,7 +72,7 @@ export default {
       type: String,
       default: '',
     },
-    dense: {
+    small: {
       type: Boolean,
       default: false,
     },
