@@ -6,16 +6,15 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
  * @property {string} ticket_url
  * @property {string} ticket_system_name
  * @property {Object} ticket_data
- * @property {string} output
+ * @property {string} ticket_comment
+ * @property {boolean} ticket_resources
  */
 
 /**
  * @typedef {AssociateTicketEvent} AssociateTicketEventForm
  * @property {string} ticket_id
- * @property {string} ticket_url
  * @property {string} system_name
  * @property {TextPairObject[]} mapping
- * @property {string} output
  */
 
 /**
@@ -27,8 +26,9 @@ import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 export const eventToAssociateTicketForm = (event = {}) => ({
   ticket_id: event.ticket ?? '',
   ticket_url: event.ticket_url ?? '',
+  ticket_resources: event.ticket_resources ?? false,
   system_name: event.ticket_system_name ?? '',
-  output: event.output ?? '',
+  ticket_comment: event.ticket_comment ?? '',
   mapping: objectToTextPairs(event.ticket_data),
 });
 
@@ -42,6 +42,7 @@ export const formToAssociateTicketEvent = form => ({
   ticket: form.ticket_id,
   ticket_url: form.ticket_url,
   ticket_system_name: form.system_name,
-  output: form.output,
+  ticket_comment: form.ticket_comment,
+  ticket_resources: form.ticket_resources,
   ticket_data: textPairsToObject(form.mapping),
 });
