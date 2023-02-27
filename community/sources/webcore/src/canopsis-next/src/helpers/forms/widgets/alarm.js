@@ -16,6 +16,8 @@ import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 import { defaultColumnsToColumns } from '@/helpers/entities';
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 
+import { openedToForm } from './common';
+
 /**
  * @typedef {Object} AlarmsListDataTableColumn
  * @property {string} value
@@ -229,7 +231,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
     ? cloneDeep(parameters.liveReporting)
     : {},
   sort: widgetSortToForm(parameters.sort),
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],
