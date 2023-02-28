@@ -124,20 +124,20 @@ func (w *worker) processFirstJob(ctx context.Context) {
 		return
 	}
 
-	done := make(chan struct{})
+	reportCtx, cancel := context.WithCancel(context.Background())
 	go func() {
 		w.processJob(ctx, job)
-		close(done)
+		cancel()
 	}()
 
 	ticket := time.NewTicker(abandonedTicketInterval)
 	defer ticket.Stop()
 	for {
 		select {
-		case <-done:
+		case <-reportCtx.Done():
 			return
 		case <-ticket.C:
-			err := w.reporter.ReportOngoing(ctx, job)
+			err := w.reporter.ReportOngoing(reportCtx, job)
 			if err != nil {
 				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 			}
