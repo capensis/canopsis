@@ -57,11 +57,17 @@ export default {
   },
   computed: {
     payloadVariables() {
-      return [
+      const variables = [
         ...this.alarmPayloadVariables,
-        ...this.entityPayloadVariables,
-        ...this.additionalDataVariables,
       ];
+
+      if (this.hasPrevious) {
+        variables.push(...this.payloadVariablesFromPreviousStep);
+      }
+
+      variables.push(...this.additionalDataVariables);
+
+      return variables;
     },
   },
   methods: {

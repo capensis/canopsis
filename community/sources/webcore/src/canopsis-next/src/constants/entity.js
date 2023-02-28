@@ -487,8 +487,3 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.links,
   ENTITY_FIELDS.pbehaviorInfo,
 ];
-
-export const ENTITY_PAYLOAD_VARIABLES = {
-  entity: '.Entity',
-  infosValue: '.Infos.%infos_name%.Value',
-};

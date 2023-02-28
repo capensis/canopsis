@@ -25,7 +25,7 @@
               v-field="value.ticket_id",
               :disabled="disabled",
               :name="ticketIdFieldName",
-              required
+              :required="ticketIdRequired"
             )
           v-flex(xs6)
             declare-ticket-rule-ticket-url-field(
@@ -76,6 +76,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ticketIdRequired: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ticketIdFieldName() {
@@ -106,7 +110,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: 'required:true',
-        getter: () => this.isDeclareTicketExist || this.value.enabled,
+        getter: () => !this.ticketIdRequired || this.isDeclareTicketExist || this.value.enabled,
         vm: this,
       });
     },

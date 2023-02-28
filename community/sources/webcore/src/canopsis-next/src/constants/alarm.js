@@ -373,6 +373,7 @@ export const ALARM_UNSORTABLE_FIELDS = [
 ];
 
 export const ALARM_PAYLOADS_VARIABLES = {
+  alarm: '.Alarm',
   alarms: '.Alarms',
   component: '.Value.Component',
   resource: '.Value.Resource',
@@ -386,6 +387,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
+  entityInfosValue: '.Entity.Infos.%infos_name%.Value ',
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {

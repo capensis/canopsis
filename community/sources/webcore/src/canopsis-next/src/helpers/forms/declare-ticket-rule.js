@@ -127,7 +127,7 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = []) => webhooks.map(declareTicketRuleWebhookToForm);
+export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) => webhooks.map(declareTicketRuleWebhookToForm);
 
 /**
  * Convert declare ticket rule object to form compatible object

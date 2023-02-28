@@ -32,7 +32,7 @@ export default {
   noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement acquitté pour l\'élément sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements acquittés pour les éléments seront envoyés avant.',
   ruleName: 'Nom de la règle',
   checkSyntax: 'Vérifier la syntaxe',
-  ticketResource: 'Déclarer un ticket pour les ressources',
+  ticketResources: 'Déclarer un ticket pour les ressources',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
