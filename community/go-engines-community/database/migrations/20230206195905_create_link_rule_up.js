@@ -18,17 +18,17 @@ if (!db.default_rights.findOne({_id: "api_link_rule"})) {
     });
 }
 
-if (!db.default_rights.findOne({_id: "models_linkRule"})) {
+if (!db.default_rights.findOne({_id: "models_exploitation_linkRule"})) {
     db.default_rights.insertOne({
-        _id: "models_linkRule",
-        crecord_name: "models_linkRule",
+        _id: "models_exploitation_linkRule",
+        crecord_name: "models_exploitation_linkRule",
         crecord_type: "action",
-        description: "Link rule",
+        description: "Exploitation: Link rule",
         type: "CRUD"
     });
     db.default_rights.updateOne({_id: "admin"}, {
         $set: {
-            "rights.models_linkRule": {
+            "rights.models_exploitation_linkRule": {
                 checksum: 15,
                 crecord_type: "right"
             }
