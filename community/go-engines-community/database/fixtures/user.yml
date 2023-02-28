@@ -417,7 +417,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_pbehavior
     crecord_name: <Current()._id>
-    description: "Exploitation: Pbehaviors"
+    description: "Exploitation: Pbehavior"
   permission_models_exploitation_snmpRule:
     <<: *permission_crud
     _id: models_exploitation_snmpRule
@@ -427,7 +427,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_dynamicInfo
     crecord_name: <Current()._id>
-    description: "Exploitation: Dynamic informations"
+    description: "Exploitation: Dynamic information rule"
   permission_models_exploitation_metaAlarmRule:
     <<: *permission_crud
     _id: models_exploitation_metaAlarmRule
@@ -437,27 +437,32 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_scenario
     crecord_name: <Current()._id>
-    description: "Exploitation: Scenarios"
+    description: "Exploitation: Scenario"
   permission_models_exploitation_idleRules:
     <<: *permission_crud
     _id: models_exploitation_idleRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Idle rules"
+    description: "Exploitation: Idle rule"
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Flapping rules"
+    description: "Exploitation: Flapping rule"
   permission_models_exploitation_resolveRules:
     <<: *permission_crud
     _id: models_exploitation_resolveRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Resolve rules"
+    description: "Exploitation: Resolve rule"
   permission_models_exploitation_declareTicketRule:
     <<: *permission_crud
     _id: models_exploitation_declareTicketRule
     crecord_name: <Current()._id>
     description: "Exploitation: Declare ticket rule"
+  permission_models_exploitation_linkRule:
+    <<: *permission_crud
+    _id: models_exploitation_linkRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Link rule"
   permission_models_healthcheck:
     <<: *permission
     _id: models_healthcheck
@@ -1206,6 +1211,8 @@ default_rights:
       "@permission_models_exploitation_resolveRules":
         checksum: 15
       "@permission_models_exploitation_declareTicketRule":
+        checksum: 15
+      "@permission_models_exploitation_linkRule":
         checksum: 15
       "@permission_models_healthcheck":
         checksum: 1
