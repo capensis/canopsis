@@ -30,7 +30,8 @@
           ref="general",
           v-model="parameters",
           :name="`${name}.parameters`",
-          :type="action.type"
+          :type="action.type",
+          :has-previous-webhook="hasPreviousWebhook"
         )
       v-tab-item
         scenario-action-patterns-form.mt-4(
@@ -82,6 +83,10 @@ export default {
     actionNumber: {
       type: [Number, String],
       default: 0,
+    },
+    hasPreviousWebhook: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

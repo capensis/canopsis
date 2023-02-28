@@ -34,7 +34,7 @@ export default {
     + '</dl>',
   otherTickets: 'Other tickets are available in the expand panel',
   noAlarmFound: 'No alarms is found according to the patterns defined',
-  associateTicketResource: 'Associate ticket for resource',
+  associateTicketResources: 'Associate ticket for resources',
   actions: {
     titles: {
       ack: 'Ack',
@@ -87,7 +87,7 @@ export default {
       [EVENT_ENTITY_TYPES.assocTicket]: 'Ticket associated',
       [EVENT_ENTITY_TYPES.declareTicket]: 'Ticket is declared successfully',
       [EVENT_ENTITY_TYPES.declareTicketFail]: 'Ticket declaration is failed',
-      [EVENT_ENTITY_TYPES.webhookStart]: 'Webhook has started by root',
+      [EVENT_ENTITY_TYPES.webhookStart]: 'Webhook has started',
       [EVENT_ENTITY_TYPES.webhookComplete]: 'Webhook is executed successfully',
       [EVENT_ENTITY_TYPES.webhookFail]: 'Webhook is failed',
       [EVENT_ENTITY_TYPES.snooze]: 'Alarm snoozed',

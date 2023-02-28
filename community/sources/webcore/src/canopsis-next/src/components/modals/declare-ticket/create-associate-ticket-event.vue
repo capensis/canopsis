@@ -10,7 +10,7 @@
           v-checkbox(
             v-if="isAllComponentAlarms",
             v-model="form.ticket_resources",
-            :label="$t('alarm.associateTicketResource')",
+            :label="$t('alarm.associateTicketResources')",
             color="primary"
           )
           associate-ticket-event-form.mt-3(v-model="form")
@@ -82,7 +82,7 @@ export default {
     },
 
     isAllComponentAlarms() {
-      return this.itemsWithoutAck.every(({ entity }) => isEntityComponentType(entity.type));
+      return this.config.items.every(({ entity }) => isEntityComponentType(entity.type));
     },
   },
   methods: {

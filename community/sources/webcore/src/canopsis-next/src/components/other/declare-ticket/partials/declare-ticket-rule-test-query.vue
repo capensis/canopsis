@@ -24,9 +24,16 @@
             :fail-reason="executionStatus.fail_reason"
           )
           c-action-btn(v-if="webhooksResponses.length", type="delete", @click="clearResponses")
-        v-card.grey.lighten-4.mb-2(v-for="(webhooksResponse, index) in webhooksResponses", :key="index", light, flat)
-          v-card-text
-            c-request-text-information(:value="webhooksResponse")
+
+        transition-group(name="fade-transition")
+          v-card.grey.lighten-4.mb-2(
+            v-for="webhookResponse in webhooksResponses",
+            :key="webhookResponse.id",
+            light,
+            flat
+          )
+            v-card-text
+              c-request-text-information(:value="webhookResponse.value")
 </template>
 
 <script>
@@ -66,7 +73,7 @@ export default {
       alarm: '',
       pending: false,
       executionStatus: undefined,
-      webhooksResponses: [],
+      webhooksResponsesById: {},
     };
   },
   computed: {
@@ -89,6 +96,19 @@ export default {
         return acc;
       }, {});
     },
+
+    webhooksResponses() {
+      return this.executionStatus.webhooks.reduce((acc, { _id: id }) => {
+        if (this.webhooksResponsesById[id]) {
+          acc.push({
+            id,
+            value: this.webhooksResponsesById[id],
+          });
+        }
+
+        return acc;
+      }, []);
+    },
   },
   watch: {
     executionStatus(executionStatus) {
@@ -97,7 +117,6 @@ export default {
         && (isDeclareTicketExecutionSucceeded(executionStatus) || isDeclareTicketExecutionFailed(executionStatus))
       ) {
         this.leaveFromSocketRoom();
-        this.fetchTestWebhooksResponse();
       }
     },
   },
@@ -111,8 +130,28 @@ export default {
       return `${SOCKET_ROOMS.declareticket}/${id}`;
     },
 
-    setExecutionStatus(executionStatus) {
+    async setExecutionStatus(executionStatus) {
       this.executionStatus = executionStatus;
+
+      const newFinishedWebhook = this.executionStatus.webhooks.filter(
+        webhookExecution => !this.webhooksResponsesById[webhookExecution._id]
+          && (isDeclareTicketExecutionSucceeded(webhookExecution) || isDeclareTicketExecutionFailed(webhookExecution)),
+      );
+
+      const responses = await Promise.all(
+        newFinishedWebhook.map(({ _id: id }) => this.fetchTestDeclareTicketExecutionWebhooksResponse({ id })),
+      );
+
+      const responsesById = newFinishedWebhook.reduce((acc, { _id: id }, index) => {
+        acc[id] = responses[index];
+
+        return acc;
+      }, {});
+
+      this.webhooksResponsesById = {
+        ...this.webhooksResponsesById,
+        ...responsesById,
+      };
     },
 
     /**
@@ -189,18 +228,8 @@ export default {
       }
     },
 
-    async fetchTestWebhooksResponse() {
-      const webhooksWithResponses = this.executionStatus.webhooks.filter(
-        execution => isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution),
-      );
-
-      this.webhooksResponses = await Promise.all(
-        webhooksWithResponses.map(({ _id: id }) => this.fetchTestDeclareTicketExecutionWebhooksResponse({ id })),
-      );
-    },
-
     clearResponses() {
-      this.webhooksResponses = [];
+      this.webhooksResponsesById = {};
     },
   },
 };
