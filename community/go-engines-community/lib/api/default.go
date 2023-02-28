@@ -160,12 +160,10 @@ func Default(
 		canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger,
 	)
 
-	jobQueue := contextgraph.NewJobQueue()
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
-		jobQueue,
 		libcontextgraphV1.NewWorker(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
@@ -297,7 +295,6 @@ func Default(
 			techMetricsTaskExecutor,
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
-			jobQueue,
 			p.UserInterfaceConfigProvider,
 			scenarioPriorityIntervals,
 			cfg.File.Upload,

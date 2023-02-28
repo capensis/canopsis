@@ -14,12 +14,13 @@ const (
 )
 
 type ImportJob struct {
-	ID       string    `bson:"_id" json:"_id"`
-	Creation time.Time `bson:"creation" json:"creation"`
-	Status   string    `bson:"status" json:"status"`
-	Info     string    `bson:"info,omitempty" json:"info"`
-	ExecTime string    `bson:"exec_time,omitempty" json:"exec_time"`
-	Source   string    `bson:"source" json:"source"`
+	ID       string     `bson:"_id" json:"_id"`
+	Creation time.Time  `bson:"creation" json:"creation"`
+	LastPing *time.Time `bson:"last_ping,omitempty" json:"last_ping"`
+	Status   string     `bson:"status" json:"status"`
+	Info     string     `bson:"info,omitempty" json:"info"`
+	ExecTime string     `bson:"exec_time,omitempty" json:"exec_time"`
+	Source   string     `bson:"source" json:"source"`
 
 	Stats importcontextgraph.Stats `bson:"stats" json:"stats"`
 
