@@ -33,6 +33,8 @@ export default {
     + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
     + '</dl>',
   otherTickets: 'D\'autres billets sont disponibles dans le panneau d\'expansion',
+  noAlarmFound: 'Aucune alarme n\'est trouvée selon les modèles définis',
+  associateTicketResource: 'Ticket associé pour la ressource',
   actions: {
     titles: {
       ack: 'Acquitter',

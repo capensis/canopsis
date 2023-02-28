@@ -476,7 +476,6 @@ describe('actions-panel', () => {
           alarmsByTickets: byRules,
           ticketsByAlarms: byAlarms,
           action: expect.any(Function),
-          afterSubmit: expect.any(Function),
         },
       },
     );

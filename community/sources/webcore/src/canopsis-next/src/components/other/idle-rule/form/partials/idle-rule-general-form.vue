@@ -17,10 +17,18 @@
     template(v-if="!isEntityType")
       c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
       action-parameters-form(v-model="parameters", :type="form.operation.type", name="operation.parameters")
+      c-description-field(
+        v-if="isAssociateTicketAction",
+        v-field="form.comment",
+        :label="$tc('common.comment')",
+        name="comment"
+      )
 </template>
 
 <script>
 import { ACTION_TYPES } from '@/constants';
+
+import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
@@ -57,6 +65,10 @@ export default {
       set(value) {
         this.updateField(`operation.parameters.${this.form.operation.type}`, value);
       },
+    },
+
+    isAssociateTicketAction() {
+      return isAssociateTicketActionType(this.form.operation.type);
     },
 
     actionTypes() {
