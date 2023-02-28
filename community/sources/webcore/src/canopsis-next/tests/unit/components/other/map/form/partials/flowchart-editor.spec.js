@@ -79,7 +79,7 @@ describe('flowchart-editor', () => {
 
     const flowchartCodeEditor = selectFlowchart(wrapper);
 
-    flowchartCodeEditor.vm.$emit('update:background-color', newColor);
+    flowchartCodeEditor.vm.$emit('update:backgroundColor', newColor);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,

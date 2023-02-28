@@ -1,7 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-flex(v-show="!actions.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('scenario.emptyActions') }}
+    c-alert(v-show="!actions.length", type="info") {{ $t('scenario.emptyActions') }}
     c-card-iterator.mb-2(
       v-field="actions",
       item-key="key",
@@ -12,6 +11,7 @@
           v-field="actions[index]",
           :name="`${name}.${action.key}`",
           :action-number="index + 1",
+          :has-previous-webhook="hasPreviousWebhook(index)",
           @remove="removeItemFromArray(index)"
         )
     v-layout(row, align-center)
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { actionToForm } from '@/helpers/forms/action';
+import { actionToForm, isWebhookActionType } from '@/helpers/forms/action';
 
 import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -62,6 +62,16 @@ export default {
         name: 'scenarios-actions',
       };
     },
+
+    webhookIndexes() {
+      return this.actions.reduce((acc, action, index) => {
+        if (isWebhookActionType(action.type)) {
+          acc.push(index);
+        }
+
+        return acc;
+      }, []);
+    },
   },
   watch: {
     actions() {
@@ -90,6 +100,10 @@ export default {
 
     addAction() {
       this.addItemIntoArray(actionToForm());
+    },
+
+    hasPreviousWebhook(index) {
+      return this.webhookIndexes.indexOf(index) > 0;
     },
   },
 };
