@@ -18,6 +18,7 @@ const stubs = {
   'c-alert': true,
   'alarm-general-table': true,
   'associate-ticket-event-form': true,
+  'c-description-field': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -27,6 +28,7 @@ const snapshotStubs = {
   'c-alert': true,
   'alarm-general-table': true,
   'associate-ticket-event-form': true,
+  'c-description-field': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
@@ -61,10 +63,11 @@ describe('create-associate-ticket-event', () => {
   };
   const items = [alarm];
   const assocTicketEventData = {
-    output: '',
+    ticket_comment: '',
     ticket: '',
     ticket_data: {},
     ticket_system_name: '',
+    ticket_resources: false,
     ticket_url: '',
   };
 
@@ -149,10 +152,11 @@ describe('create-associate-ticket-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      output: '',
+      ticket_comment: '',
       ticket: '',
       ticket_data: {},
       ticket_system_name: '',
+      ticket_resources: false,
       ticket_url: '',
     });
     expect($modals.hide).toBeCalledWith();

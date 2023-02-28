@@ -20,6 +20,7 @@
     :autocomplete="autocomplete",
     :combobox="!autocomplete",
     :return-object="returnObject",
+    :no-data-text="noDataText",
     no-filter,
     dense,
     @focus="onFocus",
@@ -72,6 +73,10 @@ export default {
     itemValue: {
       type: String,
       default: '_id',
+    },
+    noDataText: {
+      type: String,
+      required: false,
     },
     limit: {
       type: Number,

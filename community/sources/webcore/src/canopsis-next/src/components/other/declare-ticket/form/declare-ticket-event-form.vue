@@ -7,6 +7,12 @@
       :disable-tickets="disableTickets",
       :hide-remove="hideRemove"
     )
+    v-checkbox(
+      v-if="!hideTicketResource",
+      v-field="form.ticket_resources",
+      :label="$t('declareTicket.ticketResource')",
+      color="primary"
+    )
     c-description-field.mt-3(v-field="form.comment", :label="$tc('common.comment')", name="comment")
 </template>
 
@@ -37,6 +43,10 @@ export default {
       default: false,
     },
     hideRemove: {
+      type: Boolean,
+      default: false,
+    },
+    hideTicketResource: {
       type: Boolean,
       default: false,
     },
