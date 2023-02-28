@@ -2,7 +2,12 @@
   v-layout.declare-ticket-test-query(column)
     v-layout(row, align-center, justify-space-between)
       v-flex(xs10)
-        c-alarm-field(v-model="alarm", :disabled="pending || isExecutionRunning", name="alarms")
+        c-alarm-field(
+          v-model="alarm",
+          :disabled="pending || isExecutionRunning",
+          :params="alarmsParams",
+          name="alarms"
+        )
       v-btn.white--text(
         :disabled="hasErrors || !alarm",
         :loading="pending || isExecutionRunning",
@@ -19,7 +24,7 @@
             :fail-reason="executionStatus.fail_reason"
           )
           c-action-btn(v-if="webhooksResponses.length", type="delete", @click="clearResponses")
-        v-card.grey.lighten-4.mb-2(v-for="(webhooksResponse, index) in webhooksResponses", :key="index", flat)
+        v-card.grey.lighten-4.mb-2(v-for="(webhooksResponse, index) in webhooksResponses", :key="index", light, flat)
           v-card-text
             c-request-text-information(:value="webhooksResponse")
 </template>
@@ -35,6 +40,7 @@ import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/forms/declare-ticket-rule';
+import { formFilterToPatterns } from '@/helpers/forms/filter';
 
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
@@ -74,6 +80,14 @@ export default {
 
     isExecutionSucceeded() {
       return isDeclareTicketExecutionSucceeded(this.executionStatus);
+    },
+
+    alarmsParams() {
+      return Object.entries(formFilterToPatterns(this.form.patterns)).reduce((acc, [key, value]) => {
+        acc[key] = JSON.stringify(value);
+
+        return acc;
+      }, {});
     },
   },
   watch: {

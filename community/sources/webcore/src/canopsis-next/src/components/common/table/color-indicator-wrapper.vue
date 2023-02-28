@@ -1,7 +1,11 @@
 <template lang="pug">
   v-tooltip(:disabled="!text", right)
     template(#activator="{ on }")
-      div.color-indicator.white--text(v-on="on", :style="{ backgroundColor: color }")
+      div.color-indicator(
+        v-on="on",
+        :class="{ 'color-indicator--invalid': !text }",
+        :style="{ backgroundColor: color }"
+      )
         slot {{ value }}
     span {{ text }}
 </template>
@@ -66,7 +70,9 @@ export default {
         return this.$t('common.countOfTotal', { count: this.impactState, total: COLORS.impactState.length - 1 });
       }
 
-      return this.$t(`common.stateTypes.${this.state}`);
+      const key = `common.stateTypes.${this.state}`;
+
+      return this.$te(key) && this.$t(key);
     },
   },
 };
@@ -77,5 +83,10 @@ export default {
   display: inline-block;
   border-radius: 10px;
   padding: 3px 7px;
+  color: black;
+
+  &--invalid {
+    color: white;
+  }
 }
 </style>

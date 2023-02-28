@@ -14,6 +14,7 @@
       v-select.time-complete-unit(
         v-field="duration.unit",
         v-validate="'required'",
+        :label="$t('common.unit')",
         :items="availableUnits",
         :name="unitFieldName",
         :disabled="disabled",

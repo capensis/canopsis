@@ -12,8 +12,7 @@
           v-field="value.username",
           :label="$t('common.username')",
           :name="`${name}.username`",
-          :disabled="disabled",
-          autofocus
+          :disabled="disabled"
         )
       v-flex(xs4)
         c-password-field(
