@@ -2,7 +2,8 @@
   v-layout(column)
     c-information-block(
       :title="$t('storageSetting.alarm.title')",
-      :help-text="$t('storageSetting.alarm.titleHelp')"
+      :help-text="$t('storageSetting.alarm.titleHelp')",
+      help-icon-color="info"
     )
       template(v-if="history.alarm", #subtitle="") {{ alarmSubTitle }}
       c-enabled-duration-field(
@@ -17,7 +18,8 @@
       )
     c-information-block(
       :title="$t('storageSetting.entity.title')",
-      :help-text="$t('storageSetting.entity.titleHelp')"
+      :help-text="$t('storageSetting.entity.titleHelp')",
+      help-icon-color="info"
     )
       template(v-if="history.entity", #subtitle="") {{ entitySubTitle }}
       v-radio-group(v-field="form.entity.archive", hide-details, mandatory, row)
@@ -32,7 +34,10 @@
           c-help-icon(:text="$t('storageSetting.entity.archiveDependenciesHelp')", color="info", max-width="300", top)
       v-flex
         v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
-    c-information-block(:title="$t('storageSetting.remediation.title')")
+    c-information-block(
+      :title="$t('storageSetting.remediation.title')",
+      help-icon-color="info"
+    )
       template(v-if="history.remediation", #subtitle="") {{ remediationSubTitle }}
       c-enabled-duration-field(
         v-field="form.remediation.delete_after",
@@ -52,7 +57,10 @@
         :help-text="$t('storageSetting.remediation.deleteModStatsAfterHelpText')",
         :name="remediationDeleteModStatsAfterFieldName"
       )
-    c-information-block(:title="$t('storageSetting.pbehavior.title')")
+    c-information-block(
+      :title="$t('storageSetting.pbehavior.title')",
+      help-icon-color="info"
+    )
       template(v-if="history.pbehavior", #subtitle="") {{ pbehaviorSubTitle }}
       c-enabled-duration-field(
         v-field="form.pbehavior.delete_after",
@@ -60,7 +68,10 @@
         :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')",
         :name="pbehaviorDeleteAfterFieldName"
       )
-    c-information-block(:title="$t('storageSetting.junit.title')")
+    c-information-block(
+      :title="$t('storageSetting.junit.title')",
+      help-icon-color="info"
+    )
       template(v-if="history.junit", #subtitle="") {{ junitSubTitle }}
       c-enabled-duration-field(
         v-field="form.junit.delete_after",
@@ -68,7 +79,10 @@
         :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
         :name="junitDeleteAfterFieldName"
       )
-    c-information-block(:title="$t('storageSetting.healthCheck.title')")
+    c-information-block(
+      :title="$t('storageSetting.healthCheck.title')",
+      help-icon-color="info"
+    )
       template(v-if="history.health_check", #subtitle="") {{ healthCheckSubTitle }}
       c-enabled-duration-field(
         v-field="form.health_check.delete_after",
@@ -77,7 +91,8 @@
       )
     c-information-block(
       :title="$t('storageSetting.webhook.title')",
-      :help-text="$t('storageSetting.webhook.titleHelp')"
+      :help-text="$t('storageSetting.webhook.titleHelp')",
+      help-icon-color="info"
     )
       template(v-if="history.webhook", #subtitle="") {{ webhookSubTitle }}
       c-enabled-duration-field(
@@ -93,7 +108,7 @@
         hide-details
       )
         template(#append="")
-          c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", top)
+          c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", color="info", top)
 </template>
 
 <script>

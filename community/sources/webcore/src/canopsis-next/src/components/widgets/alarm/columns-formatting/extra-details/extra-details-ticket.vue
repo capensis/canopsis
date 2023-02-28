@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     isSuccessTicketDeclaration(ticket) {
-      return ticket._t === EVENT_ENTITY_TYPES.declareTicket;
+      return [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket._t);
     },
 
     getTicketStatusText(ticket) {

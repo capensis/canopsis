@@ -30,6 +30,14 @@ import {
  */
 
 /**
+ * Check if entity is component
+ *
+ * @param {EntityType} type
+ * @returns {boolean}
+ */
+export const isEntityComponentType = type => type === ENTITY_TYPES.component;
+
+/**
  * Check is action available for the entity
  *
  * @param {String} actionType

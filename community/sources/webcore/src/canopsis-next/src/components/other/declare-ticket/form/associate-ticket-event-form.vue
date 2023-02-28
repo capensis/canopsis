@@ -7,7 +7,6 @@
       v-flex(xs6)
         declare-ticket-rule-ticket-url-field(v-field="form.ticket_url", :name="ticketUrlFieldName")
     declare-ticket-rule-ticket-custom-fields-field(v-field="form.mapping", :name="name")
-    c-description-field(v-field="form.output", :label="$tc('common.comment')", :name="commentFieldName")
 </template>
 
 <script>
@@ -46,10 +45,6 @@ export default {
 
     ticketUrlFieldName() {
       return this.prepareFieldName('ticket_url');
-    },
-
-    commentFieldName() {
-      return this.prepareFieldName('comment');
     },
   },
   methods: {
