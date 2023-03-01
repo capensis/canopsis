@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { ALARM_LEVELS, ALARM_LEVELS_COLORS } from '@/constants';
 
+import { openedToForm } from './common';
 import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
@@ -24,7 +25,7 @@ export const statsCalendarWidgetParametersToForm = (parameters = {}) => ({
   filters: parameters.filters
     ? cloneDeep(parameters.filters)
     : [],
-  opened: parameters.opened ?? false,
+  opened: openedToForm(parameters.opened),
   considerPbehaviors: parameters.considerPbehaviors ?? false,
   criticityLevels: parameters.criticityLevels
     ? { ...parameters.criticityLevels }

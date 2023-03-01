@@ -12,6 +12,7 @@ import {
   alarmListBaseParametersToForm,
   formToAlarmListBaseParameters,
 } from './alarm';
+import { openedToForm } from './common';
 
 /**
  * @typedef {Object} CounterWidgetLevels
@@ -41,7 +42,7 @@ import {
  * @return {CounterWidgetParameters}
  */
 export const counterWidgetParametersToForm = (parameters = {}) => ({
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
   columnSM: parameters.columnSM ?? 6,
   columnMD: parameters.columnMD ?? 4,
