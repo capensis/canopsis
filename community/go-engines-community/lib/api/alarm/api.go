@@ -427,9 +427,19 @@ func (a *api) GetLinks(c *gin.Context) {
 		return
 	}
 
-	links, err := a.store.GetLinks(c, r.Ids)
+	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
 		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	c.JSON(http.StatusOK, links)

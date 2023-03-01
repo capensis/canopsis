@@ -269,7 +269,7 @@ func RegisterRoutes(
 			alarmAPI.GetDetails,
 		)
 		protected.GET(
-			"/alarm-links",
+			"/alarm-links/:id",
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.GetLinks,
 		)

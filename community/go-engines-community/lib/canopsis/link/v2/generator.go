@@ -30,22 +30,24 @@ func NewGenerator(
 	logger zerolog.Logger,
 ) liblink.Generator {
 	return &generator{
-		dbClient:         client,
-		alarmCollection:  client.Collection(mongo.AlarmMongoCollection),
-		entityCollection: client.Collection(mongo.EntityMongoCollection),
-		linkCollection:   client.Collection(mongo.LinkRuleMongoCollection),
-		tplExecutor:      tplExecutor,
-		logger:           logger,
+		dbClient:                client,
+		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
+		resolvedAlarmCollection: client.Collection(mongo.ResolvedAlarmMongoCollection),
+		entityCollection:        client.Collection(mongo.EntityMongoCollection),
+		linkCollection:          client.Collection(mongo.LinkRuleMongoCollection),
+		tplExecutor:             tplExecutor,
+		logger:                  logger,
 	}
 }
 
 type generator struct {
-	dbClient         mongo.DbClient
-	alarmCollection  mongo.DbCollection
-	entityCollection mongo.DbCollection
-	linkCollection   mongo.DbCollection
-	tplExecutor      libtemplate.Executor
-	logger           zerolog.Logger
+	dbClient                mongo.DbClient
+	alarmCollection         mongo.DbCollection
+	resolvedAlarmCollection mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	linkCollection          mongo.DbCollection
+	tplExecutor             libtemplate.Executor
+	logger                  zerolog.Logger
 
 	rulesMx sync.RWMutex
 	rules   []parsedRule
@@ -74,6 +76,11 @@ type parsedRule struct {
 	CodeExecutor    js.Executor
 }
 
+type linkWithCategory struct {
+	liblink.Link
+	Category string
+}
+
 func (g *generator) Load(ctx context.Context) error {
 	rules, err := g.getRules(ctx)
 	if err != nil {
@@ -92,7 +99,7 @@ func (g *generator) GenerateForAlarms(ctx context.Context, ids []string) (map[st
 		return nil, err
 	}
 
-	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string]liblink.LinksByCategory, error) {
+	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
 		return g.generateLinksByAlarms(ctx, rule, alarms)
 	})
 }
@@ -103,45 +110,95 @@ func (g *generator) GenerateForEntities(ctx context.Context, ids []string) (map[
 		return nil, err
 	}
 
-	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string]liblink.LinksByCategory, error) {
+	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
 		return g.generateLinksByEntities(ctx, rule, entities)
 	})
 }
 
-func (g *generator) GenerateForAllAlarms(ctx context.Context, ids []string) ([]liblink.Link, error) {
-	alarms, err := g.getAlarms(ctx, ids)
-	if err != nil || len(alarms) != len(ids) {
+func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string) ([]liblink.Link, error) {
+	rule := g.getRule(ruleId)
+	if rule.ID == "" {
+		return nil, liblink.ErrNoRule
+	}
+
+	alarms, err := g.getAlarms(ctx, alarmIds)
+	if err != nil {
 		return nil, err
 	}
+	if len(alarms) != len(alarmIds) {
+		return nil, liblink.ErrNotMatchedAlarm
+	}
+
+	for _, alarm := range alarms {
+		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
+		if err != nil {
+			return nil, fmt.Errorf("invalid alarm pattern linkrule=%s: %w", rule.ID, err)
+		}
+		if !ok {
+			return nil, liblink.ErrNotMatchedAlarm
+		}
+
+		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		if err != nil {
+			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
+		}
+		if !ok {
+			return nil, liblink.ErrNotMatchedAlarm
+		}
+	}
+
 	entities := make([]entityWithData, len(alarms))
 	for i, alarm := range alarms {
 		entities[i] = entityWithData{Entity: alarm.Entity}
 	}
 
-	linksMap, err := g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string]liblink.LinksByCategory, error) {
-		return g.generateLinksByAllAlarms(ctx, rule, alarms, entities)
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	res := make([]liblink.Link, 0)
-	for _, linksByCategory := range linksMap {
-		for _, links := range linksByCategory {
-			res = append(res, links...)
+	switch rule.Type {
+	case liblink.TypeAlarm:
+		err := g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, alarms)
+		if err != nil {
+			return nil, err
+		}
+	case liblink.TypeEntity:
+		err := g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, entities)
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	return res, nil
+	if rule.CodeExecutor != nil {
+		var arg any
+		switch rule.Type {
+		case liblink.TypeAlarm:
+			arg = alarms
+		case liblink.TypeEntity:
+			arg = entities
+		}
+
+		return g.getLinksByCode(ctx, rule.CodeExecutor, arg)
+	}
+
+	var data map[string]any
+	switch rule.Type {
+	case liblink.TypeAlarm:
+		data = map[string]any{
+			"Alarms": alarms,
+		}
+	case liblink.TypeEntity:
+		data = map[string]any{
+			"Entities": entities,
+		}
+	}
+
+	return g.getLinksByTpl(rule.Links, rule.LinkTpls, data)
 }
 
 func (g *generator) runWorkers(
 	ctx context.Context,
-	f func(context.Context, parsedRule) (map[string]liblink.LinksByCategory, error),
+	f func(context.Context, parsedRule) (map[string][]linkWithCategory, error),
 ) (map[string]liblink.LinksByCategory, error) {
 	eg, ctx := errgroup.WithContext(ctx)
 	inCh := make(chan parsedRule)
-	outCh := make(chan map[string]liblink.LinksByCategory)
+	outCh := make(chan map[string][]linkWithCategory)
 
 	go func() {
 		defer close(inCh)
@@ -179,8 +236,15 @@ func (g *generator) runWorkers(
 	}()
 
 	res := make(map[string]liblink.LinksByCategory)
-	for v := range outCh {
-		liblink.MergeLinks(res, v)
+	for linksById := range outCh {
+		for id, links := range linksById {
+			if res[id] == nil {
+				res[id] = make(map[string][]liblink.Link)
+			}
+			for _, link := range links {
+				res[id][link.Category] = append(res[id][link.Category], link.Link)
+			}
+		}
 	}
 
 	err := eg.Wait()
@@ -262,11 +326,7 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 }
 
 func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithData, error) {
-	cursor, err := g.alarmCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"_id":        bson.M{"$in": ids},
-			"v.resolved": nil,
-		}},
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "d",
@@ -278,14 +338,47 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 			"v.steps": 0,
 		}},
 		{"$sort": bson.M{"_id": 1}},
-	})
+	}
+	openPipeline := []bson.M{
+		{"$match": bson.M{
+			"_id":        bson.M{"$in": ids},
+			"v.resolved": nil,
+		}},
+	}
+	openPipeline = append(openPipeline, pipeline...)
+	openCursor, err := g.alarmCollection.Aggregate(ctx, openPipeline)
 	if err != nil {
 		return nil, err
 	}
 
-	var alarms []alarmWithData
-	err = cursor.All(ctx, &alarms)
-	return alarms, err
+	var openAlarms []alarmWithData
+	err = openCursor.All(ctx, &openAlarms)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(openAlarms) == len(ids) {
+		return openAlarms, nil
+	}
+
+	resolvedPipeline := []bson.M{
+		{"$match": bson.M{
+			"_id": bson.M{"$in": ids},
+		}},
+	}
+	resolvedPipeline = append(resolvedPipeline, pipeline...)
+	resolvedCursor, err := g.resolvedAlarmCollection.Aggregate(ctx, resolvedPipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var resolvedAlarms []alarmWithData
+	err = resolvedCursor.All(ctx, &resolvedAlarms)
+	if err != nil {
+		return nil, err
+	}
+
+	return append(openAlarms, resolvedAlarms...), nil
 }
 
 func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWithData, error) {
@@ -299,8 +392,8 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 	return entities, err
 }
 
-func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData) (map[string]liblink.LinksByCategory, error) {
-	res := make(map[string]liblink.LinksByCategory, len(alarms))
+func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData) (map[string][]linkWithCategory, error) {
+	res := make(map[string][]linkWithCategory, len(alarms))
 	for _, alarm := range alarms {
 		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
 		if err != nil {
@@ -337,7 +430,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		}
 
 		if rule.CodeExecutor != nil {
-			res[alarm.ID], err = g.processCode(ctx, rule.CodeExecutor, arg)
+			res[alarm.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, arg)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 			}
@@ -357,7 +450,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			}
 		}
 
-		res[alarm.ID], err = g.processLinks(rule.Links, rule.LinkTpls, data)
+		res[alarm.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 		}
@@ -366,12 +459,12 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 	return res, nil
 }
 
-func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithData) (map[string]liblink.LinksByCategory, error) {
+func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithData) (map[string][]linkWithCategory, error) {
 	if rule.Type != liblink.TypeEntity {
 		return nil, nil
 	}
 
-	res := make(map[string]liblink.LinksByCategory, len(entities))
+	res := make(map[string][]linkWithCategory, len(entities))
 	for _, entity := range entities {
 		ok, _, err := rule.EntityPattern.Match(entity.Entity)
 		if err != nil {
@@ -388,7 +481,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		}
 
 		if rule.CodeExecutor != nil {
-			res[entity.ID], err = g.processCode(ctx, rule.CodeExecutor, arg)
+			res[entity.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, arg)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 				continue
@@ -397,7 +490,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		res[entity.ID], err = g.processLinks(rule.Links, rule.LinkTpls, map[string]any{
+		res[entity.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, map[string]any{
 			"Entities": arg,
 		})
 		if err != nil {
@@ -408,82 +501,16 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 	return res, nil
 }
 
-func (g *generator) generateLinksByAllAlarms(
-	ctx context.Context,
-	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
-) (map[string]liblink.LinksByCategory, error) {
-	for _, alarm := range alarms {
-		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
-		if err != nil {
-			return nil, fmt.Errorf("invalid alarm pattern linkrule=%s: %w", rule.ID, err)
-		}
-		if !ok {
-			return nil, nil
-		}
-
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
-		if err != nil {
-			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
-		}
-		if !ok {
-			return nil, nil
+func (g *generator) getRule(id string) parsedRule {
+	g.rulesMx.RLock()
+	defer g.rulesMx.RUnlock()
+	for _, rule := range g.rules {
+		if rule.ID == id {
+			return rule
 		}
 	}
 
-	switch rule.Type {
-	case liblink.TypeAlarm:
-		err := g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, alarms)
-		if err != nil {
-			return nil, err
-		}
-	case liblink.TypeEntity:
-		err := g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, entities)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if rule.CodeExecutor != nil {
-		var arg any
-		switch rule.Type {
-		case liblink.TypeAlarm:
-			arg = alarms
-		case liblink.TypeEntity:
-			arg = entities
-		}
-
-		linksByCategory, err := g.processCode(ctx, rule.CodeExecutor, arg)
-		if err != nil {
-			return nil, err
-		}
-
-		return map[string]liblink.LinksByCategory{
-			"": linksByCategory,
-		}, nil
-	}
-
-	var data map[string]any
-	switch rule.Type {
-	case liblink.TypeAlarm:
-		data = map[string]any{
-			"Alarms": alarms,
-		}
-	case liblink.TypeEntity:
-		data = map[string]any{
-			"Entities": entities,
-		}
-	}
-
-	linksByCategory, err := g.processLinks(rule.Links, rule.LinkTpls, data)
-	if err != nil {
-		return nil, err
-	}
-
-	return map[string]liblink.LinksByCategory{
-		"": linksByCategory,
-	}, nil
+	return parsedRule{}
 }
 
 func (g *generator) addExternalDataToAlarms(
@@ -618,33 +645,61 @@ func (g *generator) processExternalData(
 	return nil, nil
 }
 
-func (g *generator) processLinks(
-	links []liblink.Parameters,
+func (g *generator) getLinksWithCategoryByTpl(
+	id string,
+	linkTpls []liblink.Parameters,
 	tpls []*template.Template,
 	data map[string]any,
-) (liblink.LinksByCategory, error) {
-	res := make(liblink.LinksByCategory)
-	for i, link := range links {
+) ([]linkWithCategory, error) {
+	res := make([]linkWithCategory, len(linkTpls))
+	for i, linkTpl := range linkTpls {
 		url, err := g.tplExecutor.ExecuteByTpl(tpls[i], data)
 		if err != nil {
 			return nil, err
 		}
 
-		res[link.Category] = append(res[link.Category], liblink.Link{
-			Label:    link.Label,
-			IconName: link.IconName,
-			Url:      url,
-		})
+		res[i] = linkWithCategory{
+			Category: linkTpl.Category,
+			Link: liblink.Link{
+				RuleID:   id,
+				Label:    linkTpl.Label,
+				IconName: linkTpl.IconName,
+				Url:      url,
+			},
+		}
 	}
 
 	return res, nil
 }
 
-func (g *generator) processCode(
+func (g *generator) getLinksByTpl(
+	linkTpls []liblink.Parameters,
+	tpls []*template.Template,
+	data map[string]any,
+) ([]liblink.Link, error) {
+	res := make([]liblink.Link, len(linkTpls))
+	for i, linkTpl := range linkTpls {
+		url, err := g.tplExecutor.ExecuteByTpl(tpls[i], data)
+		if err != nil {
+			return nil, err
+		}
+
+		res[i] = liblink.Link{
+			Label:    linkTpl.Label,
+			IconName: linkTpl.IconName,
+			Url:      url,
+		}
+	}
+
+	return res, nil
+}
+
+func (g *generator) getLinksWithCategoryByCode(
 	ctx context.Context,
+	id string,
 	codeExecutor js.Executor,
 	arg any,
-) (liblink.LinksByCategory, error) {
+) ([]linkWithCategory, error) {
 	r, err := codeExecutor.Execute(ctx, arg)
 	if err != nil {
 		return nil, err
@@ -655,7 +710,7 @@ func (g *generator) processCode(
 		return nil, fmt.Errorf("generate returns not slice")
 	}
 
-	res := make(liblink.LinksByCategory)
+	res := make([]linkWithCategory, len(s))
 	for i := 0; i < len(s); i++ {
 		item, ok := s[i].(map[string]any)
 		if !ok {
@@ -673,11 +728,57 @@ func (g *generator) processCode(
 			return nil, fmt.Errorf("generate returns no label")
 		}
 
-		res[category] = append(res[category], liblink.Link{
+		res[i] = linkWithCategory{
+			Category: category,
+			Link: liblink.Link{
+				RuleID:   id,
+				Label:    label,
+				IconName: iconName,
+				Url:      url,
+			},
+		}
+	}
+
+	return res, nil
+}
+
+func (g *generator) getLinksByCode(
+	ctx context.Context,
+	codeExecutor js.Executor,
+	arg any,
+) ([]liblink.Link, error) {
+	r, err := codeExecutor.Execute(ctx, arg)
+	if err != nil {
+		return nil, err
+	}
+
+	s, ok := r.([]any)
+	if !ok {
+		return nil, fmt.Errorf("generate returns not slice")
+	}
+
+	res := make([]liblink.Link, len(s))
+	for i := 0; i < len(s); i++ {
+		item, ok := s[i].(map[string]any)
+		if !ok {
+			return nil, fmt.Errorf("generate returns not slice of map")
+		}
+
+		label, _ := item["label"].(string)
+		iconName, _ := item["icon_name"].(string)
+		url, _ := item["url"].(string)
+		if url == "" {
+			return nil, fmt.Errorf("generate returns no url")
+		}
+		if label == "" {
+			return nil, fmt.Errorf("generate returns no label")
+		}
+
+		res[i] = liblink.Link{
 			Label:    label,
 			IconName: iconName,
 			Url:      url,
-		})
+		}
 	}
 
 	return res, nil
