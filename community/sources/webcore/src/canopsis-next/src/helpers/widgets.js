@@ -239,6 +239,7 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
     case ALARM_FIELDS.statusAt:
     case ALARM_FIELDS.resolved:
     case ALARM_FIELDS.timestamp:
+    case ALARM_FIELDS.entityLastPbehaviorDate:
       return convertDateToStringWithFormatForToday;
 
     case ALARM_FIELDS.duration:
