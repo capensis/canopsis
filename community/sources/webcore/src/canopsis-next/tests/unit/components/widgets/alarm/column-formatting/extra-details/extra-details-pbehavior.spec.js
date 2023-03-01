@@ -1,16 +1,10 @@
 import { omit } from 'lodash';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { mount } from '@unit/utils/vue';
 
 import ExtraDetailsPbehavior from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-pbehavior.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsPbehavior, {
-  localVue,
-
-  ...options,
-});
+const snapshotFactory = (options = {}) => mount(ExtraDetailsPbehavior, options);
 
 describe('extra-details-pbehavior', () => {
   const prevDateStartTimestamp = 1386382400000;
@@ -103,10 +97,30 @@ describe('extra-details-pbehavior', () => {
     expect(tooltipContent.element).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without comments', () => {
+  it('Renders `extra-details-pbehavior` without comment', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pbehavior: omit(pbehavior, ['comments']),
+        pbehavior: omit(pbehavior, ['last_comment']),
+        pbehaviorInfo,
+      },
+    });
+
+    const tooltipContent = wrapper.findTooltip();
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(tooltipContent.element).toMatchSnapshot();
+  });
+
+  it('Renders `extra-details-pbehavior` without comment author', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        pbehavior: {
+          ...pbehavior,
+          last_comment: {
+            author: null,
+            ...pbehavior.last_comment,
+          },
+        },
         pbehaviorInfo,
       },
     });

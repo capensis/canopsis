@@ -9,14 +9,16 @@
         strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
-          div {{ $t('common.author') }}: {{ pbehavior.author.name }}
+          div(v-if="pbehavior.author") {{ $t('common.author') }}: {{ pbehavior.author.name }}
           div(v-if="pbehaviorInfo.type_name") {{ $t('common.type') }}: {{ pbehaviorInfo.type_name }}
           div(v-if="pbehavior.reason") {{ $t('common.reason') }}: {{ pbehavior.reason.name }}
           div {{ tstart }}
             template(v-if="pbehavior.tstop") &nbsp;- {{ tstop }}
           div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
           div(v-if="pbehavior.last_comment") {{ $t('common.lastComment') }}:
-            div.ml-2 - {{ pbehavior.last_comment.author.name }}: {{ pbehavior.last_comment.message }}
+            div.ml-2 -&nbsp;
+              template(v-if="pbehavior.last_comment.author") {{ pbehavior.last_comment.author.name }}:&nbsp;
+              | {{ pbehavior.last_comment.message }}
           v-divider
 </template>
 
