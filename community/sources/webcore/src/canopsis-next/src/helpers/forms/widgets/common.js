@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isBoolean, isNull } from 'lodash';
 
 import {
   WIDGET_TYPES,
@@ -271,3 +271,17 @@ export const formToWidget = form => ({
 
   parameters: formToWidgetParameters(form),
 });
+
+/**
+ * Convert opened field widget
+ *
+ * @param  {boolean | null} [opened]
+ * @returns {boolean | null}
+ */
+export const openedToForm = (opened) => {
+  if (isBoolean(opened) || isNull(opened)) {
+    return opened;
+  }
+
+  return true;
+};
