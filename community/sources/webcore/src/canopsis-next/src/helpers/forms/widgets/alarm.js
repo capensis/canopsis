@@ -18,6 +18,7 @@ import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration'
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
+import { openedToForm } from './common';
 
 /**
  * @typedef {Object} AlarmsListDataTableColumn
@@ -235,7 +236,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
     ? cloneDeep(parameters.liveReporting)
     : {},
   sort: widgetSortToForm(parameters.sort),
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],
