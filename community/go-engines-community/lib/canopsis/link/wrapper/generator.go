@@ -55,10 +55,10 @@ func (g *generator) GenerateForEntities(ctx context.Context, ids []string) (map[
 	return res, nil
 }
 
-func (g *generator) GenerateForAllAlarms(ctx context.Context, ids []string) ([]link.Link, error) {
+func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, error) {
 	var res []link.Link
 	for _, v := range g.generators {
-		links, err := v.GenerateForAllAlarms(ctx, ids)
+		links, err := v.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds)
 		if err != nil {
 			return nil, err
 		}
