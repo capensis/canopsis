@@ -345,8 +345,12 @@ table.v-datatable {
     }
 
     .service-dependencies {
-      td:not(.v-datatable__expand-col) {
+      thead tr, thead th, td:not(.v-datatable__expand-col) {
         height: $denseTreeviewCellHeight;
+      }
+
+      .treeview-data-table--tree {
+        margin-top: $denseTreeviewCellHeight;
       }
 
       .v-treeview-node__root {
