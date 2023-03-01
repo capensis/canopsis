@@ -11,6 +11,7 @@ import {
   TIME_UNITS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  ALARM_DENSE_TYPES,
 } from '@/constants';
 
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
@@ -190,7 +191,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
-  dense: !!parameters.dense,
+  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {

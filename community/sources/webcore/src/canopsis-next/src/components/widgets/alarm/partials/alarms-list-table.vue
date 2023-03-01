@@ -39,7 +39,8 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        :dense="dense",
+        :dense="isMediumHeight",
+        :ultra-dense="isSmallHeight",
         item-key="_id",
         hide-actions,
         multi-sort,
@@ -69,6 +70,8 @@
             :selecting="selecting",
             :selected-tag="selectedTag",
             :hide-actions="hideActions",
+            :medium="isMediumHeight",
+            :small="isSmallHeight",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -95,7 +98,7 @@
 
 <script>
 import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
@@ -172,8 +175,8 @@ export default {
       default: false,
     },
     dense: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: ALARM_DENSE_TYPES.large,
     },
     parentAlarm: {
       type: Object,
@@ -276,6 +279,14 @@ export default {
 
     tableBody() {
       return this.$el.querySelector('.v-table__overflow > table > tbody');
+    },
+
+    isMediumHeight() {
+      return this.dense === ALARM_DENSE_TYPES.medium;
+    },
+
+    isSmallHeight() {
+      return this.dense === ALARM_DENSE_TYPES.small;
     },
   },
 
@@ -489,9 +500,14 @@ export default {
 
       tr {
         background: white;
+        transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
         .theme--dark & {
           background: #424242;
+        }
+
+        th {
+          transition: none;
         }
       }
     }
