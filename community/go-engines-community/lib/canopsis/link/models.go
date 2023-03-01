@@ -45,9 +45,10 @@ type ExternalDataParameters struct {
 }
 
 type Link struct {
-	Label    string `bson:"label" json:"label"`
-	IconName string `bson:"icon_name" json:"icon_name"`
-	Url      string `bson:"url" json:"url"`
+	RuleID   string `json:"rule_id,omitempty"`
+	Label    string `json:"label"`
+	IconName string `json:"icon_name"`
+	Url      string `json:"url"`
 }
 
 type LinksByCategory map[string][]Link

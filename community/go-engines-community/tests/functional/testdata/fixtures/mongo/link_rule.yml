@@ -154,6 +154,7 @@ link_rule:
 
   rule_to_alarm_link_get_1:
     <<: *link_rule_alarm
+    _id: test-link-rule-to-alarm-link-get-1
     links:
       - label: test-link-rule-to-alarm-link-get-1-link-1-label
         category: test-category-to-alarm-link-get-1
@@ -190,6 +191,7 @@ link_rule:
 
   rule_to_alarm_link_get_2:
     <<: *link_rule_entity
+    _id: test-link-rule-to-alarm-link-get-2
     links:
       - label: test-link-rule-to-alarm-link-get-2-link-1-label
         category: test-category-to-alarm-link-get-1
@@ -209,6 +211,7 @@ link_rule:
 
   rule_to_alarm_link_get_3:
     <<: *link_rule_alarm
+    _id: test-link-rule-to-alarm-link-get-3
     links:
     source_code: |
       function generate(alarms) {
@@ -241,6 +244,7 @@ link_rule:
 
   rule_to_alarm_link_get_4:
     <<: *link_rule_entity
+    _id: test-link-rule-to-alarm-link-get-4
     links:
     source_code: |
       function generate(entities) {
