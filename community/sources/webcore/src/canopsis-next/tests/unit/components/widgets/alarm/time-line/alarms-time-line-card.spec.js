@@ -1,23 +1,14 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITIES_STATES } from '@/constants';
 
-import TimeLineCard from '@/components/widgets/alarm/time-line/time-line-card.vue';
-
-const localVue = createVueInstance();
+import AlarmsTimeLineCard from '@/components/widgets/alarm/time-line/alarms-time-line-card.vue';
 
 const stubs = {
   'c-alarm-chip': true,
 };
 
-const snapshotFactory = (options = {}) => mount(TimeLineCard, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-describe('time-line-card', () => {
+describe('alarms-time-line-card', () => {
   const stateCounterStep = {
     _t: 'statecounter',
     t: 1626159262,
@@ -70,7 +61,11 @@ describe('time-line-card', () => {
     m: `<p>${pbehaviorEnterStep.m}</p>`,
   };
 
-  it('Renders `time-line-card` with state counter type', () => {
+  const snapshotFactory = generateRenderer(AlarmsTimeLineCard, {
+    stubs,
+  });
+
+  it('Renders `alarms-time-line-card` with state counter type', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: stateCounterStep,
@@ -80,7 +75,7 @@ describe('time-line-card', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `time-line-card` with html as message', () => {
+  it('Renders `alarms-time-line-card` with html as message', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: pbehaviorEnterStepWithHtml,
@@ -91,7 +86,7 @@ describe('time-line-card', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `time-line-card` without translate', () => {
+  it('Renders `alarms-time-line-card` without translate', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: pbehaviorEnterStep,
@@ -101,7 +96,7 @@ describe('time-line-card', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `time-line-card` with state but without translate', () => {
+  it('Renders `alarms-time-line-card` with state but without translate', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: stateIncStep,
@@ -111,7 +106,7 @@ describe('time-line-card', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `time-line-card` with state but without translate', () => {
+  it('Renders `alarms-time-line-card` with state but without translate', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: statusDecStep,
@@ -121,7 +116,7 @@ describe('time-line-card', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `time-line-card` with states', () => {
+  it('Renders `alarms-time-line-card` with states', () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: stateStepWithStates,
