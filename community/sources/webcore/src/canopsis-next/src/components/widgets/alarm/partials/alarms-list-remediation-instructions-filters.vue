@@ -13,10 +13,9 @@
     )
     v-tooltip(v-if="addable", bottom)
       template(#activator="{ on }")
-        v-btn(
+        v-btn.ma-0(
           v-on="on",
           icon,
-          small,
           @click="showCreateFilterModal"
         )
           v-icon(:color="buttonIconColor") assignment

@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ultraDense: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeItems() {
@@ -40,6 +44,7 @@ export default {
         'v-datatable v-table': true,
         'v-datatable--select-all': this.selectAll !== false,
         'v-datatable--dense': this.dense,
+        'v-datatable--ultra-dense': this.ultraDense,
         [this.tableClass]: !!this.tableClass,
         ...this.themeClasses,
       };
@@ -255,7 +260,11 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
+
 $denseCellHeight: 32px;
+$ultraDenseCellHeight: 24px;
+$denseTreeviewCellHeight: 32px;
+
 $denseColorIndicatorPadding: 1px 5px;
 
 table.v-datatable {
@@ -285,15 +294,8 @@ table.v-datatable {
   }
 
   &--dense.v-datatable {
-    .service-dependencies .v-treeview-node__root {
-      min-height: $denseCellHeight;
+    thead tr {
       height: $denseCellHeight;
-
-      .v-btn {
-        width: $denseCellHeight - 4;
-        height: $denseCellHeight - 4;
-        margin: 2px;
-      }
     }
 
     tbody, thead {
@@ -303,18 +305,62 @@ table.v-datatable {
 
       td:not(.v-datatable__expand-col) {
         height: $denseCellHeight;
+      }
+    }
+  }
+
+  &--ultra-dense.v-datatable {
+    thead tr {
+      height: $ultraDenseCellHeight;
+    }
+
+    tbody, thead {
+      td:not(.v-datatable__expand-col) {
+        height: $ultraDenseCellHeight;
+      }
+    }
+  }
+
+  &--dense.v-datatable,
+  &--ultra-dense.v-datatable {
+    tbody, thead {
+      td:not(.v-datatable__expand-col) {
+        td, th {
+          padding: 0 $densePadding;
+        }
 
         .v-btn {
           margin-top: 0;
           margin-bottom: 0;
         }
 
+        .color-indicator {
+          padding: $denseColorIndicatorPadding;
+        }
+
         .c-action-btn__button {
           margin: 0 !important;
         }
+      }
+    }
 
-        .color-indicator {
-          padding: $denseColorIndicatorPadding;
+    .service-dependencies {
+      thead tr, thead th, td:not(.v-datatable__expand-col) {
+        height: $denseTreeviewCellHeight;
+      }
+
+      .treeview-data-table--tree {
+        margin-top: $denseTreeviewCellHeight;
+      }
+
+      .v-treeview-node__root {
+        min-height: $denseTreeviewCellHeight;
+        height: $denseTreeviewCellHeight;
+
+        .v-btn {
+          width: $denseTreeviewCellHeight - 4;
+          height: $denseTreeviewCellHeight - 4;
+          margin: 2px;
         }
       }
     }
