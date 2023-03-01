@@ -8,6 +8,7 @@ import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
 import detailsModule from './details';
+import linksModule from './links';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -21,6 +22,7 @@ export default {
   namespaced: true,
   modules: {
     details: detailsModule,
+    links: linksModule,
   },
   state: {
     widgets: {},

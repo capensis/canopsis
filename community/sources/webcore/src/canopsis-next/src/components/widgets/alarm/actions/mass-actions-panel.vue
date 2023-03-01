@@ -1,9 +1,9 @@
 <template lang="pug">
-  shared-mass-actions-panel(:actions="filteredActions")
+  shared-mass-actions-panel(:actions="preparedActions")
 </template>
 
 <script>
-import { difference } from 'lodash';
+import { difference, intersectionBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -21,6 +21,7 @@ import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alar
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
+import { mapIds } from '@/helpers/entities';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -143,6 +144,34 @@ export default {
       return this.actions.filter(this.actionsAccessFilterHandler);
     },
 
+    linksActions() {
+      const preparedLinks = this.items.reduce((acc, alarm) => {
+        acc.push(...Object.entries(alarm.links).map(([key, links]) => ({ key, links })));
+
+        return acc;
+      }, []);
+
+      return intersectionBy(preparedLinks, 'key').reduce((acc, { key, links }) => {
+        const localLinks = links.map(link => ({
+          type: key,
+          icon: link.icon_name,
+          title: link.label,
+          method: () => this.openLink(link),
+        }));
+
+        acc.push(...localLinks);
+
+        return acc;
+      }, []);
+    },
+
+    preparedActions() {
+      return [
+        ...this.filteredActions,
+        ...this.linksActions,
+      ];
+    },
+
     alarmsWithAssignedDeclareTicketRules() {
       return this.items.filter(item => item.assigned_declare_ticket_rules?.length);
     },
@@ -247,6 +276,10 @@ export default {
       await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
 
       return this.afterSubmit();
+    },
+
+    async openLink() {
+      await this.fetchAlarmsLinksWithoutStore({ ids: mapIds(this.items) });
     },
   },
 };
