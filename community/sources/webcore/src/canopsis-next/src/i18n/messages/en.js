@@ -165,6 +165,7 @@ export default {
     expired: 'Expired date',
     accessed: 'Accessed at',
     lastEventDate: 'Last event date',
+    lastPbehaviorDate: 'Last pbehavior date',
     activated: 'Activated',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
