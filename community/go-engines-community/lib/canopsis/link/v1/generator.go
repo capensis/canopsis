@@ -120,7 +120,7 @@ func (g *generator) GenerateForEntities(ctx context.Context, ids []string) (map[
 	return res, nil
 }
 
-func (g *generator) GenerateForAllAlarms(_ context.Context, _ []string) ([]liblink.Link, error) {
+func (g *generator) GenerateCombinedForAlarmsByRule(_ context.Context, _ string, _ []string) ([]liblink.Link, error) {
 	return nil, nil
 }
 

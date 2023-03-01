@@ -46,7 +46,7 @@ type Store interface {
 	FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error)
 	GetDetails(ctx context.Context, r DetailsRequest) (*Details, error)
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
-	GetLinks(ctx context.Context, ids []string) ([]link.Link, error)
+	GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error)
 }
 
 type store struct {
@@ -537,10 +537,16 @@ func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 	return m, err
 }
 
-func (s *store) GetLinks(ctx context.Context, ids []string) ([]link.Link, error) {
-	links, err := s.linkGenerator.GenerateForAllAlarms(ctx, ids)
+func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error) {
+	links, err := s.linkGenerator.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, link.ErrNoRule) {
+			return nil, false, nil
+		}
+		if errors.Is(err, link.ErrNotMatchedAlarm) {
+			return nil, false, common.NewValidationError("ids", "Alarms aren't matched to rule.")
+		}
+		return nil, false, err
 	}
 
 	sort.Slice(links, func(i, j int) bool {
@@ -548,10 +554,10 @@ func (s *store) GetLinks(ctx context.Context, ids []string) ([]link.Link, error)
 	})
 
 	if links == nil {
-		return []link.Link{}, nil
+		return []link.Link{}, true, nil
 	}
 
-	return links, nil
+	return links, true, nil
 }
 
 func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, bson.M, error) {

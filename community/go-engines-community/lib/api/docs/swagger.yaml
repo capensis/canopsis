@@ -326,7 +326,7 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /alarm-links:
+  /alarm-links/{id}:
     get:
       tags:
         - alarms
@@ -337,7 +337,9 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-links-get
       parameters:
+        - $ref: '#/components/parameters/id'
         - name: ids[]
+          description: alarm ids
           in: query
           style: form
           explode: true
@@ -9881,7 +9883,6 @@ paths:
       tags:
         - linkrules
       summary: Delete link rule by id
-      description: Delete link rule by id
       description: |
         Delete link rule by id.
         
@@ -9994,7 +9995,7 @@ paths:
       tags:
         - userpreference
       summary: Update user preferences by widget id
-      description: | 
+      description: |
         Update user preferences by widget id.
         
         -  PERMISSIONS: `{view_id}:read`
@@ -10030,7 +10031,7 @@ paths:
       tags:
         - userpreference
       summary: Get user preferences by widget id
-      description: | 
+      description: |
         Get user preferences by widget id.
         
         -  PERMISSIONS: `{view_id}:read`
@@ -12336,6 +12337,13 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
 components:
   parameters:
+    id:
+      name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
     page:
       name: page
       in: query

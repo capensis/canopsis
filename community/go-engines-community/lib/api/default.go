@@ -447,9 +447,19 @@ func Default(
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
 	api.AddWorker("links", func(ctx context.Context) {
-		err := linkGenerator.Load(ctx)
-		if err != nil {
-			logger.Err(err).Msg("cannot load links")
+		ticker := time.NewTicker(flags.PeriodicalWaitTime)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := linkGenerator.Load(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot load links")
+				}
+			}
 		}
 	})
 
