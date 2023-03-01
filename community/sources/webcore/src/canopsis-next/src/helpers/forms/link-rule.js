@@ -1,10 +1,17 @@
-import { LINK_RULE_TYPES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import {
+  LINK_RULE_TYPES,
+  OLD_PATTERNS_FIELDS,
+  PATTERNS_FIELDS,
+  LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
+  LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE,
+} from '@/constants';
 
 import uid from '../uid';
 import { removeKeyFromEntities } from '../entities';
 
 import { filterPatternsToForm, formFilterToPatterns } from './filter';
 import { externalDataToForm, formToExternalData } from './shared/external-data';
+import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {'alarm' | 'entity'} LinkRuleType
@@ -67,7 +74,8 @@ export const linkRuleLinkToForm = (link = {}) => ({
 export const linkRuleToForm = (linkRule = {}) => ({
   name: linkRule.name ?? '',
   type: linkRule.type ?? LINK_RULE_TYPES.alarm,
-  source_code: linkRule.source_code ?? '',
+  enabled: enabledToForm(linkRule.enabled),
+  source_code: linkRule.source_code ?? LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
   links: (linkRule.links ?? []).map(linkRuleLinkToForm),
   external_data: externalDataToForm(linkRule.external_data),
   patterns: filterPatternsToForm(
@@ -78,23 +86,36 @@ export const linkRuleToForm = (linkRule = {}) => ({
 });
 
 /**
+ * Check if source code is default
+ *
+ * @param {string} [code = '']
+ * @returns {boolean}
+ */
+export const isDefaultSourceCode = (code = '') => (
+  !code || [LINK_RULE_DEFAULT_ALARM_SOURCE_CODE, LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE].includes(code)
+);
+
+/**
  * Convert form to link rule
  *
  * @param {FilterPatternsForm} patterns
  * @param {LinkRuleLinkForm[]} links
+ * @param {string} source_code
  * @param {ExternalDataForm} externalData
  * @param {LinkRuleForm} form
  * @returns {LinkRule}
  */
-export const formToLinkRule = ({ patterns, links, external_data: externalData, ...form }) => {
+export const formToLinkRule = ({ patterns, links, source_code: sourceCode, external_data: externalData, ...form }) => {
   const linkRule = {
     ...form,
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
     external_data: formToExternalData(externalData),
   };
 
-  if (!linkRule.source_code) {
+  if (isDefaultSourceCode(sourceCode)) {
     linkRule.links = removeKeyFromEntities(links);
+  } else {
+    linkRule.source_code = sourceCode;
   }
 
   return linkRule;

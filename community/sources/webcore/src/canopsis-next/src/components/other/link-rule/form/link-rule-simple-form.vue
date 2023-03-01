@@ -1,8 +1,10 @@
 <template lang="pug">
-  link-rule-links-form(v-field="links")
+  link-rule-links-form(v-field="links", :type="type")
 </template>
 
 <script>
+import { LINK_RULE_TYPES } from '@/constants';
+
 import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
 
 import LinkRuleLinksForm from './partials/link-rule-links-form.vue';
@@ -17,8 +19,12 @@ export default {
   },
   props: {
     links: {
-      type: Object,
-      default: () => ({}),
+      type: Array,
+      default: () => [],
+    },
+    type: {
+      type: String,
+      default: LINK_RULE_TYPES.alarm,
     },
   },
 };

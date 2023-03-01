@@ -1,12 +1,13 @@
 <template lang="pug">
   v-layout(column)
     v-flex.mb-3(xs12)
-      v-alert(:value="!links.length", type="info") {{ $t('linkRule.linksEmpty') }}
+      v-alert(:value="!links.length && !errors.has('links')", type="info") {{ $t('linkRule.linksEmpty') }}
     link-rule-link-form.mb-3(
       v-for="(link, index) in links",
       v-field="links[index]",
       :key="link.key",
       :name="link.key",
+      :type="type",
       @remove="removeItemFromArray(index)"
     )
     v-flex
@@ -18,6 +19,8 @@
 </template>
 
 <script>
+import { LINK_RULE_TYPES } from '@/constants';
+
 import { linkRuleLinkToForm } from '@/helpers/forms/link-rule';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -36,6 +39,10 @@ export default {
     links: {
       type: Array,
       default: () => [],
+    },
+    type: {
+      type: String,
+      default: LINK_RULE_TYPES.alarm,
     },
   },
   methods: {

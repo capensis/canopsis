@@ -13,6 +13,7 @@
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
+          :disabled="isDisabled",
           type="submit"
         ) {{ $t('common.submit') }}
 </template>
