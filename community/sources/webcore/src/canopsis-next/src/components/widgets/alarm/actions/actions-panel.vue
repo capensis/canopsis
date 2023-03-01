@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
+  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown", :small="small")
 </template>
 
 <script>
@@ -54,6 +54,10 @@ export default {
       default: null,
     },
     isResolvedAlarm: {
+      type: Boolean,
+      default: false,
+    },
+    small: {
       type: Boolean,
       default: false,
     },

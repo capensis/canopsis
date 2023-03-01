@@ -2,7 +2,7 @@
 
 exports[`filter-selector Renders \`filter-selector\` with array value 1`] = `
 <div
-  class="v-input filter-selector v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input filter-selector mt-0 v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -495,7 +495,7 @@ exports[`filter-selector Renders \`filter-selector\` with array value 2`] = `
 
 exports[`filter-selector Renders \`filter-selector\` with badges 1`] = `
 <div
-  class="v-input filter-selector v-text-field v-select theme--light"
+  class="v-input filter-selector mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -790,7 +790,7 @@ exports[`filter-selector Renders \`filter-selector\` with badges 2`] = `
 
 exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
 <div
-  class="v-input filter-selector v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input filter-selector mt-0 v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
   long="true"
   role="combobox"
 >
@@ -1118,7 +1118,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2`] = `
 
 exports[`filter-selector Renders \`filter-selector\` with custom props 3`] = `
 <div
-  class="v-input filter-selector v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input filter-selector mt-0 v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
   role="combobox"
 >
   <div
@@ -1422,7 +1422,7 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 4`] = `
 
 exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
 <div
-  class="v-input filter-selector v-text-field v-select theme--light"
+  class="v-input filter-selector mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div

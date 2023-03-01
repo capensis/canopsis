@@ -16,7 +16,6 @@
         v-btn(
           v-on="on",
           icon,
-          small,
           @click="showCreateFilterModal"
         )
           v-icon(:color="buttonIconColor") assignment
