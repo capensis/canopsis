@@ -165,6 +165,7 @@ export default {
     expired: 'Date d\'expiration',
     accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
+    lastPbehaviorDate: 'Date du dernier comportement',
     activated: 'Activé',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
