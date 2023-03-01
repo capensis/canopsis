@@ -242,3 +242,9 @@ export const ALARM_ACK_INITIATORS = {
   system: 'system',
   external: 'external',
 };
+
+export const ALARM_DENSE_TYPES = {
+  large: 0,
+  medium: 1,
+  small: 2,
+};

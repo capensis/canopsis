@@ -6,6 +6,7 @@ import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
+import { ALARM_DENSE_TYPES } from '@/constants';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 
@@ -479,7 +480,7 @@ describe('alarms-list-table', () => {
         loading: true,
         selectable: true,
         hideChildren: true,
-        dense: true,
+        dense: ALARM_DENSE_TYPES.medium,
         expandable: true,
         stickyHeader: true,
         densable: true,
@@ -525,7 +526,7 @@ describe('alarms-list-table', () => {
           parameters: {
             ...defaultWidget.parameters,
 
-            dense: true,
+            dense: ALARM_DENSE_TYPES.medium,
           },
         },
         alarms: [],

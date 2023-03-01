@@ -2,7 +2,7 @@
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom props and open select 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
+  class="v-input mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -332,7 +332,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and open select 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
+  class="v-input mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -615,7 +615,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and pending 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-loading theme--light"
+  class="v-input mt-0 v-text-field v-select v-input--is-loading theme--light"
   role="combobox"
 >
   <div
@@ -721,7 +721,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props correctly 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
+  class="v-input mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -800,7 +800,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with validator error 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--has-state theme--light error--text"
+  class="v-input mt-0 v-text-field v-select v-input--has-state theme--light error--text"
   role="combobox"
 >
   <div

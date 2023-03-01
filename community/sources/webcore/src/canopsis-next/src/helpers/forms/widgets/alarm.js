@@ -10,6 +10,7 @@ import {
   GRID_SIZES,
   SORT_ORDERS,
   TIME_UNITS,
+  ALARM_DENSE_TYPES,
 } from '@/constants';
 import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
@@ -188,7 +189,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
-  dense: !!parameters.dense,
+  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {
