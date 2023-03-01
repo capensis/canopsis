@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >
@@ -23,7 +25,9 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the e
 exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >
@@ -119,7 +123,9 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >
@@ -131,7 +137,9 @@ exports[`actions-panel Renders \`actions-panel\` with default props correctly on
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >
@@ -143,7 +151,9 @@ exports[`actions-panel Renders \`actions-panel\` with default props correctly on
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >
@@ -239,7 +249,9 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >
@@ -335,7 +347,9 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 1`] = `
-<div>
+<div
+  class="actions-panel"
+>
   <div
     class="layout row align-center"
   >

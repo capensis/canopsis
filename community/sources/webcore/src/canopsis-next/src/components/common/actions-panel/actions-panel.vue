@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.actions-panel(:class="{ 'actions-panel--small': small }")
     v-layout(row, align-center)
       c-action-btn(
         v-for="(action, index) in preparedActions.inline",
@@ -50,6 +50,10 @@ export default {
       type: Number,
       default: 3,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     preparedActions() {
@@ -68,3 +72,18 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.actions-panel {
+  &--small {
+    .v-btn--icon {
+      width: 24px;
+      height: 24px;
+
+      .v-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+</style>

@@ -69,6 +69,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-density-stub
       name="dense"
+      value="0"
     />
     <hr
       class="v-divider theme--light"
@@ -276,6 +277,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     />
     <field-density-stub
       name="dense"
+      value="0"
     />
     <hr
       class="v-divider theme--light"
@@ -470,6 +472,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-density-stub
       name="dense"
+      value="0"
     />
     <hr
       class="v-divider theme--light"
