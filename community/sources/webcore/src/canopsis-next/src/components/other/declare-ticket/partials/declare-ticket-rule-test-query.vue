@@ -39,7 +39,8 @@ import {
   formToDeclareTicketRule,
   isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded, isDeclareTicketExecutionWaiting,
+  isDeclareTicketExecutionSucceeded,
+  isDeclareTicketExecutionWaiting,
 } from '@/helpers/forms/declare-ticket-rule';
 import { formFilterToPatterns } from '@/helpers/forms/filter';
 
