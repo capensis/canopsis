@@ -347,7 +347,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityOkEvents]: 'alarm.fields.entityOkEvents',
   [ALARM_FIELDS.entityInfos]: 'alarm.fields.entityInfos',
   [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
-  [ALARM_FIELDS.entityLastPbehaviorDate]: 'common.lastPbehaviorDate',
+  [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
 
   /**
    * OBJECTS
