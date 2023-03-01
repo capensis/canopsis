@@ -10,7 +10,7 @@
         @expand="expandResponse"
       )
     v-expand-transition
-      v-card(v-show="expanded", light, flat)
+      v-card(v-show="expanded", light)
         v-card-text
           c-request-text-information(v-if="response", :value="response")
           span(v-else) {{ $t('declareTicket.noResponse') }}
