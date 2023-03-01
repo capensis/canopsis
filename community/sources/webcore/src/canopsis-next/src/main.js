@@ -218,6 +218,7 @@ import MediationIcon from '@/components/icons/mediation.vue';
 import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
 import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
+import RestartAlt from '@/components/icons/restart_alt.vue';
 
 /**
  * Groups
@@ -281,6 +282,9 @@ Vue.use(Vuetify, {
     },
     manual_instruction: {
       component: ManualInstruction,
+    },
+    restart_alt: {
+      component: RestartAlt,
     },
   },
 });

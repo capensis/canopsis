@@ -25,26 +25,35 @@
               :name="iconFieldName",
               required
             )
-        v-text-field(
+        c-payload-text-field(
           v-field="form.url",
-          v-validate="'required'",
           :label="$t('common.url')",
-          :error-messages="errors.collect(urlFieldName)",
-          :name="urlFieldName"
+          :variables="urlVariables",
+          :name="form.key",
+          required
         )
 </template>
 
 <script>
+import { ALARM_PAYLOADS_VARIABLES, ENTITY_PAYLOAD_VARIABLES, LINK_RULE_TYPES } from '@/constants';
+
+import { payloadVariablesMixin } from '@/mixins/payload/variables';
+
 export default {
   inject: ['$validator'],
+  mixins: [payloadVariablesMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
   props: {
     form: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
+    },
+    type: {
+      type: String,
+      default: LINK_RULE_TYPES.alarm,
     },
     name: {
       type: String,
@@ -60,8 +69,48 @@ export default {
       return `${this.name}.icon`;
     },
 
-    urlFieldName() {
-      return `${this.name}.url`;
+    alarmUrlVariables() {
+      return [
+        ...this.alarmPayloadVariables,
+
+        {
+          value: ALARM_PAYLOADS_VARIABLES.alarms,
+          enumerable: true,
+          variables: [{
+            value: ALARM_PAYLOADS_VARIABLES.infosValue,
+            text: this.$t('common.infos'),
+          }],
+        },
+
+        ...this.externalDataVariables,
+      ];
+    },
+
+    entityUrlVariables() {
+      return [
+        {
+          value: ENTITY_PAYLOAD_VARIABLES.entity,
+          enumerable: true,
+          variables: [
+            {
+              value: ENTITY_PAYLOAD_VARIABLES.name,
+              text: this.$t('common.name'),
+            },
+            {
+              value: ENTITY_PAYLOAD_VARIABLES.component,
+              text: this.$t('common.component'),
+            },
+          ],
+        },
+
+        ...this.entityPayloadVariables,
+      ];
+    },
+
+    urlVariables() {
+      return this.type === LINK_RULE_TYPES.alarm
+        ? this.alarmUrlVariables
+        : this.entityUrlVariables;
     },
   },
   methods: {

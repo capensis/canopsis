@@ -2,6 +2,7 @@
   code-editor(
     v-field="value",
     :options="editorOptions",
+    :resettable="resettable",
     language="javascript"
   )
 </template>
@@ -20,6 +21,14 @@ export default {
       type: String,
       default: '',
     },
+    theme: {
+      type: String,
+      default: 'iPlastic',
+    },
+    resettable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -29,6 +38,7 @@ export default {
   computed: {
     editorOptions() {
       return {
+        theme: this.theme,
         automaticLayout: true,
         minimap: {
           enabled: false,

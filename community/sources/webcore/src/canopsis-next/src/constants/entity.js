@@ -490,5 +490,7 @@ export const ENTITY_UNSORTABLE_FIELDS = [
 
 export const ENTITY_PAYLOAD_VARIABLES = {
   entity: '.Entity',
+  name: '.Name',
+  component: '.Component',
   infosValue: '.Infos.%infos_name%.Value',
 };
