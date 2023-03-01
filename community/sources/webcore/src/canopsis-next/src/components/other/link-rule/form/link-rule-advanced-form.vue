@@ -1,5 +1,7 @@
 <template lang="pug">
-  java-script-code-editor.fill-min-height(v-field="value")
+  v-layout(column)
+    p.font-italic.grey--text.my-3 {{ $t('linkRule.sourceCodeAlert') }}
+    java-script-code-editor.java-script-code-editor(v-field="value", resettable)
 </template>
 
 <script>
@@ -22,3 +24,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.java-script-code-editor {
+  min-height: 400px;
+}
+</style>

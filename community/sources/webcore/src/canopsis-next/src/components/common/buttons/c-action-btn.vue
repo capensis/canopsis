@@ -4,6 +4,7 @@
     :right="right",
     :bottom="bottom",
     :left="left",
+    :disabled="disabled",
     :custom-activator="customTooltipActivator"
   )
     template(#activator="{ on: tooltipOn }")
@@ -22,24 +23,27 @@
                 slot(name="badgeIcon", :on="badgeTooltipOn")
                   v-icon(v-on="badgeTooltipOn", color="white") {{ badgeIcon }}
               span {{ badgeTooltip }}
-          span(v-on="tooltipOn")
-            v-btn.ma-0(
-              :disabled="disabled",
-              :loading="loading",
-              :small="small",
-              icon,
-              @click.stop.prevent="$listeners.click"
-            )
-              v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-        span.mx-1(v-else, v-on="tooltipOn")
-          v-btn.ma-0(
+          v-btn.ma-0.c-action-btn__button(
+            v-on="tooltipOn",
             :disabled="disabled",
             :loading="loading",
             :small="small",
+            :color="btnColor",
             icon,
             @click.stop.prevent="$listeners.click"
           )
             v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
+        v-btn.mx-1.c-action-btn__button(
+          v-else,
+          v-on="tooltipOn",
+          :disabled="disabled",
+          :loading="loading",
+          :small="small",
+          :color="btnColor",
+          icon,
+          @click.stop.prevent="$listeners.click"
+        )
+          v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
     span {{ preparedProps.tooltip }}
 </template>
 
@@ -92,6 +96,10 @@ export default {
     },
     small: {
       type: Boolean,
+      required: false,
+    },
+    btnColor: {
+      type: String,
       required: false,
     },
     badgeValue: {

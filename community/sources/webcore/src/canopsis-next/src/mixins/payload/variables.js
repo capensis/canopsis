@@ -117,6 +117,17 @@ export const payloadVariablesMixin = {
       ];
     },
 
+    externalDataVariables() {
+      return [{
+        value: ALARM_PAYLOADS_VARIABLES.alarms,
+        enumerable: true,
+        variables: [{
+          value: ALARM_PAYLOADS_VARIABLES.externalData,
+          text: this.$t('externalData.title'),
+        }],
+      }];
+    },
+
     payloadVariables() {
       const variables = [...this.alarmPayloadVariables, ...this.entityPayloadVariables];
 

@@ -1,13 +1,30 @@
 <template lang="pug">
   v-layout(column)
-    v-text-field(
+    v-layout.mt-3(row, align-end)
+      v-flex(xs6)
+        div.subheading {{ $t('linkRule.type') }}
+        v-radio-group(
+          v-field="form.type",
+          row,
+          mandatory,
+          @change="updateType"
+        )
+          v-radio(
+            v-for="type in types",
+            :value="type.value",
+            :label="type.label",
+            :key="type.value",
+            color="primary"
+          )
+      v-flex(xs6)
+        c-enabled-field(v-field="form.enabled")
+    v-text-field.mb-3(
       v-field="form.name",
       v-validate="'required'",
       :label="$t('common.name')",
       :error-messages="errors.collect('name')",
       name="name"
     )
-    c-enabled-field(v-field="form.enabled")
     c-patterns-field(
       v-field="form.patterns",
       :alarm-attributes="alarmAttributes",
@@ -29,9 +46,11 @@ import {
   ENTITY_PATTERN_FIELDS,
   QUICK_RANGES,
   EXTERNAL_DATA_TYPES,
+  LINK_RULE_TYPES,
+  LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES,
 } from '@/constants';
 
-import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
+import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
@@ -43,7 +62,7 @@ export default {
     ExternalDataForm,
     LinkRuleLinksForm,
   },
-  mixins: [formValidationHeaderMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -55,6 +74,13 @@ export default {
     },
   },
   computed: {
+    types() {
+      return Object.values(LINK_RULE_TYPES).map(type => ({
+        value: type,
+        label: this.$t(`linkRule.types.${type}`),
+      }));
+    },
+
     externalDataTypes() {
       return [{
         text: this.$t(`externalData.types.${EXTERNAL_DATA_TYPES.mongo}`),
@@ -98,6 +124,17 @@ export default {
           options: { disabled: true },
         },
       ];
+    },
+  },
+  methods: {
+    updateType(type) {
+      this.updateModel({
+        ...this.form,
+
+        type,
+        source_code: LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES[type] ?? '',
+      });
+      this.updateField('source_code', LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES[type]);
     },
   },
 };
