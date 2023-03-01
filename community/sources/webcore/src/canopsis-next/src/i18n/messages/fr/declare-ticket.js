@@ -1,7 +1,7 @@
 export default {
   ticketUrlAndId: 'URL et identifiant du ticket',
-  ticketUrlAndIdHelpText: 'L\'URL du ticket reçue de la réponse de l\'API peut être ajoutée aux informations dynamiques de l\'alarme.'
-    + 'Les données de la réponse de l\'API ne peuvent être extraites que d\'une étape d\'une règle',
+  ticketUrlAndIdHelpText: 'L\'URL du ticket reçue de la réponse de l\'API peut être ajoutée aux informations dynamiques de l\'alarme.',
+  dataFromOneStepAttention: 'Les données de la réponse de l\'API ne peuvent être extraites que d\'une étape d\'une règle.',
   ticketID: 'ID de ticket',
   ticketURL: 'URL du ticket',
   alarmFieldName: 'Nom du champ d\'alarme',
@@ -33,6 +33,7 @@ export default {
   ruleName: 'Nom de la règle',
   checkSyntax: 'Vérifier la syntaxe',
   ticketResources: 'Déclarer un ticket pour les ressources',
+  noResponse: 'Pas de réponse',
   errors: {
     webhookRequired: 'Les webhooks doivent être ajoutés',
     webhookTicketDeclarationRequired: 'Une déclaration de ticket webhook doit être définie',
