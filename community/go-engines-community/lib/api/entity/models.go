@@ -74,8 +74,10 @@ type Entity struct {
 	ImpactLevel    int64          `bson:"impact_level" json:"impact_level"`
 	Category       *Category      `bson:"category" json:"category"`
 	IdleSince      *types.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
-	PbehaviorInfo  *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastEventDate  *types.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
+
+	PbehaviorInfo     *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastPbehaviorDate *types.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty" swaggertype:"integer"`
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
