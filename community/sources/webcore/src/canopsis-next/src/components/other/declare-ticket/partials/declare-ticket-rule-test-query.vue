@@ -23,17 +23,11 @@
             :success="isExecutionSucceeded",
             :fail-reason="executionStatus.fail_reason"
           )
-          c-action-btn(v-if="webhooksResponses.length", type="delete", @click="clearResponses")
+          c-action-btn(v-if="isExecutionSucceeded || isExecutionFailed", type="delete", @click="clearWebhookStatus")
 
-        transition-group(name="fade-transition")
-          v-card.grey.lighten-4.mb-2(
-            v-for="webhookResponse in webhooksResponses",
-            :key="webhookResponse.id",
-            light,
-            flat
-          )
-            v-card-text
-              c-request-text-information(:value="webhookResponse.value")
+        v-card(v-if="isSomeOneWebhookStarted")
+          v-card-text
+            declare-ticket-rule-execution-webhooks-timeline(:webhooks="executionStatus.webhooks")
 </template>
 
 <script>
@@ -45,7 +39,7 @@ import {
   formToDeclareTicketRule,
   isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionRunning,
-  isDeclareTicketExecutionSucceeded,
+  isDeclareTicketExecutionSucceeded, isDeclareTicketExecutionWaiting,
 } from '@/helpers/forms/declare-ticket-rule';
 import { formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -53,10 +47,11 @@ import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
+import DeclareTicketRuleExecutionWebhooksTimeline from './declare-ticket-rule-execution-webhooks-timeline.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DeclareTicketRuleExecutionStatus },
+  components: { DeclareTicketRuleExecutionWebhooksTimeline, DeclareTicketRuleExecutionStatus },
   mixins: [entitiesDeclareTicketRuleMixin, validationErrorsMixinCreator()],
   props: {
     form: {
@@ -73,7 +68,6 @@ export default {
       alarm: '',
       pending: false,
       executionStatus: undefined,
-      webhooksResponsesById: {},
     };
   },
   computed: {
@@ -89,25 +83,20 @@ export default {
       return isDeclareTicketExecutionSucceeded(this.executionStatus);
     },
 
+    isExecutionFailed() {
+      return isDeclareTicketExecutionFailed(this.executionStatus);
+    },
+
+    isSomeOneWebhookStarted() {
+      return this.executionStatus?.webhooks.some(webhook => !isDeclareTicketExecutionWaiting(webhook));
+    },
+
     alarmsParams() {
       return Object.entries(formFilterToPatterns(this.form.patterns)).reduce((acc, [key, value]) => {
         acc[key] = JSON.stringify(value);
 
         return acc;
       }, {});
-    },
-
-    webhooksResponses() {
-      return this.executionStatus.webhooks.reduce((acc, { _id: id }) => {
-        if (this.webhooksResponsesById[id]) {
-          acc.push({
-            id,
-            value: this.webhooksResponsesById[id],
-          });
-        }
-
-        return acc;
-      }, []);
     },
   },
   watch: {
@@ -132,26 +121,6 @@ export default {
 
     async setExecutionStatus(executionStatus) {
       this.executionStatus = executionStatus;
-
-      const newFinishedWebhook = this.executionStatus.webhooks.filter(
-        webhookExecution => !this.webhooksResponsesById[webhookExecution._id]
-          && (isDeclareTicketExecutionSucceeded(webhookExecution) || isDeclareTicketExecutionFailed(webhookExecution)),
-      );
-
-      const responses = await Promise.all(
-        newFinishedWebhook.map(({ _id: id }) => this.fetchTestDeclareTicketExecutionWebhooksResponse({ id })),
-      );
-
-      const responsesById = newFinishedWebhook.reduce((acc, { _id: id }, index) => {
-        acc[id] = responses[index];
-
-        return acc;
-      }, {});
-
-      this.webhooksResponsesById = {
-        ...this.webhooksResponsesById,
-        ...responsesById,
-      };
     },
 
     /**
@@ -201,7 +170,7 @@ export default {
 
       if (isFormValid) {
         this.pending = true;
-        this.clearResponses();
+        this.clearWebhookStatus();
 
         const declareTicket = formToDeclareTicketRule(this.form);
 
@@ -228,8 +197,8 @@ export default {
       }
     },
 
-    clearResponses() {
-      this.webhooksResponsesById = {};
+    clearWebhookStatus() {
+      this.executionStatus = null;
     },
   },
 };

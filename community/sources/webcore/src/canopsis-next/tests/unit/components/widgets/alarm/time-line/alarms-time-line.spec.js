@@ -1,14 +1,12 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
-import TimeLine from '@/components/widgets/alarm/time-line/time-line.vue';
-
-const localVue = createVueInstance();
+import AlarmsTimeLine from '@/components/widgets/alarm/time-line/alarms-time-line.vue';
 
 const stubs = {
-  'time-line-flag': true,
-  'time-line-card': true,
+  'alarms-time-line-flag': true,
+  'alarms-time-line-card': true,
   'c-pagination': {
     template: `
       <input class="c-pagination" @input="$listeners.input(+$event.target.value)" />
@@ -17,27 +15,20 @@ const stubs = {
 };
 
 const snapshotStubs = {
-  'time-line-flag': true,
-  'time-line-card': true,
+  'alarms-time-line-flag': true,
+  'alarms-time-line-card': true,
   'c-pagination': true,
 };
 
-const factory = (options = {}) => shallowMount(TimeLine, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(TimeLine, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
-describe('time-line', () => {
+describe('alarms-time-line', () => {
   const { steps } = fakeAlarmDetails();
+
+  const factory = generateShallowRenderer(AlarmsTimeLine, {
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(AlarmsTimeLine, {
+    stubs: snapshotStubs,
+  });
 
   it('Check pagination', () => {
     const page = 2;
@@ -57,7 +48,7 @@ describe('time-line', () => {
     expect(updatePageEvents[0]).toEqual([page]);
   });
 
-  it('Renders `time-line` with required props', () => {
+  it('Renders `alarms-time-line` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         steps,
@@ -67,7 +58,7 @@ describe('time-line', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `time-line` with isHtmlEnabled', () => {
+  it('Renders `alarms-time-line` with isHtmlEnabled', () => {
     const wrapper = snapshotFactory({
       propsData: {
         steps,

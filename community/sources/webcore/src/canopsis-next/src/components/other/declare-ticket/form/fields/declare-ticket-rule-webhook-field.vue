@@ -21,7 +21,8 @@
       :name="`${name}.declare_ticket`",
       :is-declare-ticket-exist="isDeclareTicketExist",
       hide-empty-response,
-      ticket-id-required
+      ticket-id-required,
+      only-one-ticket-id
     )
     c-workflow-field(
       v-field="value.stop_on_fail",

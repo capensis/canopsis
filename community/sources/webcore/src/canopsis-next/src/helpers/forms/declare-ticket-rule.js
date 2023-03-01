@@ -60,6 +60,14 @@ import uid from '@/helpers/uid';
  */
 
 /**
+ * Check declare ticket execution status is waiting
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isDeclareTicketExecutionWaiting = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.waiting;
+
+/**
  * Check declare ticket execution status is running
  *
  * @param {number} status

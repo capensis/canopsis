@@ -2,7 +2,7 @@
   v-layout(column)
     c-information-block(
       :title="$t('declareTicket.ticketUrlAndId')",
-      :help-text="$t('declareTicket.ticketUrlAndIdHelpText')",
+      :help-text="ticketUrlHelpText",
       help-icon="help",
       help-icon-color="grey darken-1"
     )
@@ -80,6 +80,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    onlyOneTicketId: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ticketIdFieldName() {
@@ -88,6 +92,13 @@ export default {
 
     ticketUrlFieldName() {
       return `${this.name}.ticket_url`;
+    },
+
+    ticketUrlHelpText() {
+      return [
+        this.$t('declareTicket.ticketUrlAndIdHelpText'),
+        this.onlyOneTicketId && this.$t('declareTicket.dataFromOneStepAttention'),
+      ].filter(Boolean).join('\n');
     },
   },
   watch: {
