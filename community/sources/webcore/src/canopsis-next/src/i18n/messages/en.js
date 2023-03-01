@@ -2795,6 +2795,7 @@ export default {
       entityOkEvents: 'Entity OK events',
       entityInfos: 'Entity infos',
       entityComponentInfos: 'Entity component infos',
+      entityLastPbehaviorDate: 'Entity last pbehavior date',
     },
   },
 
