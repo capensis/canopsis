@@ -381,7 +381,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   stateValue: '.Value.State.Value',
   statusValue: '.Value.Status.Value',
   ticketAuthor: '.Value.Ticket.Author',
-  ticketValue: '.Value.Ticket.Value',
+  ticketValue: '.Value.Ticket.Ticket',
   ticketMessage: '.Value.Ticket.Message',
   ackAuthor: '.Value.ACK.Author',
   ackMessage: '.Value.ACK.Message',
