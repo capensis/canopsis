@@ -247,6 +247,11 @@ default_rights:
     _id: api_kpi_filter
     crecord_name: <Current()._id>
     desc: KPI filters
+  permission_api_ocws_noc:
+    <<: *permission_crud
+    _id: api_ocws_noc
+    crecord_name: <Current()._id>
+    desc: OCWS-NOC
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
@@ -1257,6 +1262,9 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_kpi_filter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_ocws_noc":
         checksum: 15
         crecord_type: right
       "@permission_api_snmprule":
