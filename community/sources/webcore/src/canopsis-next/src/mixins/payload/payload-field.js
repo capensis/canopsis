@@ -49,7 +49,7 @@ export const payloadFieldMixin = {
             text,
             value: (this.variableGroup || this.newVariableGroup) && this.operatorGroup
               ? `{{ ${value} }}`
-              : `{{ range ${variable.value} }} {{ ${value} }} {{ end }}`,
+              : `{{ range ${variable.value} }}{{ ${value} }}{{ end }}`,
           })));
         } else {
           acc.push({

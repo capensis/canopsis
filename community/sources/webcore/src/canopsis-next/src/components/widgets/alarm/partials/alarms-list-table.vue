@@ -16,6 +16,7 @@
                   v-if="!hideActions",
                   :items="unresolvedSelected",
                   :widget="widget",
+                  :alarms="alarms",
                   :refresh-alarms-list="refreshAlarmsList",
                   @clear:items="clearSelected"
                 )
