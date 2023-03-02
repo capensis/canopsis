@@ -62,6 +62,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -794,7 +795,12 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetAPI := widget.NewApi(widget.NewStore(dbClient), enforcer, common.NewPatternFieldsTransformer(dbClient), actionLogger)
+		widgetAPI := widget.NewApi(
+			widget.NewStore(dbClient),
+			enforcer,
+			widget.NewRequestTransformer(common.NewPatternFieldsTransformer(dbClient), dbClient),
+			actionLogger,
+		)
 		widgetRouter := protected.Group("/widgets")
 		{
 			widgetRouter.POST(
@@ -858,6 +864,38 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
 			widgetFilterAPI.UpdatePositions,
 		)
+
+		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(dbClient), actionLogger)
+		widgetTemplateRouter := protected.Group("/widget-templates")
+		{
+			widgetTemplateRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionRead, enforcer),
+				widgetTemplateAPI.List,
+			)
+			widgetTemplateRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				widgetTemplateAPI.Create,
+			)
+			widgetTemplateRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionRead, enforcer),
+				widgetTemplateAPI.Get,
+			)
+			widgetTemplateRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetTemplateAPI.Update,
+			)
+			widgetTemplateRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionDelete, enforcer),
+				widgetTemplateAPI.Delete,
+			)
+		}
 
 		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(dbClient), actionLogger)
 		viewGroupRouter := protected.Group("/view-groups")

@@ -15,6 +15,11 @@ const snapshotFactory = (options = {}) => mount(KpiAlarmsChart, {
   localVue,
   stubs,
   attachTo: document.body,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });

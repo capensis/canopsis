@@ -17,6 +17,19 @@ export const WIDGET_TYPES = {
   ...featuresService.get('constants.WIDGET_TYPES'),
 };
 
+export const COMPONENTS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
+  [WIDGET_TYPES.context]: 'entities-list-widget',
+  [WIDGET_TYPES.serviceWeather]: 'service-weather-widget',
+  [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+  [WIDGET_TYPES.text]: 'text-widget',
+  [WIDGET_TYPES.counter]: 'counter-widget',
+  [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
+  [WIDGET_TYPES.map]: 'map-widget',
+
+  ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
+};
+
 export const WIDGET_ICONS = {
   [WIDGET_TYPES.alarmList]: 'view_list',
   [WIDGET_TYPES.context]: 'view_list',
@@ -145,3 +158,19 @@ export const EXPORT_STATUSES = {
   completed: 1,
   failed: 2,
 };
+
+export const WIDGET_TEMPLATES_TYPES = {
+  alarmColumns: 'alarm_columns',
+  entityColumns: 'entity_columns',
+  alarmMoreInfos: 'alarm_more_infos',
+  weatherItem: 'weather_item',
+  weatherModal: 'weather_modal',
+  weatherEntity: 'weather_entity',
+};
+
+export const COLUMNS_WIDGET_TEMPLATES_TYPES = [
+  WIDGET_TEMPLATES_TYPES.alarmColumns,
+  WIDGET_TEMPLATES_TYPES.entityColumns,
+];
+
+export const CUSTOM_WIDGET_TEMPLATE = Symbol('custom').toString();

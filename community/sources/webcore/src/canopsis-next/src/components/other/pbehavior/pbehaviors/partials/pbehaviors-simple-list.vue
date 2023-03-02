@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.white(column)
+  v-layout(column)
     v-layout(row, justify-end)
       c-action-fab-btn.ma-0(
         v-if="addable",
@@ -18,7 +18,7 @@
         left,
         @click="showPbehaviorsCalendarModal"
       )
-    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending", :dense="dense", light)
+    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending", :dense="dense")
       template(#items="{ item }")
         td {{ item.name }}
         td {{ item.author.name }}
