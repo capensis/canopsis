@@ -129,6 +129,10 @@ export const TextEditor = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/text-editor.vue'),
   loading: LoaderOverlay,
 });
+export const TextEditorWithTemplate = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/text-editor-with-template.vue'),
+  loading: LoaderOverlay,
+});
 export const TextFieldEditor = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/text-field-editor.vue'),
   loading: LoaderOverlay,
@@ -151,6 +155,14 @@ export const Info = () => ({
 });
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
+  loading: LoaderOverlay,
+});
+export const SelectWidgetTemplateType = () => ({
+  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/select-widget-template-type.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateWidgetTemplate = () => ({
+  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/create-widget-template.vue'),
   loading: LoaderOverlay,
 });
 export const CreateService = () => ({

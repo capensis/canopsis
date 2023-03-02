@@ -114,8 +114,16 @@ export default {
         );
       }
 
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
       if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
-        actions.push(...featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []));
+        const featuresActions = featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []);
+
+        if (featuresActions?.length) {
+          actions.push(...featuresActions);
+        }
       }
 
       return actions;

@@ -2,7 +2,6 @@ package pbehaviortype
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -141,7 +140,7 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 		return false, err
 	}
 	if pt.IconName == "" && (!isDefault || pt.Type != pbehavior.TypeActive) {
-		return false, common.NewValidationError("icon_name", errors.New("IconName is missing."))
+		return false, common.NewValidationError("icon_name", "IconName is missing.")
 	}
 	if isDefault {
 		filter := bson.M{

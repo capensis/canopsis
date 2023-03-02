@@ -45,11 +45,12 @@ const (
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
 
-	ViewMongoCollection          = "views"
-	ViewTabMongoCollection       = "viewtabs"
-	WidgetMongoCollection        = "widgets"
-	WidgetFiltersMongoCollection = "widget_filters"
-	ViewGroupMongoCollection     = "viewgroups"
+	ViewMongoCollection           = "views"
+	ViewTabMongoCollection        = "viewtabs"
+	WidgetMongoCollection         = "widgets"
+	WidgetFiltersMongoCollection  = "widget_filters"
+	WidgetTemplateMongoCollection = "widget_templates"
+	ViewGroupMongoCollection      = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
@@ -97,6 +98,13 @@ const (
 	ScenarioMongoCollection          = "action_scenario"
 	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
 	WebhookHistoryMongoCollection    = "webhook_history"
+
+	OcwsNocChoiceCollection    = "ocws_noc_snow_sys_choice_new"
+	OcwsNocContractCollection  = "ocws_noc_snow_service_contract_new"
+	OcwsNocLocationCollection  = "ocws_noc_snow_location_group_new"
+	OcwsNocGroupCollection     = "ocws_noc_snow_group_new"
+	OcwsNocUserCollection      = "ocws_noc_snow_user_new"
+	OcwsNocUserGroupCollection = "ocws_noc_snow_user_group_new"
 )
 
 const (

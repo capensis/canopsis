@@ -2,7 +2,7 @@
 
 exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -75,15 +75,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-0
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -95,15 +86,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
             <td>
               type-pbehavior-entity-1
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
           </tr>
           <tr>
             <!---->
@@ -117,15 +99,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-2
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -137,15 +110,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
             <td>
               type-pbehavior-entity-3
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
           </tr>
           <tr>
             <!---->
@@ -159,15 +123,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-4
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -179,15 +134,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
             <td>
               type-pbehavior-entity-5
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
           </tr>
           <tr>
             <!---->
@@ -201,15 +147,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-6
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -221,15 +158,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
             <td>
               type-pbehavior-entity-7
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
           </tr>
           <tr>
             <!---->
@@ -243,15 +171,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-8
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -264,15 +183,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-9
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -284,15 +194,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
             <td>
               type-pbehavior-entity-10
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="3"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>
@@ -409,7 +310,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
 
 exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
