@@ -211,6 +211,7 @@ import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
+import DensityLargeIcon from '@/components/icons/density_large.vue';
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
 import NotificationImportantStrokeIcon from '@/components/icons/notification_important-stroke.vue';
@@ -261,6 +262,9 @@ Vue.use(Vuetify, {
     },
     published_with_changes: {
       component: PublishedWithChangesIcon,
+    },
+    density_large: {
+      component: DensityLargeIcon,
     },
     density_medium: {
       component: DensityMediumIcon,

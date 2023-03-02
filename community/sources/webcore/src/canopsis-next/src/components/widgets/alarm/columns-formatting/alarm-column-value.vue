@@ -10,6 +10,7 @@
       :alarm="alarm",
       :widget="widget",
       :column="column",
+      :small="small",
       :selected-tag="selectedTag",
       @activate="$emit('activate', $event)",
       @select:tag="$emit('select:tag', $event)"
@@ -19,6 +20,7 @@
     :alarm="alarm",
     :widget="widget",
     :column="column",
+    :small="small",
     :selected-tag="selectedTag",
     @activate="$emit('activate', $event)",
     @select:tag="$emit('select:tag', $event)"
@@ -55,6 +57,10 @@ export default {
     selectedTag: {
       type: String,
       default: '',
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   asyncComputed: {
