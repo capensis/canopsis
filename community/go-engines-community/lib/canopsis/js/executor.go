@@ -14,18 +14,18 @@ type Executor interface {
 func Compile(name, src, funcName string) (Executor, error) {
 	prg, err := goja.Compile(name, src, true)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot compile js: %w", err)
 	}
 
 	vm := goja.New()
 	_, err = vm.RunProgram(prg)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot execute js: %w", err)
 	}
 
 	callable, ok := goja.AssertFunction(vm.Get(funcName))
 	if !ok {
-		return nil, fmt.Errorf("%s not found", funcName)
+		return nil, fmt.Errorf("js function %q not found", funcName)
 	}
 
 	return &executor{
@@ -45,21 +45,26 @@ func (e *executor) Execute(ctx context.Context, args ...any) (any, error) {
 		transformedArgs[i] = e.vm.ToValue(arg)
 	}
 
-	stop := make(chan struct{})
-	defer close(stop)
-
+	resCh := make(chan any, 1)
 	go func() {
-		select {
-		case <-stop:
-		case <-ctx.Done():
-			e.vm.Interrupt(ctx.Err())
+		defer close(resCh)
+		r, err := e.callable(goja.Undefined(), transformedArgs...)
+		if err != nil {
+			resCh <- err
+			return
 		}
+
+		resCh <- r.Export()
 	}()
 
-	r, err := e.callable(goja.Undefined(), transformedArgs...)
-	if err != nil {
-		return nil, err
-	}
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	case res := <-resCh:
+		if err, ok := res.(error); ok {
+			return nil, fmt.Errorf("cannot execute js function: %w", err)
+		}
 
-	return r.Export(), nil
+		return res, nil
+	}
 }
