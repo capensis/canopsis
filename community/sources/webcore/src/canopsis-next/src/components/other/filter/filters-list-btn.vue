@@ -2,7 +2,6 @@
   c-action-btn(
     :tooltip="$t('filterSelector.buttons.list')",
     icon="filter_list",
-    small,
     @click="showFiltersListModal"
   )
 </template>

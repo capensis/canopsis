@@ -1,11 +1,5 @@
 <template lang="pug">
-  v-card.secondary.lighten-2(flat)
-    v-card-text
-      service-dependencies.pa-3(
-        :root="item",
-        :columns="columns",
-        openable-root
-      )
+  service-dependencies(:root="item", :columns="columns", openable-root)
 </template>
 
 <script>

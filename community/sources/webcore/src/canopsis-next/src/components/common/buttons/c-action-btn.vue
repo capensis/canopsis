@@ -1,10 +1,23 @@
 <template lang="pug">
-  v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left")
+  v-tooltip(
+    :top="top",
+    :right="right",
+    :bottom="bottom",
+    :left="left",
+    :custom-activator="customTooltipActivator"
+  )
     template(#activator="{ on: tooltipOn }")
       slot(name="button", :on="tooltipOn")
         v-badge.c-action-btn__badge(v-if="badgeValue", :color="badgeColor", overlap)
           template(#badge="")
-            v-tooltip(:top="top", :right="right", :bottom="bottom", :left="left", :disabled="!badgeTooltip")
+            v-tooltip(
+              :top="top",
+              :right="right",
+              :bottom="bottom",
+              :left="left",
+              :disabled="!badgeTooltip",
+              :custom-activator="customTooltipActivator"
+            )
               template(#activator="{ on: badgeTooltipOn }")
                 slot(name="badgeIcon", :on="badgeTooltipOn")
                   v-icon(v-on="badgeTooltipOn", color="white") {{ badgeIcon }}
@@ -97,6 +110,10 @@ export default {
       type: String,
       default: '',
     },
+    customTooltipActivator: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     preparedProps() {
@@ -133,6 +150,7 @@ export default {
   margin: 6px 4px;
 
   & ::v-deep .v-badge__badge {
+    font-size: 11px;
     top: -4px;
     right: -4px;
     height: 16px;
