@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip(top)
     template(#activator="{ on }")
-      v-icon.instruction-icon(v-on="on", :class="iconClass", size="24") {{ iconName }}
+      v-icon.instruction-icon(v-on="on", :class="iconClass", size="22") {{ iconName }}
     span.pre-wrap(v-html="iconTooltip")
 </template>
 
