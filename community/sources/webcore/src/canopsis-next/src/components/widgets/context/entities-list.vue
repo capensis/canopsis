@@ -38,7 +38,7 @@
             with-pbehavior
           )
       v-flex
-        v-checkbox(
+        v-checkbox.pt-2(
           :input-value="query.no_events",
           :label="$t('context.noEventsFilter')",
           color="primary",
