@@ -11,12 +11,14 @@ import {
   TIME_UNITS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  ALARM_DENSE_TYPES,
 } from '@/constants';
 
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
+import { openedToForm } from './common';
 
 /**
  * @typedef {Object} AlarmsListDataTableColumn
@@ -190,7 +192,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
-  dense: !!parameters.dense,
+  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {
@@ -234,7 +236,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
     ? cloneDeep(parameters.liveReporting)
     : {},
   sort: widgetSortToForm(parameters.sort),
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],

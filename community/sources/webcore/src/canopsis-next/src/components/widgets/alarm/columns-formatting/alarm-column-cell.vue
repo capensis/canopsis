@@ -72,6 +72,10 @@ export default {
       type: String,
       default: '',
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
