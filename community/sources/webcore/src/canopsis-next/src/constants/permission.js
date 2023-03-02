@@ -168,8 +168,6 @@ export const USERS_PERMISSIONS = {
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
-        // TODO: USERS_RIGHTS Should be removed after create MR in all features
-        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
     },
@@ -353,10 +351,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction,
-
-    // TODO: Should be removed after create MR in all features
-    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
-    ...featuresService.get('constants.BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {
