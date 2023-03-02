@@ -8,17 +8,25 @@ import (
 )
 
 type Executor interface {
-	Execute(ctx context.Context, args ...any) (any, error)
+	ExecuteFunc(ctx context.Context, funcName string, args ...any) (any, error)
 }
 
-func Compile(name, src, funcName string) (Executor, error) {
+func Compile(name, src string) (Executor, error) {
 	prg, err := goja.Compile(name, src, true)
 	if err != nil {
 		return nil, fmt.Errorf("cannot compile js: %w", err)
 	}
 
+	return &executor{prg: prg}, nil
+}
+
+type executor struct {
+	prg *goja.Program
+}
+
+func (e *executor) ExecuteFunc(ctx context.Context, funcName string, args ...any) (any, error) {
 	vm := goja.New()
-	_, err = vm.RunProgram(prg)
+	_, err := vm.RunProgram(e.prg)
 	if err != nil {
 		return nil, fmt.Errorf("cannot execute js: %w", err)
 	}
@@ -28,27 +36,15 @@ func Compile(name, src, funcName string) (Executor, error) {
 		return nil, fmt.Errorf("js function %q not found", funcName)
 	}
 
-	return &executor{
-		vm:       vm,
-		callable: callable,
-	}, nil
-}
-
-type executor struct {
-	vm       *goja.Runtime
-	callable goja.Callable
-}
-
-func (e *executor) Execute(ctx context.Context, args ...any) (any, error) {
 	transformedArgs := make([]goja.Value, len(args))
 	for i, arg := range args {
-		transformedArgs[i] = e.vm.ToValue(arg)
+		transformedArgs[i] = vm.ToValue(arg)
 	}
 
 	resCh := make(chan any, 1)
 	go func() {
 		defer close(resCh)
-		r, err := e.callable(goja.Undefined(), transformedArgs...)
+		r, err := callable(goja.Undefined(), transformedArgs...)
 		if err != nil {
 			resCh <- err
 			return
@@ -59,7 +55,8 @@ func (e *executor) Execute(ctx context.Context, args ...any) (any, error) {
 
 	select {
 	case <-ctx.Done():
-		return nil, nil
+		vm.Interrupt(ctx.Err())
+		return nil, ctx.Err()
 	case res := <-resCh:
 		if err, ok := res.(error); ok {
 			return nil, fmt.Errorf("cannot execute js function: %w", err)
