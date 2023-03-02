@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout(row, wrap, justify-space-between, align-center)
+    v-layout(:class="{ 'mb-4': !dense }", row, wrap, justify-space-between, align-end)
       v-flex
         c-advanced-search-field(
           :query.sync="query",
@@ -8,16 +8,17 @@
           :tooltip="$t('search.alarmAdvancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+        c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
       v-flex(v-if="hasAccessToCorrelation")
-        v-switch(
+        v-switch.mt-0(
           :value="query.correlation",
           :label="$t('common.correlation')",
           color="primary",
+          hide-details,
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(v-if="hasAccessToUserFilter", row, align-center)
+        v-layout(v-if="hasAccessToUserFilter", row, align-end)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
@@ -26,6 +27,7 @@
             :value="mainFilter",
             :disabled="!hasAccessToListFilters",
             :clearable="!widget.parameters.clearFilterDisabled",
+            hide-details,
             @input="updateSelectedFilter"
           )
           filters-list-btn(
@@ -65,7 +67,7 @@
           icon="cloud_download",
           @click="exportAlarmsList"
         )
-    alarms-list-table(
+    alarms-list-table.mt-1(
       ref="alarmsTable",
       :widget="widget",
       :alarms="alarms",
