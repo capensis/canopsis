@@ -19,7 +19,7 @@ export default {
   webhookTicketDeclarationExist: 'La déclaration de ticket Webhook existe déjà dans une autre étape',
   runTest: 'Exécuter le test',
   headerFieldFromPreviousSteps: 'Champ d\'en-tête des étapes précédentes',
-  headerFieldFromStep: 'Champ d\'en-tête de l\'étape #N',
+  responseFieldFromStep: 'Champ de réponse de l\'étape #N',
   responseFieldFromPreviousSteps: 'Champ de réponse des étapes précédentes',
   userId: 'Identifiant d\'utilisateur',
   actionInitiator: 'Initiateur d\'actions',
