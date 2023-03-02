@@ -582,60 +582,59 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   >
     Cancel ack|not_interested|ackRemove
   </button>
-
   <button
-    class="drop-down-action-changeState"
+    class="action-changeState"
   >
     Change and lock severity|thumbs_up_down|changeState
   </button>
   <button
-    class="drop-down-action-ack"
+    class="action-ack"
   >
     Ack|playlist_add_check|ack
   </button>
   <button
-    class="drop-down-action-snooze"
+    class="action-snooze"
   >
     Snooze alarm|alarm|snooze
   </button>
   <button
-    class="drop-down-action-pbehaviorAdd"
+    class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
-    class="drop-down-action-comment"
+    class="action-comment"
   >
     Comment|comment|comment
   </button>
   <button
-    class="drop-down-action-history"
+    class="action-history"
   >
     History|history|history
   </button>
   <button
-    class="drop-down-action-variablesHelp"
+    class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
   </button>
   <button
-    class="drop-down-action-removeAlarmsFromManualMetaAlarm"
+    class="action-removeAlarmsFromManualMetaAlarm"
   >
     Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
   </button>
   <button
-    class="drop-down-action-executeInstruction"
+    class="action-executeInstruction"
   >
     Running instruction in progress...|assignment|executeInstruction
   </button>
   <button
-    class="drop-down-action-executeInstruction"
+    class="action-executeInstruction"
     disabled="disabled"
   >
     Execute New instruction|assignment|executeInstruction
   </button>
   <button
-    class="drop-down-action-executeInstruction"
+    class="action-executeInstruction"
   >
     Resume Paused instruction|assignment|executeInstruction
   </button>
@@ -661,14 +660,13 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
   >
     Comment|comment|comment
   </button>
-
   <button
-    class="drop-down-action-variablesHelp"
+    class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
   </button>
   <button
-    class="drop-down-action-removeAlarmsFromManualMetaAlarm"
+    class="action-removeAlarmsFromManualMetaAlarm"
   >
     Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
   </button>
