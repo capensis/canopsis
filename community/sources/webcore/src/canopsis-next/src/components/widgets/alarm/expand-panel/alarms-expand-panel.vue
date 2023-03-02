@@ -28,7 +28,7 @@
               indeterminate
             )
             v-card-text
-              time-line(
+              alarms-time-line(
                 :steps="steps",
                 :is-html-enabled="isHtmlEnabled",
                 @update:page="updateStepsQueryPage"
@@ -129,7 +129,7 @@ import ServiceDependencies from '@/components/other/service/partials/service-dep
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 
-import TimeLine from '../time-line/time-line.vue';
+import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
@@ -139,7 +139,7 @@ export default {
     DeclaredTicketsList,
     PbehaviorsSimpleList,
     ServiceDependencies,
-    TimeLine,
+    AlarmsTimeLine,
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
