@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
+  shared-actions-panel(:actions="actions", :small="small")
 </template>
 
 <script>
@@ -39,8 +39,6 @@ export default {
   mixins: [
     entitiesAlarmMixin,
     widgetActionsPanelAlarmMixin,
-
-    ...featuresService.get('components.alarmListActionPanel.mixins', []),
   ],
   props: {
     item: {
@@ -59,14 +57,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
     refreshAlarmsList: {
       type: Function,
       default: () => {},
     },
   },
-  data() {
-    return {
-      actionsMap: {
+  computed: {
+    actionsMap() {
+      return {
         ack: {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
@@ -150,27 +152,30 @@ export default {
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
           method: this.showExecuteInstructionModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
+
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
+
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
+
     modalConfig() {
       return {
         items: [this.item],
         afterSubmit: this.refreshAlarmsList,
       };
     },
+
     resolvedActions() {
       const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
 
       return [pbehaviorList, variablesHelp];
     },
+
     unresolvedActions() {
       const { filteredActionsMap } = this;
       const { assigned_instructions: assignedInstructions = [] } = this.item;
@@ -190,6 +195,18 @@ export default {
 
       if (this.isParentAlarmManualMetaAlarm) {
         actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
+      }
+
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
+      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
+        const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
+
+        if (featuresActions?.length) {
+          actions.unshift(...featuresActions);
+        }
       }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
@@ -259,24 +276,7 @@ export default {
     },
 
     actions() {
-      let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
-
-      actions = compact(actions);
-
-      const result = {
-        inline: actions.slice(0, 3),
-        dropDown: actions.slice(3),
-      };
-
-      /**
-       * If we will have actions for resolved alarms in the features we should move this condition to
-       * the every features repositories
-       */
-      if (!this.isResolvedAlarm && featuresService.has('components.alarmListActionPanel.computed.actions')) {
-        return featuresService.call('components.alarmListActionPanel.computed.actions', this, result);
-      }
-
-      return result;
+      return compact(this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions);
     },
   },
   methods: {

@@ -43,21 +43,21 @@ func (t *RequestTransformer) transformPatternFields(ctx context.Context, r *Edit
 		r.Filters[i].AlarmPatternFieldsRequest, err = t.patternFieldsTransformer.TransformAlarmPatternFieldsRequest(ctx, r.Filters[i].AlarmPatternFieldsRequest)
 		if err != nil {
 			if err == common.ErrNotExistCorporateAlarmPattern {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_alarm_pattern", i), err)
+				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_alarm_pattern", i), err.Error())
 			}
 			return err
 		}
 		r.Filters[i].EntityPatternFieldsRequest, err = t.patternFieldsTransformer.TransformEntityPatternFieldsRequest(ctx, r.Filters[i].EntityPatternFieldsRequest)
 		if err != nil {
 			if err == common.ErrNotExistCorporateEntityPattern {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_entity_pattern", i), err)
+				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_entity_pattern", i), err.Error())
 			}
 			return err
 		}
 		r.Filters[i].PbehaviorPatternFieldsRequest, err = t.patternFieldsTransformer.TransformPbehaviorPatternFieldsRequest(ctx, r.Filters[i].PbehaviorPatternFieldsRequest)
 		if err != nil {
 			if err == common.ErrNotExistCorporatePbehaviorPattern {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_pbehavior_pattern", i), err)
+				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_pbehavior_pattern", i), err.Error())
 			}
 			return err
 		}
@@ -98,7 +98,7 @@ func (t *RequestTransformer) transformTemplateFields(ctx context.Context, r *Edi
 			}).Decode(&tpl)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return common.NewValidationError("parameters."+parameter+"Template", errors.New("Template doesn't exist."))
+					return common.NewValidationError("parameters."+parameter+"Template", "Template doesn't exist.")
 				}
 				return err
 			}
