@@ -99,6 +99,13 @@ const (
 	WebhookHistoryMongoCollection    = "webhook_history"
 
 	LinkRuleMongoCollection = "link_rule"
+
+	OcwsNocChoiceCollection    = "ocws_noc_snow_sys_choice_new"
+	OcwsNocContractCollection  = "ocws_noc_snow_service_contract_new"
+	OcwsNocLocationCollection  = "ocws_noc_snow_location_group_new"
+	OcwsNocGroupCollection     = "ocws_noc_snow_group_new"
+	OcwsNocUserCollection      = "ocws_noc_snow_user_new"
+	OcwsNocUserGroupCollection = "ocws_noc_snow_user_group_new"
 )
 
 const (
