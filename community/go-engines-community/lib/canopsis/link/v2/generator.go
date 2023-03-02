@@ -707,14 +707,14 @@ func (g *generator) getLinksWithCategoryByCode(
 
 	s, ok := r.([]any)
 	if !ok {
-		return nil, fmt.Errorf("generate returns not slice")
+		return nil, fmt.Errorf("value is not slice")
 	}
 
 	res := make([]linkWithCategory, len(s))
 	for i := 0; i < len(s); i++ {
 		item, ok := s[i].(map[string]any)
 		if !ok {
-			return nil, fmt.Errorf("generate returns not slice of map")
+			return nil, fmt.Errorf("value is not slice of map")
 		}
 
 		category, _ := item["category"].(string)
@@ -722,10 +722,10 @@ func (g *generator) getLinksWithCategoryByCode(
 		iconName, _ := item["icon_name"].(string)
 		url, _ := item["url"].(string)
 		if url == "" {
-			return nil, fmt.Errorf("generate returns no url")
+			return nil, fmt.Errorf("url is missing")
 		}
 		if label == "" {
-			return nil, fmt.Errorf("generate returns no label")
+			return nil, fmt.Errorf("label is missing")
 		}
 
 		res[i] = linkWithCategory{
@@ -754,24 +754,24 @@ func (g *generator) getLinksByCode(
 
 	s, ok := r.([]any)
 	if !ok {
-		return nil, fmt.Errorf("generate returns not slice")
+		return nil, fmt.Errorf("value is not slice")
 	}
 
 	res := make([]liblink.Link, len(s))
 	for i := 0; i < len(s); i++ {
 		item, ok := s[i].(map[string]any)
 		if !ok {
-			return nil, fmt.Errorf("generate returns not slice of map")
+			return nil, fmt.Errorf("value is not slice of map")
 		}
 
 		label, _ := item["label"].(string)
 		iconName, _ := item["icon_name"].(string)
 		url, _ := item["url"].(string)
 		if url == "" {
-			return nil, fmt.Errorf("generate returns no url")
+			return nil, fmt.Errorf("url is missing")
 		}
 		if label == "" {
-			return nil, fmt.Errorf("generate returns no label")
+			return nil, fmt.Errorf("label is missing")
 		}
 
 		res[i] = liblink.Link{
