@@ -1,7 +1,5 @@
 import { COLORS } from '@/config';
 
-import featuresService from '@/services/features';
-
 export const ALARM_FIELDS = {
   id: '_id',
   displayName: 'v.display_name',
@@ -106,8 +104,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
-
-  ...featuresService.get('constants.ALARM_LIST_ACTIONS_TYPES'),
 
   links: 'links',
 
@@ -371,3 +367,9 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.links,
   ALARM_FIELDS.tags,
 ];
+
+export const ALARM_DENSE_TYPES = {
+  large: 0,
+  medium: 1,
+  small: 2,
+};

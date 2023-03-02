@@ -267,6 +267,7 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
         bind: {
           is: 'alarm-column-value-state',
           alarm: context.alarm,
+          small: context.small,
         },
       });
 
@@ -275,6 +276,7 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
         bind: {
           is: 'alarm-column-value-status',
           alarm: context.alarm,
+          small: context.small,
         },
       });
 
@@ -295,6 +297,7 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
           asList: get(widget.parameters, 'linksCategoriesAsList.enabled', false),
           limit: get(widget.parameters, 'linksCategoriesAsList.limit'),
           links: context.alarm.links ?? {},
+          small: context.small,
         },
         on: {
           activate: context.$listeners.activate,
@@ -306,6 +309,7 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
         bind: {
           is: 'alarm-column-value-extra-details',
           alarm: context.alarm,
+          small: context.small,
         },
       });
 
@@ -315,6 +319,7 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
           is: 'c-alarm-tags-chips',
           alarm: context.alarm,
           selectedTag: context.selectedTag,
+          small: context.small,
         },
         on: {
           select: context.$listeners['select:tag'],
