@@ -407,10 +407,14 @@ definitions:
     type: object
   alarm.ExportRequest:
     properties:
+      alarm_pattern:
+        type: string
       category:
         type: string
       correlation:
         type: boolean
+      entity_pattern:
+        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -425,6 +429,8 @@ definitions:
         type: array
       opened:
         type: boolean
+      pbehavior_pattern:
+        type: string
       search:
         type: string
       separator:
@@ -1787,6 +1793,7 @@ definitions:
             * `view_tab` - export viewtabs collection
             * `widget` - export widgets collection
             * `widget_filter` - export widget_filters collection
+            * `widget_template` - export widget_templates collection
             * `view_group` - export viewgroups collection
             * `instruction` - export instruction collection
             * `job_config` - export job_config collection
@@ -4602,6 +4609,22 @@ definitions:
       updated:
         type: integer
     type: object
+  view.WidgetColumn:
+    properties:
+      colorIndicator:
+        type: string
+      isHtml:
+        type: boolean
+      label:
+        maxLength: 255
+        type: string
+      template:
+        type: string
+      value:
+        type: string
+    required:
+    - value
+    type: object
   viewgroup.EditRequest:
     properties:
       title:
@@ -4851,6 +4874,51 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  widgettemplate.EditRequest:
+    properties:
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      content:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - alarm_columns
+        - entity_columns
+        - alarm_more_infos
+        - weather_item
+        - weather_modal
+        - weather_entity
+        type: string
+    required:
+    - title
+    - type
+    type: object
+  widgettemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      content:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}

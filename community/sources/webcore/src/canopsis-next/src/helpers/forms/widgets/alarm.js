@@ -1,20 +1,24 @@
-import { isString, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
+import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
-  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   DEFAULT_PERIODIC_REFRESH,
-  DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   GRID_SIZES,
   SORT_ORDERS,
   TIME_UNITS,
+  DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  ALARM_DENSE_TYPES,
 } from '@/constants';
-import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
-import { defaultColumnsToColumns } from '@/helpers/entities';
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
+
+import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
+import { openedToForm } from './common';
 
 /**
  * @typedef {Object} AlarmsListDataTableColumn
@@ -51,8 +55,11 @@ import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration'
 /**
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
+ * @property {WidgetSort} sort
  * @property {string} moreInfoTemplate
+ * @property {string} moreInfoTemplateTemplate
  * @property {WidgetInfoPopup[]} infoPopups
+ * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
  */
 
@@ -63,6 +70,11 @@ import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration'
  * @property {number} itemsPerPage
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} moreInfoTemplate
+ * @property {string} moreInfoTemplateTemplate
+ * @property {string} widgetColumnsTemplate
+ * @property {string} widgetGroupColumnsTemplate
+ * @property {string} widgetExportColumnsTemplate
+ * @property {string} serviceDependenciesColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
  * @property {WidgetColumn[]} widgetExportColumns
@@ -90,31 +102,26 @@ import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration'
  */
 
 /**
- * Add 'alarm.' prefix in column value
- *
- * @param {string} [value]
- * @returns {string}
+ * @typedef {AlarmListBaseParameters} AlarmListBaseParametersForm
+ * @property {string | Symbol} widgetColumnsTemplate
+ * @property {WidgetColumnForm[]} widgetColumns
  */
-export const columnValueToForm = value => (value && isString(value) ? value.replace(/^v\./, 'alarm.v.') : value);
 
 /**
- * Remove 'alarm.' prefix from column value
- *
- * @param {string} [value]
- * @returns {string}
+ * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetDefaultParametersForm
+ * @property {string | Symbol} widgetColumnsTemplate
+ * @property {string | Symbol} widgetGroupColumnsTemplate
+ * @property {string | Symbol} widgetExportColumnsTemplate
+ * @property {string | Symbol} serviceDependenciesColumnsTemplate
+ * @property {WidgetColumnForm[]} widgetColumns
+ * @property {WidgetColumnForm[]} widgetGroupColumns
+ * @property {WidgetColumnForm[]} widgetExportColumns
+ * @property {WidgetColumnForm[]} serviceDependenciesColumns
  */
-export const formToColumnValue = value => (value && isString(value) ? value.replace(/^alarm\./, '') : value);
 
 /**
- * Convert columns parameters to form
- *
- * @param {WidgetColumn[]} [widgetColumns = []]
- * @return {WidgetColumn[]}
+ * @typedef {AlarmListWidgetDefaultParametersForm & AlarmListWidgetParameters} AlarmListWidgetParametersForm
  */
-export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(column => ({
-  ...column,
-  value: columnValueToForm(column.value),
-}));
 
 /**
  * Convert alarm list infoPopups parameters to form
@@ -122,10 +129,7 @@ export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(col
  * @param {WidgetInfoPopup[]} [infoPopups = []]
  * @return {WidgetInfoPopup[]}
  */
-export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
-  ...infoPopup,
-  column: columnValueToForm(infoPopup.column),
-}));
+export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({ ...infoPopup }));
 
 /**
  * Convert widget sort parameters to form
@@ -134,23 +138,24 @@ export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup =>
  * @return {WidgetSort}
  */
 export const widgetSortToForm = (sort = {}) => ({
-  order: sort.order || SORT_ORDERS.asc,
-  column: sort.column ? columnValueToForm(sort.column) : '',
+  order: sort.order ?? SORT_ORDERS.asc,
+  column: sort.column ?? '',
 });
 
 /**
  * Convert alarm list base parameters (we are using it inside another widgets with alarmList) to form
  *
  * @param {AlarmListBaseParameters} [alarmListParameters = {}]
- * @return {AlarmListBaseParameters}
+ * @return {AlarmListBaseParametersForm}
  */
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
+  sort: widgetSortToForm(alarmListParameters.sort),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
+  moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
-  widgetColumns: alarmListParameters.widgetColumns
-    ? widgetColumnsToForm(alarmListParameters.widgetColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
+  widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
+  widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
 });
 
 /**
@@ -160,9 +165,9 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
  * @returns {DurationWithEnabled}
  */
 export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC_REFRESH) => {
-  /*
-  * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
-  */
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+   */
   const unit = isValidUnit(periodicRefresh.unit)
     ? periodicRefresh.unit
     : TIME_UNITS.second;
@@ -174,34 +179,38 @@ export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
- * @return {AlarmListWidgetDefaultParameters}
+ * @return {AlarmListWidgetDefaultParametersForm}
  */
 export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   infoPopups: infoPopupsToForm(parameters.infoPopups),
   moreInfoTemplate: parameters.moreInfoTemplate ?? '',
+  moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
-  dense: !!parameters.dense,
+  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {
       enabled: false,
       value: 'auto ack',
     },
-  widgetColumns: parameters.widgetColumns
-    ? widgetColumnsToForm(parameters.widgetColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
-  widgetGroupColumns: parameters.widgetGroupColumns
-    ? widgetColumnsToForm(parameters.widgetGroupColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
-  serviceDependenciesColumns: parameters.serviceDependenciesColumns
-    ? widgetColumnsToForm(parameters.serviceDependenciesColumns)
-    : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  widgetColumnsTemplate: widgetTemplateValueToForm(parameters.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: widgetTemplateValueToForm(parameters.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(parameters.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: widgetTemplateValueToForm(parameters.widgetExportColumnsTemplate),
+  widgetColumns:
+    widgetColumnsToForm(parameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  widgetGroupColumns:
+    widgetColumnsToForm(parameters.widgetGroupColumns ?? DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
+  serviceDependenciesColumns:
+    widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  widgetExportColumns:
+    widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   linksCategoriesAsList: parameters.linksCategoriesAsList
     ? { ...parameters.linksCategoriesAsList }
     : {
@@ -214,7 +223,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetParameters} [parameters = {}]
- * @return {AlarmListWidgetParameters}
+ * @return {AlarmListWidgetParametersForm}
  */
 export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
@@ -227,88 +236,44 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
     ? cloneDeep(parameters.liveReporting)
     : {},
   sort: widgetSortToForm(parameters.sort),
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
-  widgetExportColumns: parameters.widgetExportColumns
-    ? widgetColumnsToForm(parameters.widgetExportColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
 });
-
-/**
- * Convert form sort parameters to widget sort
- *
- * @param {WidgetSort} sort
- * @return {WidgetSort}
- */
-export const formSortToWidgetSort = (sort = {}) => ({
-  order: sort.order,
-  column: formToColumnValue(sort.column),
-});
-
-/**
- * Convert form columns parameters to widget columns
- *
- * @param {WidgetColumn[]} widgetColumns
- * @return {WidgetColumn[]}
- */
-export const formWidgetColumnsToColumns = widgetColumns => widgetColumns.map(column => ({
-  ...column,
-  value: formToColumnValue(column.value),
-}));
-
-/**
- * Convert infoPopups parameters to alarm list
- *
- * @param {WidgetInfoPopup[]} infoPopups
- * @return {WidgetInfoPopup[]}
- */
-export const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
-  ...infoPopup,
-  column: columnValueToForm(infoPopup.column),
-}));
 
 /**
  * Convert form to alarm list base parameters (we are using it inside another widgets with alarmList)
  *
- * @param {AlarmListBaseParameters} [form = {}]
+ * @param {AlarmListBaseParametersForm} [form = {}]
  * @return {AlarmListBaseParameters}
  */
 export const formToAlarmListBaseParameters = (form = {}) => ({
-  itemsPerPage: form.itemsPerPage,
-  moreInfoTemplate: form.moreInfoTemplate,
-  infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
-  widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
+  ...form,
+
+  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+  widgetColumns: formToWidgetColumns(form.widgetColumns),
 });
 
 /**
  * Convert form parameters to alarm list widget parameters
  *
- * @param {AlarmListWidgetParameters} form
+ * @param {AlarmListWidgetParametersForm} form
  * @return {AlarmListWidgetParameters}
  */
 export const formToAlarmListWidgetParameters = form => ({
   ...form,
 
-  widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
-  widgetGroupColumns: formWidgetColumnsToColumns(form.widgetGroupColumns),
-  widgetExportColumns: formWidgetColumnsToColumns(form.widgetExportColumns),
-  serviceDependenciesColumns: formWidgetColumnsToColumns(form.serviceDependenciesColumns),
-  infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
-  sort: formSortToWidgetSort(form.sort),
+  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
+  widgetColumns: formToWidgetColumns(form.widgetColumns),
+  widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
+  widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+  serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
 });
-
-/**
- * Convert alarms list columns to data table columns
- *
- * @param {WidgetColumn[]} [columns = []]
- * @returns {AlarmsListDataTableColumn[]}
- */
-export const alarmsListColumnsToTableColumns = (columns = []) => columns.map(({ label, ...column }) => ({
-  ...column,
-
-  text: label,
-}));

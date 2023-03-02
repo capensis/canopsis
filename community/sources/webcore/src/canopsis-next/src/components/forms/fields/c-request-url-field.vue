@@ -23,7 +23,6 @@
           c-help-icon(
             :text="helpText",
             icon="help",
-            color="grey darken-1",
             left
           )
 </template>

@@ -1,7 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
-<settings-button-field-stub>
+<settings-button-field-stub
+  addable="true"
+  removable="true"
+>
   <div
     class="subheading"
   >
@@ -12,7 +15,9 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
 
 exports[`text-editor Renders \`text-editor\` with default props 1`] = `
 <settings-button-field-stub
+  addable="true"
   isempty="true"
+  removable="true"
 >
   <div
     class="subheading"

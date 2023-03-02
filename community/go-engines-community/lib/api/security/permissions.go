@@ -13,9 +13,10 @@ const (
 	ObjEntityCategory = "api_entitycategory"
 	ObjContextGraph   = "api_contextgraph"
 
-	ObjView      = "api_view"
-	ObjViewGroup = "api_viewgroup"
-	ObjPlaylist  = "api_playlist"
+	ObjView           = "api_view"
+	ObjWidgetTemplate = "api_widgettemplate"
+	ObjViewGroup      = "api_viewgroup"
+	ObjPlaylist       = "api_playlist"
 
 	PermAlarmRead = "api_alarm_read"
 
