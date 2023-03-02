@@ -22,7 +22,7 @@
           @click.prevent.stop="showCreateServiceModal"
         )
           v-icon(size="24") $vuetify.icons.engineering
-        span {{ $t('context.fab.addService') }}
+      span {{ $t('context.fab.addService') }}
 </template>
 
 <script>
