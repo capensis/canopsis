@@ -19,7 +19,7 @@ export default {
   webhookTicketDeclarationExist: 'Webhook ticket declaration already exist in another step',
   runTest: 'Run test',
   headerFieldFromPreviousSteps: 'Header field from previous steps',
-  headerFieldFromStep: 'Header field from the step #N',
+  responseFieldFromStep: 'Response field from the step #N',
   responseFieldFromPreviousSteps: 'Response field from previous steps',
   userId: 'User ID',
   actionInitiator: 'Action initiator',
