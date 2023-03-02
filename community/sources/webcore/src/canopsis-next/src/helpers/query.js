@@ -10,11 +10,16 @@ import {
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from './date/date-intervals';
 
 /**
  * WIDGET CONVERTERS
@@ -278,18 +283,18 @@ export function convertContextUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
-  switch (widgetType) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.context:
-      return convertContextUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.map:
-      return convertMapUserPreferenceToQuery(userPreference);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+
+    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widgetType];
+
+  return converter ? converter(userPreference) : {};
 }
 
 /**
@@ -299,20 +304,19 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.type) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmWidgetToQuery(widget);
-    case WIDGET_TYPES.context:
-      return convertContextWidgetToQuery(widget);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
-    case WIDGET_TYPES.counter:
-      return convertCounterWidgetToQuery(widget);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
+    [WIDGET_TYPES.context]: convertContextWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
+    [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+
+    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widget.type];
+
+  return converter ? converter(widget) : {};
 }
 
 /**

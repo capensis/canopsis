@@ -349,5 +349,29 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Password:             "test",
 			Timeout:              2 * time.Second,
 		},
+		"/ocws/api/now/table/incident": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body: `{
+				"result": [
+					{
+						"number": "OCWS_INC01976",
+						"state": "1",
+						"sys_created_on": "2029-03-29 11:11:04",
+						"sys_id": "2000-PD0809",
+						"u_incident_start_time": "2029-07-30 06:13:37"
+					}
+				]
+			}`,
+		},
+		"/ocd/api/now/table/incident": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body: `{
+				"result": {
+					"number": "OCD_INC0411241"
+				}
+			}`,
+		},
 	}
 }

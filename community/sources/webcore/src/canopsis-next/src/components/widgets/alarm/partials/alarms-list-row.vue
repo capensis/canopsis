@@ -4,7 +4,7 @@
       v-layout(row, align-center, justify-space-between)
         v-layout.alarm-list-row__checkbox
           template(v-if="selectable")
-            v-checkbox-functional(v-if="!isResolvedAlarm", v-field="selected", hide-details)
+            v-checkbox-functional.ma-0(v-if="!isResolvedAlarm", v-field="selected", hide-details)
             v-checkbox-functional(v-else, disabled, hide-details)
         v-layout(v-if="hasAlarmInstruction", align-center, justify-center)
           alarms-list-row-icon(:alarm="alarm")
@@ -13,7 +13,8 @@
           v-model="row.expanded",
           :alarm="alarm",
           :widget="widget",
-          :is-tour-enabled="isTourEnabled"
+          :is-tour-enabled="isTourEnabled",
+          :small="small"
         )
     td(v-for="column in columns")
       alarm-column-value(
@@ -21,6 +22,7 @@
         :widget="widget",
         :column="column",
         :selected-tag="selectedTag",
+        :small="small",
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
       )
@@ -30,7 +32,8 @@
         :widget="widget",
         :is-resolved-alarm="isResolvedAlarm",
         :parent-alarm="parentAlarm",
-        :refresh-alarms-list="refreshAlarmsList"
+        :refresh-alarms-list="refreshAlarmsList",
+        :small="small"
       )
 </template>
 
@@ -115,6 +118,14 @@ export default {
       type: String,
       default: '',
     },
+    medium: {
+      type: Boolean,
+      default: false,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -122,8 +133,6 @@ export default {
     };
   },
   computed: {
-    ...featuresService.get('components.alarmListRow.computed', {}),
-
     alarm() {
       return this.row.item;
     },
