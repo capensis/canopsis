@@ -202,5 +202,6 @@ export default {
     title: 'Default view',
     comfort: 'Comfort view',
     compact: 'Compact view',
+    ultraCompact: 'Ultra compact view',
   },
 };
