@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { difference, intersectionBy } from 'lodash';
+import { difference, intersectionBy, find, pick } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -14,14 +14,16 @@ import {
 
 import featuresService from '@/services/features';
 
+import { mapIds } from '@/helpers/entities';
 import { getEntityEventIcon } from '@/helpers/icon';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-import { mapIds } from '@/helpers/entities';
+import { removeTrailingSlashes } from '@/helpers/url';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -34,7 +36,11 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: { SharedMassActionsPanel },
-  mixins: [widgetActionsPanelAlarmMixin, entitiesDeclareTicketRuleMixin],
+  mixins: [
+    widgetActionsPanelAlarmMixin,
+    entitiesDeclareTicketRuleMixin,
+    entitiesAlarmLinksMixin,
+  ],
   props: {
     items: {
       type: Array,
@@ -145,24 +151,16 @@ export default {
     },
 
     linksActions() {
-      const preparedLinks = this.items.reduce((acc, alarm) => {
-        acc.push(...Object.entries(alarm.links).map(([key, links]) => ({ key, links })));
+      const preparedLinks = this.items.map(({ links = '' }) => (
+        Object.values(links).flat().filter(link => !!link.rule_id)
+      ));
 
-        return acc;
-      }, []);
-
-      return intersectionBy(preparedLinks, 'key').reduce((acc, { key, links }) => {
-        const localLinks = links.map(link => ({
-          type: key,
-          icon: link.icon_name,
-          title: link.label,
-          method: () => this.openLink(link),
-        }));
-
-        acc.push(...localLinks);
-
-        return acc;
-      }, []);
+      return intersectionBy(...preparedLinks, 'rule_id').map(link => ({
+        type: `${link.rule_id}.${link.icon_name}.${link.label}`,
+        icon: link.icon_name,
+        title: link.label,
+        method: () => this.openLink(link),
+      }));
     },
 
     preparedActions() {
@@ -278,8 +276,19 @@ export default {
       return this.afterSubmit();
     },
 
-    async openLink() {
-      await this.fetchAlarmsLinksWithoutStore({ ids: mapIds(this.items) });
+    async openLink(link) {
+      const links = await this.fetchAlarmLinkWithoutStore({
+        id: link.rule_id,
+        params: { ids: mapIds(this.items) },
+      });
+
+      const summaryLink = find(links, pick(link, ['icon_name, label']));
+
+      if (!summaryLink) {
+        return;
+      }
+
+      window.open(removeTrailingSlashes(summaryLink.url), '_blank');
     },
   },
 };

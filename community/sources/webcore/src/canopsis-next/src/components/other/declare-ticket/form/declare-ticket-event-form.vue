@@ -10,7 +10,7 @@
     v-checkbox(
       v-if="!hideTicketResource",
       v-field="form.ticket_resources",
-      :label="$t('declareTicket.ticketResource')",
+      :label="$t('declareTicket.ticketResources')",
       color="primary"
     )
     c-description-field.mt-3(v-field="form.comment", :label="$tc('common.comment')", name="comment")

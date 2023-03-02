@@ -8,7 +8,7 @@ const { mapActions } = createNamespacedHelpers('alarm/links');
 export const entitiesAlarmLinksMixin = {
   methods: {
     ...mapActions({
-      fetchAlarmsLinksWithoutStore: 'fetchList',
+      fetchAlarmLinkWithoutStore: 'fetchItemWithoutStore',
     }),
   },
 };

@@ -20,7 +20,9 @@
       v-field="value.declare_ticket",
       :name="`${name}.declare_ticket`",
       :is-declare-ticket-exist="isDeclareTicketExist",
-      hide-empty-response
+      hide-empty-response,
+      ticket-id-required,
+      only-one-ticket-id
     )
     c-workflow-field(
       v-field="value.stop_on_fail",
@@ -70,14 +72,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasPrevious: {
-      type: Boolean,
-      default: false,
-    },
-    hasAdditionalData: {
-      type: Boolean,
-      default: false,
-    },
     webhookNumber: {
       type: Number,
       required: false,
@@ -86,16 +80,6 @@ export default {
   computed: {
     requestFormName() {
       return `${this.name}.request`;
-    },
-
-    payloadVariables() {
-      const variables = [...this.alarmPayloadVariables, ...this.entityPayloadVariables];
-
-      if (this.hasPrevious) {
-        variables.push(...this.payloadVariablesFromPreviousStep);
-      }
-
-      return variables;
     },
   },
   methods: {

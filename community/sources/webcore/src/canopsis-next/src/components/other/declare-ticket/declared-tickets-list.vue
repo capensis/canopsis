@@ -22,6 +22,10 @@ export default {
       type: Array,
       required: true,
     },
+    hideMetaAlarm: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headers() {
@@ -32,10 +36,10 @@ export default {
         { text: this.$t('declareTicket.ruleName'), value: 'ticket_rule_name' },
         { text: this.$t('common.date'), value: 't' },
         { text: this.$t('common.status'), value: '_t' },
-        { text: this.$t('alarm.metaAlarm'), value: 'metaalarm' },
+        !this.hideMetaAlarm && { text: this.$t('alarm.metaAlarm'), value: 'metaalarm' },
         { text: this.$t('common.author'), value: 'a' },
         { text: this.$tc('common.comment'), value: 'ticket_comment' },
-      ];
+      ].filter(Boolean);
     },
   },
   methods: {

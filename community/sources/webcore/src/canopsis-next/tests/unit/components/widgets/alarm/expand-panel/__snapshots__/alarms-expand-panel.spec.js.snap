@@ -150,7 +150,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                 <div
                   class="v-card__text"
                 >
-                  <time-line-stub
+                  <alarms-time-line-stub
                     steps="[object Object]"
                   />
                 </div>
@@ -366,7 +366,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 <div
                   class="v-card__text"
                 >
-                  <time-line-stub
+                  <alarms-time-line-stub
                     steps="[object Object]"
                   />
                 </div>
@@ -657,7 +657,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                 <div
                   class="v-card__text"
                 >
-                  <time-line-stub
+                  <alarms-time-line-stub
                     steps="[object Object]"
                   />
                 </div>
@@ -857,7 +857,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                 <div
                   class="v-card__text"
                 >
-                  <time-line-stub
+                  <alarms-time-line-stub
                     steps="[object Object]"
                   />
                 </div>
