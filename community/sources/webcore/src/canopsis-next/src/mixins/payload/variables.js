@@ -101,8 +101,8 @@ export const payloadVariablesMixin = {
           text: this.$t('declareTicket.responseFieldFromPreviousSteps'),
         },
         {
-          value: DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES.headerByStep,
-          text: this.$t('declareTicket.headerFieldFromStep'),
+          value: DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES.responseByStep,
+          text: this.$t('declareTicket.responseFieldFromStep'),
         },
       ];
     },
