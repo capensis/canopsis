@@ -301,7 +301,7 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		}
 
 		if rule.SourceCode != "" {
-			pr.CodeExecutor, err = js.Compile(rule.ID, rule.SourceCode, jsFuncName)
+			pr.CodeExecutor, err = js.Compile(rule.ID, rule.SourceCode)
 			if err != nil {
 				return nil, fmt.Errorf("invalid source code linkrule=%s: %w", rule.ID, err)
 			}
@@ -700,7 +700,7 @@ func (g *generator) getLinksWithCategoryByCode(
 	codeExecutor js.Executor,
 	arg any,
 ) ([]linkWithCategory, error) {
-	r, err := codeExecutor.Execute(ctx, arg)
+	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, arg)
 	if err != nil {
 		return nil, err
 	}
@@ -747,7 +747,7 @@ func (g *generator) getLinksByCode(
 	codeExecutor js.Executor,
 	arg any,
 ) ([]liblink.Link, error) {
-	r, err := codeExecutor.Execute(ctx, arg)
+	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, arg)
 	if err != nil {
 		return nil, err
 	}
