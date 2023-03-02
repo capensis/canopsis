@@ -34,7 +34,7 @@ export default {
     + '</dl>',
   otherTickets: 'D\'autres billets sont disponibles dans le panneau d\'expansion',
   noAlarmFound: 'Aucune alarme n\'est trouvée selon les modèles définis',
-  associateTicketResource: 'Ticket associé pour la ressource',
+  associateTicketResources: 'Ticket associé pour les ressources',
   actions: {
     titles: {
       ack: 'Acquitter',
