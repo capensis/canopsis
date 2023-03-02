@@ -40,7 +40,8 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        :dense="dense",
+        :dense="isMediumHeight",
+        :ultra-dense="isSmallHeight",
         item-key="_id",
         hide-actions,
         multi-sort,
@@ -70,6 +71,8 @@
             :selecting="selecting",
             :selected-tag="selectedTag",
             :hide-actions="hideActions",
+            :medium="isMediumHeight",
+            :small="isSmallHeight",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -96,7 +99,7 @@
 
 <script>
 import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
@@ -121,8 +124,6 @@ export default {
     AlarmHeaderCell,
     AlarmsExpandPanel,
     AlarmsListRow,
-
-    ...featuresService.get('components.alarmListTable.components', {}),
   },
   mixins: [
     widgetColumnsAlarmMixin,
@@ -175,8 +176,8 @@ export default {
       default: false,
     },
     dense: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: ALARM_DENSE_TYPES.large,
     },
     parentAlarm: {
       type: Object,
@@ -204,15 +205,9 @@ export default {
     },
   },
   data() {
-    const data = featuresService.has('components.alarmListTable.data')
-      ? featuresService.call('components.alarmListTable.data', this, {})
-      : {};
-
     return {
       selecting: false,
       selected: [],
-
-      ...data,
     };
   },
 
@@ -273,7 +268,7 @@ export default {
 
     additionalComponent() {
       if (featuresService.has('components.alarmListTable.computed.additionalComponent')) {
-        return featuresService.call('components.alarmListTable.computed.additionalComponent', this, {});
+        return featuresService.call('components.alarmListTable.computed.additionalComponent', this);
       }
 
       return {};
@@ -286,11 +281,17 @@ export default {
     tableBody() {
       return this.$el.querySelector('.v-table__overflow > table > tbody');
     },
+
+    isMediumHeight() {
+      return this.dense === ALARM_DENSE_TYPES.medium;
+    },
+
+    isSmallHeight() {
+      return this.dense === ALARM_DENSE_TYPES.small;
+    },
   },
 
   watch: {
-    ...featuresService.get('components.alarmListTable.watch', {}),
-
     stickyHeader(stickyHeader) {
       if (stickyHeader) {
         this.calculateHeaderOffsetPosition();
@@ -320,24 +321,14 @@ export default {
       window.addEventListener('keydown', this.enableSelecting);
       window.addEventListener('keyup', this.disableSelecting);
     }
-
-    if (featuresService.has('components.alarmListTable.mounted')) {
-      featuresService.call('components.alarmListTable.mounted', this, {});
-    }
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
     window.removeEventListener('keydown', this.enableSelecting);
     window.removeEventListener('keyup', this.disableSelecting);
-
-    if (featuresService.has('components.alarmListTable.beforeDestroy')) {
-      featuresService.call('components.alarmListTable.beforeDestroy', this, {});
-    }
   },
 
   methods: {
-    ...featuresService.get('components.alarmListTable.methods', {}),
-
     clearSelected() {
       this.selected = [];
     },
@@ -510,9 +501,14 @@ export default {
 
       tr {
         background: white;
+        transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
         .theme--dark & {
           background: #424242;
+        }
+
+        th {
+          transition: none;
         }
       }
     }

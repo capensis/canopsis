@@ -1,11 +1,9 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsPbehavior from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-pbehavior.vue';
-
-const localVue = createVueInstance();
 
 describe('extra-details-pbehavior', () => {
   const prevDateStartTimestamp = 1386382400000;
@@ -42,10 +40,7 @@ describe('extra-details-pbehavior', () => {
     icon_name: 'icon-name',
   };
 
-  const snapshotFactory = generateRenderer(ExtraDetailsPbehavior, {
-    localVue,
-    attachTo: document.body,
-  });
+  const snapshotFactory = generateRenderer(ExtraDetailsPbehavior);
 
   it('Renders `extra-details-pbehavior` with full pbehavior', async () => {
     snapshotFactory({
@@ -99,10 +94,29 @@ describe('extra-details-pbehavior', () => {
     expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without comments', async () => {
+  it('Renders `extra-details-pbehavior` without comment', async () => {
     snapshotFactory({
       propsData: {
-        pbehavior: omit(pbehavior, ['comments']),
+        pbehavior: omit(pbehavior, ['last_comment']),
+        pbehaviorInfo,
+      },
+    });
+
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
+  });
+
+  it('Renders `extra-details-pbehavior` without comment author', async () => {
+    snapshotFactory({
+      propsData: {
+        pbehavior: {
+          ...pbehavior,
+          last_comment: {
+            author: null,
+            ...pbehavior.last_comment,
+          },
+        },
         pbehaviorInfo,
       },
     });

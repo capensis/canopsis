@@ -202,5 +202,6 @@ export default {
     title: 'Vue par défaut',
     comfort: 'Vue confort',
     compact: 'Vue compacte',
+    ultraCompact: 'Vue ultra compacte',
   },
 };
