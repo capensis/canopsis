@@ -18,12 +18,12 @@ func TestCompile_GivenFunc_ShouldCallIt(t *testing.T) {
           return a + b;
         }
 	`
-	e, err := js.Compile(t.Name(), code, "test")
+	e, err := js.Compile(t.Name(), code)
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
 
-	res, err := e.Execute(ctx, 1, 2)
+	res, err := e.ExecuteFunc(ctx, "test", 1, 2)
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -39,7 +39,7 @@ func TestCompile_GivenInvalidJs_ShouldReturnError(t *testing.T) {
         function test(a, b) {
           return a + b;
 	`
-	_, err := js.Compile(t.Name(), code, "test")
+	_, err := js.Compile(t.Name(), code)
 
 	syntaxErr := &goja.CompilerSyntaxError{}
 	if err == nil || !errors.As(err, &syntaxErr) {
@@ -55,12 +55,12 @@ func TestCompile_GivenInvalidFuncArgs_ShouldReturnError(t *testing.T) {
           return a.indexOf(b);
         }
 	`
-	e, err := js.Compile(t.Name(), code, "test")
+	e, err := js.Compile(t.Name(), code)
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
 
-	_, err = e.Execute(ctx)
+	_, err = e.ExecuteFunc(ctx, "test")
 	exception := &goja.Exception{}
 	if err == nil || !errors.As(err, &exception) {
 		t.Fatalf("unexpected error %v", err)
