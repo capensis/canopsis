@@ -60,6 +60,14 @@ import uid from '@/helpers/uid';
  */
 
 /**
+ * Check declare ticket execution status is waiting
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isDeclareTicketExecutionWaiting = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.waiting;
+
+/**
  * Check declare ticket execution status is running
  *
  * @param {number} status
@@ -127,7 +135,7 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = []) => webhooks.map(declareTicketRuleWebhookToForm);
+export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) => webhooks.map(declareTicketRuleWebhookToForm);
 
 /**
  * Convert declare ticket rule object to form compatible object

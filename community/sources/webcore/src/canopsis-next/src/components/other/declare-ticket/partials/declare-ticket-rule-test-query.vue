@@ -23,10 +23,11 @@
             :success="isExecutionSucceeded",
             :fail-reason="executionStatus.fail_reason"
           )
-          c-action-btn(v-if="webhooksResponses.length", type="delete", @click="clearResponses")
-        v-card.grey.lighten-4.mb-2(v-for="(webhooksResponse, index) in webhooksResponses", :key="index", light, flat)
+          c-action-btn(v-if="isExecutionSucceeded || isExecutionFailed", type="delete", @click="clearWebhookStatus")
+
+        v-card(v-if="isSomeOneWebhookStarted")
           v-card-text
-            c-request-text-information(:value="webhooksResponse")
+            declare-ticket-rule-execution-webhooks-timeline(:webhooks="executionStatus.webhooks")
 </template>
 
 <script>
@@ -39,6 +40,7 @@ import {
   isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
+  isDeclareTicketExecutionWaiting,
 } from '@/helpers/forms/declare-ticket-rule';
 import { formFilterToPatterns } from '@/helpers/forms/filter';
 
@@ -46,10 +48,11 @@ import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
+import DeclareTicketRuleExecutionWebhooksTimeline from './declare-ticket-rule-execution-webhooks-timeline.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DeclareTicketRuleExecutionStatus },
+  components: { DeclareTicketRuleExecutionWebhooksTimeline, DeclareTicketRuleExecutionStatus },
   mixins: [entitiesDeclareTicketRuleMixin, validationErrorsMixinCreator()],
   props: {
     form: {
@@ -66,7 +69,6 @@ export default {
       alarm: '',
       pending: false,
       executionStatus: undefined,
-      webhooksResponses: [],
     };
   },
   computed: {
@@ -80,6 +82,14 @@ export default {
 
     isExecutionSucceeded() {
       return isDeclareTicketExecutionSucceeded(this.executionStatus);
+    },
+
+    isExecutionFailed() {
+      return isDeclareTicketExecutionFailed(this.executionStatus);
+    },
+
+    isSomeOneWebhookStarted() {
+      return this.executionStatus?.webhooks.some(webhook => !isDeclareTicketExecutionWaiting(webhook));
     },
 
     alarmsParams() {
@@ -97,7 +107,6 @@ export default {
         && (isDeclareTicketExecutionSucceeded(executionStatus) || isDeclareTicketExecutionFailed(executionStatus))
       ) {
         this.leaveFromSocketRoom();
-        this.fetchTestWebhooksResponse();
       }
     },
   },
@@ -111,7 +120,7 @@ export default {
       return `${SOCKET_ROOMS.declareticket}/${id}`;
     },
 
-    setExecutionStatus(executionStatus) {
+    async setExecutionStatus(executionStatus) {
       this.executionStatus = executionStatus;
     },
 
@@ -162,7 +171,7 @@ export default {
 
       if (isFormValid) {
         this.pending = true;
-        this.clearResponses();
+        this.clearWebhookStatus();
 
         const declareTicket = formToDeclareTicketRule(this.form);
 
@@ -189,18 +198,8 @@ export default {
       }
     },
 
-    async fetchTestWebhooksResponse() {
-      const webhooksWithResponses = this.executionStatus.webhooks.filter(
-        execution => isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution),
-      );
-
-      this.webhooksResponses = await Promise.all(
-        webhooksWithResponses.map(({ _id: id }) => this.fetchTestDeclareTicketExecutionWebhooksResponse({ id })),
-      );
-    },
-
-    clearResponses() {
-      this.webhooksResponses = [];
+    clearWebhookStatus() {
+      this.executionStatus = null;
     },
   },
 };

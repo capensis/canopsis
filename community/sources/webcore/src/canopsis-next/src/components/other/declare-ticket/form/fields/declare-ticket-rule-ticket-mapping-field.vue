@@ -2,7 +2,7 @@
   v-layout(column)
     c-information-block(
       :title="$t('declareTicket.ticketUrlAndId')",
-      :help-text="$t('declareTicket.ticketUrlAndIdHelpText')",
+      :help-text="ticketUrlHelpText",
       help-icon="help",
       help-icon-color="grey darken-1"
     )
@@ -25,7 +25,7 @@
               v-field="value.ticket_id",
               :disabled="disabled",
               :name="ticketIdFieldName",
-              required
+              :required="ticketIdRequired"
             )
           v-flex(xs6)
             declare-ticket-rule-ticket-url-field(
@@ -76,6 +76,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    ticketIdRequired: {
+      type: Boolean,
+      default: false,
+    },
+    onlyOneTicketId: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ticketIdFieldName() {
@@ -84,6 +92,13 @@ export default {
 
     ticketUrlFieldName() {
       return `${this.name}.ticket_url`;
+    },
+
+    ticketUrlHelpText() {
+      return [
+        this.$t('declareTicket.ticketUrlAndIdHelpText'),
+        this.onlyOneTicketId && this.$t('declareTicket.dataFromOneStepAttention'),
+      ].filter(Boolean).join('\n');
     },
   },
   watch: {
@@ -106,7 +121,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: 'required:true',
-        getter: () => this.isDeclareTicketExist || this.value.enabled,
+        getter: () => !this.ticketIdRequired || this.isDeclareTicketExist || this.value.enabled,
         vm: this,
       });
     },

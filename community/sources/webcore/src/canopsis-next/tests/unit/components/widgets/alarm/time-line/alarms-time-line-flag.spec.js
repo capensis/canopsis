@@ -1,25 +1,20 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
-
-import TimeLineFlag from '@/components/widgets/alarm/time-line/time-line-flag.vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
-const localVue = createVueInstance();
+import TimeLineFlag from '@/components/widgets/alarm/time-line/alarms-time-line-flag.vue';
 
 const stubs = {
   'c-alarm-chip': true,
 };
 
-const snapshotFactory = (options = {}) => mount(TimeLineFlag, {
-  localVue,
-  stubs,
+describe('alarms-time-line-flag', () => {
+  const snapshotFactory = generateRenderer(TimeLineFlag, {
+    stubs,
+  });
 
-  ...options,
-});
-
-describe('time-line-flag', () => {
   it.each(
     Object.entries(ENTITIES_STATUSES),
-  )('Renders `time-line-flag` with status: %s', (_, status) => {
+  )('Renders `alarms-time-line-flag` with status: %s', (_, status) => {
     const wrapper = snapshotFactory({
       propsData: {
         step: {
@@ -34,7 +29,7 @@ describe('time-line-flag', () => {
 
   it.each(
     Object.entries(ENTITIES_STATES),
-  )('Renders `time-line-flag` with state: %s', (_, status) => {
+  )('Renders `alarms-time-line-flag` with state: %s', (_, status) => {
     const wrapper = snapshotFactory({
       propsData: {
         step: {
@@ -49,7 +44,7 @@ describe('time-line-flag', () => {
 
   it.each(
     Object.entries(EVENT_ENTITY_TYPES),
-  )('Renders `time-line-flag` with type: %s', (_, type) => {
+  )('Renders `alarms-time-line-flag` with type: %s', (_, type) => {
     const wrapper = snapshotFactory({
       propsData: {
         step: {
