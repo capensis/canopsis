@@ -40,7 +40,7 @@
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
-                declared-tickets-list(:tickets="alarm.v.tickets")
+                declared-tickets-list(:tickets="alarm.v.tickets", :parent-alarm-id="parentAlarmId")
 
     v-tab {{ $tc('common.pbehavior', 2) }}
     v-tab-item
@@ -153,6 +153,10 @@ export default {
     alarm: {
       type: Object,
       required: true,
+    },
+    parentAlarmId: {
+      type: String,
+      required: false,
     },
     widget: {
       type: Object,
