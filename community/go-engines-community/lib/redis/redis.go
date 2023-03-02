@@ -103,9 +103,13 @@ func NewOptions(surl string, db int, logger zerolog.Logger,
 // url, which must be on the following shape:
 //
 // redis-sentinel://[password@]host1[:port1][,host2[:port2]][,hostN[:portN]][/database][?
-//    [timeout=timeout[d|h|m|s|ms|us|ns]][&sentinelMasterId=sentinelMasterId]]
+//
+//	[timeout=timeout[d|h|m|s|ms|us|ns]][&sentinelMasterId=sentinelMasterId]]
+//
 // As well supported password parameter same as in NewOptions():
-//    redis://[nouser:password@]host:port/int
+//
+//	redis://[nouser:password@]host:port/int
+//
 // With this form "nouser" is ignored, and "password" extracted only.
 func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 	reconnectCount int, minReconnectTimeout time.Duration) (*redis.FailoverOptions, error) {
@@ -125,12 +129,17 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 			if username := redisURL.User.Username(); username != "" {
 				failoverOptions.SentinelUsername = username
 				failoverOptions.SentinelPassword = password
+				if redisURL.Query().Has("redisPassword") {
+					failoverOptions.Password = redisURL.Query().Get("redisPassword")
+				}
 			} else {
 				failoverOptions.Password = password
 			}
 		} else if password := redisURL.User.Username(); password != "" {
 			failoverOptions.Password = password
 		}
+	} else if redisURL.Query().Has("redisPassword") {
+		failoverOptions.Password = redisURL.Query().Get("redisPassword")
 	}
 
 	failoverOptions.SentinelAddrs = strings.Split(redisURL.Host, ",")

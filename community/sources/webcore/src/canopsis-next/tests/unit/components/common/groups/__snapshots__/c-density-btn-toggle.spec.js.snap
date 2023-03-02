@@ -2,7 +2,8 @@
 
 exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props 1`] = `
 <div
-  class="v-item-group density-btn-toggle theme--light v-btn-toggle"
+  class="v-item-group density__btn-toggle theme--light v-btn-toggle"
+  name="dense"
 >
   <span
     class="v-tooltip v-tooltip--top"
@@ -13,7 +14,31 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
     <button
       class="v-btn v-btn--flat v-btn--small theme--light"
       type="button"
-      value="false"
+      value="0"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          $vuetify.icons.density_large
+        </i>
+      </div>
+    </button>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--flat v-btn--small theme--light"
+      type="button"
+      value="1"
     >
       <div
         class="v-btn__content"
@@ -35,9 +60,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
       name="slide-y-reverse-transition"
     />
     <button
-      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+      class="v-btn v-btn--flat v-btn--small theme--light"
       type="button"
-      value="true"
+      value="2"
     >
       <div
         class="v-btn__content"
@@ -57,7 +82,8 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
 
 exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default props 1`] = `
 <div
-  class="v-item-group density-btn-toggle theme--light v-btn-toggle"
+  class="v-item-group density__btn-toggle theme--light v-btn-toggle"
+  name="dense"
 >
   <span
     class="v-tooltip v-tooltip--top"
@@ -68,7 +94,31 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
     <button
       class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
       type="button"
-      value="false"
+      value="0"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          $vuetify.icons.density_large
+        </i>
+      </div>
+    </button>
+  </span>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <button
+      class="v-btn v-btn--flat v-btn--small theme--light"
+      type="button"
+      value="1"
     >
       <div
         class="v-btn__content"
@@ -92,7 +142,7 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
     <button
       class="v-btn v-btn--flat v-btn--small theme--light"
       type="button"
-      value="true"
+      value="2"
     >
       <div
         class="v-btn__content"

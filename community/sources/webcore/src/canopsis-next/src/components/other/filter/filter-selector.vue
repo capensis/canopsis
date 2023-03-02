@@ -8,7 +8,8 @@
     :item-text="itemText",
     :item-value="itemValue",
     :item-disabled="isFilterItemDisabled",
-    :multiple="isMultiple"
+    :multiple="isMultiple",
+    :hide-details="hideDetails"
   )
     template(v-if="!hideMultiply", #prepend-item="")
       c-enabled-field.mx-3(
@@ -111,6 +112,10 @@ export default {
       default: true,
     },
     hideMultiply: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },
