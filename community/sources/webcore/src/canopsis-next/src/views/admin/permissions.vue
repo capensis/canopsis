@@ -3,12 +3,12 @@
     c-page-header
     div.position-relative
       v-fade-transition
-        v-layout.white.progress(v-show="pending", column)
+        v-layout.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
       v-tabs(v-if="hasReadAnyRoleAccess", fixed-tabs, slider-color="primary")
         template(v-for="(permissions, groupKey) in groupedPermissions")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
-          v-tab-item.white(:key="`tab-item-${groupKey}`")
+          v-tab-item(:key="`tab-item-${groupKey}`")
             permissions-table-wrapper(
               :permissions="permissions",
               :roles="preparedRoles",
@@ -250,7 +250,7 @@ export default {
     bottom: 10px;
   }
 
-  .admin-rights /deep/ {
+  .admin-rights ::v-deep {
     .v-window__container--is-active th {
       position: relative;
       top: 0;
@@ -266,7 +266,7 @@ export default {
     opacity: .4;
     z-index: 1;
 
-    & /deep/ .v-progress-circular {
+    & ::v-deep .v-progress-circular {
       top: 50%;
       left: 50%;
       margin-top: -16px;

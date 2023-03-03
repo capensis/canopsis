@@ -14,7 +14,7 @@ paths:
       tags:
         - account
       summary: Get account
-      description: Get account
+      description: Get account.
       operationId: account-get
       responses:
         200:
@@ -33,7 +33,7 @@ paths:
       tags:
         - account
       summary: Update account
-      description: Update account
+      description: Update account.
       operationId: account-update
       requestBody:
         description: body
@@ -60,7 +60,7 @@ paths:
       tags:
         - broadcast-messages
       summary: Get all active broadcast-message
-      description: Get all active broadcast-message
+      description: Get all active broadcast-message.
       operationId: broadcast-messages-get-active
       responses:
         200:
@@ -78,7 +78,10 @@ paths:
       tags:
         - alarms
       summary: Count alarms
-      description: Get counts of alarms
+      description: |
+        Get counts of alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-get-counts
       parameters:
         - name: active_columns[]
@@ -133,6 +136,18 @@ paths:
           in: query
           schema:
             type: integer
+        - name: alarm_pattern
+          in: query
+          schema:
+            type: string
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+        - name: pbehavior_pattern
+          in: query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -151,7 +166,10 @@ paths:
       tags:
         - alarms
       summary: Start export alarms
-      description: Start export alarms
+      description: |
+        Start export alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-export-start
       requestBody:
         description: request
@@ -178,7 +196,10 @@ paths:
       tags:
         - alarms
       summary: Get status of export alarms
-      description: Get status of export alarms
+      description: |
+        Get status of export alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-export-get
       parameters:
         - name: id
@@ -211,7 +232,10 @@ paths:
       tags:
         - alarms
       summary: Get result of export alarms
-      description: Get result of export alarms
+      description: |
+        Get result of export alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-export-download
       parameters:
         - name: id
@@ -245,7 +269,10 @@ paths:
       tags:
         - alarms
       summary: Get alarms' details
-      description: Get paginated list of alarms' steps and children.
+      description: |
+        Get paginated list of alarms' steps and children.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-details-get
       requestBody:
         description: body
@@ -303,7 +330,10 @@ paths:
       tags:
         - alarms
       summary: Get alarms' tags
-      description: Get paginated list of alarms' tags.
+      description: |
+        Get paginated list of alarms' tags.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-tags-get
       parameters:
         - $ref: '#/components/parameters/limit'
@@ -336,7 +366,10 @@ paths:
       tags:
         - alarms
       summary: Find all alarms
-      description: Get paginated list of alarms.
+      description: |
+        Get paginated list of alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-find-all
       parameters:
         - name: active_columns[]
@@ -391,6 +424,21 @@ paths:
           in: query
           schema:
             type: integer
+        - in: query
+          name: alarm_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"v.component\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_component\"}}]]"
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
+        - in: query
+          name: pbehavior_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"default_maintenance\"}}]]"
         - name: with_links
           in: query
           description: Links are retrieved from external service so use carefully with big limit.
@@ -442,7 +490,10 @@ paths:
       tags:
         - alarms
       summary: Get alarm by id
-      description: Get alarm by id
+      description: |
+        Get alarm by id.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-get-by-id
       parameters:
         - name: id
@@ -469,7 +520,7 @@ paths:
       tags:
         - internal
       summary: Get application information
-      description: Get application information
+      description: Get application information.
       operationId: internal-get-app-info
       responses:
         200:
@@ -483,7 +534,10 @@ paths:
       tags:
         - associativetables
       summary: Get associativetable by name
-      description: Get associativetable by name
+      description: |
+        Get associativetable by name.
+        
+        -  PERMISSIONS: `api_associative_table:read`
       operationId: associativetables-get-by-name
       parameters:
         - name: name
@@ -509,7 +563,10 @@ paths:
       tags:
         - associativetables
       summary: Create/update associativetable
-      description: Create/update associativetable
+      description: |
+        Create/update associativetable.
+        
+        -  PERMISSIONS: `api_associative_table:update`
       operationId: associativetables-update
       requestBody:
         description: body
@@ -535,7 +592,10 @@ paths:
       tags:
         - associativetables
       summary: Delete associativetable by name
-      description: Delete associativetable by name
+      description: |
+        Delete associativetable by name.
+        
+        -  PERMISSIONS: `api_associative_table:delete`
       operationId: associativetables-delete-by-name
       parameters:
         - name: name
@@ -558,7 +618,10 @@ paths:
       tags:
         - broadcast-messages
       summary: Find all broadcast-message
-      description: Get paginated list of broadcast-message
+      description: |
+        Get paginated list of broadcast-message.
+        
+        -  PERMISSIONS: `api_broadcast_message:read`
       operationId: broadcast-messages-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -588,7 +651,10 @@ paths:
       tags:
         - broadcast-messages
       summary: Create broadcast-message
-      description: Create broadcast-message
+      description: |
+        Create broadcast-message.
+        
+        -  PERMISSIONS: `api_broadcast_message:create`
       operationId: broadcast-messages-create
       requestBody:
         description: body
@@ -615,7 +681,10 @@ paths:
       tags:
         - broadcast-messages
       summary: Get broadcast-message by id
-      description: Get broadcast-message by id
+      description: |
+        Get broadcast-message by id.
+        
+        -  PERMISSIONS: `api_broadcast_message:read`
       operationId: broadcast-messages-get-by-id
       parameters:
         - name: id
@@ -641,7 +710,10 @@ paths:
       tags:
         - broadcast-messages
       summary: Update broadcast-message by id
-      description: Update broadcast-message by id
+      description: |
+        Update broadcast-message by id.
+        
+        -  PERMISSIONS: `api_broadcast_message:update`
       operationId: broadcast-messages-update-by-id
       parameters:
         - name: id
@@ -680,7 +752,10 @@ paths:
       tags:
         - broadcast-messages
       summary: Delete broadcast-message by id
-      description: Delete broadcast-message by id
+      description: |
+        Delete broadcast-message by id.
+        
+        -  PERMISSIONS: `api_broadcast_message:delete`
       operationId: broadcast-messages-delete-by-id
       parameters:
         - name: id
@@ -703,7 +778,10 @@ paths:
       tags:
         - entities
       summary: Bulk disable entities
-      description: Bulk disable entities
+      description: |
+        Bulk disable entities.
+        
+        -  PERMISSIONS: `api_entity:update`
       operationId: entitybasics-bulk-disable
       requestBody:
         description: body
@@ -753,7 +831,10 @@ paths:
       tags:
         - entities
       summary: Bulk enable entities
-      description: Bulk enable entities
+      description: |
+        Bulk enable entities.
+        
+        -  PERMISSIONS: `api_entity:update`
       operationId: entitybasics-bulk-enable
       requestBody:
         description: body
@@ -803,7 +884,10 @@ paths:
       tags:
         - entityservices
       summary: Bulk update entityservices
-      description: Bulk update entityservices
+      description: |
+        Bulk update entityservices.
+        
+        -  PERMISSIONS: `api_entityservice:update`
       operationId: entityservices-bulk-update
       requestBody:
         description: body
@@ -890,7 +974,10 @@ paths:
       tags:
         - entityservices
       summary: Bulk create entityservices
-      description: Bulk create entityservices
+      description: |
+        Bulk create entityservices.
+        
+        -  PERMISSIONS: `api_entityservice:create`
       operationId: entityservices-bulk-create
       requestBody:
         description: body
@@ -976,7 +1063,10 @@ paths:
       tags:
         - entityservices
       summary: Bulk delete entityservices
-      description: Bulk delete entityservices
+      description: |
+        Bulk delete entityservices.
+        
+        -  PERMISSIONS: `api_entityservice:delete`
       operationId: entityservices-bulk-delete
       requestBody:
         description: body
@@ -1021,7 +1111,10 @@ paths:
       tags:
         - eventfilters
       summary: Bulk update eventfilters
-      description: Bulk update eventfilters
+      description: |
+        Bulk update eventfilters.
+        
+        -  PERMISSIONS: `api_entityservice:update`
       operationId: eventfilters-bulk-update
       requestBody:
         description: body
@@ -1058,7 +1151,10 @@ paths:
       tags:
         - eventfilters
       summary: Bulk create eventfilters
-      description: Bulk create eventfilters
+      description: |
+        Bulk create eventfilters.
+        
+        -  PERMISSIONS: `api_eventfilter:create`
       operationId: eventfilters-bulk-create
       requestBody:
         description: body
@@ -1095,7 +1191,10 @@ paths:
       tags:
         - eventfilters
       summary: Bulk delete eventfilters
-      description: Bulk delete eventfilters
+      description: |
+        Bulk delete eventfilters.
+        
+        -  PERMISSIONS: `api_eventfilter:delete`
       operationId: eventfilters-bulk-delete
       requestBody:
         description: body
@@ -1133,7 +1232,10 @@ paths:
       tags:
         - idlerules
       summary: Bulk update idlerules
-      description: Bulk update idlerules
+      description: |
+        Bulk update idlerules.
+        
+        -  PERMISSIONS: `api_eventfilter:update`
       operationId: idlerules-bulk-update
       requestBody:
         description: body
@@ -1170,7 +1272,10 @@ paths:
       tags:
         - idlerules
       summary: Bulk create idlerules
-      description: Bulk create idlerules
+      description: |
+        Bulk create idlerules.
+        
+        -  PERMISSIONS: `api_idlerule:create`
       operationId: idlerules-bulk-create
       requestBody:
         description: body
@@ -1207,7 +1312,10 @@ paths:
       tags:
         - idlerules
       summary: Bulk delete idlerules
-      description: Bulk delete idlerules
+      description: |
+        Bulk delete idlerules.
+        
+        -  PERMISSIONS: `api_idlerule:delete`
       operationId: idlerules-bulk-delete
       requestBody:
         description: body
@@ -1245,7 +1353,10 @@ paths:
       tags:
         - saved-patterns
       summary: Bulk delete patterns
-      description: Bulk delete patterns
+      description: |
+        Bulk delete patterns.
+        
+        -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-bulk-delete
       requestBody:
         description: body
@@ -1292,7 +1403,10 @@ paths:
       tags:
         - pbehaviors
       summary: Bulk update pbehaviors
-      description: Bulk update pbehaviors
+      description: |
+        Bulk update pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehaviors-bulk-update
       requestBody:
         description: body
@@ -1364,7 +1478,10 @@ paths:
       tags:
         - pbehaviors
       summary: Bulk create pbehaviors
-      description: Bulk create pbehaviors
+      description: |
+        Bulk create pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
       operationId: pbehaviors-bulk-create
       requestBody:
         description: body
@@ -1435,7 +1552,10 @@ paths:
       tags:
         - pbehaviors
       summary: Bulk delete pbehaviors
-      description: Bulk delete pbehaviors
+      description: |
+        Bulk delete pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
       operationId: pbehaviors-bulk-delete
       requestBody:
         description: body
@@ -1482,7 +1602,10 @@ paths:
       tags:
         - pbehaviors
       summary: Bulk create entity pbehaviors
-      description: Bulk create entity pbehaviors
+      description: |
+        Bulk create entity pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
       operationId: entity-pbehaviors-bulk-create
       requestBody:
         description: body
@@ -1535,7 +1658,10 @@ paths:
       tags:
         - pbehaviors
       summary: Bulk delete entity pbehaviors
-      description: Bulk delete entity pbehaviors
+      description: |
+        Bulk delete entity pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
       operationId: entity-pbehaviors-bulk-delete
       requestBody:
         description: body
@@ -1583,7 +1709,10 @@ paths:
       tags:
         - scenarios
       summary: Bulk update scenarios
-      description: Bulk update scenarios
+      description: |
+        Bulk update scenarios.
+        
+        -  PERMISSIONS: `api_action:update`
       operationId: scenarios-bulk-update
       requestBody:
         description: body
@@ -1673,7 +1802,10 @@ paths:
       tags:
         - scenarios
       summary: Bulk create scenarios
-      description: Bulk create scenarios
+      description: |
+        Bulk create scenarios.
+        
+        -  PERMISSIONS: `api_action:create`
       operationId: scenarios-bulk-create
       requestBody:
         description: body
@@ -1762,7 +1894,10 @@ paths:
       tags:
         - scenarios
       summary: Bulk delete scenarios
-      description: Bulk delete scenarios
+      description: |
+        Bulk delete scenarios.
+        
+        -  PERMISSIONS: `api_action:delete`
       operationId: scenarios-bulk-delete
       requestBody:
         description: body
@@ -1809,7 +1944,10 @@ paths:
       tags:
         - users
       summary: Bulk update users
-      description: Bulk update users
+      description: |
+        Bulk update users.
+        
+        -  PERMISSIONS: `api_acl:update`
       operationId: users-bulk-update
       requestBody:
         description: body
@@ -1846,7 +1984,10 @@ paths:
       tags:
         - users
       summary: Bulk create users
-      description: Bulk create users
+      description: |
+        Bulk create users.
+        
+        -  PERMISSIONS: `api_acl:create`
       operationId: users-bulk-create
       requestBody:
         description: body
@@ -1855,7 +1996,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/user.Request'
+                $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         required: true
       responses:
         207:
@@ -1872,7 +2013,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/user.Request'
+                            $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         400:
           description: Bad Request
           content:
@@ -1883,7 +2024,10 @@ paths:
       tags:
         - users
       summary: Bulk delete users
-      description: Bulk delete users
+      description: |
+        Bulk delete users.
+        
+        -  PERMISSIONS: `api_acl:delete`
       operationId: users-bulk-delete
       requestBody:
         description: body
@@ -1921,7 +2065,10 @@ paths:
       tags:
         - alarms
       summary: Find opened alarms of component's resource
-      description: Get paginated list of alarms.
+      description: |
+        Get paginated list of alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-find-component-alarms
       parameters:
         - name: _id
@@ -1968,7 +2115,10 @@ paths:
       tags:
         - contextgraph-import
       summary: Create import task
-      description: Create import task
+      description: |
+        Create import task.
+        
+        -  PERMISSIONS: `api_contextgraph:create`
       operationId: contextgraph-import-create-import
       parameters:
         - name: source
@@ -2255,7 +2405,10 @@ paths:
       tags:
         - contextgraph-import
       summary: Create import task
-      description: Create import task
+      description: |
+        Create import task.
+        
+        -  PERMISSIONS: `api_contextgraph:create`
       operationId: contextgraph-import-create-import-partial
       parameters:
         - name: source
@@ -2518,7 +2671,10 @@ paths:
       tags:
         - contextgraph-import
       summary: Create new import task
-      description: Create new import task
+      description: |
+        Create new import task.
+        
+        -  PERMISSIONS: `api_contextgraph:create`
       operationId: contextgraph-import-create-new-import
       parameters:
         - name: source
@@ -2670,7 +2826,10 @@ paths:
       tags:
         - contextgraph-import
       summary: Create new import partial task
-      description: Create new import partial task
+      description: |
+        Create new import partial task.
+        
+        -  PERMISSIONS: `api_contextgraph:create`
       operationId: contextgraph-import-create-new-import-partial
       parameters:
         - name: source
@@ -2822,7 +2981,10 @@ paths:
       tags:
         - contextgraph-import
       summary: Get import status by id
-      description: Get import status by id
+      description: |
+        Get import status by id.
+        
+        -  PERMISSIONS: `api_contextgraph:read`
       operationId: contextgraph-import-get-status-by-id
       parameters:
         - name: id
@@ -2849,7 +3011,10 @@ paths:
       tags:
         - datastorage
       summary: Get conf
-      description: Get conf
+      description: |
+        Get conf.
+        
+        -  PERMISSIONS: `api_datastorage_read`
       operationId: datastorage-get
       responses:
         200:
@@ -2862,7 +3027,10 @@ paths:
       tags:
         - datastorage
       summary: Update conf
-      description: Update conf
+      description: |
+        Update conf.
+        
+        -  PERMISSIONS: `api_datastorage_update`
       operationId: datastorage-update
       requestBody:
         description: body
@@ -2883,7 +3051,10 @@ paths:
       tags:
         - entities
       summary: Find entities
-      description: Get paginated list of entities
+      description: |
+        Get paginated list of entities.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entities-find-all
       parameters:
         - name: active_columns[]
@@ -2959,7 +3130,10 @@ paths:
       tags:
         - entities
       summary: Clean disabled entities
-      description: Clean disabled entities
+      description: |
+        Clean disabled entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
       operationId: entities-clean
       parameters:
         - name: archive
@@ -2985,7 +3159,10 @@ paths:
       tags:
         - entities
       summary: Get context graph by id
-      description: Get context graph by id
+      description: |
+        Get context graph by id.
+        
+        -  PERMISSIONS: `api_entity:get`
       operationId: entities-get-context-graph
       parameters:
         - name: _id
@@ -3013,7 +3190,10 @@ paths:
       tags:
         - pbehaviors
       summary: Find pbehaviors by entity id
-      description: Get list of pbehaviors' timespans
+      description: |
+        Get list of pbehaviors' timespans.
+        
+        -  PERMISSIONS: `api_entity:read` `api_pbehavior:read`
       operationId: pbehaviors-calendar-by-entity-id
       parameters:
         - name: _id
@@ -3058,7 +3238,10 @@ paths:
       tags:
         - pbehaviors
       summary: Find pbehaviors by entity id
-      description: Get list of pbehaviors
+      description: |
+        Get list of pbehaviors.
+        
+        -  PERMISSIONS: `api_entity:read` `api_pbehavior:read`
       operationId: pbehaviors-find-by-entity-id
       parameters:
         - name: _id
@@ -3094,7 +3277,10 @@ paths:
       tags:
         - entity-categories
       summary: Find entity categories
-      description: Get paginated list of entity categories
+      description: |
+        Get paginated list of entity categories.
+        
+        -  PERMISSIONS: `api_entitycategory:read`
       operationId: entity-categories-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -3130,7 +3316,10 @@ paths:
       tags:
         - entity-categories
       summary: Create entity category
-      description: Create entity category
+      description: |
+        Create entity category.
+        
+        -  PERMISSIONS: `api_entitycategory:create`
       operationId: entity-categories-create
       requestBody:
         description: body
@@ -3164,7 +3353,10 @@ paths:
       tags:
         - entity-categories
       summary: Get entity category by id
-      description: Get entity category by id
+      description: |
+        Get entity category by id.
+        
+        -  PERMISSIONS: `api_entitycategory:read`
       operationId: entity-categories-get-by-id
       parameters:
         - name: id
@@ -3190,7 +3382,10 @@ paths:
       tags:
         - entity-categories
       summary: Update entity category by id
-      description: Update entity category by id
+      description: |
+        Update entity category by id.
+        
+        -  PERMISSIONS: `api_entitycategory:update`
       operationId: entity-categories-update-by-id
       parameters:
         - name: id
@@ -3236,7 +3431,10 @@ paths:
       tags:
         - entity-categories
       summary: Delete entity category by id
-      description: Delete entity category by id
+      description: |
+        Delete entity category by id.
+        
+        -  PERMISSIONS: `api_entitycategory:delete`
       operationId: entity-categories-delete-by-id
       parameters:
         - name: id
@@ -3259,7 +3457,10 @@ paths:
       tags:
         - entities
       summary: Start export entities
-      description: Start export entities
+      description: |
+        Start export entities.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entities-export-start
       requestBody:
         description: request
@@ -3286,7 +3487,10 @@ paths:
       tags:
         - entities
       summary: Get status of export entities
-      description: Get status of export entities
+      description: |
+        Get status of export entities.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entities-export-get
       parameters:
         - name: id
@@ -3319,7 +3523,10 @@ paths:
       tags:
         - entities
       summary: Get result of export entities
-      description: Get result of export entities
+      description: |
+        Get result of export entities.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entities-export-download
       parameters:
         - name: id
@@ -3353,7 +3560,10 @@ paths:
       tags:
         - entity-infos-dictionary
       summary: Find entity infos keys
-      description: Get paginated list of entity info keys
+      description: |
+        Get paginated list of entity info keys.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entity-infos-dictionary-list-keys
       parameters:
         - $ref: '#/components/parameters/page'
@@ -3384,7 +3594,10 @@ paths:
       tags:
         - entity-infos-dictionary
       summary: Find entity infos values
-      description: Get paginated list of entity info values
+      description: |
+        Get paginated list of entity info values.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entity-infos-dictionary-list-values
       parameters:
         - $ref: '#/components/parameters/page'
@@ -3420,7 +3633,10 @@ paths:
       tags:
         - entitybasics
       summary: Get entity by id
-      description: Get entity by id
+      description: |
+        Get entity by id.
+        
+        -  PERMISSIONS: `api_entity:read`
       operationId: entitybasics-get-by-id
       parameters:
         - name: _id
@@ -3446,7 +3662,10 @@ paths:
       tags:
         - entitybasics
       summary: Update entity by id
-      description: Update entity by id
+      description: |
+        Update entity by id.
+        
+        -  PERMISSIONS: `api_entity:update`
       operationId: entitybasics-update-by-id
       parameters:
         - name: _id
@@ -3477,12 +3696,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_component"
-                  ],
-                  "depends": [
-                    "cps_connector/cps_connector_name"
                   ]
                 }
               component:
@@ -3500,13 +3713,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_connector/cps_connector_name"
-                  ],
-                  "depends": [
-                    "cps_resource_1/cps_component",
-                    "cps_resource_2/cps_component"
                   ]
                 }
               connector:
@@ -3524,14 +3730,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_resource_1/cps_component_1",
-                    "cps_resource_2/cps_component_2"
-                  ],
-                  "depends": [
-                    "cps_component_1",
-                    "cps_component_2"
                   ]
                 }
         required: true
@@ -3558,7 +3756,10 @@ paths:
       tags:
         - entitybasics
       summary: Delete entity by id
-      description: Delete entity by id
+      description: |
+        Delete entity by id.
+        
+        -  PERMISSIONS: `api_entity:delete`
       operationId: entitybasics-delete-by-id
       parameters:
         - name: _id
@@ -3587,7 +3788,10 @@ paths:
       tags:
         - entityservices
       summary: Get entity service's dependencies by id
-      description: Get entity service's dependencies by id
+      description: |
+        Get entity service's dependencies by id.
+        
+        -  PERMISSIONS: `api_entityservice:read`
       operationId: entityservices-get-dependencies-by-id
       parameters:
         - name: id
@@ -3636,7 +3840,10 @@ paths:
       tags:
         - entityservices
       summary: Get entity's impacted services by id
-      description: Get entity's impacted services by id
+      description: |
+        Get entity's impacted services by id.
+        
+        -  PERMISSIONS: `api_entityservice:read`
       operationId: entityservices-get-impacts-by-id
       parameters:
         - name: id
@@ -3685,7 +3892,10 @@ paths:
       tags:
         - alarms
       summary: Find opened alarms of service's dependencies
-      description: Get paginated list of alarms.
+      description: |
+        Get paginated list of alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-find-service-alarms
       parameters:
         - name: id
@@ -3742,7 +3952,10 @@ paths:
       tags:
         - entityservices
       summary: Create entity service
-      description: Create entity service
+      description: |
+        Create entity service.
+        
+        -  PERMISSIONS: `api_entityservice:create`
       operationId: entityservices-create
       requestBody:
         description: body
@@ -3816,7 +4029,10 @@ paths:
       tags:
         - entityservices
       summary: Get entity service by id
-      description: Get entity service by id
+      description: |
+        Get entity service by id.
+        
+        -  PERMISSIONS: `api_entityservice:read`
       operationId: entityservices-get-by-id
       parameters:
         - name: id
@@ -3842,7 +4058,10 @@ paths:
       tags:
         - entityservices
       summary: Update entity service by id
-      description: Update entity service by id
+      description: |
+        Update entity service by id.
+        
+        -  PERMISSIONS: `api_entityservice:update`
       operationId: entityservices-update-by-id
       parameters:
         - name: id
@@ -3928,7 +4147,10 @@ paths:
       tags:
         - entityservices
       summary: Delete entity service by id
-      description: Delete entity service by id
+      description: |
+        Delete entity service by id.
+        
+        -  PERMISSIONS: `api_entityservice:delete`
       operationId: entityservices-delete-by-id
       parameters:
         - name: id
@@ -3951,7 +4173,10 @@ paths:
       tags:
         - events
       summary: Send event/events
-      description: Send event/events
+      description: |
+        Send event/events.
+        
+        - PERMISSIONS: `api_event`
       operationId: event-send
       requestBody:
         description: body
@@ -4118,7 +4343,10 @@ paths:
       tags:
         - eventfilters
       summary: Find all eventfilter
-      description: Get paginated list of eventfilter
+      description: |
+        Get paginated list of eventfilter.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilters-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -4148,7 +4376,10 @@ paths:
       tags:
         - eventfilters
       summary: Create eventfilter
-      description: Create eventfilter
+      description: |
+        Create eventfilter.
+        
+        -  PERMISSIONS: `api_eventfilter:create`
       operationId: eventfilters-create
       requestBody:
         description: body
@@ -4521,7 +4752,10 @@ paths:
       tags:
         - eventfilters
       summary: Get eventfilter by id
-      description: Get eventfilter by id
+      description: |
+        Get eventfilter by id.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilters-get-by-id
       parameters:
         - name: id
@@ -4547,7 +4781,10 @@ paths:
       tags:
         - eventfilters
       summary: Update eventfilter by id
-      description: Update eventfilter by id
+      description: |
+        Update eventfilter by id.
+        
+        -  PERMISSIONS: `api_eventfilter:update`
       operationId: eventfilters-update-by-id
       parameters:
         - name: id
@@ -4623,7 +4860,10 @@ paths:
       tags:
         - eventfilters
       summary: Delete eventfilter by id
-      description: Delete eventfilter by id
+      description: |
+        Delete eventfilter by id.
+        
+        -  PERMISSIONS: `api_eventfilter:delete`
       operationId: eventfilters-delete-by-id
       parameters:
         - name: id
@@ -4646,7 +4886,10 @@ paths:
       tags:
         - exportconfiguration
       summary: Export configurations
-      description: Export configurations
+      description: |
+        Export configurations.
+        
+        -  PERMISSIONS: `api_export_configurations`
       operationId: export-configurations
       requestBody:
         description: body
@@ -4694,7 +4937,10 @@ paths:
       tags:
         - files
       summary: List files by ID
-      description: Get list of file objects by ID
+      description: |
+        Get list of file objects by ID.
+        
+        -  PERMISSIONS (for private files): `api_file:read`
       operationId: files-list
       responses:
         200:
@@ -4721,7 +4967,10 @@ paths:
       tags:
         - files
       summary: Upload files
-      description: Upload files
+      description: |
+        Upload files.
+        
+        -  PERMISSIONS: `api_file:create`
       operationId: file-upload
       parameters:
         - name: public
@@ -4763,7 +5012,7 @@ paths:
       tags:
         - auth
       summary: Get file access
-      description: Get file access
+      description: Get file access.
       operationId: auth-get-file-access
       responses:
         204:
@@ -4775,7 +5024,10 @@ paths:
       tags:
         - files
       summary: Get file by ID
-      description: Get file content by ID or download with file name
+      description: |
+        Get file content by ID or download with file name.
+        
+        -  PERMISSIONS (for private files): `api_file:read`
       operationId: files-get
       parameters:
         - name: id
@@ -4802,7 +5054,10 @@ paths:
       tags:
         - files
       summary: Delete file
-      description: Delete file by ID
+      description: |
+        Delete file by ID.
+        
+        -  PERMISSIONS: `api_file:delete`
       operationId: files-delete
       parameters:
         - name: id
@@ -4831,7 +5086,10 @@ paths:
       tags:
         - flappingrules
       summary: Find all flapping rule
-      description: Get paginated list of flapping rule
+      description: |
+        Get paginated list of flapping rule.
+        
+        -  PERMISSIONS: `api_flapping_rule:read`
       operationId: flappingrules-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -4861,7 +5119,10 @@ paths:
       tags:
         - flappingrules
       summary: Create flapping rule
-      description: Create flapping rule
+      description: |
+        Create flapping rule.
+        
+        -  PERMISSIONS: `api_flapping_rule:create`
       operationId: flappingrules-create
       requestBody:
         description: body
@@ -4924,7 +5185,10 @@ paths:
       tags:
         - flappingrules
       summary: Get flapping rule by id
-      description: Get flapping rule by id
+      description: |
+        Get flapping rule by id.
+        
+        -  PERMISSIONS: `api_flapping_rule:read`
       operationId: flappingrules-get-by-id
       parameters:
         - name: id
@@ -4950,7 +5214,10 @@ paths:
       tags:
         - flappingrules
       summary: Update flapping rule by id
-      description: Update flapping rule by id
+      description: |
+        Update flapping rule by id.
+        
+        -  PERMISSIONS: `api_flapping_rule:update`
       operationId: flappingrules-update-by-id
       parameters:
         - name: id
@@ -5025,7 +5292,10 @@ paths:
       tags:
         - flappingrules
       summary: Delete flapping rule by id
-      description: Delete flapping rule by id
+      description: |
+        Delete flapping rule by id.
+        
+        -  PERMISSIONS: `api_flapping_rule:delete`
       operationId: flappingrules-delete-by-id
       parameters:
         - name: id
@@ -5048,7 +5318,10 @@ paths:
       tags:
         - idlerules
       summary: Find idle rules
-      description: Get paginated list of idle rules
+      description: |
+        Get paginated list of idle rules.
+        
+        -  PERMISSIONS: `api_idlerule:read`
       operationId: idlerules-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -5084,7 +5357,10 @@ paths:
       tags:
         - idlerules
       summary: Create idle rule
-      description: Create idle rule
+      description: |
+        Create idle rule.
+        
+        -  PERMISSIONS: `api_idlerule:create`
       operationId: idlerules-create
       requestBody:
         description: body
@@ -5192,7 +5468,10 @@ paths:
       tags:
         - idlerules
       summary: Get idle rule by id
-      description: Get idle rule by id
+      description: |
+        Get idle rule by id.
+        
+        -  PERMISSIONS: `api_idlerule:read`
       operationId: idlerules-get-by-id
       parameters:
         - name: id
@@ -5218,7 +5497,10 @@ paths:
       tags:
         - idlerules
       summary: Update idle rule by id
-      description: Update idle rule by id
+      description: |
+        Update idle rule by id.
+        
+        -  PERMISSIONS: `api_idlerule:update`
       operationId: idlerules-update-by-id
       parameters:
         - name: id
@@ -5332,7 +5614,10 @@ paths:
       tags:
         - idlerules
       summary: Delete idle rule by id
-      description: Delete idle rule by id
+      description: |
+        Delete idle rule by id.
+        
+        -  PERMISSIONS: `api_idlerule:delete`
       operationId: idlerules-delete-by-id
       parameters:
         - name: id
@@ -5355,7 +5640,10 @@ paths:
       tags:
         - internal
       summary: update user interface
-      description: update user interface
+      description: |
+        update user interface.
+        
+        -  PERMISSIONS: `api_acl_interface_update`
       operationId: internal-update-user-interface
       requestBody:
         description: body
@@ -5381,7 +5669,10 @@ paths:
       tags:
         - internal
       summary: delete user interface
-      description: delete user interface
+      description: |
+        delete user interface.
+        
+        -  PERMISSIONS: `api_acl_interface_delete`
       operationId: internal-delete-user-interface
       responses:
         204:
@@ -5391,7 +5682,7 @@ paths:
       tags:
         - auth
       summary: Get logged user count
-      description: Get logged user count
+      description: Get logged user count.
       operationId: auth-logged-user-count
       responses:
         200:
@@ -5405,7 +5696,7 @@ paths:
       tags:
         - auth
       summary: Log in
-      description: Log in
+      description: Log in.
       operationId: auth-login
       requestBody:
         description: body
@@ -5428,37 +5719,22 @@ paths:
       tags:
         - auth
       summary: Log out
-      description: Log out
+      description: Log out.
       operationId: auth-logout
       responses:
         204:
           description: OK
       security:
         - BearerAuth: [ ]
-  /manual-meta-alarms:
-    get:
-      tags:
-        - alarms
-      summary: Find manual meta alarms
-      description: Get manual meta alarms.
-      operationId: alarms-find-meta-alarms
-      parameters:
-        - $ref: '#/components/parameters/search'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: 'schemas_swagger.yaml#/definitions/alarm.ManualResponse'
   /message-rate-stats:
     get:
       tags:
         - message-rate-stats
       summary: Find message rate stats
-      description: Get paginated list of stats
+      description: |
+        Get paginated list of stats.
+        
+        -  PERMISSIONS: `api_message_rate_stats_read`
       operationId: message-rate-stats-find-all
       parameters:
         - name: from
@@ -5494,7 +5770,10 @@ paths:
       tags:
         - notification
       summary: Get notification settings
-      description: Get notification settings
+      description: |
+        Get notification settings.
+        
+        -  PERMISSIONS: `api_notification`
       operationId: notification-get
       parameters:
         - $ref: '#/components/parameters/page'
@@ -5517,7 +5796,10 @@ paths:
       tags:
         - notification
       summary: Update notification settings
-      description: Update notification settings
+      description: |
+        Update notification settings.
+        
+        -  PERMISSIONS: `api_notification`
       operationId: notification-update
       requestBody:
         description: body
@@ -5550,7 +5832,10 @@ paths:
       tags:
         - alarms
       summary: Get open alarm by entity
-      description: Get open alarm by entity
+      description: |
+        Get open alarm by entity.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-get-open-by-entity
       parameters:
         - name: _id
@@ -5579,7 +5864,7 @@ paths:
       tags:
         - saved-patterns
       summary: Count matches
-      description: Count matches of pattern
+      description: Count matches of pattern.
       operationId: saved-patterns-count
       requestBody:
         description: body
@@ -5645,7 +5930,10 @@ paths:
       tags:
         - saved-patterns
       summary: Find all saved patterns
-      description: Get paginated list of saved patterns
+      description: |
+        Get paginated list of saved patterns.
+        
+        -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-find-all
       parameters:
         - name: corporate
@@ -5689,7 +5977,10 @@ paths:
       tags:
         - saved-patterns
       summary: Create saved pattern
-      description: Create saved pattern
+      description: |
+        Create saved pattern.
+        
+        -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-create
       requestBody:
         description: body
@@ -5834,7 +6125,10 @@ paths:
       tags:
         - saved-patterns
       summary: Get saved pattern by id
-      description: Get saved pattern by id
+      description: |
+        Get saved pattern by id.
+        
+        -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-get-by-id
       parameters:
         - name: id
@@ -5860,7 +6154,10 @@ paths:
       tags:
         - saved-patterns
       summary: Update saved pattern by id
-      description: Update saved pattern by id
+      description: |
+        Update saved pattern by id.
+        
+        -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-update-by-id
       parameters:
         - name: id
@@ -5936,7 +6233,10 @@ paths:
       tags:
         - saved-patterns
       summary: Delete saved pattern by id
-      description: Delete saved pattern by id
+      description: |
+        Delete saved pattern by id.
+        
+        -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-delete-by-id
       parameters:
         - name: id
@@ -5959,7 +6259,10 @@ paths:
       tags:
         - pbehavior-comments
       summary: Create pbehavior comment
-      description: Create pbehavior comment
+      description: |
+        Create pbehavior comment.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehavior-comments-create
       requestBody:
         description: body
@@ -5994,7 +6297,10 @@ paths:
       tags:
         - pbehavior-comments
       summary: Delete pbehavior comment by id
-      description: Delete pbehavior comment by id
+      description: |
+        Delete pbehavior comment by id.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehavior-comment-delete-by-id
       parameters:
         - name: id
@@ -6017,7 +6323,10 @@ paths:
       tags:
         - pbehavior-exceptions
       summary: Find all pbehavior exceptions
-      description: Get paginated list of behavior exceptions
+      description: |
+        Get paginated list of behavior exceptions.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:read`
       operationId: pbehavior-exceptions-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -6058,7 +6367,10 @@ paths:
       tags:
         - pbehavior-exceptions
       summary: Create pbehavior exception
-      description: Create pbehavior exception
+      description: |
+        Create pbehavior exception.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:create`
       operationId: pbehavior-exceptions-create
       requestBody:
         description: body
@@ -6110,7 +6422,10 @@ paths:
       tags:
         - pbehavior-exceptions
       summary: Get pbehavior exception by id
-      description: Get pbehavior exception by id
+      description: |
+        Get pbehavior exception by id.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:read`
       operationId: pbehavior-exceptions-get-by-id
       parameters:
         - name: id
@@ -6136,7 +6451,10 @@ paths:
       tags:
         - pbehavior-exceptions
       summary: Update behavior exception by id
-      description: Update behavior exception by id
+      description: |
+        Update behavior exception by id.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:update`
       operationId: pbehavior-exceptions-update-by-id
       parameters:
         - name: id
@@ -6200,7 +6518,10 @@ paths:
       tags:
         - pbehavior-exceptions
       summary: Delete pbehavior exception by id
-      description: Delete pbehavior exception by id
+      description: |
+        Delete pbehavior exception by id.
+        
+        -  PERMISSIONS: `api_pbehaviorexception:delete`
       operationId: pbehavior-exceptions-delete-by-id
       parameters:
         - name: id
@@ -6229,7 +6550,10 @@ paths:
       tags:
         - pbehavior-ics
       summary: Get pbehavior ICS by id
-      description: Get pbehavior ICS by id
+      description: |
+        Get pbehavior ICS by id.
+        
+        -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehavior-ics-get-by-id
       parameters:
         - name: id
@@ -6257,7 +6581,10 @@ paths:
       tags:
         - pbehavior-reasons
       summary: Find pbehavior reasons
-      description: Get paginated list of behavior reasons
+      description: |
+        Get paginated list of behavior reasons.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:read`
       operationId: pbehavior-reasons-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -6298,7 +6625,10 @@ paths:
       tags:
         - pbehavior-reasons
       summary: Create pbehavior reason
-      description: Create pbehavior reason
+      description: |
+        Create pbehavior reason.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:create`
       operationId: pbehavior-reasons-create
       requestBody:
         description: body
@@ -6333,7 +6663,10 @@ paths:
       tags:
         - pbehavior-reasons
       summary: Get pbehavior reason by id
-      description: Get pbehavior reason by id
+      description: |
+        Get pbehavior reason by id.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:read`
       operationId: pbehavior-reasons-get-by-id
       parameters:
         - name: id
@@ -6359,7 +6692,10 @@ paths:
       tags:
         - pbehavior-reasons
       summary: Update behavior reason by id
-      description: Update behavior reason by id
+      description: |
+        Update behavior reason by id.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:update`
       operationId: pbehavior-reasons-update-by-id
       parameters:
         - name: id
@@ -6406,7 +6742,10 @@ paths:
       tags:
         - pbehavior-reasons
       summary: Delete pbehavior reason by id
-      description: Delete pbehavior reason by id
+      description: |
+        Delete pbehavior reason by id.
+        
+        -  PERMISSIONS: `api_pbehaviorreason:delete`
       operationId: pbehavior-reasons-delete-by-id
       parameters:
         - name: id
@@ -6435,9 +6774,12 @@ paths:
       tags:
         - pbehavior-timespans
       summary: Get all pbehavior timespans
-      description: 'Get time spans of calendar event within view span; {by_date: false}
+      description: |
+        Get time spans of calendar event within view span; {by_date: false}
         adds exception spans with types, {by_date: true} merges adjacent spans if
         gap between sequential ones less than 24 hours'
+        
+        -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehavior-timespans-get-all
       requestBody:
         description: body
@@ -6466,7 +6808,10 @@ paths:
       tags:
         - pbehavior-types
       summary: Find pbehavior types
-      description: Get paginated list of behavior types
+      description: |
+        Get paginated list of behavior types.
+        
+        -  PERMISSIONS: `api_pbehaviortype:read`
       operationId: pbehavior-types-find-all
       parameters:
         - name: types[]
@@ -6515,7 +6860,10 @@ paths:
       tags:
         - pbehavior-types
       summary: Create pbehavior type
-      description: Create pbehavior type
+      description: |
+        Create pbehavior type.
+        
+        -  PERMISSIONS: `api_pbehaviortype:create`
       operationId: pbehavior-types-create
       requestBody:
         description: body
@@ -6553,7 +6901,10 @@ paths:
       tags:
         - pbehavior-types
       summary: Get pbehavior type by id
-      description: Get pbehavior type by id
+      description: |
+        Get pbehavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:read`
       operationId: pbehavior-types-get-by-id
       parameters:
         - name: id
@@ -6579,7 +6930,10 @@ paths:
       tags:
         - pbehavior-types
       summary: Update behavior type by id
-      description: Update behavior type by id
+      description: |
+        Update behavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:update`
       operationId: pbehavior-types-update-by-id
       parameters:
         - name: id
@@ -6629,7 +6983,10 @@ paths:
       tags:
         - pbehavior-types
       summary: Delete pbehavior type by id
-      description: Delete pbehavior type by id
+      description: |
+        Delete pbehavior type by id.
+        
+        -  PERMISSIONS: `api_pbehaviortype:delete`
       operationId: pbehavior-types-delete-by-id
       parameters:
         - name: id
@@ -6658,7 +7015,10 @@ paths:
       tags:
         - pbehaviors
       summary: Delete pbehavior by name
-      description: Delete pbehavior by name
+      description: |
+        Delete pbehavior by name.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
       operationId: pbehaviors-delete-by-name
       parameters:
         - name: name
@@ -6686,7 +7046,10 @@ paths:
       tags:
         - pbehaviors
       summary: Find all pbehaviors
-      description: Get paginated list of pbehaviors
+      description: |
+        Get paginated list of pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -6722,7 +7085,10 @@ paths:
       tags:
         - pbehaviors
       summary: Create pbehavior
-      description: Create pbehavior
+      description: |
+        Create pbehavior.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
       operationId: pbehaviors-create
       requestBody:
         description: body
@@ -6850,7 +7216,10 @@ paths:
       tags:
         - pbehaviors
       summary: Get pbehavior by id
-      description: Get pbehavior by id
+      description: |
+        Get pbehavior by id.
+        
+        -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-get-by-id
       parameters:
         - name: id
@@ -6876,7 +7245,10 @@ paths:
       tags:
         - pbehaviors
       summary: Update behavior by id
-      description: Update behavior by id
+      description: |
+        Update behavior by id.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehaviors-update-by-id
       parameters:
         - name: id
@@ -6947,7 +7319,10 @@ paths:
       tags:
         - pbehaviors
       summary: Delete pbehavior by id
-      description: Delete pbehavior by id
+      description: |
+        Delete pbehavior by id.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
       operationId: pbehaviors-delete-by-id
       parameters:
         - name: id
@@ -6969,7 +7344,10 @@ paths:
       tags:
         - pbehaviors
       summary: Patch partial set of behavior attributes by id
-      description: Patch partial set of behavior attributes by id
+      description: |
+        Patch partial set of behavior attributes by id.
+        
+        -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehaviors-patch-by-id
       parameters:
         - name: id
@@ -7017,7 +7395,10 @@ paths:
       tags:
         - pbehaviors
       summary: Find entities by pbehavior id
-      description: Find entities by pbehavior id
+      description: |
+        Find entities by pbehavior id.
+        
+        -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-find-entities
       parameters:
         - name: id
@@ -7066,7 +7447,10 @@ paths:
       tags:
         - permissions
       summary: Find permissions
-      description: Get paginated list of permissions
+      description: |
+        Get paginated list of permissions.
+        
+        -  PERMISSIONS: `api_acl:read`
       operationId: permissions-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -7103,7 +7487,10 @@ paths:
       tags:
         - playlists
       summary: Find all playlist
-      description: Get paginated list of playlist
+      description: |
+        Get paginated list of playlist.
+        
+        -  PERMISSIONS: `api_playlist:read` `{id}:read`
       operationId: playlists-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -7139,7 +7526,10 @@ paths:
       tags:
         - playlists
       summary: Create playlist
-      description: Create playlist
+      description: |
+        Create playlist.
+        
+        -  PERMISSIONS: `api_playlist:create`
       operationId: playlists-create
       requestBody:
         description: body
@@ -7166,7 +7556,10 @@ paths:
       tags:
         - playlists
       summary: Get playlist by id
-      description: Get playlist by id
+      description: |
+        Get playlist by id.
+        
+        -  PERMISSIONS: `api_playlist:read` `{id}:read`
       operationId: playlists-get-by-id
       parameters:
         - name: id
@@ -7192,7 +7585,10 @@ paths:
       tags:
         - playlists
       summary: Update playlist by id
-      description: Update playlist by id
+      description: |
+        Update playlist by id.
+        
+        -  PERMISSIONS: `api_playlist:update` `{id}:update`
       operationId: playlists-update-by-id
       parameters:
         - name: id
@@ -7231,7 +7627,10 @@ paths:
       tags:
         - playlists
       summary: Delete playlist by id
-      description: Delete playlist by id
+      description: |
+        Delete playlist by id.
+        
+        -  PERMISSIONS: `api_playlist:delete` `{id}:update`
       operationId: playlists-delete-by-id
       parameters:
         - name: id
@@ -7254,7 +7653,10 @@ paths:
       tags:
         - resolverules
       summary: Find all resolve rule
-      description: Get paginated list of resolve rule
+      description: |
+        Get paginated list of resolve rule.
+        
+        -  PERMISSIONS: `api_resolve_rule:read`
       operationId: resolverules-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -7284,7 +7686,10 @@ paths:
       tags:
         - resolverules
       summary: Create resolve rule
-      description: Create resolve rule
+      description: |
+        Create resolve rule.
+        
+        -  PERMISSIONS: `api_resolve_rule:create`
       operationId: resolverules-create
       requestBody:
         description: body
@@ -7346,7 +7751,10 @@ paths:
       tags:
         - resolverules
       summary: Get resolve rule by id
-      description: Get resolve rule by id
+      description: |
+        Get resolve rule by id.
+        
+        -  PERMISSIONS: `api_resolve_rule:read`
       operationId: resolverules-get-by-id
       parameters:
         - name: id
@@ -7372,7 +7780,10 @@ paths:
       tags:
         - resolverules
       summary: Update resolve rule by id
-      description: Update resolve rule by id
+      description: |
+        Update resolve rule by id.
+        
+        -  PERMISSIONS: `api_resolve_rule:update`
       operationId: resolverules-update-by-id
       parameters:
         - name: id
@@ -7446,7 +7857,10 @@ paths:
       tags:
         - resolverules
       summary: Delete resolve rule by id
-      description: Delete resolve rule by id
+      description: |
+        Delete resolve rule by id.
+        
+        -  PERMISSIONS: `api_resolve_rule:delete`
       operationId: resolverules-delete-by-id
       parameters:
         - name: id
@@ -7469,7 +7883,10 @@ paths:
       tags:
         - alarms
       summary: Find resolved alarms of entity
-      description: Get paginated list of alarms.
+      description: |
+        Get paginated list of alarms.
+        
+        -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-find-resolved-alarms
       parameters:
         - name: _id
@@ -7524,7 +7941,10 @@ paths:
       tags:
         - roles
       summary: Find roles
-      description: Get paginated list of roles
+      description: |
+        Get paginated list of roles.
+        
+        -  PERMISSIONS: `api_acl:read`
       operationId: roles-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -7560,7 +7980,10 @@ paths:
       tags:
         - roles
       summary: Create role
-      description: Create role
+      description: |
+        Create role.
+        
+        -  PERMISSIONS: `api_acl:create`
       operationId: roles-create
       requestBody:
         description: body
@@ -7593,7 +8016,10 @@ paths:
       tags:
         - roles
       summary: Get role by id
-      description: Get role by id
+      description: |
+        Get role by id.
+        
+        -  PERMISSIONS: `api_acl:read`
       operationId: roles-get-by-id
       parameters:
         - name: id
@@ -7619,7 +8045,10 @@ paths:
       tags:
         - roles
       summary: Update role by id
-      description: Update role by id
+      description: |
+        Update role by id.
+        
+        -  PERMISSIONS: `api_acl:update`
       operationId: roles-update-by-id
       parameters:
         - name: id
@@ -7658,7 +8087,10 @@ paths:
       tags:
         - roles
       summary: Delete role by id
-      description: Delete role by id
+      description: |
+        Delete role by id.
+        
+        -  PERMISSIONS: `api_acl:delete`
       operationId: roles-delete-by-id
       parameters:
         - name: id
@@ -7681,7 +8113,10 @@ paths:
       tags:
         - scenarios
       summary: Find scenarios
-      description: Get paginated list of scenarios
+      description: |
+        Get paginated list of scenarios.
+        
+        -  PERMISSIONS: `api_action:read`
       operationId: scenarios-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -7717,7 +8152,10 @@ paths:
       tags:
         - scenarios
       summary: Create scenario
-      description: Create scenario
+      description: |
+        Create scenario.
+        
+        -  PERMISSIONS: `api_action:create`
       operationId: scenarios-create
       requestBody:
         description: body
@@ -8176,7 +8614,10 @@ paths:
       tags:
         - scenarios
       summary: Get scenario by id
-      description: Get scenario by id
+      description: |
+        Get scenario by id.
+        
+        -  PERMISSIONS: `api_action:read`
       operationId: scenarios-get-by-id
       parameters:
         - name: id
@@ -8202,7 +8643,10 @@ paths:
       tags:
         - scenarios
       summary: Update scenario by id
-      description: Update scenario by id
+      description: |
+        Update scenario by id.
+        
+        -  PERMISSIONS: `api_action:update`
       operationId: scenarios-update-by-id
       parameters:
         - name: id
@@ -8667,7 +9111,10 @@ paths:
       tags:
         - scenarios
       summary: Delete scenario by id
-      description: Delete scenario by id
+      description: |
+        Delete scenario by id.
+        
+        -  PERMISSIONS: `api_action:delete`
       operationId: scenarios-delete-by-id
       parameters:
         - name: id
@@ -8690,7 +9137,10 @@ paths:
       tags:
         - scenarios
       summary: Check priority
-      description: Check priority
+      description: |
+        Check priority.
+        
+        -  PERMISSIONS: `api_action:read`
       operationId: scenarios-check-priority
       requestBody:
         description: body
@@ -8717,7 +9167,10 @@ paths:
       tags:
         - scenarios
       summary: Get minimal priority
-      description: Get minimal priority
+      description: |
+        Get minimal priority.
+        
+        -  PERMISSIONS: `api_action:read`
       operationId: scenarios-get-minimal-priority
       responses:
         200:
@@ -8731,7 +9184,10 @@ paths:
       tags:
         - share-tokens
       summary: Find share tokens
-      description: Get paginated list of share tokens
+      description: |
+        Get paginated list of share tokens.
+        
+        -  PERMISSIONS: `api_share_token:read`
       operationId: share-tokens-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -8767,7 +9223,10 @@ paths:
       tags:
         - share-tokens
       summary: Create share token
-      description: Create share token
+      description: |
+        Create share token.
+        
+        -  PERMISSIONS: `api_share_token:create`
       operationId: share-tokens-create
       requestBody:
         description: body
@@ -8805,7 +9264,10 @@ paths:
       tags:
         - share-tokens
       summary: Delete share token by id
-      description: Delete share token by id
+      description: |
+        Delete share token by id.
+        
+        -  PERMISSIONS: `api_share_token:delete`
       operationId: share-tokens-delete-by-id
       parameters:
         - name: id
@@ -8828,7 +9290,10 @@ paths:
       tags:
         - state-settings
       summary: Find all state settings for a widget
-      description: Get paginated list of state settings
+      description: |
+        Get paginated list of state settings.
+        
+        -  PERMISSIONS: `api_state_settings`
       operationId: state-settings-list
       parameters:
         - $ref: '#/components/parameters/page'
@@ -8852,7 +9317,10 @@ paths:
       tags:
         - state-settings
       summary: Update state setting type by id
-      description: Update state setting type by id
+      description: |
+        Update state setting type by id.
+        
+        -  PERMISSIONS: `api_state_settings`
       operationId: state-settings-update-by-id
       parameters:
         - name: id
@@ -8892,7 +9360,10 @@ paths:
       tags:
         - tech-metrics
       summary: Start export tech metrics
-      description: Start export tech metrics
+      description: |
+        Start export tech metrics.
+        
+        -  PERMISSIONS: `api_techmetrics`
       operationId: tech-metrics-export-start
       responses:
         201:
@@ -8911,7 +9382,10 @@ paths:
       tags:
         - tech-metrics
       summary: Get status of export tech metrics
-      description: Get status of export tech metrics
+      description: |
+        Get status of export tech metrics.
+        
+        -  PERMISSIONS: `api_techmetrics`
       operationId: tech-metrics-export-get
       responses:
         200:
@@ -8931,7 +9405,10 @@ paths:
       tags:
         - tech-metrics
       summary: Get result of export tech metrics
-      description: Get result of export tech metrics
+      description: |
+        Get result of export tech metrics.
+        
+        -  PERMISSIONS: `api_techmetrics`
       operationId: tech-metrics-export-download
       responses:
         200:
@@ -8952,7 +9429,10 @@ paths:
       tags:
         - userpreference
       summary: Update user preferences by widget id
-      description: Update user preferences by widget id
+      description: | 
+        Update user preferences by widget id.
+        
+        -  PERMISSIONS: `{view_id}:read`
       operationId: userpreference-update-by-widget-id
       requestBody:
         description: body
@@ -8985,7 +9465,10 @@ paths:
       tags:
         - userpreference
       summary: Get user preferences by widget id
-      description: Get user preferences by widget id
+      description: | 
+        Get user preferences by widget id.
+        
+        -  PERMISSIONS: `{view_id}:read`
       operationId: userpreference-get-by-id
       parameters:
         - name: id
@@ -9012,7 +9495,10 @@ paths:
       tags:
         - users
       summary: Find users
-      description: Get paginated list of users
+      description: |
+        Get paginated list of users.
+        
+        -  PERMISSIONS: `api_acl:read`
       operationId: users-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -9053,14 +9539,17 @@ paths:
       tags:
         - users
       summary: Create user
-      description: Create user
+      description: |
+        Create user.
+        
+        -  PERMISSIONS: `api_acl:create`
       operationId: users-create
       requestBody:
         description: body
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/user.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/user.CreateRequest'
         required: true
       responses:
         201:
@@ -9080,7 +9569,10 @@ paths:
       tags:
         - users
       summary: Get user by id
-      description: Get user by id
+      description: |
+        Get user by id.
+        
+        -  PERMISSIONS: `api_acl:read`
       operationId: users-get-by-id
       parameters:
         - name: id
@@ -9106,7 +9598,10 @@ paths:
       tags:
         - users
       summary: Update user by id
-      description: Update user by id
+      description: |
+        Update user by id.
+        
+        -  PERMISSIONS: `api_acl:update`
       operationId: users-update-by-id
       parameters:
         - name: id
@@ -9120,7 +9615,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/user.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/user.UpdateRequest'
         required: true
       responses:
         200:
@@ -9145,7 +9640,10 @@ paths:
       tags:
         - users
       summary: Delete user by id
-      description: Delete user by id
+      description: |
+        Delete user by id.
+        
+        -  PERMISSIONS: `api_acl:delete`
       operationId: users-delete-by-id
       parameters:
         - name: id
@@ -9168,7 +9666,10 @@ paths:
       tags:
         - views
       summary: Copy view
-      description: Copy view
+      description: |
+        Copy view.
+        
+        -  PERMISSIONS: `api_view:create` `api_view:read` `{id}:read`
       operationId: views-copy
       parameters:
         - name: id
@@ -9226,7 +9727,10 @@ paths:
       tags:
         - views
       summary: Export views
-      description: Export views
+      description: |
+        Export views.
+        
+        -  PERMISSIONS: `api_view:read` `api_viewgroup:read` `{view_id}:read`
       operationId: views-export
       requestBody:
         description: body
@@ -9263,7 +9767,10 @@ paths:
       tags:
         - viewgroups
       summary: Find view groups
-      description: Get paginated list of view groups
+      description: |
+        Get paginated list of view groups.
+        
+        -  PERMISSIONS: `api_viewgroup:read`
       operationId: viewgroups-find-all
       parameters:
         - name: with_flags
@@ -9309,7 +9816,10 @@ paths:
       tags:
         - viewgroups
       summary: Create view group
-      description: Create view group
+      description: |
+        Create view group.
+        
+        -  PERMISSIONS: `api_viewgroup:create`
       operationId: viewgroups-create
       requestBody:
         description: body
@@ -9343,7 +9853,10 @@ paths:
       tags:
         - viewgroups
       summary: Get view group by id
-      description: Get view group by id
+      description: |
+        Get view group by id.
+        
+        -  PERMISSIONS: `api_viewgroup:read`
       operationId: viewgroups-get-by-id
       parameters:
         - name: id
@@ -9369,7 +9882,10 @@ paths:
       tags:
         - viewgroups
       summary: Update view group by id
-      description: Update view group by id
+      description: |
+        Update view group by id.
+        
+        -  PERMISSIONS: `api_viewgroup:update`
       operationId: viewgroups-update-by-id
       parameters:
         - name: id
@@ -9415,7 +9931,10 @@ paths:
       tags:
         - viewgroups
       summary: Delete view group by id
-      description: Delete view group by id
+      description: |
+        Delete view group by id.
+        
+        -  PERMISSIONS: `api_viewgroup:delete`
       operationId: viewgroups-delete-by-id
       parameters:
         - name: id
@@ -9444,7 +9963,10 @@ paths:
       tags:
         - views
       summary: Import views
-      description: Import views
+      description: |
+        Import views.
+        
+        -  PERMISSIONS: `api_view:update` `api_viewgroup:update` `{view_id}:update`
       operationId: views-import
       requestBody:
         description: body
@@ -9629,7 +10151,10 @@ paths:
       tags:
         - views
       summary: Update views positions
-      description: Update views positions
+      description: |
+        Update views positions.
+        
+        -  PERMISSIONS: `api_view:update` `api_viewgroup:update` `{view_id}:update`
       operationId: views-update-positions
       requestBody:
         description: body
@@ -9681,7 +10206,10 @@ paths:
       tags:
         - viewtabs
       summary: Copy view tab
-      description: Copy view tab
+      description: |
+        Copy view tab.
+        
+        -  PERMISSIONS: `api_view:update` `api_view:read` `{view_id}:read`
       operationId: viewtabs-copy
       parameters:
         - name: id
@@ -9729,7 +10257,10 @@ paths:
       tags:
         - viewtabs
       summary: Update view tabs positions
-      description: Update view tabs positions
+      description: |
+        Update view tabs positions.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: viewtabs-update-positions
       requestBody:
         description: body
@@ -9768,7 +10299,10 @@ paths:
       tags:
         - viewtabs
       summary: Create view tab
-      description: Create view tab
+      description: |
+        Create view tab.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: viewtabs-create
       requestBody:
         description: body
@@ -9803,7 +10337,10 @@ paths:
       tags:
         - viewtabs
       summary: Get view tab by id
-      description: Get view tab by id
+      description: |
+        Get view tab by id.
+        
+        -  PERMISSIONS: `api_view:read` `{view_id}:read`
       operationId: viewtabs-get-by-id
       parameters:
         - name: id
@@ -9829,7 +10366,10 @@ paths:
       tags:
         - viewtabs
       summary: Update view tab by id
-      description: Update view tab by id
+      description: |
+        Update view tab by id.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: viewtabs-update-by-id
       parameters:
         - name: id
@@ -9876,7 +10416,10 @@ paths:
       tags:
         - viewtabs
       summary: Delete view tab by id
-      description: Delete view tab by id
+      description: |
+        Delete view tab by id.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: viewtabs-delete-by-id
       parameters:
         - name: id
@@ -9899,7 +10442,10 @@ paths:
       tags:
         - views
       summary: Find views
-      description: Get paginated list of views
+      description: |
+        Get paginated list of views.
+        
+        -  PERMISSIONS: `api_view:read` `{id}:read`
       operationId: views-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -9929,7 +10475,10 @@ paths:
       tags:
         - views
       summary: Create view
-      description: Create view
+      description: |
+        Create view.
+        
+        -  PERMISSIONS: `api_view:create`
       operationId: views-create
       requestBody:
         description: body
@@ -9974,7 +10523,10 @@ paths:
       tags:
         - views
       summary: Get view by id
-      description: Get view by id
+      description: |
+        Get view by id.
+        
+        -  PERMISSIONS: `api_view:read` `{id}:read`
       operationId: views-get-by-id
       parameters:
         - name: id
@@ -10000,7 +10552,10 @@ paths:
       tags:
         - views
       summary: Update view by id
-      description: Update view by id
+      description: |
+        Update view by id.
+        
+        -  PERMISSIONS: `api_view:update` `{id}:update`
       operationId: views-update-by-id
       parameters:
         - name: id
@@ -10057,7 +10612,10 @@ paths:
       tags:
         - views
       summary: Delete view by id
-      description: Delete view by id
+      description: |
+        Delete view by id.
+        
+        -  PERMISSIONS: `api_view:delete` `{id}:delete`
       operationId: views-delete-by-id
       parameters:
         - name: id
@@ -10080,7 +10638,10 @@ paths:
       tags:
         - weather-services
       summary: Find all services
-      description: Get paginated list of services
+      description: |
+        Get paginated list of services.
+        
+        -  PERMISSIONS: `api_entityservice:read`
       operationId: weather-services-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -10108,6 +10669,16 @@ paths:
           in: query
           schema:
             type: boolean
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"infos.info1\",\"field_type\":\"string\",\"cond\":{\"type\":\"eq\",\"value\":\"val1\"}}]]"
+        - in: query
+          name: weather_service_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"icon\",\"cond\":{\"type\":\"neq\",\"value\":\"wb_sunny\"}}]]"
       responses:
         200:
           description: OK
@@ -10133,7 +10704,10 @@ paths:
       tags:
         - weather-services
       summary: Find all entity by service id
-      description: Get paginated list of entities
+      description: |
+        Get paginated list of entities.
+        
+        -  PERMISSIONS: `api_entityservice:read`
       operationId: weather-services-find-all-entities
       parameters:
         - name: id
@@ -10180,7 +10754,10 @@ paths:
       tags:
         - widgets
       summary: Copy widget
-      description: Copy widget
+      description: |
+        Copy widget.
+        
+        -  PERMISSIONS: `api_view:update` `api_view:read` `{view_id}:read`
       operationId: widgets-copy
       parameters:
         - name: id
@@ -10296,7 +10873,10 @@ paths:
       tags:
         - widgetfilters
       summary: Find widget filters
-      description: Get paginated list of widget filters
+      description: |
+        Get paginated list of widget filters.
+        
+        -  PERMISSIONS: `api_view:read`
       operationId: widgetfilters-find-all
       parameters:
         - name: private
@@ -10334,7 +10914,10 @@ paths:
       tags:
         - widgetfilters
       summary: Create widget filter
-      description: Create widget filter
+      description: |
+        Create widget filter.
+        
+        -  PERMISSIONS: `api_view:read`
       operationId: widgetfilters-create
       requestBody:
         description: body
@@ -10414,7 +10997,10 @@ paths:
       tags:
         - widgetfilters
       summary: Get widget filter by id
-      description: Get widget filter by id
+      description: |
+        Get widget filter by id.
+        
+        -  PERMISSIONS: `api_view:read`
       operationId: widgetfilters-get-by-id
       parameters:
         - name: id
@@ -10440,7 +11026,10 @@ paths:
       tags:
         - widgetfilters
       summary: Update widget filter by id
-      description: Update widget filter by id
+      description: |
+        Update widget filter by id.
+        
+        -  PERMISSIONS: `api_view:read`
       operationId: widgetfilters-update-by-id
       parameters:
         - name: id
@@ -10521,7 +11110,10 @@ paths:
       tags:
         - widgetfilters
       summary: Delete widget filter by id
-      description: Delete widget filter by id
+      description: |
+        Delete widget filter by id.
+        
+        -  PERMISSIONS: `api_view:read`
       operationId: widgetfilters-delete-by-id
       parameters:
         - name: id
@@ -10544,7 +11136,10 @@ paths:
       tags:
         - widgetfilters
       summary: Update widget filters positions
-      description: Update widget filters positions
+      description: |
+        Update widget filters positions.
+        
+        -  PERMISSIONS: `api_view:read` `{view_id}:read`
       operationId: widgetfilters-update-positions
       requestBody:
         description: body
@@ -10583,7 +11178,10 @@ paths:
       tags:
         - widgets
       summary: Update widgets grid positions
-      description: Update widgets grid positions
+      description: |
+        Update widgets grid positions.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: widgets-update-grid-positions
       requestBody:
         description: body
@@ -10633,12 +11231,227 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-templates:
+    get:
+      tags:
+        - widgettemplates
+      summary: Find widget templates
+      description: Get paginated list of widget templates
+      operationId: widgettemplates-find-all
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - widgettemplates
+      summary: Create widget template
+      description: Create widget template
+      operationId: widgettemplates-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.EditRequest'
+            examples:
+              alarm_columns:
+                summary: Alarm columns template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_columns",
+                  "columns": [
+                    {
+                      "value": "v.resource"
+                    },
+                    {
+                      "value": "v.component"
+                    },
+                    {
+                      "value": "extra_details"
+                    }
+                  ]
+                }
+              entity_columns:
+                summary: Entity columns template
+                description: Create a template for entities list.
+                value: {
+                  "title": "Template",
+                  "type": "entity_columns",
+                  "columns": [
+                    {
+                      "value": "_id"
+                    },
+                    {
+                      "value": "type"
+                    }
+                  ]
+                }
+              alarm_more_infos:
+                summary: Alarm more infos template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_more_infos",
+                  "content": "Name: {{ alarm.v.display_name }}"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /widget-templates/{id}:
+    get:
+      tags:
+        - widgettemplates
+      summary: Get widget template by id
+      description: Get widget template by id
+      operationId: widgettemplates-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: template id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - widgettemplates
+      summary: Update widget template by id
+      description: Update widget template by id
+      operationId: widgettemplates-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: template id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a template.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_columns",
+                  "columns": [
+                    {
+                      "value": "v.resource"
+                    },
+                    {
+                      "value": "v.component"
+                    },
+                    {
+                      "value": "extra_details"
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - widgettemplates
+      summary: Delete widget template by id
+      description: Delete widget template by id
+      operationId: widgettemplates-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: template id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /widgets:
     post:
       tags:
         - widgets
       summary: Create widget
-      description: Create widget
+      description: |
+        Create widget.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: widgets-create
       requestBody:
         description: body
@@ -10722,6 +11535,48 @@ paths:
                     }
                   }
                 }
+              template:
+                summary: Create with template
+                description: Create a widget with template.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "grid_parameters": {
+                    "mobile": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "tablet": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "desktop": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 12,
+                      "h": 1,
+                      "autoHeight": true
+                    }
+                  },
+                  "parameters": {
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "widgetColumnsTemplate": "dedeae28-7829-4093-8165-0705de09efaa",
+                    "sort": {
+                      "order": "DESC"
+                    },
+                    "itemsPerPage": 15,
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
+                  }
+                }
         required: true
       responses:
         201:
@@ -10741,7 +11596,10 @@ paths:
       tags:
         - widgets
       summary: Get widget by id
-      description: Get widget by id
+      description: |
+        Get widget by id.
+        
+        -  PERMISSIONS: `api_view:read` `{view_id}:read`
       operationId: widgets-get-by-id
       parameters:
         - name: id
@@ -10767,7 +11625,10 @@ paths:
       tags:
         - widgets
       summary: Update widget by id
-      description: Update widget by id
+      description: |
+        Update widget by id.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: widgets-update-by-id
       parameters:
         - name: id
@@ -10882,7 +11743,10 @@ paths:
       tags:
         - widgets
       summary: Delete widget by id
-      description: Delete widget by id
+      description: |
+        Delete widget by id.
+        
+        -  PERMISSIONS: `api_view:update` `{view_id}:update`
       operationId: widgets-delete-by-id
       parameters:
         - name: id

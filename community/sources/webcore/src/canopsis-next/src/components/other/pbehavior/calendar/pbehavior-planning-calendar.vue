@@ -36,10 +36,7 @@
             @remove="removePbehavior"
           )
     template(#menuRight="")
-      pbehavior-planning-calendar-legend(
-        :exception-types="exceptionTypes",
-        :colors-to-types="colorsToPbehaviors"
-      )
+      pbehavior-planning-calendar-legend(:exception-types="exceptionTypes")
 </template>
 
 <script>
@@ -50,7 +47,7 @@ import { Calendar, Op } from 'dayspan';
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getMostReadableTextColor, getRandomHexColor } from '@/helpers/color';
+import { getMostReadableTextColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
@@ -60,6 +57,7 @@ import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/tim
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
+import { COLORS } from '@/config';
 
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
@@ -115,7 +113,6 @@ export default {
       exceptionTypes: [],
       events: [],
       defaultTypes: [],
-      colorsToPbehaviors: {},
     };
   },
   computed: {
@@ -200,21 +197,6 @@ export default {
     },
 
     /**
-     * Get color for pbehavior and save that into data for correct displaying
-     *
-     * @param {Object} [type = {}]
-     * @param {string} [color = getRandomHexColor()]
-     * @returns {string}
-     */
-    getColorForPbehavior(pbehavior = {}, color = getRandomHexColor()) {
-      if (!this.colorsToPbehaviors[pbehavior._id]) {
-        this.colorsToPbehaviors[pbehavior._id] = color;
-      }
-
-      return this.colorsToPbehaviors[pbehavior._id];
-    },
-
-    /**
      * Fetch timespans and convert that into events for every pbehavior from data
      *
      * @returns {Promise<void>}
@@ -260,12 +242,12 @@ export default {
       timespans,
     }) {
       return timespans.map((timespan, index) => {
-        const type = timespan.type || pbehavior.type;
+        const type = timespan.type ?? pbehavior.type;
 
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = pbehavior.color || this.getColorForPbehavior(pbehavior);
+        const color = pbehavior.color || type.color || pbehavior.type?.color || COLORS.secondary;
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({
@@ -351,6 +333,8 @@ export default {
       }
 
       this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
+
+      return this.applyEvents();
     },
 
     /**
@@ -584,7 +568,7 @@ export default {
 <style lang="scss" scoped>
 // We've turned off animation because of render freezes on css animation on the render process
 
-.calendar-progress /deep/ .v-progress-circular--indeterminate .v-progress-circular__overlay {
+.calendar-progress ::v-deep .v-progress-circular--indeterminate .v-progress-circular__overlay {
   animation: none;
 }
 </style>

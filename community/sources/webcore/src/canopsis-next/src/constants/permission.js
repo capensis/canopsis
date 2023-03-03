@@ -104,6 +104,7 @@ export const USERS_PERMISSIONS = {
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
+    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -165,8 +166,6 @@ export const USERS_PERMISSIONS = {
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
-        // TODO: USERS_RIGHTS Should be removed after create MR in all features
-        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
     },
@@ -326,11 +325,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
     [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup]:
+    [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup]:
-    USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUpdate]:
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,
@@ -350,10 +347,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction,
-
-    // TODO: Should be removed after create MR in all features
-    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
-    ...featuresService.get('constants.BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {

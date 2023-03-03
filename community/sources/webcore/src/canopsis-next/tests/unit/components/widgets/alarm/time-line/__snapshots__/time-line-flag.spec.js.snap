@@ -1,619 +1,532 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`time-line-flag Renders \`time-line-flag\` with state: critical 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(245, 105, 84);"
-  >
-    assistant_photo
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(245, 105, 84); caret-color: #f56954;"
+>
+  assistant_photo
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with state: major 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(255, 153, 0);"
-  >
-    assistant_photo
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(255, 153, 0); caret-color: #ff9900;"
+>
+  assistant_photo
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with state: minor 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(252, 220, 0);"
-  >
-    assistant_photo
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(252, 220, 0); caret-color: #fcdc00;"
+>
+  assistant_photo
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with state: ok 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(0, 166, 90);"
-  >
-    assistant_photo
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(0, 166, 90); caret-color: #00a65a;"
+>
+  assistant_photo
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with status: cancelled 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(117, 117, 117);"
-  >
-    highlight_off
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(117, 117, 117); caret-color: #757575;"
+>
+  highlight_off
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with status: closed 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(47, 171, 99);"
-  >
-    check_circle_outline
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(47, 171, 99); caret-color: #2fab63;"
+>
+  check_circle_outline
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with status: flapping 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(43, 62, 79);"
-  >
-    swap_vert
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(43, 62, 79); caret-color: #2b3E4F;"
+>
+  swap_vert
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with status: noEvents 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(255, 82, 82);"
-  >
-    sync_problem
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(255, 82, 82); caret-color: #ff5252;"
+>
+  sync_problem
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with status: ongoing 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(249, 168, 37);"
-  >
-    warning
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(249, 168, 37); caret-color: #f9A825;"
+>
+  warning
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with status: stealthy 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(117, 117, 117);"
-  >
-    swap_vert
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(117, 117, 117); caret-color: #757575;"
+>
+  swap_vert
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: ack 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(156, 39, 176);"
-  >
-    playlist_add_check
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(156, 39, 176); caret-color: #9c27b0;"
+>
+  playlist_add_check
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: ackRemove 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(156, 39, 176);"
-  >
-    not_interested
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(156, 39, 176); caret-color: #9c27b0;"
+>
+  not_interested
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: assocTicket 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    local_play
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  local_play
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionAlreadyRunning 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionComplete 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionFail 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: autoInstructionStart 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: cancel 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    delete
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  delete
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: changeState 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    thumbs_up_down
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  thumbs_up_down
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: check 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: comment 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(186, 104, 200);"
-  >
-    comment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(186, 104, 200); caret-color: #ba68c8;"
+>
+  comment
+</i>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: createManualMetaAlarm 1`] = `
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  center_focus_strong
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: declareTicket 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(33, 150, 243);"
-  >
-    report_problem
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(33, 150, 243); caret-color: #2196f3;"
+>
+  report_problem
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: delete 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    delete
-  </i>
-</div>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: done 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(0, 166, 90);"
-  >
-    assignment_turned_in
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  delete
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: executeInstruction 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: fastAck 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    check
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  check
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: group 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: groupRequest 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    note_add
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  note_add
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionAbort 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionComplete 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionFail 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobAbort 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobComplete 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobFail 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionJobStart 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionPause 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionResume 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: instructionStart 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    assignment
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  assignment
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: invalidate 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    thumb_down
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  thumb_down
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestCaseUpdate 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    keyboard_arrow_up
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  keyboard_arrow_up
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: junitTestSuiteUpdate 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    keyboard_arrow_up
-  </i>
-</div>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmGroup 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    center_focus_strong
-  </i>
-</div>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUngroup 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    link_off
-  </i>
-</div>
-`;
-
-exports[`time-line-flag Renders \`time-line-flag\` with type: manualMetaAlarmUpdate 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  keyboard_arrow_up
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: metaalarmattach 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(109, 76, 65);"
-  >
-    center_focus_weak
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(109, 76, 65); caret-color: #6d4c41;"
+>
+  center_focus_weak
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: pause 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    pause
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  pause
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: pbehaviorAdd 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    pause
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  pause
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: pbehaviorList 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    list
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  list
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: pbhenter 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(24, 255, 255);"
-  >
-    pause
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(24, 255, 255); caret-color: #18ffff;"
+>
+  pause
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: pbhleave 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(24, 255, 255);"
-  >
-    play_arrow
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(24, 255, 255); caret-color: #18ffff;"
+>
+  play_arrow
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: play 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    play_arrow
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  play_arrow
+</i>
+`;
+
+exports[`time-line-flag Renders \`time-line-flag\` with type: removeAlarmsFromManualMetaAlarm 1`] = `
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  link_off
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: snooze 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: rgb(233, 30, 99);"
-  >
-    alarm
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+  style="color: rgb(233, 30, 99); caret-color: #e91e63;"
+>
+  alarm
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: statedec 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: stateinc 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: statusdec 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: statusinc 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: uncancel 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: unsooze 1`] = `
-<div>
-  <i
-    class="material-icons"
-    style="color: black;"
-  >
-    clear
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light black--text"
+>
+  clear
+</i>
 `;
 
 exports[`time-line-flag Renders \`time-line-flag\` with type: validate 1`] = `
-<div>
-  <i
-    class="material-icons"
-  >
-    thumb_up
-  </i>
-</div>
+<i
+  aria-hidden="true"
+  class="v-icon material-icons theme--light"
+>
+  thumb_up
+</i>
 `;

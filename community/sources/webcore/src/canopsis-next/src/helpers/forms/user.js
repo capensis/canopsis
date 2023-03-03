@@ -1,3 +1,5 @@
+import { THEMES_NAMES } from '@/config';
+
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 /**
@@ -19,6 +21,7 @@ import { GROUPS_NAVIGATION_TYPES } from '@/constants';
  * @property {DefaultView} defaultview
  * @property {string} groups_navigation_type
  * @property {string} ui_language
+ * @property {string} ui_theme
  */
 
 /**
@@ -34,18 +37,19 @@ import { GROUPS_NAVIGATION_TYPES } from '@/constants';
  * @returns {UserForm}
  */
 export const userToForm = (user = {}) => ({
-  _id: user._id || '',
-  name: user.name || '',
-  firstname: user.firstname || '',
-  lastname: user.lastname || '',
-  email: user.email || '',
-  password: user.password || '',
+  _id: user._id ?? '',
+  name: user.name ?? '',
+  firstname: user.firstname ?? '',
+  lastname: user.lastname ?? '',
+  email: user.email ?? '',
+  password: user.password ?? '',
   role: user.role,
   enable: !!user.enable,
   defaultview: user.defaultview ? user.defaultview._id : '',
-  ui_language: user.ui_language || '',
-  ui_tours: user.ui_tours || {},
-  ui_groups_navigation_type: user.ui_groups_navigation_type || GROUPS_NAVIGATION_TYPES.sideBar,
+  ui_language: user.ui_language ?? '',
+  ui_tours: user.ui_tours ?? {},
+  ui_groups_navigation_type: user.ui_groups_navigation_type ?? GROUPS_NAVIGATION_TYPES.sideBar,
+  ui_theme: user.ui_theme || THEMES_NAMES.canopsis,
 });
 
 /**
