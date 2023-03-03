@@ -1,6 +1,8 @@
+import flatten from 'flat';
+
 import { DECLARE_TICKET_EXECUTION_STATUSES } from '@/constants';
 
-import { formToRequest, requestToForm } from '@/helpers/forms/shared/request';
+import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } from '@/helpers/forms/shared/request';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { removeKeyFromEntities } from '@/helpers/entities';
@@ -56,6 +58,14 @@ import uid from '@/helpers/uid';
  * @property {DeclareTicketRuleWebhooksForm} webhooks
  * @property {FilterPatternsForm} patterns
  */
+
+/**
+ * Check declare ticket execution status is waiting
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isDeclareTicketExecutionWaiting = ({ status }) => status === DECLARE_TICKET_EXECUTION_STATUSES.waiting;
 
 /**
  * Check declare ticket execution status is running
@@ -125,7 +135,7 @@ export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
  * @param {DeclareTicketRuleWebhooks} webhooks
  * @returns {DeclareTicketRuleWebhooksForm}
  */
-export const declareTicketRuleWebhooksToForm = (webhooks = []) => webhooks.map(declareTicketRuleWebhookToForm);
+export const declareTicketRuleWebhooksToForm = (webhooks = [undefined]) => webhooks.map(declareTicketRuleWebhookToForm);
 
 /**
  * Convert declare ticket rule object to form compatible object
@@ -223,4 +233,27 @@ export const declareTicketRuleErrorsToForm = (errors, form) => {
   };
 
   return flattenErrorMap(errors, prepareWebhooksErrors);
+};
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {DeclareTicketRuleForm} form
+ * @return {FlattenErrors}
+ */
+export const declareTicketRuleTemplateVariablesErrorsToForm = (errorsObject, form) => {
+  const { webhooks } = errorsObject;
+
+  return flatten({
+    webhooks: webhooks.reduce((acc, { request }, index) => {
+      const webhook = form.webhooks[index];
+
+      acc[webhook.key] = {
+        request: requestTemplateVariablesErrorsToForm(request, webhook.request),
+      };
+
+      return acc;
+    }, {}),
+  });
 };

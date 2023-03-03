@@ -20,6 +20,7 @@
     :autocomplete="autocomplete",
     :combobox="!autocomplete",
     :return-object="returnObject",
+    :no-data-text="noDataText",
     no-filter,
     dense,
     @focus="onFocus",
@@ -72,6 +73,10 @@ export default {
     itemValue: {
       type: String,
       default: '_id',
+    },
+    noDataText: {
+      type: String,
+      required: false,
     },
     limit: {
       type: Number,
@@ -203,7 +208,7 @@ export default {
     right: 0;
     bottom: 0;
     left: 0;
-    height: 300px;
+    height: 200px;
   }
 
   .v-select__selections {

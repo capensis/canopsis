@@ -1,11 +1,13 @@
 <template lang="pug">
-  div
-    v-tooltip(v-if="isEnabled", :disabled="!text", right)
-      template(#activator="{ on }")
-        div.color-indicator.white--text(v-on="on", :style="{ backgroundColor: color }")
-          slot {{ value }}
-      span {{ text }}
-    slot(v-else)
+  v-tooltip(:disabled="!text", right)
+    template(#activator="{ on }")
+      div.color-indicator(
+        v-on="on",
+        :class="{ 'color-indicator--invalid': !text }",
+        :style="{ backgroundColor: color }"
+      )
+        slot {{ value }}
+    span {{ text }}
 </template>
 
 <script>
@@ -31,10 +33,6 @@ export default {
     },
   },
   computed: {
-    isEnabled() {
-      return Object.values(COLOR_INDICATOR_TYPES).includes(this.type);
-    },
-
     isImpactState() {
       return this.type === COLOR_INDICATOR_TYPES.impactState;
     },
@@ -69,10 +67,12 @@ export default {
 
     text() {
       if (this.isImpactState) {
-        return this.$t('common.countOfMax', { count: this.impactState, total: COLORS.impactState.length - 1 });
+        return this.$t('common.countOfTotal', { count: this.impactState, total: COLORS.impactState.length - 1 });
       }
 
-      return this.$t(`common.stateTypes.${this.state}`);
+      const key = `common.stateTypes.${this.state}`;
+
+      return this.$te(key) && this.$t(key);
     },
   },
 };
@@ -83,5 +83,10 @@ export default {
   display: inline-block;
   border-radius: 10px;
   padding: 3px 7px;
+  color: black;
+
+  &--invalid {
+    color: white;
+  }
 }
 </style>

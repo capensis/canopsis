@@ -3,7 +3,7 @@
     :widget="widget",
     :meta="meta",
     :alarms="alarms",
-    :columns="alarmsColumns",
+    :columns="columns",
     :query.sync="query",
     :expandable="!resolved",
     :hide-pagination="!resolved",
@@ -17,8 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { alarmsListColumnsToTableColumns } from '@/helpers/forms/widgets/alarm';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertWidgetQueryToRequest } from '@/helpers/query';
 
 import AlarmsListTableWithPagination from '@/components/widgets/alarm/partials/alarms-list-table-with-pagination.vue';
@@ -55,12 +54,8 @@ export default {
     };
   },
   computed: {
-    alarmsColumns() {
-      return alarmsListColumnsToTableColumns(this.columns);
-    },
-
     widget() {
-      return generateDefaultAlarmListWidget();
+      return generatePreparedDefaultAlarmListWidget();
     },
   },
   watch: {

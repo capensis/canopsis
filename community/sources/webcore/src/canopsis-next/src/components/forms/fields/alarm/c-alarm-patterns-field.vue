@@ -22,6 +22,7 @@ import {
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
+  ALARM_FIELDS_TO_LABELS_KEYS,
   MAX_LIMIT,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
@@ -310,153 +311,119 @@ export default {
 
     alarmAttributes() {
       return [
+        { value: ALARM_PATTERN_FIELDS.displayName },
         {
-          text: this.$t('common.displayName'),
-          value: ALARM_PATTERN_FIELDS.displayName,
-        },
-        {
-          text: this.$t('common.state'),
           value: ALARM_PATTERN_FIELDS.state,
           options: this.stateOptions,
         },
         {
-          text: this.$t('common.status'),
           value: ALARM_PATTERN_FIELDS.status,
           options: this.statusOptions,
         },
         {
-          text: this.$t('common.component'),
           value: ALARM_PATTERN_FIELDS.component,
           options: this.componentOptions,
         },
         {
-          text: this.$t('common.resource'),
           value: ALARM_PATTERN_FIELDS.resource,
           options: this.resourceOptions,
         },
         {
-          text: this.$t('common.connector'),
           value: ALARM_PATTERN_FIELDS.connector,
           options: this.connectorOptions,
         },
         {
-          text: this.$t('common.connectorName'),
           value: ALARM_PATTERN_FIELDS.connectorName,
           options: this.connectorNameOptions,
         },
         {
-          text: this.$t('common.created'),
           value: ALARM_PATTERN_FIELDS.creationDate,
           options: this.dateOptions,
         },
         {
-          text: this.$t('common.duration'),
           value: ALARM_PATTERN_FIELDS.duration,
           options: this.durationOptions,
         },
         {
-          text: this.$t('common.infos'),
           value: ALARM_PATTERN_FIELDS.infos,
           options: this.infosOptions,
         },
         {
-          text: this.$t('common.output'),
           value: ALARM_PATTERN_FIELDS.output,
           options: this.stringWithExistOptions,
         },
         {
-          text: this.$t('common.lastEventDate'),
           value: ALARM_PATTERN_FIELDS.lastEventDate,
           options: this.dateOptions,
         },
         {
-          text: this.$t('common.updated'),
           value: ALARM_PATTERN_FIELDS.lastUpdateDate,
           options: this.dateOptions,
         },
         {
-          text: this.$t('common.acked'),
           value: ALARM_PATTERN_FIELDS.ack,
           options: this.ackOptions,
         },
         {
-          text: this.$t('common.ackedAt'),
           value: ALARM_PATTERN_FIELDS.ackAt,
           options: this.dateOptions,
         },
         {
-          text: this.$t('common.ackedBy'),
           value: ALARM_PATTERN_FIELDS.ackBy,
           options: this.ackByOptions,
         },
         {
-          text: this.$t('common.ackMessage'),
           value: ALARM_PATTERN_FIELDS.ackMessage,
           options: this.stringWithExistOptions,
         },
         {
-          text: this.$t('common.ackInitiator'),
           value: ALARM_PATTERN_FIELDS.ackInitiator,
           options: this.ackInitiatorOptions,
         },
         {
-          text: this.$t('common.resolvedAt'),
-          value: ALARM_PATTERN_FIELDS.resolvedAt,
+          value: ALARM_PATTERN_FIELDS.resolved,
           options: this.dateOptions,
         },
         {
-          text: this.$tc('common.ticket'),
           value: ALARM_PATTERN_FIELDS.ticket,
           options: this.ticketOptions,
         },
         {
-          text: this.$t('common.snoozed'),
           value: ALARM_PATTERN_FIELDS.snooze,
           options: this.snoozeOptions,
         },
         {
-          text: this.$t('common.canceled'),
           value: ALARM_PATTERN_FIELDS.canceled,
           options: this.canceledOptions,
         },
         {
-          text: this.$t('common.lastComment'),
           value: ALARM_PATTERN_FIELDS.lastComment,
           options: this.stringWithExistOptions,
         },
         {
-          text: this.$tc('common.tag', 2),
           value: ALARM_PATTERN_FIELDS.tags,
           options: this.tagsOptions,
         },
         {
-          text: this.$t('common.activated'),
           value: ALARM_PATTERN_FIELDS.activated,
           options: this.activatedOptions,
         },
         {
-          text: this.$t('common.activationDate'),
           value: ALARM_PATTERN_FIELDS.activationDate,
           options: this.dateOptions,
         },
+        { value: ALARM_PATTERN_FIELDS.longOutput },
+        { value: ALARM_PATTERN_FIELDS.initialOutput },
+        { value: ALARM_PATTERN_FIELDS.initialLongOutput },
         {
-          text: this.$t('common.longOutput'),
-          value: ALARM_PATTERN_FIELDS.longOutput,
-        },
-        {
-          text: this.$t('common.initialOutput'),
-          value: ALARM_PATTERN_FIELDS.initialOutput,
-        },
-        {
-          text: this.$t('common.initialLongOutput'),
-          value: ALARM_PATTERN_FIELDS.initialLongOutput,
-        },
-        {
-          text: this.$t('common.totalStateChanges'),
           value: ALARM_PATTERN_FIELDS.totalStateChanges,
           options: this.totalStateChangesOptions,
         },
-      ];
+      ].map(variable => ({
+        ...variable,
+
+        text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[variable.value], 2),
+      }));
     },
 
     availableAttributesByValue() {

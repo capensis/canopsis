@@ -95,7 +95,6 @@ export const API_ROUTES = {
   resolvedAlarms: '/api/v4/resolved-alarms',
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
-  manualMetaAlarm: '/api/v4/manual-meta-alarms',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
@@ -130,6 +129,7 @@ export const API_ROUTES = {
     filters: '/api/v4/widget-filters',
     filterPositions: '/api/v4/widget-filter-positions',
   },
+  widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
   roles: '/api/v4/roles',
@@ -198,6 +198,11 @@ export const API_ROUTES = {
   patternsCount: '/api/v4/patterns-count',
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
+  templateVars: '/api/v4/template-vars',
+  templateValidator: {
+    declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
+    scenarios: '/api/v4/template-validator/scenarios',
+  },
 
   /**
    * Cat routes
@@ -244,6 +249,7 @@ export const API_ROUTES = {
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
+  manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
@@ -280,7 +286,6 @@ export const COLORS = {
     ackRemove: '#9c27b0',
     declareTicket: '#2196f3',
     snooze: '#e91e63',
-    done: '#00a65a',
     pbhenter: '#18ffff',
     pbhleave: '#18ffff',
     comment: '#ba68c8',
@@ -454,6 +459,52 @@ export const COLORS = {
       '#fce4ec',
       '#ffebee',
     ],
+  },
+};
+
+export const THEMES_NAMES = {
+  canopsis: 'canopsis',
+  canopsisDark: 'canopsisDark',
+  colorBlind: 'colorBlind',
+  colorBlindDark: 'colorBlindDark',
+};
+
+const CANOPSIS_THEME_COLORS = {
+  primary: COLORS.primary,
+  secondary: COLORS.secondary,
+};
+
+const CANOPSIS_DARK_THEME_COLORS = {
+  ...CANOPSIS_THEME_COLORS,
+  error: '#ff8b8b',
+};
+
+const COLOR_BLIND_THEME_COLORS = {
+  primary: '#2196f3',
+  secondary: COLORS.secondary,
+};
+
+const COLOR_BLIND_DARK_THEME_COLORS = {
+  ...COLOR_BLIND_THEME_COLORS,
+  error: CANOPSIS_DARK_THEME_COLORS.error,
+};
+
+export const THEMES = {
+  [THEMES_NAMES.canopsis]: {
+    dark: false,
+    colors: CANOPSIS_THEME_COLORS,
+  },
+  [THEMES_NAMES.canopsisDark]: {
+    dark: true,
+    colors: CANOPSIS_DARK_THEME_COLORS,
+  },
+  [THEMES_NAMES.colorBlind]: {
+    dark: false,
+    colors: COLOR_BLIND_THEME_COLORS,
+  },
+  [THEMES_NAMES.colorBlindDark]: {
+    dark: true,
+    colors: COLOR_BLIND_DARK_THEME_COLORS,
   },
 };
 

@@ -10,6 +10,7 @@ export default {
   emptyActions: 'Aucune action ajoutée pour le moment',
   output: 'Format d\'action de sortie',
   forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
+  skipForChild: 'Sauter pour les enfants de la méta-alarme',
   outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
     + '<i>Quelques exemples:</i>'
     + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
@@ -37,5 +38,7 @@ export default {
   errors: {
     actionRequired: 'Veuillez ajouter au moins une action',
     priorityExist: 'La priorité du scénario actuel est déjà utilisée. Voulez-vous changer la priorité actuelle du scénario en {priority} ?',
+    deprecatedTriggerExist: 'Ce scénario n\'est plus pris en charge en raison de son ancien format et donc désactivé. \n'
+      + 'Veuillez mettre à jour les déclencheurs de scénario ou créer une nouvelle règle de déclaration de ticket.',
   },
 };

@@ -136,16 +136,6 @@ func (a mongoAdapter) GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alar
 	})
 }
 
-func (a mongoAdapter) GetAlarmsWithDoneMark(ctx context.Context) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
-		"v.done": bson.M{"$ne": nil},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-	})
-}
-
 func (a mongoAdapter) GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error) {
 	return a.getAlarms(ctx, bson.M{
 		"v.snooze": bson.M{"$ne": nil},

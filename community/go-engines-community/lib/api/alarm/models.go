@@ -78,6 +78,10 @@ type BaseFilterRequest struct {
 	Category    string         `form:"category" json:"category"`
 	Tag         string         `form:"tag" json:"tag"`
 
+	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
+	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
+	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+
 	Instructions []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
 }
 
@@ -115,15 +119,6 @@ type SortRequest struct {
 	MultiSort []string `form:"multi_sort[]" json:"multi_sort"`
 	Sort      string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
 	SortBy    string   `form:"sort_by" json:"sort_by"`
-}
-
-type ManualRequest struct {
-	Search string `form:"search" json:"search"`
-}
-
-type ManualResponse struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"name" json:"name"`
 }
 
 type DetailsRequest struct {
@@ -235,12 +230,12 @@ type Alarm struct {
 type MetaAlarmRule struct {
 	ID   string `bson:"_id" json:"_id"`
 	Name string `bson:"name" json:"name"`
+	Type string `bson:"type" json:"type"`
 }
 
 type AlarmValue struct {
 	ACK         *common.AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *common.AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *common.AlarmStep  `bson:"done,omitempty" json:"done,omitempty"`
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`

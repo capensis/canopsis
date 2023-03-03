@@ -2,7 +2,7 @@
 
 exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
   duplicable="true"
   removable="true"
   updatable="true"
@@ -660,7 +660,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
 
 exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"

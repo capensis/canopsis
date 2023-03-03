@@ -6,7 +6,7 @@
       :style="editorStyles",
       :cursor-style="addOnClick ? 'crosshair' : undefined",
       @input="updateShapes",
-      @update:background-color="updateBackgroundColor"
+      @update:backgroundColor="updateBackgroundColor"
     )
       template(#sidebar-prepend="{ data }")
         add-location-btn(v-model="addOnClick")

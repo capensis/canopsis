@@ -1,7 +1,7 @@
 <template lang="pug">
   c-action-btn(v-bind="$attrs", :tooltip="tooltip")
     template(#button="")
-      v-btn.mx-1(
+      v-btn.mx-1.ma-0(
         v-clipboard:copy="value",
         v-clipboard:success="onSuccessCopied",
         v-clipboard:error="onErrorCopied",
