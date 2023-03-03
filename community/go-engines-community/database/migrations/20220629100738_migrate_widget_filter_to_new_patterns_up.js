@@ -107,6 +107,84 @@ function migrateOldMongoQueryForAlarmList(oldMongoQuery) {
     return [newAlarmPattern, newPbehaviorPattern, newEntityPattern];
 }
 
+// Translate $or cases with following conditions:
+// 1) [{"field1": "val1"}, {"field1": "val2"}] as {"field1": {"$in": ["val1", "val2"]}} 
+// 2) [{"field2": {"$regex":"val1"}}, {"field2": {"$regex":"val2"}}] as {"field2": {"$regex": "(val1)|(val2)"}} 
+// but doesn't mix cases, cant't handle mix of equal and $regex conditions
+// Special cases: handled below exclusively based on its $or-prefixed form
+// 1) $or [{"field3":{"$exists":false}},{"field3":""}] as {"field3": {"$exists": false}} 
+// 2) $or [{"field4":null},{"field4":""}] as {"field4": {"$exists": false}} 
+// 3) $or [{"field5":{"$ne": null}},{"field5":{"$ne":""}}] as {"field5": {"$exists": true}} 
+function preprocInnerOrSingleFieldManyValues(oldGroup) {
+    var fieldName;
+    var valuesGroup = [];
+    var allStringValues = false;
+    var allRegexValues = false;
+    var existsCondition = false;
+    var existsValue = false;
+    for (var oldCond of oldGroup) {
+        if (typeof oldCond !== "object" || !oldCond) {
+            return null;
+        }
+
+        for (var field of Object.keys(oldCond)) {
+            if (fieldName !== undefined && fieldName != field) {
+                return null;
+            }
+            var value = oldCond[field];
+            if (fieldName === undefined) {
+                fieldName = field;
+                if (typeof value === "string") {
+                    allStringValues = true;
+                } else if (typeof value === "object" && value && Object.keys(value).length === 1 &&
+                    value["$regex"] && typeof value["$regex"] === "string") {
+                    allRegexValues = true;
+                    value = value["$regex"];
+                } else if (typeof value === "object" && value && Object.keys(value).length === 1 &&
+                    value["$exists"] === false) {
+                    return { k: fieldName, v: value }
+                } else if (value === null || typeof value === "object" && value && Object.keys(value).length === 1 &&
+                    value["$ne"] === null) {
+                    existsCondition = true;
+                } else if (typeof value === "object" && value && Object.keys(value).length === 1 &&
+                    value["$ne"] === "") {
+                    existsCondition = true;
+                    existsValue = true;
+                }
+                if (!allStringValues && !allRegexValues && !existsCondition) {
+                    return null;
+                }
+                valuesGroup.push(value);
+            } else if (allStringValues && typeof value === "string") {
+                valuesGroup.push(value);
+            } else if (allStringValues && typeof value === "object" && value && Object.keys(value).length === 1 &&
+                value["$exists"] === false) {
+                return { k: fieldName, v: value }
+            } else if (allRegexValues && typeof value === "object" && value && Object.keys(value).length === 1 &&
+                value["$regex"] && typeof value["$regex"] === "string") {
+                valuesGroup.push(value["$regex"]);
+            } else if (allStringValues && valuesGroup[0] == "" && value === null) {
+                allStringValues = false;
+                existsCondition = true;
+            } else if (existsCondition && value !== "" && !(typeof value === "object" && value && (value["$ne"] === "" || value["$ne"] === null))) {
+                existsCondition = false;
+            } else {
+                return null
+            }
+        }
+    }
+    if (allStringValues) {
+        return {k: fieldName, v: {"$in": valuesGroup}}
+    }
+    if (allRegexValues) {
+        return {k: fieldName, v: {"$regex": "(" + valuesGroup.join(")|(") + ")"}}
+    }
+    if (existsCondition) {
+        return {k: fieldName, v: {"$exists": existsValue}}
+    }
+    return null;
+}
+
 function migrateOldMongoQueryForEntityList(oldMongoQuery) {
     if (!oldMongoQuery || oldMongoQuery === "") {
         return null;
@@ -257,6 +335,39 @@ function migrateOldGroupForAlarmList(oldGroup) {
         for (var field of Object.keys(oldCond)) {
             var value = oldCond[field];
             var strCond = null;
+            if (field == "$or") {
+                var newCond = preprocInnerOrSingleFieldManyValues(value);
+                if (newCond) {
+                    field = newCond.k;
+                    value = newCond.v;
+                }
+            } else if (field == "$and") {
+                var newGroups = migrateOldGroupForAlarmList(value);
+                var updGroups = false;
+                if (newGroups) {
+                    if (newGroups[0]) {
+                        newGroups[0].forEach(function(gr) {
+                            newAlarmGroup.push(gr)
+                        });
+                        updGroups = true
+                    }
+                    if (newGroups[1]) {
+                        newGroups[1].forEach(function(gr) {
+                            newPbehaviorGroup.push(gr)
+                        });
+                        updGroups = true
+                    }
+                    if (newGroups[2]) {
+                        newGroups[2].forEach(function(gr) {
+                            newEntityGroup.push(gr)
+                        });
+                        updGroups = true
+                    }
+                }
+                if (updGroups) {
+                    continue
+                }
+            }
             if (typeof value === "string") {
                 strCond = {
                     type: "eq",
@@ -273,11 +384,16 @@ function migrateOldGroupForAlarmList(oldGroup) {
                         type: "is_one_of",
                         value: value["$in"],
                     };
-                } else if (value["$ne"] && typeof value["$ne"] === "string") {
+                } else if (typeof value["$ne"] === "string") {
                     strCond = {
                         type: "neq",
                         value: value["$ne"],
                     };
+                } else if (value["$ne"] === null) {
+                    strCond = {
+                        type: "exist",
+                        value: true
+                    }
                 }
             }
 
@@ -316,6 +432,16 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 }
             }
 
+            if (field == "state" || field == "status") {
+                field = "v." + field + ".val"
+            } else if (field == "has_active_pb" && (value == "false" || value == "true")) {
+                field = "v.pbehavior_info";
+                value = { "$exists": value == "true" }
+            } if ((field == "v.ack._t" || field == "v.ticket._t" || field == "v.snooze._t") && (value === null ||
+                typeof value === "object" && value && typeof value["$exists"] === "boolean")) {
+                field = field.replace("._t", "")
+            }
+
             switch (field) {
                 case "v.ack":
                 case "v.ticket":
@@ -330,6 +456,14 @@ function migrateOldGroupForAlarmList(oldGroup) {
                                 value: value["$exists"],
                             },
                         });
+                    } else if (value === null) {
+                        newAlarmGroup.push({
+                            field: field,
+                            cond: {
+                                type: "exist",
+                                value: false,
+                            },
+                        })
                     } else {
                         return null;
                     }
@@ -343,16 +477,27 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.long_output":
                 case "v.initial_output":
                 case "v.initial_long_output":
+                case "v.ack._t":
                 case "v.ack.a":
                 case "v.ack.m":
                 case "v.ack.initiator":
-                    if (strCond === null) {
-                        return null;
+                    if (typeof value === "object" && value && typeof value["$exists"] === "boolean") {
+                        newAlarmGroup.push({
+                            field: field,
+                            cond: {
+                                type: "exist",
+                                value: value["$exists"],
+                            },
+                        });
+                    } else {
+                        if (strCond === null) {
+                            return null;
+                        }
+                        newAlarmGroup.push({
+                            field: field,
+                            cond: strCond,
+                        });
                     }
-                    newAlarmGroup.push({
-                        field: field,
-                        cond: strCond,
-                    });
                     break;
                 case "connector":
                 case "connector_name":
@@ -457,11 +602,14 @@ function migrateOldGroupForAlarmList(oldGroup) {
                                 if (entityField.startsWith("infos.") && entityField.endsWith(".value")) {
                                     var info = entityField.replace(".value", "");
                                     if (strCond !== null) {
-                                        newEntityGroup.push({
+                                        var entityGroup = {
                                             field: info,
-                                            field_type: "string",
                                             cond: strCond,
-                                        });
+                                        };
+                                        if (strCond.type != "exist") {
+                                            entityGroup.field_type = "string"
+                                        }
+                                        newEntityGroup.push(entityGroup);
                                     } else if (value === null) {
                                         newEntityGroup.push({
                                             field: info,
@@ -477,14 +625,20 @@ function migrateOldGroupForAlarmList(oldGroup) {
                                     return null;
                                 }
                         }
-                    } else if (field.startsWith("infos.") && field.endsWith(".value")) {
-                        var info = field.replace(".value", "");
+                    } else if (field.startsWith("infos.") && !field.endsWith(".name")) {
+                        var info = field;
+                        if (field.endsWith(".value")) {
+                            info = field.replace(".value", "");
+                        }
                         if (strCond !== null) {
-                            newEntityGroup.push({
+                            var entityGroup = {
                                 field: info,
-                                field_type: "string",
                                 cond: strCond,
-                            });
+                            };
+                            if (strCond.type != "exist") {
+                                entityGroup.field_type = "string"
+                            }
+                            newEntityGroup.push(entityGroup);
                         } else if (value === null) {
                             newEntityGroup.push({
                                 field: info,
@@ -534,6 +688,21 @@ function migrateOldGroupForEntityList(oldGroup) {
         for (var field of Object.keys(oldCond)) {
             var value = oldCond[field];
             var strCond = null;
+            if (field == "$or") {
+                var newCond = preprocInnerOrSingleFieldManyValues(value);
+                if (newCond) {
+                    field = newCond.k;
+                    value = newCond.v;
+                }
+            } else if (field == "$and") {
+                var newGroup = migrateOldGroupForEntityList(value);
+                if (newGroup) {
+                    newGroup.forEach(function(gr) {
+                        newEntityGroup.push(gr)
+                    });
+                    continue
+                }
+            }
             if (typeof value === "string") {
                 strCond = {
                     type: "eq",
