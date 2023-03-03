@@ -36,6 +36,7 @@ describe('declare-ticket-rules-list', () => {
   it('Renders `declare-ticket-rules-list` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
+        declareTicketRules: [],
         pagination: {},
       },
     });
