@@ -183,7 +183,6 @@ import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rule
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
 import CPatternEditorField from '@/components/forms/fields/pattern/c-pattern-editor-field.vue';
-import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
 import CAlarmInfosAttributeField from '@/components/forms/fields/alarm/c-alarm-infos-attribute-field.vue';
@@ -457,7 +456,6 @@ Vue.component('c-pattern-rules-field', CPatternRulesField);
 Vue.component('c-pattern-group-field', CPatternGroupField);
 Vue.component('c-pattern-groups-field', CPatternGroupsField);
 Vue.component('c-pattern-editor-field', CPatternEditorField);
-Vue.component('c-pattern-advanced-editor-field', CPatternAdvancedEditorField);
 Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-patterns-field', CPatternsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);

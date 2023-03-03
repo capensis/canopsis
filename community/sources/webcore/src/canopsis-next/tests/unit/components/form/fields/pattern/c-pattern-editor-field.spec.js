@@ -19,7 +19,7 @@ const localVue = createVueInstance();
 const stubs = {
   'c-pattern-field': true,
   'c-pattern-groups-field': true,
-  'c-pattern-advanced-editor-field': true,
+  'pattern-advanced-editor-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CPatternsEditorField, {
@@ -52,7 +52,7 @@ const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
 const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
 const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
 const selectEditButton = wrapper => wrapper.find('v-btn-stub');
-const selectPatternAdvancedEditorField = wrapper => wrapper.find('c-pattern-advanced-editor-field-stub');
+const selectPatternAdvancedEditorField = wrapper => wrapper.find('pattern-advanced-editor-field-stub');
 
 describe('c-pattern-editor-field', () => {
   test('Pattern id changed to custom after trigger input event on the pattern field', () => {
