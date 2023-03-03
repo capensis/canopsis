@@ -388,18 +388,18 @@ func (mr *MockHubMockRecorder) GetGroupIds(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIds", reflect.TypeOf((*MockHub)(nil).GetGroupIds), arg0)
 }
 
-// GetUsers mocks base method.
-func (m *MockHub) GetUsers() map[string][]string {
+// GetUserTokens mocks base method.
+func (m *MockHub) GetUserTokens() []string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUsers")
-	ret0, _ := ret[0].(map[string][]string)
+	ret := m.ctrl.Call(m, "GetUserTokens")
+	ret0, _ := ret[0].([]string)
 	return ret0
 }
 
-// GetUsers indicates an expected call of GetUsers.
-func (mr *MockHubMockRecorder) GetUsers() *gomock.Call {
+// GetUserTokens indicates an expected call of GetUserTokens.
+func (mr *MockHubMockRecorder) GetUserTokens() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockHub)(nil).GetUsers))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTokens", reflect.TypeOf((*MockHub)(nil).GetUserTokens))
 }
 
 // RegisterGroup mocks base method.
