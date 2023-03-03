@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -74,7 +75,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 
 	var project []bson.M
 	if r.WithFlags {
-		project = getEditableAndDeletablePipeline(prioritiesOfDefaultTypes)
+		project = getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes)
 	}
 	cursor, err := s.dbCollection.Aggregate(
 		ctx,
@@ -116,7 +117,6 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 
 // Insert creates new pbehavior type.
 func (s *store) Insert(ctx context.Context, pt *Type) error {
-
 	if pt.ID == "" {
 		pt.ID = utils.NewID()
 	}
@@ -139,8 +139,33 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	if pt.IconName == "" && (!isDefault || pt.Type != pbehavior.TypeActive) {
+		return false, common.NewValidationError("icon_name", "IconName is missing.")
+	}
 	if isDefault {
-		return false, ErrDefaultType
+		filter := bson.M{
+			"_id":         id,
+			"name":        pt.Name,
+			"description": pt.Description,
+			"type":        pt.Type,
+			"priority":    pt.Priority,
+			"icon_name":   pt.IconName,
+		}
+		if pt.IconName == "" {
+			filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
+		}
+		result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{
+			"color": pt.Color,
+		}})
+		if err != nil {
+			return false, err
+		}
+
+		if result.MatchedCount == 0 {
+			return false, ErrDefaultType
+		}
+
+		return true, nil
 	}
 
 	if pt.ID != id {
@@ -150,7 +175,7 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return result.ModifiedCount > 0 || result.MatchedCount > 0, nil
+	return result.MatchedCount > 0, nil
 }
 
 // Delete pbehavior type by id
@@ -294,7 +319,7 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 	return res, nil
 }
 
-func getEditableAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
+func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
@@ -309,7 +334,7 @@ func getEditableAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
 			"as":           "actions",
 		}},
 		{"$addFields": bson.M{
-			"editable": bson.M{"$not": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}}},
+			"default": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}},
 			"deletable": bson.M{"$and": []bson.M{
 				{"$not": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}}},
 				{"$eq": bson.A{bson.M{"$size": "$pbhs"}, 0}},

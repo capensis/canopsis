@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-flex.white(v-resize="changeHeaderPositionOnResize")
-    c-empty-data-table-columns(v-if="!hasColumns")
+  v-flex(v-resize="changeHeaderPositionOnResize")
+    c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
         v-if="totalItems && (densable || !hideActions || !hidePagination)",
@@ -39,7 +39,8 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        :dense="dense",
+        :dense="isMediumHeight",
+        :ultra-dense="isSmallHeight",
         item-key="_id",
         hide-actions,
         multi-sort,
@@ -62,14 +63,15 @@
             :expandable="expandable",
             :row="props",
             :widget="widget",
-            :columns="columns",
-            :columns-filters="columnsFilters",
+            :columns="preparedColumns",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
             :hide-actions="hideActions",
+            :medium="isMediumHeight",
+            :small="isSmallHeight",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -96,13 +98,13 @@
 
 <script>
 import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -121,11 +123,9 @@ export default {
     AlarmHeaderCell,
     AlarmsExpandPanel,
     AlarmsListRow,
-
-    ...featuresService.get('components.alarmListTable.components', {}),
   },
   mixins: [
-    entitiesAlarmColumnsFiltersMixin,
+    widgetColumnsAlarmMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -138,10 +138,6 @@ export default {
       type: Array,
       required: true,
     },
-    columns: {
-      type: Array,
-      required: true,
-    },
     totalItems: {
       type: Number,
       required: false,
@@ -149,6 +145,10 @@ export default {
     pagination: {
       type: Object,
       default: () => ({}),
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
     isTourEnabled: {
       type: Boolean,
@@ -175,8 +175,8 @@ export default {
       default: false,
     },
     dense: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: ALARM_DENSE_TYPES.large,
     },
     parentAlarm: {
       type: Object,
@@ -204,27 +204,15 @@ export default {
     },
   },
   data() {
-    const data = featuresService.has('components.alarmListTable.data')
-      ? featuresService.call('components.alarmListTable.data', this, {})
-      : {};
-
     return {
       selecting: false,
-      columnsFilters: [],
       selected: [],
-      columnsFiltersPending: false,
-
-      ...data,
     };
   },
 
   computed: {
     unresolvedSelected() {
       return this.selected.filter(item => !isResolvedAlarm(item));
-    },
-
-    hasColumns() {
-      return this.columns.length > 0;
     },
 
     expanded() {
@@ -236,14 +224,16 @@ export default {
     },
 
     headers() {
-      const headers = [...this.columns];
+      const headers = [...this.preparedColumns];
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
       }
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
-        // We need it for the expand panel open button
+        /**
+         * We need it for the expand panel open button
+         */
         headers.unshift({ sortable: false });
       }
 
@@ -277,7 +267,7 @@ export default {
 
     additionalComponent() {
       if (featuresService.has('components.alarmListTable.computed.additionalComponent')) {
-        return featuresService.call('components.alarmListTable.computed.additionalComponent', this, {});
+        return featuresService.call('components.alarmListTable.computed.additionalComponent', this);
       }
 
       return {};
@@ -290,11 +280,17 @@ export default {
     tableBody() {
       return this.$el.querySelector('.v-table__overflow > table > tbody');
     },
+
+    isMediumHeight() {
+      return this.dense === ALARM_DENSE_TYPES.medium;
+    },
+
+    isSmallHeight() {
+      return this.dense === ALARM_DENSE_TYPES.small;
+    },
   },
 
   watch: {
-    ...featuresService.get('components.alarmListTable.watch', {}),
-
     stickyHeader(stickyHeader) {
       if (stickyHeader) {
         this.calculateHeaderOffsetPosition();
@@ -324,28 +320,14 @@ export default {
       window.addEventListener('keydown', this.enableSelecting);
       window.addEventListener('keyup', this.disableSelecting);
     }
-
-    if (featuresService.has('components.alarmListTable.mounted')) {
-      featuresService.call('components.alarmListTable.mounted', this, {});
-    }
-
-    this.columnsFiltersPending = true;
-    this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
-    this.columnsFiltersPending = false;
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
     window.removeEventListener('keydown', this.enableSelecting);
     window.removeEventListener('keyup', this.disableSelecting);
-
-    if (featuresService.has('components.alarmListTable.beforeDestroy')) {
-      featuresService.call('components.alarmListTable.beforeDestroy', this, {});
-    }
   },
 
   methods: {
-    ...featuresService.get('components.alarmListTable.methods', {}),
-
     clearSelected() {
       this.selected = [];
     },
@@ -518,6 +500,15 @@ export default {
 
       tr {
         background: white;
+        transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+
+        .theme--dark & {
+          background: #424242;
+        }
+
+        th {
+          transition: none;
+        }
       }
     }
 

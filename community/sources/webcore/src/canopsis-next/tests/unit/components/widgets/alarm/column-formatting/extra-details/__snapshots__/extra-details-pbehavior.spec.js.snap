@@ -8,10 +8,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
+        class="v-icon icon icon-name theme--light white--text"
         style="font-size: 16px;"
       />
     </span>
@@ -54,7 +57,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with full p
         <div
           class="ml-2"
         >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
         </div>
       </div>
       <hr
@@ -73,10 +76,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text material-icons theme--light"
+        class="v-icon material-icons theme--light white--text"
         style="font-size: 16px;"
       />
     </span>
@@ -117,7 +123,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
         <div
           class="ml-2"
         >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
         </div>
       </div>
       <hr
@@ -128,7 +134,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` with pbehav
 </div>
 `;
 
-exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 1`] = `
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comment 1`] = `
 <div>
   <span
     class="v-tooltip c-extra-details v-tooltip--top"
@@ -136,10 +142,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
+        class="v-icon icon icon-name theme--light white--text"
         style="font-size: 16px;"
       />
     </span>
@@ -147,7 +156,68 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
 </div>
 `;
 
-exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comments 2`] = `
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comment 2`] = `
+<div
+  class="v-tooltip__content"
+  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
+>
+  <div>
+    <strong>
+      Periodic behaviors
+    </strong>
+    <div>
+      <div
+        class="mt-2 font-weight-bold"
+      >
+        pbehavior-name
+      </div>
+      <div>
+        Author: pbehavior-author
+      </div>
+      <div>
+        Type: type-name
+      </div>
+      <div>
+        Reason: pbehavior-reason-name
+      </div>
+      <div>
+        07/12/2013 3:13:20 - 07/12/2013 6:00:00
+      </div>
+      <div>
+        rrule
+      </div>
+      <!---->
+      <hr
+        class="v-divider theme--light"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comment author 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon icon icon-name theme--light white--text"
+        style="font-size: 16px;"
+      />
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without comment author 2`] = `
 <div
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
@@ -182,7 +252,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without com
         <div
           class="ml-2"
         >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
         </div>
       </div>
       <hr
@@ -201,10 +271,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
+        class="v-icon icon icon-name theme--light white--text"
         style="font-size: 16px;"
       />
     </span>
@@ -245,7 +318,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rea
         <div
           class="ml-2"
         >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
         </div>
       </div>
       <hr
@@ -264,10 +337,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
+        class="v-icon icon icon-name theme--light white--text"
         style="font-size: 16px;"
       />
     </span>
@@ -308,7 +384,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without rru
         <div
           class="ml-2"
         >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
         </div>
       </div>
       <hr
@@ -327,10 +403,13 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
     <transition-stub
       name="slide-y-reverse-transition"
     />
-    <span>
+    <span
+      class="c-extra-details__badge"
+      style="background-color: rgb(43, 62, 79);"
+    >
       <i
         aria-hidden="true"
-        class="v-icon c-extra-details__badge secondary accent-2 white--text icon icon-name theme--light"
+        class="v-icon icon icon-name theme--light white--text"
         style="font-size: 16px;"
       />
     </span>
@@ -374,7 +453,7 @@ exports[`extra-details-pbehavior Renders \`extra-details-pbehavior\` without tst
         <div
           class="ml-2"
         >
-          - pbehavior-comment-1-author: pbehavior-comment-1-message
+          - pbehavior-comment-1-author: pbehavior-comment-1-message
         </div>
       </div>
       <hr

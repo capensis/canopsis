@@ -8,12 +8,12 @@ import { createNamespacedHelpers } from 'vuex';
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
-  EVENT_ENTITY_STYLE,
   ALARM_LIST_ACTIONS_TYPES,
 } from '@/constants';
 
 import featuresService from '@/services/features';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
@@ -55,43 +55,43 @@ export default {
       const actions = [
         {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
           title: this.$t('alarmList.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
           title: this.$t('alarmList.actions.titles.ack'),
           method: this.showAckModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
           title: this.$t('alarmList.actions.titles.fastAck'),
           method: this.createMassFastAckEvent,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
           title: this.$t('alarmList.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
           title: this.$t('alarmList.actions.titles.associateTicket'),
           method: this.showCreateAssociateTicketEventModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.snooze,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showSnoozeModal,
         },
@@ -101,21 +101,29 @@ export default {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.groupRequest,
-            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.groupRequest),
             title: this.$t('alarmList.actions.titles.groupRequest'),
             method: this.showCreateGroupRequestEventModal,
           },
           {
-            type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup,
-            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
-            title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+            type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
+            title: this.$t('alarmList.actions.titles.createManualMetaAlarm'),
             method: this.showCreateManualMetaAlarmModal,
           },
         );
       }
 
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
       if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
-        actions.push(...featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []));
+        const featuresActions = featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []);
+
+        if (featuresActions?.length) {
+          actions.push(...featuresActions);
+        }
       }
 
       return actions;

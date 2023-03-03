@@ -1,7 +1,9 @@
 <template lang="pug">
   div
     v-tooltip.c-extra-details(top)
-      v-icon.c-extra-details__badge.blue.white--text(slot="activator", small) {{ icon }}
+      template(#activator="{ on }")
+        span.c-extra-details__badge.blue(v-on="on")
+          v-icon(color="white", small) {{ icon }}
       div.text-md-center
         strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
         div {{ $t('common.by') }} : {{ ticket.a }}
@@ -12,8 +14,9 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -29,7 +32,7 @@ export default {
     },
 
     icon() {
-      return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.declareTicket].icon;
+      return getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket);
     },
   },
 };

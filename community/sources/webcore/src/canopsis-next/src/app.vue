@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app#app
+  v-app#app(:dark="system.dark")
     v-layout(v-if="!pending")
       the-navigation#main-navigation(v-if="shownNavigation")
       v-content#main-content
@@ -62,7 +62,7 @@ export default {
     },
 
     shownNavigation() {
-      return !this.$route.meta.hideNavigation;
+      return this.currentUser && !this.$route.meta.hideNavigation;
     },
   },
   beforeCreate() {
@@ -93,15 +93,14 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+          this.setTheme(currentUser.ui_theme);
 
           await Promise.all([
             this.fetchAppInfo(),
             this.filesAccess(),
           ]);
 
-          this.setSystemData({
-            timezone: this.timezone,
-          });
+          this.setSystemData({ timezone: this.timezone });
 
           this.setTitle();
           this.showPausedExecutionsPopup();
