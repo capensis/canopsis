@@ -47,7 +47,7 @@
           readonly,
           rows="10"
         )
-        c-pattern-advanced-editor-field(
+        pattern-advanced-editor-field(
           v-else,
           :value="patternsJson",
           :disabled="readonly || disabled || !isCustomPattern",
@@ -96,10 +96,13 @@ import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/hel
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
+import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
+
 const { mapActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
+  components: { PatternAdvancedEditorField },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'patterns',
