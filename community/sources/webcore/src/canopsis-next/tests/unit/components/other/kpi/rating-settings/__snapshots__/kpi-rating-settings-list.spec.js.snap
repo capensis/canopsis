@@ -2,7 +2,7 @@
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after updated rating settings prop 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -72,7 +72,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -93,7 +93,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -120,7 +120,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -141,7 +141,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -168,7 +168,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -189,7 +189,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -216,7 +216,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -264,7 +264,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -312,7 +312,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -360,7 +360,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -408,7 +408,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -456,7 +456,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -504,7 +504,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -525,7 +525,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -552,7 +552,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -573,7 +573,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -607,7 +607,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with custom props 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -711,7 +711,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -732,7 +732,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -759,7 +759,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -780,7 +780,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -807,7 +807,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -828,7 +828,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -855,7 +855,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -903,7 +903,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -951,7 +951,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -999,7 +999,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1047,7 +1047,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1095,7 +1095,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1143,7 +1143,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1164,7 +1164,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -1191,7 +1191,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1212,7 +1212,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -1246,7 +1246,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with default props 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -1325,7 +1325,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enable rating 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -1418,7 +1418,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1466,7 +1466,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1487,7 +1487,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -1514,7 +1514,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1535,7 +1535,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -1562,7 +1562,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1610,7 +1610,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1658,7 +1658,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1706,7 +1706,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1754,7 +1754,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1802,7 +1802,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1850,7 +1850,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1871,7 +1871,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -1898,7 +1898,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1919,7 +1919,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -1953,7 +1953,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enable rating 2`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -2023,7 +2023,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2044,7 +2044,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -2071,7 +2071,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2092,7 +2092,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -2119,7 +2119,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2140,7 +2140,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -2167,7 +2167,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2215,7 +2215,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2263,7 +2263,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2311,7 +2311,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2359,7 +2359,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2407,7 +2407,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2455,7 +2455,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2476,7 +2476,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
@@ -2503,7 +2503,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2524,7 +2524,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>

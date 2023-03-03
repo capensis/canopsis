@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.c-advanced-data-table.white
+  div.c-advanced-data-table
     v-layout(row, wrap, v-bind="toolbarProps")
       v-flex(v-if="shownSearch", xs4)
         c-search-field(
@@ -278,7 +278,7 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-data-table {
-  /deep/ thead th {
+  ::v-deep thead th {
     vertical-align: middle;
   }
 

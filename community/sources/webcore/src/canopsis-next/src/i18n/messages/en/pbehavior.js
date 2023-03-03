@@ -56,7 +56,7 @@ export default {
 
   types: {
     usingType: 'Cannot be deleted since it is in use',
-    defaultType: 'Type is default, because cannot be edited',
+    defaultType: 'The type is default, you can edit only color field',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',

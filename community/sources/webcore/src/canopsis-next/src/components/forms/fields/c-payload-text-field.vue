@@ -61,7 +61,6 @@ export default {
         required: this.required,
       };
     },
-
     errorMessages() {
       return this.errors.collect(this.name);
     },

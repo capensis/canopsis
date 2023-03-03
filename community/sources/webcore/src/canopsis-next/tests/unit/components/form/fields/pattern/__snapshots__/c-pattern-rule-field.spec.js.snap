@@ -24,11 +24,12 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props
       <div
         class="flex pl-3 xs8"
       >
-        <c-pattern-infos-attribute-field-stub
+        <c-infos-attribute-field-stub
           combobox="true"
           disabled="true"
           items="Infos 1,Infos 2"
           name="customName"
+          row="row"
           value="[object Object]"
         />
       </div>
@@ -262,9 +263,10 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
       <div
         class="flex pl-3 xs8"
       >
-        <c-pattern-infos-attribute-field-stub
+        <c-infos-attribute-field-stub
           items=""
           name="rule"
+          row="row"
           value="[object Object]"
         />
       </div>
@@ -316,10 +318,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with infos type a
       <div
         class="flex pl-3 xs8"
       >
-        <c-pattern-infos-attribute-field-stub
+        <c-infos-attribute-field-stub
           combobox="true"
           items=""
           name="rule"
+          row="row"
           value="[object Object]"
         />
       </div>

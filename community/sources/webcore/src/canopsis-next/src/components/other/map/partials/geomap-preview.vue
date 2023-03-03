@@ -219,5 +219,7 @@ export default {
 <style lang="scss">
 .geomap-preview {
   min-height: 700px;
+  border-radius: 5px;
+  overflow: hidden;
 }
 </style>

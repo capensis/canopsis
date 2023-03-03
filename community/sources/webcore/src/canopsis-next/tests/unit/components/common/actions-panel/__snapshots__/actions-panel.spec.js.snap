@@ -1,43 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 1`] = `
-<div>
-  <div>
-    <div
-      class="layout"
-    >
-      <span>
-        <c-action-btn-stub
-          color="primary"
-          icon="edit"
-          tooltip="Edit title"
-        />
-      </span>
-      <span>
-        <c-action-btn-stub
-          color="secondary"
-          icon="delete"
-          tooltip="Delete title"
-        />
-      </span>
-      <!---->
-    </div>
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
+    <!---->
   </div>
-  <!---->
 </div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with actions correctly on the extra large size 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with actions correctly on the large size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="layout"
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <span
+      class="ml-1"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
@@ -58,7 +56,7 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
           name="v-menu-transition"
         />
       </div>
-    </div>
+    </span>
   </div>
 </div>
 `;
@@ -72,200 +70,98 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
     class="v-list theme--light"
     role="list"
   >
-    <span>
-      <div
-        role="listitem"
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
+            edit
+          </i>
+          <span
+            class="body-1"
+          >
+            Edit title
+          </span>
+        </div>
+      </a>
+    </div>
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
+            delete
+          </i>
+          <span
+            class="body-1"
+          >
+            Delete title
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 1`] = `
-<div>
-  <div>
-    <div
-      class="layout"
-    >
-      <!---->
-    </div>
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <!---->
   </div>
-  <!---->
 </div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the extra large size 2`] = `undefined`;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="layout"
-    >
-      <!---->
-    </div>
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <!---->
   </div>
 </div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with default props correctly on the large size 2`] = `undefined`;
 
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the extra large size 1`] = `
-<div>
-  <div>
-    <div
-      class="layout"
-    >
-      <button
-        class="mr-0 v-btn v-btn--icon theme--light"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </div>
-      </button>
-      <div
-        class="v-menu"
-      >
-        <transition-stub
-          name="v-menu-transition"
-        />
-      </div>
-    </div>
-  </div>
-  <!---->
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the extra large size 2`] = `
+exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 1`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+  class="actions-panel"
 >
   <div
-    class="v-list theme--light"
-    role="list"
+    class="layout row align-center"
   >
-    <span>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__title"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__title"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-  </div>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the large size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="layout"
+    <span
+      class="ml-1"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
@@ -286,7 +182,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           name="v-menu-transition"
         />
       </div>
-    </div>
+    </span>
   </div>
 </div>
 `;
@@ -300,71 +196,70 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
     class="v-list theme--light"
     role="list"
   >
-    <span>
-      <div
-        role="listitem"
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
+            edit
+          </i>
+          <span
+            class="body-1"
+          >
+            Edit title
+          </span>
+        </div>
+      </a>
+    </div>
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
+            delete
+          </i>
+          <span
+            class="body-1"
+          >
+            Delete title
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the mobile size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="layout"
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <span
+      class="ml-1"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
@@ -385,7 +280,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           name="v-menu-transition"
         />
       </div>
-    </div>
+    </span>
   </div>
 </div>
 `;
@@ -399,71 +294,70 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
     class="v-list theme--light"
     role="list"
   >
-    <span>
-      <div
-        role="listitem"
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
+            edit
+          </i>
+          <span
+            class="body-1"
+          >
+            Edit title
+          </span>
+        </div>
+      </a>
+    </div>
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
+            delete
+          </i>
+          <span
+            class="body-1"
+          >
+            Delete title
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly on the tablet size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="layout"
+<div
+  class="actions-panel"
+>
+  <div
+    class="layout row align-center"
+  >
+    <span
+      class="ml-1"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
@@ -484,7 +378,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
           name="v-menu-transition"
         />
       </div>
-    </div>
+    </span>
   </div>
 </div>
 `;
@@ -498,58 +392,54 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
     class="v-list theme--light"
     role="list"
   >
-    <span>
-      <div
-        role="listitem"
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
+            edit
+          </i>
+          <span
+            class="body-1"
+          >
+            Edit title
+          </span>
+        </div>
+      </a>
+    </div>
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1 pl-3"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
+            delete
+          </i>
+          <span
+            class="body-1"
+          >
+            Delete title
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 `;

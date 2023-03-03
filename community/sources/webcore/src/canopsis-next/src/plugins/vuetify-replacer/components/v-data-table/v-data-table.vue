@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ultraDense: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeItems() {
@@ -40,6 +44,7 @@ export default {
         'v-datatable v-table': true,
         'v-datatable--select-all': this.selectAll !== false,
         'v-datatable--dense': this.dense,
+        'v-datatable--ultra-dense': this.ultraDense,
         [this.tableClass]: !!this.tableClass,
         ...this.themeClasses,
       };
@@ -255,10 +260,16 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
+
 $denseCellHeight: 32px;
+$ultraDenseCellHeight: 24px;
+$denseTreeviewCellHeight: 32px;
+
 $denseColorIndicatorPadding: 1px 5px;
 
 table.v-datatable {
+  transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+
   .v-datatable-header__sort-badge {
     display: inline-flex;
     justify-content: center;
@@ -269,20 +280,22 @@ table.v-datatable {
     min-height: 18px;
     height: 18px;
     width: 18px;
-    background-color: rgba(0, 0, 0, .12);
-    color: rgba(0, 0, 0, .87);
+    margin-left: 4px;
+
+    .theme--light & {
+      background-color: rgba(black, .12);
+      color: rgba(black, .87);
+    }
+
+    .theme--dark & {
+      background-color: rgba(white, .12);
+      color: rgba(white, .87);
+    }
   }
 
   &--dense.v-datatable {
-    .service-dependencies .v-treeview-node__root {
-      min-height: $denseCellHeight;
+    thead tr {
       height: $denseCellHeight;
-
-      .v-btn {
-        width: $denseCellHeight - 4;
-        height: $denseCellHeight - 4;
-        margin: 2px;
-      }
     }
 
     tbody, thead {
@@ -292,18 +305,62 @@ table.v-datatable {
 
       td:not(.v-datatable__expand-col) {
         height: $denseCellHeight;
+      }
+    }
+  }
+
+  &--ultra-dense.v-datatable {
+    thead tr {
+      height: $ultraDenseCellHeight;
+    }
+
+    tbody, thead {
+      td:not(.v-datatable__expand-col) {
+        height: $ultraDenseCellHeight;
+      }
+    }
+  }
+
+  &--dense.v-datatable,
+  &--ultra-dense.v-datatable {
+    tbody, thead {
+      td:not(.v-datatable__expand-col) {
+        td, th {
+          padding: 0 $densePadding;
+        }
 
         .v-btn {
           margin-top: 0;
           margin-bottom: 0;
         }
 
+        .color-indicator {
+          padding: $denseColorIndicatorPadding;
+        }
+
         .c-action-btn__button {
           margin: 0 !important;
         }
+      }
+    }
 
-        .color-indicator {
-          padding: $denseColorIndicatorPadding;
+    .service-dependencies {
+      thead tr, thead th, td:not(.v-datatable__expand-col) {
+        height: $denseTreeviewCellHeight;
+      }
+
+      .treeview-data-table--tree {
+        margin-top: $denseTreeviewCellHeight;
+      }
+
+      .v-treeview-node__root {
+        min-height: $denseTreeviewCellHeight;
+        height: $denseTreeviewCellHeight;
+
+        .v-btn {
+          width: $denseTreeviewCellHeight - 4;
+          height: $denseTreeviewCellHeight - 4;
+          margin: 2px;
         }
       }
     }

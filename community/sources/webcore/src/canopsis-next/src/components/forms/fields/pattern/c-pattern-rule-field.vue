@@ -11,12 +11,13 @@
             required
           )
         v-flex.pl-3(v-if="isAnyInfosRule", xs8)
-          c-pattern-infos-attribute-field(
+          c-infos-attribute-field(
             v-field="rule",
             :items="infos",
             :name="name",
             :disabled="disabled",
-            :combobox="isInfosRule"
+            :combobox="isInfosRule",
+            row
           )
 
     v-flex(v-if="rule.attribute", :xs8="!isAnyInfosRule", xs7)

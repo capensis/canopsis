@@ -29,23 +29,18 @@ import {
 import featuresService from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { prepareAlarmListWidget } from '@/helpers/widgets';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
 const stubs = {
   'shared-actions-panel': {
-    props: ['actions', 'dropDownActions'],
+    props: ['actions'],
     template: `
       <div class="shared-actions-panel">
         <button
           v-for="action in actions"
           :class="'action-' + action.type"
-          :disabled="action.disabled"
-          @click="action.method"
-        >{{ action.title }}|{{ action.icon }}|{{ action.type }}</button>
-        <button
-          v-for="action in dropDownActions"
-          :class="'drop-down-action-' + action.type"
           :disabled="action.disabled"
           @click="action.method"
         >{{ action.title }}|{{ action.icon }}|{{ action.type }}</button>
@@ -55,7 +50,6 @@ const stubs = {
 };
 
 const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
-const selectDropDownActionByType = (wrapper, type) => wrapper.find(`.drop-down-action-${type}`);
 
 describe('actions-panel', () => {
   const timestamp = 1386435600000;
@@ -126,9 +120,26 @@ describe('actions-panel', () => {
     },
   ];
 
+  const assignedDeclareTicketRules = [
+    {
+      _id: 1,
+      name: 'Name 1',
+    },
+    {
+      _id: 2,
+      name: 'Name 2',
+
+    },
+    {
+      _id: 3,
+      name: 'Name 3',
+    },
+  ];
+
   const alarm = {
     _id: 'alarm-id',
     assigned_instructions: assignedInstructions,
+    assigned_declare_ticket_rules: assignedDeclareTicketRules,
     entity: {},
     v: {
       ack: {},
@@ -146,7 +157,7 @@ describe('actions-panel', () => {
   };
 
   const parentAlarm = {
-    rule: {
+    meta_alarm_rule: {
       type: META_ALARMS_RULE_TYPES.manualgroup,
     },
     d: 'parent-d',
@@ -188,7 +199,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack);
+    const ackAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack);
 
     ackAction.trigger('click');
 
@@ -300,7 +311,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackRemoveAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove);
+    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove);
 
     ackRemoveAction.trigger('click');
 
@@ -341,7 +352,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const pbehaviorAddAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd);
+    const pbehaviorAddAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd);
 
     pbehaviorAddAction.trigger('click');
 
@@ -384,7 +395,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const snoozeAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
+    const snoozeAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
 
     snoozeAction.trigger('click');
 
@@ -458,7 +469,6 @@ describe('actions-panel', () => {
           alarmsByTickets: byRules,
           ticketsByAlarms: byAlarms,
           action: expect.any(Function),
-          afterSubmit: expect.any(Function),
         },
       },
     );
@@ -565,7 +575,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const changeStateAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
+    const changeStateAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
 
     changeStateAction.trigger('click');
 
@@ -690,7 +700,7 @@ describe('actions-panel', () => {
   });
 
   it('History modal showed after trigger history action', () => {
-    const widgetData = {
+    const widgetData = prepareAlarmListWidget({
       _id: Faker.datatype.string(),
       parameters: {
         widgetColumns: [
@@ -700,7 +710,8 @@ describe('actions-panel', () => {
           },
         ],
       },
-    };
+    });
+
     const entity = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
@@ -719,11 +730,11 @@ describe('actions-panel', () => {
       },
     });
 
-    const historyAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
+    const historyAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
 
     historyAction.trigger('click');
 
-    const defaultWidget = generateDefaultAlarmListWidget();
+    const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
     expect($modals.show).toBeCalledWith(
       {
@@ -733,10 +744,14 @@ describe('actions-panel', () => {
           fetchList: expect.any(Function),
           widget: {
             ...defaultWidget,
+
             _id: expect.any(String),
             parameters: {
               ...defaultWidget.parameters,
+
               widgetColumns: widgetData.parameters.widgetColumns,
+              widgetGroupColumns: widgetData.parameters.widgetGroupColumns,
+              serviceDependenciesColumns: widgetData.parameters.serviceDependenciesColumns,
             },
           },
         },
@@ -779,7 +794,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const commentAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
+    const commentAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
 
     commentAction.trigger('click');
 
@@ -825,7 +840,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Manual meta alarm modal showed after trigger manual meta alarm ungroup action', () => {
+  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -845,22 +860,21 @@ describe('actions-panel', () => {
       },
     });
 
-    const manualMetaAlarmUngroupAction = selectDropDownActionByType(
+    const manualMetaAlarmUngroupAction = selectActionByType(
       wrapper,
-      ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup,
+      ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
     );
 
     manualMetaAlarmUngroupAction.trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.createEvent,
+        name: MODALS.removeAlarmsFromManualMetaAlarm,
         config: {
           items: [alarm],
           afterSubmit: expect.any(Function),
           title: 'Unlink alarm from manual meta alarm',
-          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [parentAlarm.d],
+          parentAlarm,
         },
       },
     );
@@ -903,7 +917,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const executeInstructionAction = selectDropDownActionByType(
+    const executeInstructionAction = selectActionByType(
       wrapper,
       ALARM_LIST_ACTIONS_TYPES.executeInstruction,
     );
@@ -945,10 +959,7 @@ describe('actions-panel', () => {
       .mockReturnValueOnce(true);
     const featureGetSpy = jest.spyOn(featuresService, 'get')
       .mockReturnValueOnce((
-      ) => ({
-        inline: [customAction],
-        dropDown: [],
-      }));
+      ) => [customAction]);
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -1147,7 +1158,9 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
     const wrapper = snapshotFactory({
-      store,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
       propsData: {
         item: {
           ...alarm,
@@ -1158,6 +1171,25 @@ describe('actions-panel', () => {
               val: ENTITIES_STATUSES.stealthy,
             },
           },
+        },
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          assigned_declare_ticket_rules: undefined,
         },
         widget,
         parentAlarm,

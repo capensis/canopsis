@@ -64,6 +64,7 @@ func main() {
 		enforcer,
 		providers,
 		logger,
+		nil,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
 		nil,

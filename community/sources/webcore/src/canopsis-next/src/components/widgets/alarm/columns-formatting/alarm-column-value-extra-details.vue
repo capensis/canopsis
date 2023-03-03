@@ -1,13 +1,13 @@
 <template lang="pug">
-  v-layout
+  v-layout.alarm-column-value-extra-details
     extra-details-ack(v-if="alarm.v.ack", :ack="alarm.v.ack")
     extra-details-last-comment(
       v-if="alarm.v.last_comment && alarm.v.last_comment.m",
       :last-comment="alarm.v.last_comment"
     )
     extra-details-ticket(
-      v-if="alarm.v.ticket",
-      :ticket="alarm.v.ticket"
+      v-if="hasTickets",
+      :tickets="alarm.v.tickets"
     )
     extra-details-canceled(
       v-if="alarm.v.canceled",
@@ -68,5 +68,16 @@ export default {
       required: true,
     },
   },
+  computed: {
+    hasTickets() {
+      return this.alarm.v.tickets?.length;
+    },
+  },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-value-extra-details {
+  gap: 2px;
+}
+</style>

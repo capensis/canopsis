@@ -7,9 +7,7 @@
         v-select(
           v-field="value.column",
           :items="columns",
-          :label="columnsLabel",
-          item-text="label",
-          item-value="value"
+          :label="columnsLabel"
         )
       v-layout(row)
         v-select(

@@ -27,7 +27,6 @@ const snapshotStubs = {
   'date-time-splitted-range-picker-field': true,
   'c-pbehavior-reason-field': true,
   'c-pbehavior-type-field': true,
-  'c-color-picker-field': true,
 };
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
@@ -36,7 +35,6 @@ const selectDateTimePickerField = wrapper => wrapper.find('date-time-splitted-ra
 const selectEnabledFields = wrapper => wrapper.findAll('c-enabled-field-stub');
 const selectReasonField = wrapper => wrapper.find('c-pbehavior-reason-field-stub');
 const selectTypeField = wrapper => wrapper.find('c-pbehavior-type-field-stub');
-const selectColorField = wrapper => wrapper.find('c-color-picker-field-stub');
 const selectEnabledField = wrapper => selectEnabledFields(wrapper)
   .at(0);
 const selectStartOnTriggerField = wrapper => selectEnabledFields(wrapper)
@@ -474,24 +472,6 @@ describe('pbehavior-general-form', () => {
       ...form,
 
       type: newType,
-    });
-  });
-
-  test('Color changed after trigger color field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newColor = Faker.internet.color();
-
-    selectColorField(wrapper).vm.$emit('input', newColor);
-
-    expect(wrapper).toEmit('input', {
-      ...form,
-
-      color: newColor,
     });
   });
 
