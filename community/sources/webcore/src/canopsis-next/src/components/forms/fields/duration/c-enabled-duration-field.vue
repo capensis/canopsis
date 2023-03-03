@@ -10,7 +10,7 @@
         color="primary"
       )
         template(#append="")
-          c-help-icon(v-if="helpText", :text="helpText", max-width="300", top)
+          c-help-icon(v-if="helpText", :text="helpText", color="info", max-width="300", top)
     v-flex(xs4)
       c-duration-field(
         v-field="duration",

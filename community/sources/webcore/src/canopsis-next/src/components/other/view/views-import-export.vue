@@ -137,7 +137,7 @@ export default {
   .view-import-selector {
     display: inline-flex;
 
-    & /deep/ .file-selector-button-wrapper {
+    & ::v-deep .file-selector-button-wrapper {
       width: 100%;
     }
 
@@ -151,7 +151,7 @@ export default {
     overflow: auto;
   }
   .export-views-block {
-    & /deep/ .panel-header {
+    & ::v-deep .panel-header {
       display: flex;
       flex: inherit;
       align-items: center;

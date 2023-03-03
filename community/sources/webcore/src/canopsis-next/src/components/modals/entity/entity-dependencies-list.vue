@@ -5,6 +5,7 @@
     template(#text="")
       entity-dependencies-list-component(
         :widget="widget",
+        :columns="widget.parameters.widgetColumns",
         :entity-id="config.entityId",
         :impact="config.impact"
       )
@@ -13,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { generateDefaultContextWidget } from '@/helpers/entities';
+import { generatePreparedDefaultContextWidget } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
@@ -30,11 +31,11 @@ export default {
   mixins: [modalInnerMixin],
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createEntity.create.title');
+      return this.config.title ?? this.$t('modals.entityDependenciesList.title');
     },
 
     widget() {
-      return generateDefaultContextWidget();
+      return this.config.widget ?? generatePreparedDefaultContextWidget();
     },
   },
 };

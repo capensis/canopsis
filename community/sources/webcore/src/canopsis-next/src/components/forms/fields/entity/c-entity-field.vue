@@ -3,6 +3,7 @@
     v-field="value",
     :label="selectLabel",
     :loading="pending",
+    :limit="limit",
     :items="entities",
     :name="name",
     :has-more="hasMoreEntities",
@@ -96,7 +97,7 @@ export default {
     return {
       entitiesById: {},
       pending: false,
-      pageCount: Infinity,
+      pageCount: 1,
 
       query: {
         page: 1,
@@ -156,7 +157,6 @@ export default {
           ...keyBy(entities, '_id'),
           ...currentEntities,
         };
-        this.entitiesById = keyBy(entities, this.itemValue);
       } catch (err) {
         console.error(err);
       } finally {

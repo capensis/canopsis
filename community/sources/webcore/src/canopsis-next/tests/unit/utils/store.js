@@ -690,6 +690,90 @@ export const createEventModule = () => {
   };
 };
 
+export const createWidgetTemplateModule = () => {
+  const fetchWidgetTemplatesListWithoutStore = jest.fn()
+    .mockReturnValue({
+      meta: { total_count: 0 },
+      data: [],
+    }); // TODO: finish it in the future
+
+  const createWidgetTemplate = jest.fn();
+  const updateWidgetTemplate = jest.fn();
+  const removeWidgetTemplate = jest.fn();
+
+  const widgetTemplateModule = {
+    name: 'widgetTemplate',
+    actions: {
+      fetchListWithoutStore: fetchWidgetTemplatesListWithoutStore,
+      create: createWidgetTemplate,
+      update: updateWidgetTemplate,
+      remove: removeWidgetTemplate,
+    },
+  };
+
+  return {
+    fetchWidgetTemplatesListWithoutStore,
+    createWidgetTemplate,
+    updateWidgetTemplate,
+    removeWidgetTemplate,
+    widgetTemplateModule,
+  };
+};
+
+export const createInfosModule = () => {
+  const fetchItems = jest.fn();
+
+  const infosModule = {
+    name: 'infos',
+    getters: {
+      alarmInfos: () => [], // TODO: finish it in the future
+      alarmInfosRules: () => [],
+      entityInfos: () => [],
+      pending: () => [],
+    },
+    actions: {
+      fetch: fetchItems,
+    },
+  };
+
+  return {
+    fetchItems,
+    infosModule,
+  };
+};
+
+export const createManualMetaAlarmModule = () => {
+  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
+  const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchManualMetaAlarmsListWithoutStore.mockClear();
+    createManualMetaAlarm.mockClear();
+    addAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsIntoManualMetaAlarm.mockClear();
+  });
+
+  const manualMetaAlarmModule = {
+    name: 'manualMetaAlarm',
+    actions: {
+      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
+      create: createManualMetaAlarm,
+      addAlarms: addAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+    },
+  };
+
+  return {
+    fetchManualMetaAlarmsListWithoutStore,
+    createManualMetaAlarm,
+    addAlarmsIntoManualMetaAlarm,
+    removeAlarmsIntoManualMetaAlarm,
+    manualMetaAlarmModule,
+  };
+};
+
 export const createDeclareTicketModule = () => {
   const bulkCreateDeclareTicketExecution = jest.fn().mockResolvedValue([]);
   const fetchAssignedDeclareTicketsWithoutStore = jest.fn().mockResolvedValue({

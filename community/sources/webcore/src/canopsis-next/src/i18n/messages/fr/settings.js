@@ -31,7 +31,7 @@ export default {
   columnNames: 'Nom des colonnes',
   exportColumnNames: 'Nom des colonnes à exporter',
   groupColumnNames: 'Nom des colonnes des méta-alarmes',
-  trackColumnNames: 'Suivre les colonnes de source d\'alarme',
+  trackColumnNames: 'Colonnes pour le suivi de cause racine',
   treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
@@ -39,7 +39,6 @@ export default {
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
   open: 'Ouverte',
-  resolved: 'Résolue',
   filters: 'Filtres',
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
@@ -134,8 +133,8 @@ export default {
       both: 'Les deux',
     },
   },
-  templateEditor: 'Modèle',
   columns: {
+    customLabel: 'Étiquette personnalisée',
     isHtml: 'Est-ce du HTML ?',
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
@@ -203,5 +202,6 @@ export default {
     title: 'Vue par défaut',
     comfort: 'Vue confort',
     compact: 'Vue compacte',
+    ultraCompact: 'Vue ultra compacte',
   },
 };

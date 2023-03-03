@@ -4,7 +4,7 @@
       v-expansion-panel-content.grey.darken-2.white--text(:class="{ error: errors.length }", lazy)
         template(#header="")
           div.white--text {{ label }}
-        v-card.pt-1.white
+        v-card.pt-1
           v-alert.pa-2.mx-2(type="error", :value="!!errors.length") {{ errors.join(' ') }}
           chips-list(
             :entities="entities",
@@ -63,7 +63,7 @@ export default {
 
 <style scoped lang="scss">
   .choose-expansion-panel {
-    & /deep/ .v-expansion-panel__header .v-icon {
+    & ::v-deep .v-expansion-panel__header .v-icon {
       color: white !important;
     }
   }

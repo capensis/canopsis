@@ -21,7 +21,7 @@
           )
           v-layout
             v-flex(xs5)
-              c-name-field(v-field="form.name", required, key="name")
+              c-name-field(v-field="form.name", key="name", required)
             v-flex(xs7)
               v-text-field.ml-2(
                 v-if="isStringValueType",
@@ -32,9 +32,8 @@
                 key="from",
                 name="value"
               )
-                v-tooltip(#append="", left)
-                  v-icon(#activator="{ on, bind }", v-on="on", v-bind="bind") help
-                  div(v-html="$t('eventFilter.tooltips.copyFromHelp')")
+                template(#append="")
+                  c-help-icon(icon="help", :text="$t('eventFilter.tooltips.copyFromHelp')", left)
               c-mixed-field.ml-2(
                 v-else,
                 v-field="form.value",

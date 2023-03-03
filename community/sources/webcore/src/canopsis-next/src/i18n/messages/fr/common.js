@@ -1,3 +1,4 @@
+import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -41,7 +42,6 @@ export default {
   by: 'Par',
   date: 'Date',
   comment: 'Commentaire | Commentaires',
-  lastComment: 'Dernier commentaire',
   end: 'Fin',
   start: 'Début',
   message: 'Message',
@@ -122,13 +122,11 @@ export default {
   payload: 'Payload',
   note: 'Note',
   output: 'Output',
-  displayName: 'Nom simplifié (DisplayName)',
   created: 'Date de création',
   updated: 'Date de dernière modification',
   expired: 'Date d\'expiration',
   accessed: 'Consulté à',
   lastEventDate: 'Date du dernier événement',
-  activationDate: 'Date d\'activation',
   activated: 'Activé',
   pattern: 'Modèle | Modèles',
   correlation: 'Corrélation',
@@ -159,8 +157,8 @@ export default {
   impactLevel: 'Niveau d\'impact',
   impactState: 'État d\'impact',
   loadMore: 'Charger plus',
-  initiator: 'Initiateur',
   download: 'Télécharger',
+  initiator: 'Initiateur',
   percent: 'Pourcentage | Pourcentages',
   tests: 'Tests',
   total: 'Total',
@@ -219,14 +217,8 @@ export default {
   connectorName: 'Nom du connecteur',
   component: 'Composant',
   resource: 'Ressource',
-  extraDetail: 'Détails supplémentaires',
   ack: 'Acquittement',
   acked: 'Acquitté',
-  ackedAt: 'Acquitté à',
-  ackedBy: 'Acquitté par',
-  ackMessage: 'Message de l\'acquittement',
-  ackInitiator: 'Origine de l\'acquittement',
-  resolvedAt: 'Résolue à',
   extraInfo: 'Extra info | Extra infos',
   custom: 'Personnalisé',
   eventType: 'Type d\'événement',
@@ -251,11 +243,12 @@ export default {
   close: 'Fermer',
   alarmId: 'Identifiant de l\'alarme',
   longOutput: 'Sortie longue',
-  initialOutput: 'Sortie initiale',
-  longInitialOutput: 'Sortie initiale longue',
   timestamp: 'Horodatage',
   countOfMax: '{count} sur {total}',
   trigger: 'Déclencheur | Déclencheurs',
+  column: 'Colonne | Colonnes',
+  countOfTotal: '{count} sur {total}',
+  deprecatedTrigger: 'Ce déclencheur n\'est plus pris en charge',
   initialLongOutput: 'Sortie initiale longue',
   totalStateChanges: 'Changements d\'état totaux',
   noReceivedEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
@@ -263,6 +256,7 @@ export default {
   clearSearch: 'Ne plus appliquer cette recherche',
   noData: 'Aucune donnée',
   noColumns: 'Veuillez sélectionner au moins une colonne',
+  theme: 'Thème | Thèmes',
   systemName: 'Nom du système',
   emitTrigger: 'Émettre un déclencheur',
   header: 'En-tête | En-têtes',
@@ -406,6 +400,7 @@ export default {
     [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     [EVENT_ENTITY_TYPES.snooze]: 'Mettre en veille',
   },
+
   triggers: {
     [TRIGGERS.create]: {
       text: 'Création d\'alarme',
@@ -437,10 +432,6 @@ export default {
     },
     [TRIGGERS.comment]: {
       text: 'Commentaire sur une alarme',
-    },
-    [TRIGGERS.done]: {
-      text: 'Alarme en statut "done"',
-      helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
     },
     [TRIGGERS.declareticket]: {
       text: 'Déclaration de ticket depuis l\'interface graphique',
@@ -487,6 +478,12 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
+  },
+  themes: {
+    [THEMES_NAMES.canopsis]: 'Canopsis',
+    [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
+    [THEMES_NAMES.colorBlind]: 'Daltonien',
+    [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
   },
   request: {
     timeout: 'Temps libre',

@@ -1,4 +1,4 @@
-import { WIDGET_TYPES } from '@/constants';
+import { PBEHAVIOR_TYPE_TYPES, WIDGET_TYPES } from '@/constants';
 
 export default {
   common: {
@@ -163,6 +163,9 @@ export default {
         fields: {
           message: 'Message',
         },
+      },
+      color: {
+        label: 'Utiliser une couleur spéciale pour cet événement ?',
       },
     },
     errors: {
@@ -484,6 +487,12 @@ export default {
       type: 'Type',
       priority: 'Priorité',
       iconName: 'Nom de l\'icône',
+    },
+    canonicalTypes: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+      [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
     },
   },
   pbehaviorRecurrentChangesConfirmation: {
@@ -848,6 +857,20 @@ export default {
     create: {
       title: 'Créer un jeton de partage',
     },
+  },
+  createWidgetTemplate: {
+    create: {
+      title: 'Créer un modèle de widget',
+    },
+    edit: {
+      title: 'Modifier le modèle de widget',
+    },
+  },
+  selectWidgetTemplateType: {
+    title: 'Sélectionner le type de modèle de widget',
+  },
+  entityDependenciesList: {
+    title: 'Entités Centreon impactées',
   },
   createDeclareTicketRule: {
     create: {

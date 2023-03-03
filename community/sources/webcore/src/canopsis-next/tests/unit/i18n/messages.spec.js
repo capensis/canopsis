@@ -1,15 +1,14 @@
-import fr from '@/i18n/messages/fr';
+import { differenceKeys } from '@unit/utils/object';
+
 import en from '@/i18n/messages/en';
+import fr from '@/i18n/messages/fr';
 
 describe('I18n messages', () => {
-  const enKeys = Object.keys(en);
-  const frKeys = Object.keys(fr);
-
-  test('Translation modules count is equal', () => {
-    expect(enKeys).toEqual(frKeys);
+  test('EN translation keys exists inside FR', () => {
+    expect(differenceKeys(en, fr)).toEqual({});
   });
 
-  test.each(enKeys)('Translation module: "%s" count is equal', (module) => {
-    expect(en[module]).toStructureEqual(fr[module]);
+  test('FR translation keys exists inside EN', () => {
+    expect(differenceKeys(fr, en)).toEqual({});
   });
 });

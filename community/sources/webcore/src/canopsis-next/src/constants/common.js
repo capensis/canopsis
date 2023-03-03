@@ -276,7 +276,6 @@ export const TRIGGERS = {
   cancel: 'cancel',
   uncancel: 'uncancel',
   comment: 'comment',
-  done: 'done',
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
@@ -303,6 +302,10 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructionjobfail,
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
+];
+
+export const DEPRECATED_TRIGGERS = [
+  TRIGGERS.declareticket,
 ];
 
 export const HEADERS = {

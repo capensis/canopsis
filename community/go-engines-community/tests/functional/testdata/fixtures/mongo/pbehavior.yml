@@ -5,7 +5,7 @@ template:
     enabled: true,
     tstart: <NowUnix()>,
     tstop: <NowUnix()>,
-    color: "#FFFFFF",
+    color: <HexColor()>,
     rrule: "",
     reason: test-reason-to-pbh-edit,
     type_: test-default-maintenance-type,
@@ -65,6 +65,7 @@ pbehavior:
     rrule: ""
     tstart: 1591172881
     tstop: 1591536400
+    color: "#FFFFFF"
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
   pbehavior_to_get_by_name_2:
@@ -85,7 +86,7 @@ pbehavior:
     reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
-    color: "#FFFFFF"
+    color: ""
     type_: test-type-to-pbh-edit-2
     comments: [ ]
     updated: 1592215337
@@ -224,6 +225,7 @@ pbehavior:
     rrule: ""
     tstart: 1591172881
     tstop: 1591536400
+    color: "#FFFFFF"
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
 
@@ -249,6 +251,7 @@ pbehavior:
     rrule: ""
     tstart: 1591172881
     tstop: 1591536400
+    color: "#FFFFFF"
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
 
@@ -459,6 +462,7 @@ pbehavior:
     <<: *pbehavior
     _id: test-pbehavior-to-patch-14
     author: noperms
+    color: "#FFFFFF"
 
   pbehavior_to_bulk_delete_1:
     <<: *pbehavior
@@ -504,6 +508,7 @@ pbehavior:
     rrule:
     tstart: 1664704800
     tstop: 1664712000
+    color: "#FFFFFF"
     type_: test-default-maintenance-type
     entity_pattern:
       - - field: name
@@ -518,6 +523,7 @@ pbehavior:
     rrule: FREQ=WEEKLY
     tstart: 1664704800
     tstop: 1664712000
+    color: "#FFFFFF"
     type_: test-default-active-type
     exdates:
       - begin: 1664701200
@@ -536,6 +542,7 @@ pbehavior:
     rrule:
     tstart: 1664794800
     tstop: 1664802000
+    color: "#FFFFFF"
     type_: test-default-maintenance-type
     entity_pattern:
       - - field: name

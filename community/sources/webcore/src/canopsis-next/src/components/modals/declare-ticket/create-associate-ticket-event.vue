@@ -7,7 +7,18 @@
         v-layout(column)
           alarm-general-table(v-if="config.items", :items="config.items")
           v-divider
+          v-checkbox(
+            v-if="isAllComponentAlarms",
+            v-model="form.ticket_resources",
+            :label="$t('alarm.associateTicketResources')",
+            color="primary"
+          )
           associate-ticket-event-form.mt-3(v-model="form")
+          c-description-field(
+            v-model="form.ticket_comment",
+            :label="$tc('common.comment')",
+            name="ticket_comment"
+          )
           c-alert(v-if="itemsWithoutAck.length", type="info") {{ alertMessage }}
       template(#actions="")
         v-btn(
@@ -26,6 +37,7 @@
 import { MODALS } from '@/constants';
 
 import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/forms/associate-ticket-event';
+import { isEntityComponentType } from '@/helpers/entities/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -67,6 +79,10 @@ export default {
       const { length: count } = this.itemsWithoutAck;
 
       return this.$tc('declareTicket.noAckItems', count, { count });
+    },
+
+    isAllComponentAlarms() {
+      return this.config.items.every(({ entity }) => isEntityComponentType(entity.type));
     },
   },
   methods: {

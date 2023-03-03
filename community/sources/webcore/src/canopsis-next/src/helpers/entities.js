@@ -1,6 +1,5 @@
 import { omit, pick, isObject, groupBy, map } from 'lodash';
 
-import i18n from '@/i18n';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -12,19 +11,7 @@ import uid from './uid';
 import uuid from './uuid';
 import { convertDateToString } from './date/date';
 import { formToWidget, widgetToForm } from './forms/widgets/common';
-
-/**
- * Convert default columns from constants to columns with prepared by i18n label
- *
- * @param {{ labelKey: string, value: string }[]} [columns = []]
- * @returns {{ label: string, value: string }[]}
- */
-export function defaultColumnsToColumns(columns = []) {
-  return columns.map(({ labelKey, value }) => ({
-    label: i18n.tc(labelKey),
-    value,
-  }));
-}
+import { prepareAlarmListWidget, prepareContextWidget } from './widgets';
 
 /**
  * Checks if alarm is resolved
@@ -162,6 +149,13 @@ export const generateDefaultAlarmListWidget = () => ({
 });
 
 /**
+ * Generate prepared default alarm list
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultAlarmListWidget = () => prepareAlarmListWidget(generateDefaultAlarmListWidget());
+
+/**
  * Generate context widget with default parameters.
  *
  * @return {Widget}
@@ -171,6 +165,13 @@ export const generateDefaultContextWidget = () => ({
 
   _id: uuid(),
 });
+
+/**
+ * Generate prepared default context
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
 
 /**
  * Generate service weather widget with default parameters.

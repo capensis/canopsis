@@ -13,7 +13,7 @@
             c-expand-btn.operation-expand(
               v-if="!disabled",
               v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
+              :color="!expanded && hasChildrenError ? 'error' : ''"
             )
             v-layout(column)
               v-text-field(
@@ -52,7 +52,8 @@
                     :jobs="operation.jobs"
                   )
                   jobs-select(v-if="!disabled", v-field="operation.jobs")
-        c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
+        span
+          c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
 <script>

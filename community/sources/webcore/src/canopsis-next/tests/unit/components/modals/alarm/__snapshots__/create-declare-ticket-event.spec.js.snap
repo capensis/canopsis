@@ -24,6 +24,7 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
         alarms="[object Object]"
         alarmsbytickets="[object Object]"
         form="[object Object]"
+        hideticketresource="true"
         tickets=""
         ticketsbyalarms="[object Object]"
       />

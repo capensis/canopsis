@@ -1,17 +1,19 @@
 <template lang="pug">
-  v-tooltip(top)
-    template(#activator="{ on }")
-      v-icon.c-extra-details__badge.brown.darken-1.white--text(v-on="on", small) {{ icon }}
-    div.text-md-center
-      strong {{ $t('alarm.actions.iconsTitles.grouping') }}
-      v-layout(column)
-        div {{ $tc('common.rule', rules.length) }}&nbsp;:
-        div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
-      div {{ $t('alarm.actions.iconsFields.parents') }} : {{ total }}
+  div
+    v-tooltip.c-extra-details(top)
+      template(#activator="{ on }")
+        span.c-extra-details__badge.brown.darken-1(v-on="on")
+          v-icon(color="white", small) {{ icon }}
+      div.text-md-center
+        strong {{ $t('alarm.actions.iconsTitles.grouping') }}
+        v-layout(column)
+          div {{ $tc('common.rule', rules.length) }}&nbsp;:
+          div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
+        div {{ $t('alarm.actions.iconsFields.parents') }} : {{ total }}
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE } from '@/constants';
+import { EVENT_ENTITY_ICONS_BY_TYPE } from '@/constants';
 
 export default {
   props: {
@@ -26,7 +28,7 @@ export default {
   },
   computed: {
     icon() {
-      return EVENT_ENTITY_STYLE.groupParents.icon;
+      return EVENT_ENTITY_ICONS_BY_TYPE.groupParents;
     },
   },
 };

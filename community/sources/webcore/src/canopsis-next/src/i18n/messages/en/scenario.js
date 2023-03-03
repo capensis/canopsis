@@ -10,6 +10,7 @@ export default {
   emptyActions: 'No actions added yet',
   output: 'Output Action Format',
   forwardAuthor: 'Forward author to the next step',
+  skipForChild: 'Skip for meta alarm children',
   outputHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
     + '<i>For example:</i>'
     + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',
@@ -37,5 +38,7 @@ export default {
   errors: {
     actionRequired: 'Please add at least one action',
     priorityExist: 'The priority of current scenario is already in use. Do you want to change the current scenario priority to {priority}?',
+    deprecatedTriggerExist: 'This scenario is not supported anymore due to its old format and thus disabled. \n'
+      + 'Please update the scenario triggers or create a new ticket declaration rule.',
   },
 };

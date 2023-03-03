@@ -8,7 +8,7 @@
     template(#_t="{ item }")
       c-help-icon(v-bind="getIconProps(item)", top)
     template(#metaalarm="{ item }")
-      v-icon(v-if="item.ticket_meta_alarm_id", top) low_priority
+      v-icon(v-if="item.ticket_meta_alarm_id === parentAlarmId", top) low_priority
 </template>
 
 <script>
@@ -22,6 +22,10 @@ export default {
       type: Array,
       required: true,
     },
+    parentAlarmId: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     headers() {
@@ -32,10 +36,10 @@ export default {
         { text: this.$t('declareTicket.ruleName'), value: 'ticket_rule_name' },
         { text: this.$t('common.date'), value: 't' },
         { text: this.$t('common.status'), value: '_t' },
-        { text: this.$t('alarm.metaAlarm'), value: 'metaalarm' },
+        this.parentAlarmId && { text: this.$t('alarm.metaAlarm'), value: 'metaalarm' },
         { text: this.$t('common.author'), value: 'a' },
         { text: this.$tc('common.comment'), value: 'ticket_comment' },
-      ];
+      ].filter(Boolean);
     },
   },
   methods: {

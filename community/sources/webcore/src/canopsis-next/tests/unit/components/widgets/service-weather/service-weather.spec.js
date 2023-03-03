@@ -109,7 +109,6 @@ describe('service-weather', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-
           search: '',
         },
       },

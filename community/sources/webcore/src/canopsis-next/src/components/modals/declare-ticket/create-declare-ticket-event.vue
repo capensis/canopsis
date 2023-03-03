@@ -8,7 +8,8 @@
           v-model="form",
           :alarms="items",
           :tickets-by-alarms="config.ticketsByAlarms",
-          :alarms-by-tickets="config.alarmsByTickets"
+          :alarms-by-tickets="config.alarmsByTickets",
+          :hide-ticket-resource="!isAllComponentAlarms"
         )
       template(#actions="")
         v-btn(
@@ -24,14 +25,16 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/forms/declare-ticket-event';
+import { isEntityComponentType } from '@/helpers/entities/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import DeclareTicketEventsForm from '@/components/other/declare-ticket/form/declare-ticket-events-form.vue';
 
@@ -44,6 +47,7 @@ export default {
   name: MODALS.createDeclareTicketEvent,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { DeclareTicketEventsForm, ModalWrapper },
   mixins: [
@@ -51,6 +55,7 @@ export default {
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixinCreator(),
+    confirmableModalMixinCreator(),
   ],
   data() {
     const { alarmsByTickets } = this.modal.config;
@@ -58,6 +63,11 @@ export default {
     return {
       form: alarmsToDeclareTicketEventForm(alarmsByTickets),
     };
+  },
+  computed: {
+    isAllComponentAlarms() {
+      return this.items.every(({ entity }) => isEntityComponentType(entity.type));
+    },
   },
   methods: {
     async submit() {
