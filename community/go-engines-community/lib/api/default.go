@@ -480,16 +480,14 @@ func updateTokenActivity(
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				for _, tokens := range websocketHub.GetUsers() {
-					for _, t := range tokens {
-						err := tokenStore.Access(ctx, t)
-						if err != nil {
-							logger.Err(err).Msg("cannot update token access")
-						}
-						err = shareTokenStore.Access(ctx, t)
-						if err != nil {
-							logger.Err(err).Msg("cannot update share token access")
-						}
+				for _, t := range websocketHub.GetUserTokens() {
+					err := tokenStore.Access(ctx, t)
+					if err != nil {
+						logger.Err(err).Msg("cannot update token access")
+					}
+					err = shareTokenStore.Access(ctx, t)
+					if err != nil {
+						logger.Err(err).Msg("cannot update share token access")
 					}
 				}
 			}
