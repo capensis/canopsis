@@ -24,7 +24,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
     </div>
   </div>
   <div
-    class="layout row"
+    class="layout mb-2 row"
   >
     <div
       class="flex mr-3 xs8"
@@ -75,7 +75,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
     </div>
   </div>
   <div
-    class="layout row"
+    class="layout mb-2 row"
   >
     <div
       class="flex mr-3 xs8"

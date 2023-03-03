@@ -34,9 +34,5 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
     name="declare_ticket"
     value="[object Object]"
   />
-  <c-description-field-stub
-    label="Comment"
-    value="Output"
-  />
 </c-information-block-stub>
 `;

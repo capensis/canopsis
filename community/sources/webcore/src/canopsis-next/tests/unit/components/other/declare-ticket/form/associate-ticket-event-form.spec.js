@@ -10,14 +10,12 @@ const stubs = {
   'declare-ticket-rule-ticket-id-field': true,
   'declare-ticket-rule-ticket-url-field': true,
   'declare-ticket-rule-ticket-custom-fields-field': true,
-  'c-description-field': true,
 };
 
 const selectSystemNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDeclareTicketRuleTicketIdField = wrapper => wrapper.find('declare-ticket-rule-ticket-id-field-stub');
 const selectDeclareTicketRuleTicketUrlField = wrapper => wrapper.find('declare-ticket-rule-ticket-url-field-stub');
 const selectDeclareTicketRuleTicketCustomFieldsField = wrapper => wrapper.find('declare-ticket-rule-ticket-custom-fields-field-stub');
-const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 
 describe('associate-ticket-event-form', () => {
   const form = {
@@ -107,23 +105,6 @@ describe('associate-ticket-event-form', () => {
     expect(wrapper).toEmit('input', {
       ...form,
       mapping: newMapping,
-    });
-  });
-
-  test('Output changed after trigger description field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newOutput = Faker.datatype.string();
-
-    selectDescriptionField(wrapper).vm.$emit('input', newOutput);
-
-    expect(wrapper).toEmit('input', {
-      ...form,
-      output: newOutput,
     });
   });
 

@@ -59,4 +59,15 @@ describe('declared-tickets-list', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `declared-tickets-list` with parant alarm id', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tickets: [],
+        parentAlarmId: 'ticket-meta-alarm-id-2',
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });
