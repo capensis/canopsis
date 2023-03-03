@@ -21,7 +21,7 @@ const (
 	queueCheckTickInterval  = time.Second
 	reportCleanTickInterval = time.Hour
 	reportCleanInterval     = 24 * time.Hour
-	abandonedTicketInterval = 4 * time.Minute
+	abandonedTickInterval   = 4 * time.Minute
 	abandonedInterval       = 5 * time.Minute
 )
 
@@ -130,7 +130,7 @@ func (w *worker) processFirstJob(ctx context.Context) {
 		cancel()
 	}()
 
-	ticket := time.NewTicker(abandonedTicketInterval)
+	ticket := time.NewTicker(abandonedTickInterval)
 	defer ticket.Stop()
 	for {
 		select {
