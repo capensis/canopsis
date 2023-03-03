@@ -1,5 +1,4 @@
 import { createNamespacedHelpers } from 'vuex';
-import { get } from 'lodash';
 
 import {
   MODALS,
@@ -9,7 +8,7 @@ import {
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import { authMixin } from '@/mixins/auth';
@@ -144,9 +143,11 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showHistoryModal() {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
+      widget.parameters.widgetGroupColumns = this.widget.parameters.widgetGroupColumns;
+      widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
 
       this.$modals.show({
         name: MODALS.alarmsList,
@@ -156,19 +157,6 @@ export const widgetActionsPanelAlarmMixin = {
           fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
             params: { ...params, _id: this.item.entity._id },
           }),
-        },
-      });
-    },
-
-    showManualMetaAlarmUngroupModal() {
-      this.$modals.show({
-        name: MODALS.createEvent,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
-          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [get(this.parentAlarm, 'd')],
         },
       });
     },

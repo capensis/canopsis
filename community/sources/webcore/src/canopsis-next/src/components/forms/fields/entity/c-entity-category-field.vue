@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select(
+  v-select.mt-0(
     v-validate="rules",
     v-field="category",
     :label="$t('common.category')",
@@ -8,6 +8,7 @@
     :items="entityCategories",
     :error-messages="errors.collect(name)",
     :name="name",
+    :hide-details="hideDetails",
     :clearable="!required",
     item-text="name",
     item-value="_id",
@@ -26,9 +27,8 @@
         @keyup.enter="createCategory",
         @blur="clearCategory"
       )
-        v-tooltip(slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="$t('service.createCategoryHelp')")
+        template(#append="")
+          c-help-icon(icon="help", :text="$t('service.createCategoryHelp')", left)
 </template>
 
 <script>
@@ -58,6 +58,10 @@ export default {
       default: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },

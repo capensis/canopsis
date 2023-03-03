@@ -146,7 +146,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar-administration-menu-link /deep/ span {
+.top-bar-administration-menu-link ::v-deep span {
   margin-left: 8px;
 }
 </style>

@@ -1,9 +1,11 @@
 <template lang="pug">
   settings-button-field(
-    :isEmpty="isValueEmpty",
-    @create="openTextEditorModal",
-    @edit="openTextEditorModal",
-    @delete="deleteMoreInfoTemplate"
+    :is-empty="isValueEmpty",
+    addable,
+    removable,
+    @create="showTextEditorModal",
+    @edit="showTextEditorModal",
+    @delete="showRemoveTextConfirmationModal"
   )
     template(#title="")
       div.subheading {{ title }}
@@ -39,7 +41,7 @@ export default {
     },
   },
   methods: {
-    openTextEditorModal() {
+    showTextEditorModal() {
       this.$modals.show({
         name: MODALS.textEditor,
         config: {
@@ -50,7 +52,7 @@ export default {
       });
     },
 
-    deleteMoreInfoTemplate() {
+    showRemoveTextConfirmationModal() {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {

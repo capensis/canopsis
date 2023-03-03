@@ -5,9 +5,9 @@
     template(#text="")
       v-layout
         v-flex
-          chrome(v-model="color")
+          c-color-chrome-picker-field(v-model="color")
         v-flex
-          compact(v-model="color", :palette="config.palette")
+          c-color-compact-picker-field(v-model="color")
     template(#actions="")
       v-btn(
         data-test="colorPickerCancelButton",
@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import { Chrome, Compact } from 'vue-color';
-
 import { MODALS } from '@/constants';
 
 import { colorToHex, colorToRgb, isValidColor } from '@/helpers/color';
@@ -38,8 +36,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.colorPicker,
   components: {
-    Chrome,
-    Compact,
     ModalWrapper,
   },
   mixins: [
