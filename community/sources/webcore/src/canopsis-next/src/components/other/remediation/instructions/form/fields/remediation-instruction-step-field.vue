@@ -12,7 +12,7 @@
           v-layout
             c-expand-btn.step-expand(
               v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
+              :color="!expanded && hasChildrenError ? 'error' : ''"
             )
             v-layout(column)
               v-layout(row)
@@ -142,13 +142,13 @@ export default {
 
 <style lang="scss" scoped>
   .step-field {
-    & /deep/ .step-expand {
+    & ::v-deep .step-expand {
       margin: 24px 2px 0 2px !important;
       width: 20px !important;
       height: 20px !important;
     }
 
-    & /deep/ .step-time-complete-unit .v-input__slot {
+    & ::v-deep .step-time-complete-unit .v-input__slot {
       &:before, &:after {
         content: none !important;
       }

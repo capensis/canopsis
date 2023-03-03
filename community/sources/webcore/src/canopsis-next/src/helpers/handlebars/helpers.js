@@ -99,10 +99,14 @@ export function alarmTagsHelper() {
  * Pass response of a request to the child block
  *
  * Example:
- * {{#request method="get" url="https://test.com" path="data.users" variable="users"
- * username="test" password="test" headers='{ "test": "test2" }'}}
- *   {{#each users}}
- *     <li>{{login}}</li>
+ * {{#request
+ *  method="post"
+ *  url="https://jsonplaceholder.typicode.com/todos"
+ *  variable="post"
+ *  headers='{ "Content-Type": "application/json" }'
+ *  data='{ "userId": "1", "title": "test", "completed": false }'}}
+ *   {{#each post}}
+ *       <li><strong>{{@key}}</strong>: {{this}}</li>
  *   {{/each}}
  * {{/request}}
  *
@@ -115,6 +119,7 @@ export async function requestHelper(options) {
     url,
     headers,
     path,
+    data,
     variable,
     username,
     password,
@@ -138,10 +143,14 @@ export async function requestHelper(options) {
       axiosOptions.auth = { username, password };
     }
 
-    const { data } = await axios(axiosOptions);
+    if (data) {
+      axiosOptions.data = JSON.parse(data);
+    }
+
+    const { data: responseData } = await axios(axiosOptions);
 
     if (isFunction(options.fn)) {
-      const value = path ? get(data, path) : data;
+      const value = path ? get(responseData, path) : responseData;
       const context = variable ? { [variable]: value } : value;
 
       return options.fn(context);

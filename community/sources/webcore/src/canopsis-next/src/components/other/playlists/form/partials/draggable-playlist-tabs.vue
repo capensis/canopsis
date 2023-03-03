@@ -64,7 +64,7 @@ export default {
 
 <style lang="scss" scoped>
   .tabs-draggable-panel {
-    &:not(.disabled) /deep/ .tab-panel-item {
+    &:not(.disabled) ::v-deep .tab-panel-item {
       cursor: move;
     }
 

@@ -2665,6 +2665,14 @@ periodical_alarm:
       component: test-component-to-alarm-test-tag-filter
       resource: test-resource-to-alarm-test-tag-filter-3
 
+  alarm_manual_correlation_fail_1:
+    <<: *alarm
+    _id: test-alarm-manual-correlation-fail-1
+    d: test-resource-manual-correlation-fail-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-manual-correlation-fail-1
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3
@@ -2739,3 +2747,11 @@ resolved_alarms:
     v:
       <<: *alarm_value
       resource: test-resource-to-stats-executions-get-with-resolved-alarms-resolved
+
+  alarm_manual_correlation_fail_2:
+    <<: *resolved_alarm
+    _id: test-alarm-manual-correlation-fail-2
+    d: test-resource-manual-correlation-fail-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-manual-correlation-fail-1

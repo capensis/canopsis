@@ -1,5 +1,7 @@
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
+import featuresService from '@/services/features';
+
 import { CANOPSIS_EDITION } from './permission';
 
 export const WIDGET_TYPES = {
@@ -11,6 +13,21 @@ export const WIDGET_TYPES = {
   counter: 'Counter',
   testingWeather: 'Junit',
   map: 'Map',
+
+  ...featuresService.get('constants.WIDGET_TYPES'),
+};
+
+export const COMPONENTS_BY_WIDGET_TYPES = {
+  [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
+  [WIDGET_TYPES.context]: 'entities-list-widget',
+  [WIDGET_TYPES.serviceWeather]: 'service-weather-widget',
+  [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+  [WIDGET_TYPES.text]: 'text-widget',
+  [WIDGET_TYPES.counter]: 'counter-widget',
+  [WIDGET_TYPES.testingWeather]: 'testing-weather-widget',
+  [WIDGET_TYPES.map]: 'map-widget',
+
+  ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };
 
 export const WIDGET_ICONS = {
@@ -22,6 +39,8 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.counter]: 'view_module',
   [WIDGET_TYPES.testingWeather]: 'view_module',
   [WIDGET_TYPES.map]: 'location_on',
+
+  ...featuresService.get('constants.WIDGET_ICONS'),
 };
 
 export const SIDE_BARS = {
@@ -33,6 +52,8 @@ export const SIDE_BARS = {
   counterSettings: 'counter-settings',
   testingWeatherSettings: 'testing-weather-settings',
   mapSettings: 'map-settings',
+
+  ...featuresService.get('constants.SIDE_BARS'),
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -44,12 +65,16 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
   [WIDGET_TYPES.testingWeather]: SIDE_BARS.testingWeatherSettings,
   [WIDGET_TYPES.map]: SIDE_BARS.mapSettings,
+
+  ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
 
 export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.map]: { edition: CANOPSIS_EDITION.pro },
+
+  ...featuresService.get('constants.WIDGET_TYPES_RULES'),
 };
 
 export const WIDGET_GRID_SIZES_KEYS = {
@@ -133,3 +158,19 @@ export const EXPORT_STATUSES = {
   completed: 1,
   failed: 2,
 };
+
+export const WIDGET_TEMPLATES_TYPES = {
+  alarmColumns: 'alarm_columns',
+  entityColumns: 'entity_columns',
+  alarmMoreInfos: 'alarm_more_infos',
+  weatherItem: 'weather_item',
+  weatherModal: 'weather_modal',
+  weatherEntity: 'weather_entity',
+};
+
+export const COLUMNS_WIDGET_TEMPLATES_TYPES = [
+  WIDGET_TEMPLATES_TYPES.alarmColumns,
+  WIDGET_TEMPLATES_TYPES.entityColumns,
+];
+
+export const CUSTOM_WIDGET_TEMPLATE = Symbol('custom').toString();

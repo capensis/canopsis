@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { THEMES_NAMES } from '@/config';
 
 import {
   ENTITIES_STATES,
@@ -42,11 +42,10 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   SERVICE_WEATHER_STATE_COUNTERS,
   ALARM_INTERVAL_FIELDS,
+  WIDGET_TEMPLATES_TYPES,
 } from '@/constants';
 
-import featureService from '@/services/features';
-
-export default merge({
+export default {
   common: {
     ok: 'Ok',
     undefined: 'Non défini',
@@ -81,7 +80,6 @@ export default merge({
     by: 'Par',
     date: 'Date',
     comment: 'Commentaire | Commentaires',
-    lastComment: 'Dernier commentaire',
     end: 'Fin',
     start: 'Début',
     message: 'Message',
@@ -162,13 +160,11 @@ export default merge({
     payload: 'Payload',
     note: 'Note',
     output: 'Output',
-    displayName: 'Nom simplifié (DisplayName)',
     created: 'Date de création',
     updated: 'Date de dernière modification',
     expired: 'Date d\'expiration',
     accessed: 'Consulté à',
     lastEventDate: 'Date du dernier événement',
-    activationDate: 'Date d\'activation',
     activated: 'Activé',
     pattern: 'Modèle | Modèles',
     correlation: 'Corrélation',
@@ -199,8 +195,8 @@ export default merge({
     impactLevel: 'Niveau d\'impact',
     impactState: 'État d\'impact',
     loadMore: 'Charger plus',
-    initiator: 'Initiateur',
     download: 'Télécharger',
+    initiator: 'Initiateur',
     percent: 'Pourcentage | Pourcentages',
     tests: 'Tests',
     total: 'Total',
@@ -259,14 +255,8 @@ export default merge({
     connectorName: 'Nom du connecteur',
     component: 'Composant',
     resource: 'Ressource',
-    extraDetails: 'Détails supplémentaires',
     ack: 'Acquittement',
     acked: 'Acquitté',
-    ackedAt: 'Acquitté à',
-    ackedBy: 'Acquitté par',
-    ackMessage: 'Message de l\'acquittement',
-    ackInitiator: 'Origine de l\'acquittement',
-    resolvedAt: 'Résolue à',
     extraInfo: 'Extra info | Extra infos',
     custom: 'Personnalisé',
     eventType: 'Type d\'événement',
@@ -291,17 +281,19 @@ export default merge({
     close: 'Fermer',
     alarmId: 'Identifiant de l\'alarme',
     longOutput: 'Sortie longue',
-    initialOutput: 'Sortie initiale',
-    longInitialOutput: 'Sortie initiale longue',
     timestamp: 'Horodatage',
     trigger: 'Déclencheur | Déclencheurs',
+    column: 'Colonne | Colonnes',
+    countOfTotal: '{count} sur {total}',
+    rule: 'Règle',
     initialLongOutput: 'Sortie initiale longue',
     totalStateChanges: 'Changements d\'état totaux',
+    theme: 'Thème | Thèmes',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',
-      reportIncident: 'Signaler un incident',
+      reportIncident: 'Déclarer un incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
       [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
       [EVENT_ENTITY_TYPES.validate]: 'Valider',
@@ -317,7 +309,7 @@ export default merge({
     acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
     acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
     saveChanges: 'Sauvegarder',
-    reportIncident: 'Signaler un incident',
+    reportIncident: 'Déclarer un incident',
     times: {
       second: 'seconde | secondes',
       minute: 'minute | minutes',
@@ -466,10 +458,6 @@ export default merge({
       [TRIGGERS.comment]: {
         text: 'Commentaire sur une alarme',
       },
-      [TRIGGERS.done]: {
-        text: 'Alarme en statut "done"',
-        helpText: 'Ne peut s\'obtenir que par un événement posté sur l\'API',
-      },
       [TRIGGERS.declareticket]: {
         text: 'Déclaration de ticket depuis l\'interface graphique',
       },
@@ -515,6 +503,12 @@ export default merge({
       [TRIGGERS.autoinstructioncomplete]: {
         text: 'Consigne automatique terminée',
       },
+    },
+    themes: {
+      [THEMES_NAMES.canopsis]: 'Canopsis',
+      [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
+      [THEMES_NAMES.colorBlind]: 'Daltonien',
+      [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
     },
   },
   variableTypes: {
@@ -611,8 +605,6 @@ export default merge({
     },
   },
   alarmList: {
-    alarmCreationDate: 'Date de création de l\'alarme',
-    alarmDisplayName: 'Nom d\'affichage de l\'alarme',
     actions: {
       titles: {
         ack: 'Acquitter',
@@ -627,8 +619,8 @@ export default merge({
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour méta-alarmes',
-        manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
-        manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
+        createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
+        removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
@@ -796,7 +788,7 @@ export default merge({
     columnNames: 'Nom des colonnes',
     exportColumnNames: 'Nom des colonnes à exporter',
     groupColumnNames: 'Nom des colonnes des méta-alarmes',
-    trackColumnNames: 'Suivre les colonnes de source d\'alarme',
+    trackColumnNames: 'Colonnes pour le suivi de cause racine',
     treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
@@ -804,7 +796,6 @@ export default merge({
     elementsPerPage: 'Élements par page',
     filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
     open: 'Ouverte',
-    resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
@@ -899,8 +890,8 @@ export default merge({
         both: 'Les deux',
       },
     },
-    templateEditor: 'Modèle',
     columns: {
+      customLabel: 'Étiquette personnalisée',
       isHtml: 'Est-ce du HTML ?',
       withTemplate: 'Modèle personnalisé',
       isState: 'Affiché comme une criticité ?',
@@ -968,6 +959,7 @@ export default merge({
       title: 'Vue par défaut',
       comfort: 'Vue confort',
       compact: 'Vue compacte',
+      ultraCompact: 'Vue ultra compacte',
     },
   },
   modals: {
@@ -1145,6 +1137,9 @@ export default merge({
             message: 'Message',
           },
         },
+        color: {
+          label: 'Utiliser une couleur spéciale pour cet événement ?',
+        },
       },
       errors: {
         invalid: 'Invalide',
@@ -1262,13 +1257,6 @@ export default merge({
         add: 'Ajouter un groupe',
         edit: 'Éditer un groupe',
       },
-    },
-    addStat: {
-      title: {
-        add: 'Ajouter une statistique',
-        edit: 'Éditer une statistique',
-      },
-      slaRequired: "La paramètre 'SLA' est obligatoire",
     },
     group: {
       create: {
@@ -1484,6 +1472,12 @@ export default merge({
         type: 'Type',
         priority: 'Priorité',
         iconName: 'Nom de l\'icône',
+      },
+      canonicalTypes: {
+        [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+        [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+        [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
       },
     },
     pbehaviorRecurrentChangesConfirmation: {
@@ -1849,6 +1843,20 @@ export default merge({
         title: 'Créer un jeton de partage',
       },
     },
+    createWidgetTemplate: {
+      create: {
+        title: 'Créer un modèle de widget',
+      },
+      edit: {
+        title: 'Modifier le modèle de widget',
+      },
+    },
+    selectWidgetTemplateType: {
+      title: 'Sélectionner le type de modèle de widget',
+    },
+    entityDependenciesList: {
+      title: 'Entités Centreon impactées',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -2153,6 +2161,7 @@ export default merge({
       stateSettings: 'Paramètres d\'état',
       storageSettings: 'Paramètres de stockage',
       notificationsSettings: 'Paramètres des notifications',
+      widgetTemplates: 'Modèles de widgets',
     },
   },
   view: {
@@ -2362,7 +2371,7 @@ export default merge({
 
   pbehaviorTypes: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
-    defaultType: 'Le type par défaut ne peut pas être modifié.',
+    defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
@@ -2752,7 +2761,40 @@ export default merge({
   },
 
   alarm: {
-    eventsCount: 'Les événements comptent',
+    fields: {
+      displayName: 'Nom simplifié (DisplayName)',
+      initialOutput: 'Sortie initiale longue',
+      initialLongOutput: 'Sortie longue initiale',
+      lastComment: 'Dernier commentaire',
+      ackBy: 'Acquis par',
+      ackMessage: 'Message de l\'acquittement',
+      ackInitiator: 'Origine de l\'acquittement',
+      stateMessage: 'Message d\'état',
+      statusMessage: 'Message de statut',
+      totalStateChanges: 'Changements d\'état totaux',
+      ackAt: 'Acquitté à',
+      stateAt: 'État changé à',
+      statusAt: 'Le statut a changé à',
+      resolved: 'Résolue à',
+      activationDate: 'Date d\'activation',
+      currentStateDuration: 'Durée de l\'état actuel',
+      snoozeDuration: 'Durée de sommeil',
+      pbhInactiveDuration: 'Pbehavior durée d\'inactivité',
+      activeDuration: 'Durée active',
+      eventsCount: 'Les événements comptent',
+      extraDetails: 'Détails supplémentaires',
+      entityId: 'ID d\'entité',
+      entityName: 'Nom de l\'entité',
+      entityCategoryName: 'Nom de la catégorie d\'entité',
+      entityType: 'Type d\'entité',
+      entityComponent: 'Composant d\'entité',
+      entityConnector: 'Connecteur d\'entité',
+      entityImpactLevel: 'Niveau d\'impact de l\'entité',
+      entityKoEvents: 'Événements d\'entité KO',
+      entityOkEvents: 'Événements d\'entité OK',
+      entityInfos: 'Informations sur l\'entité',
+      entityComponentInfos: 'Informations sur les composants de l\'entité',
+    },
   },
 
   entity: {
@@ -2763,13 +2805,22 @@ export default merge({
     addInformation: 'Ajouter une information',
     emptyInfos: 'Aucune information',
     availabilityState: 'État de disponibilité',
-    okEvents: 'OK événements',
-    koEvents: 'KO événements',
     types: {
       [ENTITY_TYPES.component]: 'Composant',
       [ENTITY_TYPES.connector]: 'Connecteur',
       [ENTITY_TYPES.resource]: 'Ressource',
       [ENTITY_TYPES.service]: 'Service',
+    },
+    fields: {
+      categoryName: 'Nom de catégorie',
+      koEvents: 'KO événements',
+      okEvents: 'OK événements',
+      statsKo: 'Stats KO',
+      statsOk: 'Stats OK',
+      idleSince: 'Inactif depuis',
+      componentInfos: 'Informations sur les composants',
+      alarmDisplayName: 'Nom d\'affichage de l\'alarme',
+      alarmCreationDate: 'Date de création de l\'alarme',
     },
   },
 
@@ -2873,9 +2924,12 @@ export default merge({
     },
     remediation: {
       title: 'Stockage des données de consigne',
-      accumulateAfter: 'Accumuler les statistiques des consignes après',
-      deleteAfter: 'Supprimer les données des consignes après',
-      deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+      deleteAfter: 'Supprimer les données de la chronologie des instructions après',
+      deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
+      deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
+      deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
+      deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
+      deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
     },
     entity: {
       title: 'Stockage des données des entités',
@@ -3321,4 +3375,18 @@ export default merge({
     generateDump: 'Générer un nouveau dump',
     downloadDump: 'Télécharger le dump',
   },
-}, featureService.get('i18n.fr'));
+
+  widgetTemplate: {
+    types: {
+      [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Général : Colonnes des alarmes',
+      [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Général : Colonnes des entités',
+      [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Bac à alarmes : plus d\'infos',
+      [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Météo des services : Modèle de tuile',
+      [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Météo des services : Modèle de modale',
+      [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Météo des services : Modèle d\'entité',
+    },
+    errors: {
+      columnsRequired: 'Vous devez ajouter au moins une colonne.',
+    },
+  },
+};

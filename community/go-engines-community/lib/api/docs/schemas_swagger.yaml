@@ -9,6 +9,8 @@ definitions:
         type: string
       ui_language:
         type: string
+      ui_theme:
+        type: string
       ui_tours:
         additionalProperties:
           type: boolean
@@ -47,6 +49,8 @@ definitions:
       ui_groups_navigation_type:
         type: string
       ui_language:
+        type: string
+      ui_theme:
         type: string
       ui_tours:
         additionalProperties:
@@ -235,8 +239,6 @@ definitions:
         type: integer
       display_name:
         type: string
-      done:
-        $ref: '#/definitions/common.AlarmStep'
       duration:
         type: integer
       events_count:
@@ -399,10 +401,14 @@ definitions:
     type: object
   alarm.ExportRequest:
     properties:
+      alarm_pattern:
+        type: string
       category:
         type: string
       correlation:
         type: boolean
+      entity_pattern:
+        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -417,6 +423,8 @@ definitions:
         type: array
       opened:
         type: boolean
+      pbehavior_pattern:
+        type: string
       search:
         type: string
       separator:
@@ -465,18 +473,13 @@ definitions:
       running:
         type: boolean
     type: object
-  alarm.ManualResponse:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-    type: object
   alarm.MetaAlarmRule:
     properties:
       _id:
         type: string
       name:
+        type: string
+      type:
         type: string
     type: object
   alarm.Pbehavior:
@@ -824,9 +827,11 @@ definitions:
         type: object
       remediation:
         properties:
-          accumulate_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
           delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_mod_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_stats_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
     type: object
@@ -1047,19 +1052,11 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/types.Coordinates'
-      depends:
-        items:
-          type: string
-        type: array
       description:
         maxLength: 255
         type: string
       enabled:
         type: boolean
-      impact:
-        items:
-          type: string
-        type: array
       impact_level:
         maximum: 10
         minimum: 1
@@ -1087,14 +1084,6 @@ definitions:
         type: integer
       category:
         $ref: '#/definitions/entity.Category'
-      changeable_depends:
-        items:
-          type: string
-        type: array
-      changeable_impact:
-        items:
-          type: string
-        type: array
       component:
         type: string
       component_infos:
@@ -1775,6 +1764,7 @@ definitions:
             * `view_tab` - export viewtabs collection
             * `widget` - export widgets collection
             * `widget_filter` - export widget_filters collection
+            * `widget_template` - export widget_templates collection
             * `view_group` - export viewgroups collection
             * `instruction` - export instruction collection
             * `job_config` - export job_config collection
@@ -2481,7 +2471,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - entity
     - name
     - origin
@@ -2538,7 +2527,6 @@ definitions:
         type: string
     required:
     - _id
-    - color
     - enabled
     - name
     - reason
@@ -2598,7 +2586,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2722,6 +2709,8 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
       description:
         type: string
       icon_name:
@@ -2769,7 +2758,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2916,10 +2904,9 @@ definitions:
     type: object
   pbehaviortype.EditRequest:
     properties:
-      description:
-        maxLength: 255
+      color:
         type: string
-      icon_name:
+      description:
         maxLength: 255
         type: string
       name:
@@ -2935,8 +2922,8 @@ definitions:
         - pause
         type: string
     required:
+    - color
     - description
-    - icon_name
     - name
     - priority
     - type
@@ -2945,12 +2932,14 @@ definitions:
     properties:
       _id:
         type: string
+      color:
+        type: string
+      default:
+        type: boolean
       deletable:
         type: boolean
       description:
         type: string
-      editable:
-        type: boolean
       icon_name:
         type: string
       name:
@@ -3392,7 +3381,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -3470,7 +3458,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -3531,7 +3518,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
             * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
@@ -4120,8 +4106,13 @@ definitions:
       role:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - _id
@@ -4130,7 +4121,7 @@ definitions:
     - name
     - role
     type: object
-  user.EditRequest:
+  user.CreateRequest:
     properties:
       defaultview:
         type: string
@@ -4138,6 +4129,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -4151,40 +4144,16 @@ definitions:
         type: string
       role:
         type: string
-      ui_groups_navigation_type:
-        type: string
-      ui_language:
-        type: string
-    required:
-    - email
-    - enable
-    - name
-    - role
-    type: object
-  user.Request:
-    properties:
-      defaultview:
-        type: string
-      email:
-        type: string
-      enable:
-        type: boolean
-      firstname:
-        maxLength: 255
-        type: string
-      lastname:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      password:
-        type: string
-      role:
+      source:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - email
@@ -4200,6 +4169,42 @@ definitions:
         $ref: '#/definitions/user.View'
       name:
         type: string
+    type: object
+  user.UpdateRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
+        type: string
+    required:
+    - email
+    - enable
+    - name
+    - role
     type: object
   user.User:
     properties:
@@ -4230,6 +4235,8 @@ definitions:
       ui_groups_navigation_type:
         type: string
       ui_language:
+        type: string
+      ui_theme:
         type: string
     type: object
   user.View:
@@ -4430,6 +4437,22 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  view.WidgetColumn:
+    properties:
+      colorIndicator:
+        type: string
+      isHtml:
+        type: boolean
+      label:
+        maxLength: 255
+        type: string
+      template:
+        type: string
+      value:
+        type: string
+    required:
+    - value
     type: object
   viewgroup.EditRequest:
     properties:
@@ -4680,6 +4703,51 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  widgettemplate.EditRequest:
+    properties:
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      content:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - alarm_columns
+        - entity_columns
+        - alarm_more_infos
+        - weather_item
+        - weather_modal
+        - weather_entity
+        type: string
+    required:
+    - title
+    - type
+    type: object
+  widgettemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      content:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}

@@ -7,29 +7,44 @@
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(
         v-model="form.parameters.sort",
-        :columns="form.parameters.widgetColumns",
+        :columns="sortablePreparedWidgetColumns",
         :columns-label="$t('settings.columnName')"
       )
       v-divider
       field-columns(
         v-model="form.parameters.widgetColumns",
+        :template="form.parameters.widgetColumnsTemplate",
+        :templates="alarmColumnsWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.columnNames')",
+        :type="$constants.ENTITIES_TYPES.alarm",
         with-template,
         with-html,
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
+        :template="form.parameters.widgetGroupColumnsTemplate",
+        :templates="alarmColumnsWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.groupColumnNames')",
+        :type="$constants.ENTITIES_TYPES.alarm",
         with-html,
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateWidgetGroupColumnsTemplate"
       )
       v-divider
       field-columns(
         v-model="form.parameters.serviceDependenciesColumns",
+        :template="form.parameters.serviceDependenciesColumnsTemplate",
+        :templates="entityColumnsWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.trackColumnNames')",
-        with-color-indicator
+        :type="$constants.ENTITIES_TYPES.entity",
+        with-color-indicator,
+        @update:template="updateServiceDependenciesColumnsTemplate"
       )
       v-divider
       field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
@@ -66,13 +81,18 @@
       v-divider
       field-info-popup(
         v-model="form.parameters.infoPopups",
-        :columns="form.parameters.widgetColumns"
+        :columns="preparedWidgetColumns"
       )
       v-divider
-      field-text-editor(
-        v-model="form.parameters.moreInfoTemplate",
+      field-text-editor-with-template(
+        :value="form.parameters.moreInfoTemplate",
+        :template="form.parameters.moreInfoTemplateTemplate",
         :title="$t('settings.moreInfosModal')",
-        :variables="alarmVariables"
+        :variables="alarmVariables",
+        :templates="alarmMoreInfosWidgetTemplates",
+        addable,
+        removable,
+        @input="updateMoreInfo"
       )
       v-divider
       field-grid-range-size(
@@ -114,7 +134,13 @@
         :label="$t('settings.linksCategoriesLimit')"
       )
       v-divider
-      export-csv-form(v-model="form.parameters", datetime-format)
+      export-csv-form(
+        v-model="form.parameters",
+        :type="$constants.ENTITIES_TYPES.alarm",
+        :templates="alarmColumnsWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
+        datetime-format
+      )
       v-divider
       field-switcher(
         v-model="form.parameters.sticky_header",
@@ -124,10 +150,15 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+
+import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
+import { getColumnLabel, getSortable } from '@/helpers/widgets';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
@@ -139,7 +170,7 @@ import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldFilters from './fields/common/filters.vue';
-import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldTextEditorWithTemplate from './fields/common/text-editor-with-template.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
 import FieldGridRangeSize from './fields/common/grid-range-size.vue';
@@ -168,7 +199,7 @@ export default {
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,
     FieldFilters,
-    FieldTextEditor,
+    FieldTextEditorWithTemplate,
     FieldSwitcher,
     FieldFastAckOutput,
     FieldGridRangeSize,
@@ -180,9 +211,51 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
+    entitiesInfosMixin,
     alarmVariablesMixin,
+    widgetTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
+  computed: {
+    preparedWidgetColumns() {
+      return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
+        ...column,
+
+        text: getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+      }));
+    },
+
+    sortablePreparedWidgetColumns() {
+      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
+    },
+  },
+  mounted() {
+    this.fetchInfos();
+  },
+  methods: {
+    updateWidgetColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetColumns', columns);
+    },
+
+    updateWidgetGroupColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'widgetGroupColumnsTemplate', template);
+      this.$set(this.form.parameters, 'widgetGroupColumns', columns);
+    },
+
+    updateServiceDependenciesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
+    },
+
+    updateMoreInfo(content, template) {
+      this.$set(this.form.parameters, 'moreInfoTemplate', content);
+
+      if (template && template !== this.form.parameters.moreInfoTemplateTemplate) {
+        this.$set(this.form.parameters, 'moreInfoTemplateTemplate', template);
+      }
+    },
+  },
 };
 </script>

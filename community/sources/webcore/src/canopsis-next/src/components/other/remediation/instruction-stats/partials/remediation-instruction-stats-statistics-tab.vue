@@ -38,10 +38,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    interval: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
@@ -81,9 +77,6 @@ export default {
       ];
     },
   },
-  watch: {
-    interval: 'fetchList',
-  },
   mounted() {
     this.fetchList();
   },
@@ -91,17 +84,12 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const params = this.getQuery();
-
-      params.from = this.interval.from;
-      params.to = this.interval.to;
-
       const {
         data: remediationInstructionChanges,
         meta,
       } = await this.fetchRemediationInstructionStatsChangesListWithoutStore({
         id: this.remediationInstruction._id,
-        params,
+        params: this.getQuery(),
       });
 
       this.remediationInstructionChanges = remediationInstructionChanges;
