@@ -1,14 +1,45 @@
 <template lang="pug">
   v-tabs.expand-panel.secondary.lighten-2(
+    v-model="activeTab",
     :key="tabsKey",
     color="secondary lighten-1",
     slider-color="primary",
     dark,
     centered
   )
-    template(v-if="hasMoreInfos")
-      v-tab(:class="moreInfosTabClass") {{ $t('alarm.tabs.moreInfos') }}
-      v-tab-item
+    v-tab(
+      v-if="hasMoreInfos",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos}`",
+      :class="moreInfosTabClass"
+      ) {{ $t('alarm.tabs.moreInfos') }}
+    v-tab(
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`",
+      :class="timeLineTabClass"
+    ) {{ $t('alarm.tabs.timeLine') }}
+    v-tab(
+      v-if="hasTickets",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared}`"
+    ) {{ $t('alarm.tabs.ticketsDeclared') }}
+    v-tab(:href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior}`") {{ $tc('common.pbehavior', 2) }}
+    v-tab(
+      v-if="hasChildren",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren}`"
+    ) {{ $t('alarm.tabs.alarmsChildren') }}
+    v-tab(
+      v-if="hasServiceDependencies",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.trackSource}`"
+    ) {{ $t('alarm.tabs.trackSource') }}
+    v-tab(
+      v-if="hasImpactsDependencies",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.impactChain}`"
+    ) {{ $t('alarm.tabs.impactChain') }}
+    v-tab(
+      v-if="hasEntityGantt",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt}`"
+    ) {{ $t('alarm.tabs.entityGantt') }}
+
+    v-tabs-items(v-model="activeTab")
+      v-tab-item(v-if="hasMoreInfos", :value="$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos")
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -17,45 +48,38 @@
                   :alarm="alarm",
                   :template="widget.parameters.moreInfoTemplate"
                 )
-    v-tab(:class="timeLineTabClass") {{ $t('alarm.tabs.timeLine') }}
-    v-tab-item
-      v-layout.pa-3(row)
-        v-flex(:class="cardFlexClass")
-          v-card.tab-item-card
-            v-progress-linear(
-              :active="pending",
-              :height="3",
-              indeterminate
-            )
-            v-card-text
-              alarms-time-line(
-                :steps="steps",
-                :is-html-enabled="isHtmlEnabled",
-                @update:page="updateStepsQueryPage"
+      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
+        v-layout.pa-3(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-progress-linear(
+                :active="pending",
+                :height="3",
+                indeterminate
               )
-    template(v-if="hasTickets")
-      v-tab {{ $t('alarm.tabs.ticketsDeclared') }}
-      v-tab-item
+              v-card-text
+                alarms-time-line(
+                  :steps="steps",
+                  :is-html-enabled="isHtmlEnabled",
+                  @update:page="updateStepsQueryPage"
+                )
+      v-tab-item(v-if="hasTickets", :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared")
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
                 declared-tickets-list(:tickets="alarm.v.tickets", :parent-alarm-id="parentAlarmId")
-
-    v-tab {{ $tc('common.pbehavior', 2) }}
-    v-tab-item
-      v-layout.pa-3.secondary.lighten-2(row)
-        v-flex(:class="cardFlexClass")
-          v-card.tab-item-card
-            v-card-text
-              pbehaviors-simple-list(
-                :entity="alarm.entity",
-                :removable="hasDeleteAnyPbehaviorAccess",
-                :updatable="hasUpdateAnyPbehaviorAccess"
-              )
-    template(v-if="hasChildren")
-      v-tab {{ $t('alarm.tabs.alarmsChildren') }}
-      v-tab-item
+      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
+        v-layout.pa-3.secondary.lighten-2(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                pbehaviors-simple-list(
+                  :entity="alarm.entity",
+                  :removable="hasDeleteAnyPbehaviorAccess",
+                  :updatable="hasUpdateAnyPbehaviorAccess"
+                )
+      v-tab-item(v-if="hasChildren", :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -69,9 +93,7 @@
                   :query.sync="childrenQuery",
                   :refresh-alarms-list="fetchList"
                 )
-    template(v-if="hasServiceDependencies")
-      v-tab {{ $t('alarm.tabs.trackSource') }}
-      v-tab-item
+      v-tab-item(v-if="hasServiceDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -82,9 +104,7 @@
                   include-root,
                   openable-root
                 )
-    template(v-if="hasImpactsDependencies")
-      v-tab {{ $t('alarm.tabs.impactChain') }}
-      v-tab-item
+      v-tab-item(v-if="hasImpactsDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -96,9 +116,7 @@
                   impact,
                   openable-root
                 )
-    template(v-if="hasEntityGantt")
-      v-tab {{ $t('alarm.tabs.entityGantt') }}
-      v-tab-item(lazy)
+      v-tab-item(v-if="hasEntityGantt", :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt")(lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -177,6 +195,7 @@ export default {
   },
   data() {
     return {
+      activeTab: undefined,
       tabsKey: uid(),
     };
   },
