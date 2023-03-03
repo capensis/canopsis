@@ -50,8 +50,7 @@ type Hub interface {
 	GetConnectedGroupIds(group string) []string
 	CloseGroupRoom(group, id string) error
 	CloseGroupRoomAndNotify(group, id string) error
-	// GetUsers returns users from all connections with their tokens.
-	GetUsers() map[string][]string
+	GetUserTokens() []string
 	GetConnections() []UserConnection
 }
 
@@ -250,25 +249,22 @@ func (h *hub) CloseGroupRoomAndNotify(group, id string) error {
 	return h.CloseGroupRoom(group, id)
 }
 
-func (h *hub) GetUsers() map[string][]string {
+func (h *hub) GetUserTokens() []string {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
-	users := make(map[string][]string)
+	tokens := make([]string, 0)
 	uniqueTokens := make(map[string]struct{}, len(h.conns))
 	for _, conn := range h.conns {
-		if conn.userId != "" {
-			if _, ok := users[conn.userId]; !ok {
-				users[conn.userId] = make([]string, 0, 1)
-			}
+		if conn.token != "" {
 			if _, ok := uniqueTokens[conn.token]; !ok {
-				users[conn.userId] = append(users[conn.userId], conn.token)
+				tokens = append(tokens, conn.token)
 				uniqueTokens[conn.token] = struct{}{}
 			}
 		}
 	}
 
-	return users
+	return tokens
 }
 
 func (h *hub) GetConnections() []UserConnection {

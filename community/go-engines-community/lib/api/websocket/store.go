@@ -14,6 +14,7 @@ type Store interface {
 	UpdateConnections(ctx context.Context, conns []UserConnection) error
 	GetConnections(ctx context.Context, ids []string) (map[string]int64, error)
 	GetActiveConnections(ctx context.Context) (int64, error)
+	GetUsers(ctx context.Context) ([]string, error)
 }
 
 func NewStore(
@@ -131,4 +132,34 @@ func (s *store) GetActiveConnections(ctx context.Context) (int64, error) {
 	}
 
 	return 0, nil
+}
+
+func (s *store) GetUsers(ctx context.Context) ([]string, error) {
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"updated": bson.M{"$gt": types.CpsTime{Time: time.Now().Add(-s.readInterval)}},
+		}},
+		{"$group": bson.M{
+			"_id": "$user",
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	res := make([]string, 0)
+	for cursor.Next(ctx) {
+		item := struct {
+			ID string `bson:"_id"`
+		}{}
+		err = cursor.Decode(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		res = append(res, item.ID)
+	}
+
+	return res, nil
 }
