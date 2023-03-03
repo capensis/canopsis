@@ -7,7 +7,8 @@ import {
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-import { generateDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
+
+import { generatePreparedDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
@@ -66,10 +67,6 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarms([this.item]);
-    },
-
     async showDeclareTicketModalByAlarms(alarms) {
       this.ticketsForAlarmsPending = true;
 
@@ -86,7 +83,7 @@ export const widgetActionsPanelAlarmMixin = {
         this.$modals.show({
           name: MODALS.createDeclareTicketEvent,
           config: {
-            ...this.modalConfig,
+            items: alarms,
             alarmsByTickets,
             ticketsByAlarms,
             action: (events) => {
@@ -110,10 +107,6 @@ export const widgetActionsPanelAlarmMixin = {
       } finally {
         this.ticketsForAlarmsPending = false;
       }
-    },
-
-    showAssociateTicketModal() {
-      this.showAssociateTicketModalByAlarms([this.item]);
     },
 
     showAssociateTicketModalByAlarms(alarms, ignoreAck = false) {
@@ -166,6 +159,7 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.createAckEvent,
         config: {
           items: alarms,
+          isNoteRequired: this.widget.parameters.isAckNoteRequired,
           action: async (event, { needDeclareTicket, needAssociateTicket }) => {
             const ackEvents = prepareEventsByAlarms(
               EVENT_ENTITY_TYPES.ack,
@@ -187,8 +181,6 @@ export const widgetActionsPanelAlarmMixin = {
               await this.showDeclareTicketModalByAlarms(alarmsWithRules);
             }
           },
-
-          isNoteRequired: this.widget.parameters.isAckNoteRequired,
         },
       });
     },
@@ -256,9 +248,11 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showHistoryModal() {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
+      widget.parameters.widgetGroupColumns = this.widget.parameters.widgetGroupColumns;
+      widget.parameters.serviceDependenciesColumns = this.widget.parameters.serviceDependenciesColumns;
 
       this.$modals.show({
         name: MODALS.alarmsList,
@@ -268,19 +262,6 @@ export const widgetActionsPanelAlarmMixin = {
           fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
             params: { ...params, _id: this.item.entity._id },
           }),
-        },
-      });
-    },
-
-    showManualMetaAlarmUngroupModal() {
-      this.$modals.show({
-        name: MODALS.createEvent,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('alarm.actions.titles.manualMetaAlarmUngroup'),
-          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [this.parentAlarm.d],
         },
       });
     },

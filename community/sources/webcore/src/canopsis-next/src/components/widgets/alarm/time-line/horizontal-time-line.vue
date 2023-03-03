@@ -9,7 +9,6 @@
           v-icon.mx-2(
             v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1",
             :key="`arrow-${stepIndex}`",
-            color="black",
             size="16"
           ) arrow_forward
 </template>

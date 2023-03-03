@@ -8,7 +8,8 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous m
     <div>Initiator : ack-initiator</div>
     <div class="c-extra-details__message">Comment : ack-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon purple white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">playlist_add_check</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `
@@ -19,7 +20,8 @@ exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `
     <div>Initiator : ack-initiator</div>
     <div class="c-extra-details__message">Comment : ack-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon purple white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">playlist_add_check</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 1`] = `
@@ -30,7 +32,8 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 1`] =
     <!---->
     <div class="c-extra-details__message">Comment : ack-message</div>
   </div>
-</div><i aria-hidden="true" class="v-icon purple white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">playlist_add_check</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;
 
 exports[`extra-details-ack Renders \`extra-details-ack\` without message 1`] = `
@@ -41,5 +44,6 @@ exports[`extra-details-ack Renders \`extra-details-ack\` without message 1`] = `
     <div>Initiator : ack-initiator</div>
     <!---->
   </div>
-</div><i aria-hidden="true" class="v-icon purple white--text c-extra-details__badge material-icons theme--light" style="font-size: 16px;">playlist_add_check</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>
+</div>
+<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span></div>
 `;

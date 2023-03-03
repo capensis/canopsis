@@ -32,7 +32,7 @@
           small,
           @click="removeCondition"
         )
-          v-icon(color="red", small) delete
+          v-icon(color="error", small) delete
 </template>
 
 <script>

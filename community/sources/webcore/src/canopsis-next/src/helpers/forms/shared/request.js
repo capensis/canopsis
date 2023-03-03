@@ -66,18 +66,6 @@ export const requestToForm = (request = {}) => ({
 });
 
 /**
- * Convert retry parameters to form object
- *
- * @param {RetryParameters} parameters
- * @returns {RetryDuration}
- */
-export const retryToForm = (parameters = {}) => (
-  parameters.retry_delay
-    ? { count: parameters.retry_count, ...durationToForm(parameters.retry_delay) }
-    : { count: '', unit: '', value: '' }
-);
-
-/**
  * Convert form object to request field
  *
  * @param {RequestForm} form
@@ -95,11 +83,50 @@ export const formToRequest = form => ({
 });
 
 /**
- * Convert form object to retry parameters
+ * Convert error structure to form structure
  *
- * @param {RetryDuration} parameters
- * @returns {RetryParameters}
+ * @param {Object[]} headersErrors
+ * @param {Object[]} headers
+ * @return {FlattenErrors}
  */
-export const formToRetry = ({ value, unit, count }) => (
-  value ? { retry_count: count, retry_delay: { value, unit } } : {}
-);
+export const requestHeadersTemplateVariablesErrorsToForm = (
+  headersErrors,
+  headers,
+) => headersErrors.reduce((acc, { is_valid: isValid, err }, index) => {
+  const header = headers[index];
+
+  if (!isValid) {
+    acc[header.key] = {
+      value: err.message,
+    };
+  }
+
+  return acc;
+}, {});
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {Object} form
+ * @return {FlattenErrors}
+ */
+export const requestTemplateVariablesErrorsToForm = (errorsObject, form) => {
+  const { url, payload, headers } = errorsObject;
+
+  const requestErrors = {};
+
+  if (!url.is_valid) {
+    requestErrors.url = url.err.message;
+  }
+
+  if (!payload.is_valid) {
+    requestErrors.payload = `${payload.err.line}|${payload.err.message}`;
+  }
+
+  if (headers.some(({ is_valid: isValid }) => !isValid)) {
+    requestErrors.headers = requestHeadersTemplateVariablesErrorsToForm(headers, form.headers);
+  }
+
+  return requestErrors;
+};

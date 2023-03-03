@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
-    request-information-content.mb-4(:text="data.request")
-    request-information-content(v-if="data.response", :text="data.response")
+    request-information-content(:text="data.request")
+    request-information-content.mt-4(v-if="data.response", :text="data.response")
 </template>
 
 <script>

@@ -1,0 +1,177 @@
+template:
+  - &choice {
+    language: fr,
+    name: incident
+  }
+
+ocws_noc_snow_sys_choice_new:
+  subcategory_{1..2}:
+    <<: *choice
+    _id: <{choice-to-get-1-subcategory-<RangeIndex()>}>
+    sys_id: <{choice-to-get-1-subcategory-<RangeIndex()>}>
+    dependent_value: CATEGORY-to-get-1
+    element: subcategory
+    provenance: project
+    sequence: <RangeIndex()>
+    label: <{project - <RangeIndex()> - accounting}>
+    value: <{PROJECT - <RangeIndex()> - ACCOUNTING}>
+  category-to-fill-form_{1..3}:
+    <<: *choice
+    _id: <{choice-fill-form-1-category-<RangeIndex()>}>
+    sys_id: <{choice-fill-form-1-category-<RangeIndex()>}>
+    element: category
+    provenance: entity-to-fill-form-1-provenance-1
+    sequence: <RangeIndex()>
+    label: <{category - <RangeIndex()> - fill-form-1}>
+    value: <{CATEGORY - <RangeIndex()> - fill-form-1}>
+  subcategory-to-fill-form-shouldnt-match:
+    <<: *choice
+    _id: choice-fill-form-1-category-shouldnt-match
+    sys_id: choice-fill-form-1-category-shouldnt-match
+    element: category
+    provenance: entity-to-fill-form-1-provenance-1
+    sequence: 0
+    label: <LoremIpsumSentence(3)>
+    value: "NETWORK_MCO"
+  subcategory-to-fill-form-{1..4}:
+    <<: *choice
+    _id: <{choice-fill-form-1-subcategory-<RangeIndex()>}>
+    sys_id: <{choice-fill-form-1-subcategory-<RangeIndex()>}>
+    dependent_value: NETWORK
+    element: subcategory
+    provenance: entity-to-fill-form-1-provenance-1
+    sequence: <RangeIndex()>
+    label: <LoremIpsumSentence(3)>
+    value: <LoremIpsumSentence(3)>
+
+default_entities:
+  entity-to-fill-form-1:
+    _id: <UUID()>
+    name: <UniqueName()>
+    infos:
+      id_equipement:
+        name: id_equipement
+        description: entity-to-fill-form-1-description
+        value: entity-to-fill-form-1
+      flag:
+        name: flag
+        description: <LoremIpsumSentence(6)>
+        value: 1
+      ci_provenance:
+        name: ci_provenance
+        description: <LoremIpsumSentence(6)>
+        value: entity-to-fill-form-1-provenance-1
+      ci_company_snow:
+        name: ci_company_snow
+        description: <LoremIpsumSentence(6)>
+        value: entity-to-fill-form-1-ci_company_snow-1
+      ci_type_snow:
+        name: ci_type_snow
+        description: <LoremIpsumSentence(6)>
+        value: entity-to-fill-form-1-ci_type_snow-1
+      company_is_communauty_snow:
+        name: company_is_communauty_snow
+        description: <LoremIpsumSentence(6)>
+        value: "true"
+      ci_location_snow:
+        name: ci_location_snow
+        description: <LoremIpsumSentence(6)>
+        value: entity-to-fill-form-1-ci_location_snow-1
+
+ocws_noc_snow_service_contract_new:
+  contract-to-fill-form-{1..5}:
+    _id: <UUID()>
+    flag: "1"
+    u_company: entity-to-fill-form-1-ci_company_snow-1
+    provenance: entity-to-fill-form-1-provenance-1
+    sys_id: <{ocws_noc_snow_service_contract-to-fill-form-1-sys_id-<RangeIndex()>}>
+    short_description: <LoremIpsumSentence(6)>
+    u_contract_owner: <{u_contract_owner-<RangeIndex()>}>
+  contract-to-check-incident-ok:
+    _id: <UUID()>
+    flag: "1"
+    u_company: company-incident-exists-1
+    provenance: company-incident-exists-1-provenance-1
+    sys_id: contract-incident-exists-1
+    short_description: <LoremIpsumSentence(6)>
+    u_contract_owner: OCWS
+  contract-to-check-incident-owner-not-found:
+    _id: <UUID()>
+    flag: "1"
+    u_company: company-incident-exists-2
+    provenance: company-incident-exists-2-provenance-1
+    sys_id: contract-incident-exists-2
+    short_description: <LoremIpsumSentence(6)>
+    u_contract_owner: ""
+  contract-to-create-incident-ok:
+    _id: <UUID()>
+    flag: "1"
+    u_company: company-create-incident-1
+    provenance: company-create-incident-1-provenance-1
+    sys_id: contract-create-incident-1
+    short_description: <LoremIpsumSentence(6)>
+    u_contract_owner: OCD
+    u_service_center: service-center-1-create-incident-1
+    u_alert_list: "contract-create-incident-1-alertlist-1"
+    u_nsoc_notification_list: "contract-create-incident-1-notificationlist-1"
+  contract-to-create-incident-owner-not-found:
+    _id: <UUID()>
+    flag: "1"
+    u_company: company-create-incident-2
+    provenance: company-create-incident-2-provenance-1
+    sys_id: contract-create-incident-2
+    short_description: <LoremIpsumSentence(6)>
+    u_contract_owner: ""
+
+ocws_noc_snow_location_group_new:
+  location-to-fill-form-1:
+    _id: <UUID()>
+    u_active: "true"
+    location: entity-to-fill-form-1-ci_location_snow-1
+    sys_id: location-to-fill-form-1
+    group: group-1-to-fill-form-1
+  location-create-incident-1:
+    _id: <UUID()>
+    sys_id: location-create-incident-1
+    group: group-1-create-incident-1
+    provenance: company-create-incident-1-provenance-1
+
+ocws_noc_snow_group_new:
+  group-to-fill-form-1_{1..2}:
+    _id: <UUID()>
+    name: <{group-to-fill-form-1-name-<RangeIndex()>}>
+    sys_id: group-1-to-fill-form-1
+  group-create-incident-1:
+    _id: <UUID()>
+    sys_id: group-1-create-incident-1
+    provenance: company-create-incident-1-provenance-1
+    email: group-create-incident-1-email-1@host
+  group-create-incident-1-manager-1:
+    _id: <UUID()>
+    sys_id: service-center-1-create-incident-1
+    provenance: company-create-incident-1-provenance-1
+    manager: group-create-incident-1-manager-1
+  group-create-incident-1-assignment-1:
+    _id: <UUID()>
+    sys_id: group-create-incident-1-assignment-1-id
+    name: group-create-incident-1-assignment-1
+    provenance: company-create-incident-1-provenance-1
+    email: group-create-incident-1-assignment-1@host
+
+ocws_noc_snow_user_new:
+  user-create-incident-1:
+    _id: <UUID()>
+    user_name: user-create-incident-1-opened_by-1
+    provenance: company-create-incident-1-provenance-1
+    sys_id: user-create-incident-1-id-1
+  user-create-incident-1-manager1:
+    _id: <UUID()>
+    sys_id: group-create-incident-1-manager-1
+    email: manager-1-create-incident-1-email-1@host
+
+ocws_noc_snow_user_group_new:
+  user-group-create-incident-1:
+    _id: <UUID()>
+    provenance: company-create-incident-1-provenance-1
+    user: user-create-incident-1-id-1
+    group: group-1-create-incident-1

@@ -56,7 +56,7 @@ export default {
 
   types: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
-    defaultType: 'Le type par défaut ne peut pas être modifié.',
+    defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',

@@ -1,6 +1,8 @@
 import promisedHandlebars from 'promised-handlebars';
 import HandlebarsLib from 'handlebars';
 
+import store from '@/store';
+
 import * as helpers from './helpers';
 
 const Handlebars = promisedHandlebars(HandlebarsLib);
@@ -14,7 +16,13 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  */
 export async function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template ?? '');
-  const result = await handleBarFunction(context);
+  const preparedContext = {
+    env: store.getters['templateVars/items'] ?? {},
+
+    ...context,
+  };
+
+  const result = await handleBarFunction(preparedContext);
 
   const element = document.createElement('div');
 

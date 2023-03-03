@@ -12,9 +12,12 @@ export default {
   },
   remediation: {
     title: 'Stockage des données de consigne',
-    accumulateAfter: 'Accumuler les statistiques des consignes après',
-    deleteAfter: 'Supprimer les données des consignes après',
-    deleteAfterHelpText: 'Lorsque cette option est activée, les données statistiques des consignes sont supprimées après la période de temps définie.',
+    deleteAfter: 'Supprimer les données de la chronologie des instructions après',
+    deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
+    deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
+    deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
+    deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
+    deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
   },
   entity: {
     title: 'Stockage des données des entités',
@@ -33,6 +36,15 @@ export default {
   healthCheck: {
     title: 'Stockage des données du bilan de santé',
     deleteAfter: 'Supprimer les données de flux entrant FIFO après',
+  },
+  webhook: {
+    title: 'Stockage de données Webhooks',
+    titleHelp: 'L\'historique de toutes les demandes de webhook est conservé dans des journaux',
+    deleteAfter: 'Effacer les journaux des webhooks après',
+    deleteAfterHelpText: 'Tous les historiques de demandes de webhook antérieurs à la période définie seront supprimés',
+    logCredentials: 'Ouvrir les données d\'authentification dans les journaux',
+    logCredentialsHelpText: 'Lorsqu\'il est activé, toutes les informations d\'identification et les données d\'authentification sont écrites dans les journaux de manière ouverte (non recommandé). \n'
+      + 'Lorsqu\'il est désactivé, tous les mots de passe, jetons et données d\'authentification sont masqués et écrits sous la forme *** dans les journaux.',
   },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',

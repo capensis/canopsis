@@ -3,7 +3,15 @@
     template(#header="")
       c-action-type-field(v-field="action.type", :name="`${name}.type`")
 
-    c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
+    v-layout(row)
+      v-flex(xs6)
+        c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
+      v-flex(v-if="isWebhookActionType", xs6)
+        c-enabled-field(
+          :value="parameters.skip_for_child",
+          :label="$t('scenario.skipForChild')",
+          @input="updateSkipForChild"
+        )
     action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
     c-workflow-field(
       v-field="action.drop_scenario_if_not_matched",
@@ -22,7 +30,8 @@
           ref="general",
           v-model="parameters",
           :name="`${name}.parameters`",
-          :type="action.type"
+          :type="action.type",
+          :has-previous-webhook="hasPreviousWebhook"
         )
       v-tab-item
         scenario-action-patterns-form.mt-4(
@@ -33,7 +42,7 @@
 </template>
 
 <script>
-import { isPbehaviorActionType } from '@/helpers/forms/action';
+import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/forms/action';
 
 import { formMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
@@ -75,6 +84,10 @@ export default {
       type: [Number, String],
       default: 0,
     },
+    hasPreviousWebhook: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -87,6 +100,10 @@ export default {
   computed: {
     isPbehaviorAction() {
       return isPbehaviorActionType(this.action.type);
+    },
+
+    isWebhookActionType() {
+      return isWebhookActionType(this.action.type);
     },
 
     parameters: {
@@ -110,6 +127,13 @@ export default {
     });
   },
   methods: {
+    updateSkipForChild(value) {
+      this.parameters = {
+        ...this.parameters,
+        skip_for_child: value,
+      };
+    },
+
     removeAction() {
       this.$emit('remove');
     },

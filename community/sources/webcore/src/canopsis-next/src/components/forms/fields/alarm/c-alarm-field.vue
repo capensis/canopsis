@@ -1,7 +1,7 @@
 <template lang="pug">
   c-lazy-search-field(
     v-field="value",
-    :label="$t('alarm.alarmDisplayName')",
+    :label="$t('entity.fields.alarmDisplayName')",
     :loading="pending",
     :items="alarms",
     :name="name",
@@ -10,6 +10,7 @@
     :item-text="itemText",
     :item-value="itemValue",
     :disabled="disabled",
+    :no-data-text="$t('alarm.noAlarmFound')",
     name="alarms",
     clearable,
     autocomplete,
@@ -23,8 +24,9 @@
 import { createNamespacedHelpers } from 'vuex';
 import { isArray, keyBy, pick } from 'lodash';
 
+import { ALARM_FIELDS } from '@/constants';
+
 import { formArrayMixin } from '@/mixins/form';
-import { ALARM_PATTERN_FIELDS } from '@/constants';
 
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
@@ -64,12 +66,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    params: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
       alarmsById: {},
       pending: false,
-      pageCount: Infinity,
+      pageCount: 1,
 
       query: {
         page: 1,
@@ -86,6 +92,13 @@ export default {
       return this.pageCount > this.query.page;
     },
   },
+  watch: {
+    params() {
+      this.query.page = 1;
+
+      this.fetchAlarms();
+    },
+  },
   methods: {
     ...mapAlarmActions({ fetchAlarmsListWithoutStore: 'fetchListWithoutStore' }),
 
@@ -94,7 +107,8 @@ export default {
         limit: this.limit,
         page: this.query.page,
         search: this.query.search,
-        type: this.entityTypes,
+        active_columns: [ALARM_FIELDS.id, ALARM_FIELDS.displayName],
+        ...this.params,
       };
     },
 
@@ -103,12 +117,7 @@ export default {
         this.pending = true;
 
         const { data, meta } = await this.fetchAlarmsListWithoutStore({
-          params: {
-            limit: this.limit,
-            page: this.query.page,
-            search: this.query.search,
-            active_columns: [ALARM_PATTERN_FIELDS.id, ALARM_PATTERN_FIELDS.displayName],
-          },
+          params: this.getQuery(),
         });
 
         this.pageCount = meta.page_count;

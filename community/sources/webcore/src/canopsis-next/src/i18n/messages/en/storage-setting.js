@@ -12,9 +12,12 @@ export default {
   },
   remediation: {
     title: 'Instructions data storage',
-    accumulateAfter: 'Accumulate instructions statistics after',
-    deleteAfter: 'Delete instructions data after',
-    deleteAfterHelpText: 'When switched on, the instructions statistical data will be deleted after the defined time period.',
+    deleteAfter: 'Delete instructions timeline data after',
+    deleteAfterHelpText: 'When switched on, the instructions timelines data will be deleted after the defined time period.',
+    deleteStatsAfter: 'Delete instruction statistics data after',
+    deleteStatsAfterHelpText: 'When switched on, the instruction statistics will be deleted after the defined time period.',
+    deleteModStatsAfter: 'Delete instructions summary data after',
+    deleteModStatsAfterHelpText: 'When switched on, the instructions summary data will be deleted after the defined time period.',
   },
   entity: {
     title: 'Entities data storage',
@@ -33,6 +36,15 @@ export default {
   healthCheck: {
     title: 'Healthcheck data storage',
     deleteAfter: 'Delete FIFO incoming flow data after',
+  },
+  webhook: {
+    title: 'Webhooks data storage',
+    titleHelp: 'All webhook requests history is kept in logs',
+    deleteAfter: 'Clear webhooks logs after',
+    deleteAfterHelpText: 'All webhook requests history older than the defined time period will be deleted',
+    logCredentials: 'Open auth data in logs',
+    logCredentialsHelpText: 'When enabled, all credentials and auth data is written in logs in open way (not recommended). \n'
+      + 'When disabled, all passwords, tokens and auth data is hidden and written as *** in logs.',
   },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',

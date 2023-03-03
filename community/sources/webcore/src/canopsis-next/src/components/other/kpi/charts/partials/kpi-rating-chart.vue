@@ -1,5 +1,5 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :labels="labels", :options="ratingChartOptions")
+  bar-chart(:datasets="datasets", :labels="labels", :options="ratingChartOptions", :dark="$system.dark")
     template(#actions="{ chart }")
       kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
@@ -26,6 +26,7 @@ import BarChart from '@/components/common/chart/bar-chart.vue';
 import KpiChartExportActions from './kpi-chart-export-actions.vue';
 
 export default {
+  inject: ['$system'],
   components: { KpiChartExportActions, BarChart },
   props: {
     metrics: {
@@ -115,9 +116,6 @@ export default {
           mode: 'index',
         },
         plugins: {
-          background: {
-            color: 'white',
-          },
           legend: {
             display: false,
           },
