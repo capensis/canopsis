@@ -2,7 +2,7 @@
 
 exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with custom props 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -764,7 +764,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
 
 exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with default props 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
