@@ -21,7 +21,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 
@@ -37,6 +37,7 @@ export default {
   name: MODALS.createFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { PatternsForm, ModalWrapper },
   mixins: [
@@ -46,7 +47,7 @@ export default {
   ],
   data() {
     return {
-      form: filterToForm(this.modal.config.filter, this.getPatternsFields()),
+      form: filterToForm(this.modal.config.filter, this.getPatternsFields(), this.getOldPatternsFields()),
     };
   },
   computed: {
@@ -73,6 +74,10 @@ export default {
         withEvent && PATTERNS_FIELDS.event,
         withServiceWeather && PATTERNS_FIELDS.serviceWeather,
       ].filter(Boolean);
+    },
+
+    getOldPatternsFields() {
+      return this.getPatternsFields().map(() => OLD_PATTERNS_FIELDS.mongoQuery);
     },
 
     async submit() {
