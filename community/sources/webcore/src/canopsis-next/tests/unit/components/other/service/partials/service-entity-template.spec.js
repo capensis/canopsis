@@ -35,7 +35,7 @@ describe('service-entity-template', () => {
       propsData: {
         entity: {
           _id: 'service-id',
-          linklist: ['link', 'link2'],
+          links: { test: [{ rule_id: 'id', url: 'url', label: 'label' }] },
         },
         template: '{{entity._id}}{{links category="test"}}',
       },

@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { ALARM_PAYLOADS_VARIABLES, ENTITY_PAYLOAD_VARIABLES, LINK_RULE_TYPES } from '@/constants';
+import { ENTITY_PAYLOADS_VARIABLES, LINK_RULE_TYPES } from '@/constants';
 
 import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
@@ -72,38 +72,24 @@ export default {
     alarmUrlVariables() {
       return [
         ...this.alarmPayloadVariables,
-
-        {
-          value: ALARM_PAYLOADS_VARIABLES.alarms,
-          enumerable: true,
-          variables: [{
-            value: ALARM_PAYLOADS_VARIABLES.infosValue,
-            text: this.$t('common.infos'),
-          }],
-        },
-
-        ...this.externalDataVariables,
+        ...this.externalDataAlarmPayloadVariables,
       ];
     },
 
     entityUrlVariables() {
       return [
         {
-          value: ENTITY_PAYLOAD_VARIABLES.entity,
+          value: ENTITY_PAYLOADS_VARIABLES.entity,
           enumerable: true,
           variables: [
             {
-              value: ENTITY_PAYLOAD_VARIABLES.name,
-              text: this.$t('common.name'),
-            },
-            {
-              value: ENTITY_PAYLOAD_VARIABLES.component,
-              text: this.$t('common.component'),
+              value: ENTITY_PAYLOADS_VARIABLES.infosValue,
+              text: this.$t('common.infos'),
             },
           ],
         },
 
-        ...this.entityPayloadVariables,
+        ...this.externalDataEntityPayloadVariables,
       ];
     },
 

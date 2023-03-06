@@ -1,7 +1,3 @@
-import { merge } from 'lodash';
-
-import featureService from '@/services/features';
-
 import common from './common';
 import context from './context';
 import dynamicInfo from './dynamic-info';
@@ -59,7 +55,7 @@ import declareTicket from './declare-ticket';
 import linkRule from './link-rule';
 import externalData from './external-data';
 
-export default merge({
+export default {
   common,
   context,
   dynamicInfo,
@@ -116,4 +112,4 @@ export default merge({
   declareTicket,
   linkRule,
   externalData,
-}, featureService.get('i18n.en'));
+};

@@ -1,5 +1,7 @@
 import {
   ALARM_PAYLOADS_VARIABLES,
+  ENTITY_PAYLOADS_VARIABLES,
+  EXTERNAL_DATA_PAYLOADS_VARIABLES,
   DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES,
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
 } from '@/constants';
@@ -61,6 +63,10 @@ export const payloadVariablesMixin = {
         {
           value: ALARM_PAYLOADS_VARIABLES.lastCommentMessage,
           text: this.$t('alarm.lastCommentMessage'),
+        },
+        {
+          value: ALARM_PAYLOADS_VARIABLES.entityName,
+          text: this.$t('alarm.fields.entityName'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.entityInfosValue,
@@ -132,14 +138,39 @@ export const payloadVariablesMixin = {
       ];
     },
 
-    externalDataVariables() {
+    entityPayloadVariables() {
+      return [
+        {
+          value: `${ENTITY_PAYLOADS_VARIABLES.entity}${ENTITY_PAYLOADS_VARIABLES.name}`,
+          text: this.$t('common.name'),
+        },
+        {
+          value: ENTITY_PAYLOADS_VARIABLES.infosValue,
+          text: this.$t('common.infos'),
+        },
+      ];
+    },
+
+    externalDataPayloadSubVariables() {
+      return [{
+        value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData,
+        text: this.$t('externalData.title'),
+      }];
+    },
+
+    externalDataAlarmPayloadVariables() {
       return [{
         value: ALARM_PAYLOADS_VARIABLES.alarms,
         enumerable: true,
-        variables: [{
-          value: ALARM_PAYLOADS_VARIABLES.externalData,
-          text: this.$t('externalData.title'),
-        }],
+        variables: this.externalDataPayloadSubVariables,
+      }];
+    },
+
+    externalDataEntityPayloadVariables() {
+      return [{
+        value: ENTITY_PAYLOADS_VARIABLES.entities,
+        enumerable: true,
+        variables: this.externalDataPayloadSubVariables,
       }];
     },
 

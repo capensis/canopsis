@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
@@ -293,11 +291,10 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
     case ALARM_FIELDS.links:
       return context => ({
         bind: {
-          is: 'alarm-column-value-categories',
-          asList: get(widget.parameters, 'linksCategoriesAsList.enabled', false),
-          limit: get(widget.parameters, 'linksCategoriesAsList.limit'),
-          links: context.alarm.links ?? {},
+          is: 'c-alarm-links-chips',
+          alarm: context.alarm,
           small: context.small,
+          inlineCount: widget.parameters?.linksCategoriesAsList?.limit,
         },
         on: {
           activate: context.$listeners.activate,
@@ -330,9 +327,9 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
   if (value.startsWith('links.')) {
     return context => ({
       bind: {
-        links: get(context.alarm, value, []),
-
-        is: 'alarm-column-value-links',
+        is: 'c-alarm-links-chips',
+        alarm: context.alarm,
+        small: context.small,
       },
     });
   }

@@ -35,6 +35,7 @@ export default {
   otherTickets: 'Other tickets are available in the expand panel',
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
+  followLink: 'Follow the link "{title}"',
   actions: {
     titles: {
       ack: 'Ack',
