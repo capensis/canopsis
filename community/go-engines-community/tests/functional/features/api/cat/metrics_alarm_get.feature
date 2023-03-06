@@ -779,7 +779,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "filter": "filter \"not-exist\" not found"
+        "filter": "Filter \"not-exist\" not found."
       }
     }
     """
@@ -789,7 +789,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "parameter \"not-exist\" is not supported"
+        "parameter.0": "Parameter \"not-exist\" is not supported."
       }
     }
     """
@@ -799,7 +799,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "parameter \"total_user_activity\" is not supported"
+        "parameter.0": "Parameter \"total_user_activity\" is not supported."
       }
     }
     """
