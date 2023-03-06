@@ -9,7 +9,6 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -182,7 +181,7 @@ func (c *cancelableComputer) updateAlarms(
 	excludeIds []string,
 	resolver ComputedEntityTypeResolver,
 ) ([]string, error) {
-	eventGenerator := libevent.NewGenerator(libentity.NewAdapter(c.dbClient))
+	eventGenerator := libevent.NewGenerator("api", "api")
 	pbehavior := PBehavior{}
 	err := c.pbehaviorCollection.FindOne(ctx, bson.M{"_id": pbehaviorID},
 		options.FindOne().SetProjection(bson.M{
@@ -296,7 +295,7 @@ func (c *cancelableComputer) sendAlarmEvents(
 			Initiator: types.InitiatorSystem,
 		}
 		if alarm == nil {
-			event, err = eventGenerator.Generate(ctx, entity)
+			event, err = eventGenerator.Generate(entity)
 			if err != nil {
 				return nil, fmt.Errorf("cannot generate event: %w", err)
 			}

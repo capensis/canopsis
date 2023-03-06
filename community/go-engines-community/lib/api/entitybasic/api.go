@@ -102,8 +102,8 @@ func (a *api) Update(c *gin.Context) {
 		}
 
 		if !entity.Enabled && entity.Type == types.EntityTypeComponent {
-			msg.Resources = make([]string, len(entity.Depends))
-			copy(msg.Resources, entity.Depends)
+			msg.Resources = make([]string, len(entity.Resources))
+			copy(msg.Resources, entity.Resources)
 		}
 
 		a.sendChangeMessage(msg)
@@ -120,7 +120,7 @@ func (a *api) Update(c *gin.Context) {
 
 	a.metricMetaUpdater.UpdateById(c, entity.ID)
 	if isToggled && entity.Type == types.EntityTypeComponent {
-		a.metricMetaUpdater.UpdateById(c, entity.Depends...)
+		a.metricMetaUpdater.UpdateById(c, entity.Resources...)
 	}
 
 	c.JSON(http.StatusOK, entity)
@@ -136,7 +136,7 @@ func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, request.ID)
 
 	if err != nil {
-		if err == ErrLinkedEntityToAlarm {
+		if err == ErrLinkedEntityToAlarm || err == ErrComponent {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}

@@ -22,6 +22,7 @@ import {
 import featuresService from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { prepareAlarmListWidget } from '@/helpers/widgets';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 
@@ -29,18 +30,12 @@ const localVue = createVueInstance();
 
 const stubs = {
   'shared-actions-panel': {
-    props: ['actions', 'dropDownActions'],
+    props: ['actions'],
     template: `
       <div class="shared-actions-panel">
         <button
           v-for="action in actions"
           :class="'action-' + action.type"
-          :disabled="action.disabled"
-          @click="action.method"
-        >{{ action.title }}|{{ action.icon }}|{{ action.type }}</button>
-        <button
-          v-for="action in dropDownActions"
-          :class="'drop-down-action-' + action.type"
           :disabled="action.disabled"
           @click="action.method"
         >{{ action.title }}|{{ action.icon }}|{{ action.type }}</button>
@@ -64,7 +59,6 @@ const snapshotFactory = (options = {}) => mount(ActionsPanel, {
 });
 
 const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
-const selectDropDownActionByType = (wrapper, type) => wrapper.find(`.drop-down-action-${type}`);
 
 describe('actions-panel', () => {
   const timestamp = 1386435600000;
@@ -203,7 +197,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack);
+    const ackAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack);
 
     ackAction.trigger('click');
 
@@ -318,7 +312,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackRemoveAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove);
+    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove);
 
     ackRemoveAction.trigger('click');
 
@@ -361,7 +355,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const pbehaviorAddAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd);
+    const pbehaviorAddAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd);
 
     pbehaviorAddAction.trigger('click');
 
@@ -406,7 +400,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const snoozeAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
+    const snoozeAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
 
     snoozeAction.trigger('click');
 
@@ -536,7 +530,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const changeStateAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
+    const changeStateAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
 
     changeStateAction.trigger('click');
 
@@ -665,7 +659,7 @@ describe('actions-panel', () => {
   });
 
   it('History modal showed after trigger history action', () => {
-    const widgetData = {
+    const widgetData = prepareAlarmListWidget({
       _id: Faker.datatype.string(),
       parameters: {
         widgetColumns: [
@@ -675,7 +669,8 @@ describe('actions-panel', () => {
           },
         ],
       },
-    };
+    });
+
     const entity = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
@@ -696,11 +691,11 @@ describe('actions-panel', () => {
       },
     });
 
-    const historyAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
+    const historyAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
 
     historyAction.trigger('click');
 
-    const defaultWidget = generateDefaultAlarmListWidget();
+    const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
     expect($modals.show).toBeCalledWith(
       {
@@ -710,10 +705,14 @@ describe('actions-panel', () => {
           fetchList: expect.any(Function),
           widget: {
             ...defaultWidget,
+
             _id: expect.any(String),
             parameters: {
               ...defaultWidget.parameters,
+
               widgetColumns: widgetData.parameters.widgetColumns,
+              widgetGroupColumns: widgetData.parameters.widgetGroupColumns,
+              serviceDependenciesColumns: widgetData.parameters.serviceDependenciesColumns,
             },
           },
         },
@@ -759,7 +758,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const commentAction = selectDropDownActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
+    const commentAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
 
     commentAction.trigger('click');
 
@@ -827,7 +826,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const manualMetaAlarmUngroupAction = selectDropDownActionByType(
+    const manualMetaAlarmUngroupAction = selectActionByType(
       wrapper,
       ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
     );
@@ -886,7 +885,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const executeInstructionAction = selectDropDownActionByType(
+    const executeInstructionAction = selectActionByType(
       wrapper,
       ALARM_LIST_ACTIONS_TYPES.executeInstruction,
     );
@@ -927,10 +926,7 @@ describe('actions-panel', () => {
       .mockReturnValueOnce(true);
     const featureGetSpy = jest.spyOn(featuresService, 'get')
       .mockReturnValueOnce((
-      ) => ({
-        inline: [customAction],
-        dropDown: [],
-      }));
+      ) => [customAction]);
 
     const wrapper = factory({
       store: createMockedStoreModules([

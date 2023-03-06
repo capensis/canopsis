@@ -22,9 +22,11 @@
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
-        v-btn.error(
+        v-btn(
           v-if="view && hasDeleteViewAccess && !duplicate",
           :disabled="submitting",
+          :outline="$system.dark",
+          color="error",
           @click="remove"
         ) {{ $t('common.delete') }}
 </template>
@@ -56,6 +58,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { ViewForm, ModalWrapper },
   mixins: [
     modalInnerMixin,

@@ -5,9 +5,9 @@
     template(#text="")
       alarms-list-table-with-pagination(
         :widget="widget",
+        :columns="widget.parameters.widgetColumns",
         :alarms="alarms",
         :meta="meta",
-        :columns="columns",
         :loading="pending",
         :query.sync="query",
         :refresh-alarms-list="fetchList",
@@ -19,11 +19,10 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
 import { MODALS } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { convertWidgetQueryToRequest } from '@/helpers/query';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { convertAlarmWidgetToQuery, convertWidgetQueryToRequest } from '@/helpers/query';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
@@ -46,10 +45,7 @@ export default {
       pending: false,
       alarms: [],
       meta: {},
-      query: {
-        page: 1,
-        limit: config.widget?.parameters?.itemsPerPage ?? PAGINATION_LIMIT,
-      },
+      query: convertAlarmWidgetToQuery(config.widget),
     };
   },
   computed: {
@@ -58,7 +54,7 @@ export default {
     },
 
     widget() {
-      return this.config.widget ?? generateDefaultAlarmListWidget();
+      return this.config.widget ?? generatePreparedDefaultAlarmListWidget();
     },
   },
   watch: {

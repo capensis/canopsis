@@ -1,6 +1,5 @@
 <template lang="pug">
-  v-tooltip.ma-1(right)
-    v-icon(slot="activator") help
+  c-help-icon.ma-1(icon="help", right)
     v-layout(wrap)
       v-flex(xs12) {{ $t('login.connectionProtocols') }}
       ul
