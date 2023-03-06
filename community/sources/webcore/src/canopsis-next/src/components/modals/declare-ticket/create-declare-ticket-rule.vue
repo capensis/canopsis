@@ -103,7 +103,11 @@ export default {
       try {
         const errors = await this.validateFormTemplates(this.form);
 
-        this.setFormErrors(declareTicketRuleTemplateVariablesErrorsToForm(errors, this.form));
+        const wasSet = this.setFormErrors(declareTicketRuleTemplateVariablesErrorsToForm(errors, this.form));
+
+        if (!wasSet) {
+          this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });
+        }
       } catch (err) {
         console.error(err);
       } finally {
