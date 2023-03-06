@@ -85,14 +85,12 @@ export const payloadVariablesMixin = {
 
     alarmPayloadVariables() {
       return this.alarmPayloadSubVariables.map(
-        variable => (
-          variable.value !== ALARM_PAYLOADS_VARIABLES.entityInfosValue
-            ? ({
-              ...variable,
-              value: `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
-            })
-            : variable
-        ),
+        variable => ({
+          ...variable,
+          value: variable.value === ALARM_PAYLOADS_VARIABLES.entityInfosValue
+            ? variable.value.replace('index ', `index ${ALARM_PAYLOADS_VARIABLES.alarm}`)
+            : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
+        }),
       );
     },
 
@@ -107,8 +105,8 @@ export const payloadVariablesMixin = {
           text: this.$t('declareTicket.responseFieldFromPreviousSteps'),
         },
         {
-          value: DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES.headerByStep,
-          text: this.$t('declareTicket.headerFieldFromStep'),
+          value: DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES.responseByStep,
+          text: this.$t('declareTicket.responseFieldFromStep'),
         },
       ];
     },

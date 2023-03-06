@@ -19,7 +19,7 @@ export default {
   webhookTicketDeclarationExist: 'Webhook ticket declaration already exist in another step',
   runTest: 'Run test',
   headerFieldFromPreviousSteps: 'Header field from previous steps',
-  headerFieldFromStep: 'Header field from the step #N',
+  responseFieldFromStep: 'Response field from the step #N',
   responseFieldFromPreviousSteps: 'Response field from previous steps',
   userId: 'User ID',
   actionInitiator: 'Action initiator',
@@ -32,6 +32,7 @@ export default {
   noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
   ruleName: 'Rule name',
   checkSyntax: 'Check syntax',
+  syntaxIsValid: 'Syntax is valid',
   ticketResources: 'Declare ticket for resources',
   noResponse: 'No response',
   errors: {
