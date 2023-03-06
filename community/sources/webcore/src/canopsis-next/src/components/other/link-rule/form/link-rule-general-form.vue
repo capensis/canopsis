@@ -4,7 +4,7 @@
       v-flex(xs6)
         div.subheading {{ $t('linkRule.type') }}
         v-radio-group(
-          v-field="form.type",
+          :value="form.type",
           row,
           mandatory,
           @change="updateType"
@@ -150,7 +150,6 @@ export default {
         type,
         source_code: LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES[type] ?? '',
       });
-      this.updateField('source_code', LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES[type]);
     },
   },
 };

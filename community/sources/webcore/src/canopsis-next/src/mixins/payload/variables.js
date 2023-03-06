@@ -26,27 +26,27 @@ export const payloadVariablesMixin = {
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.stateMessage,
-          text: this.$t('alarm.stateMessage'),
+          text: this.$t('alarm.fields.stateMessage'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.stateValue,
-          text: this.$t('alarm.stateValue'),
+          text: this.$t('alarm.fields.stateValue'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.statusValue,
-          text: this.$t('common.status'),
+          text: this.$t('alarm.fields.statusValue'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ticketAuthor,
-          text: this.$t('alarm.ticketAuthor'),
+          text: this.$t('alarm.fields.ticketAuthor'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ticketValue,
-          text: this.$t('alarm.ticketId'),
+          text: this.$t('alarm.fields.ticketId'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ticketMessage,
-          text: this.$t('alarm.ticketMessage'),
+          text: this.$t('alarm.fields.ticketMessage'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ackAuthor,
@@ -54,7 +54,7 @@ export const payloadVariablesMixin = {
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ackMessage,
-          text: this.$t('alarm.ackMessage'),
+          text: this.$t('alarm.fields.ackMessage'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.lastCommentAuthor,
