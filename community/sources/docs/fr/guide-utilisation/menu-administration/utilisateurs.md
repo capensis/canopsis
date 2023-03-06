@@ -48,6 +48,6 @@ Dans la vue principale, les boutons d'action rapides permettent d'éditer et/ou 
 
 ## Jetons partagés
 
-La liste des [vues partagées](../../notes-de-version/22.10.0.md#vues-partagees) sont listé sur cette page.
+La liste des [vues partagées](../../notes-de-version/22.10.0.md#vues-partagees) est disponible sur cette page.
 
 ![Liste jetons](./img/utilisateurs_liste_jetons.png)
