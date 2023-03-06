@@ -15,7 +15,7 @@ La vue principale se compose d'un tableau avec plusieurs onglets que nous allons
 
 ### Création d'un utilisateur
 
-Pour créer un nouvel utilisateur, cliquer sur le bouton de création (**+**) en bas à droite.  
+Pour créer un nouvel utilisateur, cliquez sur le bouton de création (**+**) en bas à droite.  
 ![Ajout d'un rôle](./img/utilisateurs_ajout.png)
 
 Il suffit de remplir le formulaire proposé.  
