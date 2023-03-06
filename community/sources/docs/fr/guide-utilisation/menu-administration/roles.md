@@ -37,11 +37,11 @@ Pour supprimer la vue par défaut cliquer sur la croix rouge:
 
 ### Paramètres d'expiration
 
-Les **paramềtres d'expiration** définnissent la période d'activité du rôle.  
+Ces options permettent de définir le temps d'activité d'une session utilisateur. 
 
-  - Activé(e) (**1**): Active ou non les paramètres d'expiration.
-  - Intervalle d'inactivité (**2**): Définit quand l'utilisateur est compté comme inactif
-  - Intervalle d'expiration (**3**): Définit la période d'inactivité après laquelle le jeton d'authentification expire
+  - Activé(e) (**1**) : Active ou non les paramètres d'expiration.
+  - Intervalle d'inactivité (**2**) : Intervalle de temps pendant lequel l'utilisateur doit effectuer une action. Au-delà de cette période, le compte est considéré comme inactif. Cette option permet d'affiner le nombre d'utilisateur connecté en parallèle.
+  - Intervalle d'expiration (**3**) : Temps maximal de validité d'un jeton. Lorsque ce temps est dépassé le jeton est invalidé et le compte devra de nouveau être authentifié.
 
 ![Modal création expiration](./img/roles_modal_creation_expiration.png)
 
