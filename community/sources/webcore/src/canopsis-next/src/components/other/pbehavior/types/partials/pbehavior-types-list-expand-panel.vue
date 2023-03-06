@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(color="secondary lighten-1", dark, centered, slider-color="primary")
+  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
     v-tab {{ $t('common.description') }}
     v-tab-item
       v-layout.pa-3.secondary.lighten-2(column)

@@ -7,7 +7,7 @@
           v-btn.badge-button(
             v-on="on",
             v-bind="attrs",
-            color="red",
+            color="error",
             icon,
             small,
             @click="showInfoModal"
