@@ -332,31 +332,7 @@ Feature: Create a declare ticket rule
         "webhooks.0.request.method": "Method is missing.",
         "webhooks.0.stop_on_fail": "StopOnFail is missing.",
         "webhooks.1.request.url": "URL is missing.",
-        "webhooks.1.request.method": "Method is missing.",
-        "webhooks.1.declare_ticket.ticket_id": "TicketID is missing."
-      }
-    }
-    """
-    When I do POST /api/v4/cat/declare-ticket-rules:
-    """json
-    {
-      "webhooks": [
-        {
-          "declare_ticket": {}
-        },
-        {
-          "declare_ticket": {}
-        }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "webhooks.0.declare_ticket.ticket_id": "TicketID is missing.",
-        "webhooks.1.declare_ticket.ticket_id": "TicketID is missing."
+        "webhooks.1.request.method": "Method is missing."
       }
     }
     """

@@ -705,3 +705,150 @@ Feature: execute action on trigger
       }
     ]
     """
+
+  @concurrent
+  Scenario: given scenario with empty ticket_id add ticket
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-webhook-second-5-name",
+      "priority": 10100,
+      "enabled": true,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-webhook-second-5"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "comment": "test-scenario-action-webhook-second-5-comment",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .dummyApiURL }}/webhook/auth-request",
+              "auth": {
+                "username": "test",
+                "password": "test"
+              },
+              "payload": "{}"
+            },
+            "ticket_system_name": "test-scenario-action-webhook-second-5-system-name",
+            "declare_ticket": {}
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response scenarioId={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector" : "test-connector-action-webhook-second-5",
+      "connector_name" : "test-connector-name-action-webhook-second-5",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" :  "test-component-action-webhook-second-5",
+      "resource" : "test-resource-action-webhook-second-5",
+      "state" : 2,
+      "output" : "noveo alarm"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-action-webhook-second-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "system",
+                "m": "Scenario: test-scenario-action-webhook-second-5-name. Ticket ID: N/A.",
+                "ticket": "N/A",
+                "ticket_rule_id": "{{ .scenarioId }}",
+                "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-5-name",
+                "ticket_system_name": "test-scenario-action-webhook-second-5-system-name",
+                "ticket_comment": "test-scenario-action-webhook-second-5-comment"
+              }
+            ],
+            "ticket": {
+              "_t": "declareticket",
+              "a": "system",
+              "m": "Scenario: test-scenario-action-webhook-second-5-name. Ticket ID: N/A.",
+              "ticket": "N/A",
+              "ticket_rule_id": "{{ .scenarioId }}",
+              "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-5-name",
+              "ticket_system_name": "test-scenario-action-webhook-second-5-system-name",
+              "ticket_comment": "test-scenario-action-webhook-second-5-comment"
+            },
+            "connector": "test-connector-action-webhook-second-5",
+            "connector_name": "test-connector-name-action-webhook-second-5",
+            "component": "test-component-action-webhook-second-5",
+            "resource": "test-resource-action-webhook-second-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-second-5-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-second-5-name"
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-webhook-second-5-name. Ticket ID: N/A."
+      }
+    ]
+    """
