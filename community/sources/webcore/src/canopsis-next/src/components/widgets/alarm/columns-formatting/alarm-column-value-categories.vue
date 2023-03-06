@@ -1,13 +1,20 @@
 <template lang="pug">
-  div
+  div.alarm-column-value-categories(:class="{ 'alarm-column-value-categories--small': small }")
     categories-list(v-if="asList", :categories="filteredCategories", :limit="limit")
     v-menu(
       v-else,
       :disabled="isDisabled",
+      lazy,
       @input="$emit('activate', $event)",
       @click.native.stop=""
     )
-      v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $tc('common.link', 2) }}
+      template(#activator="{ on }")
+        v-btn.ma-0.alarm-column-value-categories__button(
+          v-on="on",
+          :disabled="isDisabled",
+          depressed,
+          small
+        ) {{ $tc('common.link', 2) }}
       v-list(dark, dense)
         categories-list(:categories="filteredCategories")
 </template>
@@ -36,6 +43,10 @@ export default {
     limit: {
       type: Number,
       required: false,
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -67,3 +78,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-value-categories {
+  &--small &__button {
+    height: 20px;
+  }
+}
+</style>

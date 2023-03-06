@@ -136,6 +136,18 @@ paths:
           in: query
           schema:
             type: integer
+        - name: alarm_pattern
+          in: query
+          schema:
+            type: string
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+        - name: pbehavior_pattern
+          in: query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -412,6 +424,21 @@ paths:
           in: query
           schema:
             type: integer
+        - in: query
+          name: alarm_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"v.component\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_component\"}}]]"
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
+        - in: query
+          name: pbehavior_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"default_maintenance\"}}]]"
         - name: with_links
           in: query
           description: Links are retrieved from external service so use carefully with big limit.
@@ -3669,12 +3696,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_component"
-                  ],
-                  "depends": [
-                    "cps_connector/cps_connector_name"
                   ]
                 }
               component:
@@ -3692,13 +3713,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_connector/cps_connector_name"
-                  ],
-                  "depends": [
-                    "cps_resource_1/cps_component",
-                    "cps_resource_2/cps_component"
                   ]
                 }
               connector:
@@ -3716,14 +3730,6 @@ paths:
                       "description": "Group id",
                       "value": "g1"
                     }
-                  ],
-                  "impact": [
-                    "cps_resource_1/cps_component_1",
-                    "cps_resource_2/cps_component_2"
-                  ],
-                  "depends": [
-                    "cps_component_1",
-                    "cps_component_2"
                   ]
                 }
         required: true
@@ -10663,6 +10669,16 @@ paths:
           in: query
           schema:
             type: boolean
+        - in: query
+          name: entity_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"infos.info1\",\"field_type\":\"string\",\"cond\":{\"type\":\"eq\",\"value\":\"val1\"}}]]"
+        - in: query
+          name: weather_service_pattern
+          schema:
+            type: string
+          example: "[[{\"field\":\"icon\",\"cond\":{\"type\":\"neq\",\"value\":\"wb_sunny\"}}]]"
       responses:
         200:
           description: OK
@@ -11215,6 +11231,218 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-templates:
+    get:
+      tags:
+        - widgettemplates
+      summary: Find widget templates
+      description: Get paginated list of widget templates
+      operationId: widgettemplates-find-all
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - widgettemplates
+      summary: Create widget template
+      description: Create widget template
+      operationId: widgettemplates-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.EditRequest'
+            examples:
+              alarm_columns:
+                summary: Alarm columns template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_columns",
+                  "columns": [
+                    {
+                      "value": "v.resource"
+                    },
+                    {
+                      "value": "v.component"
+                    },
+                    {
+                      "value": "extra_details"
+                    }
+                  ]
+                }
+              entity_columns:
+                summary: Entity columns template
+                description: Create a template for entities list.
+                value: {
+                  "title": "Template",
+                  "type": "entity_columns",
+                  "columns": [
+                    {
+                      "value": "_id"
+                    },
+                    {
+                      "value": "type"
+                    }
+                  ]
+                }
+              alarm_more_infos:
+                summary: Alarm more infos template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_more_infos",
+                  "content": "Name: {{ alarm.v.display_name }}"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /widget-templates/{id}:
+    get:
+      tags:
+        - widgettemplates
+      summary: Get widget template by id
+      description: Get widget template by id
+      operationId: widgettemplates-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: template id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - widgettemplates
+      summary: Update widget template by id
+      description: Update widget template by id
+      operationId: widgettemplates-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: template id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.EditRequest'
+            examples:
+              update:
+                summary: Update
+                description: Update a template.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_columns",
+                  "columns": [
+                    {
+                      "value": "v.resource"
+                    },
+                    {
+                      "value": "v.component"
+                    },
+                    {
+                      "value": "extra_details"
+                    }
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - widgettemplates
+      summary: Delete widget template by id
+      description: Delete widget template by id
+      operationId: widgettemplates-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: template id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /widgets:
     post:
       tags:
@@ -11298,6 +11526,48 @@ paths:
                         "label": "Status"
                       }
                     ],
+                    "sort": {
+                      "order": "DESC"
+                    },
+                    "itemsPerPage": 15,
+                    "alarmsStateFilter": {
+                      "opened": true
+                    }
+                  }
+                }
+              template:
+                summary: Create with template
+                description: Create a widget with template.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "grid_parameters": {
+                    "mobile": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "tablet": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 3,
+                      "h": 1,
+                      "autoHeight": true
+                    },
+                    "desktop": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 12,
+                      "h": 1,
+                      "autoHeight": true
+                    }
+                  },
+                  "parameters": {
+                    "mainFilter": "6ccfd7ea-9f04-4c0f-8809-25545cbb579e",
+                    "widgetColumnsTemplate": "dedeae28-7829-4093-8165-0705de09efaa",
                     "sort": {
                       "order": "DESC"
                     },
