@@ -32,7 +32,7 @@ Les champs obligatoires sont notés en **gras**.
   - *Langue par défaut*: Définit la langue de l'interface de l'utilisateur;
   - *Type d'affichage de la barre de vues*: Définit la position de la barre de menu;
   - **Activé(e)**: Active ou non l'utilisateur. Désactivé par défaut;
-  - *Sélectionner une vue par défaut*: Définit la vue par défaut lors de la connexion de l'utilisateur, surcharge la valeur définit dans le [rôle](./roles.md#vue-par-defaut).
+  - *Sélectionner une vue par défaut*: Définit la vue par défaut lors de la connexion de l'utilisateur, surcharge la valeur définie dans le [rôle](./roles.md#vue-par-defaut).
 
 ![Modal ajout rôle](./img/utilisateurs_modal_creation.png)
 
