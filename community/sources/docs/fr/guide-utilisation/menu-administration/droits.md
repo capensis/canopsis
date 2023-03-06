@@ -37,7 +37,7 @@ Il est possible de spécifier les droits suivants par élément :
   - **update**: Permet d'éditer l'élement (modification);
   - **delete**: Permet de supprimer l'élement.
 
-Exemple avec la gestion des droits d'une liste de lecture, on sélectionne les droits voulus pour le role (**1**) puis on valide les changements en cliquant sur soumettre (**2**).
+Exemple avec la gestion des droits d'une liste de lecture, on sélectionne les droits voulus pour le rôle (**1**) puis on valide les changements en cliquant sur soumettre (**2**).
 
 ![Vue View Ajout droits liste de lecture](./img/droits_liste_view_edit_playlist.png)
 
