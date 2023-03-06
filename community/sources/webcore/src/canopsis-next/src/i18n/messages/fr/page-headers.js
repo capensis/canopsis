@@ -53,7 +53,7 @@ export default {
   },
 
   [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: {
-    title: 'Règles de déclaration des billets',
+    title: 'Règles de déclaration des tickets',
     // message: '', // TODO: need to put description
   },
 
