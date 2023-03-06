@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`time-line-card Renders \`time-line-card\` with html as message 1`] = `
-<div>
+<div
+  class="time-line-card"
+>
   <div
-    class="header"
+    class="time-line-card__header"
   >
     <!---->
     <p>
@@ -11,7 +13,7 @@ exports[`time-line-card Renders \`time-line-card\` with html as message 1`] = `
     </p>
   </div>
   <div
-    class="content"
+    class="time-line-card__content"
   >
     <p>
       <p>
@@ -23,9 +25,11 @@ exports[`time-line-card Renders \`time-line-card\` with html as message 1`] = `
 `;
 
 exports[`time-line-card Renders \`time-line-card\` with state but without translate 1`] = `
-<div>
+<div
+  class="time-line-card"
+>
   <div
-    class="header"
+    class="time-line-card__header"
   >
     <c-alarm-chip-stub
       class="chips pr-2"
@@ -37,7 +41,7 @@ exports[`time-line-card Renders \`time-line-card\` with state but without transl
     </p>
   </div>
   <div
-    class="content"
+    class="time-line-card__content"
   >
     <p>
       Idle rule Test all resource
@@ -47,9 +51,11 @@ exports[`time-line-card Renders \`time-line-card\` with state but without transl
 `;
 
 exports[`time-line-card Renders \`time-line-card\` with state but without translate 2`] = `
-<div>
+<div
+  class="time-line-card"
+>
   <div
-    class="header"
+    class="time-line-card__header"
   >
     <c-alarm-chip-stub
       class="chips pr-2"
@@ -61,7 +67,7 @@ exports[`time-line-card Renders \`time-line-card\` with state but without transl
     </p>
   </div>
   <div
-    class="content"
+    class="time-line-card__content"
   >
     <p>
       Status dec
@@ -71,16 +77,18 @@ exports[`time-line-card Renders \`time-line-card\` with state but without transl
 `;
 
 exports[`time-line-card Renders \`time-line-card\` with state counter type 1`] = `
-<div>
+<div
+  class="time-line-card"
+>
   <div
-    class="header"
+    class="time-line-card__header"
   >
     <p>
       Cropped Severity (since last change of status)
     </p>
   </div>
   <div
-    class="content"
+    class="time-line-card__content"
   >
     <table>
       <tr>
@@ -105,16 +113,18 @@ exports[`time-line-card Renders \`time-line-card\` with state counter type 1`] =
 `;
 
 exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
-<div>
+<div
+  class="time-line-card"
+>
   <div
-    class="header"
+    class="time-line-card__header"
   >
     <p>
       Cropped Severity (since last change of status)
     </p>
   </div>
   <div
-    class="content"
+    class="time-line-card__content"
   >
     <table>
       <tr>
@@ -171,9 +181,11 @@ exports[`time-line-card Renders \`time-line-card\` with states 1`] = `
 `;
 
 exports[`time-line-card Renders \`time-line-card\` without translate 1`] = `
-<div>
+<div
+  class="time-line-card"
+>
   <div
-    class="header"
+    class="time-line-card__header"
   >
     <!---->
     <p>
@@ -181,7 +193,7 @@ exports[`time-line-card Renders \`time-line-card\` without translate 1`] = `
     </p>
   </div>
   <div
-    class="content"
+    class="time-line-card__content"
   >
     <p>
       Pbehavior Name pbh. Type: Default pause. Reason: Test reason

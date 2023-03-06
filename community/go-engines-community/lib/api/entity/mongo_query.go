@@ -79,7 +79,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAdditionalMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields()
-	q.excludedFields = []string{"impact", "depends", "alarm", "event_stats", "pbehavior_info_type"}
+	q.excludedFields = []string{"services", "alarm", "event_stats", "pbehavior_info_type"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
@@ -97,11 +97,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 
 	if r.WithFlags {
 		q.addFlags()
-		q.computedFields["depends_count"] = bson.M{"$cond": bson.M{
-			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
-			"then": bson.M{"$size": "$depends"},
-			"else": 0,
-		}}
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: getDependsCountPipeline()})
 		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
 	}
 
@@ -138,11 +134,7 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 
 	if withFlags {
 		q.addFlags()
-		q.computedFields["depends_count"] = bson.M{"$cond": bson.M{
-			"if":   bson.M{"$eq": bson.A{"$type", types.EntityTypeService}},
-			"then": bson.M{"$size": "$depends"},
-			"else": 0,
-		}}
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: getDependsCountPipeline()})
 		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
 	}
 
@@ -259,7 +251,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+				return common.NewValidationError("filter", "Filter doesn't exist.")
 			}
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
@@ -515,16 +507,32 @@ func getDeletablePipeline() []bson.M {
 	}
 }
 
+func getDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
+		}},
+		{"$addFields": bson.M{
+			"depends_count": bson.M{"$size": "$depends"},
+		}},
+		{"$project": bson.M{"depends": 0}},
+	}
+}
+
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$impact",
-			"connectFromField":        "impact",
-			"connectToField":          "_id",
-			"as":                      "service_impacts",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
-			"maxDepth":                0,
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$services",
+			"connectFromField": "services",
+			"connectToField":   "_id",
+			"as":               "service_impacts",
+			"maxDepth":         0,
 		}},
 		{"$addFields": bson.M{
 			"impacts_count": bson.M{"$size": "$service_impacts"},

@@ -51,6 +51,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"view_tab":            mongo.ViewTabMongoCollection,
 			"widget":              mongo.WidgetMongoCollection,
 			"widget_filter":       mongo.WidgetFiltersMongoCollection,
+			"widget_template":     mongo.WidgetTemplateMongoCollection,
 			"view_group":          mongo.ViewGroupMongoCollection,
 			"instruction":         mongo.InstructionMongoCollection,
 			"job_config":          mongo.JobConfigMongoCollection,

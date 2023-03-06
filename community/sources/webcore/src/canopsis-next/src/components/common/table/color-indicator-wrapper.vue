@@ -1,21 +1,19 @@
 <template lang="pug">
-  div
-    v-tooltip(v-if="isEnabled", :disabled="!formattedData.text", right)
-      div.color-indicator.white--text(
-        slot="activator",
-        :style="{ backgroundColor: formattedData.color }"
-      )
-        slot {{ value }}
-      span {{ formattedData.text }}
-    slot(v-else)
+  v-tooltip(:disabled="!text", right)
+    div.color-indicator.white--text(
+      slot="activator",
+      :style="{ backgroundColor: color }"
+    )
+      slot {{ value }}
+    span {{ text }}
 </template>
 
 <script>
-import { get, isUndefined } from 'lodash';
+import { COLORS } from '@/config';
 
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { formatState, formatImpactState } from '@/helpers/formatting';
+import { getEntityStateColor, getImpactStateColor } from '@/helpers/color';
 
 export default {
   props: {
@@ -33,42 +31,44 @@ export default {
     },
   },
   computed: {
-    isEnabled() {
-      return !!this.type;
+    isImpactState() {
+      return this.type === COLOR_INDICATOR_TYPES.impactState;
     },
 
     impactLevel() {
-      return get(this.entity, 'impact_level', 0);
+      return this.entity.impact_level ?? 0;
     },
 
     state() {
-      return get(this.alarm, 'v.state.val', 0);
+      return this.alarm?.v?.state?.val ?? 0;
     },
 
     impactState() {
-      const impactState = get(this.entity, 'impact_state');
-
-      if (!isUndefined(impactState)) {
-        return impactState;
-      }
-
-      return get(this.alarm, 'impact_state', this.state * this.impactLevel);
+      return this.entity?.impact_state
+        ?? this.alarm?.impact_state
+        ?? this.state * this.impactLevel;
     },
 
     value() {
-      return {
-        [COLOR_INDICATOR_TYPES.state]: this.state,
-        [COLOR_INDICATOR_TYPES.impactState]: this.impactState,
-      }[this.type];
+      return this.isImpactState
+        ? this.impactState
+        : this.state;
     },
 
-    formattedData() {
-      const formatter = {
-        [COLOR_INDICATOR_TYPES.state]: formatState,
-        [COLOR_INDICATOR_TYPES.impactState]: formatImpactState,
-      }[this.type];
+    color() {
+      const color = this.isImpactState
+        ? getImpactStateColor(this.impactState)
+        : getEntityStateColor(this.state);
 
-      return formatter ? formatter(this.value) : {};
+      return color ?? 'black';
+    },
+
+    text() {
+      if (this.isImpactState) {
+        return this.$t('common.countOfTotal', { count: this.impactState, total: COLORS.impactState.length - 1 });
+      }
+
+      return this.$t(`common.stateTypes.${this.state}`);
     },
   },
 };

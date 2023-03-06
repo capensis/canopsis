@@ -92,6 +92,11 @@ default_rights:
     _id: api_view
     crecord_name: <Current()._id>
     description: Views
+  permission_api_widgettemplate:
+    <<: *permission_crud
+    _id: api_widgettemplate
+    crecord_name: <Current()._id>
+    description: Widget templates
   permission_api_pbehavior:
     <<: *permission_crud
     _id: api_pbehavior
@@ -252,6 +257,11 @@ default_rights:
     _id: api_kpi_filter
     crecord_name: <Current()._id>
     description: KPI filters
+  permission_api_ocws_noc:
+    <<: *permission_crud
+    _id: api_ocws_noc
+    crecord_name: <Current()._id>
+    description: OCWS-NOC
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
@@ -1173,6 +1183,9 @@ default_rights:
       "@permission_api_view":
         checksum: 15
         crecord_type: right
+      "@permission_api_widgettemplate":
+        checksum: 15
+        crecord_type: right
       "@permission_api_pbehavior":
         checksum: 15
         crecord_type: right
@@ -1267,6 +1280,9 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_kpi_filter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_ocws_noc":
         checksum: 15
         crecord_type: right
       "@permission_api_snmprule":

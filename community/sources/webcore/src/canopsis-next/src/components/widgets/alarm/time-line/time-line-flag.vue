@@ -1,6 +1,5 @@
 <template lang="pug">
-  div
-    i.material-icons(:style="{ color: style.color }") {{ style.icon }}
+  v-icon(:color="style.color") {{ style.icon }}
 </template>
 
 <script>
