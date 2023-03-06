@@ -20,8 +20,8 @@ Pour créer un nouveau rôle, cliquer sur le bouton de création (**+**) en bas 
 
 Il suffit de remplir le formulaire proposé.  
 
-  - Nom (**1**): Saisir le nom de votre rôle, doit être unique. Paramètre obligatoire.
-  - Description (**2**): Saisir une description champ libre.
+  - Nom (**1**) : Saisir le nom de votre rôle, doit être unique. Paramètre obligatoire.
+  - Description (**2**) : Saisir une description champ libre.
 
 ![Modal ajout rôle](./img/roles_modal_creation.png)
 
