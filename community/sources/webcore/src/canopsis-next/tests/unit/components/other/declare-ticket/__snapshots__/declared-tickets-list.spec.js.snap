@@ -1,0 +1,948 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`declared-tickets-list Renders \`declared-tickets-list\` with parant alarm id 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout row wrap"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div>
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label="Ticket URL: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ticket URL
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Ticket ID: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ticket ID
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="System name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              System name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Rule name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Rule name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Date
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Status: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Status
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Meta alarm: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Meta alarm
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Author: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Author
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Comment: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Comment
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="9"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="text-xs-center"
+              colspan="9"
+            >
+              No data available
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout row wrap"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div>
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label="Ticket URL: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ticket URL
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Ticket ID: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ticket ID
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="System name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              System name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Rule name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Rule name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Date
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Status: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Status
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Author: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Author
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Comment: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Comment
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="8"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!---->
+            <td>
+              <a
+                href="https://ticket-url.com/0"
+                target="_blank"
+              >
+                https://ticket-url.com/0
+              </a>
+            </td>
+            <td>
+              ticket-0
+            </td>
+            <td>
+              ticket-system-name-0
+            </td>
+            <td>
+              ticket-rule-name-0
+            </td>
+            <td>
+              04/03/2021 13:44:48
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-0
+            </td>
+            <td>
+              ticket-comment-0
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <span>
+                ticket-url-1
+              </span>
+            </td>
+            <td>
+              ticket-1
+            </td>
+            <td>
+              ticket-system-name-1
+            </td>
+            <td>
+              ticket-rule-name-1
+            </td>
+            <td>
+              04/03/2021 13:44:49
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="error"
+                icon="error"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-1
+            </td>
+            <td>
+              ticket-comment-1
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <a
+                href="https://ticket-url.com/2"
+                target="_blank"
+              >
+                https://ticket-url.com/2
+              </a>
+            </td>
+            <td>
+              ticket-2
+            </td>
+            <td>
+              ticket-system-name-2
+            </td>
+            <td>
+              ticket-rule-name-2
+            </td>
+            <td>
+              04/03/2021 13:44:50
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-2
+            </td>
+            <td>
+              ticket-comment-2
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <span>
+                ticket-url-3
+              </span>
+            </td>
+            <td>
+              ticket-3
+            </td>
+            <td>
+              ticket-system-name-3
+            </td>
+            <td>
+              ticket-rule-name-3
+            </td>
+            <td>
+              04/03/2021 13:44:51
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="error"
+                icon="error"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-3
+            </td>
+            <td>
+              ticket-comment-3
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <a
+                href="https://ticket-url.com/4"
+                target="_blank"
+              >
+                https://ticket-url.com/4
+              </a>
+            </td>
+            <td>
+              ticket-4
+            </td>
+            <td>
+              ticket-system-name-4
+            </td>
+            <td>
+              ticket-rule-name-4
+            </td>
+            <td>
+              04/03/2021 13:44:52
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-4
+            </td>
+            <td>
+              ticket-comment-4
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <span>
+                ticket-url-5
+              </span>
+            </td>
+            <td>
+              ticket-5
+            </td>
+            <td>
+              ticket-system-name-5
+            </td>
+            <td>
+              ticket-rule-name-5
+            </td>
+            <td>
+              04/03/2021 13:44:53
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="error"
+                icon="error"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-5
+            </td>
+            <td>
+              ticket-comment-5
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <a
+                href="https://ticket-url.com/6"
+                target="_blank"
+              >
+                https://ticket-url.com/6
+              </a>
+            </td>
+            <td>
+              ticket-6
+            </td>
+            <td>
+              ticket-system-name-6
+            </td>
+            <td>
+              ticket-rule-name-6
+            </td>
+            <td>
+              04/03/2021 13:44:54
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-6
+            </td>
+            <td>
+              ticket-comment-6
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <span>
+                ticket-url-7
+              </span>
+            </td>
+            <td>
+              ticket-7
+            </td>
+            <td>
+              ticket-system-name-7
+            </td>
+            <td>
+              ticket-rule-name-7
+            </td>
+            <td>
+              04/03/2021 13:44:55
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="error"
+                icon="error"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-7
+            </td>
+            <td>
+              ticket-comment-7
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <a
+                href="https://ticket-url.com/8"
+                target="_blank"
+              >
+                https://ticket-url.com/8
+              </a>
+            </td>
+            <td>
+              ticket-8
+            </td>
+            <td>
+              ticket-system-name-8
+            </td>
+            <td>
+              ticket-rule-name-8
+            </td>
+            <td>
+              04/03/2021 13:44:56
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-8
+            </td>
+            <td>
+              ticket-comment-8
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <span>
+                ticket-url-9
+              </span>
+            </td>
+            <td>
+              ticket-9
+            </td>
+            <td>
+              ticket-system-name-9
+            </td>
+            <td>
+              ticket-rule-name-9
+            </td>
+            <td>
+              04/03/2021 13:44:57
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="error"
+                icon="error"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-9
+            </td>
+            <td>
+              ticket-comment-9
+            </td>
+          </tr>
+          <tr>
+            <!---->
+            <td>
+              <a
+                href="https://ticket-url.com/10"
+                target="_blank"
+              >
+                https://ticket-url.com/10
+              </a>
+            </td>
+            <td>
+              ticket-10
+            </td>
+            <td>
+              ticket-system-name-10
+            </td>
+            <td>
+              ticket-rule-name-10
+            </td>
+            <td>
+              04/03/2021 13:44:58
+            </td>
+            <td>
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top="top"
+              />
+            </td>
+            <td>
+              author-10
+            </td>
+            <td>
+              ticket-comment-10
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`declared-tickets-list Renders \`declared-tickets-list\` without tickets 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout row wrap"
+  >
+    <!---->
+    <!---->
+  </div>
+  <div>
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label="Ticket URL: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ticket URL
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Ticket ID: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ticket ID
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="System name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              System name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Rule name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Rule name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Date
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Status: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Status
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Author: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Author
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Comment: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Comment
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="8"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="text-xs-center"
+              colspan="8"
+            >
+              No data available
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!---->
+</div>
+`;

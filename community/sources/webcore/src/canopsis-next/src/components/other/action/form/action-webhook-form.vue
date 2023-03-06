@@ -115,7 +115,11 @@ export default {
       try {
         const errors = await this.validateFormTemplates(this.webhook);
 
-        this.setFormErrors(this.scenarioRequestErrorsRoForm(errors, this.form));
+        const wasSet = this.setFormErrors(this.scenarioRequestErrorsRoForm(errors, this.form));
+
+        if (!wasSet) {
+          this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });
+        }
       } catch (err) {
         console.error(err);
       } finally {

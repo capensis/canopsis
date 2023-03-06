@@ -1,7 +1,6 @@
 <template lang="pug">
   v-layout(column)
     v-layout.mb-2(align-center)
-      span.mr-2 {{ $t(`alarm.timeLine.types.${step._t}`) }}
       c-expand-btn(
         v-if="expandable",
         :expanded="expanded",
@@ -9,6 +8,8 @@
         color="grey",
         @expand="expandResponse"
       )
+      span.ml-2 {{ $t(`alarm.timeLine.types.${step._t}`) }}
+      span(v-if="step.message") : {{ step.message }}
     v-expand-transition
       v-card(v-show="expanded", light)
         v-card-text

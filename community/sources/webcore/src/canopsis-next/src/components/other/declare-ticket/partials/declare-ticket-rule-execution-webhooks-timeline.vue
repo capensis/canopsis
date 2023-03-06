@@ -53,6 +53,7 @@ export default {
             webhookId,
             t: webhook.completed_at,
             _t: EVENT_ENTITY_TYPES.webhookFail,
+            message: webhook.fail_reason,
           });
         }
 
