@@ -133,7 +133,7 @@ exemple, il s'agit d'assigner la consigne aux alarmes dont la ressource contient
 
 ![Assignation_consigne2](./img/consignes_tache_association_02.png)
 
-À ce stade, vous pouvez vérifier, dans un bac à alarmes que les alarmes
+À ce stade, vous pouvez vérifier dans un bac à alarmes que les alarmes
 sélectionnées par les patterns remplissent bien les conditions de votre consigne.
 
 ![Assignation_consigne3](./img/consignes_tache_association_03.png)
