@@ -1,7 +1,7 @@
 # Consignes
-## mise en œuvre de la remédiation
+## Mise en œuvre de la remédiation
 
-!!! abstract "pages associées"
+!!! Abstract "Pages associées"
     cette page fait partie d'une série de trois documentations au sujet de la
     remédiation dans canopsis :
     
