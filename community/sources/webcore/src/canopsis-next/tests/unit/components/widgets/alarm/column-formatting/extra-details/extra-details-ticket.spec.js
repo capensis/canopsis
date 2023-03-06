@@ -20,6 +20,7 @@ describe('extra-details-ticket', () => {
       a: 'ticket-author-1',
       t: prevDateTimestamp,
       ticket_rule_name: 'ticket-rule-name-1',
+      ticket_comment: 'ticket-comment-1',
       ticket: 'ticket-1',
       _t: EVENT_ENTITY_TYPES.declareTicket,
     },
