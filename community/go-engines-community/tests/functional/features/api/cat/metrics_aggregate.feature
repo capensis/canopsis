@@ -386,7 +386,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "filter": "filter \"test-kpi-filter-not-found\" not found"
+        "filter": "Filter \"test-kpi-filter-not-found\" not found."
       }
     }
     """
