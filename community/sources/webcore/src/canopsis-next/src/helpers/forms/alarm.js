@@ -1,11 +1,19 @@
 /**
- * @typedef {Object} AlarmLink
+ * @typedef {Object} AlarmOldLink
  * @property {string} label
  * @property {string} link
  */
 
 /**
- * @typedef {Object.<string, AlarmLink[] | string[]>} AlarmLinks
+ * @typedef {Object} AlarmLink
+ * @property {string} icon_name
+ * @property {string} label
+ * @property {string} url
+ * @property {string} [rule_id]
+ */
+
+/**
+ * @typedef {Object<string, AlarmLink[] | AlarmOldLink[]>} AlarmLinks
  */
 
 /**
@@ -95,14 +103,6 @@
  */
 
 /**
- * @typedef {Object<string, AlarmLink>} AlarmLink
- * @property {string} icon_name
- * @property {string} label
- * @property {string} url
- * @property {string} [rule_id]
- */
-
-/**
  * @typedef {Object} Alarm
  * @property {string} _id
  * @property {Entity} entity
@@ -121,7 +121,7 @@
  * @property {Correlation} consequences
  * @property {Correlation} causes
  * @property {AlarmPbehavior} pbehavior
- * @property {Object<string, AlarmLink[]>} links
+ * @property {AlarmLinks} links
  * @property {number} t
  * @property {AlarmValue} v
  */

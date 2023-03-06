@@ -9,6 +9,7 @@
       :key="item.key",
       :disabled="disabled",
       :types="types",
+      :variables="variables",
       @remove="removeItemFromArray(index)"
     )
     v-flex(v-if="!disabled")
@@ -42,6 +43,10 @@ export default {
     types: {
       type: Array,
       default: () => [],
+    },
+    variables: {
+      type: Array,
+      default: () => ([]),
     },
     disabled: {
       type: Boolean,

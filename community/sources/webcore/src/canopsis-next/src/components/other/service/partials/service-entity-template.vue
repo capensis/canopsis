@@ -40,7 +40,7 @@ export default {
       const category = hash.category ? `'${hash.category}'` : null;
 
       return new Handlebars.SafeString(`
-        <service-entity-links :links="entity.linklist" :category="${category}" />
+        <service-entity-links :links="entity.links" :category="${category}" />
       `);
     });
   },

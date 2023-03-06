@@ -34,6 +34,7 @@
       :name="`${name}.${condition.key}`",
       :disabled-remove="hasOnlyOneCondition",
       :disabled="disabled",
+      :variables="variables",
       @remove="removeCondition(index)"
     )
     v-flex(v-if="!disabled")
@@ -69,6 +70,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    variables: {
+      type: Array,
+      default: () => ([]),
     },
   },
   computed: {

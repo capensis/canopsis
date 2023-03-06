@@ -6,7 +6,7 @@ exports[`service-entity-template Renders \`service-entity-template\` with custom
         
   <service-entity-links-stub
     category="test"
-    links="link,link2"
+    links="[object Object]"
   />
 </div>
 `;

@@ -43,3 +43,7 @@ export const EXTERNAL_DATA_CONDITION_VALUES = {
     value: '.Event.ExtraInfos',
   },
 };
+
+export const EXTERNAL_DATA_PAYLOADS_VARIABLES = {
+  externalData: '.ExternalData.%reference%.Value',
+};
