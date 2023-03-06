@@ -140,7 +140,7 @@ sélectionnées par les patterns remplissent bien les conditions de votre consig
 
 ## Configuration
 
-Cet onglet permet de gérer vos ordonnanceurs.  
+Cet onglet permet de gérer vos configurations d'ordonnanceurs.  
 ![consignes vue configuration](./img/consignes_vue_configuration.png)
 
 
