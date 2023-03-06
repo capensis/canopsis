@@ -2,7 +2,7 @@
 
 Cette section décrit la gestion des droits utilisateurs et des rôles.
 
-Pour accéder à ce menu, cliquer sur Administration > Droits :
+Pour accéder à ce menu, cliquez sur Administration > Droits :
 
 ![Menu droits](./img/droits_menu.png)
 
