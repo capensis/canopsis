@@ -32,6 +32,7 @@ export default {
   noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement acquitté pour l\'élément sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements acquittés pour les éléments seront envoyés avant.',
   ruleName: 'Nom de la règle',
   checkSyntax: 'Vérifier la syntaxe',
+  syntaxIsValid: 'La syntaxe est valide',
   ticketResources: 'Déclarer un ticket pour les ressources',
   noResponse: 'Pas de réponse',
   errors: {
