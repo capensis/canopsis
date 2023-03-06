@@ -19,7 +19,7 @@ La vue principale se compose d'un tableau avec plusieurs onglets que nous allons
 ### Business
 
 Cette vue regroupe les droits relatifs à la gestion des évènements.  
-Vous trouverez plus de détail en cliquant sur la flèche pour dérouler la liste (**1**).  
+Vous trouverez plus de détails en cliquant sur la flèche pour dérouler la liste (**1**).  
 Il est possible d'ajouter des droits de manière globale en cliquant sur la case à droite de la section (**2**) ou, affiner les droits de chaque section (**3**).
 
 ![Vue Business edit](./img/droits_liste_business_edit.png)
