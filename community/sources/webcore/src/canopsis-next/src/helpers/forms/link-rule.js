@@ -22,6 +22,7 @@ import { enabledToForm } from './shared/common';
  * @property {string} icon_name
  * @property {string} label
  * @property {string} url
+ * @property {string} [rule_id]
  * @property {string} [category]
  */
 

@@ -35,6 +35,7 @@ export default {
   otherTickets: 'D\'autres billets sont disponibles dans le panneau d\'expansion',
   noAlarmFound: 'Aucune alarme n\'est trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',
+  followLink: 'Suivez le lien "{title}"',
   actions: {
     titles: {
       ack: 'Acquitter',

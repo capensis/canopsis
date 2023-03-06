@@ -1,3 +1,5 @@
+import { isUndefined } from 'lodash';
+
 import { getCollectionComparator } from './sort';
 
 /**
@@ -13,37 +15,103 @@ import { getCollectionComparator } from './sort';
  * @param {string} category
  * @return {{ label: string, link: string }[]}
  */
-export const harmonizeLinks = (
-  links,
-  category,
-) => links.map((link, index) => {
-  if (link?.link && link?.label) {
-    return link;
-  }
-
-  return {
-    label: `${category} - ${index}`,
-    link,
-  };
-}).sort(getCollectionComparator('label'));
 
 /**
- * Category harmonization
+ * Harmonize links for special category
  *
- * @param {Object} categories
- * @param {Function} additionalFilter
- * @return {Array}
+ * @param {AlarmLinks} [links = {}]
+ * @param {string} [category]
+ * @returns {AlarmLink[]}
  */
-export const harmonizeCategories = (
-  categories,
-  additionalFilter = () => true,
-) => Object.entries(categories).reduce((acc, [category, categoryLinks]) => {
-  if (categoryLinks.length && additionalFilter(category)) {
-    acc.push({
-      label: category,
-      links: harmonizeLinks(categoryLinks, category),
-    });
+export const harmonizeCategoryLinks = (links = {}, category) => {
+  if (!category || !links[category]) {
+    return [];
   }
 
-  return acc;
-}, []).sort(getCollectionComparator('label'));
+  return links[category]
+    .filter(link => !!link.rule_id)
+    .sort(getCollectionComparator('label'));
+};
+
+/**
+ * Harmonize links for all categories
+ *
+ * @param {AlarmLinks} [links = {}]
+ * @returns {Object<string, AlarmLink[]>}
+ */
+export const harmonizeCategoriesLinks = (links = {}) => Object.keys(links)
+  .reduce((acc, category) => {
+    acc[category] = harmonizeCategoryLinks(links, category);
+
+    return acc;
+  }, {});
+
+/**
+ * Get link rule link action type
+ *
+ * @param {LinkRuleLink} link
+ * @returns {string}
+ */
+export const getLinkRuleLinkActionType = (link = {}) => `${link.rule_id}.${link.icon_name}.${link.label}`;
+
+/**
+ * Get flatten alarm links
+ *
+ * @param {AlarmLinks} [links = {}]
+ * @returns {AlarmLink[]}
+ */
+export const harmonizeLinks = (links = {}) => Object.values(links)
+  .map(nestedLinks => nestedLinks.filter(link => !!link.rule_id))
+  .flat()
+  .sort(getCollectionComparator('label'));
+
+/**
+ * Get filtered links for alarms
+ *
+ * @param {Alarm[]} alarms
+ * @returns {AlarmLink[]}
+ */
+export const harmonizeAlarmsLinks = (alarms = []) => {
+  const links = alarms.map(alarm => harmonizeLinks(alarm.links));
+
+  if (links.length === 0) {
+    return [];
+  }
+
+  if (links.length === 1) {
+    return links[0];
+  }
+
+  const linksByKeys = {};
+  const lastIndexesByRuleIds = {};
+
+  links.forEach((itemLinks, index) => {
+    itemLinks.forEach((link) => {
+      const key = getLinkRuleLinkActionType(link);
+
+      if (!linksByKeys[key]) {
+        linksByKeys[key] = link;
+      }
+
+      if (!index) {
+        lastIndexesByRuleIds[link.rule_id] = 0;
+        return;
+      }
+
+      if (!lastIndexesByRuleIds[link.rule_id]) {
+        return;
+      }
+
+      if (lastIndexesByRuleIds[link.rule_id] - index > 1) {
+        delete lastIndexesByRuleIds[link.rule_id];
+        return;
+      }
+
+      lastIndexesByRuleIds[link.rule_id] = index;
+    });
+  });
+
+  return Object.values(linksByKeys)
+    .filter(link => !isUndefined(lastIndexesByRuleIds[link.rule_id]))
+    .sort(getCollectionComparator('label'));
+};

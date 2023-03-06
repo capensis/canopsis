@@ -22,7 +22,7 @@
           v-field="condition.value",
           :label="$t('common.value')",
           :disabled="disabled",
-          :variables="variables",
+          :variables="preparedVariables",
           clearable
         )
         v-btn(
@@ -67,9 +67,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    variables: {
+      type: Array,
+      default: () => ([]),
+    },
   },
   computed: {
-    variables() {
+    preparedVariables() {
+      if (this.variables.length) {
+        return this.variables;
+      }
+
       return Object.values(EXTERNAL_DATA_CONDITION_VALUES).map(({ value, text }) => ({
         value,
         text: this.$t(`externalData.conditionValues.${text}`),

@@ -30,12 +30,6 @@ export default {
   duringPeriod: 'Appliqué pendant cette période uniquement',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
-  noExternalData: 'Aucune donnée externe n\'a encore été ajoutée',
-  addExternalData: 'Ajouter des données externes',
-  reference: 'Référence',
-  collection: 'Collection',
-  sort: 'Sens du tri',
-  sortBy: 'Colonne de tri',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',
@@ -50,7 +44,6 @@ export default {
     removeRuleField: 'Supprimer le groupe/la règle',
     copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
       + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-    reference: 'Sera utilisé dans les actions via <strong>.ExternalData.&lt;Reference&gt;</strong>',
   },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {

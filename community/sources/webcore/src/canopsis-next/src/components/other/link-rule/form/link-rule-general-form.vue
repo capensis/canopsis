@@ -27,8 +27,8 @@
     )
     c-patterns-field(
       v-field="form.patterns",
-      :alarm-attributes="alarmAttributes",
-      :entity-attributes="entityAttributes",
+      :alarm-attributes="alarmPatternAttributes",
+      :entity-attributes="entityPatternAttributes",
       some-required,
       with-alarm,
       with-entity
@@ -36,7 +36,8 @@
     c-collapse-panel.my-3(:title="$t('externalData.title')")
       external-data-form(
         v-field="form.external_data",
-        :types="externalDataTypes"
+        :types="externalDataTypes",
+        :variables="externalDataPayloadVariables"
       )
 </template>
 
@@ -51,6 +52,7 @@ import {
 } from '@/constants';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
+import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
@@ -62,7 +64,11 @@ export default {
     ExternalDataForm,
     LinkRuleLinksForm,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [
+    formMixin,
+    formValidationHeaderMixin,
+    payloadVariablesMixin,
+  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -74,6 +80,10 @@ export default {
     },
   },
   computed: {
+    isAlarmType() {
+      return this.form.type === LINK_RULE_TYPES.alarm;
+    },
+
     types() {
       return Object.values(LINK_RULE_TYPES).map(type => ({
         value: type,
@@ -88,7 +98,13 @@ export default {
       }];
     },
 
-    alarmAttributes() {
+    externalDataPayloadVariables() {
+      return this.isAlarmType
+        ? this.alarmPayloadVariables
+        : this.entityPayloadVariables;
+    },
+
+    alarmPatternAttributes() {
       return [
         {
           value: ALARM_PATTERN_FIELDS.lastEventDate,
@@ -117,7 +133,7 @@ export default {
       ];
     },
 
-    entityAttributes() {
+    entityPatternAttributes() {
       return [
         {
           value: ENTITY_PATTERN_FIELDS.lastEventDate,
