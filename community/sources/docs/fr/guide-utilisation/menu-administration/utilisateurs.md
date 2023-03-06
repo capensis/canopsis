@@ -22,7 +22,7 @@ Il suffit de remplir le formulaire proposé.
 Les champs falcutatifs sont notés en *italique*.  
 Les champs obligatoires sont notés en **gras**.
 
-  - *Identifiant*: Indique l'identifiant du nouvel utilisateur qui sera inséré en base de donnée. Si non renseigner, il sera créé automatiquement;
+  - *Identifiant*: Indique l'identifiant du nouvel utilisateur qui sera inséré en base de donnée. Si non renseigné, il sera créé automatiquement;
   - **Identifiant utilisateur**: Définit l'identifiant de l'utilisateur (nécessaire à la connexion);
   - *Prénom*: Prénom de l'utilisateur;
   - *Nom*: Nom de l'utilisateur;
