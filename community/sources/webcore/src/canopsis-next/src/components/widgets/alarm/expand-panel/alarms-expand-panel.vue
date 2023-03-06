@@ -116,7 +116,7 @@
                   impact,
                   openable-root
                 )
-      v-tab-item(v-if="hasEntityGantt", :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt")(lazy)
+      v-tab-item(v-if="hasEntityGantt", :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
