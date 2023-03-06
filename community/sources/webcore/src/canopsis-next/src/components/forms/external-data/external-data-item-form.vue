@@ -29,7 +29,8 @@
           v-if="isMongoType",
           v-field="form",
           :name="form.key",
-          :disabled="disabled"
+          :disabled="disabled",
+          :variables="variables"
         )
         request-form(
           v-else,
@@ -72,6 +73,10 @@ export default {
     types: {
       type: Array,
       default: () => [],
+    },
+    variables: {
+      type: Array,
+      default: () => ([]),
     },
   },
   computed: {

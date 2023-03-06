@@ -63,8 +63,10 @@ import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
  * Chips
  */
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
-import CAlarmTagChip from '@/components/common/chips/c-alarm-tag-chip.vue';
+import CAlarmActionChip from '@/components/common/chips/c-alarm-action-chip.vue';
+import CAlarmActionsChips from '@/components/common/chips/c-alarm-actions-chips.vue';
 import CAlarmTagsChips from '@/components/common/chips/c-alarm-tags-chips.vue';
+import CAlarmLinksChips from '@/components/common/chips/c-alarm-links-chips.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
@@ -359,8 +361,10 @@ Vue.component('alarms-list-table', AlarmsListTable);
 /* Global custom canopsis components */
 Vue.component('c-alert', CAlert);
 Vue.component('c-alarm-chip', CAlarmChip);
-Vue.component('c-alarm-tag-chip', CAlarmTagChip);
+Vue.component('c-alarm-action-chip', CAlarmActionChip);
+Vue.component('c-alarm-actions-chips', CAlarmActionsChips);
 Vue.component('c-alarm-tags-chips', CAlarmTagsChips);
+Vue.component('c-alarm-links-chips', CAlarmLinksChips);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
 Vue.component('c-engine-chip', CEngineChip);

@@ -8,21 +8,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          edit
-        </i>
-      </button>
-    </span>
+        edit
+      </i>
+    </button>
      
     <span>
       Edit
@@ -32,21 +28,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          file_copy
-        </i>
-      </button>
-    </span>
+        file_copy
+      </i>
+    </button>
      
     <span>
       Duplicate
@@ -56,21 +48,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light error--text"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light error--text"
-        >
-          delete
-        </i>
-      </button>
-    </span>
+        delete
+      </i>
+    </button>
      
     <span>
       Delete
@@ -80,21 +68,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light color--text"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light color--text"
-        >
-          test_icon
-        </i>
-      </button>
-    </span>
+        test_icon
+      </i>
+    </button>
      
     <span>
       tooltip
@@ -107,19 +91,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     <span
       class="v-badge c-action-btn__badge v-badge--overlap"
     >
-      <span>
-        <button
-          class="v-btn ma-0"
-          icon="icon"
+      <button
+        class="v-btn ma-0 c-action-btn__button"
+        icon="icon"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            edit
-          </i>
-        </button>
-      </span>
+          edit
+        </i>
+      </button>
       <transition-stub
         name="fab-transition"
       >
@@ -160,21 +142,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          edit
-        </i>
-      </button>
-    </span>
+        edit
+      </i>
+    </button>
      
     <span>
       Edit
@@ -184,21 +162,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          file_copy
-        </i>
-      </button>
-    </span>
+        file_copy
+      </i>
+    </button>
      
     <span>
       Duplicate
@@ -208,21 +182,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light error--text"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light error--text"
-        >
-          delete
-        </i>
-      </button>
-    </span>
+        delete
+      </i>
+    </button>
      
     <span>
       Delete
@@ -232,21 +202,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light color--text"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light color--text"
-        >
-          test_icon
-        </i>
-      </button>
-    </span>
+        test_icon
+      </i>
+    </button>
      
     <span>
       tooltip
@@ -263,21 +229,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          edit
-        </i>
-      </button>
-    </span>
+        edit
+      </i>
+    </button>
      
     <span>
       Edit
@@ -287,21 +249,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          file_copy
-        </i>
-      </button>
-    </span>
+        file_copy
+      </i>
+    </button>
      
     <span>
       Duplicate
@@ -311,21 +269,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light error--text"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light error--text"
-        >
-          delete
-        </i>
-      </button>
-    </span>
+        delete
+      </i>
+    </button>
      
     <span>
       Delete
@@ -342,21 +296,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          edit
-        </i>
-      </button>
-    </span>
+        edit
+      </i>
+    </button>
      
     <span>
       Edit
@@ -366,21 +316,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          file_copy
-        </i>
-      </button>
-    </span>
+        file_copy
+      </i>
+    </button>
      
     <span>
       Duplicate
@@ -397,21 +343,17 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
     bottom="true"
     class="v-tooltip"
   >
-    <span
-      class="mx-1"
+    <button
+      class="v-btn mx-1 c-action-btn__button"
+      icon="icon"
     >
-      <button
-        class="v-btn ma-0"
-        icon="icon"
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          edit
-        </i>
-      </button>
-    </span>
+        edit
+      </i>
+    </button>
      
     <span>
       Edit

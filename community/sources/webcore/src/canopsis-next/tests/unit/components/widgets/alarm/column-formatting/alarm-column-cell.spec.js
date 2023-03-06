@@ -18,7 +18,7 @@ const stubs = {
   'color-indicator-wrapper': true,
   'alarm-column-value-categories': true,
   'alarm-column-value-extra-details': true,
-  'alarm-column-value-links': true,
+  'c-alarm-links-chips': true,
   'c-ellipsis': true,
 };
 
@@ -236,7 +236,6 @@ describe('alarm-column-cell', () => {
     const localWidget = {
       parameters: {
         linksCategoriesAsList: {
-          enabled: true,
           limit: 2,
         },
       },

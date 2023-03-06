@@ -3,13 +3,14 @@
 </template>
 
 <script>
-import { difference, intersectionBy, find, pick } from 'lodash';
+import { difference, find, pick } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
   ALARM_LIST_ACTIONS_TYPES,
+  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -17,13 +18,13 @@ import featuresService from '@/services/features';
 import { mapIds } from '@/helpers/entities';
 import { getEntityEventIcon } from '@/helpers/icon';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/links';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-import { removeTrailingSlashes } from '@/helpers/url';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -54,6 +55,11 @@ export default {
       type: Function,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      pendingByActionsTypes: {},
+    };
   },
   computed: {
     ...entitiesMapGetters({
@@ -159,16 +165,21 @@ export default {
     },
 
     linksActions() {
-      const preparedLinks = this.items.map(({ links = '' }) => (
-        Object.values(links).flat().filter(link => !!link.rule_id)
-      ));
+      if (!this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links])) {
+        return [];
+      }
 
-      return intersectionBy(...preparedLinks, 'rule_id').map(link => ({
-        type: `${link.rule_id}.${link.icon_name}.${link.label}`,
-        icon: link.icon_name,
-        title: link.label,
-        method: () => this.openLink(link),
-      }));
+      return harmonizeAlarmsLinks(this.items).map((link) => {
+        const type = getLinkRuleLinkActionType(link);
+
+        return {
+          type,
+          icon: link.icon_name,
+          title: this.$t('alarm.followLink', { title: link.label }),
+          loading: this.pendingByActionsTypes[type],
+          method: () => this.openLink(link, type),
+        };
+      });
     },
 
     preparedActions() {
@@ -284,19 +295,27 @@ export default {
       return this.afterSubmit();
     },
 
-    async openLink(link) {
-      const links = await this.fetchAlarmLinkWithoutStore({
-        id: link.rule_id,
-        params: { ids: mapIds(this.items) },
-      });
+    async openLink(link, type) {
+      try {
+        this.$set(this.pendingByActionsTypes, type, true);
 
-      const summaryLink = find(links, pick(link, ['icon_name, label']));
+        const links = await this.fetchAlarmLinkWithoutStore({
+          id: link.rule_id,
+          params: { ids: mapIds(this.items) },
+        });
 
-      if (!summaryLink) {
-        return;
+        const summaryLink = find(links, pick(link, ['icon_name, label']));
+
+        if (!summaryLink) {
+          return;
+        }
+
+        window.open(summaryLink.url, '_blank');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.$set(this.pendingByActionsTypes, type, false);
       }
-
-      window.open(removeTrailingSlashes(summaryLink.url), '_blank');
     },
   },
 };

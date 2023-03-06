@@ -488,9 +488,9 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.pbehaviorInfo,
 ];
 
-export const ENTITY_PAYLOAD_VARIABLES = {
+export const ENTITY_PAYLOADS_VARIABLES = {
   entity: '.Entity',
+  entities: '.Entities',
   name: '.Name',
-  component: '.Component',
-  infosValue: '.Infos.%infos_name%.Value',
+  infosValue: '(index .Entity.Infos.%infos_name%).Value',
 };

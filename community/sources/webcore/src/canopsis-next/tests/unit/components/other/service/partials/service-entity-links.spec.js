@@ -8,27 +8,18 @@ import ServiceEntityLinks from '@/components/other/service/partials/service-enti
 const localVue = createVueInstance();
 
 describe('service-entity-links', () => {
-  const links = [
-    {
-      cat_name: 'FirstCategory',
-      links: [
-        { label: 'FirstCategoryLinkLabel1', link: 'FirstCategoryLink1' },
-        { label: 'FirstCategoryLinkLabel2', link: 'FirstCategoryLink2' },
-      ],
-    },
-    {
-      cat_name: 'SecondCategory',
-      links: [
-        { label: 'SecondCategoryLinkLabel1', link: 'SecondCategoryLink1' },
-      ],
-    },
-    {
-      cat_name: 'ThirdCategory',
-      links: [
-        { label: 'ThirdCategoryLinkLabel1', link: 'ThirdCategoryLink1' },
-      ],
-    },
-  ];
+  const links = {
+    FirstCategory: [
+      { label: 'FirstCategoryLinkLabel1', url: 'FirstCategoryLink1', rule_id: '1' },
+      { label: 'FirstCategoryLinkLabel2', url: 'FirstCategoryLink2', rule_id: '2' },
+    ],
+    SecondCategory: [
+      { label: 'SecondCategoryLinkLabel1', url: 'SecondCategoryLink1', rule_id: '2' },
+    ],
+    ThirdCategory: [
+      { label: 'ThirdCategoryLinkLabel1', url: 'ThirdCategoryLink1', rule_id: '1' },
+    ],
+  };
 
   const { authModule, currentUserPermissionsById } = createAuthModule();
 
@@ -39,16 +30,18 @@ describe('service-entity-links', () => {
   });
 
   test('Renders `service-entity-links` with default props', () => {
-    const wrapper = snapshotFactory();
+    currentUserPermissionsById.mockReturnValue({});
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([authModule]),
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   test('Renders `service-entity-links` with links', () => {
-    currentUserPermissionsById.mockReturnValue({
-      [`${permission}_FirstCategory`]: { actions: [] },
-      [`${permission}_ThirdCategory`]: { actions: [] },
-    });
+    currentUserPermissionsById.mockReturnValue({ [permission]: { actions: [] } });
+
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([authModule]),
       propsData: {
@@ -60,9 +53,8 @@ describe('service-entity-links', () => {
   });
 
   test('Renders `service-entity-links` with links and category', () => {
-    currentUserPermissionsById.mockReturnValue({
-      [permission]: { actions: [] },
-    });
+    currentUserPermissionsById.mockReturnValue({ [permission]: { actions: [] } });
+
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([authModule]),
       propsData: {

@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-chip.c-alarm-tag-chip(
-    :class="{ 'c-alarm-tag-chip--closable': close, 'c-alarm-tag-chip--small': small }",
+  v-chip.c-alarm-action-chip(
+    :class="{ 'c-alarm-action-chip--closable': closable, 'c-alarm-action-chip--small': small }",
     :color="color",
     small,
     @click="$emit('click')"
@@ -8,7 +8,7 @@
     span.white--text
       slot
     v-icon.cursor-pointer.ml-2(
-      v-if="close",
+      v-if="closable",
       color="white",
       @click.stop="$emit('close')"
     ) cancel
@@ -21,7 +21,7 @@ export default {
       type: String,
       required: false,
     },
-    close: {
+    closable: {
       type: Boolean,
       default: false,
     },
@@ -34,9 +34,13 @@ export default {
 </script>
 
 <style lang="scss">
-.c-alarm-tag-chip {
+.c-alarm-action-chip {
   border-radius: 5px;
   font-size: 12px;
+
+  .v-chip__content {
+    cursor: pointer;
+  }
 
   &--closable {
     .v-chip__content {

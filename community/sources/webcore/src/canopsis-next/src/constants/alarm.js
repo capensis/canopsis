@@ -389,9 +389,10 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
-  infosValue: '(Index .Infos.%infos_name%).Value',
-  externalData: '.ExternalData.%reference%.Value',
-  entityInfosValue: '.Entity.Infos.%infos_name%.Value ',
+  infosValue: '(index .Infos.%infos_name%).Value',
+
+  entityName: '.Entity.name',
+  entityInfosValue: '(index .Alarm.Entity.Infos.%infos_name%).Value',
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {
