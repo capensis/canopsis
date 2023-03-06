@@ -31,7 +31,7 @@ Cet onglet permet de gérer les droits relatifs aux actions sur les **Alarmes**,
 
 ![Vue View](./img/droits_liste_view.png)
 
-Il est possible de spécifier les droits suivants par éléments :
+Il est possible de spécifier les droits suivants par élément :
 
   - **read**: Donne accès à la fonctionnalité (lecture);
   - **update**: Permet d'éditer l'élement (modification);
