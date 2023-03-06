@@ -6,8 +6,8 @@ export default {
   stateMessage: 'Message d\'état',
   stateValue: 'Valeur d\'état',
   ticketAuthor: 'Auteur du ticket',
-  ticketId: 'ID de billets',
-  ticketMessage: 'Message de billet',
+  ticketId: 'ID du ticket',
+  ticketMessage: 'Message du ticket',
   ackAuthor: 'Confirmer l\'auteur',
   ackMessage: 'Message de confirmation',
   lastCommentAuthor: 'Auteur du dernier commentaire',
@@ -32,7 +32,7 @@ export default {
     + '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n'
     + '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n'
     + '</dl>',
-  otherTickets: 'D\'autres billets sont disponibles dans le panneau d\'expansion',
+  otherTickets: 'D\'autres tickets sont disponibles dans le panneau d\'expansion',
   noAlarmFound: 'Aucune alarme n\'est trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',
   actions: {
@@ -123,7 +123,7 @@ export default {
     trackSource: 'Cause racine',
     impactChain: 'Chaîne d\'impact',
     entityGantt: 'Diagramme de Gantt',
-    ticketsDeclared: 'Billets déclarés',
+    ticketsDeclared: 'Tickets déclarés',
   },
   moreInfos: {
     defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
