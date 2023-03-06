@@ -1,3 +1,5 @@
+import { VALIDATION_DELAY } from '@/constants';
+
 import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 
 import { queryMixin } from '@/mixins/query';
@@ -10,6 +12,7 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 export const widgetSettingsMixin = {
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   props: {
     sidebar: {

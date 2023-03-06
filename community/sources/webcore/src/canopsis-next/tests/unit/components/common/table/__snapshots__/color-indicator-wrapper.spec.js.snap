@@ -1,23 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and alarm state 1`] = `
-<div>
-  <span
-    class="v-tooltip v-tooltip--right"
-  >
-    <transition-stub
-      name="slide-x-transition"
-    />
-    <span>
-      <div
-        class="color-indicator white--text"
-        style="background-color: rgb(245, 124, 0);"
-      >
-        12
-      </div>
-    </span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <transition-stub
+    name="slide-x-transition"
+  />
+  <span>
+    <div
+      class="color-indicator white--text"
+      style="background-color: rgb(205, 220, 57);"
+    >
+      2
+    </div>
   </span>
-</div>
+</span>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and alarm state 2`] = `
@@ -26,29 +24,27 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    12 of 30
+    2 of 30
   </span>
 </div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and impact state 1`] = `
-<div>
-  <span
-    class="v-tooltip v-tooltip--right"
-  >
-    <transition-stub
-      name="slide-x-transition"
-    />
-    <span>
-      <div
-        class="color-indicator white--text"
-        style="background-color: rgb(245, 124, 0);"
-      >
-        12
-      </div>
-    </span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <transition-stub
+    name="slide-x-transition"
+  />
+  <span>
+    <div
+      class="color-indicator white--text"
+      style="background-color: rgb(245, 124, 0);"
+    >
+      12
+    </div>
   </span>
-</div>
+</span>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and impact state 2`] = `
@@ -63,25 +59,23 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state type and default slot 1`] = `
-<div>
-  <span
-    class="v-tooltip v-tooltip--right"
-  >
-    <transition-stub
-      name="slide-x-transition"
-    />
-    <span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <transition-stub
+    name="slide-x-transition"
+  />
+  <span>
+    <div
+      class="color-indicator white--text"
+      style="background-color: rgb(255, 153, 0);"
+    >
       <div
-        class="color-indicator white--text"
-        style="background-color: black;"
-      >
-        <div
-          class="default-slot"
-        />
-      </div>
-    </span>
+        class="default-slot"
+      />
+    </div>
   </span>
-</div>
+</span>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state type and default slot 2`] = `
@@ -90,28 +84,27 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state 
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    Invalid val
+    Major
   </span>
 </div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 1`] = `
-<div>
-  <span
-    class="v-tooltip v-tooltip--right"
-  >
-    <transition-stub
-      name="slide-x-transition"
-    />
-    <span>
-      <div
-        class="color-indicator white--text"
-      >
-        
-      </div>
-    </span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <transition-stub
+    name="slide-x-transition"
+  />
+  <span>
+    <div
+      class="color-indicator white--text"
+      style="background-color: rgb(0, 166, 90);"
+    >
+      0
+    </div>
   </span>
-</div>
+</span>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 2`] = `
@@ -120,31 +113,29 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unreso
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    
+    Ok
   </span>
 </div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without type but with default slot 1`] = `
-<div>
-  <span
-    class="v-tooltip v-tooltip--right"
-  >
-    <transition-stub
-      name="slide-x-transition"
-    />
-    <span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <transition-stub
+    name="slide-x-transition"
+  />
+  <span>
+    <div
+      class="color-indicator white--text"
+      style="background-color: rgb(245, 105, 84);"
+    >
       <div
-        class="color-indicator white--text"
-        style="background-color: black;"
-      >
-        <div
-          class="default-slot"
-        />
-      </div>
-    </span>
+        class="default-slot"
+      />
+    </div>
   </span>
-</div>
+</span>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without type but with default slot 2`] = `
@@ -153,7 +144,7 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without typ
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    Invalid val
+    Critical
   </span>
 </div>
 `;

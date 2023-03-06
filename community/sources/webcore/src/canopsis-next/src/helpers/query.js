@@ -4,19 +4,22 @@ import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
   WIDGET_TYPES,
   QUICK_RANGES,
-  ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
   DATETIME_FORMATS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
-import { defaultColumnsToColumns } from './entities';
+import featuresService from '@/services/features';
+
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from './date/date-intervals';
 
 /**
  * WIDGET CONVERTERS
@@ -80,7 +83,7 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    widgetColumns,
+    widgetColumns = [],
     itemsPerPage,
     sort,
     mainFilter,
@@ -105,12 +108,15 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  if (widgetColumns) {
-    query.active_columns = widgetColumns.map(v => (ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP[v.value] || v.value));
+  if (widgetColumns.length) {
+    query.active_columns = widgetColumns.map(v => v.value);
   }
 
   if (sort && sort.column && sort.order) {
-    query.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+    query.multiSortBy.push({
+      sortBy: sort.column,
+      descending: sort.order === SORT_ORDERS.desc,
+    });
   }
 
   return query;
@@ -277,18 +283,18 @@ export function convertContextUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
-  switch (widgetType) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.context:
-      return convertContextUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.map:
-      return convertMapUserPreferenceToQuery(userPreference);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+
+    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widgetType];
+
+  return converter ? converter(userPreference) : {};
 }
 
 /**
@@ -298,20 +304,19 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.type) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmWidgetToQuery(widget);
-    case WIDGET_TYPES.context:
-      return convertContextWidgetToQuery(widget);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
-    case WIDGET_TYPES.counter:
-      return convertCounterWidgetToQuery(widget);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
+    [WIDGET_TYPES.context]: convertContextWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
+    [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+
+    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widget.type];
+
+  return converter ? converter(widget) : {};
 }
 
 /**
@@ -373,7 +378,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
   const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+    : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
     _id: alarm._id,
