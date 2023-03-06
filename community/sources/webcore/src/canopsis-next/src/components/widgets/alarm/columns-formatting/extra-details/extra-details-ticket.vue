@@ -15,6 +15,9 @@
           div(
             v-if="ticket.ticket"
           ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.ticket }}
+          div(
+            v-if="ticket.ticket_comment"
+          ) {{ $tc('common.comment') }} : {{ ticket.ticket_comment }}
       div.mt-2
         i(v-if="tickets.length > limit") {{ $t('alarm.otherTickets') }}
 </template>

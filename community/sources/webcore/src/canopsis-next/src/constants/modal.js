@@ -6,7 +6,6 @@ export const MODALS = {
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',
-  createMoreInfos: 'create-more-infos',
   variablesHelp: 'variables-help',
   createEntity: 'create-entity',
   createService: 'create-service',

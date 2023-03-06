@@ -77,6 +77,7 @@
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
+            :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
@@ -289,6 +290,10 @@ export default {
 
     isSmallHeight() {
       return this.dense === ALARM_DENSE_TYPES.small;
+    },
+
+    parentAlarmId() {
+      return this.parentAlarm?._id;
     },
   },
 
