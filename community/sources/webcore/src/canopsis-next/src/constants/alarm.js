@@ -392,7 +392,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   infosValue: '(index .Infos.%infos_name%).Value',
 
   entityName: '.Entity.name',
-  entityInfosValue: '(index .Alarm.Entity.Infos.%infos_name%).Value',
+  entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {
