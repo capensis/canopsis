@@ -29,6 +29,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         >
           <a
             class="v-tabs__item v-tabs__item--active"
+            href="#moreInfos"
           >
             More infos
           </a>
@@ -38,6 +39,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         >
           <a
             class="v-tabs__item"
+            href="#timeLine"
           >
             Timeline
           </a>
@@ -48,6 +50,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         >
           <a
             class="v-tabs__item"
+            href="#pbehavior"
           >
             Pbehaviors
           </a>
@@ -159,6 +162,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+      <!---->
       <transition-stub
         name=""
       >
@@ -187,6 +191,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+      <!---->
+      <!---->
+      <!---->
+      <!---->
     </div>
   </div>
 </div>
@@ -221,6 +229,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
           <a
             class="v-tabs__item v-tabs__item--active"
+            href="#moreInfos"
           >
             More infos
           </a>
@@ -230,6 +239,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
           <a
             class="v-tabs__item"
+            href="#timeLine"
           >
             Timeline
           </a>
@@ -239,6 +249,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
           <a
             class="v-tabs__item"
+            href="#ticketsDeclared"
           >
             Tickets declared
           </a>
@@ -248,6 +259,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
           <a
             class="v-tabs__item"
+            href="#pbehavior"
           >
             Pbehaviors
           </a>
@@ -258,6 +270,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
           <a
             class="v-tabs__item"
+            href="#trackSource"
           >
             Track source
           </a>
@@ -267,6 +280,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
           <a
             class="v-tabs__item"
+            href="#impactChain"
           >
             Impact chain
           </a>
@@ -431,6 +445,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+      <!---->
       <transition-stub
         name=""
       >
@@ -494,6 +509,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -528,6 +544,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
           <a
             class="v-tabs__item v-tabs__item--active"
+            href="#moreInfos"
           >
             More infos
           </a>
@@ -537,6 +554,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
           <a
             class="v-tabs__item"
+            href="#timeLine"
           >
             Timeline
           </a>
@@ -547,6 +565,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
           <a
             class="v-tabs__item"
+            href="#pbehavior"
           >
             Pbehaviors
           </a>
@@ -559,6 +578,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         >
           <a
             class="v-tabs__item"
+            href="#entityGantt"
           >
             Gantt chart
           </a>
@@ -666,6 +686,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+      <!---->
       <transition-stub
         name=""
       >
@@ -694,6 +715,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+      <!---->
+      <!---->
+      <!---->
       <transition-stub
         name=""
       >
@@ -736,6 +760,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         >
           <a
             class="v-tabs__item v-tabs__item--active"
+            href="#moreInfos"
           >
             More infos
           </a>
@@ -745,6 +770,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         >
           <a
             class="v-tabs__item"
+            href="#timeLine"
           >
             Timeline
           </a>
@@ -755,6 +781,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         >
           <a
             class="v-tabs__item"
+            href="#pbehavior"
           >
             Pbehaviors
           </a>
@@ -866,6 +893,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+      <!---->
       <transition-stub
         name=""
       >
@@ -894,6 +922,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+      <!---->
+      <!---->
+      <!---->
+      <!---->
     </div>
   </div>
 </div>

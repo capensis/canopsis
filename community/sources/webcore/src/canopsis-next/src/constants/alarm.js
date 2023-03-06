@@ -400,3 +400,14 @@ export const ACK_MODAL_ACTIONS_TYPES = {
   ackAndAssociateTicket: 1,
   ackAndDeclareTicket: 2,
 };
+
+export const ALARMS_EXPAND_PANEL_TABS = {
+  moreInfos: 'moreInfos',
+  timeLine: 'timeLine',
+  ticketsDeclared: 'ticketsDeclared',
+  pbehavior: 'pbehavior',
+  alarmsChildren: 'alarmsChildren',
+  trackSource: 'trackSource',
+  impactChain: 'impactChain',
+  entityGantt: 'entityGantt',
+};
