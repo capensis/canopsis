@@ -1,7 +1,7 @@
 # Utilisateurs
 
 Cette section décrit la page de gestion des utilisateurs.  
-Pour accéder à ce menu, cliquer sur Administration > Utilisateurs :
+Pour accéder à ce menu, cliquez sur Administration > Utilisateurs :
 
 ![Menu rôles](./img/utilisateurs_menu.png)
 
