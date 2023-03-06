@@ -7,9 +7,8 @@
       :error-messages="errors.collect('corelId')",
       name="corelId"
     )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        span(v-html="$t('metaAlarmRule.corelIdHelp')")
+      template(#append="")
+        c-help-icon(icon="help", :text="$t('metaAlarmRule.corelIdHelp')", left)
     v-text-field(
       v-field.number="config.corel_status",
       v-validate="'required'",
@@ -17,9 +16,8 @@
       :error-messages="errors.collect('corelStatus')",
       name="corelStatus"
     )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        span(v-html="$t('metaAlarmRule.corelStatusHelp')")
+      template(#append="")
+        c-help-icon(icon="help", :text="$t('metaAlarmRule.corelStatusHelp')", left)
     v-text-field(
       v-field.number="config.corel_parent",
       v-validate="'required'",

@@ -7,7 +7,8 @@
       :key="category.label"
     )
     v-menu(v-if="dropDownShown", full-width)
-      v-btn.ma-0(slot="activator", small, block, flat) ...
+      template(#activator="{ on }")
+        v-btn(v-on="on", small, block, flat) ...
       categories-list(:categories="dropDownCategories")
 </template>
 

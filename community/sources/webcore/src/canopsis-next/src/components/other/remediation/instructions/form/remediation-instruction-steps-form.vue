@@ -72,7 +72,7 @@ export default {
         disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.step-drag-handler',
-        ghostClass: 'white',
+        ghostClass: 'grey',
         group: {
           name: 'remediation-instruction-steps',
         },

@@ -52,7 +52,9 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     <field-columns-stub
       columns="[object Object]"
       label="Alarm list columns"
-      withcolorindicator="true"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withhtml="true"
       withtemplate="true"
     />
@@ -62,6 +64,9 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     <field-columns-stub
       columns="[object Object]"
       label="Context explorer columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -126,7 +131,9 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Alarm list columns"
-      withcolorindicator="true"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withhtml="true"
       withtemplate="true"
     />
@@ -136,6 +143,9 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object]"
       label="Context explorer columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
       withhtml="true"
     />

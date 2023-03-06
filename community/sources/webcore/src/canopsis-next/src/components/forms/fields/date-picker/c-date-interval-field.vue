@@ -8,7 +8,7 @@
       hide-details
     )
       template(#append="")
-        v-icon(color="black") calendar_today
+        v-icon calendar_today
     c-date-picker-field.ml-4(
       v-field="value.to",
       :label="$t('common.to')",
@@ -17,7 +17,7 @@
       hide-details
     )
       template(#append="")
-        v-icon(color="black") calendar_today
+        v-icon calendar_today
 </template>
 
 <script>
