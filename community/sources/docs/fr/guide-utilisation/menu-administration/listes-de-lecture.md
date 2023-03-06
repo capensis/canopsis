@@ -6,7 +6,7 @@ Elles peuvent être affichées en mode "plein écran" sur un téléviseur par ex
 
 ## Création d'une liste de lecture
 
-Rendez-vous tout d'abord dans le menu Administration > Playlists :
+Rendez-vous tout d'abord dans le menu Administration > Listes de lecture :
 
 ![Menu listes de lecture](./img/playlists_menu.png)
 
