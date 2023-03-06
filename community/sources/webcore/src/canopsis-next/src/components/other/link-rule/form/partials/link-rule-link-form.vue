@@ -61,6 +61,10 @@ export default {
     },
   },
   computed: {
+    isAlarmType() {
+      return this.type === LINK_RULE_TYPES.alarm;
+    },
+
     labelFieldName() {
       return `${this.name}.label`;
     },
@@ -71,7 +75,7 @@ export default {
 
     alarmUrlVariables() {
       return [
-        ...this.alarmPayloadVariables,
+        ...this.alarmPayloadRangeVariables,
         ...this.externalDataAlarmPayloadVariables,
       ];
     },
@@ -94,7 +98,7 @@ export default {
     },
 
     urlVariables() {
-      return this.type === LINK_RULE_TYPES.alarm
+      return this.isAlarmType
         ? this.alarmUrlVariables
         : this.entityUrlVariables;
     },
