@@ -44,7 +44,7 @@ graph TD
 Le menu `Administratration -> Consignes` vous permet d'accéder à la liste des consignes.  
 ![Consignes menu](./img/consignes_menu.png)
 
-Sur cette page, vous y trouverez la liste des consignes, leurs états et quelques boutons d'actions rapides. Le processus de création de consigne est détaillé dans le chapitre [Créer une consigne](#creer-une-consigne).
+Sur cette page, vous trouverez la liste des consignes, leur état et quelques boutons d'actions rapides. Le processus de création de consigne est détaillé dans le chapitre [Créer une consigne](#creer-une-consigne).
 
 ![Consigne vue liste](./img/consignes_vue_liste.png)
 
