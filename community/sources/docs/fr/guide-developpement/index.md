@@ -21,7 +21,7 @@ Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/
 
 !!! note "Note"
     Il est possible d'activer la documentation swagger de la version installée en ajoutant l'option `-docs` aux options de démarrage du binaire `canopsis-api`. 
-    Une url `/swagger/index.html` serai ainsi accessible et disponible derrière le port d'écoute de l'api ( par défaut TCP/8082 )
+    Une url `/swagger/index.html` sera ainsi accessible et disponible derrière le port d'écoute de l'api ( par défaut TCP/8082 )
 
 ### Anciennes API
 
