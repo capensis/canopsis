@@ -21,7 +21,7 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
 } from '@/constants';
 
-import { harmonizeLinks } from '@/helpers/links';
+import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/links';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -40,6 +40,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    category: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     hasAccessToLinks() {
@@ -47,7 +51,11 @@ export default {
     },
 
     links() {
-      return harmonizeLinks(this.alarm.links).map(link => ({
+      const links = this.category
+        ? harmonizeCategoryLinks(this.alarm.links, this.category)
+        : harmonizeLinks(this.alarm.links);
+
+      return links.map(link => ({
         text: link.label,
         icon: link.icon_name,
         url: link.url,
