@@ -18,13 +18,7 @@
           )
       v-flex(xs6)
         c-enabled-field(v-field="form.enabled")
-    v-text-field.mb-3(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field.mb-3(v-field="form.name", required)
     c-patterns-field(
       v-field="form.patterns",
       :alarm-attributes="alarmPatternAttributes",

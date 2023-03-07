@@ -44,7 +44,7 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { linkRule = {} } = this.modal.config;
+    const { linkRule } = this.modal.config;
 
     return {
       form: linkRuleToForm(linkRule),

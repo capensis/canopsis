@@ -2,17 +2,15 @@
   v-card
     v-card-text
       v-layout(column)
-        v-layout(row)
-          v-text-field.mr-2(
+        v-layout(row, align-center)
+          c-name-field.mr-2(
             v-field="form.label",
-            v-validate="'required'",
             :label="$t('common.label')",
-            :error-messages="errors.collect(labelFieldName)",
-            :name="labelFieldName"
+            :name="labelFieldName",
+            required
           )
-          v-btn.mr-0(icon, @click="remove")
-            v-icon(color="error") delete
-        v-layout(row)
+          c-action-btn(type="delete", @click="remove")
+        v-layout(row, align-center)
           v-flex.pr-2(xs8)
             v-text-field(
               v-field="form.category",
