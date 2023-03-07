@@ -3,20 +3,6 @@ import { isUndefined } from 'lodash';
 import { getCollectionComparator } from './sort';
 
 /**
- * The linkbuilders used to return the links directly as
- * strings. They can now also return objects with the
- * properties 'label' and 'link', allowing to change the link's
- * label.
- * The following code converts the "legacy" representation
- * (strings) into the "new" representation, so they can be
- * displayed in the same manner by the template.
- *
- * @param {Array} links
- * @param {string} category
- * @return {{ label: string, link: string }[]}
- */
-
-/**
  * Harmonize links for special category
  *
  * @param {AlarmLinks} [links = {}]

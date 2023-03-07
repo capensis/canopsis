@@ -294,7 +294,7 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
           is: 'c-alarm-links-chips',
           alarm: context.alarm,
           small: context.small,
-          inlineCount: widget.parameters?.linksCategoriesAsList?.limit,
+          inlineCount: widget.parameters?.inlineLinksCount,
         },
         on: {
           activate: context.$listeners.activate,
