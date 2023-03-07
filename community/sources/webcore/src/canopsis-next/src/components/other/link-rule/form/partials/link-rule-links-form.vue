@@ -1,7 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    v-flex.mb-3(xs12)
-      v-alert(:value="!links.length && !errors.has('links')", type="info") {{ $t('linkRule.linksEmpty') }}
+    c-alert(:value="!links.length && !errors.has('links')", type="info") {{ $t('linkRule.linksEmpty') }}
     link-rule-link-form.mb-3(
       v-for="(link, index) in links",
       v-field="links[index]",
