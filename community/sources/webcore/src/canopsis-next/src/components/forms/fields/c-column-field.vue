@@ -46,7 +46,8 @@
       v-text-field(
         v-if="isLinks",
         v-field="column.field",
-        :label="$t('common.field')"
+        :label="$t('common.category')",
+        clearable
       )
       v-switch.pa-0.my-2(
         v-model="customLabel",
