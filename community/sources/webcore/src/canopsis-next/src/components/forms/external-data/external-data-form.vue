@@ -1,7 +1,10 @@
 <template lang="pug">
   v-layout(column)
-    v-flex.mb-3(xs12)
-      v-alert(:value="!form.length", type="info") {{ $t('externalData.empty') }}
+    c-alert(
+      :value="!form.length",
+      type="info",
+      transition="fade-transition"
+    ) {{ $t('externalData.empty') }}
     external-data-item-form.mb-3(
       v-for="(item, index) in form",
       v-field="form[index]",

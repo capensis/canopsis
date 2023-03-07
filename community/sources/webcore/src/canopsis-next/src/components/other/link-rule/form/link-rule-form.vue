@@ -8,12 +8,11 @@
       :disabled="sourceCodeWasChanged"
     ) {{ $t('linkRule.simpleMode') }}
     v-tab-item
-      v-flex.mt-2(xs12)
-        v-alert(
-          :value="errors.has('links')",
-          transition="fade-transition",
-          type="error"
-        ) {{ $t('linkRule.linksEmptyError') }}
+      c-alert(
+        :value="errors.has('links')",
+        transition="fade-transition",
+        type="error"
+      ) {{ $t('linkRule.linksEmptyError') }}
       link-rule-simple-form.mt-2(
         ref="simple",
         v-field="form.links",
@@ -24,12 +23,11 @@
       :class="{ 'error--text': hasAdvancedError || errors.has('links') }"
     ) {{ $t('linkRule.advancedMode') }}
     v-tab-item
-      v-flex.mt-2(xs12)
-        v-alert(
-          :value="errors.has('links')",
-          transition="fade-transition",
-          type="error"
-        ) {{ $t('linkRule.linksEmptyError') }}
+      c-alert(
+        :value="errors.has('links')",
+        transition="fade-transition",
+        type="error"
+      ) {{ $t('linkRule.linksEmptyError') }}
       link-rule-advanced-form.mt-2(
         ref="advanced",
         v-field="form.source_code",
@@ -100,10 +98,7 @@ export default {
       this.$validator.attach({
         name: 'links',
         rules: 'required:true',
-        getter: () => (
-          !!this.form.links.length
-          || (!isDefaultSourceCode(this.form.source_code) && !this.form.source_code)
-        ),
+        getter: () => !!this.form.links.length || !isDefaultSourceCode(this.form.source_code),
         vm: this,
       });
     },
