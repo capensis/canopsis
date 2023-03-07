@@ -1,21 +1,14 @@
 <template lang="pug">
-  div
-    c-column-field.my-2(
-      v-for="(column, index) in columns",
-      v-field="columns[index]",
-      :key="column.key",
-      :name="column.key",
-      :type="type",
-      :with-html="withHtml",
-      :with-template="withTemplate",
-      :with-color-indicator="withColorIndicator",
-      :disabled-up="index === 0",
-      :disabled-down="index === columns.length - 1",
-      @up="up(index)",
-      @down="down(index)",
-      @remove="removeItemFromArray(index)"
-    )
-    v-btn.mx-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
+  c-movable-card-iterator-field(v-field="columns", @add="add")
+    template(#item="{ item, index }")
+      c-column-field.my-2(
+        v-field="columns[index]",
+        :name="item.key",
+        :type="type",
+        :with-html="withHtml",
+        :with-template="withTemplate",
+        :with-color-indicator="withColorIndicator"
+      )
 </template>
 
 <script>
@@ -85,30 +78,6 @@ export default {
 
     add() {
       this.addItemIntoArray(widgetColumnToForm());
-    },
-
-    up(index) {
-      if (index > 0) {
-        const columns = [...this.columns];
-        const temp = columns[index];
-
-        columns[index] = columns[index - 1];
-        columns[index - 1] = temp;
-
-        this.updateModel(columns);
-      }
-    },
-
-    down(index) {
-      if (index < this.columns.length - 1) {
-        const columns = [...this.columns];
-        const temp = columns[index];
-
-        columns[index] = columns[index + 1];
-        columns[index + 1] = temp;
-
-        this.updateModel(columns);
-      }
     },
   },
 };
