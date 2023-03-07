@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    movable-card.my-2(
+    movable-card-iterator-item.my-2(
       v-for="(item, index) in items",
       :key="item[itemKey]",
       :disabled-up="index === 0",
@@ -17,10 +17,10 @@
 <script>
 import { formArrayMixin } from '@/mixins/form';
 
-import MovableCard from './movable-card.vue';
+import MovableCardIteratorItem from './movable-card-iterator-item.vue';
 
 export default {
-  components: { MovableCard },
+  components: { MovableCardIteratorItem },
   mixins: [formArrayMixin],
   model: {
     prop: 'items',
@@ -37,27 +37,27 @@ export default {
     },
   },
   methods: {
-    up(index) {
+    moveItemByOffset(index, offset) {
       if (index > 0) {
         const items = [...this.items];
         const temp = items[index];
 
-        items[index] = items[index - 1];
-        items[index - 1] = temp;
+        items[index] = items[index + offset];
+        items[index + offset] = temp;
 
         this.updateModel(items);
       }
     },
 
+    up(index) {
+      if (index > 0) {
+        this.moveItemByOffset(index, -1);
+      }
+    },
+
     down(index) {
       if (index < this.items.length - 1) {
-        const items = [...this.items];
-        const temp = items[index];
-
-        items[index] = items[index + 1];
-        items[index + 1] = temp;
-
-        this.updateModel(items);
+        this.moveItemByOffset(index, 1);
       }
     },
   },
