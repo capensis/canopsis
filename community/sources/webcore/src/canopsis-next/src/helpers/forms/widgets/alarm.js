@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 
-import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_PERIODIC_REFRESH,
@@ -12,6 +12,7 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   ALARM_DENSE_TYPES,
+  DEFAULT_LINKS_INLINE_COUNT,
 } from '@/constants';
 
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
@@ -66,7 +67,7 @@ import { openedToForm } from './common';
 /**
  * @typedef {Object} AlarmListWidgetDefaultParameters
  * @property {WidgetFastAckOutput} fastAckOutput
- * @property {WidgetLinksCategoriesAsList} linksCategoriesAsList
+ * @property {number} inlineLinksCount
  * @property {number} itemsPerPage
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} moreInfoTemplate
@@ -211,12 +212,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
     widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
-  linksCategoriesAsList: parameters.linksCategoriesAsList
-    ? { ...parameters.linksCategoriesAsList }
-    : {
-      enabled: false,
-      limit: DEFAULT_CATEGORIES_LIMIT,
-    },
+  inlineLinksLimit: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
 });
 
 /**

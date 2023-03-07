@@ -1,7 +1,7 @@
 import {
   EXTERNAL_DATA_TYPES,
   EXTERNAL_DATA_CONDITION_TYPES,
-  EXTERNAL_DATA_CONDITION_FIELDS,
+  EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS,
 } from '@/constants';
 
 export default {
@@ -26,11 +26,11 @@ export default {
     [EXTERNAL_DATA_CONDITION_TYPES.regexp]: 'Regexp',
   },
   conditionValues: {
-    [EXTERNAL_DATA_CONDITION_FIELDS.component]: 'Component',
-    [EXTERNAL_DATA_CONDITION_FIELDS.connector]: 'Connector',
-    [EXTERNAL_DATA_CONDITION_FIELDS.connectorName]: 'Connector name',
-    [EXTERNAL_DATA_CONDITION_FIELDS.resource]: 'Resource',
-    [EXTERNAL_DATA_CONDITION_FIELDS.output]: 'Output',
-    [EXTERNAL_DATA_CONDITION_FIELDS.extraInfos]: 'Extra infos',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.component]: 'Component',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connector]: 'Connector',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connectorName]: 'Connector name',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.resource]: 'Resource',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output]: 'Output',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos]: 'Extra infos',
   },
 };
