@@ -23,7 +23,6 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links 1`] =
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links as list 1`] = `
 <c-alarm-links-chips-stub
   alarm="[object Object]"
-  inlinecount="2"
 />
 `;
 
