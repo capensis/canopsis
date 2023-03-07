@@ -38,7 +38,7 @@
 <script>
 import {
   EXTERNAL_DATA_CONDITION_TYPES,
-  EXTERNAL_DATA_CONDITION_VALUES,
+  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
 } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
@@ -78,7 +78,7 @@ export default {
         return this.variables;
       }
 
-      return Object.values(EXTERNAL_DATA_CONDITION_VALUES).map(({ value, text }) => ({
+      return EXTERNAL_DATA_DEFAULT_CONDITION_VALUES.map(({ value, text }) => ({
         value,
         text: this.$t(`externalData.conditionValues.${text}`),
       }));

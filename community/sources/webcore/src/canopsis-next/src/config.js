@@ -516,8 +516,6 @@ export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
 
-export const DEFAULT_CATEGORIES_LIMIT = 3;
-
 export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 
 export const HEALTHCHECK_HISTORY_FILENAME_PREFIX = 'healthcheck_history-';

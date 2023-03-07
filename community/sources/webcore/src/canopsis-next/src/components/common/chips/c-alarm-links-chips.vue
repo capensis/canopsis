@@ -15,7 +15,11 @@
 </template>
 
 <script>
-import { ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
+import {
+  ALARM_LIST_ACTIONS_TYPES,
+  DEFAULT_LINKS_INLINE_COUNT,
+  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+} from '@/constants';
 
 import { harmonizeLinks } from '@/helpers/links';
 
@@ -30,7 +34,7 @@ export default {
     },
     inlineCount: {
       type: [Number, String],
-      default: 2,
+      default: DEFAULT_LINKS_INLINE_COUNT,
     },
     small: {
       type: Boolean,
