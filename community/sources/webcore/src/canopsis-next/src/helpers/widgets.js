@@ -325,8 +325,12 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
   }
 
   if (value.startsWith('links.')) {
+    const category = value.replace('links.', '');
+
     return context => ({
       bind: {
+        category,
+
         is: 'c-alarm-links-chips',
         alarm: context.alarm,
         small: context.small,

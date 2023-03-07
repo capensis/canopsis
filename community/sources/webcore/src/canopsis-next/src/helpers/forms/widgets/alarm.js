@@ -212,7 +212,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
     widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
-  inlineLinksLimit: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
+  inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
 });
 
 /**
