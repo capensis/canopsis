@@ -165,6 +165,7 @@ export default {
     expired: 'Expired date',
     accessed: 'Accessed at',
     lastEventDate: 'Last event date',
+    lastPbehaviorDate: 'Last pbehavior date',
     activated: 'Activated',
     pattern: 'Pattern | Patterns',
     correlation: 'Correlation',
@@ -2794,6 +2795,7 @@ export default {
       entityOkEvents: 'Entity OK events',
       entityInfos: 'Entity infos',
       entityComponentInfos: 'Entity component infos',
+      entityLastPbehaviorDate: 'Entity last pbehavior date',
     },
   },
 
