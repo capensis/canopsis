@@ -945,6 +945,8 @@ definitions:
         type: integer
       last_event_date:
         type: integer
+      last_pbehavior_date:
+        type: integer
       links:
         additionalProperties: true
         description: Links
@@ -1129,6 +1131,8 @@ definitions:
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         additionalProperties: true
@@ -1340,6 +1344,8 @@ definitions:
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         additionalProperties: true
