@@ -62,3 +62,12 @@ func (r *AggregationResult) GetData() interface{} {
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type CategoriesRequest struct {
+	Limit int64  `form:"limit" binding:"numeric,gte=0"`
+	Type  string `form:"type" binding:"oneoforempty=alarm entity"`
+}
+
+type CategoryResponse struct {
+	Categories []string `json:"categories"`
+}
