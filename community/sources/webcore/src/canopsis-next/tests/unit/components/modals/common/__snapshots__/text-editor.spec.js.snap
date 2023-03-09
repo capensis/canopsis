@@ -56,6 +56,62 @@ exports[`text-editor Renders \`text-editor\` with all parameters 1`] = `
 </form>
 `;
 
+exports[`text-editor Renders \`text-editor\` with all parameters 2`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Text editor title
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <text-editor-field-stub
+        error-messages=""
+        label="Text editor label"
+        name="text"
+        value="Text"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
 exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
 <form
   class="v-form"
