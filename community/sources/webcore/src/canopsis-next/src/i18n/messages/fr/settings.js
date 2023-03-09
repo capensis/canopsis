@@ -66,6 +66,7 @@ export default {
   entitiesColumns: 'Colonnes de l\'explorateur de contexte',
   entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
   modal: '(Modal)',
+  defaultSampling: 'Default sampling',
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
