@@ -66,6 +66,7 @@ export default {
   entitiesColumns: 'Context explorer columns',
   entityInfoPopup: 'Entity info popup',
   modal: '(Modal)',
+  defaultTimeRange: 'Default time range',
   exportCsv: {
     title: 'Export CSV',
     fields: {
