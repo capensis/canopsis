@@ -1299,6 +1299,14 @@ func RegisterRoutes(
 				linkRuleAPI.Delete,
 			)
 		}
+		linkCategoryRouter := protected.Group("/link-categories")
+		{
+			linkCategoryRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+				linkRuleAPI.GetCategories,
+			)
+		}
 
 		bulkRouter := protected.Group("/bulk")
 		{
