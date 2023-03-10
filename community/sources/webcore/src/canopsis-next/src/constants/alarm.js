@@ -185,7 +185,7 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
-export const ALARM_METRIC_PARAMETERS = {
+export const ALARM_BASIC_METRIC_PARAMETERS = {
   activeAlarms: 'active_alarms',
   createdAlarms: 'created_alarms',
   nonDisplayedAlarms: 'non_displayed_alarms',
@@ -204,8 +204,20 @@ export const ALARM_METRIC_PARAMETERS = {
   ratioRemediatedAlarms: 'ratio_remediated_alarms',
   averageAck: 'average_ack',
   averageResolve: 'average_resolve',
+};
+
+export const ALARM_OPTIONAL_METRIC_PARAMETERS = {
   manualInstructionAssignedAlarms: 'manual_instruction_assigned_alarms',
   manualInstructionExecutedAlarms: 'manual_instruction_executed_alarms',
+  notAckedAlarms: 'not_acked_alarms',
+  notAckedInHourAlarms: 'not_acked_in_hour_alarms',
+  notAckedInFourHoursAlarms: 'not_acked_in_four_hours_alarms',
+  notAckedInDayAlarms: 'not_acked_in_day_alarms',
+};
+
+export const ALARM_METRIC_PARAMETERS = {
+  ...ALARM_BASIC_METRIC_PARAMETERS,
+  ...ALARM_OPTIONAL_METRIC_PARAMETERS,
 };
 
 export const ALARMS_LIST_HEADER_OPACITY_DELAY = 500;

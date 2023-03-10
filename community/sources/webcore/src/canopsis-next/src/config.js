@@ -231,6 +231,7 @@ export const API_ROUTES = {
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
   metrics: {
+    settings: '/api/v4/cat/metrics-settings',
     alarm: '/api/v4/cat/metrics/alarm',
     exportAlarm: '/api/v4/cat/metrics-export/alarm',
     exportRating: '/api/v4/cat/metrics-export/rating',
@@ -352,6 +353,10 @@ export const COLORS = {
     remediationStatisticAssignedRemediations: '#FFA800',
     remediationStatisticExecutedRemediations: '#5B6E7F',
     remediationStatisticRatioRemediations: '#5B6E7F',
+    notAckedAlarms: '#dce775',
+    notAckedInHourAlarms: '#1fbcd3',
+    notAckedInFourHoursAlarms: '#afb42b',
+    notAckedInDayAlarms: '#fff176',
   },
   mermaid: {
     primaryColor: '#bfe4ce',
