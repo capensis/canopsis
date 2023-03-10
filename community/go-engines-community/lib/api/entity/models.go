@@ -114,6 +114,9 @@ type Entity struct {
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	Resources []string `bson:"resources,omitempty" json:"-"`
+
+	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
+	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 }
 
 func (e *Entity) fillConnectorType() {
