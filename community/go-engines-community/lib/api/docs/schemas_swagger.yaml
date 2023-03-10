@@ -2363,6 +2363,9 @@ definitions:
       label:
         maxLength: 255
         type: string
+      single:
+        description: Single to mark links unavailable to multiple selected alarms
+        type: boolean
       url:
         maxLength: 1000
         type: string
@@ -4762,6 +4765,8 @@ definitions:
     properties:
       colorIndicator:
         type: string
+      iconOnly:
+        type: boolean
       isHtml:
         type: boolean
       label:
