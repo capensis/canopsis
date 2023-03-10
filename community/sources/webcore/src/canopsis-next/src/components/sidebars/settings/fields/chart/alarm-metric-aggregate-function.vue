@@ -13,14 +13,6 @@ export default {
       type: String,
       required: true,
     },
-    withColor: {
-      type: Boolean,
-      default: false,
-    },
-    withAggregateFunction: {
-      type: Boolean,
-      default: false,
-    },
   },
 };
 </script>
