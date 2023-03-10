@@ -4,6 +4,7 @@
     :items="links",
     :small="small",
     :inline-count="inlineCount",
+    :only-icon="onlyIcon",
     item-text="text",
     item-value="url",
     @select="openLink",
@@ -43,6 +44,10 @@ export default {
     category: {
       type: String,
       required: false,
+    },
+    onlyIcon: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

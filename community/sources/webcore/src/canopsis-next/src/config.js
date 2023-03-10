@@ -205,6 +205,7 @@ export const API_ROUTES = {
     scenarios: '/api/v4/template-validator/scenarios',
   },
   linkRule: '/api/v4/link-rules',
+  linkCategories: '/api/v4/link-categories',
 
   /**
    * Cat routes
@@ -474,21 +475,25 @@ export const THEMES_NAMES = {
 const CANOPSIS_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
+  background: '#ffffff',
 };
 
 const CANOPSIS_DARK_THEME_COLORS = {
   ...CANOPSIS_THEME_COLORS,
   error: '#ff8b8b',
+  background: '#303030',
 };
 
 const COLOR_BLIND_THEME_COLORS = {
   primary: '#2196f3',
   secondary: COLORS.secondary,
+  background: CANOPSIS_THEME_COLORS.background,
 };
 
 const COLOR_BLIND_DARK_THEME_COLORS = {
   ...COLOR_BLIND_THEME_COLORS,
   error: CANOPSIS_DARK_THEME_COLORS.error,
+  background: CANOPSIS_DARK_THEME_COLORS.background,
 };
 
 export const THEMES = {

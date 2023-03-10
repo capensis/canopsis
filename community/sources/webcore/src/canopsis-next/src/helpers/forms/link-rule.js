@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 import {
   LINK_RULE_TYPES,
   OLD_PATTERNS_FIELDS,
@@ -7,7 +9,6 @@ import {
 } from '@/constants';
 
 import uid from '../uid';
-import { removeKeyFromEntities } from '../entities';
 
 import { filterPatternsToForm, formFilterToPatterns } from './filter';
 import { externalDataToForm, formToExternalData } from './shared/external-data';
@@ -22,6 +23,7 @@ import { enabledToForm } from './shared/common';
  * @property {string} icon_name
  * @property {string} label
  * @property {string} url
+ * @property {string} [with_mass]
  * @property {string} [rule_id]
  * @property {string} [category]
  */
@@ -63,6 +65,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
   label: link.label ?? '',
   icon_name: link.icon_name ?? '',
   url: link.url ?? '',
+  with_mass: link.with_mass ?? false,
   category: link.category ?? '',
 });
 
@@ -97,6 +100,20 @@ export const isDefaultSourceCode = (code = '') => (
 );
 
 /**
+ * Convert link rule link to form
+ *
+ * @param {string} key
+ * @param {LinkRuleLinkForm} form
+ * @param {LinkRuleType} type
+ * @returns {LinkRuleLink}
+ */
+export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) => (
+  type === LINK_RULE_TYPES.entity
+    ? omit(form, ['with_mass'])
+    : form
+);
+
+/**
  * Convert form to link rule
  *
  * @param {FilterPatternsForm} patterns
@@ -114,7 +131,7 @@ export const formToLinkRule = ({ patterns, links, source_code: sourceCode, exter
   };
 
   if (isDefaultSourceCode(sourceCode)) {
-    linkRule.links = removeKeyFromEntities(links);
+    linkRule.links = links.map(link => formToLinkRuleLink(link, form.type));
   } else {
     linkRule.source_code = sourceCode;
   }

@@ -5,7 +5,7 @@
     small,
     @click="$emit('click')"
   )
-    span.white--text
+    span.white--text(v-if="!onlyIcon")
       slot
     v-icon.cursor-pointer.ml-2(
       v-if="closable",
@@ -26,6 +26,10 @@ export default {
       default: false,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    onlyIcon: {
       type: Boolean,
       default: false,
     },
