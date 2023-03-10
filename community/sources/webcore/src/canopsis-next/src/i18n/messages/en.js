@@ -238,7 +238,6 @@ export default {
     lastModifiedBy: 'Last modified by',
     exportAsCsv: 'Export as csv',
     criteria: 'Criteria',
-    ratingSettings: 'Rating settings',
     pbehavior: 'Pbehavior | Pbehaviors',
     activePbehavior: 'Active pbehavior | Active pbehaviors',
     searchBy: 'Search by',
@@ -727,6 +726,10 @@ export default {
       [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Number of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Number of alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Number of not acked alarms',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Number of not acked alarms with duration 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Number of not acked alarms with duration 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Number of not acked alarms older than 24h',
     },
   },
   weather: {
@@ -3168,6 +3171,17 @@ export default {
     sli: 'SLI',
     metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
     noData: 'No data available',
+    tabs: {
+      collectionSettings: 'Collection settings',
+      ratingSettings: 'Rating settings',
+    },
+
+    collectionSetting: {
+      basicMetrics: 'Basic metrics',
+      optionalMetrics: 'Optional metrics',
+      manualInstructions: 'Number of alarms with manual instructions',
+      notAckedMetrics: 'Number of active not acked alarms of different durations',
+    },
   },
 
   kpiMetrics: {
@@ -3193,8 +3207,12 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
-      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} not acked alarms',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: '{value} not acked alarms with duration 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: '{value} not acked alarms with duration 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: '{value} not acked alarms older than 24h',
     },
   },
 

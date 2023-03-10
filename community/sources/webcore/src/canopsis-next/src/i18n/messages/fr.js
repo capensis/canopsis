@@ -238,7 +238,6 @@ export default {
     lastModifiedBy: 'Dernière modification par',
     exportAsCsv: 'Exporter en csv',
     criteria: 'Critères',
-    ratingSettings: 'Paramètres d\'évaluation',
     pbehavior: 'Comportement périodique | Comportements périodiques',
     activePbehavior: 'Activer le comportement périodique | Activer les comportements périodiques',
     searchBy: 'Recherché par',
@@ -727,6 +726,10 @@ export default {
       [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre d\'alarmes corrigées manuellement',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre d\'alarmes avec instructions manuelles',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Nombre d\'alarmes non acquittées',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Nombre d\'alarmes non acquittées avec durée 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Nombre d\'alarmes non acquittées avec durée 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Nombre d\'alarmes non acquittées de plus de 24h',
     },
   },
   weather: {
@@ -3168,6 +3171,17 @@ export default {
     sli: 'SLI',
     metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
     noData: 'Pas de données disponibles',
+    tabs: {
+      collectionSettings: 'Paramètres d\'évaluation',
+      ratingSettings: 'Paramètres d\'évaluation',
+    },
+
+    collectionSetting: {
+      basicMetrics: 'Métriques de base',
+      optionalMetrics: 'Métriques facultatives',
+      manualInstructions: 'Nombre d\'alarmes avec instructions manuelles',
+      notAckedMetrics: 'Nombre d\'alarmes actives non acquittées de différentes durées',
+    },
   },
 
   kpiMetrics: {
@@ -3193,8 +3207,12 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
-      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} alarmes corrigées manuellement',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} alarmes non acquittées',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: '{value} alarmes non acquittées avec une durée de 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: '{value} alarmes non acquittées d\'une durée de 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: '{value} alarmes non acquittées datant de plus de 24h',
     },
   },
 

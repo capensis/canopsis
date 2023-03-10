@@ -52,6 +52,7 @@ import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
 import manualMetaAlarmModule from './manual-meta-alarm';
+import metricsSettingsModule from './metrics-settings';
 
 export default {
   alarm: alarmModule,
@@ -108,4 +109,5 @@ export default {
   techMetrics: techMetricsModule,
   widgetTemplate: widgetTemplateModule,
   manualMetaAlarm: manualMetaAlarmModule,
+  metricsSettings: metricsSettingsModule,
 };
