@@ -137,6 +137,7 @@ export default {
     isHtml: 'Est-ce du HTML ?',
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
+    onlyIcon: 'Afficher uniquement les icônes de liens',
   },
   liveReporting: {
     title: 'Suivi personnalisé',

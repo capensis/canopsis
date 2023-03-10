@@ -23,6 +23,11 @@
               :name="iconFieldName",
               required
             )
+        c-enabled-field(
+          v-if="isAlarmType",
+          v-field="form.with_mass",
+          :label="$t('linkRule.withMass')"
+        )
         c-payload-text-field(
           v-field="form.url",
           :label="$t('common.url')",

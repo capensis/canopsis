@@ -252,13 +252,14 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
 };
 
 /**
- * Get component getter for alarms list widget column value
+ * Get component getter for alarms list widget column
  *
  * @param {string} value
+ * @param {boolean} [onlyIcon]
  * @param {Widget | {}} [widget = {}]
  * @returns {Function}
  */
-export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}) => {
+export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon }, widget = {}) => {
   switch (value) {
     case ALARM_FIELDS.state:
       return context => ({
@@ -291,6 +292,8 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
     case ALARM_FIELDS.links:
       return context => ({
         bind: {
+          onlyIcon,
+
           is: 'c-alarm-links-chips',
           alarm: context.alarm,
           small: context.small,
@@ -330,10 +333,12 @@ export const getAlarmsListWidgetColumnValueComponentGetter = (value, widget = {}
     return context => ({
       bind: {
         category,
+        onlyIcon,
 
         is: 'c-alarm-links-chips',
         alarm: context.alarm,
         small: context.small,
+        inlineCount: widget.parameters?.inlineLinksCount,
       },
     });
   }

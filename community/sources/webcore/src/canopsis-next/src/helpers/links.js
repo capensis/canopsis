@@ -10,7 +10,7 @@ import { getCollectionComparator } from './sort';
  * @returns {AlarmLink[]}
  */
 export const harmonizeCategoryLinks = (links = {}, category) => {
-  if (!category || !links[category]) {
+  if (isUndefined(category) || !links[category]) {
     return [];
   }
 
@@ -25,7 +25,7 @@ export const harmonizeCategoryLinks = (links = {}, category) => {
  * @param {AlarmLinks} [links = {}]
  * @returns {Object<string, AlarmLink[]>}
  */
-export const harmonizeCategoriesLinks = (links = {}) => Object.keys(links)
+export const harmonizeCategoriesLinks = (links = {}) => Object.keys(links ?? {})
   .reduce((acc, category) => {
     acc[category] = harmonizeCategoryLinks(links, category);
 
@@ -98,6 +98,6 @@ export const harmonizeAlarmsLinks = (alarms = []) => {
   });
 
   return Object.values(linksByKeys)
-    .filter(link => !isUndefined(lastIndexesByRuleIds[link.rule_id]))
+    .filter(link => !isUndefined(lastIndexesByRuleIds[link.rule_id]) && link.with_mass)
     .sort(getCollectionComparator('label'));
 };

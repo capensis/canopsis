@@ -390,7 +390,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
 
-  entityName: '.Entity.name',
+  entityName: '.Entity.Name',
   entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
 };
 
