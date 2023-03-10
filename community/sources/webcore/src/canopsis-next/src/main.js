@@ -51,6 +51,7 @@ import CResponsiveList from '@/components/common/responsive-list/c-responsive-li
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import CAlert from '@/components/common/alert/c-alert.vue';
+import CLinksList from '@/components/common/links/c-links-list.vue';
 
 /**
  * Overlays
@@ -128,9 +129,8 @@ import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
 import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field.vue';
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
-import CColumnField from '@/components/forms/fields/c-column-field.vue';
-import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
-import CColumnsWithTemplateField from '@/components/forms/fields/c-columns-with-template-field.vue';
+import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue';
+import CColumnsWithTemplateField from '@/components/forms/fields/column/c-columns-with-template-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import CColorChromePickerField from '@/components/forms/fields/color/c-color-chrome-picker-field.vue';
 import CColorCompactPickerField from '@/components/forms/fields/color/c-color-compact-picker-field.vue';
@@ -422,7 +422,6 @@ Vue.component('c-percents-field', CPercentsField);
 Vue.component('c-color-indicator-field', CColorIndicatorField);
 Vue.component('c-color-chrome-picker-field', CColorChromePickerField);
 Vue.component('c-color-compact-picker-field', CColorCompactPickerField);
-Vue.component('c-column-field', CColumnField);
 Vue.component('c-columns-field', CColumnsField);
 Vue.component('c-columns-with-template-field', CColumnsWithTemplateField);
 Vue.component('c-mini-bar-chart', CMiniBarChart);
@@ -494,6 +493,7 @@ Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
+Vue.component('c-links-list', CLinksList);
 
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
 Vue.component('c-service-weather-state-counter-field', CServiceWeatherStateCounterField);

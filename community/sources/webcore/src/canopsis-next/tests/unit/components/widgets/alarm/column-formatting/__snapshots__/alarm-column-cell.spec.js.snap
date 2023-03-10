@@ -33,6 +33,20 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links categ
 />
 `;
 
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links only icon 1`] = `
+<c-alarm-links-chips-stub
+  alarm="[object Object]"
+  onlyicon="true"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links with inline links count 1`] = `
+<c-alarm-links-chips-stub
+  alarm="[object Object]"
+  inlinecount="2"
+/>
+`;
+
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `
 <alarm-column-value-state-stub
   alarm="[object Object]"

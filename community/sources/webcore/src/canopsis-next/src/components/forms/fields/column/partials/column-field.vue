@@ -43,12 +43,14 @@
         combobox,
         column
       )
-      v-text-field(
-        v-if="isLinks",
-        v-field="column.field",
-        :label="$t('common.category')",
-        clearable
-      )
+      template(v-if="isLinks")
+        column-links-category-field(v-field="column.field")
+        v-switch.pa-0.my-2(
+          v-field="column.onlyIcon",
+          :label="$t('settings.columns.onlyIcon')",
+          color="primary",
+          hide-details
+        )
       v-switch.pa-0.my-2(
         v-model="customLabel",
         :label="$t('settings.columns.customLabel')",
@@ -122,8 +124,11 @@ import { isLinksWidgetColumn } from '@/helpers/forms/shared/widget-column';
 import { formMixin } from '@/mixins/form';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
 
+import ColumnLinksCategoryField from './column-links-category-field.vue';
+
 export default {
   inject: ['$validator'],
+  components: { ColumnLinksCategoryField },
   mixins: [
     formMixin,
     entitiesInfosMixin,

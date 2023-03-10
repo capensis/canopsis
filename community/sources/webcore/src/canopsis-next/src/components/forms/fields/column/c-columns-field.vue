@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-column-field.my-2(
+    column-field.my-2(
       v-for="(column, index) in columns",
       v-field="columns[index]",
       :key="column.key",
@@ -29,8 +29,11 @@ import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
 
+import ColumnField from './partials/column-field.vue';
+
 export default {
   inject: ['$validator'],
+  components: { ColumnField },
   mixins: [
     formArrayMixin,
     formValidationHeaderMixin,

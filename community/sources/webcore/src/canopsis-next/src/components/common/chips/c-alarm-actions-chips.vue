@@ -6,6 +6,7 @@
       :color="item.color",
       :small="small",
       :closable="closable",
+      :only-icon="onlyIcon",
       @click="selectItem(item)",
       @close="closeItem(item)"
     )
@@ -54,6 +55,10 @@ export default {
       default: false,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    onlyIcon: {
       type: Boolean,
       default: false,
     },
