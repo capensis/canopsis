@@ -3175,7 +3175,7 @@ Feature: create and update meta alarm
       ]
     }
     """
-    When I wait the end of 5 events processing
+    When I wait the end of 6 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
