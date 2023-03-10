@@ -204,4 +204,8 @@ export default {
     compact: 'Vue compacte',
     ultraCompact: 'Vue ultra compacte',
   },
+
+  chart: {
+    selectMetrics: 'Select metrics',
+  },
 };
