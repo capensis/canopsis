@@ -13,6 +13,10 @@ Feature: get instruction statistics
         {
           "executed_on": 1618280210,
           "instruction_modified_on": 1596712203,
+          "timeout_after_execution": {
+            "value": 2,
+            "unit": "s"
+          },
           "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
@@ -37,6 +41,10 @@ Feature: get instruction statistics
         {
           "executed_on": 1618280210,
           "instruction_modified_on": 1596712203,
+          "timeout_after_execution": {
+            "value": 2,
+            "unit": "s"
+          },
           "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
