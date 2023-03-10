@@ -204,4 +204,10 @@ export default {
     compact: 'Vue compacte',
     ultraCompact: 'Vue ultra compacte',
   },
+
+  chart: {
+    graphType: 'Type de graphique',
+    separateBars: 'Barres séparées',
+    stackedBars: 'Barres empilées',
+  },
 };
