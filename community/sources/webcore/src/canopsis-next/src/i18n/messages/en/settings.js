@@ -204,4 +204,8 @@ export default {
     compact: 'Compact view',
     ultraCompact: 'Ultra compact view',
   },
+
+  chart: {
+    selectMetrics: 'Select metrics',
+  },
 };
