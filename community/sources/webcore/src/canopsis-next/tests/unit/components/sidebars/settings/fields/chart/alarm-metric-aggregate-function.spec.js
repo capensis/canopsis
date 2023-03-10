@@ -40,8 +40,6 @@ describe('alarm-metric-aggregate-function', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: AGGREGATE_FUNCTIONS.sum,
-        withColor: true,
-        withAggregateFunction: true,
       },
     });
 
