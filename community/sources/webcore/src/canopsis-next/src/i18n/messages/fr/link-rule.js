@@ -8,6 +8,7 @@ export default {
   linksEmptyError: 'You should add at least 1 link in simple mode or edit source code in advanced mode',
   sourceCodeAlert: 'Please, change this script only if you are completely aware of what you are doing',
   type: 'Link type',
+  withMass: 'Afficher ce lien dans les actions de masse ?',
   types: {
     [LINK_RULE_TYPES.alarm]: 'Alarm',
     [LINK_RULE_TYPES.entity]: 'Entity',

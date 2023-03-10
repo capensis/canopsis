@@ -16,5 +16,9 @@ export default createEntityModule({
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.linkRule, { data });
     },
+
+    fetchLinkCategoriesWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.linkCategories, { params });
+    },
   },
 });

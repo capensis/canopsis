@@ -137,6 +137,7 @@ export default {
     isHtml: 'Is it HTML?',
     withTemplate: 'Custom template',
     isState: 'Displayed as severity?',
+    onlyIcon: 'Show only links icons',
   },
   liveReporting: {
     title: 'Live reporting',

@@ -1,8 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`service-entity-links Renders \`service-entity-links\` with default props 1`] = `<!---->`;
+exports[`c-links-list Renders \`c-links-list\` with default props 1`] = `
+<div
+  class="mt-1"
+/>
+`;
 
-exports[`service-entity-links Renders \`service-entity-links\` with links 1`] = `
+exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
 <div
   class="mt-1"
 >
@@ -87,7 +91,7 @@ exports[`service-entity-links Renders \`service-entity-links\` with links 1`] = 
 </div>
 `;
 
-exports[`service-entity-links Renders \`service-entity-links\` with links and category 1`] = `
+exports[`c-links-list Renders \`c-links-list\` with links and category 1`] = `
 <div
   class="mt-1"
 >

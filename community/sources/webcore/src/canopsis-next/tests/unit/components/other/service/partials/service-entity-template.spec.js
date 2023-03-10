@@ -9,7 +9,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-runtime-template': CRuntimeTemplate,
-  'service-entity-links': true,
+  'c-links-list': true,
 };
 
 describe('service-entity-template', () => {
