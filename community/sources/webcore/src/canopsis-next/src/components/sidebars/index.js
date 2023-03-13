@@ -6,3 +6,7 @@ export { default as TextSettings } from './settings/text.vue';
 export { default as CounterSettings } from './settings/counter.vue';
 export { default as TestingWeatherSettings } from './settings/testing-weather.vue';
 export { default as MapSettings } from './settings/map.vue';
+export { default as BarChartSettings } from './settings/bar-chart.vue';
+export { default as LineChartSettings } from './settings/line-chart.vue';
+export { default as PieChartSettings } from './settings/pie-chart.vue';
+export { default as NumbersSettings } from './settings/numbers.vue';
