@@ -829,9 +829,9 @@ definitions:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
-          delete_stats_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
           delete_mod_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_stats_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
     type: object
@@ -939,11 +939,17 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         additionalProperties: true
@@ -1124,11 +1130,17 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         additionalProperties: true
@@ -1335,11 +1347,17 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         additionalProperties: true
@@ -3701,6 +3719,10 @@ definitions:
       impact_level:
         type: integer
       impact_state:
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         additionalProperties:
