@@ -11,8 +11,13 @@
     @activate="activate"
   )
     template(#item="{ item }")
-      v-icon(color="white", small) {{ item.icon }}
-      span.ml-1(v-if="!onlyIcon") {{ item.text }}
+      v-tooltip(v-if="onlyIcon", top, custom-activator)
+        template(#activator="{ on }")
+          v-icon(v-on="on", color="white", small) {{ item.icon }}
+        span {{ item.text }}
+      template(v-else)
+        v-icon(color="white", small) {{ item.icon }}
+        span.ml-1 {{ item.text }}
 </template>
 
 <script>
