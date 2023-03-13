@@ -143,6 +143,9 @@ type Entity struct {
 
 	DependsCount int `bson:"depends_count" json:"depends_count"`
 
+	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
+	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
+
 	AssignedDeclareTicketRules []alarm.AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }
 
