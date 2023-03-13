@@ -33,7 +33,7 @@
             @click.stop.prevent="$listeners.click"
           )
             v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-        v-btn.mx-1.c-action-btn__button(
+        v-btn.mx-1.my-0.c-action-btn__button(
           v-else,
           v-on="tooltipOn",
           :disabled="disabled",
