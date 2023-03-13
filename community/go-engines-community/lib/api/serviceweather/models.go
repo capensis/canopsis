@@ -141,6 +141,9 @@ type Entity struct {
 	Links []WeatherLink `json:"linklist" bson:"-"`
 
 	DependsCount int `bson:"depends_count" json:"depends_count"`
+
+	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
+	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 }
 
 type WeatherLink struct {
