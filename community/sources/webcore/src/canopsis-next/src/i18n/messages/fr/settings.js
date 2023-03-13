@@ -15,6 +15,10 @@ export default {
     [SIDE_BARS.counterSettings]: 'Paramètres du widget compteur',
     [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
     [SIDE_BARS.mapSettings]: 'Paramètres du widget de cartographie',
+    [SIDE_BARS.barChartSettings]: 'Paramètres du graphique à barres',
+    [SIDE_BARS.lineChartSettings]: 'Paramètres du graphique en courbes',
+    [SIDE_BARS.pieChartSettings]: 'Paramètres du graphique à secteurs',
+    [SIDE_BARS.numbersSettings]: 'Paramètres des nombres',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
