@@ -1,18 +1,18 @@
 <template lang="pug">
-  c-alarm-actions-chips(
+  c-alarm-actions-chips.c-alarm-links-chips(
     v-if="hasAccessToLinks",
     :items="links",
     :small="small",
     :inline-count="inlineCount",
-    :only-icon="onlyIcon",
     item-text="text",
     item-value="url",
+    item-class="c-alarm-links-chips__chip",
     @select="openLink",
     @activate="activate"
   )
     template(#item="{ item }")
-      v-icon.mr-1(color="white", small) {{ item.icon }}
-      span {{ item.text }}
+      v-icon(color="white", small) {{ item.icon }}
+      span.ml-1(v-if="!onlyIcon") {{ item.text }}
 </template>
 
 <script>
@@ -79,3 +79,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-alarm-links-chips__chip .v-chip__content {
+  padding: 0 4px;
+}
+</style>

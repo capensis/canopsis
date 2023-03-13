@@ -86,7 +86,7 @@ export const widgetColumnToForm = ({ value = '', label = '', onlyIcon = false, .
     result.dictionary = dictionary;
     result.field = field;
   } else if (isLinksWidgetColumn(value)) {
-    const [column, field] = value.split('.');
+    const [column, field = ''] = value.split('.');
 
     result.column = column;
     result.field = field;
@@ -122,9 +122,12 @@ export const formToWidgetColumns = (form = []) => (
       result.value = `${column}.${rule}.${dictionary}`;
     } else if (getInfosWidgetColumn(column)) {
       result.value = `${column}.${dictionary}.${field}`;
-    } else if (isLinksWidgetColumn(column) && field) {
-      result.value = `${column}.${field}`;
+    } else if (isLinksWidgetColumn(column)) {
       result.onlyIcon = onlyIcon;
+
+      if (field) {
+        result.value = `${column}.${field}`;
+      }
     }
 
     return result;

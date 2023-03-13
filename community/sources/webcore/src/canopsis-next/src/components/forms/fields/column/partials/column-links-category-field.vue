@@ -6,7 +6,8 @@
     :return-object="false",
     :loading="pending",
     item-text="value",
-    item-value="value"
+    item-value="value",
+    clearable
   )
 </template>
 
@@ -40,15 +41,15 @@ export default {
   methods: {
     ...mapActions(['fetchLinkCategoriesWithoutStore']),
 
-    fetchList() {
+    async fetchList() {
       try {
         this.pending = true;
 
         const params = { limit: MAX_LIMIT, type: LINK_RULE_TYPES.alarm };
 
-        const { data } = this.fetchLinkCategoriesWithoutStore({ params });
+        const { categories = [] } = await this.fetchLinkCategoriesWithoutStore({ params });
 
-        this.categories = data;
+        this.categories = categories.filter(category => !!category);
       } catch (err) {
         console.error(err);
       } finally {

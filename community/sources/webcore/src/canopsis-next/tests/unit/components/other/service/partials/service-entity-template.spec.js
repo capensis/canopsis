@@ -1,9 +1,11 @@
 import flushPromises from 'flush-promises';
 
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceEntityTemplate from '@/components/other/service/partials/service-entity-template.vue';
+import { USERS_PERMISSIONS } from '@/constants';
 
 const localVue = createVueInstance();
 
@@ -13,6 +15,9 @@ const stubs = {
 };
 
 describe('service-entity-template', () => {
+  const { authModule, currentUserPermissionsById } = createAuthModule();
+  const store = createMockedStoreModules([authModule]);
+
   const snapshotFactory = generateRenderer(ServiceEntityTemplate, {
     localVue,
     stubs,
@@ -20,6 +25,7 @@ describe('service-entity-template', () => {
 
   test('Renders `service-entity-template` with default props', async () => {
     const wrapper = snapshotFactory({
+      store,
       propsData: {
         entity: {},
       },
@@ -31,7 +37,29 @@ describe('service-entity-template', () => {
   });
 
   test('Renders `service-entity-template` with custom props', async () => {
+    currentUserPermissionsById.mockReturnValue({
+      [USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks]: { actions: [] },
+    });
+
     const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        entity: {
+          _id: 'service-id',
+          links: { test: [{ rule_id: 'id', url: 'url', label: 'label' }] },
+        },
+        template: '{{entity._id}}{{links category="test"}}',
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `service-entity-template` with custom props without right', async () => {
+    const wrapper = snapshotFactory({
+      store,
       propsData: {
         entity: {
           _id: 'service-id',
