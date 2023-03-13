@@ -25,8 +25,8 @@
             )
         c-enabled-field(
           v-if="isAlarmType",
-          v-field="form.with_mass",
-          :label="$t('linkRule.withMass')"
+          v-field="form.single",
+          :label="$t('linkRule.single')"
         )
         c-payload-text-field(
           v-field="form.url",

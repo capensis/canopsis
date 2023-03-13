@@ -23,7 +23,7 @@ import { enabledToForm } from './shared/common';
  * @property {string} icon_name
  * @property {string} label
  * @property {string} url
- * @property {string} [with_mass]
+ * @property {boolean} [single]
  * @property {string} [rule_id]
  * @property {string} [category]
  */
@@ -65,7 +65,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
   label: link.label ?? '',
   icon_name: link.icon_name ?? '',
   url: link.url ?? '',
-  with_mass: link.with_mass ?? false,
+  single: link.single ?? true,
   category: link.category ?? '',
 });
 
@@ -109,7 +109,7 @@ export const isDefaultSourceCode = (code = '') => (
  */
 export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) => (
   type === LINK_RULE_TYPES.entity
-    ? omit(form, ['with_mass'])
+    ? omit(form, ['single'])
     : form
 );
 

@@ -3,10 +3,10 @@
     c-alarm-action-chip(
       v-for="item in inlineItems",
       :key="item[itemValue]",
+      :class="itemClass",
       :color="item.color",
       :small="small",
       :closable="closable",
-      :only-icon="onlyIcon",
       @click="selectItem(item)",
       @close="closeItem(item)"
     )
@@ -26,6 +26,7 @@
           c-alarm-action-chip(
             v-for="item in dropDownItems",
             :key="item[itemValue]",
+            :class="itemClass",
             :color="item.color",
             :closable="closable",
             @click="selectItem(item)",
@@ -58,10 +59,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    onlyIcon: {
-      type: Boolean,
-      default: false,
-    },
     itemValue: {
       type: String,
       default: 'text',
@@ -69,6 +66,10 @@ export default {
     itemText: {
       type: String,
       default: 'text',
+    },
+    itemClass: {
+      type: String,
+      required: false,
     },
   },
   computed: {
