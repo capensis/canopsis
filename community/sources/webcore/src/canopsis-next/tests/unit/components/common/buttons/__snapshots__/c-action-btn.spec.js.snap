@@ -9,7 +9,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -29,7 +29,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -49,7 +49,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -69,7 +69,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -143,7 +143,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -163,7 +163,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -183,7 +183,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -203,7 +203,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -230,7 +230,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -250,7 +250,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -270,7 +270,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -297,7 +297,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -317,7 +317,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
@@ -344,7 +344,7 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
     class="v-tooltip"
   >
     <button
-      class="v-btn mx-1 c-action-btn__button"
+      class="v-btn mx-1 my-0 c-action-btn__button"
       icon="icon"
     >
       <i
