@@ -13,12 +13,15 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
 )
 
 const EnvVar = "Env"
 
 type Executor interface {
 	Execute(tplStr string, data any) (string, error)
+	Parse(tplStr string) (*template.Template, error)
+	ExecuteByTpl(tpl *template.Template, data any) (string, error)
 }
 
 type executor struct {
@@ -43,17 +46,30 @@ func NewExecutor(
 }
 
 func (e *executor) Execute(tplStr string, data any) (string, error) {
-	location := e.timezoneConfigProvider.Get().Location
-	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+	tpl, err := e.Parse(tplStr)
 	if err != nil {
 		return "", err
 	}
 
+	return e.ExecuteByTpl(tpl, data)
+}
+
+func (e *executor) Parse(tplStr string) (*template.Template, error) {
+	location := e.timezoneConfigProvider.Get().Location
+	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+	if err != nil {
+		return nil, err
+	}
+
 	tpl.Option("missingkey=error")
+	return tpl, err
+}
+
+func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
 	buf := e.bufPool.Get().(*bytes.Buffer)
 	defer e.bufPool.Put(buf)
 	buf.Reset()
-	err = tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
+	err := tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
 	if err != nil {
 		return "", err
 	}
@@ -244,59 +260,11 @@ func addEnvVarsToData(data any, envVars map[string]any) any {
 		return data
 	}
 
-	var mapData map[string]any
-	v := reflect.ValueOf(data)
-	v = getStruct(v)
-
-	switch v.Kind() {
-	case reflect.Map:
-		mapData = make(map[string]any, v.Len()+1)
-		mi := v.MapRange()
-		for mi.Next() {
-			if mi.Key().Kind() != reflect.String {
-				return data
-			}
-			mapData[mi.Key().String()] = mi.Value().Interface()
-		}
-	case reflect.Struct:
-		mapData = make(map[string]any, v.Type().NumField()+1)
-		structToMap(v, mapData)
-	default:
+	mapData, ok := libreflect.ToMap(data)
+	if !ok {
 		return data
 	}
 
 	mapData[EnvVar] = envVars
 	return mapData
-}
-
-func structToMap(v reflect.Value, data map[string]any) {
-	t := v.Type()
-	for i := 0; i < t.NumField(); i++ {
-		f := t.Field(i)
-		if !f.IsExported() {
-			continue
-		}
-		fv := v.Field(i)
-		if !fv.IsValid() {
-			continue
-		}
-		if f.Anonymous {
-			fv = getStruct(fv)
-			structToMap(fv, data)
-			continue
-		}
-
-		data[f.Name] = fv.Interface()
-	}
-}
-
-func getStruct(v reflect.Value) reflect.Value {
-	for {
-		switch v.Kind() {
-		case reflect.Interface, reflect.Ptr:
-			v = v.Elem()
-		default:
-			return v
-		}
-	}
 }
