@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -34,17 +35,18 @@ const (
 const InstructionStatusApproved = 0
 
 type Store interface {
-	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
-	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
-	GetOpenByEntityID(ctx context.Context, id, apiKey string) (*Alarm, bool, error)
-	FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error)
-	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
-	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
-	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
+	GetByID(ctx context.Context, id string) (*Alarm, error)
+	GetOpenByEntityID(ctx context.Context, id string) (*Alarm, bool, error)
+	FindByService(ctx context.Context, id string, r ListByServiceRequest) (*AggregationResult, error)
+	FindByComponent(ctx context.Context, r ListByComponentRequest) (*AggregationResult, error)
+	FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error)
+	GetDetails(ctx context.Context, r DetailsRequest) (*Details, error)
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
+	GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error)
 }
 
 type store struct {
@@ -56,12 +58,12 @@ type store struct {
 	dbEntityCollection               mongo.DbCollection
 	dbDeclareTicketCollection        mongo.DbCollection
 
-	linksFetcher common.LinksFetcher
+	linkGenerator link.Generator
 
 	logger zerolog.Logger
 }
 
-func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger zerolog.Logger) Store {
+func NewStore(dbClient mongo.DbClient, linkGenerator link.Generator, logger zerolog.Logger) Store {
 	return &store{
 		dbClient:                         dbClient,
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
@@ -71,13 +73,13 @@ func NewStore(dbClient mongo.DbClient, linksFetcher common.LinksFetcher, logger 
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
 
-		linksFetcher: linksFetcher,
+		linkGenerator: linkGenerator,
 
 		logger: logger,
 	}
 }
 
-func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error) {
 	collection := s.mainDbCollection
 	if r.GetOpenedFilter() == OnlyResolved {
 		collection = s.resolvedDbCollection
@@ -103,10 +105,10 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, apiKey, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
+	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
 }
 
-func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) {
+func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
 	if err != nil {
 		return nil, err
@@ -145,10 +147,10 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 		return nil, nil
 	}
 
-	return &result.Data[0], s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
+	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
-func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) (*Alarm, bool, error) {
+func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm, bool, error) {
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
 		"_id":     entityID,
 		"enabled": true,
@@ -186,10 +188,10 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, apiKey string) 
 		return nil, true, nil
 	}
 
-	return &result.Data[0], true, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
-func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error) {
+func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	service := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -238,10 +240,10 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
-func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error) {
+func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	component := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -279,10 +281,10 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, apiKey, true, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
-func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error) {
+func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -321,7 +323,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 		}
 	}
 
-	err = s.fillLinks(ctx, apiKey, &result)
+	err = s.fillLinks(ctx, &result)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fill links")
 	}
@@ -329,7 +331,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 	return &result, nil
 }
 
-func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error) {
+func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, error) {
 	now := types.NewCpsTime()
 	match := bson.M{"_id": r.ID}
 	collection := s.mainDbCollection
@@ -415,7 +417,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 				}
 			}
 
-			err = s.postProcessResult(ctx, &children, apiKey, r.WithDeclareTickets, r.WithInstructions, true, false)
+			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false)
 			if err != nil {
 				return nil, err
 			}
@@ -533,6 +535,29 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error) {
 	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	return m, err
+}
+
+func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error) {
+	links, err := s.linkGenerator.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds)
+	if err != nil {
+		if errors.Is(err, link.ErrNoRule) {
+			return nil, false, nil
+		}
+		if errors.Is(err, link.ErrNotMatchedAlarm) {
+			return nil, false, common.NewValidationError("ids", "Alarms aren't matched to rule.")
+		}
+		return nil, false, err
+	}
+
+	sort.Slice(links, func(i, j int) bool {
+		return links[i].Label < links[j].Label
+	})
+
+	if links == nil {
+		return []link.Link{}, true, nil
+	}
+
+	return links, true, nil
 }
 
 func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, bson.M, error) {
@@ -1121,35 +1146,27 @@ func (s *store) fillChildrenInstructionsFlag(ctx context.Context, result *Aggreg
 }
 
 // fillLinks sends a request to API v2 and fills result with links from a response.
-func (s *store) fillLinks(ctx context.Context, apiKey string, result *AggregationResult) error {
+func (s *store) fillLinks(ctx context.Context, result *AggregationResult) error {
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
 
-	reqEntities := make([]common.FetchLinksRequestItem, len(result.Data))
-	alarmIndexes := make(map[string]int, len(result.Data))
-
-	for i, item := range result.Data {
-		reqEntities[i] = common.FetchLinksRequestItem{
-			AlarmID:  item.ID,
-			EntityID: item.Entity.ID,
-		}
-		alarmIndexes[item.ID] = i
+	ids := make([]string, len(result.Data))
+	for i, v := range result.Data {
+		ids[i] = v.ID
 	}
 
-	res, err := s.linksFetcher.Fetch(ctx, apiKey, common.FetchLinksRequest{Entities: reqEntities})
-	if err != nil || res == nil {
+	linksByAlarmId, err := s.linkGenerator.GenerateForAlarms(ctx, ids)
+	if err != nil || len(linksByAlarmId) == 0 {
 		return err
 	}
 
-	for _, rec := range res.Data {
-		if i, ok := alarmIndexes[rec.AlarmID]; ok && len(rec.Links) > 0 {
-			links := make(map[string]interface{}, len(rec.Links))
-			for category, link := range rec.Links {
-				links[category] = link
-			}
-
-			result.Data[i].Links = links
+	for i, v := range result.Data {
+		result.Data[i].Links = linksByAlarmId[v.ID]
+		for _, links := range result.Data[i].Links {
+			sort.Slice(links, func(i, j int) bool {
+				return links[i].Label < links[j].Label
+			})
 		}
 	}
 
@@ -1308,7 +1325,7 @@ func (s *store) processPipeline(
 	return nil
 }
 
-func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, apiKey string, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
+func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
 	if withDeclareTicket {
 		err := s.fillAssignedDeclareTickets(ctx, result)
 		if err != nil {
@@ -1334,7 +1351,7 @@ func (s *store) postProcessResult(ctx context.Context, result *AggregationResult
 	}
 
 	if withLinks {
-		err := s.fillLinks(ctx, apiKey, result)
+		err := s.fillLinks(ctx, result)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot fill links")
 		}
