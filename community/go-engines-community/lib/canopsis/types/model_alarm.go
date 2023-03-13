@@ -156,6 +156,9 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
 	}
+	if a.Value.LastComment != nil {
+		steps = append(steps, *a.Value.LastComment)
+	}
 	sort.Sort(ByTimestamp{steps})
 	return steps
 }
