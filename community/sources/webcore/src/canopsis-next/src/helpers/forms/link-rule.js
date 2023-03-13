@@ -65,7 +65,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
   label: link.label ?? '',
   icon_name: link.icon_name ?? '',
   url: link.url ?? '',
-  single: link.single ?? true,
+  single: link.single ?? false,
   category: link.category ?? '',
 });
 
