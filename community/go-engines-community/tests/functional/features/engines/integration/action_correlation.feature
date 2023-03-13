@@ -338,7 +338,7 @@ Feature: update meta alarm on action
       "output": "test-output-action-correlation-2"
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -562,13 +562,16 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "declareticket"
+              },
+              {
+                "_t": "comment"
               }
             ],
             "meta": {
               "page": 1,
               "page_count": 1,
               "per_page": 10,
-              "total_count": 4
+              "total_count": 5
             }
           }
         }
