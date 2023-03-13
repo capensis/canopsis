@@ -4,8 +4,6 @@
     v-divider
     field-periodic-refresh(v-model="form.parameters.periodic_refresh")
     v-divider
-    field-pie-show-mode(v-model="form.parameters.periodic_refresh")
-    v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(
         v-model="form.parameters.sort",
@@ -184,7 +182,6 @@ import FieldDensity from './fields/common/density.vue';
 import ExportCsvForm from './forms/export-csv.vue';
 import WidgetSettings from './partials/widget-settings.vue';
 import WidgetSettingsGroup from './partials/widget-settings-group.vue';
-import FieldPieShowMode from './fields/chart/pie-show-mode.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -192,7 +189,6 @@ import FieldPieShowMode from './fields/chart/pie-show-mode.vue';
 export default {
   name: SIDE_BARS.alarmSettings,
   components: {
-    FieldPieShowMode,
     WidgetSettingsGroup,
     WidgetSettings,
     FieldTitle,
