@@ -13,7 +13,7 @@
     )
     v-tooltip(v-if="addable", bottom)
       template(#activator="{ on }")
-        v-btn.ma-0(
+        v-btn.mx-1.my-0(
           v-on="on",
           icon,
           @click="showCreateFilterModal"
