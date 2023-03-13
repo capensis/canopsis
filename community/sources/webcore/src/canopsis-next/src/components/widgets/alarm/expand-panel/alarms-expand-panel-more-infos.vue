@@ -9,10 +9,20 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { USERS_PERMISSIONS } from '@/constants';
+
 import { compile } from '@/helpers/handlebars';
+
+import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
 
 export default {
   components: { VRuntimeTemplate },
+  mixins: [
+    handlebarsLinksHelperCreator(
+      'alarm.links',
+      USERS_PERMISSIONS.business.alarmsList.actions.links,
+    ),
+  ],
   props: {
     alarm: {
       type: Object,
