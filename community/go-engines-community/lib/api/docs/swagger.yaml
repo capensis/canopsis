@@ -9676,7 +9676,7 @@ paths:
         - linkrules
       summary: Get categories by link type
       description: |
-        Get list of distinct categories
+        Get list of distinct categories, empty list if no categories found 
         
         -  PERMISSIONS: `api_link_rule:get`
       operationId: linkrules-categories
@@ -9703,12 +9703,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-        404:
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     post:
       tags:
         - linkrules
