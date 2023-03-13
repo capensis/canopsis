@@ -51,11 +51,9 @@ export default {
     },
 
     columns() {
-      return this.widget.parameters.widgetColumns.map(({ label: text, value, ...rest }) => ({
-        ...rest,
+      return this.widget.parameters.widgetColumns.map(column => ({
+        ...column,
 
-        value,
-        text,
         sortable: false,
       }));
     },
