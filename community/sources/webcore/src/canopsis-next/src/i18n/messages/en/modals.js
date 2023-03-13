@@ -895,4 +895,12 @@ export default {
   createAckEvent: {
     title: 'Ack',
   },
+  createLinkRule: {
+    create: {
+      title: 'Create link generator',
+    },
+    edit: {
+      title: 'Edit link generator',
+    },
+  },
 };

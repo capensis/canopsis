@@ -1198,4 +1198,31 @@ describe('actions-panel', () => {
 
     expect(wrapper.element).toMatchSnapshot();
   });
+
+  it('Renders `actions-panel` with links in alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          links: {
+            cat: [
+              {
+                icon_name: 'icon',
+                label: 'Label',
+                url: 'URL',
+                rule_id: 'RuleId',
+              },
+            ],
+          },
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
 });

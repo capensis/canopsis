@@ -51,6 +51,7 @@ import CResponsiveList from '@/components/common/responsive-list/c-responsive-li
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import CAlert from '@/components/common/alert/c-alert.vue';
+import CLinksList from '@/components/common/links/c-links-list.vue';
 
 /**
  * Overlays
@@ -63,8 +64,10 @@ import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
  * Chips
  */
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
-import CAlarmTagChip from '@/components/common/chips/c-alarm-tag-chip.vue';
+import CAlarmActionChip from '@/components/common/chips/c-alarm-action-chip.vue';
+import CAlarmActionsChips from '@/components/common/chips/c-alarm-actions-chips.vue';
 import CAlarmTagsChips from '@/components/common/chips/c-alarm-tags-chips.vue';
+import CAlarmLinksChips from '@/components/common/chips/c-alarm-links-chips.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
@@ -126,9 +129,8 @@ import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
 import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field.vue';
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
-import CColumnField from '@/components/forms/fields/c-column-field.vue';
-import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
-import CColumnsWithTemplateField from '@/components/forms/fields/c-columns-with-template-field.vue';
+import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue';
+import CColumnsWithTemplateField from '@/components/forms/fields/column/c-columns-with-template-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import CColorChromePickerField from '@/components/forms/fields/color/c-color-chrome-picker-field.vue';
 import CColorCompactPickerField from '@/components/forms/fields/color/c-color-compact-picker-field.vue';
@@ -219,6 +221,7 @@ import MediationIcon from '@/components/icons/mediation.vue';
 import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
 import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
+import RestartAlt from '@/components/icons/restart_alt.vue';
 
 /**
  * Groups
@@ -285,6 +288,9 @@ Vue.use(Vuetify, {
     },
     manual_instruction: {
       component: ManualInstruction,
+    },
+    restart_alt: {
+      component: RestartAlt,
     },
   },
 });
@@ -355,8 +361,10 @@ Vue.component('alarms-list-table', AlarmsListTable);
 /* Global custom canopsis components */
 Vue.component('c-alert', CAlert);
 Vue.component('c-alarm-chip', CAlarmChip);
-Vue.component('c-alarm-tag-chip', CAlarmTagChip);
+Vue.component('c-alarm-action-chip', CAlarmActionChip);
+Vue.component('c-alarm-actions-chips', CAlarmActionsChips);
 Vue.component('c-alarm-tags-chips', CAlarmTagsChips);
+Vue.component('c-alarm-links-chips', CAlarmLinksChips);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
 Vue.component('c-engine-chip', CEngineChip);
@@ -414,7 +422,6 @@ Vue.component('c-percents-field', CPercentsField);
 Vue.component('c-color-indicator-field', CColorIndicatorField);
 Vue.component('c-color-chrome-picker-field', CColorChromePickerField);
 Vue.component('c-color-compact-picker-field', CColorCompactPickerField);
-Vue.component('c-column-field', CColumnField);
 Vue.component('c-columns-field', CColumnsField);
 Vue.component('c-columns-with-template-field', CColumnsWithTemplateField);
 Vue.component('c-mini-bar-chart', CMiniBarChart);
@@ -486,6 +493,7 @@ Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
+Vue.component('c-links-list', CLinksList);
 
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
 Vue.component('c-service-weather-state-counter-field', CServiceWeatherStateCounterField);
@@ -555,6 +563,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
     [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
     [MODALS.executeDeclareTickets]: { maxWidth: 920 },
+    [MODALS.createLinkRule]: { maxWidth: 920 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
