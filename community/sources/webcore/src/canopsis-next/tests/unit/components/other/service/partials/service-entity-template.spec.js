@@ -3,9 +3,10 @@ import flushPromises from 'flush-promises';
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
+import { USERS_PERMISSIONS } from '@/constants';
+
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceEntityTemplate from '@/components/other/service/partials/service-entity-template.vue';
-import { USERS_PERMISSIONS } from '@/constants';
 
 const localVue = createVueInstance();
 
