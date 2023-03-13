@@ -416,7 +416,10 @@ func (a *mongoAdapter) UpdatePbehaviorInfo(ctx context.Context, id string, info 
 		return err
 	}
 
-	_, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"pbehavior_info": info}})
+	_, err := a.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
+		"pbehavior_info":      info,
+		"last_pbehavior_date": info.Timestamp,
+	}})
 	return err
 }
 

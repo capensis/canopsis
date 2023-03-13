@@ -88,6 +88,26 @@ Feature: new-import entities
       "impact": []
     }
     """
+    When I do GET /api/v4/weather-services/{{ .serviceID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-new-import-partial-1",
+          "import_source": "test-new-import-partial-1-source"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.imported" should be greater than 0
 
   @concurrent
   Scenario: given service and updated entity by new import should update service
