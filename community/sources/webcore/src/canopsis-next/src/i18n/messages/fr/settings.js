@@ -2,7 +2,7 @@ import {
   STATS_CRITICITY,
   ENTITY_TYPES,
   SIDE_BARS,
-  ALARMS_OPENED_VALUES,
+  ALARMS_OPENED_VALUES, CHART_WIDGET_PRESET_TYPES,
 } from '@/constants';
 
 export default {
@@ -207,5 +207,31 @@ export default {
     comfort: 'Vue confort',
     compact: 'Vue compacte',
     ultraCompact: 'Vue ultra compacte',
+  },
+
+  chart: {
+    preset: 'Préréglé',
+    presets: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques d\'accusé de réception',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Statistiques des billets',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Confirmer l\'annulation',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Acquitte l\'activité',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistiques des alarmes non acquittées',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistiques des alarmes non affichées',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
+    },
+    presetChartHeaders: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements d\'alarme',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Statistiques des tickets',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Confirmer les statistiques des actions d\'annulation',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Accuser réception des statistiques des actions',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistiques des alarmes non acquittées',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistiques des alarmes non affichées',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
+    },
   },
 };
