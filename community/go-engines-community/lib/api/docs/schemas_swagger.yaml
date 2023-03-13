@@ -939,6 +939,10 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
@@ -1125,6 +1129,10 @@ definitions:
         type: integer
       impacts_count:
         description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -1338,6 +1346,10 @@ definitions:
         type: integer
       impacts_count:
         description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -3707,6 +3719,10 @@ definitions:
       impact_level:
         type: integer
       impact_state:
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         additionalProperties:
