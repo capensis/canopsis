@@ -2343,6 +2343,8 @@ definitions:
         type: string
       rule_id:
         type: string
+      single:
+        type: boolean
       url:
         type: string
     type: object
