@@ -160,6 +160,7 @@ export default {
   download: 'Télécharger',
   initiator: 'Initiateur',
   percent: 'Pourcentage | Pourcentages',
+  number: 'Nombre | Nombres',
   tests: 'Tests',
   total: 'Total',
   error: 'Erreur | Erreurs',
