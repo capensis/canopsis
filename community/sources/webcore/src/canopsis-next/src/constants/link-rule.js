@@ -9,7 +9,8 @@ export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms) {
       label: "",
       category: "",
       icon_name: "",
-      url: ""
+      url: "",
+      single: true
     }
   ];
 }`;
