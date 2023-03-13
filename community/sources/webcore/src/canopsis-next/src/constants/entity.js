@@ -489,3 +489,10 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.links,
   ENTITY_FIELDS.pbehaviorInfo,
 ];
+
+export const ENTITY_PAYLOADS_VARIABLES = {
+  entity: '.Entity',
+  entities: '.Entities',
+  name: '.Name',
+  infosValue: '(index .Entity.Infos.%infos_name%).Value',
+};

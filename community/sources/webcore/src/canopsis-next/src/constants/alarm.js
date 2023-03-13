@@ -391,6 +391,8 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
+
+  entityName: '.Entity.Name',
   entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
 };
 

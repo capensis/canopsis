@@ -117,6 +117,7 @@ export const USERS_PERMISSIONS = {
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -291,6 +292,7 @@ export const USERS_PERMISSIONS = {
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,

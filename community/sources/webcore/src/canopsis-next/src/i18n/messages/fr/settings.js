@@ -43,8 +43,7 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
-  linksCategoriesAsList: 'Afficher les liens sous forme de liste ?',
-  linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
+  inlineLinksCount: 'Nombre de liens en ligne',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
@@ -138,6 +137,7 @@ export default {
     isHtml: 'Est-ce du HTML ?',
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
+    onlyIcon: 'Afficher uniquement les icônes de liens',
   },
   liveReporting: {
     title: 'Suivi personnalisé',
