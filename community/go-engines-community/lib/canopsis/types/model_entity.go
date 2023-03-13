@@ -56,7 +56,8 @@ type Entity struct {
 	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
 	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
 
-	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo     PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastPbehaviorDate *CpsTime      `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 	// Coordinates is used only in api, add json tag if it's required in an event.
