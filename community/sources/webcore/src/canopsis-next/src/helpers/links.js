@@ -98,6 +98,6 @@ export const harmonizeAlarmsLinks = (alarms = []) => {
   });
 
   return Object.values(linksByKeys)
-    .filter(link => !isUndefined(lastIndexesByRuleIds[link.rule_id]) && link.with_mass)
+    .filter(link => !isUndefined(lastIndexesByRuleIds[link.rule_id]) && !link.single)
     .sort(getCollectionComparator('label'));
 };
