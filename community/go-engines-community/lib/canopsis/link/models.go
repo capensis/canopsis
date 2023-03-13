@@ -32,6 +32,8 @@ type Parameters struct {
 	Category string `bson:"category" json:"category" binding:"max=255"`
 	IconName string `bson:"icon_name" json:"icon_name" binding:"required,max=255"`
 	Url      string `bson:"url" json:"url" binding:"required,max=1000"`
+	// Single to mark links unavailable to multiple selected alarms
+	Single bool `bson:"single,omitempty" json:"single,omitempty"`
 }
 
 type ExternalDataParameters struct {
@@ -49,6 +51,7 @@ type Link struct {
 	Label    string `json:"label"`
 	IconName string `json:"icon_name"`
 	Url      string `json:"url"`
+	Single   bool   `json:"single,omitempty"`
 }
 
 type LinksByCategory map[string][]Link

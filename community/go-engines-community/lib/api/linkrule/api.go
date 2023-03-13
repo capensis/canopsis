@@ -18,6 +18,7 @@ import (
 
 type API interface {
 	common.CrudAPI
+	GetCategories(*gin.Context)
 	BulkDelete(c *gin.Context)
 }
 
@@ -119,6 +120,28 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, rule)
+}
+
+// Get categories by link type
+// @Success 200 {object} CategoryResponse
+func (a *api) GetCategories(c *gin.Context) {
+	var r CategoriesRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	categories, err := a.store.GetCategories(c, r.Type, r.Limit)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, categories)
 }
 
 // Update
