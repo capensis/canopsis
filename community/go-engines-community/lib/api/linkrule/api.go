@@ -141,11 +141,6 @@ func (a *api) GetCategories(c *gin.Context) {
 		panic(err)
 	}
 
-	if categories == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
 	c.JSON(http.StatusOK, categories)
 }
 
