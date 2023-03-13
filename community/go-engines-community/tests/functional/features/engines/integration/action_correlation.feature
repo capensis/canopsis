@@ -809,13 +809,16 @@ Feature: update meta alarm on action
                 "a": "system",
                 "user_id": "",
                 "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+              },
+              {
+                "_t": "comment"
               }
             ],
             "meta": {
               "page": 1,
               "page_count": 1,
               "per_page": 10,
-              "total_count": 4
+              "total_count": 5
             }
           }
         }

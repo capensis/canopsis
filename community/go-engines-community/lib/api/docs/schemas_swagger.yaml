@@ -971,11 +971,17 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         $ref: '#/definitions/link.LinksByCategory'
@@ -1155,11 +1161,17 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         $ref: '#/definitions/link.LinksByCategory'
@@ -1365,11 +1377,17 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
+        type: integer
+      last_pbehavior_date:
         type: integer
       links:
         $ref: '#/definitions/link.LinksByCategory'
@@ -4027,6 +4045,10 @@ definitions:
       impact_level:
         type: integer
       impact_state:
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         additionalProperties:
