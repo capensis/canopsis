@@ -13,12 +13,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+const defaultCategoriesLimit = 100
+
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	GetCategories(ctx context.Context, categoryType string, limit int64) (*CategoryResponse, error)
 }
 
 type store struct {
@@ -144,6 +147,41 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	deleted, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
 	return deleted > 0, err
+}
+
+// GetCategories returns list of distinct categories
+func (s *store) GetCategories(ctx context.Context, categoryType string, limit int64) (*CategoryResponse, error) {
+	filter := bson.M{}
+	if categoryType != "" {
+		filter["type"] = categoryType
+	}
+	queryLimit := limit
+	if queryLimit == 0 {
+		queryLimit = defaultCategoriesLimit
+	}
+	cursor, err := s.collection.Aggregate(ctx,
+		[]bson.M{
+			{"$match": filter},
+			{"$unwind": "$links"},
+			{"$sort": bson.M{"links.category": 1}},
+			{"$limit": queryLimit},
+			{"$group": bson.M{"_id": nil, "categories": bson.M{"$addToSet": "$links.category"}}},
+			{"$project": bson.M{"_id": 0}},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	resp := CategoryResponse{}
+	if !cursor.Next(ctx) {
+		return &resp, nil
+	}
+	if err := cursor.Decode(&resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 func transformRequestToModel(r EditRequest) link.Rule {
