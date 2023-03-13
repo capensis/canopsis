@@ -176,7 +176,7 @@ func (s *store) GetCategories(ctx context.Context, categoryType string, limit in
 
 	resp := CategoryResponse{}
 	if !cursor.Next(ctx) {
-		return nil, nil
+		return &resp, nil
 	}
 	if err := cursor.Decode(&resp); err != nil {
 		return nil, err

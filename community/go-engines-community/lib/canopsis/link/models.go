@@ -51,6 +51,7 @@ type Link struct {
 	Label    string `json:"label"`
 	IconName string `json:"icon_name"`
 	Url      string `json:"url"`
+	Single   bool   `json:"single,omitempty"`
 }
 
 type LinksByCategory map[string][]Link
