@@ -665,6 +665,7 @@ func (g *generator) getLinksWithCategoryByTpl(
 				Label:    linkTpl.Label,
 				IconName: linkTpl.IconName,
 				Url:      url,
+				Single:   linkTpl.Single,
 			},
 		}
 	}
@@ -688,6 +689,7 @@ func (g *generator) getLinksByTpl(
 			Label:    linkTpl.Label,
 			IconName: linkTpl.IconName,
 			Url:      url,
+			Single:   linkTpl.Single,
 		}
 	}
 
@@ -737,6 +739,9 @@ func (g *generator) getLinksWithCategoryByCode(
 				Url:      url,
 			},
 		}
+		if single, ok := item["single"].(bool); ok {
+			res[i].Link.Single = single
+		}
 	}
 
 	return res, nil
@@ -778,6 +783,9 @@ func (g *generator) getLinksByCode(
 			Label:    label,
 			IconName: iconName,
 			Url:      url,
+		}
+		if single, ok := item["single"].(bool); ok {
+			res[i].Single = single
 		}
 	}
 

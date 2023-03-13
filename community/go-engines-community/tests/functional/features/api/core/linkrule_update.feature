@@ -16,7 +16,8 @@ Feature: Update an link rule
           "label": "test-link-rule-to-update-link-1-label",
           "category": "test-link-rule-to-update-link-1-category",
           "icon_name": "test-link-rule-to-update-link-1-icon",
-          "url": "http://test-link-rule-to-update-link-1-url.com"
+          "url": "http://test-link-rule-to-update-link-1-url.com",
+          "single": true
         },
         {
           "label": "test-link-rule-to-update-link-2-label",
@@ -66,7 +67,8 @@ Feature: Update an link rule
           "label": "test-link-rule-to-update-link-1-label",
           "category": "test-link-rule-to-update-link-1-category",
           "icon_name": "test-link-rule-to-update-link-1-icon",
-          "url": "http://test-link-rule-to-update-link-1-url.com"
+          "url": "http://test-link-rule-to-update-link-1-url.com",
+          "single": true
         },
         {
           "label": "test-link-rule-to-update-link-2-label",

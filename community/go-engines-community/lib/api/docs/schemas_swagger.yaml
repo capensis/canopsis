@@ -2341,6 +2341,10 @@ definitions:
         type: string
       label:
         type: string
+      rule_id:
+        type: string
+      single:
+        type: boolean
       url:
         type: string
     type: object
@@ -2361,6 +2365,9 @@ definitions:
       label:
         maxLength: 255
         type: string
+      single:
+        description: Single to mark links unavailable to multiple selected alarms
+        type: boolean
       url:
         maxLength: 1000
         type: string
@@ -2375,6 +2382,13 @@ definitions:
         type: string
     required:
     - _id
+    type: object
+  linkrule.CategoryResponse:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
     type: object
   linkrule.EditRequest:
     properties:
@@ -4753,6 +4767,8 @@ definitions:
     properties:
       colorIndicator:
         type: string
+      iconOnly:
+        type: boolean
       isHtml:
         type: boolean
       label:

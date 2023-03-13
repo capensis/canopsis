@@ -9670,6 +9670,39 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-categories:
+    get:
+      tags:
+        - linkrules
+      summary: Get categories by link type
+      description: |
+        Get list of distinct categories, empty list if no categories found 
+        
+        -  PERMISSIONS: `api_link_rule:get`
+      operationId: linkrules-categories
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - name: type
+          in: query
+          description: id
+          schema:
+            type: string
+            enum:
+              - alarm
+              - entity
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.CategoryResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     post:
       tags:
         - linkrules
