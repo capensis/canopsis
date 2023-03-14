@@ -35,7 +35,7 @@ En parallèle de l'état de santé des composants, vous avez accès à des graph
 ### API Canopsis
 
 Lorsque l'API de Canopsis est indisponible, vous ne pouvez plus accéder à l'interface graphique.  
-La réponse technique lors de [l'appel à l'API](../../guide-developpement/swagger/#/healthcheck/healthcheck-get) sera de la forme
+La réponse technique lors de [l'appel à l'API](../../../guide-developpement/swagger/?urls.primaryName=Canopsis%20Pro#/healthcheck/healthcheck-get) sera de la forme :
 
     <html>
     <head><title>502 Bad Gateway</title></head>
