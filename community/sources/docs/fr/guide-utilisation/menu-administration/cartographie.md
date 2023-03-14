@@ -48,5 +48,5 @@ Voici un exemple d'arbre de dépendances:
 
 ## Utilisation
 
-Une fois votre widget de cartographie créé, il est possible de l'ajouter a votre vu comme n'importe quel [widget](../../guide-utilisation/interface/index.md)
+Une fois votre widget de cartographie créé, il est possible de l'ajouter a votre vue comme n'importe quel [widget](../../guide-utilisation/interface/index.md)
 
