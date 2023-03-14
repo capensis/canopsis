@@ -1,0 +1,30 @@
+<template lang="pug">
+  widget-settings-item(:title="$t('settings.chart.selectMetrics')")
+    c-alarm-metric-presets-field(
+      v-field="value",
+      :with-color="withColor",
+      :with-aggregate-function="withAggregateFunction"
+    )
+</template>
+
+<script>
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
+export default {
+  components: { WidgetSettingsItem },
+  props: {
+    value: {
+      type: Array,
+      required: true,
+    },
+    withColor: {
+      type: Boolean,
+      default: false,
+    },
+    withAggregateFunction: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
+</script>

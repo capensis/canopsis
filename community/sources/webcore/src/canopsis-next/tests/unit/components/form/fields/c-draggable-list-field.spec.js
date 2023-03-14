@@ -2,7 +2,7 @@ import Faker from 'faker';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
-import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
+import CDraggableListField from '@/components/forms/fields/list/c-draggable-list-field.vue';
 
 const localVue = createVueInstance();
 
