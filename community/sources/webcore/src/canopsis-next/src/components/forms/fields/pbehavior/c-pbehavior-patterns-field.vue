@@ -125,7 +125,7 @@ export default {
     availablePbehaviorTypeTypes() {
       return Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
         value: type,
-        text: this.$t(`pbehaviorTypes.types.${type}`),
+        text: this.$t(`pbehavior.types.types.${type}`),
       }));
     },
 

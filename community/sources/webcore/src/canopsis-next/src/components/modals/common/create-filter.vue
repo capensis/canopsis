@@ -21,7 +21,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/forms/filter';
 
@@ -37,6 +37,7 @@ export default {
   name: MODALS.createFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { PatternsForm, ModalWrapper },
   mixins: [

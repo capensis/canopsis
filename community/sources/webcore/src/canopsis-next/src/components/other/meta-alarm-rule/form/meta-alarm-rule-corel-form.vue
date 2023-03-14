@@ -8,7 +8,7 @@
       name="corelId"
     )
       template(#append="")
-        c-help-icon(icon="help", :text="$t('metaAlarmRule.corelIdHelp')", left)
+        c-help-icon(:text="$t('metaAlarmRule.corelIdHelp')", icon="help", left)
     v-text-field(
       v-field.number="config.corel_status",
       v-validate="'required'",
@@ -17,7 +17,7 @@
       name="corelStatus"
     )
       template(#append="")
-        c-help-icon(icon="help", :text="$t('metaAlarmRule.corelStatusHelp')", left)
+        c-help-icon(:text="$t('metaAlarmRule.corelStatusHelp')", icon="help", left)
     v-text-field(
       v-field.number="config.corel_parent",
       v-validate="'required'",

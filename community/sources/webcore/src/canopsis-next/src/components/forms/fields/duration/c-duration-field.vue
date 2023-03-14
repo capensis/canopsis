@@ -11,14 +11,15 @@
       )
     v-flex(xs4)
       v-select(
-        v-field="duration.unit",
         v-validate="unitValidateRules",
+        :value="duration.unit",
         :items="availableUnits",
         :disabled="disabled",
         :label="unitsLabel",
         :error-messages="errors.collect(unitFieldName)",
         :name="unitFieldName",
-        :clearable="clearable"
+        :clearable="clearable",
+        @change="updateUnit"
       )
 </template>
 
@@ -27,8 +28,11 @@ import { isNumber } from 'lodash';
 
 import { AVAILABLE_TIME_UNITS, SHORT_AVAILABLE_TIME_UNITS } from '@/constants';
 
+import { formMixin } from '@/mixins/form';
+
 export default {
   inject: ['$validator'],
+  mixins: [formMixin],
   model: {
     prop: 'duration',
     event: 'input',
@@ -108,6 +112,19 @@ export default {
 
     unitValidateRules() {
       return { required: this.isRequired };
+    },
+  },
+  methods: {
+    updateUnit(unit) {
+      if (unit) {
+        this.updateField('unit', unit);
+      } else {
+        this.updateModel({
+          ...this.duration,
+          unit: undefined,
+          value: undefined,
+        });
+      }
     },
   },
 };

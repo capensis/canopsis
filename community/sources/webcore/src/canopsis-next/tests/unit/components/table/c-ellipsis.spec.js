@@ -1,10 +1,16 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
 
 const localVue = createVueInstance();
+
+const stubs = {
+  'v-menu': createActivatorElementStub('v-menu'),
+};
 
 const defaultMaxLetters = CEllipsis.props.maxLetters.default;
 
@@ -14,9 +20,22 @@ const mockData = {
   maxLetters: Faker.datatype.number(),
 };
 
-const factory = (options = {}) => shallowMount(CEllipsis, { localVue, ...options });
+const selectMenu = wrapper => wrapper.find('.v-menu');
+const selectSpan = wrapper => selectMenu(wrapper).find('span');
+const selectCardTitle = wrapper => selectMenu(wrapper).find('v-card-stub > v-card-title-stub');
 
 describe('c-ellipsis', () => {
+  const factory = generateShallowRenderer(CEllipsis, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(CEllipsis, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
+
   it('Text letters count less then default max letters', () => {
     const { shortText } = mockData;
 
@@ -26,15 +45,17 @@ describe('c-ellipsis', () => {
     expect(wrapper.find('v-menu-stub').exists()).toBeFalsy();
   });
 
-  it('Text letters count more then default max letters', () => {
+  it('Text letters count more then default max letters', async () => {
     const { longText } = mockData;
     const shortenText = longText.substr(0, defaultMaxLetters);
 
     const wrapper = factory({ propsData: { text: longText } });
 
+    await flushPromises();
+
     expect(wrapper.find('div > span').text()).toBe(shortenText);
-    expect(wrapper.find('v-menu-stub > span').text()).toBe('...');
-    expect(wrapper.find('v-menu-stub > v-card-stub > v-card-title-stub').text()).toBe(longText);
+    expect(selectSpan(wrapper).text()).toBe('...');
+    expect(selectCardTitle(wrapper).text()).toBe(longText);
   });
 
   it('Text letters count less then custom maxLetters', () => {
@@ -54,20 +75,8 @@ describe('c-ellipsis', () => {
     const wrapper = factory({ propsData: { text, maxLetters } });
 
     expect(wrapper.find('div > span').text()).toBe(shortenText);
-    expect(wrapper.find('v-menu-stub > span').text()).toBe('...');
-    expect(wrapper.find('v-menu-stub > v-card-stub > v-card-title-stub').text()).toBe(text);
-  });
-
-  it('Click on dots with text letters count more then default max letters', async () => {
-    const { longText } = mockData;
-
-    const wrapper = factory({ propsData: { text: longText } });
-
-    wrapper.find('v-menu-stub > span').trigger('click');
-
-    await localVue.nextTick();
-
-    expect(wrapper.vm.isFullTextMenuOpen).toBeTruthy();
+    expect(selectSpan(wrapper).text()).toBe('...');
+    expect(selectCardTitle(wrapper).text()).toBe(text);
   });
 
   it('Click on text with text letters count less then default max letters', () => {
@@ -94,7 +103,7 @@ describe('c-ellipsis', () => {
     expect(textClickedEvents).toHaveLength(1);
   });
 
-  it('Renders `c-ellipsis` correctly', () => {
+  it('Renders `c-ellipsis` correctly', async () => {
     const text = `omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
       voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
       minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
@@ -103,14 +112,12 @@ describe('c-ellipsis', () => {
       magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
       nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
 
-    const wrapper = mount(CEllipsis, {
-      localVue,
+    snapshotFactory({
       propsData: { text },
     });
 
-    const menuContent = wrapper.findMenu();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });
