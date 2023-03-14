@@ -1260,3 +1260,74 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response key "data.1.data.0.value" should be greater or equal than 1
+
+  Scenario: given acked alarm should add min_ack and max_ack metrics
+    Given I am admin
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-metrics-axe-second-7-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-axe-second-7"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-second-7",
+      "connector_name" : "test-connector-name-metrics-axe-second-7",
+      "source_type" : "resource",
+      "event_type" : "check",
+      "component" : "test-component-metrics-axe-second-7",
+      "resource" : "test-resource-metrics-axe-second-7",
+      "state" : 1
+    }
+    """
+    When I wait 2s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-second-7",
+      "connector_name" : "test-connector-name-metrics-axe-second-7",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" : "test-component-metrics-axe-second-7",
+      "resource" : "test-resource-metrics-axe-second-7"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-second-7",
+      "connector_name" : "test-connector-name-metrics-axe-second-7",
+      "source_type" : "resource",
+      "event_type" : "ackremove",
+      "component" : "test-component-metrics-axe-second-7",
+      "resource" : "test-resource-metrics-axe-second-7"
+    }
+    """
+    When I wait 4s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector" : "test-connector-metrics-axe-second-7",
+      "connector_name" : "test-connector-name-metrics-axe-second-7",
+      "source_type" : "resource",
+      "event_type" : "ack",
+      "component" : "test-component-metrics-axe-second-7",
+      "resource" : "test-resource-metrics-axe-second-7"
+    }
+    """
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=min_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=max_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 4

@@ -77,6 +77,7 @@ func NewStore(
 			mongo.FlappingRuleMongoCollection,
 			mongo.KpiFilterMongoCollection,
 			mongo.DeclareTicketRuleMongoCollection,
+			mongo.LinkRuleMongoCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,

@@ -51,6 +51,8 @@ configuration:
     metrics:
       flushinterval: 1s
       sliinterval: 1h
+      enabledmanualinstructions: true
+      enablednotackedmetrics: true
     tech_metrics:
       enabled: false
       dumpkeepinterval: 1h

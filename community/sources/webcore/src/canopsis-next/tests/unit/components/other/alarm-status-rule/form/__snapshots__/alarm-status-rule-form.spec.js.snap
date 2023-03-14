@@ -5,6 +5,7 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
   class="layout column"
 >
   <c-name-field-stub
+    required="required"
     value="name"
   />
   <c-duration-field-stub
@@ -36,7 +37,9 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
 <div
   class="layout column"
 >
-  <c-name-field-stub />
+  <c-name-field-stub
+    required="required"
+  />
   <c-duration-field-stub
     required="required"
   />

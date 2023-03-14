@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.my-2.black--text(:class="{ 'error--text': isFailedStatus }", row, align-center)
+  v-layout.my-2(:class="{ 'error--text': isFailedStatus }", row, align-center)
     v-icon.mr-1(:color="iconColor") alarm
     span {{ label }}
 </template>
@@ -33,23 +33,23 @@ export default {
     },
 
     iconColor() {
-      return this.isFailedStatus ? 'error' : 'black';
+      return this.isFailedStatus ? 'error' : '';
     },
 
     completedLabel() {
-      return this.$t('remediationInstructionExecute.completedAt', {
+      return this.$t('remediation.instructionExecute.completedAt', {
         time: this.convertDate(this.completedAt),
       });
     },
 
     startedLabel() {
-      return this.$t('remediationInstructionExecute.startedAt', {
+      return this.$t('remediation.instructionExecute.startedAt', {
         time: this.convertDate(this.startedAt),
       });
     },
 
     failedLabel() {
-      return this.$t('remediationInstructionExecute.failedAt', {
+      return this.$t('remediation.instructionExecute.failedAt', {
         time: this.convertDate(this.failedAt),
       });
     },
@@ -57,7 +57,7 @@ export default {
     timeToCompleteLabel() {
       const { value, unit } = this.timeToComplete;
 
-      return this.$t('remediationInstructionExecute.timeToComplete', {
+      return this.$t('remediation.instructionExecute.timeToComplete', {
         duration: convertDurationToString(toSeconds(value, unit)),
       });
     },

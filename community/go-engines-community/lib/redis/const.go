@@ -40,6 +40,8 @@ const (
 
 	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
 
+	MetricsNotAckedPeriodicalLockKey = "metrics-not-acked-periodical-lock-key"
+
 	ApiCleanEntitiesLockKey      = "api-clean-entities-lock-key"
 	ApiUserActivityMetricLockKey = "api-user-activity-metric"
 )

@@ -167,8 +167,7 @@ definitions:
       is_meta_alarm:
         type: boolean
       links:
-        additionalProperties: true
-        type: object
+        $ref: '#/definitions/link.LinksByCategory'
       meta_alarm_rule:
         $ref: '#/definitions/alarm.MetaAlarmRule'
         description: Meta alarm fields
@@ -853,9 +852,9 @@ definitions:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
-          delete_stats_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
           delete_mod_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_stats_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
       webhook:
@@ -972,16 +971,21 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
         type: integer
+      last_pbehavior_date:
+        type: integer
       links:
-        additionalProperties: true
+        $ref: '#/definitions/link.LinksByCategory'
         description: Links
-        type: object
       name:
         type: string
       ok_events:
@@ -1157,16 +1161,21 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
         type: integer
+      last_pbehavior_date:
+        type: integer
       links:
-        additionalProperties: true
+        $ref: '#/definitions/link.LinksByCategory'
         description: Links
-        type: object
       name:
         type: string
       ok_events:
@@ -1368,16 +1377,21 @@ definitions:
       impacts_count:
         description: ImpactsCount contains only services
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
       ko_events:
         type: integer
       last_event_date:
         type: integer
+      last_pbehavior_date:
+        type: integer
       links:
-        additionalProperties: true
+        $ref: '#/definitions/link.LinksByCategory'
         description: Links
-        type: object
       name:
         type: string
       ok_events:
@@ -1804,6 +1818,7 @@ definitions:
             * `kpi_filter` - export kpi_filter collection
             * `pattern` - export pattern collection
             * `declare_ticket_rule` - export declare_ticket_rule collection
+            * `link_rule` - export link_rule collection
         items:
           type: string
         type: array
@@ -2311,6 +2326,175 @@ definitions:
     properties:
       deleted:
         type: integer
+      updated:
+        type: integer
+    type: object
+  link.ExternalDataParameters:
+    properties:
+      collection:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      type:
+        enum:
+        - mongo
+        type: string
+    required:
+    - collection
+    - type
+    type: object
+  link.Link:
+    properties:
+      icon_name:
+        type: string
+      label:
+        type: string
+      rule_id:
+        type: string
+      single:
+        type: boolean
+      url:
+        type: string
+    type: object
+  link.LinksByCategory:
+    additionalProperties:
+      items:
+        $ref: '#/definitions/link.Link'
+      type: array
+    type: object
+  link.Parameters:
+    properties:
+      category:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      label:
+        maxLength: 255
+        type: string
+      single:
+        description: Single to mark links unavailable to multiple selected alarms
+        type: boolean
+      url:
+        maxLength: 1000
+        type: string
+    required:
+    - icon_name
+    - label
+    - url
+    type: object
+  linkrule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  linkrule.CategoryResponse:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
+    type: object
+  linkrule.EditRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/link.ExternalDataParameters'
+        type: object
+      links:
+        items:
+          $ref: '#/definitions/link.Parameters'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      source_code:
+        type: string
+      type:
+        enum:
+        - alarm
+        - entity
+        type: string
+    required:
+    - enabled
+    - name
+    - type
+    type: object
+  linkrule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/author.Author'
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/link.ExternalDataParameters'
+        type: object
+      links:
+        items:
+          $ref: '#/definitions/link.Parameters'
+        type: array
+      name:
+        type: string
+      source_code:
+        type: string
+      type:
+        type: string
       updated:
         type: integer
     type: object
@@ -3862,6 +4046,10 @@ definitions:
         type: integer
       impact_state:
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         additionalProperties:
           $ref: '#/definitions/serviceweather.Info'
@@ -3872,10 +4060,8 @@ definitions:
         type: boolean
       last_update_date:
         type: integer
-      linklist:
-        items:
-          $ref: '#/definitions/serviceweather.WeatherLink'
-        type: array
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
       name:
         type: string
       pbehavior_info:
@@ -3968,10 +4154,6 @@ definitions:
         type: boolean
       last_update_date:
         type: integer
-      linklist:
-        items:
-          $ref: '#/definitions/serviceweather.WeatherLink'
-        type: array
       name:
         type: string
       output:
@@ -3992,12 +4174,6 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       status:
         $ref: '#/definitions/common.AlarmStep'
-    type: object
-  serviceweather.WeatherLink:
-    properties:
-      cat_name:
-        type: string
-      links: {}
     type: object
   sharetoken.EditRequest:
     properties:
@@ -4613,6 +4789,8 @@ definitions:
     properties:
       colorIndicator:
         type: string
+      iconOnly:
+        type: boolean
       isHtml:
         type: boolean
       label:
