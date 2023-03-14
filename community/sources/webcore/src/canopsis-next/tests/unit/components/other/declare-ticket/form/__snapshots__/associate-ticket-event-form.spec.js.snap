@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` with form 1`] = `
+<c-information-block-stub
+  title="Ticket URL and ID"
+>
+  <c-name-field-stub
+    label="System name"
+    name="system_name"
+    value="System name"
+  />
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex mr-3 xs6"
+    >
+      <declare-ticket-rule-ticket-id-field-stub
+        name="ticket_id"
+        required="true"
+        value="Ticket ID"
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <declare-ticket-rule-ticket-url-field-stub
+        name="ticket_url"
+        value="Ticket URL"
+      />
+    </div>
+  </div>
+  <declare-ticket-rule-ticket-custom-fields-field-stub
+    name="declare_ticket"
+    value="[object Object]"
+  />
+</c-information-block-stub>
+`;

@@ -87,7 +87,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := s.Find(ctx, "", request)
+		_, err := s.Find(ctx, request)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}

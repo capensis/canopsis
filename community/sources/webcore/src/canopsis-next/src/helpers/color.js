@@ -51,10 +51,10 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
     const state = isNumber(entity.state) ? entity.state : entity.state?.val;
 
-    return get(ENTITIES_STATES_STYLES, [state, 'color']);
+    return getEntityStateColor(state);
   }
 
-  return COLORS.impactState[entity.impact_state];
+  return getImpactStateColor(entity.impact_state);
 };
 
 /**

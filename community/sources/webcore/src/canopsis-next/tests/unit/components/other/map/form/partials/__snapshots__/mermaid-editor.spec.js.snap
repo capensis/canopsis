@@ -27,6 +27,8 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
         />
         <mermaid-theme-field-stub
           class="mermaid-editor__theme-picker"
+          label=""
+          name="type"
           value="base"
         />
       </div>
@@ -41,7 +43,8 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
         />
         <mermaid-points-editor-stub
           class="mermaid-editor__points"
-          value=""
+          markersize="24"
+          points=""
         />
       </div>
     </div>
@@ -77,6 +80,8 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
         />
         <mermaid-theme-field-stub
           class="mermaid-editor__theme-picker"
+          label=""
+          name="type"
           value="base"
         />
       </div>
@@ -91,7 +96,8 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
         />
         <mermaid-points-editor-stub
           class="mermaid-editor__points"
-          value=""
+          markersize="24"
+          points=""
         />
       </div>
     </div>
@@ -127,6 +133,8 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
         />
         <mermaid-theme-field-stub
           class="mermaid-editor__theme-picker"
+          label=""
+          name="type"
           value="base"
         />
       </div>
@@ -141,7 +149,8 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
         />
         <mermaid-points-editor-stub
           class="mermaid-editor__points"
-          value=""
+          markersize="24"
+          points=""
         />
       </div>
     </div>

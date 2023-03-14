@@ -39,145 +39,137 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
         class="container"
       >
         <div
-          class="layout row"
+          class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
         >
           <div
-            class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input__control"
           >
             <div
-              class="v-input__control"
+              class="v-input__slot"
             >
               <div
-                class="v-input__slot"
+                class="v-select__slot"
               >
-                <div
-                  class="v-select__slot"
+                <label
+                  aria-hidden="true"
+                  class="v-label v-label--active theme--light"
+                  style="left: 0px; position: absolute;"
                 >
-                  <label
-                    aria-hidden="true"
-                    class="v-label v-label--active theme--light"
-                    style="left: 0px; position: absolute;"
-                  >
-                    Separator
-                  </label>
-                  <div
-                    class="v-select__selections"
-                  >
-                    <div
-                      class="v-select__selection v-select__selection--comma"
-                    >
-                      comma
-                    </div>
-                    <input
-                      aria-label="Separator"
-                      aria-readonly="false"
-                      autocomplete="on"
-                      readonly="readonly"
-                      type="text"
-                    />
-                  </div>
-                  <div
-                    class="v-input__append-inner"
-                  >
-                    <div
-                      class="v-input__icon v-input__icon--append"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        arrow_drop_down
-                      </i>
-                    </div>
-                  </div>
-                </div>
+                  Separator
+                </label>
                 <div
-                  class="v-menu"
-                />
-              </div>
-              <div
-                class="v-text-field__details"
-              >
-                <div
-                  class="v-messages theme--light"
+                  class="v-select__selections"
                 >
                   <div
-                    class="v-messages__wrapper"
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    comma
+                  </div>
+                  <input
+                    aria-label="Separator"
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
                   />
                 </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
               </div>
             </div>
           </div>
         </div>
         <div
-          class="layout row"
+          class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+          role="combobox"
         >
           <div
-            class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input__control"
           >
             <div
-              class="v-input__control"
+              class="v-input__slot"
             >
               <div
-                class="v-input__slot"
+                class="v-select__slot"
               >
-                <div
-                  class="v-select__slot"
+                <label
+                  aria-hidden="true"
+                  class="v-label v-label--active theme--light"
+                  style="left: 0px; position: absolute;"
                 >
-                  <label
-                    aria-hidden="true"
-                    class="v-label v-label--active theme--light"
-                    style="left: 0px; position: absolute;"
-                  >
-                    Datetime format
-                  </label>
-                  <div
-                    class="v-select__selections"
-                  >
-                    <div
-                      class="v-select__selection v-select__selection--comma"
-                    >
-                      2021-01-02T15:04:05+0200
-                    </div>
-                    <input
-                      aria-label="Datetime format"
-                      aria-readonly="false"
-                      autocomplete="on"
-                      readonly="readonly"
-                      type="text"
-                    />
-                  </div>
-                  <div
-                    class="v-input__append-inner"
-                  >
-                    <div
-                      class="v-input__icon v-input__icon--append"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        arrow_drop_down
-                      </i>
-                    </div>
-                  </div>
-                </div>
+                  Datetime format
+                </label>
                 <div
-                  class="v-menu"
-                />
-              </div>
-              <div
-                class="v-text-field__details"
-              >
-                <div
-                  class="v-messages theme--light"
+                  class="v-select__selections"
                 >
                   <div
-                    class="v-messages__wrapper"
+                    class="v-select__selection v-select__selection--comma"
+                  >
+                    2021-01-02T15:04:05+0200
+                  </div>
+                  <input
+                    aria-label="Datetime format"
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
                   />
                 </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
               </div>
             </div>
           </div>
@@ -186,7 +178,7 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
           class="layout column"
         >
           <h4
-            class="subheading"
+            class="subheading my-4"
           >
             Export column names
           </h4>
@@ -431,68 +423,64 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
         class="container"
       >
         <div
-          class="layout row"
+          class="v-input v-text-field v-select theme--light"
+          role="combobox"
         >
           <div
-            class="v-input v-text-field v-select theme--light"
-            role="combobox"
+            class="v-input__control"
           >
             <div
-              class="v-input__control"
+              class="v-input__slot"
             >
               <div
-                class="v-input__slot"
+                class="v-select__slot"
               >
-                <div
-                  class="v-select__slot"
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: absolute;"
                 >
-                  <label
-                    aria-hidden="true"
-                    class="v-label theme--light"
-                    style="left: 0px; position: absolute;"
-                  >
-                    Separator
-                  </label>
-                  <div
-                    class="v-select__selections"
-                  >
-                    <input
-                      aria-label="Separator"
-                      aria-readonly="false"
-                      autocomplete="on"
-                      readonly="readonly"
-                      type="text"
-                    />
-                  </div>
-                  <div
-                    class="v-input__append-inner"
-                  >
-                    <div
-                      class="v-input__icon v-input__icon--append"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        arrow_drop_down
-                      </i>
-                    </div>
-                  </div>
-                </div>
+                  Separator
+                </label>
                 <div
-                  class="v-menu"
-                />
-              </div>
-              <div
-                class="v-text-field__details"
-              >
-                <div
-                  class="v-messages theme--light"
+                  class="v-select__selections"
                 >
-                  <div
-                    class="v-messages__wrapper"
+                  <input
+                    aria-label="Separator"
+                    aria-readonly="false"
+                    autocomplete="on"
+                    readonly="readonly"
+                    type="text"
                   />
                 </div>
+                <div
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="v-menu"
+              />
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
               </div>
             </div>
           </div>
@@ -502,7 +490,7 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
           class="layout column"
         >
           <h4
-            class="subheading"
+            class="subheading my-4"
           >
             Export column names
           </h4>

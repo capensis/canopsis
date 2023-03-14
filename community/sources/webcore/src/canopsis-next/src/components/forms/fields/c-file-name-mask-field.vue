@@ -3,7 +3,7 @@
     v-flex(v-show="title", xs12)
       v-layout
         h4.subheading.grey--text.text--darken-2 {{ title }}
-        c-help-icon.ml-2.storage-help-tooltip(v-if="helpText", :text="helpText", max-width="250", top)
+        c-help-icon(v-if="helpText", :text="helpText", icon-class="ml-2 storage-help-tooltip", max-width="250", top)
     v-flex(xs12)
       v-layout(column)
         v-text-field(
