@@ -36,7 +36,7 @@ import {
   textWidgetParametersToForm,
 } from './text';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
-import { barChartWidgetParametersToForm } from './bar-chart';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 
 /**
  * @typedef {
@@ -257,6 +257,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
+    [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };
