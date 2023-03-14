@@ -4,13 +4,17 @@
       template(#title="")
         span {{ $t('modals.createCommentEvent.title') }}
       template(#text="")
-        v-text-field(
-          v-model="form.output",
-          v-validate="'required'",
-          :label="$tc('common.comment')",
-          :error-messages="errors.collect('comment')",
-          name="comment"
-        )
+        v-layout(column)
+          template(v-if="items.length")
+            alarm-general-table(:items="items")
+            v-divider.my-3
+          v-text-field(
+            v-model="form.output",
+            v-validate="'required'",
+            :label="$tc('common.comment')",
+            :error-messages="errors.collect('comment')",
+            name="comment"
+          )
       template(#actions="")
         v-btn(
           depressed,
@@ -55,6 +59,11 @@ export default {
         output: '',
       },
     };
+  },
+  computed: {
+    items() {
+      return this.config.items ?? [];
+    },
   },
   methods: {
     async submit() {
