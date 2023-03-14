@@ -58,6 +58,9 @@ func (e *pbhEnterExecutor) Exec(
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 
 	e.metricsSender.SendPbhEnter(alarm, *entity)
+	if !alarm.Value.PbehaviorInfo.IsActive() {
+		e.metricsSender.SendRemoveNotAckedMetric(*alarm, time.Time)
+	}
 
 	return types.AlarmChangeTypePbhEnter, nil
 }

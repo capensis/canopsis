@@ -114,6 +114,11 @@ type Alarm struct {
 	// is used only for manual instructions KPI metrics
 	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
 	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+
+	// is used only for not acked metrics
+	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -149,7 +154,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	}
 
 	for _, ticketStep := range a.Value.Tickets {
-		if ticketStep.Type == AlarmStepDeclareTicket {
+		if ticketStep.Type == AlarmStepDeclareTicket || ticketStep.Type == AlarmStepAssocTicket {
 			steps = append(steps, ticketStep)
 		}
 	}
