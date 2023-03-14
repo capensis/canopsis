@@ -55,14 +55,19 @@ const (
 	AlarmStepCancel          = "cancel"
 	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
-	AlarmStepDeclareTicket   = "declareticket"
-	AlarmStepAssocTicket     = "assocticket"
 	AlarmStepSnooze          = "snooze"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+
+	AlarmStepAssocTicket       = "assocticket"
+	AlarmStepDeclareTicket     = "declareticket"
+	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepWebhookStart      = "webhookstart"
+	AlarmStepWebhookComplete   = "webhookcomplete"
+	AlarmStepWebhookFail       = "webhookfail"
 
 	// Following alarm steps are used for manual instruction execution.
 	AlarmStepInstructionStart    = "instructionstart"
@@ -136,14 +141,17 @@ func (a *Alarm) CropSteps() bool {
 
 // GetAppliedActions fetches applied to alarm actions: ACK, Snooze, AssocTicket, DeclareTicket
 // Result is in a sorted by timestamp AlarmSteps, ticket data when defined
-func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
+func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	steps = make([]AlarmStep, 0, 3)
 
 	if a.Value.ACK != nil {
 		steps = append(steps, *a.Value.ACK)
 	}
-	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
+
+	for _, ticketStep := range a.Value.Tickets {
+		if ticketStep.Type == AlarmStepDeclareTicket {
+			steps = append(steps, ticketStep)
+		}
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
@@ -152,7 +160,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
 		steps = append(steps, *a.Value.LastComment)
 	}
 	sort.Sort(ByTimestamp{steps})
-	return steps, ticket
+	return steps
 }
 
 // CurrentState returns the Current State of the Alarm

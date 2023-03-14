@@ -90,7 +90,7 @@ func (p EventPattern) Matches(event types.Event, matches *EventRegexMatches) boo
 		p.RK.Matches(event.RK, &matches.RK) &&
 		p.AckResources.Matches(event.AckResources) &&
 		p.Duration.Matches(event.Duration) &&
-		p.Ticket.Matches(event.Ticket, &matches.Ticket) &&
+		p.Ticket.Matches(event.TicketInfo.Ticket, &matches.Ticket) &&
 		p.StatName.Matches(event.StatName, &matches.StatName) &&
 		p.Debug.Matches(event.Debug) &&
 		p.Entity.Matches(event.Entity, &matches.Entity)
