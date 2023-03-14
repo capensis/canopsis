@@ -2,15 +2,18 @@
   v-select(
     v-field="value",
     :items="availableParameters",
+    :label="label",
     :name="name",
-    hide-details,
-    multiple
+    :multiple="isMultiple",
+    hide-details
   )
-    template(#selection="{ item, index }")
+    template(v-if="isMultiple", #selection="{ item, index }")
       span(v-if="!index") {{ getSelectionLabel(item) }}
 </template>
 
 <script>
+import { isArray } from 'lodash';
+
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
@@ -20,12 +23,16 @@ export default {
   },
   props: {
     value: {
-      type: Array,
+      type: [String, Array],
       required: true,
     },
     name: {
       type: String,
       default: 'parameters',
+    },
+    label: {
+      type: String,
+      required: false,
     },
     min: {
       type: Number,
@@ -33,6 +40,10 @@ export default {
     },
   },
   computed: {
+    isMultiple() {
+      return isArray(this.value);
+    },
+
     isMinValueLength() {
       return this.value.length === this.min;
     },
