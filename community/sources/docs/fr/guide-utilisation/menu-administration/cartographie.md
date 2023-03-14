@@ -8,7 +8,7 @@ Rendez-vous dans le menu `Administration -> Cartographie`.
 
 ## Liste
 
-La vue principale affiche une liste de tous les widgets qui ont été créés avec cet outils.  
+La vue principale affiche une liste de toutes les cartes qui ont été créés avec cet outil.  
 
 ![Liste cartographie](img/cartographie_liste.png)
 
