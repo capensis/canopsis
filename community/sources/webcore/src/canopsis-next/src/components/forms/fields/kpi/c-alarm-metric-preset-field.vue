@@ -1,8 +1,10 @@
 <template lang="pug">
   v-layout.c-alarm-metric-preset-field(column)
-    c-alarm-metric-parameters-field.mb-4(
+    c-alarm-metric-parameters-field(
       v-field="preset.metric",
       :label="$t('kpi.selectMetric')",
+      :parameters="parameters",
+      :disabled-parameters="disabledParameters",
       required
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
@@ -53,6 +55,14 @@ export default {
     withAggregateFunction: {
       type: Boolean,
       default: false,
+    },
+    parameters: {
+      type: Array,
+      required: false,
+    },
+    disabledParameters: {
+      type: Array,
+      required: false,
     },
   },
   methods: {

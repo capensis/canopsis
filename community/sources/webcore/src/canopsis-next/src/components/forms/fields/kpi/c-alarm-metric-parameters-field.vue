@@ -48,6 +48,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    parameters: {
+      type: Array,
+      default: () => Object.values(ALARM_METRIC_PARAMETERS),
+    },
+    disabledParameters: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     isMultiple() {
@@ -59,9 +67,10 @@ export default {
     },
 
     availableParameters() {
-      return Object.values(ALARM_METRIC_PARAMETERS).map(value => ({
+      return this.parameters.map(value => ({
         value,
-        disabled: this.isMinValueLength && this.value.includes(value),
+        disabled: (this.disabledParameters.includes(value) && !this.isActiveValue(value))
+          || (this.isMinValueLength && this.isActiveValue(value)),
         text: this.$t(`alarm.metrics.${value}`),
       }));
     },
@@ -73,6 +82,10 @@ export default {
     },
   },
   methods: {
+    isActiveValue(value) {
+      return this.isMultiple ? this.value.includes(value) : this.value === value;
+    },
+
     getSelectionLabel(item) {
       if (this.isMinValueLength) {
         return item.text;

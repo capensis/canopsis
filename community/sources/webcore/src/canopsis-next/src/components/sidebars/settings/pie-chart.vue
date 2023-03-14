@@ -7,7 +7,7 @@
     field-preset(v-model="form.parameters", :type="form.type")
     v-divider
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
-      field-alarm-metric-presets(v-model="form.parameters.metrics", with-color)
+      field-alarm-metric-presets(v-model="form.parameters.metrics", :parameters="availableParameters", with-color)
       v-divider
       field-pie-show-mode(v-model="form.parameters.show_mode")
     v-divider
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { SIDE_BARS } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
@@ -67,5 +67,30 @@ export default {
     FieldFilters,
   },
   mixins: [widgetSettingsMixin],
+  computed: {
+    availableParameters() {
+      return [
+        ALARM_METRIC_PARAMETERS.createdAlarms,
+        ALARM_METRIC_PARAMETERS.activeAlarms,
+        ALARM_METRIC_PARAMETERS.nonDisplayedAlarms,
+        ALARM_METRIC_PARAMETERS.nonDisplayedAlarms,
+        ALARM_METRIC_PARAMETERS.instructionAlarms,
+        ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms,
+        ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms,
+        ALARM_METRIC_PARAMETERS.pbehaviorAlarms,
+        ALARM_METRIC_PARAMETERS.correlationAlarms,
+        ALARM_METRIC_PARAMETERS.ackAlarms,
+        ALARM_METRIC_PARAMETERS.cancelAckAlarms,
+        ALARM_METRIC_PARAMETERS.ackActiveAlarms,
+        ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
+        ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms,
+        ALARM_METRIC_PARAMETERS.notAckedAlarms,
+        ALARM_METRIC_PARAMETERS.notAckedAlarms,
+        ALARM_METRIC_PARAMETERS.notAckedInHourAlarms,
+        ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms,
+        ALARM_METRIC_PARAMETERS.notAckedInDayAlarms,
+      ];
+    },
+  },
 };
 </script>

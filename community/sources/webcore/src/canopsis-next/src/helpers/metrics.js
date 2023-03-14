@@ -30,6 +30,7 @@ import { isOmitEqual } from '@/helpers/equal';
 export const isTimeMetric = metric => [
   USER_METRIC_PARAMETERS.totalUserActivity,
   ALARM_METRIC_PARAMETERS.averageAck,
+  ALARM_METRIC_PARAMETERS.averageResolve,
 ].includes(metric);
 
 /**
