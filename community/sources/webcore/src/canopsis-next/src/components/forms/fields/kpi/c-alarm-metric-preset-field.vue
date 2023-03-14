@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.c-alarm-metric-preset-field(column)
-    c-alarm-metric-parameters-field(
+    c-alarm-metric-parameters-field.mb-4(
       v-field="preset.metric",
       :label="$t('kpi.selectMetric')"
     )
@@ -16,22 +16,15 @@
         v-show="preset.color",
         v-field="preset.color"
       )
-    v-radio-group.mt-0(
+    c-alarm-metric-aggregate-function-field(
       v-if="withAggregateFunction",
       v-field="preset.aggregate_func",
       :label="$t('kpi.calculationMethod')"
     )
-      v-radio(
-        v-for="aggregateFunction in availableAggregateFunctions",
-        :key="aggregateFunction.value",
-        :label="aggregateFunction.label",
-        :value="aggregateFunction.value",
-        color="primary"
-      )
 </template>
 
 <script>
-import { AGGREGATE_FUNCTIONS } from '@/constants';
+import { COLORS } from '@/config';
 
 import { formMixin } from '@/mixins/form';
 
@@ -62,17 +55,9 @@ export default {
       default: false,
     },
   },
-  computed: {
-    availableAggregateFunctions() {
-      return Object.values(AGGREGATE_FUNCTIONS).map(value => ({
-        value,
-        label: this.$t(`kpi.aggregateFunctions.${value}`),
-      }));
-    },
-  },
   methods: {
     enableColor(value) {
-      this.updateField('color', value ? '#fff' : '');
+      this.updateField('color', value ? COLORS.metrics.createdAlarms : '');
     },
   },
 };
