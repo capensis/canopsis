@@ -1340,7 +1340,7 @@ Feature: new-import entities
       }
     ]
     """
-    When I send an event and wait the end of event processing:
+    When I send an event:
     """json
     {
       "connector": "test-connector-new-import-partial-9",
@@ -1356,6 +1356,14 @@ Feature: new-import entities
     When I wait the end of events processing which contain:
     """json
     [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-new-import-partial-9",
+        "connector_name": "test-connector-name-new-import-partial-9",
+        "component": "test-component-new-import-partial-9",
+        "resource": "test-resource-new-import-partial-9-1",
+        "source_type": "resource"
+      },
       {
         "event_type": "activate",
         "component": "test-entityservice-new-import-partial-9-1"

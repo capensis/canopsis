@@ -3,6 +3,9 @@ package idlerule
 import (
 	"context"
 	"errors"
+	"strconv"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -12,8 +15,6 @@ import (
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"strconv"
-	"strings"
 )
 
 type Validator struct {

@@ -13,6 +13,7 @@ const (
 	contextKeyScenarioName contextKey = iota
 	contextKeyScenarioUri
 	contextKeyApiAuthToken
+	contextKeyRequestBody
 	contextKeyResponseStatusCode
 	contextKeyResponseBody
 	contextKeyResponseBodyOutput
@@ -23,21 +24,21 @@ const (
 	contextWebsocketConn
 )
 
-func getScenarioName(ctx context.Context) (string, bool) {
+func GetScenarioName(ctx context.Context) (string, bool) {
 	v, ok := ctx.Value(contextKeyScenarioName).(string)
 	return v, ok
 }
 
-func setScenarioName(ctx context.Context, v string) context.Context {
+func SetScenarioName(ctx context.Context, v string) context.Context {
 	return context.WithValue(ctx, contextKeyScenarioName, v)
 }
 
-func getScenarioUri(ctx context.Context) (string, bool) {
+func GetScenarioUri(ctx context.Context) (string, bool) {
 	v, ok := ctx.Value(contextKeyScenarioUri).(string)
 	return v, ok
 }
 
-func setScenarioUri(ctx context.Context, v string) context.Context {
+func SetScenarioUri(ctx context.Context, v string) context.Context {
 	return context.WithValue(ctx, contextKeyScenarioUri, v)
 }
 
@@ -48,6 +49,15 @@ func getApiAuthToken(ctx context.Context) (string, bool) {
 
 func setApiAuthToken(ctx context.Context, v string) context.Context {
 	return context.WithValue(ctx, contextKeyApiAuthToken, v)
+}
+
+func getRequestBody(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(contextKeyRequestBody).(string)
+	return v, ok
+}
+
+func setRequestBody(ctx context.Context, v string) context.Context {
+	return context.WithValue(ctx, contextKeyRequestBody, v)
 }
 
 func getResponseStatusCode(ctx context.Context) (int, bool) {
