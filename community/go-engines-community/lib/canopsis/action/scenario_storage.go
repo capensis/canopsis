@@ -82,18 +82,19 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 func (s *scenarioStorage) GetTriggeredScenarios(
 	triggers []string,
 	alarm types.Alarm,
-) ([]Scenario, error) {
+) (map[string][]Scenario, error) {
 	s.scenariosMx.RLock()
 	defer s.scenariosMx.RUnlock()
 
-	triggeredScenarios := make([]Scenario, 0)
+	triggeredScenarios := make(map[string][]Scenario, 0)
 
 	for _, scenario := range s.scenarios {
 		if alarm.Value.PbehaviorInfo.OneOf(scenario.DisableDuringPeriods) {
 			continue
 		}
 
-		if !scenario.IsTriggered(triggers) {
+		trigger := scenario.IsTriggered(triggers)
+		if trigger == "" {
 			continue
 		}
 
@@ -101,7 +102,7 @@ func (s *scenarioStorage) GetTriggeredScenarios(
 			continue
 		}
 
-		triggeredScenarios = append(triggeredScenarios, scenario)
+		triggeredScenarios[trigger] = append(triggeredScenarios[trigger], scenario)
 	}
 
 	return triggeredScenarios, nil
@@ -122,7 +123,8 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			continue
 		}
 
-		if !scenario.IsTriggered(triggers) {
+		trigger := scenario.IsTriggered(triggers)
+		if trigger == "" {
 			continue
 		}
 
@@ -144,6 +146,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			}
 
 			if matched {
+				additionalData.Trigger = trigger
 				err := s.delayedScenarioManager.AddDelayedScenario(ctx, alarm, scenario, additionalData)
 				if err != nil {
 					return err

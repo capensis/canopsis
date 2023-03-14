@@ -37,6 +37,12 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageWebhookConfig
+ * @property {DurationWithEnabled} delete_after
+ * @property {boolean} log_credentials
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -44,6 +50,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageEntityConfig} [entity]
  * @property {DataStoragePbehaviorConfig} pbehavior
  * @property {DataStorageHealthCheckConfig} health_check
+ * @property {DataStorageWebhookConfig} webhook
  */
 
 /**
@@ -154,6 +161,19 @@ export const dataStorageHealthCheckSettingsToForm = (healthCheckConfig = {}) => 
 });
 
 /**
+ * Convert data storage health check config to health check form object
+ *
+ * @param {DataStorageWebhookConfig} webhook
+ * @return {DataStorageWebhookConfig}
+ */
+export const dataStorageWebhookSettingsToForm = (webhook = {}) => ({
+  delete_after: webhook.delete_after
+    ? durationWithEnabledToForm(webhook.delete_after)
+    : { value: 60, unit: TIME_UNITS.day, enabled: false },
+  log_credentials: webhook.log_credentials ?? false,
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -166,4 +186,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   entity: dataStorageEntitySettingsToForm(dataStorage.entity),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
+  webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
 });

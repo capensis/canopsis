@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-help-icon.ma-1(icon="help", right)
+  c-help-icon(icon="help", right)
     v-layout(wrap)
       v-flex(xs12) {{ $t('login.connectionProtocols') }}
       ul

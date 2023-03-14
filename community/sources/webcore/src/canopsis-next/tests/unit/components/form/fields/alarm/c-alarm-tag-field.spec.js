@@ -6,7 +6,7 @@ import CEntityField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue'
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-alarm-tag-chip': true,
+  'c-alarm-action-chip': true,
 };
 
 const factory = (options = {}) => shallowMount(CEntityField, {
