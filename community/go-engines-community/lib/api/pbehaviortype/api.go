@@ -79,7 +79,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Create
-// @Param body body EditRequest true "body"
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} pbehavior.Type
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
@@ -119,7 +119,7 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // Update
-// @Param body body EditRequest true "body"
+// @Param body body UpdateRequest true "body"
 // @Success 200 {object} pbehavior.Type
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{

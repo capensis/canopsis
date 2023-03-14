@@ -290,6 +290,7 @@ paths:
                   {
                     "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
                     "with_instructions": true,
+                    "with_declare_tickets": true,
                     "opened": true,
                     "steps": {
                       "page": 1,
@@ -325,6 +326,36 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /alarm-links/{id}:
+    get:
+      tags:
+        - alarms
+      summary: Get alarms' links
+      description: |
+        Get alarms' links.
+        
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarms-links-get
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - name: ids[]
+          description: alarm ids
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/link.Link'
   /alarm-tags:
     get:
       tags:
@@ -446,6 +477,12 @@ paths:
             type: boolean
         - name: with_instructions
           in: query
+          description: show assigned instructions and execution flags
+          schema:
+            type: boolean
+        - name: with_declare_tickets
+          in: query
+          description: show assigned declare ticket rules
           schema:
             type: boolean
         - $ref: '#/components/parameters/limit'
@@ -529,6 +566,8 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/appinfo.AppInfoResponse'
+      security:
+        - { }
   /associativetable:
     get:
       tags:
@@ -1342,6 +1381,56 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/idlerule.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/link-rules:
+    delete:
+      tags:
+        - linkrules
+      summary: Bulk delete link rules
+      description: |
+        Bulk delete link rules.
+        
+        -  PERMISSIONS: `api_link_rule:delete`
+      operationId: linkrules-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete link rules
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/linkrule.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -4311,7 +4400,13 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "ticket": ""
+                  "ticket": "ENV-116",
+                  "ticket_url": "https://%ticket_url%",
+                  "ticket_system_name": "Jira Helpdesk",
+                  "ticket_data": {
+                    "key_1": "value_1",
+                    "key_2": "value_2"
+                  }
                 }
               declareticket:
                 summary: Declare ticket
@@ -5859,6 +5954,111 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /patterns-alarms:
+    post:
+      tags:
+        - saved-patterns
+      summary: Get matched alarms
+      description: Get matched alarms by patterns.
+      operationId: get-matched-alarms-by-patterns
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsRequest'
+            examples:
+              getMatchedAlarms:
+                summary: Get matched alarms
+                description: Get matched alarms by patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              getMatchedAlarmsWithSearch:
+                summary: Get matched alarms with search
+                description: Get matched alarms by patterns with search.
+                value: {
+                  "search": "AAA-BBB-CCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /patterns-count:
     post:
       tags:
@@ -6870,7 +7070,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -6947,7 +7147,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -8276,7 +8476,13 @@ paths:
                       "type": "assocticket",
                       "parameters": {
                         "output": "The ticket is added to the alarm by scenario",
-                        "ticket": "ENV-116"
+                        "ticket": "ENV-116",
+                        "ticket_url": "https://%ticket_url%",
+                        "ticket_system_name": "Jira Helpdesk",
+                        "ticket_data": {
+                          "key_1": "value_1",
+                          "key_2": "value_2"
+                        }
                       },
                       "alarm_pattern": [
                         [
@@ -8774,7 +8980,13 @@ paths:
                       "type": "assocticket",
                       "parameters": {
                         "output": "The ticket is added to the alarm by scenario",
-                        "ticket": "ENV-116"
+                        "ticket": "ENV-116",
+                        "ticket_url": "https://%ticket_url%",
+                        "ticket_system_name": "Jira Helpdesk",
+                        "ticket_data": {
+                          "key_1": "value_1",
+                          "key_2": "value_2"
+                        }
                       },
                       "alarm_pattern": [
                         [
@@ -9424,12 +9636,399 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-rules:
+    get:
+      tags:
+        - linkrules
+      summary: Find all link rule
+      description: |
+        Get paginated list of link rule.
+        
+        -  PERMISSIONS: `api_link_rule:get`
+      operationId: linkrules-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-categories:
+    get:
+      tags:
+        - linkrules
+      summary: Get categories by link type
+      description: |
+        Get list of distinct categories, empty list if no categories found 
+        
+        -  PERMISSIONS: `api_link_rule:get`
+      operationId: linkrules-categories
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - name: type
+          in: query
+          description: id
+          schema:
+            type: string
+            enum:
+              - alarm
+              - entity
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.CategoryResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - linkrules
+      summary: Create link rule
+      description: |
+        Create link rule.
+        
+        -  PERMISSIONS: `api_link_rule:create`
+      operationId: linkrules-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/linkrule.EditRequest'
+            examples:
+              links:
+                summary: Create a rule with links
+                description: Create a rule with links
+                value: {
+                  "name": "Link rule",
+                  "enabled": true,
+                  "links": [
+                    {
+                      "label": "Dashboard",
+                      "category": "Prod",
+                      "icon_name": "build",
+                      "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}"
+                    }
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              source:
+                summary: Create a rule with code
+                description: Create a rule with code
+                value: {
+                  "name": "Link rule",
+                  "enabled": true,
+                  "source_code": "function generate(alarms, data) {\n    var queryStr = \"\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr}];\n}",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-rules/{id}:
+    get:
+      tags:
+        - linkrules
+      summary: Get link rule by id
+      description: |
+        Get link rule by id.
+        
+        -  PERMISSIONS: `api_link_rule:get`
+      operationId: linkrules-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: link rule id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - linkrules
+      summary: Update link rule by id
+      description: |
+        Update link rule by id.
+        
+        -  PERMISSIONS: `api_link_rule:update`
+      operationId: linkrules-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: link rule id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/linkrule.EditRequest'
+            examples:
+              update:
+                summary: Update a link rule
+                description: Update a link rule
+                value: {
+                  value: {
+                    "name": "Link rule",
+                    "enabled": true,
+                    "links": [
+                      {
+                        "label": "Dashboard",
+                        "category": "Prod",
+                        "icon_name": "build",
+                        "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}"
+                      }
+                    ],
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "name",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_resource"
+                          }
+                        }
+                      ]
+                    ],
+                    "alarm_pattern": [
+                      [
+                        {
+                          "field": "v.component",
+                          "cond": {
+                            "type": "eq",
+                            "value": "cps_component"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - linkrules
+      summary: Delete link rule by id
+      description: |
+        Delete link rule by id.
+        
+        -  PERMISSIONS: `api_link_rule:delete`
+      operationId: linkrules-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: link rule id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/declare-ticket-rules:
+    post:
+      tags:
+        - template-validator
+      summary: Validate declare ticket rule template
+      description: Validate declare ticket rule template.
+      operationId: template-validator-declare-ticket-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: {
+                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/scenarios:
+    post:
+      tags:
+        - template-validator
+      summary: Validate scenario template
+      description: Validate scenario template.
+      operationId: template-scenario-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: {
+                  "text": "{{ .Alarm.Value.Output }}"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-vars:
+    get:
+      tags:
+        - template-validator
+      summary: Get template env vars
+      description: Get template env vars.
+      operationId: template-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      security:
+        - { }
   /user-preferences:
     put:
       tags:
         - userpreference
       summary: Update user preferences by widget id
-      description: | 
+      description: |
         Update user preferences by widget id.
         
         -  PERMISSIONS: `{view_id}:read`
@@ -9465,7 +10064,7 @@ paths:
       tags:
         - userpreference
       summary: Get user preferences by widget id
-      description: | 
+      description: |
         Get user preferences by widget id.
         
         -  PERMISSIONS: `{view_id}:read`
@@ -10729,6 +11328,11 @@ paths:
           description: show assigned instructions and execution flags
           schema:
             type: boolean
+        - name: with_declare_tickets
+          in: query
+          description: show assigned declare ticket rules
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
@@ -11766,6 +12370,13 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
 components:
   parameters:
+    id:
+      name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
     page:
       name: page
       in: query

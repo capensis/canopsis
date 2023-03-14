@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     v-layout
       v-flex.pr-3(xs6)
         c-entity-category-field(v-field="form.category", addable, required)

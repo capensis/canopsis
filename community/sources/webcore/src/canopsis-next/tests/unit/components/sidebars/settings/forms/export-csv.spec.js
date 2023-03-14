@@ -1,4 +1,4 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import { ALARM_FIELDS, ENTITIES_TYPES, EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS } from '@/constants';
@@ -16,30 +16,6 @@ const snapshotStubs = {
   'c-columns-with-template-field': true,
 };
 
-const factory = (options = {}) => shallowMount(ExportCsv, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ExportCsv, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
-  ...options,
-});
-
 const selectColumnsWithTemplateField = wrapper => wrapper.find('c-columns-with-template-field-stub');
 const selectSeparatorSelectField = wrapper => wrapper.findAll('select.v-select').at(0);
 const selectDatetimeFormatSelectField = wrapper => wrapper.findAll('select.v-select').at(1);
@@ -50,6 +26,25 @@ describe('export-csv', () => {
     value: ALARM_FIELDS.displayName,
     isHtml: false,
   }];
+
+  const factory = generateShallowRenderer(ExportCsv, {
+    localVue,
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(ExportCsv, {
+    localVue,
+    stubs: snapshotStubs,
+
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Separator changed after trigger separator select field', () => {
     const wrapper = factory({

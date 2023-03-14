@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -168,12 +169,17 @@ func (p *metaAlarmEventProcessor) Process(ctx context.Context, event types.Event
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event types.RPCAxeEvent, eventRes types.RPCAxeResultEvent) error {
+func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
 	if event.Alarm == nil || eventRes.AlarmChangeType == "" {
 		return nil
 	}
 
 	alarm := event.Alarm
+
+	err := p.processComponentRpc(ctx, event, eventRes)
+	if err != nil {
+		return err
+	}
 
 	if alarm.IsMetaAlarm() {
 		return p.processParentRpc(ctx, event, eventRes)
@@ -181,79 +187,6 @@ func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event types
 
 	if alarm.IsMetaChildren() {
 		return p.processChildRpc(ctx, eventRes)
-	}
-
-	return nil
-}
-
-func (p *metaAlarmEventProcessor) ProcessWebhookRpc(ctx context.Context, event types.RPCWebhookEvent, ticketId string, ticketData map[string]string) error {
-	if event.Alarm == nil || ticketId == "" {
-		return nil
-	}
-
-	alarm := event.Alarm
-
-	if alarm.IsMetaAlarm() {
-		children := make([]types.Alarm, 0)
-		err := p.adapter.GetOpenedAlarmsByIDs(ctx, alarm.Value.Children, &children)
-		if err != nil {
-			return fmt.Errorf("cannot fetch alarms: %w", err)
-		}
-
-		for _, child := range children {
-			childEvent := types.Event{
-				EventType:     types.EventTypeDeclareTicketWebhook,
-				Connector:     child.Value.Connector,
-				ConnectorName: child.Value.ConnectorName,
-				Resource:      child.Value.Resource,
-				Component:     child.Value.Component,
-				Timestamp:     types.NewCpsTime(),
-				Ticket:        ticketId,
-				TicketData:    ticketData,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
-			childEvent.SourceType = childEvent.DetectSourceType()
-
-			err = p.sendToFifo(ctx, childEvent)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
-	}
-
-	if event.AckResources && event.Entity.Type == types.EntityTypeComponent {
-		resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Alarm.Value.Component)
-		if err != nil {
-			return fmt.Errorf("cannot fetch alarms: %w", err)
-		}
-
-		for _, resource := range resources {
-			if resource.Entity.Type != types.EntityTypeResource {
-				continue
-			}
-
-			resourceEvent := types.Event{
-				EventType:     types.EventTypeDeclareTicketWebhook,
-				Connector:     resource.Alarm.Value.Connector,
-				ConnectorName: resource.Alarm.Value.ConnectorName,
-				Resource:      resource.Alarm.Value.Resource,
-				Component:     resource.Alarm.Value.Component,
-				Timestamp:     types.NewCpsTime(),
-				Ticket:        ticketId,
-				TicketData:    ticketData,
-				Author:        canopsis.DefaultEventAuthor,
-				Initiator:     types.InitiatorSystem,
-			}
-			resourceEvent.SourceType = resourceEvent.DetectSourceType()
-
-			err = p.sendToFifo(ctx, resourceEvent)
-			if err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil
@@ -282,15 +215,57 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 			Resource:      alarm.Alarm.Value.Resource,
 			Component:     alarm.Alarm.Value.Component,
 			Timestamp:     event.Timestamp,
-			Ticket:        event.Ticket,
-			TicketData:    event.TicketData,
+			TicketInfo:    event.TicketInfo,
 			Output:        event.Output,
 			LongOutput:    event.LongOutput,
 			Author:        event.Author,
 			UserID:        event.UserID,
 			Debug:         event.Debug,
 			Role:          event.Role,
-			Initiator:     event.Initiator,
+			Initiator:     types.InitiatorSystem,
+		}
+		resourceEvent.SourceType = resourceEvent.DetectSourceType()
+
+		err = p.sendToFifo(ctx, resourceEvent)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *metaAlarmEventProcessor) ProcessTicketResources(ctx context.Context, event types.Event) error {
+	if !event.TicketResources || event.Alarm == nil || event.AlarmChange == nil ||
+		event.AlarmChange.Type != types.AlarmChangeTypeAssocTicket || event.SourceType != types.SourceTypeComponent {
+		return nil
+	}
+
+	alarms, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Component)
+	if err != nil {
+		return fmt.Errorf("cannot fetch alarms: %w", err)
+	}
+
+	for _, alarm := range alarms {
+		if alarm.Entity.Type != types.EntityTypeResource {
+			continue
+		}
+
+		resourceEvent := types.Event{
+			EventType:     event.EventType,
+			Connector:     alarm.Alarm.Value.Connector,
+			ConnectorName: alarm.Alarm.Value.ConnectorName,
+			Resource:      alarm.Alarm.Value.Resource,
+			Component:     alarm.Alarm.Value.Component,
+			Timestamp:     event.Timestamp,
+			TicketInfo:    event.TicketInfo,
+			Output:        event.Output,
+			LongOutput:    event.LongOutput,
+			Author:        event.Author,
+			UserID:        event.UserID,
+			Debug:         event.Debug,
+			Role:          event.Role,
+			Initiator:     types.InitiatorSystem,
 		}
 		resourceEvent.SourceType = resourceEvent.DetectSourceType()
 
@@ -304,55 +279,116 @@ func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event
 }
 
 func (p *metaAlarmEventProcessor) processParent(ctx context.Context, event types.Event) error {
-	if applyOnChild(event.AlarmChange.Type) {
-		childEvent := types.Event{
-			EventType:  event.EventType,
-			Timestamp:  event.Timestamp,
-			Output:     event.Output,
-			LongOutput: event.LongOutput,
-			Author:     event.Author,
-			UserID:     event.UserID,
-			Debug:      event.Debug,
-			Role:       event.Role,
-			Initiator:  event.Initiator,
-			Status:     event.Status,
-			State:      event.State,
-			Ticket:     event.Ticket,
-			Duration:   event.Duration,
-		}
-		err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
-		if err != nil {
-			return err
-		}
+	if !applyOnChild(event.AlarmChange.Type) {
+		return nil
+	}
+
+	childEvent := types.Event{
+		EventType:  event.EventType,
+		Timestamp:  event.Timestamp,
+		Output:     event.Output,
+		LongOutput: event.LongOutput,
+		Author:     event.Author,
+		UserID:     event.UserID,
+		Debug:      event.Debug,
+		Role:       event.Role,
+		Initiator:  types.InitiatorSystem,
+		Status:     event.Status,
+		State:      event.State,
+		TicketInfo: event.TicketInfo,
+		Duration:   event.Duration,
+	}
+
+	childEvent.TicketInfo.TicketMetaAlarmID = event.Alarm.ID
+
+	err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event types.RPCAxeEvent, eventRes types.RPCAxeResultEvent) error {
-	if applyOnChild(eventRes.AlarmChangeType) {
-		childEvent := types.Event{
-			EventType: event.EventType,
-			Timestamp: types.NewCpsTime(),
-			Output:    event.Parameters.Output,
-			Author:    event.Parameters.Author,
-			UserID:    event.Parameters.User,
-			Initiator: types.InitiatorSystem,
-			Ticket:    event.Parameters.Ticket,
+func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
+	if !applyOnChild(eventRes.AlarmChangeType) {
+		return nil
+	}
+
+	childEvent := types.Event{
+		EventType:  event.EventType,
+		Timestamp:  types.NewCpsTime(),
+		Output:     event.Parameters.Output,
+		Author:     event.Parameters.Author,
+		UserID:     event.Parameters.User,
+		Initiator:  types.InitiatorSystem,
+		TicketInfo: event.Parameters.TicketInfo,
+	}
+
+	childEvent.TicketInfo.TicketMetaAlarmID = eventRes.Alarm.ID
+
+	switch eventRes.AlarmChangeType {
+	case types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
+		childEvent.EventType = types.EventTypeDeclareTicketWebhook
+	}
+
+	if event.Parameters.State != nil {
+		childEvent.State = *event.Parameters.State
+	}
+
+	if event.Parameters.Duration != nil {
+		seconds, err := event.Parameters.Duration.To("s")
+		if err == nil {
+			childEvent.Duration = types.CpsNumber(seconds.Value)
+		}
+	}
+
+	err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
+	if !event.Parameters.TicketResources ||
+		(eventRes.AlarmChangeType != types.AlarmChangeTypeDeclareTicketWebhook && eventRes.AlarmChangeType != types.AlarmChangeTypeAutoDeclareTicketWebhook) ||
+		event.Entity.Type != types.EntityTypeComponent {
+		return nil
+	}
+
+	componentAlarm := eventRes.Alarm
+	if componentAlarm == nil || componentAlarm.Value.Ticket == nil {
+		return nil
+	}
+
+	resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Alarm.Value.Component)
+	if err != nil {
+		return fmt.Errorf("cannot fetch alarms: %w", err)
+	}
+
+	for _, resource := range resources {
+		if resource.Entity.Type != types.EntityTypeResource {
+			continue
 		}
 
-		if event.Parameters.State != nil {
-			childEvent.State = *event.Parameters.State
+		resourceEvent := types.Event{
+			EventType:     types.EventTypeDeclareTicketWebhook,
+			Connector:     resource.Alarm.Value.Connector,
+			ConnectorName: resource.Alarm.Value.ConnectorName,
+			Resource:      resource.Alarm.Value.Resource,
+			Component:     resource.Alarm.Value.Component,
+			Timestamp:     types.NewCpsTime(),
+			Output:        componentAlarm.Value.Ticket.Message,
+			TicketInfo:    componentAlarm.Value.Ticket.TicketInfo,
+			Author:        event.Parameters.Author,
+			UserID:        event.Parameters.User,
+			Initiator:     types.InitiatorSystem,
 		}
+		resourceEvent.SourceType = resourceEvent.DetectSourceType()
 
-		if event.Parameters.Duration != nil {
-			seconds, err := event.Parameters.Duration.To("s")
-			if err == nil {
-				childEvent.Duration = types.CpsNumber(seconds.Value)
-			}
-		}
-
-		err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
+		err = p.sendToFifo(ctx, resourceEvent)
 		if err != nil {
 			return err
 		}
@@ -392,7 +428,7 @@ func (p *metaAlarmEventProcessor) processChild(ctx context.Context, event types.
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, eventRes types.RPCAxeResultEvent) error {
+func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, eventRes rpc.AxeResultEvent) error {
 	switch eventRes.AlarmChangeType {
 	case types.AlarmChangeTypeChangeState:
 		err := p.updateParentState(ctx, *eventRes.Alarm)
@@ -631,7 +667,9 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 		types.AlarmChangeTypeComment,
 		types.AlarmChangeTypeSnooze,
 		types.AlarmChangeTypeUncancel,
-		types.AlarmChangeTypeUpdateStatus:
+		types.AlarmChangeTypeUpdateStatus,
+		types.AlarmChangeTypeDeclareTicketWebhook,
+		types.AlarmChangeTypeAutoDeclareTicketWebhook:
 		return true
 	}
 

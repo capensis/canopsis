@@ -1,17 +1,12 @@
 import { omit } from 'lodash';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsAck from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ack.vue';
 
 const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsAck, {
-  localVue,
-
-  ...options,
-});
 
 describe('extra-details-ack', () => {
   const nowTimestamp = 1386435500000;
@@ -20,6 +15,11 @@ describe('extra-details-ack', () => {
 
   mockDateNow(nowTimestamp);
 
+  const snapshotFactory = generateRenderer(ExtraDetailsAck, {
+    localVue,
+    attachTo: document.body,
+  });
+
   const ack = {
     a: 'ack-author',
     t: prevDateTimestamp,
@@ -27,47 +27,44 @@ describe('extra-details-ack', () => {
     m: 'ack-message',
   };
 
-  it('Renders `extra-details-ack` with full ack', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-ack` with full ack', async () => {
+    snapshotFactory({
       propsData: {
         ack,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-ack` without initiator', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-ack` without initiator', async () => {
+    snapshotFactory({
       propsData: {
         ack: omit(ack, ['initiator']),
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-ack` without message', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-ack` without message', async () => {
+    snapshotFactory({
       propsData: {
         ack: omit(ack, ['m']),
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-ack` with date in previous month', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-ack` with date in previous month', async () => {
+    snapshotFactory({
       propsData: {
         ack: {
           ...ack,
@@ -76,9 +73,8 @@ describe('extra-details-ack', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

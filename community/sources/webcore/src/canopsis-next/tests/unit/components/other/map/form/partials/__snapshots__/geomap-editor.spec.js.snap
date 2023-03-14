@@ -63,16 +63,11 @@ exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
           color="secondary"
           icon="help"
           size="32"
-          top="top"
-        >
-          <div
-            class="pre-wrap"
-          >
-            Useful shortcuts:
+          text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-          </div>
-        </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+          top="top"
+        />
       </geomap-control-stub>
       <geomap-tile-layer-stub
         layertype="base"
@@ -196,16 +191,11 @@ exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
           color="secondary"
           icon="help"
           size="32"
-          top="top"
-        >
-          <div
-            class="pre-wrap"
-          >
-            Useful shortcuts:
+          text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-          </div>
-        </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+          top="top"
+        />
       </geomap-control-stub>
       <geomap-tile-layer-stub
         layertype="base"
@@ -305,16 +295,11 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
           color="secondary"
           icon="help"
           size="32"
-          top="top"
-        >
-          <div
-            class="pre-wrap"
-          >
-            Useful shortcuts:
+          text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-          </div>
-        </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+          top="top"
+        />
       </geomap-control-stub>
       <geomap-tile-layer-stub
         layertype="base"

@@ -20,28 +20,14 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
     <div
       class="text"
     >
-      <div
-        class="container"
-      >
-        <div
-          class="layout row"
-        >
-          <div
-            class="flex text-xs-center"
-          >
-            <alarm-general-table-stub
-              items="[object Object]"
-            />
-          </div>
-        </div>
-        <div
-          class="layout row"
-        >
-          <hr
-            class="my-3 v-divider theme--light"
-          />
-        </div>
-      </div>
+      <declare-ticket-events-form-stub
+        alarms="[object Object]"
+        alarmsbytickets="[object Object]"
+        form="[object Object]"
+        hideticketresource="true"
+        tickets=""
+        ticketsbyalarms="[object Object]"
+      />
     </div>
      
     <div
@@ -64,7 +50,7 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
         <div
           class="v-btn__content"
         >
-          Report an incident
+          Submit
         </div>
       </button>
     </div>
