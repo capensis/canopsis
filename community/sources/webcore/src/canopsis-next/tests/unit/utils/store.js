@@ -629,6 +629,10 @@ export const createPbehaviorModule = () => {
 export const createPbehaviorTimespanModule = () => {
   const fetchTimespansListWithoutStore = jest.fn().mockResolvedValue([]);
 
+  afterEach(() => {
+    fetchTimespansListWithoutStore.mockClear();
+  });
+
   const pbehaviorTimespanModule = {
     name: 'pbehaviorTimespan',
     actions: {
@@ -636,13 +640,53 @@ export const createPbehaviorTimespanModule = () => {
     },
   };
 
-  afterEach(() => {
-    fetchTimespansListWithoutStore.mockClear();
-  });
-
   return {
     fetchTimespansListWithoutStore,
     pbehaviorTimespanModule,
+  };
+};
+
+export const createAlarmModule = () => {
+  const fetchAlarmItem = jest.fn();
+  const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    fetchAlarmItem.mockClear();
+    fetchAlarmItemWithoutStore.mockClear();
+  });
+
+  const alarmModule = {
+    name: 'alarm',
+    actions: {
+      fetchItem: fetchAlarmItem,
+      fetchItemWithoutStore: fetchAlarmItemWithoutStore,
+    },
+  };
+
+  return {
+    fetchAlarmItem,
+    fetchAlarmItemWithoutStore,
+    alarmModule,
+  };
+};
+
+export const createEventModule = () => {
+  const createEvent = jest.fn();
+
+  afterEach(() => {
+    createEvent.mockClear();
+  });
+
+  const eventModule = {
+    name: 'event',
+    actions: {
+      create: createEvent,
+    },
+  };
+
+  return {
+    eventModule,
+    createEvent,
   };
 };
 
@@ -718,7 +762,6 @@ export const createManualMetaAlarmModule = () => {
       create: createManualMetaAlarm,
       addAlarms: addAlarmsIntoManualMetaAlarm,
       removeAlarms: removeAlarmsIntoManualMetaAlarm,
-
     },
   };
 
@@ -728,5 +771,32 @@ export const createManualMetaAlarmModule = () => {
     addAlarmsIntoManualMetaAlarm,
     removeAlarmsIntoManualMetaAlarm,
     manualMetaAlarmModule,
+  };
+};
+
+export const createDeclareTicketModule = () => {
+  const bulkCreateDeclareTicketExecution = jest.fn().mockResolvedValue([]);
+  const fetchAssignedDeclareTicketsWithoutStore = jest.fn().mockResolvedValue({
+    by_rules: {},
+    by_alarms: {},
+  });
+
+  afterEach(() => {
+    bulkCreateDeclareTicketExecution.mockClear();
+    fetchAssignedDeclareTicketsWithoutStore.mockClear();
+  });
+
+  const declareTicketRuleModule = {
+    name: 'declareTicketRule',
+    actions: {
+      bulkCreateDeclareTicketExecution,
+      fetchAssignedTicketsWithoutStore: fetchAssignedDeclareTicketsWithoutStore,
+    },
+  };
+
+  return {
+    declareTicketRuleModule,
+    bulkCreateDeclareTicketExecution,
+    fetchAssignedDeclareTicketsWithoutStore,
   };
 };

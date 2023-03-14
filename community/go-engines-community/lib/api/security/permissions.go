@@ -58,4 +58,6 @@ const (
 	PermExportConfigurations = "api_export_configurations"
 
 	PermTechMetrics = "api_techmetrics"
+
+	ObjLinkRule = "api_link_rule"
 )

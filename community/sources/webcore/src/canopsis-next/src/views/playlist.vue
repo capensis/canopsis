@@ -16,10 +16,13 @@
                 v-icon pause
               v-btn(:disabled="!activeTab", dark, icon, @click="nextTab")
                 v-icon skip_next
-              v-tooltip(bottom)
-                v-btn(slot="activator", :disabled="!activeTab", dark, icon, @click="toggleFullScreenMode")
-                  v-icon fullscreen
-                span {{ $t('playlist.player.tooltips.fullscreen') }}
+              c-action-btn(
+                :disabled="!activeTab",
+                :tooltip="$t('playlist.player.tooltips.fullscreen')",
+                icon="fullscreen",
+                color="white",
+                @click="toggleFullScreenMode"
+              )
         div.position-relative.playlist__tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
           div.playlist__play-button-wrapper(v-if="!played")
             v-btn(color="primary", large, @click="play")
