@@ -2,7 +2,8 @@ import {
   STATS_CRITICITY,
   ENTITY_TYPES,
   SIDE_BARS,
-  ALARMS_OPENED_VALUES, CHART_WIDGET_PRESET_TYPES,
+  ALARMS_OPENED_VALUES,
+  CHART_WIDGET_PRESET_TYPES,
 } from '@/constants';
 
 export default {
@@ -210,6 +211,7 @@ export default {
   },
 
   chart: {
+    showComparison: 'Afficher la comparaison',
     preset: 'Préréglé',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
