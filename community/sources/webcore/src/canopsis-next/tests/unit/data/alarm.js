@@ -136,7 +136,7 @@ export const fakeStaticAlarms = ({
   links: {},
 }));
 
-export const fakeAlarmDetails = () => ({ // TODO: finish it
+export const fakeAlarmDetails = () => ({
   children: {
     data: [fakeStaticAlarms()],
     meta: {

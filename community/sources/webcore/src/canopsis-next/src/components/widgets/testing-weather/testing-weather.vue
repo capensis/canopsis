@@ -6,7 +6,7 @@
       template(v-if="testSuites.length")
         v-flex(v-for="testSuite in testSuites", :key="testSuite._id", xs6, md4, lg3)
           testing-weather-item(:test-suite="testSuite", :widget="widget")
-      v-alert(v-else, type="info", :value="true") {{ $t('tables.noData') }}
+      v-alert(v-else, type="info", :value="true") {{ $t('common.noData') }}
 </template>
 
 <script>

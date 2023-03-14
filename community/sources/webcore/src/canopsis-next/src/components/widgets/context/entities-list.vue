@@ -13,7 +13,7 @@
         c-advanced-search-field(
           :query.sync="query",
           :columns="widget.parameters.widgetColumns",
-          :tooltip="$t('search.contextAdvancedSearch')"
+          :tooltip="$t('context.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")

@@ -104,7 +104,7 @@ export default {
         backgroundColor: getMetricColor(metric),
         barPercentage: KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
         yAxisID: this.getMetricYAxisId(metric),
-        label: this.$t(`alarmList.metrics.${metric}`),
+        label: this.$t(`alarm.metrics.${metric}`),
         data: data.map(({ timestamp, value }) => ({
           x: timestamp * 1000,
           y: this.convertValueByMetricType(value, metric),
@@ -251,7 +251,7 @@ export default {
         )
         : raw.y;
 
-      return this.$t(`kpiMetrics.tooltip.${dataset.metric}`, { value });
+      return this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value });
     },
 
     getChartTooltipTitle(data) {

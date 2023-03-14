@@ -46,6 +46,7 @@ export const EXPLOITATION_PAGES_RULES = {
   dynamicInfo: { edition: CANOPSIS_EDITION.pro },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
+  declareTicketRule: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
@@ -116,6 +117,8 @@ export const USERS_PERMISSIONS = {
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -276,6 +279,8 @@ export const USERS_PERMISSIONS = {
       api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
+      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -288,7 +293,8 @@ export const USERS_PERMISSIONS = {
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
-      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
@@ -411,6 +417,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
   /**
    * Notifications pages

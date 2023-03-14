@@ -17,6 +17,7 @@ import uid from '@/helpers/uid';
  * @property {boolean} [label]
  * @property {boolean} [isHtml]
  * @property {string} [template]
+ * @property {string} [onlyIcon]
  * @property {ColorIndicator} [colorIndicator]
  */
 
@@ -55,12 +56,13 @@ export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_W
 /**
  * Convert widget column to form
  *
- * @param {string} [value]
- * @param {string} [label]
+ * @param {string} [value = '']
+ * @param {string} [label = '']
+ * @param {boolean} [onlyIcon = false]
  * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
  * @returns {WidgetColumnForm}
  */
-export const widgetColumnToForm = ({ value = '', label = '', ...rest } = {}) => {
+export const widgetColumnToForm = ({ value = '', label = '', onlyIcon = false, ...rest } = {}) => {
   const result = {
     ...rest,
 
@@ -84,10 +86,11 @@ export const widgetColumnToForm = ({ value = '', label = '', ...rest } = {}) => 
     result.dictionary = dictionary;
     result.field = field;
   } else if (isLinksWidgetColumn(value)) {
-    const [column, field] = value.split('.');
+    const [column, field = ''] = value.split('.');
 
     result.column = column;
     result.field = field;
+    result.onlyIcon = onlyIcon;
   }
 
   return result;
@@ -107,20 +110,26 @@ export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToF
  * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}
  */
-export const formToWidgetColumns = (form = []) => form.map(({ key, column, dictionary, field, rule, ...rest }) => {
-  let value = column;
+export const formToWidgetColumns = (form = []) => (
+  form.map(({ key, column, dictionary, field, onlyIcon, rule, ...rest }) => {
+    const result = {
+      ...rest,
 
-  if (column === ALARM_FIELDS.infos) {
-    value = `${column}.${rule}.${dictionary}`;
-  } else if (getInfosWidgetColumn(column)) {
-    value = `${column}.${dictionary}.${field}`;
-  } else if (isLinksWidgetColumn(column) && field) {
-    value = `${column}.${field}`;
-  }
+      value: column,
+    };
 
-  return {
-    ...rest,
+    if (column === ALARM_FIELDS.infos) {
+      result.value = `${column}.${rule}.${dictionary}`;
+    } else if (getInfosWidgetColumn(column)) {
+      result.value = `${column}.${dictionary}.${field}`;
+    } else if (isLinksWidgetColumn(column)) {
+      result.onlyIcon = onlyIcon;
 
-    value,
-  };
-});
+      if (field) {
+        result.value = `${column}.${field}`;
+      }
+    }
+
+    return result;
+  })
+);
