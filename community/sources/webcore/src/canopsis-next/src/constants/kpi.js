@@ -50,14 +50,14 @@ export const KPI_TABS = {
 
 export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;
 
-export const KPI_PIE_CHART_SHOW_MODES = {
-  percent: 'percent',
-  numbers: 'numbers',
-};
-
 export const AGGREGATE_FUNCTIONS = {
   sum: 'sum',
   avg: 'avg',
   min: 'min',
   max: 'max',
+};
+
+export const KPI_PIE_CHART_SHOW_MODES = {
+  percent: 'percent',
+  numbers: 'numbers',
 };
