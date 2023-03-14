@@ -10,6 +10,11 @@ export const KPI_SLI_GRAPH_DATA_TYPE = {
   time: 'time',
 };
 
+export const KPI_PIE_CHART_SHOW_MODS = {
+  percent: 'percent',
+  numbers: 'numbers',
+};
+
 export const KPI_RATING_CRITERIA = {
   user: 'username',
   role: 'role',
