@@ -39,6 +39,7 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
 import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './pie-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
 
 /**
  * @typedef {
@@ -142,7 +143,8 @@ import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from '
  *   MapWidgetParameters |
  *   BarChartWidgetParameters |
  *   LineChartWidgetParameters |
- *   PieChartWidgetParameters
+ *   PieChartWidgetParameters |
+ *   NumbersWidgetParameters
  * } WidgetParameters
  */
 
@@ -158,7 +160,8 @@ import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from '
  *   MapWidgetParameters |
  *   BarChartWidgetParametersForm |
  *   LineChartWidgetParametersForm |
- *   PieChartWidgetParametersForm
+ *   PieChartWidgetParametersForm |
+ *   NumbersWidgetParametersForm
  * } WidgetParametersForm
  */
 
@@ -202,6 +205,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
     [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
     [WIDGET_TYPES.pieChart]: pieChartWidgetParametersToForm,
+    [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
@@ -270,6 +274,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
     [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
     [WIDGET_TYPES.pieChart]: formToPieChartWidgetParameters,
+    [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };
