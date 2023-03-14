@@ -29,7 +29,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/forms/metric
  */
 export const numbersWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  metrics: metricPresetsToForm(parameters.metrics ?? [undefined]),
+  metrics: metricPresetsToForm(parameters.metrics),
   chart_title: parameters.chart_title ?? '',
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
   default_sampling: parameters.default_sampling ?? SAMPLINGS.day,
