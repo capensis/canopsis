@@ -20,11 +20,11 @@ const stubs = {
   'v-text-field': createInputStub('v-text-field'),
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
-  'alarm-general-table': true,
 };
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'alarm-general-table': true,
 };
 
 const factory = (options = {}) => shallowMount(CreateCommentEvent, {
