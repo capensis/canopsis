@@ -218,6 +218,7 @@ export default {
     separateBars: 'Separate bars',
     stackedBars: 'Stacked bars',
     selectMetrics: 'Select metrics',
+    sharesType: 'Shares type',
     showComparison: 'Show comparison',
     preset: 'Preset',
     presets: {
