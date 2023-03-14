@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -24,10 +25,11 @@ type ListRequest struct {
 
 type EntitiesListRequest struct {
 	pagination.Query
-	WithInstructions bool   `form:"with_instructions"`
-	Sort             string `form:"sort"`
-	SortBy           string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
-	PbhOrigin        string `form:"pbh_origin" json:"pbh_origin"`
+	WithInstructions   bool   `form:"with_instructions"`
+	WithDeclareTickets bool   `form:"with_declare_tickets"`
+	Sort               string `form:"sort"`
+	SortBy             string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+	PbhOrigin          string `form:"pbh_origin" json:"pbh_origin"`
 }
 
 type Service struct {
@@ -55,8 +57,6 @@ type Service struct {
 	Category       *entity.Category      `json:"category" bson:"category"`
 	IsGrey         bool                  `json:"is_grey" bson:"is_grey"`
 	IdleSince      *types.CpsTime        `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
-
-	Links []WeatherLink `json:"linklist" bson:"-"`
 }
 
 type Info struct {
@@ -124,7 +124,8 @@ type Entity struct {
 	Status         common.AlarmStep           `json:"status" bson:"status"`
 	Snooze         *common.AlarmStep          `json:"snooze" bson:"snooze"`
 	Ack            *common.AlarmStep          `json:"ack" bson:"ack"`
-	Ticket         *alarm.AlarmTicket         `json:"ticket" bson:"ticket"`
+	Ticket         *common.AlarmStep          `json:"ticket" bson:"ticket"`
+	Tickets        []common.AlarmStep         `json:"tickets" bson:"tickets"`
 	LastUpdateDate *types.CpsTime             `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	CreationDate   *types.CpsTime             `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                     `json:"alarm_display_name" bson:"display_name"`
@@ -138,17 +139,14 @@ type Entity struct {
 	IdleSince      *types.CpsTime             `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
 	Stats          statistics.EventStatistics `json:"stats" bson:"stats"`
 
-	Links []WeatherLink `json:"linklist" bson:"-"`
+	Links link.LinksByCategory `json:"links" bson:"-"`
 
 	DependsCount int `bson:"depends_count" json:"depends_count"`
 
 	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
 	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
-}
 
-type WeatherLink struct {
-	Category string      `json:"cat_name"`
-	Links    interface{} `json:"links"`
+	AssignedDeclareTicketRules []alarm.AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }
 
 type EntityAggregationResult struct {
