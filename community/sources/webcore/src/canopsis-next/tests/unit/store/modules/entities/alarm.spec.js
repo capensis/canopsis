@@ -22,7 +22,7 @@ Vue.use(SetSeveralPlugin);
 const mockData = {
   alarmsResponse: fakeAlarmsResponse({ count: 10 }),
   alarm: fakeAlarm(),
-  alarms: fakeAlarms({ count: 10 }),
+  alarms: fakeAlarms(10),
   meta: fakeMeta(),
   params: fakeParams(),
   widgetId: Faker.datatype.number(),
