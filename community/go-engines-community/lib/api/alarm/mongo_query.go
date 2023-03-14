@@ -100,7 +100,7 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 			"snooze":         "v.snooze",
 			"ack":            "v.ack",
 			"cancel":         "v.cancel",
-			"ticket":         "v.ticket.val",
+			"ticket":         "v.ticket.ticket",
 			"output":         "v.output",
 			"opened":         "t",
 			"resolved":       "v.resolved",

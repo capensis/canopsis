@@ -28,7 +28,6 @@ const (
 	PbehaviorTypeMongoCollection      = "pbehavior_type"
 	PbehaviorReasonMongoCollection    = "pbehavior_reason"
 	PbehaviorExceptionMongoCollection = "pbehavior_exception"
-	ScenarioMongoCollection           = "action_scenario"
 	FileMongoCollection               = "files"
 	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
 	IdleRuleMongoCollection           = "idle_rule"
@@ -97,6 +96,12 @@ const (
 
 	MibCollection       = "default_mibs"
 	SnmpRulesCollection = "default_snmprules"
+
+	ScenarioMongoCollection          = "action_scenario"
+	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
+	WebhookHistoryMongoCollection    = "webhook_history"
+
+	LinkRuleMongoCollection = "link_rule"
 
 	OcwsNocChoiceCollection    = "ocws_noc_snow_sys_choice_new"
 	OcwsNocContractCollection  = "ocws_noc_snow_service_contract_new"

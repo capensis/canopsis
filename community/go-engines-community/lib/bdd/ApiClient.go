@@ -10,6 +10,7 @@ import (
 	"go/types"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -18,10 +19,12 @@ import (
 	"strings"
 	"time"
 
+	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/kylelemons/godebug/pretty"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -45,14 +48,15 @@ type ApiClient struct {
 	// client is http client to make API requests.
 	client *http.Client
 	// db is db client.
-	db        mongo.DbClient
-	templater *Templater
+	db            mongo.DbClient
+	requestLogger zerolog.Logger
+	templater     *Templater
 	// directory with scenario's test data, which IReadFile can access
 	dirScenarioData string
 }
 
 // NewApiClient creates new API client.
-func NewApiClient(db mongo.DbClient, url, dirScenarioData string, templater *Templater) *ApiClient {
+func NewApiClient(db mongo.DbClient, url, dirScenarioData string, requestLogger zerolog.Logger, templater *Templater) *ApiClient {
 	return &ApiClient{
 		url: url,
 		client: &http.Client{
@@ -61,6 +65,7 @@ func NewApiClient(db mongo.DbClient, url, dirScenarioData string, templater *Tem
 		db:              db,
 		templater:       templater,
 		dirScenarioData: dirScenarioData,
+		requestLogger:   requestLogger,
 	}
 }
 
@@ -448,7 +453,14 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 		return fmt.Errorf("response is nil")
 	}
 
-	b, err := a.templater.Execute(ctx, doc)
+	b, err := a.templater.Execute(ctx, path)
+	if err != nil {
+		return err
+	}
+
+	path = b.String()
+
+	b, err = a.templater.Execute(ctx, doc)
 	if err != nil {
 		return err
 	}
@@ -483,8 +495,8 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 				return nil
 			}
 
-			if len(expected) == 0 {
-				return fmt.Errorf("%s is empty", doc)
+			if len(expected) == 0 && len(received) != 0 {
+				return fmt.Errorf("%s is not empty", path)
 			}
 
 			for _, ev := range expected {
@@ -613,14 +625,15 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(ctx context.Context, pa
 
 // TheResponseArrayKeyShouldContainInOrder
 // Step example:
-//   Then the response array key "data.0.v.steps" should contain in order:
-//   """
-//   [
-//     {
-//       "_t": "stateinc"
-//     }
-//   ]
-//   """
+//
+//	Then the response array key "data.0.v.steps" should contain in order:
+//	"""
+//	[
+//	  {
+//	    "_t": "stateinc"
+//	  }
+//	]
+//	"""
 func (a *ApiClient) TheResponseArrayKeyShouldContainInOrder(ctx context.Context, path string, doc string) error {
 	responseBody, ok := getResponseBody(ctx)
 	if !ok {
@@ -922,14 +935,9 @@ func (a *ApiClient) IDoRequest(ctx context.Context, method, uri string) (context
 		return ctx, fmt.Errorf("step is wrongly matched to IDoRequest")
 	}
 
-	uri, err := a.getRequestURL(ctx, uri)
+	req, err := a.createRequest(ctx, method, uri, "")
 	if err != nil {
 		return ctx, err
-	}
-
-	req, err := http.NewRequest(method, uri, nil)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	return a.doRequest(ctx, req)
@@ -967,23 +975,9 @@ func (a *ApiClient) IDoRequestWithBody(ctx context.Context, method, uri string, 
 		return ctx, fmt.Errorf("step is wrongly matched to IDoRequestWithBody")
 	}
 
-	uri, err := a.getRequestURL(ctx, uri)
+	req, err := a.createRequest(ctx, method, uri, doc)
 	if err != nil {
 		return ctx, err
-	}
-
-	body, err := a.getRequestBody(ctx, doc)
-	if err != nil {
-		return ctx, err
-	}
-
-	req, err := http.NewRequest(
-		method,
-		uri,
-		body,
-	)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	if headers, ok := getHeaders(ctx); ok {
@@ -1004,46 +998,33 @@ Step example:
 	When I do GET /api/v4/entitybasic/{{ .lastResponse._id}} until response code is 200
 */
 func (a *ApiClient) IDoRequestUntilResponseCode(ctx context.Context, method, uri string, code int) (context.Context, error) {
-	uri, err := a.getRequestURL(ctx, uri)
+	req, ctx, err := a.createRequestWithSavedRequest(ctx, method, uri)
 	if err != nil {
 		return ctx, err
 	}
 
-	req, err := http.NewRequest(method, uri, nil)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
+	ok, ctx, err := a.doRequestUntil(ctx, req, func(ctx context.Context) bool {
+		responseStatusCode, _ := getResponseStatusCode(ctx)
+		return code == responseStatusCode
+	})
+
+	if err != nil || ok {
+		return ctx, err
 	}
 
-	timeout := startRepeatRequestInterval
-	start := time.Now()
-	var responseStatusCode int
-	var responseBodyOutput string
-	for {
-		ctx, err = a.doRequest(ctx, req)
-		if err != nil {
-			return ctx, err
-		}
-
-		responseStatusCode, _ = getResponseStatusCode(ctx)
-		responseBodyOutput, _ = getResponseBodyOutput(ctx)
-
-		if code == responseStatusCode {
-			return ctx, nil
-		}
-
-		if time.Since(start) > totalRepeatRequestInterval {
-			break
-		}
-
-		time.Sleep(timeout)
-		timeout *= 2
-	}
+	responseStatusCode, _ := getResponseStatusCode(ctx)
+	responseBodyOutput, _ := getResponseBodyOutput(ctx)
 
 	return ctx, fmt.Errorf("max retries exceeded, expected response code to be: %d, but actual is: %d\nresponse body: %v",
 		code,
 		responseStatusCode,
 		responseBodyOutput,
 	)
+}
+
+func (a *ApiClient) ISaveRequest(ctx context.Context, doc string) (context.Context, error) {
+	ctx = setRequestBody(ctx, doc)
+	return ctx, nil
 }
 
 /*
@@ -1061,14 +1042,10 @@ func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri str
 	if doc == "" {
 		return ctx, fmt.Errorf("body is empty")
 	}
-	uri, err := a.getRequestURL(ctx, uri)
+
+	req, ctx, err := a.createRequestWithSavedRequest(ctx, method, uri)
 	if err != nil {
 		return ctx, err
-	}
-
-	req, err := http.NewRequest(method, uri, nil)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	b, err := a.templater.Execute(ctx, doc)
@@ -1081,37 +1058,21 @@ func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri str
 		return ctx, fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
-	var resDiffErr error
-	timeout := startRepeatRequestInterval
-	start := time.Now()
-	var responseStatusCode int
-	var responseBodyOutput string
-	for {
-		ctx, err = a.doRequest(ctx, req)
-		if err != nil {
-			return ctx, err
-		}
-
-		responseStatusCode, _ = getResponseStatusCode(ctx)
+	ok, ctx, err := a.doRequestUntil(ctx, req, func(ctx context.Context) bool {
+		responseStatusCode, _ := getResponseStatusCode(ctx)
 		responseBody, _ := getResponseBody(ctx)
-		responseBodyOutput, _ = getResponseBodyOutput(ctx)
 
-		if code == responseStatusCode {
-			resDiffErr = checkResponse(responseBody, expectedBody)
-			if resDiffErr == nil {
-				return ctx, nil
-			}
-		}
+		return code == responseStatusCode && checkResponse(responseBody, expectedBody) == nil
+	})
 
-		if time.Since(start) > totalRepeatRequestInterval {
-			break
-		}
-
-		time.Sleep(timeout)
-		timeout *= 2
+	if err != nil || ok {
+		return ctx, err
 	}
 
+	responseStatusCode, _ := getResponseStatusCode(ctx)
 	if code != responseStatusCode {
+		responseBodyOutput, _ := getResponseBodyOutput(ctx)
+
 		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
 			responseStatusCode,
@@ -1119,7 +1080,9 @@ func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri str
 		)
 	}
 
-	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	responseBody, _ := getResponseBody(ctx)
+
+	return ctx, fmt.Errorf("max retries exceeded: %w", checkResponse(responseBody, expectedBody))
 }
 
 /*
@@ -1137,14 +1100,10 @@ func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method,
 	if doc == "" {
 		return ctx, fmt.Errorf("body is empty")
 	}
-	uri, err := a.getRequestURL(ctx, uri)
+
+	req, ctx, err := a.createRequestWithSavedRequest(ctx, method, uri)
 	if err != nil {
 		return ctx, err
-	}
-
-	req, err := http.NewRequest(method, uri, nil)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
 	}
 
 	b, err := a.templater.Execute(ctx, doc)
@@ -1157,39 +1116,26 @@ func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method,
 		return ctx, fmt.Errorf("cannot decode expected response body: %w", err)
 	}
 
-	var resDiffErr error
-	timeout := startRepeatRequestInterval
-	start := time.Now()
-	var responseStatusCode int
-	var responseBodyOutput string
-	for {
-		ctx, err = a.doRequest(ctx, req)
-		if err != nil {
-			return ctx, err
-		}
-
-		responseStatusCode, _ = getResponseStatusCode(ctx)
-		responseBody, _ := getResponseBody(ctx)
-		responseBodyOutput, _ = getResponseBodyOutput(ctx)
-
+	ok, ctx, err := a.doRequestUntil(ctx, req, func(ctx context.Context) bool {
+		responseStatusCode, _ := getResponseStatusCode(ctx)
 		if code == responseStatusCode {
+			responseBody, _ := getResponseBody(ctx)
 			partialBody := getPartialResponse(responseBody, expectedBody)
-			resDiffErr = checkResponse(partialBody, expectedBody)
 
-			if resDiffErr == nil {
-				return ctx, nil
-			}
+			return checkResponse(partialBody, expectedBody) == nil
 		}
 
-		if time.Since(start) > totalRepeatRequestInterval {
-			break
-		}
+		return false
+	})
 
-		time.Sleep(timeout)
-		timeout *= 2
+	if err != nil || ok {
+		return ctx, err
 	}
 
+	responseStatusCode, _ := getResponseStatusCode(ctx)
 	if code != responseStatusCode {
+		responseBodyOutput, _ := getResponseBodyOutput(ctx)
+
 		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
 			responseStatusCode,
@@ -1197,7 +1143,9 @@ func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method,
 		)
 	}
 
-	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	responseBody, _ := getResponseBody(ctx)
+	partialBody := getPartialResponse(responseBody, expectedBody)
+	return ctx, fmt.Errorf("max retries exceeded: %w", checkResponse(partialBody, expectedBody))
 }
 
 /*
@@ -1208,47 +1156,29 @@ Step example:
 	"""
 */
 func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.Context, method, uri string, code int, path string, value float64) (context.Context, error) {
-	uri, err := a.getRequestURL(ctx, uri)
+	req, ctx, err := a.createRequestWithSavedRequest(ctx, method, uri)
 	if err != nil {
 		return ctx, err
 	}
 
-	req, err := http.NewRequest(method, uri, nil)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
-	}
-
-	var resDiffErr error
-	timeout := startRepeatRequestInterval
-	start := time.Now()
-	var responseStatusCode int
-	var responseBodyOutput string
-	for {
-		ctx, err = a.doRequest(ctx, req)
-		if err != nil {
-			return ctx, err
-		}
-
-		responseStatusCode, _ = getResponseStatusCode(ctx)
-		responseBodyOutput, _ = getResponseBodyOutput(ctx)
-
+	ok, ctx, err := a.doRequestUntil(ctx, req, func(ctx context.Context) bool {
+		responseStatusCode, _ := getResponseStatusCode(ctx)
 		if code == responseStatusCode {
-			resDiffErr = a.TheResponseKeyShouldBeGreaterOrEqualThan(ctx, path, value)
-
-			if resDiffErr == nil {
-				return ctx, nil
-			}
+			err := a.TheResponseKeyShouldBeGreaterOrEqualThan(ctx, path, value)
+			return err == nil
 		}
 
-		if time.Since(start) > totalRepeatRequestInterval {
-			break
-		}
+		return false
+	})
 
-		time.Sleep(timeout)
-		timeout *= 2
+	if err != nil || ok {
+		return ctx, err
 	}
 
+	responseStatusCode, _ := getResponseStatusCode(ctx)
 	if code != responseStatusCode {
+		responseBodyOutput, _ := getResponseBodyOutput(ctx)
+
 		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
 			responseStatusCode,
@@ -1256,7 +1186,7 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.C
 		)
 	}
 
-	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	return ctx, fmt.Errorf("max retries exceeded: %w", a.TheResponseKeyShouldBeGreaterOrEqualThan(ctx, path, value))
 }
 
 // IDoRequestUntilResponseArrayKeyContains
@@ -1271,47 +1201,29 @@ func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.C
 //	]
 //	"""
 func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(ctx context.Context, method, uri string, code int, path string, doc string) (context.Context, error) {
-	uri, err := a.getRequestURL(ctx, uri)
+	req, ctx, err := a.createRequestWithSavedRequest(ctx, method, uri)
 	if err != nil {
 		return ctx, err
 	}
 
-	req, err := http.NewRequest(method, uri, nil)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot create request: %w", err)
-	}
-
-	var resDiffErr error
-	timeout := startRepeatRequestInterval
-	start := time.Now()
-	var responseStatusCode int
-	var responseBodyOutput string
-	for {
-		ctx, err = a.doRequest(ctx, req)
-		if err != nil {
-			return ctx, err
-		}
-
-		responseStatusCode, _ = getResponseStatusCode(ctx)
-		responseBodyOutput, _ = getResponseBodyOutput(ctx)
-
+	ok, ctx, err := a.doRequestUntil(ctx, req, func(ctx context.Context) bool {
+		responseStatusCode, _ := getResponseStatusCode(ctx)
 		if code == responseStatusCode {
-			resDiffErr = a.TheResponseArrayKeyShouldContain(ctx, path, doc)
-
-			if resDiffErr == nil {
-				return ctx, nil
-			}
+			err := a.TheResponseArrayKeyShouldContain(ctx, path, doc)
+			return err == nil
 		}
 
-		if time.Since(start) > totalRepeatRequestInterval {
-			break
-		}
+		return false
+	})
 
-		time.Sleep(timeout)
-		timeout *= 2
+	if err != nil || ok {
+		return ctx, err
 	}
 
+	responseStatusCode, _ := getResponseStatusCode(ctx)
 	if code != responseStatusCode {
+		responseBodyOutput, _ := getResponseBodyOutput(ctx)
+
 		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
 			code,
 			responseStatusCode,
@@ -1319,7 +1231,52 @@ func (a *ApiClient) IDoRequestUntilResponseArrayKeyContains(ctx context.Context,
 		)
 	}
 
-	return ctx, fmt.Errorf("max retries exceeded: %w", resDiffErr)
+	return ctx, fmt.Errorf("max retries exceeded: %w", a.TheResponseArrayKeyShouldContain(ctx, path, doc))
+}
+
+// IDoRequestUntilResponseArrayKeyContainsOnly
+// Step example:
+//
+//	When I do GET /api/v4/alarms until response code is 200 and response array key "data.0.v.steps" contains only:
+//	"""
+//	[
+//	  {
+//	    "_t": "stateinc"
+//	  }
+//	]
+//	"""
+func (a *ApiClient) IDoRequestUntilResponseArrayKeyContainsOnly(ctx context.Context, method, uri string, code int, path string, doc string) (context.Context, error) {
+	req, ctx, err := a.createRequestWithSavedRequest(ctx, method, uri)
+	if err != nil {
+		return ctx, err
+	}
+
+	ok, ctx, err := a.doRequestUntil(ctx, req, func(ctx context.Context) bool {
+		responseStatusCode, _ := getResponseStatusCode(ctx)
+		if code == responseStatusCode {
+			err := a.TheResponseArrayKeyShouldContainOnly(ctx, path, doc)
+			return err == nil
+		}
+
+		return false
+	})
+
+	if err != nil || ok {
+		return ctx, err
+	}
+
+	responseStatusCode, _ := getResponseStatusCode(ctx)
+	if code != responseStatusCode {
+		responseBodyOutput, _ := getResponseBodyOutput(ctx)
+
+		return ctx, fmt.Errorf("max retries exceeded: expected response code to be: %d, but actual is: %d\nresponse body: %v",
+			code,
+			responseStatusCode,
+			responseBodyOutput,
+		)
+	}
+
+	return ctx, fmt.Errorf("max retries exceeded: %w", a.TheResponseArrayKeyShouldContainOnly(ctx, path, doc))
 }
 
 /*
@@ -1414,8 +1371,57 @@ func (a *ApiClient) ValueShouldBeGteLteThan(ctx context.Context, left, op, right
 	return nil
 }
 
+func (a *ApiClient) createRequest(ctx context.Context, method, uri, body string) (*http.Request, error) {
+	uri, err := a.getRequestURL(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+
+	var r io.Reader
+	if body != "" {
+		r, err = a.getRequestBody(ctx, body)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	req, err := http.NewRequest(method, uri, r)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create request: %w", err)
+	}
+
+	return req, nil
+}
+
+func (a *ApiClient) createRequestWithSavedRequest(ctx context.Context, method, uri string) (*http.Request, context.Context, error) {
+	uri, err := a.getRequestURL(ctx, uri)
+	if err != nil {
+		return nil, ctx, err
+	}
+
+	var r io.Reader
+	body, _ := getRequestBody(ctx)
+	if body != "" {
+		r, err = a.getRequestBody(ctx, body)
+		if err != nil {
+			return nil, ctx, err
+		}
+		ctx = setRequestBody(ctx, "")
+	}
+
+	req, err := http.NewRequest(method, uri, r)
+	if err != nil {
+		return nil, ctx, fmt.Errorf("cannot create request: %w", err)
+	}
+
+	return req, ctx, nil
+}
+
 // doRequest adds auth credentials and makes request.
 func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.Context, error) {
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
+
 	if headers, ok := getHeaders(ctx); ok {
 		for k, v := range headers {
 			req.Header.Set(k, v)
@@ -1432,11 +1438,26 @@ func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.C
 	var err error
 	var responseBody interface{}
 	var responseBodyOutput string
+	dumpReq, _ := httputil.DumpRequest(req, true)
 	response, err := a.client.Do(req)
 	// Read response
 	if err != nil {
+		a.requestLogger.Err(err).
+			Str("file", scUri).
+			Str("scenario", scName).
+			Str("request", string(dumpReq)).
+			Msg("invalid called request")
 		return ctx, fmt.Errorf("cannot do request: %w", err)
 	}
+
+	dumpRes, _ := httputil.DumpResponse(response, true)
+	a.requestLogger.Info().
+		Str("file", scUri).
+		Str("scenario", scName).
+		Str("request", string(dumpReq)).
+		Str("response", string(dumpRes)).
+		Msg("called request")
+
 	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch response: %w", err)
@@ -1468,6 +1489,56 @@ func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.C
 	ctx = setCookies(ctx, cookies)
 
 	return ctx, nil
+}
+
+func (a *ApiClient) doRequestUntil(
+	ctx context.Context,
+	req *http.Request,
+	check func(context.Context) bool,
+) (bool, context.Context, error) {
+	body := req.Body
+	var err error
+	if body != nil {
+		body, req.Body, err = libhttp.DrainBody(body)
+		if err != nil {
+			return false, ctx, err
+		}
+	}
+
+	timeout := startRepeatRequestInterval
+	start := time.Now()
+
+	for {
+		ctx, err = a.doRequest(ctx, req)
+		if err != nil {
+			return false, ctx, err
+		}
+
+		if check(ctx) {
+			return true, ctx, nil
+		}
+
+		if time.Since(start) > totalRepeatRequestInterval {
+			break
+		}
+
+		select {
+		case <-ctx.Done():
+			return false, ctx, ctx.Err()
+		case <-time.After(timeout):
+		}
+
+		timeout *= 2
+
+		if body != nil {
+			body, req.Body, err = libhttp.DrainBody(body)
+			if err != nil {
+				return false, ctx, err
+			}
+		}
+	}
+
+	return false, ctx, nil
 }
 
 // getRequestURL applies template uri to last response data.

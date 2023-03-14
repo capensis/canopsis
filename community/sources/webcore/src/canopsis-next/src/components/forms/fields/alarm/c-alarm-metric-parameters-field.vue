@@ -41,7 +41,7 @@ export default {
       return Object.values(ALARM_METRIC_PARAMETERS).map(value => ({
         value,
         disabled: this.isMinValueLength && this.value.includes(value),
-        text: this.$t(`alarmList.metrics.${value}`),
+        text: this.$t(`alarm.metrics.${value}`),
       }));
     },
   },

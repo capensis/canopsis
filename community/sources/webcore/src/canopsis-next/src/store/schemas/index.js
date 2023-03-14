@@ -161,6 +161,10 @@ export const shareTokenSchema = new schema.Entity(ENTITIES_TYPES.shareToken, {},
 
 export const widgetTemplateSchema = new schema.Entity(ENTITIES_TYPES.widgetTemplate, {}, { idAttribute: '_id' });
 
+export const declareTicketRuleSchema = new schema.Entity(ENTITIES_TYPES.declareTicketRule, {}, { idAttribute: '_id' });
+
+export const linkRuleSchema = new schema.Entity(ENTITIES_TYPES.linkRule, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.alarmDetails]: alarmDetailsSchema,
@@ -203,4 +207,6 @@ export default {
   [ENTITIES_TYPES.alarmTag]: alarmTagSchema,
   [ENTITIES_TYPES.shareToken]: shareTokenSchema,
   [ENTITIES_TYPES.widgetTemplate]: widgetTemplateSchema,
+  [ENTITIES_TYPES.declareTicketRule]: declareTicketRuleSchema,
+  [ENTITIES_TYPES.linkRule]: linkRuleSchema,
 };

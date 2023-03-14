@@ -67,6 +67,10 @@ const (
 
 	ValueTypeSnmpRule = "snmprule"
 	ValueTypeSnmpMib  = "snmpmib"
+
+	ValueTypeDeclareTicketRule = "declareticketrule"
+
+	ValueTypeLinkRule = "linkrule"
 )
 
 type ActionLogger interface {

@@ -6,6 +6,7 @@
         :key="index",
         :tooltip="action.title",
         :disabled="action.disabled",
+        :loading="action.loading",
         :icon="action.icon",
         :color="action.iconColor",
         :badge-value="action.badgeValue",
