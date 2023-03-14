@@ -13,6 +13,7 @@ export const ENTITY_FIELDS = {
   resource: 'resource',
   impactLevel: 'impact_level',
   lastEventDate: 'last_event_date',
+  lastPbehaviorDate: 'last_pbehavior_date',
   lastUpdateDate: 'last_update_date',
   koEvents: 'ko_events',
   okEvents: 'ok_events',
@@ -456,6 +457,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.resource]: 'common.resource',
   [ENTITY_FIELDS.impactLevel]: 'common.impactLevel',
   [ENTITY_FIELDS.lastEventDate]: 'common.lastEventDate',
+  [ENTITY_FIELDS.lastPbehaviorDate]: 'common.lastPbehaviorDate',
   [ENTITY_FIELDS.lastUpdateDate]: 'common.updated',
   [ENTITY_FIELDS.koEvents]: 'entity.fields.koEvents',
   [ENTITY_FIELDS.okEvents]: 'entity.fields.okEvents',
@@ -487,3 +489,10 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.links,
   ENTITY_FIELDS.pbehaviorInfo,
 ];
+
+export const ENTITY_PAYLOADS_VARIABLES = {
+  entity: '.Entity',
+  entities: '.Entities',
+  name: '.Name',
+  infosValue: '(index .Entity.Infos.%infos_name%).Value',
+};

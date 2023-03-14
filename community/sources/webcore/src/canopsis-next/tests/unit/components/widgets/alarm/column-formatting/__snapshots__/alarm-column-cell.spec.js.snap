@@ -15,22 +15,29 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column impact stat
 `;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links 1`] = `
-<alarm-column-value-categories-stub
-  links="[object Object]"
-/>
-`;
-
-exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links as list 1`] = `
-<alarm-column-value-categories-stub
-  aslist="true"
-  limit="2"
-  links="[object Object]"
+<c-alarm-links-chips-stub
+  alarm="[object Object]"
 />
 `;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links category 1`] = `
-<alarm-column-value-links-stub
-  links=""
+<c-alarm-links-chips-stub
+  alarm="[object Object]"
+  category="test"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links only icon 1`] = `
+<c-alarm-links-chips-stub
+  alarm="[object Object]"
+  onlyicon="true"
+/>
+`;
+
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links with inline links count 1`] = `
+<c-alarm-links-chips-stub
+  alarm="[object Object]"
+  inlinecount="2"
 />
 `;
 

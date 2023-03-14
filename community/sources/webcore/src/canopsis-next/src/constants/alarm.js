@@ -51,6 +51,7 @@ export const ALARM_FIELDS = {
   entityOkEvents: 'entity.ok_events',
   entityInfos: 'entity.infos',
   entityComponentInfos: 'entity.component_infos',
+  entityLastPbehaviorDate: 'entity.last_pbehavior_date',
 
   /**
    * OBJECTS
@@ -358,6 +359,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityOkEvents]: 'alarm.fields.entityOkEvents',
   [ALARM_FIELDS.entityInfos]: 'alarm.fields.entityInfos',
   [ALARM_FIELDS.entityComponentInfos]: 'alarm.fields.entityComponentInfos',
+  [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
 
   /**
    * OBJECTS
@@ -401,6 +403,8 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
+
+  entityName: '.Entity.Name',
   entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
 };
 

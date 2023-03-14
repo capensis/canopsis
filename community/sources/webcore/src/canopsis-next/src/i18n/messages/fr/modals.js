@@ -907,4 +907,12 @@ export default {
   createAckEvent: {
     title: 'Acquitter',
   },
+  createLinkRule: {
+    create: {
+      title: 'Créer un générateur de liens',
+    },
+    edit: {
+      title: 'Modifier le générateur de liens',
+    },
+  },
 };

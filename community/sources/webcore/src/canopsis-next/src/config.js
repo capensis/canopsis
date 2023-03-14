@@ -95,6 +95,7 @@ export const API_ROUTES = {
   resolvedAlarms: '/api/v4/resolved-alarms',
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
+  alarmLinks: '/api/v4/alarm-links',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
@@ -203,6 +204,8 @@ export const API_ROUTES = {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
     scenarios: '/api/v4/template-validator/scenarios',
   },
+  linkRule: '/api/v4/link-rules',
+  linkCategories: '/api/v4/link-categories',
 
   /**
    * Cat routes
@@ -237,6 +240,7 @@ export const API_ROUTES = {
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
   metrics: {
+    settings: '/api/v4/cat/metrics-settings',
     alarm: '/api/v4/cat/metrics/alarm',
     exportAlarm: '/api/v4/cat/metrics-export/alarm',
     exportRating: '/api/v4/cat/metrics-export/rating',
@@ -367,6 +371,10 @@ export const COLORS = {
     remediationStatisticAssignedRemediations: '#FFA800',
     remediationStatisticExecutedRemediations: '#5B6E7F',
     remediationStatisticRatioRemediations: '#5B6E7F',
+    notAckedAlarms: '#dce775',
+    notAckedInHourAlarms: '#1fbcd3',
+    notAckedInFourHoursAlarms: '#afb42b',
+    notAckedInDayAlarms: '#fff176',
   },
   mermaid: {
     primaryColor: '#bfe4ce',
@@ -472,21 +480,25 @@ export const THEMES_NAMES = {
 const CANOPSIS_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
+  background: '#ffffff',
 };
 
 const CANOPSIS_DARK_THEME_COLORS = {
   ...CANOPSIS_THEME_COLORS,
   error: '#ff8b8b',
+  background: '#303030',
 };
 
 const COLOR_BLIND_THEME_COLORS = {
   primary: '#2196f3',
   secondary: COLORS.secondary,
+  background: CANOPSIS_THEME_COLORS.background,
 };
 
 const COLOR_BLIND_DARK_THEME_COLORS = {
   ...COLOR_BLIND_THEME_COLORS,
   error: CANOPSIS_DARK_THEME_COLORS.error,
+  background: CANOPSIS_DARK_THEME_COLORS.background,
 };
 
 export const THEMES = {
@@ -513,8 +525,6 @@ export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
-
-export const DEFAULT_CATEGORIES_LIMIT = 3;
 
 export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 
