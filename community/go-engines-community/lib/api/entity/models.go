@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -101,7 +102,7 @@ type Entity struct {
 	AlarmLastUpdateDate *types.CpsTime    `bson:"alarm_last_update_date" json:"alarm_last_update_date,omitempty" swaggertype:"integer"`
 
 	// Links
-	Links map[string]interface{} `bson:"-" json:"links,omitempty"`
+	Links link.LinksByCategory `bson:"-" json:"links,omitempty"`
 
 	// DependsCount contains only service's dependencies
 	DependsCount *int `bson:"depends_count" json:"depends_count,omitempty"`
