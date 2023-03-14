@@ -1,11 +1,12 @@
 <template lang="pug">
   v-select(
     v-field="value",
+    v-validate="rules",
     :items="availableParameters",
     :label="label",
     :name="name",
     :multiple="isMultiple",
-    hide-details
+    :hide-details="hideDetails"
   )
     template(v-if="isMultiple", #selection="{ item, index }")
       span(v-if="!index") {{ getSelectionLabel(item) }}
@@ -17,6 +18,7 @@ import { isArray } from 'lodash';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
+  inject: ['$validator'],
   model: {
     prop: 'value',
     event: 'input',
@@ -38,6 +40,14 @@ export default {
       type: Number,
       default: 1,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isMultiple() {
@@ -54,6 +64,12 @@ export default {
         disabled: this.isMinValueLength && this.value.includes(value),
         text: this.$t(`alarm.metrics.${value}`),
       }));
+    },
+
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
   methods: {

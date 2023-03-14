@@ -2,7 +2,8 @@
   v-layout.c-alarm-metric-preset-field(column)
     c-alarm-metric-parameters-field.mb-4(
       v-field="preset.metric",
-      :label="$t('kpi.selectMetric')"
+      :label="$t('kpi.selectMetric')",
+      required
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
       v-switch(

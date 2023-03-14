@@ -37,6 +37,7 @@ import {
 } from './text';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
 
 /**
  * @typedef {
@@ -137,7 +138,9 @@ import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParameters |
  *   TextWidgetParameters |
- *   MapWidgetParameters
+ *   MapWidgetParameters |
+ *   BarChartWidgetParameters |
+ *   LineChartWidgetParameters
  * } WidgetParameters
  */
 
@@ -150,7 +153,9 @@ import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParametersForm |
  *   TextWidgetParameters |
- *   MapWidgetParameters
+ *   MapWidgetParameters |
+ *   BarChartWidgetParametersForm |
+ *   LineChartWidgetParametersForm
  * } WidgetParametersForm
  */
 
@@ -192,6 +197,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
     [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
+    [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
@@ -258,6 +264,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
     [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
+    [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };
