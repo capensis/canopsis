@@ -1,11 +1,8 @@
 package request
 
-//todo: copy from webhook package, webhook package should use this package instead of its own models
-
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -24,40 +21,4 @@ func CreateRequest(ctx context.Context, params Parameters) (*http.Request, error
 	}
 
 	return request, nil
-}
-
-// Flatten creates a new map[string]interface{} with a flat hierarchy
-func Flatten(in interface{}, prevKey string) map[string]interface{} {
-	out := make(map[string]interface{})
-
-	switch inVal := in.(type) {
-	case map[string]interface{}:
-		for k, v := range inVal {
-			newPrevKey := prevKey + "." + k
-			if prevKey == "" {
-				newPrevKey = k
-			}
-
-			nm := Flatten(v, newPrevKey)
-			for nk, nv := range nm {
-				out[nk] = nv
-			}
-		}
-	case []interface{}:
-		for idx, v := range inVal {
-			newPrevKey := fmt.Sprintf("%s.%d", prevKey, idx)
-			if prevKey == "" {
-				newPrevKey = newPrevKey[1:]
-			}
-
-			nm := Flatten(v, newPrevKey)
-			for nk, nv := range nm {
-				out[nk] = nv
-			}
-		}
-	default:
-		out[prevKey] = inVal
-	}
-
-	return out
 }

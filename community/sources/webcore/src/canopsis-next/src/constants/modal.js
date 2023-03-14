@@ -99,4 +99,6 @@ export const MODALS = {
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createDeclareTicketRule: 'create-declare-ticket-rule',
   executeDeclareTickets: 'execute-declare-tickets',
+
+  createLinkRule: 'create-link-rule',
 };

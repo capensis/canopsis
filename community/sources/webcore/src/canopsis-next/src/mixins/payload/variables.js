@@ -1,5 +1,7 @@
 import {
   ALARM_PAYLOADS_VARIABLES,
+  ENTITY_PAYLOADS_VARIABLES,
+  EXTERNAL_DATA_PAYLOADS_VARIABLES,
   DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES,
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
 } from '@/constants';
@@ -24,27 +26,27 @@ export const payloadVariablesMixin = {
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.stateMessage,
-          text: this.$t('alarm.stateMessage'),
+          text: this.$t('alarm.fields.stateMessage'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.stateValue,
-          text: this.$t('alarm.stateValue'),
+          text: this.$t('alarm.fields.stateValue'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.statusValue,
-          text: this.$t('common.status'),
+          text: this.$t('alarm.fields.statusValue'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ticketAuthor,
-          text: this.$t('alarm.ticketAuthor'),
+          text: this.$t('alarm.fields.ticketAuthor'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ticketValue,
-          text: this.$t('alarm.ticketId'),
+          text: this.$t('alarm.fields.ticketId'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ticketMessage,
-          text: this.$t('alarm.ticketMessage'),
+          text: this.$t('alarm.fields.ticketMessage'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ackAuthor,
@@ -52,7 +54,7 @@ export const payloadVariablesMixin = {
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.ackMessage,
-          text: this.$t('alarm.ackMessage'),
+          text: this.$t('alarm.fields.ackMessage'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.lastCommentAuthor,
@@ -61,6 +63,10 @@ export const payloadVariablesMixin = {
         {
           value: ALARM_PAYLOADS_VARIABLES.lastCommentMessage,
           text: this.$t('alarm.lastCommentMessage'),
+        },
+        {
+          value: ALARM_PAYLOADS_VARIABLES.entityName,
+          text: this.$t('alarm.fields.entityName'),
         },
         {
           value: ALARM_PAYLOADS_VARIABLES.entityInfosValue,
@@ -128,6 +134,42 @@ export const payloadVariablesMixin = {
           text: this.$t('declareTicket.triggerEventMessage'),
         },
       ];
+    },
+
+    entityPayloadVariables() {
+      return [
+        {
+          value: `${ENTITY_PAYLOADS_VARIABLES.entity}${ENTITY_PAYLOADS_VARIABLES.name}`,
+          text: this.$t('common.name'),
+        },
+        {
+          value: ENTITY_PAYLOADS_VARIABLES.infosValue,
+          text: this.$t('common.infos'),
+        },
+      ];
+    },
+
+    externalDataPayloadSubVariables() {
+      return [{
+        value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData,
+        text: this.$t('externalData.title'),
+      }];
+    },
+
+    externalDataAlarmPayloadVariables() {
+      return [{
+        value: ALARM_PAYLOADS_VARIABLES.alarms,
+        enumerable: true,
+        variables: this.externalDataPayloadSubVariables,
+      }];
+    },
+
+    externalDataEntityPayloadVariables() {
+      return [{
+        value: ENTITY_PAYLOADS_VARIABLES.entities,
+        enumerable: true,
+        variables: this.externalDataPayloadSubVariables,
+      }];
     },
 
     payloadVariables() {

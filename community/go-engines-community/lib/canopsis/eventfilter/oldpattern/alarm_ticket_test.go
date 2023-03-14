@@ -44,10 +44,10 @@ func TestAlarmTicketRefPatternToMongoDriverQuery(t *testing.T) {
 			"ticket.m": bson.M{
 				"$regex": "abc-.*-def",
 			},
-			"ticket.val": bson.M{
+			"ticket.ticket": bson.M{
 				"$eq": "a12",
 			},
-			"ticket.data.priority_id": bson.M{
+			"ticket.ticket_data.priority_id": bson.M{
 				"$regex": "^(?!1 - Critical).*$",
 			},
 		}
@@ -108,19 +108,23 @@ func TestAlarmTicketRefPatternMatchesMongoDriver(t *testing.T) {
 		Convey("The pattern matches the right alarm steps", func() {
 			matches := oldpattern.NewAlarmTicketRegexMatches()
 
-			alarmTicket1 := types.AlarmTicket{
-				Data: map[string]string{
-					"priority_id": "2 - Critical",
+			alarmTicket1 := &types.AlarmStep{
+				TicketInfo: types.TicketInfo{
+					TicketData: map[string]string{
+						"priority_id": "2 - Critical",
+					},
 				},
 			}
-			So(p.Matches(&alarmTicket1, &matches), ShouldBeTrue)
+			So(p.Matches(alarmTicket1, &matches), ShouldBeTrue)
 
-			alarmTicket2 := types.AlarmTicket{
-				Data: map[string]string{
-					"priority_id": "1 - Critical",
+			alarmTicket2 := &types.AlarmStep{
+				TicketInfo: types.TicketInfo{
+					TicketData: map[string]string{
+						"priority_id": "1 - Critical",
+					},
 				},
 			}
-			So(p.Matches(&alarmTicket2, &matches), ShouldBeFalse)
+			So(p.Matches(alarmTicket2, &matches), ShouldBeFalse)
 		})
 	})
 }
