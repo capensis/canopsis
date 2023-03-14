@@ -143,12 +143,12 @@ export default {
 
   &--completed.theme--light.v-icon,
   &--completed.theme--dark.v-icon {
-    color: var(--v-primary-base);
+    color: #2fab63;
   }
 
   &--failed.theme--light.v-icon,
   &--failed.theme--dark.v-icon {
-    color: var(--v-error-base);
+    color: #ff5252;
   }
 
   &--dotted {
