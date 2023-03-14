@@ -66,6 +66,9 @@ export default {
   entitiesColumns: 'Context explorer columns',
   entityInfoPopup: 'Entity info popup',
   modal: '(Modal)',
+  headerTitle: 'Header title',
+  defaultSampling: 'Default sampling',
+  defaultTimeRange: 'Default time range',
   exportCsv: {
     title: 'Export CSV',
     fields: {
@@ -206,6 +209,10 @@ export default {
   },
 
   chart: {
+    graphType: 'Graph type',
+    separateBars: 'Separate bars',
+    stackedBars: 'Stacked bars',
+    selectMetrics: 'Select metrics',
     sharesType: 'Shares type',
   },
 };
