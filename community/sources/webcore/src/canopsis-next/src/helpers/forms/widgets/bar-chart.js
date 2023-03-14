@@ -39,12 +39,12 @@ export const barChartWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to map widget parameters
+ * Convert form to bat chart widget parameters
  *
  * @param {BarChartWidgetParametersForm} form
  * @return {BarChartWidgetParameters}
  */
-export const formToMapWidgetParameters = form => ({
+export const formToBarChartWidgetParameters = form => ({
   ...form,
 
   metrics: formToMetricPresets(form.metrics),
