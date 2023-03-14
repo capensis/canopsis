@@ -18,7 +18,7 @@ Pour créer une carte, cliquer sur le bouton **+** dans le menu d'action rapide.
 
 ![Création cartographie](img/cartographie_ajout.png)
 
-Il vous sera alors proposer plusieurs type de carte, à plusieurs niveau d'abstraction.
+Il vous sera alors proposé plusieurs types de carte, à plusieurs niveaux d'abstraction.
 
 ![Modale création cartographie](img/cartographie_modale.png)
 
