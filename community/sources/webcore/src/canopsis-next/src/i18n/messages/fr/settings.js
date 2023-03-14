@@ -67,6 +67,7 @@ export default {
   entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
   modal: '(Modal)',
   headerTitle: 'Titre de l\'en-tête',
+  defaultSampling: 'Default sampling',
   defaultTimeRange: 'Plage horaire par défaut',
   exportCsv: {
     title: 'Exporter CSV',
@@ -205,5 +206,11 @@ export default {
     comfort: 'Vue confort',
     compact: 'Vue compacte',
     ultraCompact: 'Vue ultra compacte',
+  },
+
+  chart: {
+    graphType: 'Type de graphique',
+    separateBars: 'Barres séparées',
+    stackedBars: 'Barres empilées',
   },
 };

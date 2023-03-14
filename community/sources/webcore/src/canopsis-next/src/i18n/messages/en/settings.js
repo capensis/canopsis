@@ -67,6 +67,7 @@ export default {
   entityInfoPopup: 'Entity info popup',
   modal: '(Modal)',
   headerTitle: 'Header title',
+  defaultSampling: 'Default sampling',
   defaultTimeRange: 'Default time range',
   exportCsv: {
     title: 'Export CSV',
@@ -205,5 +206,11 @@ export default {
     comfort: 'Comfort view',
     compact: 'Compact view',
     ultraCompact: 'Ultra compact view',
+  },
+
+  chart: {
+    graphType: 'Graph type',
+    separateBars: 'Separate bars',
+    stackedBars: 'Stacked bars',
   },
 };
