@@ -5,7 +5,8 @@
       :with-color="withColor",
       :with-aggregate-function="withAggregateFunction",
       :parameters="parameters",
-      :only-group="onlyGroup"
+      :only-group="onlyGroup",
+      :min="min"
     )
 </template>
 
@@ -34,6 +35,10 @@ export default {
     onlyGroup: {
       type: Boolean,
       default: false,
+    },
+    min: {
+      type: Number,
+      required: false,
     },
   },
 };
