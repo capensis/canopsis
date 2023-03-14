@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
-import { KPI_PIE_CHART_SHOW_MODES } from '@/constants';
+import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 import CPieShowModeField from '@/components/sidebars/settings/fields/chart/pie-show-mode.vue';
 
@@ -25,19 +25,19 @@ describe('pie-show-mode', () => {
   test('Value changed after trigger radio group field', () => {
     const wrapper = factory({
       propsData: {
-        value: KPI_PIE_CHART_SHOW_MODES.numbers,
+        value: KPI_PIE_CHART_SHOW_MODS.numbers,
       },
     });
 
-    selectRadioGroup(wrapper).setValue(KPI_PIE_CHART_SHOW_MODES.percent);
+    selectRadioGroup(wrapper).setValue(KPI_PIE_CHART_SHOW_MODS.percent);
 
-    expect(wrapper).toEmit('input', KPI_PIE_CHART_SHOW_MODES.percent);
+    expect(wrapper).toEmit('input', KPI_PIE_CHART_SHOW_MODS.percent);
   });
 
   test('Renders `pie-show-mode` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: KPI_PIE_CHART_SHOW_MODES.percent,
+        value: KPI_PIE_CHART_SHOW_MODS.percent,
       },
     });
 
@@ -47,7 +47,7 @@ describe('pie-show-mode', () => {
   test('Renders `pie-show-mode` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: KPI_PIE_CHART_SHOW_MODES.numbers,
+        value: KPI_PIE_CHART_SHOW_MODS.numbers,
         name: 'custom_name',
         label: 'Custom label',
       },
