@@ -109,6 +109,8 @@ const enhanceWrapper = (wrapper) => {
  * @param {Object} component
  * @param {Object} options
  * @return {CustomWrapper}
+ *
+ * @deprecated Should be used generateRenderer instead
  */
 export const mount = (component, options = {}) => {
   const wrapper = testUtilsMount(
@@ -174,6 +176,8 @@ export const generateRenderer = (
  * @param {Object} component
  * @param {Object} options
  * @return {CustomWrapper}
+ *
+ * @deprecated Should be used generateShallowRenderer instead
  */
 export const shallowMount = (component, options = {}) => {
   const wrapper = testUtilsShallowMount(
