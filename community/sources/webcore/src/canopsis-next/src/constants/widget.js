@@ -389,3 +389,5 @@ export const NUMBERS_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
     ],
   },
 };
+
+export const CHART_PRESET_CUSTOM_ITEM_VALUE = Symbol('custom');
