@@ -30,7 +30,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/forms/metric
  */
 export const barChartWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  metrics: metricPresetsToForm(parameters.metrics ?? [undefined]),
+  metrics: metricPresetsToForm(parameters.metrics),
   stacked: parameters.stacked ?? false,
   chart_title: parameters.chart_title ?? '',
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,

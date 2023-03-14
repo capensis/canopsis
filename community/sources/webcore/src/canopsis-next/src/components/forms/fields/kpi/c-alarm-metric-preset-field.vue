@@ -1,11 +1,12 @@
 <template lang="pug">
   v-layout.c-alarm-metric-preset-field(column)
     c-alarm-metric-parameters-field(
-      v-field="preset.metric",
+      :value="preset.metric",
       :label="$t('kpi.selectMetric')",
       :parameters="parameters",
       :disabled-parameters="disabledParameters",
-      required
+      required,
+      @input="updateMetric"
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
       v-switch(
@@ -21,12 +22,14 @@
     c-alarm-metric-aggregate-function-field(
       v-if="withAggregateFunction",
       v-field="preset.aggregate_func",
+      :aggregate-functions="aggregateFunctions",
       :label="$t('kpi.calculationMethod')"
     )
 </template>
 
 <script>
 import { getMetricColor } from '@/helpers/color';
+import { getAggregateFunctionsByMetric, getDefaultAggregateFunctionByMetric } from '@/helpers/metrics';
 
 import { formMixin } from '@/mixins/form';
 
@@ -65,9 +68,26 @@ export default {
       required: false,
     },
   },
+  computed: {
+    aggregateFunctions() {
+      return getAggregateFunctionsByMetric(this.preset.metric);
+    },
+  },
   methods: {
     enableColor(value) {
       this.updateField('color', value ? getMetricColor(this.preset.metric) : '');
+    },
+
+    updateMetric(metric) {
+      if (this.withAggregateFunction) {
+        this.updateModel({
+          ...this.preset,
+          metric,
+          aggregate_func: getDefaultAggregateFunctionByMetric(metric),
+        });
+      } else {
+        this.updateField('metric', metric);
+      }
     },
   },
 };
