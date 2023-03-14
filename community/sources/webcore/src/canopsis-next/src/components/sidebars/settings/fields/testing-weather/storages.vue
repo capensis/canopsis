@@ -1,19 +1,19 @@
 <template lang="pug">
-  v-list-group(:disabled="disabled", hide-on-disabled)
-    v-list-tile(slot="activator") {{ title }}
-      div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
-    v-container.pr-2
-      c-storages-field(
-        v-field="storages",
-        v-on="$listeners",
-        :label="$t('settings.serverStorage')",
-        :disabled="disabled",
-        :help-text="helpText"
-      )
+  widget-settings-item(:title="title", optional)
+    c-storages-field(
+      v-field="storages",
+      v-on="$listeners",
+      :label="$t('settings.serverStorage')",
+      :disabled="disabled",
+      :help-text="helpText"
+    )
 </template>
 
 <script>
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   model: {
     prop: 'storages',
     event: 'input',

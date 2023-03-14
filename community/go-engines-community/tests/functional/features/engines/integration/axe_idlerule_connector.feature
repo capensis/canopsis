@@ -476,7 +476,6 @@ Feature: update connector alarm
           ],
           "type": "assocticket",
           "parameters": {
-            "output": "test-output-axe-idlerule-connector-4",
             "ticket": "test-ticket-axe-idlerule-connector-4"
           },
           "drop_scenario_if_not_matched": false,
@@ -550,7 +549,7 @@ Feature: update connector alarm
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "test-ticket-axe-idlerule-connector-4"
+                "ticket": "test-ticket-axe-idlerule-connector-4"
               },
               {
                 "_t": "ack",

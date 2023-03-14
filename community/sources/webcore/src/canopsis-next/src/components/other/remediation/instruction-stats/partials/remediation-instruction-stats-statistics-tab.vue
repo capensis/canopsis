@@ -50,27 +50,27 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('remediationInstructionStats.modifiedOn'),
+          text: this.$t('remediation.instructionStat.modifiedOn'),
           value: 'modified_on',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.averageCompletionTime'),
+          text: this.$t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.executionCount'),
+          text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmStates'),
+          text: this.$t('remediation.instructionStat.alarmStates'),
           value: 'alarm_states',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.okAlarmStates'),
+          text: this.$t('remediation.instructionStat.okAlarmStates'),
           value: 'ok_alarm_states',
           sortable: false,
         },

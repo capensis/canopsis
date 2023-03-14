@@ -93,7 +93,7 @@ export default {
           name: MODALS.confirmation,
           dialogProps: { persistent: true },
           config: {
-            text: this.$t('remediationInstructions.errors.runningInstruction'),
+            text: this.$t('remediation.instruction.errors.runningInstruction'),
             action: async () => {
               try {
                 await action();
@@ -161,7 +161,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           text: remediationInstruction.running
-            ? this.$t('remediationInstructions.errors.runningInstruction')
+            ? this.$t('remediation.instruction.errors.runningInstruction')
             : undefined,
           action: async () => {
             await this.removeRemediationInstruction({ id: remediationInstruction._id });

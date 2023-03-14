@@ -7,16 +7,16 @@
     no-pagination,
     expand
   )
-    template(slot="method", slot-scope="props") {{ $t(`stateSetting.methods.${props.item.method}`) }}
-    template(slot="actions", slot-scope="props")
+    template(#method="{ item }") {{ $t(`stateSetting.methods.${item.method}`) }}
+    template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
           type="edit",
-          :disabled="!props.item.editable",
-          @click.stop="$emit('edit', props.item)"
+          :disabled="!item.editable",
+          @click.stop="$emit('edit', item)"
         )
-    template(slot="expand", slot-scope="props")
-      state-settings-list-expand-panel(:state-setting="props.item")
+    template(#expand="{ item }")
+      state-settings-list-expand-panel(:state-setting="item")
 </template>
 
 <script>

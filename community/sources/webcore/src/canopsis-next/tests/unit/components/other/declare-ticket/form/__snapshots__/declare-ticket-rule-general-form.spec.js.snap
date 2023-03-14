@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with empty form 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs6"
+    >
+      <c-enabled-field-stub
+        value="true"
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-enabled-field-stub
+        label="Emit trigger"
+        name="emit_trigger"
+      />
+    </div>
+  </div>
+  <div
+    class="layout mb-2 row"
+  >
+    <div
+      class="flex mr-3 xs8"
+    >
+      <c-name-field-stub
+        required="required"
+        value=""
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-name-field-stub
+        label="System name"
+        name="system_name"
+        value=""
+      />
+    </div>
+  </div>
+  <declare-ticket-rule-webhooks-field-stub
+    name="webhooks"
+    webhooks=""
+  />
+</div>
+`;
+
+exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-form\` with filled form 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex xs6"
+    >
+      <c-enabled-field-stub
+        value="true"
+      />
+    </div>
+    <div
+      class="flex xs6"
+    >
+      <c-enabled-field-stub
+        label="Emit trigger"
+        name="emit_trigger"
+      />
+    </div>
+  </div>
+  <div
+    class="layout mb-2 row"
+  >
+    <div
+      class="flex mr-3 xs8"
+    >
+      <c-name-field-stub
+        required="required"
+        value="name"
+      />
+    </div>
+    <div
+      class="flex xs4"
+    >
+      <c-name-field-stub
+        label="System name"
+        name="system_name"
+        value="system-name"
+      />
+    </div>
+  </div>
+  <declare-ticket-rule-webhooks-field-stub
+    name="webhooks"
+    webhooks="[object Object]"
+  />
+</div>
+`;
