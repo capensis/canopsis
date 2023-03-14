@@ -8,6 +8,8 @@
         :parameters="parameters",
         :disabled-parameters="disabledParameters"
       )
+    template(#append="")
+      c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
 </template>
 
 <script>
@@ -19,6 +21,7 @@ import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 import { formArrayMixin } from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formArrayMixin],
   model: {
     prop: 'metrics',
@@ -49,8 +52,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    min: {
+      type: Number,
+      default: 1,
+    },
   },
   computed: {
+    errorMessage() {
+      return this.errors.collect(this.name, undefined, false)
+        ?.map(({ rule, msg }) => {
+          const customMessage = {
+            min_value: this.$t('kpi.errors.metricsMinLength', { count: this.min }),
+          }[rule];
+
+          return customMessage || msg;
+        })
+        .join('\n');
+    },
+
     excludedParameters() {
       const [firstMetric] = this.metrics;
 
@@ -76,11 +95,37 @@ export default {
       ];
     },
   },
+  watch: {
+    metrics() {
+      if (this.errorMessage) {
+        this.$validator.validate(this.name);
+      }
+    },
+  },
+  created() {
+    this.attachMinValueRule();
+  },
+  beforeDestroy() {
+    this.detachRules();
+  },
   methods: {
     add() {
       this.addItemIntoArray(metricPresetToForm({
         aggregate_func: this.withAggregateFunction ? AGGREGATE_FUNCTIONS.avg : '',
       }));
+    },
+
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: { min_value: this.min },
+        getter: () => this.metrics.length,
+        vm: this,
+      });
+    },
+
+    detachRules() {
+      this.$validator.detach(this.name);
     },
   },
 };
