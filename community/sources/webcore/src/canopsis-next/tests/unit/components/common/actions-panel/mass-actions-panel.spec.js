@@ -1,13 +1,15 @@
 import { shallowMount, mount, createVueInstance } from '@unit/utils/vue';
 
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
-import { actionsPanelItem } from '@unit/stubs/actions-panel';
+import { createButtonStub } from '@unit/stubs/button';
+
 import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'actions-panel-item': actionsPanelItem,
+  'c-action-btn': createButtonStub('c-action-btn'),
+  'v-list-tile': createButtonStub('v-list-tile'),
 };
 
 const snapshotStubs = {
@@ -41,7 +43,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const actionElements = wrapper.findAll('button.actions-panel-item');
+    const actionElements = wrapper.findAll('button.c-action-btn');
 
     expect(actionElements).toHaveLength(actions.length);
 
@@ -67,7 +69,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub button.actions-panel-item');
+    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-tile');
 
     expect(dropdownActionElements).toHaveLength(actions.length);
 

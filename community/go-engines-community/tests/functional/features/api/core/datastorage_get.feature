@@ -55,6 +55,14 @@ Feature: Get and update data storage config
           "value": 20,
           "unit": "d"
         }
+      },
+      "webhook": {
+        "log_credentials": true,
+        "delete_after": {
+          "enabled": true,
+          "value": 20,
+          "unit": "d"
+        }
       }
     }
     """
@@ -112,6 +120,14 @@ Feature: Get and update data storage config
             "value": 20,
             "unit": "d"
           }
+        },
+        "webhook": {
+          "log_credentials": true,
+          "delete_after": {
+            "enabled": true,
+            "value": 20,
+            "unit": "d"
+          }
         }
       },
       "history": {
@@ -120,7 +136,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -179,6 +196,14 @@ Feature: Get and update data storage config
             "value": 20,
             "unit": "d"
           }
+        },
+        "webhook": {
+          "log_credentials": true,
+          "delete_after": {
+            "enabled": true,
+            "value": 20,
+            "unit": "d"
+          }
         }
       },
       "history": {
@@ -187,7 +212,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -217,6 +243,10 @@ Feature: Get and update data storage config
         },
         "health_check": {
           "delete_after": null
+        },
+        "webhook": {
+          "log_credentials": false,
+          "delete_after": null
         }
       },
       "history": {
@@ -225,7 +255,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -252,6 +283,10 @@ Feature: Get and update data storage config
         },
         "health_check": {
           "delete_after": null
+        },
+        "webhook": {
+          "log_credentials": false,
+          "delete_after": null
         }
       },
       "history": {
@@ -260,7 +295,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """

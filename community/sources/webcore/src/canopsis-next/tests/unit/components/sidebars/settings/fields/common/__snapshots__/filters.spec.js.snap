@@ -9,16 +9,16 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
   >
     <filter-selector-stub
       clearable="true"
-      filters="[object Object]"
+      filters="[object Object],[object Object]"
       hidemultiply="true"
       itemtext="title"
       itemvalue="_id"
       label="Default filter"
       lockedfilters=""
-      value="filter-id"
+      value="filter-id-1"
     />
     <filters-list-stub
-      filters="[object Object]"
+      filters="[object Object],[object Object]"
     />
   </div>
 </widget-settings-item-stub>
