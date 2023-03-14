@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-alert(v-if="!webhooks.length", type="info") {{ $t('declareTicket.emptyWebhooks') }}
-    c-card-iterator.mb-2(
+    c-card-iterator-field.mb-2(
       v-field="webhooks",
       item-key="key",
       :disabled="disabled",
