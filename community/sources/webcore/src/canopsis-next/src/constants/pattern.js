@@ -81,11 +81,6 @@ export const PATTERN_CONDITIONS = {
   notEndWith: 'not_end_with',
 };
 
-export const FILTER_MONGO_OPERATORS = {
-  and: '$and',
-  or: '$or',
-};
-
 export const PATTERN_FIELD_TYPES = {
   string: 'string',
   number: 'int',

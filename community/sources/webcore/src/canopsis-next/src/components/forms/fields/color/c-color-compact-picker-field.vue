@@ -12,7 +12,7 @@ export default {
   inheritAttrs: false,
   props: {
     value: {
-      type: String,
+      type: [Object, String],
       required: false,
     },
   },

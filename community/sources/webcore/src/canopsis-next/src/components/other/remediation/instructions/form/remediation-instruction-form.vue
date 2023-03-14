@@ -25,7 +25,8 @@
       v-flex(xs7)
         c-duration-field(
           v-field="form.timeout_after_execution",
-          :label="$t('remediationInstructions.timeoutAfterExecution')",
+          :label="$t('remediation.instruction.timeoutAfterExecution')",
+          :units-label="$t('common.unit')",
           :disabled="disabled",
           name="timeout_after_execution",
           required

@@ -1,4 +1,4 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 
@@ -13,30 +13,15 @@ import {
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'more-infos': true,
-  'time-line': true,
+  'alarms-time-line': true,
   'alarms-expand-panel-children': true,
   'service-dependencies': true,
+  'declared-tickets-list': true,
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
 };
-
-const factory = (options = {}) => shallowMount(AlarmsExpandPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmsExpandPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectTabs = wrapper => wrapper.vm.$children[0];
 
@@ -96,6 +81,13 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     infoModule,
   ]);
 
+  const factory = generateShallowRenderer(AlarmsExpandPanel, {
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(AlarmsExpandPanel, {
+    stubs,
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -110,6 +102,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget: {
           parameters: {
@@ -145,6 +138,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget,
       },
@@ -173,6 +167,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget: {
           parameters: {
@@ -199,6 +194,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
             type: ENTITY_TYPES.connector,
             impact: [],
           },
+          v: {},
         },
         widget: {
           parameters: {
@@ -227,6 +223,9 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           entity: {
             type: ENTITY_TYPES.service,
             impact: ['test'],
+          },
+          v: {
+            tickets: [{}],
           },
         },
         widget: {

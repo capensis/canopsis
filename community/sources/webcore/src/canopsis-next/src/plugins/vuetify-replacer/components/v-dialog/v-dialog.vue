@@ -17,6 +17,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    absolute: {
+      type: Boolean,
+      default: false,
+    },
+    contentWrapperClass: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     activeZIndex() {
@@ -40,6 +48,19 @@ export default {
       }
 
       return parseInt(index, 10);
+    },
+
+    contentClasses() {
+      const classes = {
+        'v-dialog__content': true,
+        'v-dialog__content--active': this.isActive,
+      };
+
+      if (this.contentWrapperClass) {
+        classes[this.contentWrapperClass] = true;
+      }
+
+      return classes;
     },
   },
   methods: {

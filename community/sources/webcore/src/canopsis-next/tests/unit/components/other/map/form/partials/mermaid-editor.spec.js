@@ -119,7 +119,7 @@ describe('mermaid-editor', () => {
 
     const mermaidPoints = selectMermaidPoints(wrapper);
 
-    expect(mermaidPoints.vm.$attrs['add-on-click']).toBeTruthy();
+    expect(mermaidPoints.vm.addOnClick).toBeTruthy();
   });
 
   test('Form re-validated after change form with error', async () => {

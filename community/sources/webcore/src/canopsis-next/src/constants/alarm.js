@@ -375,3 +375,40 @@ export const ALARM_DENSE_TYPES = {
   medium: 1,
   small: 2,
 };
+
+export const ALARM_PAYLOADS_VARIABLES = {
+  alarm: '.Alarm',
+  alarms: '.Alarms',
+  component: '.Value.Component',
+  resource: '.Value.Resource',
+  stateMessage: '.Value.State.Message',
+  stateValue: '.Value.State.Value',
+  statusValue: '.Value.Status.Value',
+  ticketAuthor: '.Value.Ticket.Author',
+  ticketValue: '.Value.Ticket.Ticket',
+  ticketMessage: '.Value.Ticket.Message',
+  ackAuthor: '.Value.ACK.Author',
+  ackMessage: '.Value.ACK.Message',
+  lastCommentAuthor: '.Value.LastComment.Author',
+  lastCommentMessage: '.Value.LastComment.Message',
+
+  entityName: '.Entity.Name',
+  entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
+};
+
+export const ACK_MODAL_ACTIONS_TYPES = {
+  ack: 0,
+  ackAndAssociateTicket: 1,
+  ackAndDeclareTicket: 2,
+};
+
+export const ALARMS_EXPAND_PANEL_TABS = {
+  moreInfos: 'moreInfos',
+  timeLine: 'timeLine',
+  ticketsDeclared: 'ticketsDeclared',
+  pbehavior: 'pbehavior',
+  alarmsChildren: 'alarmsChildren',
+  trackSource: 'trackSource',
+  impactChain: 'impactChain',
+  entityGantt: 'entityGantt',
+};

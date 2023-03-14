@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
 
@@ -40,6 +40,7 @@ export default {
   name: MODALS.createRemediationInstructionsFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { RemediationInstructionsFilterForm, ModalWrapper },
   mixins: [
