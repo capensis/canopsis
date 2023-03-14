@@ -5,7 +5,7 @@
       v-validate="'required'",
       :items="rules",
       :disabled="disabled",
-      :label="label || $t('common.rule')",
+      :label="label || $tc('common.rule')",
       :name="ruleName",
       :error-messages="errors.collect(ruleName)",
       :loading="pending",

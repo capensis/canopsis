@@ -28,6 +28,7 @@ export const ROUTES_NAMES = {
   exploitationFlappingRules: 'exploitation-flapping-rules',
   exploitationResolveRules: 'exploitation-resolve-rules',
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
+  exploitationLinkRules: 'exploitation-link-rules',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
 };
@@ -62,6 +63,7 @@ export const ROUTES = {
   exploitationFlappingRules: '/exploitation/flapping-rules',
   exploitationResolveRules: '/exploitation/resolve-rules',
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
+  exploitationLinkRules: '/exploitation/link-rules',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
 };

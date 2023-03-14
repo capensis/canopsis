@@ -103,6 +103,7 @@ export const USERS_PERMISSIONS = {
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
@@ -117,6 +118,7 @@ export const USERS_PERMISSIONS = {
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -270,6 +272,7 @@ export const USERS_PERMISSIONS = {
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
       metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      metricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_metrics_settings`,
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
@@ -291,6 +294,7 @@ export const USERS_PERMISSIONS = {
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,

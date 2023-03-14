@@ -1,28 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CAlarmMetricParametersField, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CAlarmMetricParametersField, {
-  localVue,
-  ...options,
-});
-
 describe('c-alarm-metric-parameters-field', () => {
+  const factory = generateShallowRenderer(CAlarmMetricParametersField, { stubs });
+  const snapshotFactory = generateRenderer(CAlarmMetricParametersField);
+
   it('Value changed after trigger the input', () => {
     const wrapper = factory({
       propsData: {
