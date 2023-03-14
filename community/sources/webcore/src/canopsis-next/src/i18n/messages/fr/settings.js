@@ -213,5 +213,6 @@ export default {
     separateBars: 'Barres séparées',
     stackedBars: 'Barres empilées',
     selectMetrics: 'Select metrics',
+    sharesType: 'Type d\'actions',
   },
 };
