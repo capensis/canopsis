@@ -19,6 +19,7 @@ Feature: Authenticate user
       "password": "test"
     }
     """
+    Then the response code should be 200
     When I set header Authorization=Bearer {{ .lastResponse.access_token }}
     When I do GET /api/v4/alarms
     Then the response code should be 200

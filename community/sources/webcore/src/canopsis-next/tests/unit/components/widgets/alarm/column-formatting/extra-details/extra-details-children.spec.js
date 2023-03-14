@@ -1,14 +1,9 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 
+import flushPromises from 'flush-promises';
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
 const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsChildren, {
-  localVue,
-
-  ...options,
-});
 
 describe('extra-details-children', () => {
   const total = 3;
@@ -16,17 +11,21 @@ describe('extra-details-children', () => {
     name: 'rule-name',
   };
 
-  it('Renders `extra-details-children` with full children and rule', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ExtraDetailsChildren, {
+    localVue,
+    attachTo: document.body,
+  });
+
+  it('Renders `extra-details-children` with full children and rule', async () => {
+    snapshotFactory({
       propsData: {
         total,
         rule,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

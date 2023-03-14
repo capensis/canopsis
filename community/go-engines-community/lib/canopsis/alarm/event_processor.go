@@ -209,8 +209,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}()
 
 	go func() {
-		if err = s.processAckResources(context.Background(), *event); err != nil {
-			s.logger.Err(err).Msg("cannot ack resources")
+		if err = s.processResources(context.Background(), *event); err != nil {
+			s.logger.Err(err).Msg("cannot update resources")
 		}
 	}()
 
@@ -489,13 +489,13 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
 	t := event.EventType
 	parameters := types.OperationParameters{
-		Ticket:      event.Ticket,
-		Data:        event.TicketData,
+		TicketInfo:  event.TicketInfo,
 		Output:      event.Output,
 		Author:      event.Author,
 		Execution:   event.Execution,
 		Instruction: event.Instruction,
 	}
+
 	switch event.EventType {
 	case types.EventTypeSnooze:
 		parameters.Duration = &types.DurationWithUnit{
@@ -520,9 +520,13 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 	}
 }
 
-func (s *eventProcessor) processAckResources(ctx context.Context, event types.Event) error {
+func (s *eventProcessor) processResources(ctx context.Context, event types.Event) error {
 	if event.AckResources {
 		return s.metaAlarmEventProcessor.ProcessAckResources(ctx, event)
+	}
+
+	if event.TicketResources {
+		return s.metaAlarmEventProcessor.ProcessTicketResources(ctx, event)
 	}
 
 	return nil

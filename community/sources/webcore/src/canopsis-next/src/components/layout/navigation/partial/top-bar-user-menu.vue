@@ -1,11 +1,12 @@
 <template lang="pug">
   v-menu(bottom, offset-y, offset-x)
-    v-btn.white--text(slot="activator", flat) {{ userName }}
+    template(#activator="{ on }")
+      v-btn.white--text(v-on="on", flat) {{ userName }}
     v-list.py-0
       v-list-tile(@click="showEditUserModal")
         v-list-tile-avatar
           v-icon person
-        v-list-tile-title.text-uppercase.body-2 {{ $t('users.seeProfile') }}
+        v-list-tile-title.text-uppercase.body-2 {{ $t('user.seeProfile') }}
       v-list-tile(:to="profilePatternsLink", active-class="")
         v-list-tile-avatar
           v-icon filter_list
