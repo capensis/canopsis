@@ -212,5 +212,6 @@ export default {
     graphType: 'Type de graphique',
     separateBars: 'Barres séparées',
     stackedBars: 'Barres empilées',
+    selectMetrics: 'Select metrics',
   },
 };
