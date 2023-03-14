@@ -12,6 +12,7 @@
 import { metricPresetToForm } from '@/helpers/forms/metric';
 
 import { formArrayMixin } from '@/mixins/form';
+import { AGGREGATE_FUNCTIONS } from '@/constants';
 
 export default {
   mixins: [formArrayMixin],
@@ -39,7 +40,9 @@ export default {
   },
   methods: {
     add() {
-      this.addItemIntoArray(metricPresetToForm());
+      this.addItemIntoArray(metricPresetToForm({
+        aggregate_func: this.withAggregateFunction ? AGGREGATE_FUNCTIONS.avg : '',
+      }));
     },
   },
 };
