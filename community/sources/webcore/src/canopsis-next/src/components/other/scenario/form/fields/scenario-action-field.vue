@@ -1,50 +1,50 @@
 <template lang="pug">
-  v-card.scenario-action-field
-    v-card-text
-      v-layout(row, align-center)
-        v-layout.scenario-action-field__actions
-          c-draggable-step-number(
-            :color="hasChildrenError ? 'error' : 'primary'",
-            drag-class="action-drag-handler"
-          ) {{ actionNumber }}
-          c-expand-btn(v-model="expanded")
-        c-action-type-field.px-2(v-field="action.type", :name="`${name}.type`")
-        c-action-btn(type="delete", @click="removeAction")
-      v-expand-transition(mode="out-in")
-        v-layout(v-show="expanded", column)
-          c-enabled-field(v-field="action.emit_trigger", :label="$t('scenario.emitTrigger')")
-          action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
-          c-workflow-field(
-            v-field="action.drop_scenario_if_not_matched",
-            :label="$t('scenario.workflow')",
-            :continue-label="$t('scenario.remainingAction')"
-          )
-          v-textarea.mt-2(v-field="action.comment", :label="$tc('common.comment')")
+  c-card-iterator-item(:item-number="actionNumber", @remove="removeAction")
+    template(#header="")
+      c-action-type-field(v-field="action.type", :name="`${name}.type`")
 
-          v-tabs(v-model="activeTab", centered, slider-color="primary", color="transparent", fixed-tabs)
-            v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-            v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
-          v-divider
-          v-tabs-items.pt-2(v-model="activeTab")
-            v-tab-item
-              action-parameters-form.mt-4(
-                ref="general",
-                v-model="parameters",
-                :name="`${name}.parameters`",
-                :type="action.type"
-              )
-            v-tab-item
-              scenario-action-patterns-form.mt-4(
-                ref="patterns",
-                v-model="action.patterns",
-                :name="name"
-              )
+    v-layout(row)
+      v-flex(xs6)
+        c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
+      v-flex(v-if="isWebhookActionType", xs6)
+        c-enabled-field(
+          :value="parameters.skip_for_child",
+          :label="$t('scenario.skipForChild')",
+          @input="updateSkipForChild"
+        )
+    action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
+    c-workflow-field(
+      v-field="action.drop_scenario_if_not_matched",
+      :label="$t('scenario.workflow')",
+      :continue-label="$t('scenario.remainingAction')"
+    )
+    v-textarea.mt-2(v-field="action.comment", :label="$tc('common.comment')")
+
+    v-tabs(v-model="activeTab", centered, slider-color="primary", color="transparent", fixed-tabs)
+      v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
+      v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
+    v-divider
+    v-tabs-items.pt-2(v-model="activeTab")
+      v-tab-item
+        action-parameters-form.mt-4(
+          ref="general",
+          v-model="parameters",
+          :name="`${name}.parameters`",
+          :type="action.type",
+          :has-previous-webhook="hasPreviousWebhook"
+        )
+      v-tab-item
+        scenario-action-patterns-form.mt-4(
+          ref="patterns",
+          v-model="action.patterns",
+          :name="name"
+        )
 </template>
 
 <script>
-import { isPbehaviorActionType } from '@/helpers/forms/action';
+import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/forms/action';
 
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
+import { formMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
@@ -61,7 +61,6 @@ export default {
   },
   mixins: [
     formMixin,
-    validationChildrenMixin,
     confirmableFormMixinCreator({
       field: 'action',
       method: 'removeAction',
@@ -85,6 +84,10 @@ export default {
       type: [Number, String],
       default: 0,
     },
+    hasPreviousWebhook: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -97,6 +100,10 @@ export default {
   computed: {
     isPbehaviorAction() {
       return isPbehaviorActionType(this.action.type);
+    },
+
+    isWebhookActionType() {
+      return isWebhookActionType(this.action.type);
     },
 
     parameters: {
@@ -120,17 +127,16 @@ export default {
     });
   },
   methods: {
+    updateSkipForChild(value) {
+      this.parameters = {
+        ...this.parameters,
+        skip_for_child: value,
+      };
+    },
+
     removeAction() {
       this.$emit('remove');
     },
   },
 };
 </script>
-
-<style lang="scss">
-.scenario-action-field {
-  &__actions {
-    max-width: 100px;
-  }
-}
-</style>

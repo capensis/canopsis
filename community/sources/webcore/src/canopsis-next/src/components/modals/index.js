@@ -12,16 +12,8 @@ export const ConfirmAckWithTicket = () => ({
   component: import(/* webpackChunkName: "Events" */ './alarm/confirm-ack-with-ticket.vue'),
   loading: LoaderOverlay,
 });
-export const CreateAssociateTicketEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-associate-ticket-event.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateChangeStateEvent = () => ({
   component: import(/* webpackChunkName: "Events" */ './alarm/create-change-state-event.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateDeclareTicketEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-declare-ticket-event.vue'),
   loading: LoaderOverlay,
 });
 export const CreateSnoozeEvent = () => ({
@@ -363,5 +355,27 @@ export const EntityDependenciesList = () => ({
 });
 export const CreateShareToken = () => ({
   component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateDeclareTicketRule = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateDeclareTicketEvent = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
+export const ExecuteDeclareTickets = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/execute-declare-tickets-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateAssociateTicketEvent = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateLinkRule = () => ({
+  component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
   loading: LoaderOverlay,
 });

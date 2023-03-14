@@ -1,6 +1,8 @@
 import promisedHandlebars from 'promised-handlebars';
 import HandlebarsLib from 'handlebars';
 
+import store from '@/store';
+
 import * as helpers from './helpers';
 
 const Handlebars = promisedHandlebars(HandlebarsLib);
@@ -14,7 +16,13 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  */
 export async function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template ?? '');
-  const result = await handleBarFunction(context);
+  const preparedContext = {
+    env: store.getters['templateVars/items'] ?? {},
+
+    ...context,
+  };
+
+  const result = await handleBarFunction(preparedContext);
 
   const element = document.createElement('div');
 
@@ -31,7 +39,11 @@ export async function compile(template, context) {
  * @returns {*}
  */
 export function registerHelper(name, helper) {
-  return Handlebars.registerHelper(name, helper);
+  if (Handlebars.helpers[name]) {
+    return;
+  }
+
+  Handlebars.registerHelper(name, helper);
 }
 
 /**
@@ -41,7 +53,7 @@ export function registerHelper(name, helper) {
  * @returns {*}
  */
 export function unregisterHelper(name) {
-  return Handlebars.unregisterHelper(name);
+  Handlebars.unregisterHelper(name);
 }
 
 /**

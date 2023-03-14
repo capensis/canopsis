@@ -3,18 +3,19 @@
     :hide-actions="hideActions",
     :class="{ editing: isEditing }"
   )
-    div.panel-header(slot="header")
-      slot(name="title")
-        span {{ group.title }}
-      v-btn(
-        v-show="isEditing",
-        :disabled="orderChanged",
-        depressed,
-        small,
-        icon,
-        @click.stop="handleChange"
-      )
-        v-icon(small) edit
+    template(#header="")
+      div.panel-header
+        slot(name="title")
+          span {{ group.title }}
+        v-btn(
+          v-show="isEditing",
+          :disabled="orderChanged",
+          depressed,
+          small,
+          icon,
+          @click.stop="handleChange"
+        )
+          v-icon(small) edit
     slot
 </template>
 
@@ -49,6 +50,9 @@ export default {
 <style lang="scss" scoped>
   .panel-header {
     max-width: 88%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     span {
       max-width: 100%;

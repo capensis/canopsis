@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
-	devmiddleware "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware/dev"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -33,9 +32,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v1"
 	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v2"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	linkv1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v1"
+	linkv2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/wrapper"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -52,7 +56,7 @@ import (
 
 const chanBuf = 10
 const sessionStoreSessionMaxAge = 24 * time.Hour
-const sessionStoreAutoCleanInterval = 10 * time.Second
+const linkFetchTimeout = 30 * time.Second
 
 //go:embed swaggerui/*
 var docsUiFile embed.FS
@@ -64,6 +68,7 @@ type ConfigProviders struct {
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
+	TemplateConfigProvider      *config.BaseTemplateConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 }
 
@@ -77,14 +82,10 @@ func Default(
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	exportExecutor export.TaskExecutor,
+	linkGenerator link.Generator,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, fs.ReadFileFS, error) {
-	configUpdateInterval := canopsis.PeriodicalWaitTime
-	if flags.Test {
-		configUpdateInterval = time.Second
-	}
-
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
@@ -100,6 +101,9 @@ func Default(
 	}
 	if p.DataStorageConfigProvider == nil {
 		p.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
+	}
+	if p.TemplateConfigProvider == nil {
+		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg)
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
@@ -210,7 +214,7 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), logger)
+	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
 	}
@@ -256,10 +260,16 @@ func Default(
 		},
 		logger,
 	)
+
 	legacyUrl := GetLegacyURL(logger)
-	legacyUrlStr := ""
-	if legacyUrl != nil {
-		legacyUrlStr = legacyUrl.String()
+	if linkGenerator == nil {
+		linkGenerators := []link.Generator{
+			linkv2.NewGenerator(dbClient, template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider), logger),
+		}
+		if legacyUrl != nil {
+			linkGenerators = append(linkGenerators, linkv1.NewGenerator(legacyUrl.String(), dbClient, &http.Client{Timeout: linkFetchTimeout}, json.NewEncoder(), json.NewDecoder()))
+		}
+		linkGenerator = wrapper.NewGenerator(linkGenerators...)
 	}
 
 	api.AddRouter(func(router gin.IRouter) {
@@ -277,9 +287,6 @@ func Default(
 			})
 		})
 
-		if flags.Test {
-			router.Use(devmiddleware.ReloadEnforcerPolicy(enforcer))
-		}
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
 			ctx,
@@ -287,10 +294,11 @@ func Default(
 			router,
 			security,
 			enforcer,
-			legacyUrlStr,
+			linkGenerator,
 			dbClient,
 			pgPoolProvider,
 			p.TimezoneConfigProvider,
+			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
@@ -347,7 +355,7 @@ func Default(
 		techMetricsSender.Run(ctx)
 	})
 	api.AddWorker("session clean", func(ctx context.Context) {
-		security.GetSessionStore().StartAutoClean(ctx, sessionStoreAutoCleanInterval)
+		security.GetSessionStore().StartAutoClean(ctx, flags.IntegrationPeriodicalWaitTime)
 	})
 	api.AddWorker("enforce policy load", func(ctx context.Context) {
 		enforcer.StartAutoLoadPolicy(ctx)
@@ -374,8 +382,9 @@ func Default(
 	api.AddWorker("import job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider, techMetricsConfigProvider,
-		configAdapter, p.UserInterfaceConfigProvider, userInterfaceAdapter, configUpdateInterval, logger))
+	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
+		p.TemplateConfigProvider, techMetricsConfigProvider, configAdapter, p.UserInterfaceConfigProvider,
+		userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
 	api.AddWorker("data export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
@@ -437,11 +446,32 @@ func Default(
 	api.AddWorker("broadcast message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
+	api.AddWorker("links", func(ctx context.Context) {
+		ticker := time.NewTicker(flags.PeriodicalWaitTime)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				err := linkGenerator.Load(ctx)
+				if err != nil {
+					logger.Err(err).Msg("cannot load links")
+				}
+			}
+		}
+	})
 
 	return api, docsFile, nil
 }
 
-func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProviders []libsecurity.TokenProvider, logger zerolog.Logger) (websocket.Hub, error) {
+func newWebsocketHub(
+	enforcer libsecurity.Enforcer,
+	tokenProviders []libsecurity.TokenProvider,
+	checkAuthInterval time.Duration,
+	logger zerolog.Logger,
+) (websocket.Hub, error) {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 2048,
@@ -451,7 +481,7 @@ func newWebsocketHub(enforcer libsecurity.Enforcer, tokenProviders []libsecurity
 	})
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
 	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
-		canopsis.PeriodicalWaitTime, logger)
+		checkAuthInterval, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
 		return nil, err
 	}
@@ -465,6 +495,7 @@ func updateConfig(
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	dataStorageConfigProvider *config.BaseDataStorageConfigProvider,
 	apiConfigProvider *config.BaseApiConfigProvider,
+	templateConfigProvider *config.BaseTemplateConfigProvider,
 	techMetricsConfigProvider *config.BaseTechMetricsConfigProvider,
 	configAdapter config.Adapter,
 	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
@@ -489,6 +520,7 @@ func updateConfig(
 				apiConfigProvider.Update(cfg)
 				techMetricsConfigProvider.Update(cfg)
 				dataStorageConfigProvider.Update(cfg)
+				templateConfigProvider.Update(cfg)
 
 				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 				if err != nil {

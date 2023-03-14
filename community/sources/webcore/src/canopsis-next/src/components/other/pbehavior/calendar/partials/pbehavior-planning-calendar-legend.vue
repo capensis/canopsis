@@ -8,10 +8,12 @@
     offset-x,
     offset-overflow
   )
-    v-tooltip(slot="activator", top)
-      v-btn(slot="activator", icon)
-        v-icon info
-      div {{ $t('calendar.pbehaviorPlanningLegend.title') }}
+    template(#activator="{ on }")
+      v-tooltip(v-on="on", top)
+        template(#activator="{ on: tooltipOn }")
+          v-btn(v-on="tooltipOn", icon)
+            v-icon info
+        div {{ $t('calendar.pbehaviorPlanningLegend.title') }}
     v-card
       v-card-text
         template(v-if="exceptionTypes.length")

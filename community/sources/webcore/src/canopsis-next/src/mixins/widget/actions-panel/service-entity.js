@@ -1,3 +1,5 @@
+import { createNamespacedHelpers } from 'vuex';
+
 import {
   MODALS,
   WEATHER_ACK_EVENT_OUTPUT,
@@ -6,11 +8,15 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
+import { mapIds } from '@/helpers/entities';
 import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+
+const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionPanelServiceEntityMixin = {
   mixins: [
@@ -18,10 +24,17 @@ export const widgetActionPanelServiceEntityMixin = {
     entitiesPbehaviorTypeMixin,
     entitiesPbehaviorMixin,
     entitiesPbehaviorTypeMixin,
+    entitiesDeclareTicketRuleMixin,
+    entitiesDeclareTicketRuleMixin,
   ],
   data() {
     return {
       unavailableEntitiesAction: {},
+      pendingByActionType: Object.values(WEATHER_ACTIONS_TYPES).reduce((acc, type) => {
+        acc[type] = false;
+
+        return acc;
+      }, {}),
     };
   },
   computed: {
@@ -44,6 +57,18 @@ export const widgetActionPanelServiceEntityMixin = {
     },
   },
   methods: {
+    ...mapAlarmActions({ fetchAlarmItemWithoutStore: 'fetchItemWithoutStore' }),
+
+    fetchAlarmsByEntities(entities) {
+      return Promise.all(
+        entities.map(({ alarm_id: alarmId }) => this.fetchAlarmItemWithoutStore({ id: alarmId })),
+      );
+    },
+
+    setActionPendingByType(type, value) {
+      this.pendingByActionType[type] = value;
+    },
+
     removeEntityFromUnavailable(entity) {
       this.unavailableEntitiesAction[entity._id] = false;
     },
@@ -127,32 +152,74 @@ export const widgetActionPanelServiceEntityMixin = {
       });
     },
 
-    showCreateAssociateTicketModal(entities) {
-      this.$modals.show({
-        name: MODALS.textFieldEditor,
-        config: {
-          title: this.$t('modals.createAssociateTicket.title'),
-          field: {
-            name: 'ticket',
-            label: this.$t('modals.createAssociateTicket.fields.ticket'),
-            validationRules: 'required',
+    async showCreateAssociateTicketModal(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAssocTicket, true);
+
+      try {
+        const alarms = await this.fetchAlarmsByEntities(entities);
+
+        this.$modals.show({
+          name: MODALS.createAssociateTicketEvent,
+          config: {
+            items: alarms,
+            action: (event) => {
+              this.applyAction({
+                entities,
+                actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
+                payload: event,
+              });
+            },
           },
-          action: (ticket) => {
-            this.applyAction({
-              entities,
-              actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
-              payload: { ticket },
-            });
-          },
-        },
-      });
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAssocTicket, false);
+      }
     },
 
-    showCreateDeclareTicketModal(entities) {
-      this.applyAction({
-        actionType: WEATHER_ACTIONS_TYPES.declareTicket,
-        entities,
-      });
+    async showCreateDeclareTicketModal(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.declareTicket, true);
+
+      try {
+        const alarms = await this.fetchAlarmsByEntities(entities);
+
+        const {
+          by_rules: alarmsByTickets,
+          by_alarms: ticketsByAlarms,
+        } = await this.fetchAssignedDeclareTicketsWithoutStore({
+          params: {
+            alarms: mapIds(alarms),
+          },
+        });
+
+        this.$modals.show({
+          name: MODALS.createDeclareTicketEvent,
+          config: {
+            items: alarms,
+            alarmsByTickets,
+            ticketsByAlarms,
+            action: (events) => {
+              this.$modals.show({
+                name: MODALS.executeDeclareTickets,
+                config: {
+                  executions: events,
+                  tickets: events.map(({ _id: id }) => ({
+                    _id: id,
+                    name: alarmsByTickets[id].name,
+                  })),
+                  alarms,
+                  onExecute: () => this.$emit('refresh'),
+                },
+              });
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPendingByType(WEATHER_ACTIONS_TYPES.declareTicket, false);
+      }
     },
 
     showCreateCommentEventModal(entities) {

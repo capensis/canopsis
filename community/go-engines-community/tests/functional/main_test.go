@@ -3,10 +3,8 @@ package functional
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"testing"
@@ -48,19 +46,34 @@ func TestMain(m *testing.M) {
 	flags.ParseArgs()
 
 	var eventLogger zerolog.Logger
-	if flags.eventLogs != "" {
-		f, err := os.OpenFile(flags.eventLogs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	if flags.eventsLog != "" {
+		f, err := os.OpenFile(flags.eventsLog, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("")
 		}
 		defer f.Close()
-		eventLogger = zerolog.New(&eventLogWriter{writer: f}).
+		eventLogger = zerolog.New(&logWriter{writer: f}).
 			Level(zerolog.DebugLevel).
 			With().Timestamp().
 			Logger()
 	}
 
-	err = bdd.RunDummyHttpServer(ctx, fmt.Sprintf("localhost:%d", flags.dummyHttpPort))
+	var requestLogger zerolog.Logger
+	if flags.requestsLog != "" {
+		f, err := os.OpenFile(flags.requestsLog, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("")
+		}
+		defer f.Close()
+		requestLogger = zerolog.New(&logWriter{writer: f}).
+			Level(zerolog.DebugLevel).
+			With().Timestamp().
+			Logger()
+	}
+
+	dummyApiUrl := fmt.Sprintf("localhost:%d", flags.dummyHttpPort)
+	err = bdd.RunDummyHttpServer(ctx, dummyApiUrl)
+	dummyApiUrl = "http://" + dummyApiUrl
 	if err != nil {
 		logger.Fatal().Err(err).Msg("")
 	}
@@ -108,8 +121,11 @@ func TestMain(m *testing.M) {
 		return
 	}
 
-	templater := bdd.NewTemplater(map[string]interface{}{"apiURL": apiUrl})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, templater)
+	templater := bdd.NewTemplater(map[string]interface{}{
+		"apiURL":      apiUrl,
+		"dummyApiURL": dummyApiUrl,
+	})
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, requestLogger, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
@@ -189,6 +205,11 @@ func InitializeScenario(
 			})
 		}
 
+		scenarioCtx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+			ctx = bdd.SetScenarioName(ctx, sc.Name)
+			ctx = bdd.SetScenarioUri(ctx, sc.Uri)
+			return ctx, nil
+		})
 		scenarioCtx.Before(amqpClient.BeforeScenario)
 		scenarioCtx.After(amqpClient.AfterScenario)
 		scenarioCtx.After(websocketClient.AfterScenario)
@@ -208,10 +229,12 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		scenarioCtx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
 		scenarioCtx.Step(`^I send an event:$`, apiClient.ISendAnEvent)
+		scenarioCtx.Step(`^I save request:$`, apiClient.ISaveRequest)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and body is:$`, apiClient.IDoRequestUntilResponse)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and body contains:$`, apiClient.IDoRequestUntilResponseContains)
-		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response key \"([\w\.]+)\" is greater or equal than (\d+)$`, apiClient.IDoRequestUntilResponseKeyIsGreaterOrEqualThan)
-		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([\w\.]+)\" contains:$`, apiClient.IDoRequestUntilResponseArrayKeyContains)
+		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response key \"([^"]+)\" is greater or equal than (\d+)$`, apiClient.IDoRequestUntilResponseKeyIsGreaterOrEqualThan)
+		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([^"]+)\" contains:$`, apiClient.IDoRequestUntilResponseArrayKeyContains)
+		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+) and response array key \"([^"]+)\" contains only:$`, apiClient.IDoRequestUntilResponseArrayKeyContainsOnly)
 		scenarioCtx.Step(`^I do (\w+) (.+):$`, apiClient.IDoRequestWithBody)
 		scenarioCtx.Step(`^I do (\w+) (.+) until response code is (\d+)$`, apiClient.IDoRequestUntilResponseCode)
 		scenarioCtx.Step(`^I do (\w+) (.+)$`, apiClient.IDoRequest)
@@ -219,15 +242,15 @@ func InitializeScenario(
 		scenarioCtx.Step(`^the response body should be:$`, apiClient.TheResponseBodyShouldBe)
 		scenarioCtx.Step(`^the response body should contain:$`, apiClient.TheResponseBodyShouldContain)
 		scenarioCtx.Step(`^the response raw body should be:$`, apiClient.TheResponseRawBodyShouldBe)
-		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
-		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
-		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
-		scenarioCtx.Step(`^the difference between ([\w\.]+) ([\w\.]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
-		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
-		scenarioCtx.Step(`^the response key \"([\w\.]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
-		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
-		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
-		scenarioCtx.Step(`^the response array key \"([\w\.]+)\" should contain in order:$`, apiClient.TheResponseArrayKeyShouldContainInOrder)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
+		scenarioCtx.Step(`^the difference between ([^"]+) ([^"]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
+		scenarioCtx.Step(`^the response array key \"([^"]+)\" should contain:$`, apiClient.TheResponseArrayKeyShouldContain)
+		scenarioCtx.Step(`^the response array key \"([^"]+)\" should contain only:$`, apiClient.TheResponseArrayKeyShouldContainOnly)
+		scenarioCtx.Step(`^the response array key \"([^"]+)\" should contain in order:$`, apiClient.TheResponseArrayKeyShouldContainInOrder)
 		scenarioCtx.Step(`^I save response ([\w]+)=(.+)$`, apiClient.ISaveResponse)
 		scenarioCtx.Step(`^\"([\w]+)\" (>|<|>=|<=) \"([\w]+)\"$`, apiClient.ValueShouldBeGteLteThan)
 		scenarioCtx.Step(`^an alarm (.+) should be in the db$`, mongoClient.AlarmShouldBeInTheDb)
@@ -260,7 +283,13 @@ func InitializeScenario(
 			return ctx, amqpClient.IWaitTheEndOfSentEventProcessing(ctx, doc)
 		})
 		scenarioCtx.Step(`^I call RPC to engine-axe with alarm ([^:]+):$`, amqpClient.ICallRPCAxeRequest)
-		scenarioCtx.Step(`^I call RPC to engine-webhook with alarm ([^:]+):$`, amqpClient.ICallRPCWebhookRequest)
+		scenarioCtx.Step(`^I connect to websocket$`, websocketClient.IConnect)
+		scenarioCtx.Step(`^I send message to websocket:$`, websocketClient.ISend)
+		scenarioCtx.Step(`^I wait message from websocket:$`, websocketClient.IWaitMessage)
+		scenarioCtx.Step(`^I wait message from websocket which contains:$`, websocketClient.IWaitMessageWhichContains)
+		scenarioCtx.Step(`^I wait next message from websocket:$`, websocketClient.IWaitNextMessage)
+		scenarioCtx.Step(`^I wait next message from websocket which contains:$`, websocketClient.IWaitNextMessageWhichContains)
+		scenarioCtx.Step(`^I authenticate in websocket$`, websocketClient.IAuthenticate)
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
@@ -317,34 +346,4 @@ func clearStores(
 	logger.Info().Msg("Redis is flushed")
 
 	return nil
-}
-
-type eventLogWriter struct {
-	writer io.Writer
-}
-
-func (w *eventLogWriter) Write(p []byte) (int, error) {
-	var msg map[string]interface{}
-	err := json.Unmarshal(p, &msg)
-	if err != nil {
-		return 0, err
-	}
-
-	fieldsStr := ""
-	for k, v := range msg {
-		switch k {
-		case zerolog.TimestampFieldName, zerolog.LevelFieldName, zerolog.MessageFieldName:
-		default:
-			s, err := json.Marshal(v)
-			if err != nil {
-				return 0, err
-			}
-			fieldsStr += fmt.Sprintf("%s=%s ", k, s)
-		}
-	}
-
-	formattedMsg := fmt.Sprintf("%s %s > %s %s\n", msg[zerolog.TimestampFieldName],
-		msg[zerolog.LevelFieldName], msg[zerolog.MessageFieldName], fieldsStr)
-
-	return w.writer.Write([]byte(formattedMsg))
 }

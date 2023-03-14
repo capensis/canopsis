@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
@@ -9,13 +9,6 @@ const localVue = createVueInstance();
 const stubs = {
   'c-clickable-tooltip': CClickableTooltip,
 };
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsLastComment, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('extra-details-last-comment', () => {
   const nowTimestamp = 1386435500000;
@@ -29,6 +22,12 @@ describe('extra-details-last-comment', () => {
     t: prevDateTimestamp,
     m: 'lastComment-message',
   };
+
+  const snapshotFactory = generateRenderer(ExtraDetailsLastComment, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
 
   it('Renders `extra-details-last-comment` with full last comment', () => {
     const wrapper = snapshotFactory({

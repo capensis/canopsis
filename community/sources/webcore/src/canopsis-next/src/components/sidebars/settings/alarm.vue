@@ -128,10 +128,9 @@
         :title="$t('settings.isMultiDeclareTicketEnabled')"
       )
       v-divider
-      field-enabled-limit(
-        v-model="form.parameters.linksCategoriesAsList",
-        :title="$t('settings.linksCategoriesAsList')",
-        :label="$t('settings.linksCategoriesLimit')"
+      field-number(
+        v-model="form.parameters.inlineLinksCount",
+        :title="$t('settings.inlineLinksCount')"
       )
       v-divider
       export-csv-form(
@@ -177,8 +176,8 @@ import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './fields/common/remediation-instructions-filters.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldEnabledLimit from './fields/common/enabled-limit.vue';
 import FieldDensity from './fields/common/density.vue';
+import FieldNumber from './fields/common/number.vue';
 import ExportCsvForm from './forms/export-csv.vue';
 import WidgetSettings from './partials/widget-settings.vue';
 import WidgetSettingsGroup from './partials/widget-settings-group.vue';
@@ -205,8 +204,8 @@ export default {
     FieldGridRangeSize,
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
-    FieldEnabledLimit,
     FieldDensity,
+    FieldNumber,
     ExportCsvForm,
   },
   mixins: [

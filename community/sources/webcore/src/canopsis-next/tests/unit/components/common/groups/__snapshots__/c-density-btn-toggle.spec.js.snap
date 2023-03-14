@@ -36,7 +36,7 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
       name="slide-y-reverse-transition"
     />
     <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
+      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
       type="button"
       value="1"
     >

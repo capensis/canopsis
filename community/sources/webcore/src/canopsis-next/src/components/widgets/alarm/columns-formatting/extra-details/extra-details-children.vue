@@ -5,9 +5,9 @@
         span.c-extra-details__badge.brown.darken-1(v-on="on")
           v-icon(color="white", small) {{ icon }}
       div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+        strong {{ $t('alarm.actions.iconsTitles.grouping') }}
         div {{ $t('common.title') }} : {{ ruleName }}
-        div {{ $t('alarmList.actions.iconsFields.children') }} : {{ total }}
+        div {{ $t('alarm.actions.iconsFields.children') }} : {{ total }}
 </template>
 
 <script>

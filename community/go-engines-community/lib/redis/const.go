@@ -12,9 +12,9 @@ const (
 	RecomputeLockKey                = "pbehavior-recompute-lock-key"
 	RecomputeLockDuration           = 10 * time.Second
 
-	ActionPeriodicalLockKey = "action-periodical-lock-key"
-	DelayedScenarioKey      = "delayed-scenario"
-	ScenarioExecutionKey    = "scenario-execution"
+	ActionPeriodicalLockKey    = "action-periodical-lock-key"
+	ActionDelayedScenarioKey   = "action-delayed-scenario"
+	ActionScenarioExecutionKey = "action-scenario-execution"
 
 	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
 	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
@@ -39,4 +39,6 @@ const (
 	DynamicInfosDictionaryPeriodicalLockKey   = "dynamic-infos-dictionary-periodical-lock-key"
 
 	CheEventFiltersIntervalsPeriodicalLockKey = "che-event-filters-intervals-periodical-lock-key"
+
+	MetricsNotAckedPeriodicalLockKey = "metrics-not-acked-periodical-lock-key"
 )

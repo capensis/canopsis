@@ -4,23 +4,22 @@ import (
 	"context"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type changeEntityApplicator struct {
 	externalDataContainer *ExternalDataContainer
-	templateExecutor      *template.Executor
+	templateExecutor      template.Executor
 }
 
 func NewChangeEntityApplicator(
 	externalDataContainer *ExternalDataContainer,
-	timezoneConfigProvider config.TimezoneConfigProvider,
+	templateExecutor template.Executor,
 ) RuleApplicator {
 	return &changeEntityApplicator{
 		externalDataContainer: externalDataContainer,
-		templateExecutor:      template.NewExecutor(timezoneConfigProvider),
+		templateExecutor:      templateExecutor,
 	}
 }
 
