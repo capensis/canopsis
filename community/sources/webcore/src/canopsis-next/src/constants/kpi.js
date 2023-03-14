@@ -1,5 +1,5 @@
-import { ALARM_METRIC_PARAMETERS } from '@/constants/alarm';
-import { USER_METRIC_PARAMETERS } from '@/constants/user';
+import { ALARM_METRIC_PARAMETERS } from './alarm';
+import { USER_METRIC_PARAMETERS } from './user';
 
 export const KPI_SLI_GRAPH_BAR_PERCENTAGE = 0.5;
 
@@ -60,4 +60,9 @@ export const AGGREGATE_FUNCTIONS = {
   avg: 'avg',
   min: 'min',
   max: 'max',
+};
+
+export const KPI_PIE_CHART_SHOW_MODES = {
+  percent: 'percent',
+  numbers: 'numbers',
 };

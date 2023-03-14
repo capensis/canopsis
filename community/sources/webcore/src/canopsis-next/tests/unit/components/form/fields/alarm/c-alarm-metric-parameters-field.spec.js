@@ -2,6 +2,7 @@ import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
+
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
 
 const localVue = createVueInstance();
