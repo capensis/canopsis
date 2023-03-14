@@ -6,7 +6,7 @@
     
     1. La page en cours présente la fonctionnalité et montre l'exécution d'une
     consigne pour l'utilisateur final ;
-    2. La page [Mise en œuvre de la remédiation][mise-en-oeuvre] décrit la
+    2. La page [Mise en œuvre de la remédiation](../menu-administration/consignes.md) décrit la
     configuration de la remédiation dans Canopsis pour la gestion des consignes
     et des jobs ;
     3. Le guide d'administration
@@ -92,7 +92,7 @@ Ces évaluations seront comptabilisées et transmises aux administrateurs.
 ## La suite
 
 Pour paramétrer le module de *Remédiation* dans Canopsis, vous pouvez consulter
-la [documentation de mise en œuvre de la remédiation][mise-en-oeuvre].
+la [documentation de mise en œuvre de la remédiation](../menu-administration/consignes.md).
 
 [mise-en-oeuvre]: ./mise-en-oeuvre.md
 [admin-remed]: ../../guide-administration/remediation/index.md

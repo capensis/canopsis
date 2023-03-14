@@ -23,7 +23,7 @@ Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant �
 !!! attention
     La mise à jour causera une **interruption de service** de Canopsis et des composants qui lui sont associés, durant son déroulement.
 
-    Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/interface/broadcast-messages.md) afin de prévenir vos utilisateurs en amont.
+    Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/menu-administration/diffusion-de-messages.md) afin de prévenir vos utilisateurs en amont.
 
 ### Mise à jour en installation par paquets CentOS 7
 
