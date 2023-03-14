@@ -46,7 +46,11 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  *   'Text' |
  *   'Counter' |
  *   'Junit' |
- *   'Map'
+ *   'Map' |
+ *   'BarChart' |
+ *   'LineChart' |
+ *   'PieChart' |
+ *   'Numbers'
  * } WidgetType
  */
 
