@@ -9,7 +9,8 @@
         :name="enabledFieldName",
         color="primary"
       )
-        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", color="info", top)
+        template(#append="")
+          c-help-icon(v-if="helpText", :text="helpText", max-width="300", color="info", top)
     v-flex(xs2)
       c-number-field(
         v-field="value.limit",

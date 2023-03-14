@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createRemediationJob,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     ModalWrapper,

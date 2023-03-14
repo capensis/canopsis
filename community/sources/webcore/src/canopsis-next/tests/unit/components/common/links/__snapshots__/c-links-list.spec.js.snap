@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-links-list Renders \`c-links-list\` with default props 1`] = `
+<div
+  class="mt-1"
+/>
+`;
+
+exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
+<div
+  class="mt-1"
+>
+  <div>
+    <span
+      class="category mr-2"
+    >
+      FirstCategory
+    </span>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="FirstCategoryLink1"
+          target="_blank"
+        >
+          FirstCategoryLinkLabel1
+        </a>
+      </div>
+    </div>
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="FirstCategoryLink2"
+          target="_blank"
+        >
+          FirstCategoryLinkLabel2
+        </a>
+      </div>
+    </div>
+  </div>
+  <div>
+    <span
+      class="category mr-2"
+    >
+      SecondCategory
+    </span>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="SecondCategoryLink1"
+          target="_blank"
+        >
+          SecondCategoryLinkLabel1
+        </a>
+      </div>
+    </div>
+  </div>
+  <div>
+    <span
+      class="category mr-2"
+    >
+      ThirdCategory
+    </span>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="ThirdCategoryLink1"
+          target="_blank"
+        >
+          ThirdCategoryLinkLabel1
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-links-list Renders \`c-links-list\` with links and category 1`] = `
+<div
+  class="mt-1"
+>
+  <div>
+    <span
+      class="category mr-2"
+    >
+      SecondCategory
+    </span>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="SecondCategoryLink1"
+          target="_blank"
+        >
+          SecondCategoryLinkLabel1
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

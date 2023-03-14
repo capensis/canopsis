@@ -1,10 +1,11 @@
 <template lang="pug">
   span.c-horizontal-time-line-card
     v-tooltip(:disabled="!step.m", top)
-      v-layout(slot="activator", align-center, column)
-        c-alarm-chip(v-if="isStepTypeState", :value="step.val")
-        v-icon(v-else, :style="{ color: style.icon }") {{ style.icon }}
-        span.c-horizontal-time-line-card__time {{ step.t | date('time') }}
+      template(#activator="{ on }")
+        v-layout(v-on="on", align-center, column)
+          c-alarm-chip(v-if="isStepTypeState", :value="step.val")
+          v-icon(v-else, :style="{ color: style.icon }") {{ style.icon }}
+          span.c-horizontal-time-line-card__time {{ step.t | date('time') }}
       div.pre-line
         div
           strong {{ stepTitle }}

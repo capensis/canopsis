@@ -30,6 +30,14 @@ import {
  */
 
 /**
+ * Check if entity is component
+ *
+ * @param {EntityType} type
+ * @returns {boolean}
+ */
+export const isEntityComponentType = type => type === ENTITY_TYPES.component;
+
+/**
  * Check is action available for the entity
  *
  * @param {String} actionType
@@ -191,7 +199,7 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
       return [
         createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        createAssociateTicketEventByEntity({ entity, ticket: payload.ticket }),
+        createAssociateTicketEventByEntity({ entity, ...payload }),
       ];
     case WEATHER_ACTIONS_TYPES.entityValidate:
       return [

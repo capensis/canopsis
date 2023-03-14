@@ -2789,6 +2789,23 @@ periodical_alarm:
       <<: *alarm_value
       resource: test-resource-manual-correlation-fail-1
 
+  alarm_to_link_get_1:
+    <<: *alarm
+    _id: test-alarm-to-link-get-1
+    d: test-resource-to-alarm-link-get-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-alarm-link-get-1
+      output: test-output-to-alarm-link-get-1
+  alarm_to_link_get_2:
+    <<: *alarm
+    _id: test-alarm-to-link-get-2
+    d: test-resource-to-alarm-link-get-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-alarm-link-get-2
+      output: test-output-to-alarm-link-get-2
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3

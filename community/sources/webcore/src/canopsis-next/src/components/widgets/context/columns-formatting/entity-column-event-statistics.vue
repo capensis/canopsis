@@ -1,13 +1,14 @@
 <template lang="pug">
-  v-tooltip.event-statistics(top)
-    v-layout.event-statistics__tooltip(
-      slot="activator",
-      :class="{ 'event-statistics__tooltip--inactive': hasInactivePbehavior }",
-      justify-center
-    )
-      span.mr-1.success--text.font-weight-bold {{ entity.ok_events }}
-      span /
-      span.ml-1.error--text.font-weight-bold {{ entity.ko_events }}
+  v-tooltip(top)
+    template(#activator="{ on }")
+      v-layout.event-statistics__tooltip(
+        v-on="on",
+        :class="{ 'event-statistics__tooltip--inactive': hasInactivePbehavior }",
+        justify-center
+      )
+        span.mr-1.success--text.font-weight-bold {{ entity.ok_events }}
+        span /
+        span.ml-1.error--text.font-weight-bold {{ entity.ko_events }}
     span.pre-wrap {{ statisticsMessage }}
 </template>
 

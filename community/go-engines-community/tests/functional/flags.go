@@ -24,7 +24,8 @@ type Flags struct {
 	dummyHttpPort       int64
 	eventWaitKey        string
 	eventWaitExchange   string
-	eventLogs           string
+	eventsLog           string
+	requestsLog         string
 	checkUncaughtEvents bool
 	onlyFixtures        bool
 	randomize           int64
@@ -51,7 +52,8 @@ func (f *Flags) ParseArgs() {
 	flag.DurationVar(&f.periodicalWaitTime, "pwt", 2200*time.Millisecond, "Duration to wait the end of next periodical process of all engines.")
 	flag.StringVar(&f.eventWaitExchange, "ewe", "amq.direct", "Consume from exchange to detect the end of event processing.")
 	flag.StringVar(&f.eventWaitKey, "ewk", canopsis.FIFOAckQueueName, "Consume by routing key to detect the end of event processing.")
-	flag.StringVar(&f.eventLogs, "eventlogs", "", "Log all received events.")
+	flag.StringVar(&f.eventsLog, "eventslog", "", "Log all received events.")
+	flag.StringVar(&f.requestsLog, "requestslog", "", "Log all called API requests.")
 	flag.Int64Var(&f.dummyHttpPort, "dummyHttpPort", 3000, "Port for dummy http server.")
 	flag.BoolVar(&f.checkUncaughtEvents, "checkUncaughtEvents", false, "Enable catching event after each scenario.")
 	flag.BoolVar(&f.onlyFixtures, "onlyFixtures", false, "Only apply fixtures.")

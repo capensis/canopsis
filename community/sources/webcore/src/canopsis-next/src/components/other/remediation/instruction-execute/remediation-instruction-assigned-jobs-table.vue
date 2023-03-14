@@ -9,15 +9,17 @@
     template(#headers="")
       tr
         th
-        th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.startedAt') }}
-        th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
-        th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.completedAt') }}
+        th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.startedAt') }}
+        th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.launchedAt') }}
+        th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.completedAt') }}
     template(#items="row")
       remediation-instruction-assigned-jobs-row(
         :job="row.item",
         :expanded.sync="row.expanded",
-        @execute-job="$listeners['execute-job']",
-        @cancel-job-execution="$listeners['cancel-job-execution']"
+        :executable="executable",
+        :cancelable="cancelable",
+        @execute-job="$emit('execute-job', $event)",
+        @cancel-job-execution="$emit('cancel-job-execution', $event)"
       )
     template(#expand="{ item }")
       remediation-instruction-assigned-jobs-expand-panel(:job="item")
@@ -36,6 +38,14 @@ export default {
     jobs: {
       type: Array,
       default: () => [],
+    },
+    executable: {
+      type: Boolean,
+      default: false,
+    },
+    cancelable: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

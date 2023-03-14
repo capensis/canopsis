@@ -464,6 +464,18 @@ default_entities:
             type: regexp
             value: test-resource-service-weather-entity-7
 
+  service_weather_entity_8:
+    <<: *service
+    _id: test-service-weather-entity-8
+    name: test-service-weather-entity-8
+    depends:
+      - test-resource-service-weather-entity-8/test-component-service-weather-entity-8
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-service-weather-entity-8
+
   service_to_emit_resource_entityupdated_events_on_component_infos_update:
     <<: *service
     entity_pattern:
@@ -3430,3 +3442,20 @@ default_entities:
     <<: *resource
     _id: test-resource-manual-correlation-fail-1/test-component-default
     name: test-resource-manual-correlation-fail-1
+
+  resource_to_alarm_link_get_1:
+    <<: *resource
+    _id: test-resource-to-alarm-link-get-1/test-component-default
+    name: test-resource-to-alarm-link-get-1
+    infos:
+      test-info-to-alarm-link-get-1:
+        name: test-info-to-alarm-link-get-1
+        value: test-resource-to-alarm-link-get-1-info-1-val
+  resource_to_alarm_link_get_2:
+    <<: *resource
+    _id: test-resource-to-alarm-link-get-2/test-component-default
+    name: test-resource-to-alarm-link-get-2
+    infos:
+      test-info-to-alarm-link-get-1:
+        name: test-info-to-alarm-link-get-1
+        value: test-resource-to-alarm-link-get-2-info-1-val
