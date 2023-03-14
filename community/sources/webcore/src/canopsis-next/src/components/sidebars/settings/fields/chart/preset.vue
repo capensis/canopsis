@@ -15,7 +15,7 @@
 <script>
 import { isEqual, isUndefined } from 'lodash';
 
-import { KPI_PIE_CHART_SHOW_MODES, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
+import { KPI_PIE_CHART_SHOW_MODS, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import { getWidgetChartPresetParameters, getWidgetChartPresetTypesByWidgetType } from '@/helpers/entities/widget';
 import { formToMetricPresets } from '@/helpers/forms/metric';
@@ -157,7 +157,7 @@ export default {
         result.push({
           label: this.$t('settings.chart.sharesType'),
           value: this.$tc(
-            `common.${parameters.show_mode === KPI_PIE_CHART_SHOW_MODES.numbers ? 'number' : 'percent'}`,
+            `common.${parameters.show_mode === KPI_PIE_CHART_SHOW_MODS.numbers ? 'number' : 'percent'}`,
             2,
           ),
         });
