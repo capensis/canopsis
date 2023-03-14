@@ -63,6 +63,8 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"pattern":             mongo.PatternMongoCollection,
 			"snmp_rule":           mongo.SnmpRulesCollection,
 			"snmp_mib":            mongo.MibCollection,
+			"declare_ticket_rule": mongo.DeclareTicketRuleMongoCollection,
+			"link_rule":           mongo.LinkRuleMongoCollection,
 		},
 	}
 }

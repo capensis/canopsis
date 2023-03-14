@@ -181,10 +181,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-enabled-limit-stub
-      label="Number of category items"
-      title="Display links as a list?"
-      value="[object Object]"
+    <field-number-stub
+      title="Inline links count"
+      value="3"
     />
     <hr
       class="v-divider theme--light"
@@ -375,10 +374,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-enabled-limit-stub
-      label="Number of category items"
-      title="Display links as a list?"
-      value="[object Object]"
+    <field-number-stub
+      title="Inline links count"
+      value="3"
     />
     <hr
       class="v-divider theme--light"
@@ -566,10 +564,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-enabled-limit-stub
-      label="Number of category items"
-      title="Display links as a list?"
-      value="[object Object]"
+    <field-number-stub
+      title="Inline links count"
+      value="3"
     />
     <hr
       class="v-divider theme--light"

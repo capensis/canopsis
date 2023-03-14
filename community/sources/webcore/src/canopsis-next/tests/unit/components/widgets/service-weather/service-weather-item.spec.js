@@ -16,10 +16,10 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { getImpactStateColor } from '@/helpers/color';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceWeatherItem from '@/components/widgets/service-weather/service-weather-item.vue';
-import { COLORS } from '@/config';
 
 const localVue = createVueInstance();
 
@@ -208,7 +208,7 @@ describe('service-weather-item', () => {
       {
         name: MODALS.serviceEntities,
         config: {
-          color: COLORS.impactState[3],
+          color: getImpactStateColor(3),
           service,
           widgetParameters: newParameters,
         },

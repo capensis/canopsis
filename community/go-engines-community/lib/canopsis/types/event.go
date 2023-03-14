@@ -39,11 +39,6 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
-	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
-	// to trigger webhook with declare ticket parameter.
-	EventTypeDeclareTicket = "declareticket"
-	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
 	EventTypeChangestate = "changestate"
 	EventTypeKeepstate   = "keepstate"
@@ -51,6 +46,14 @@ const (
 	EventTypeSnooze      = "snooze"
 	EventTypeUnsnooze    = "unsnooze"
 	EventTypeUncancel    = "uncancel"
+
+	EventTypeDeclareTicketWebhook = "declareticketwebhook"
+	EventTypeWebhookStarted       = "webhookstarted"
+	EventTypeWebhookCompleted     = "webhookcompleted"
+	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeAutoWebhookStarted   = "autowebhookstarted"
+	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
+	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
@@ -155,17 +158,19 @@ type Event struct {
 
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
-	// It also adds declare ticket to all resource alarms on ack webhook.
-	// It's still used by some old users but meta alarms must be used instead.
-	AckResources bool                   `json:"ack_resources"`
-	Duration     CpsNumber              `json:"duration"`
-	Ticket       string                 `bson:"ticket" json:"ticket"`
-	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
-	StatName     string                 `bson:"stat_name" json:"stat_name"`
-	Debug        bool                   `bson:"debug" json:"debug"`
-	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
-	ExtraInfos   map[string]interface{} `json:"extra"`
-	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
+	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
+	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
+
+	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
+	StatName    string                 `bson:"stat_name" json:"stat_name"`
+	Debug       bool                   `bson:"debug" json:"debug"`
+	Role        string                 `bson:"role,omitempty" json:"role,omitempty"`
+	ExtraInfos  map[string]interface{} `bson:"extra_infos" json:"extra"`
+	AlarmChange *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+
+	// Ticket related fields
+	TicketInfo `bson:",inline"`
 
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`
@@ -277,7 +282,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 // IsContextable tells you if the given event can lead to context enrichment.
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
-	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
+	case EventTypeCheck, EventTypePerf, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
@@ -516,7 +521,6 @@ func isValidEventType(t string) bool {
 		EventTypeAssocTicket,
 		EventTypeCancel,
 		EventTypeComment,
-		EventTypeDeclareTicket,
 		EventTypeDeclareTicketWebhook,
 		EventTypeChangestate,
 		EventTypeSnooze,

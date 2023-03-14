@@ -1,6 +1,7 @@
 <template lang="pug">
   v-menu(v-if="preparedLinks.length", bottom, offset-y)
-    v-btn.white--text(slot="activator", flat) {{ title }}
+    template(#activator="{ on }")
+      v-btn.white--text(v-on="on", flat) {{ title }}
     v-list.py-0
       top-bar-menu-link(
         v-for="link in preparedLinks",

@@ -964,3 +964,31 @@ widget_filters:
             value: ["test-tag-filter-2"]
     entity_pattern:
     pbehavior_pattern:
+
+  filter_to_alarm_metrics_get_1:
+    <<: *filter
+    _id: test-widget-filter-to-alarm-metrics-get-1
+    entity_pattern:
+      - - field: type
+          cond:
+            type: eq
+            value: component
+    alarm_pattern:
+    pbehavior_pattern:
+
+  filter_to_alarm_metrics_get_2:
+    <<: *filter
+    _id: test-widget-filter-to-alarm-metrics-get-2
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: is_one_of
+            value:
+              - test-entity-to-alarm-metrics-get-1
+              - test-entity-to-alarm-metrics-get-2
+    alarm_pattern:
+    pbehavior_pattern:
+
+  filter_to_alarm_metrics_get_3:
+    <<: *filter
+    _id: test-widget-filter-to-alarm-metrics-get-3
