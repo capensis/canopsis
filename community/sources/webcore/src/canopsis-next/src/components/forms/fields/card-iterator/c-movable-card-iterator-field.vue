@@ -38,15 +38,13 @@ export default {
   },
   methods: {
     moveItemByOffset(index, offset) {
-      if (index > 0) {
-        const items = [...this.items];
-        const temp = items[index];
+      const items = [...this.items];
+      const temp = items[index];
 
-        items[index] = items[index + offset];
-        items[index + offset] = temp;
+      items[index] = items[index + offset];
+      items[index + offset] = temp;
 
-        this.updateModel(items);
-      }
+      this.updateModel(items);
     },
 
     up(index) {
