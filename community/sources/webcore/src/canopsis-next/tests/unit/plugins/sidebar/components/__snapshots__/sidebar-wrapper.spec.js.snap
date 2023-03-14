@@ -121,6 +121,65 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
 </aside>
 `;
 
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settings 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+>
+  <div>
+    <nav
+      class="v-toolbar theme--light secondary"
+      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
+    >
+      <div
+        class="v-toolbar__content"
+        style="height: 64px;"
+      >
+        <div
+          class="v-list theme--light"
+          role="list"
+        >
+          <div
+            role="listitem"
+          >
+            <div
+              class="v-list__tile theme--light"
+            >
+              <div
+                class="v-list__tile__title white--text"
+              >
+                Bar chart settings
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </nav>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
@@ -239,6 +298,65 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
 </aside>
 `;
 
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-settings 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+>
+  <div>
+    <nav
+      class="v-toolbar theme--light secondary"
+      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
+    >
+      <div
+        class="v-toolbar__content"
+        style="height: 64px;"
+      >
+        <div
+          class="v-list theme--light"
+          role="list"
+        >
+          <div
+            role="listitem"
+          >
+            <div
+              class="v-list__tile theme--light"
+            >
+              <div
+                class="v-list__tile__title white--text"
+              >
+                Line chart settings
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </nav>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`] = `
 <aside
   class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
@@ -267,6 +385,124 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
                 class="v-list__tile__title white--text"
               >
                 Mapping widget settings
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </nav>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+>
+  <div>
+    <nav
+      class="v-toolbar theme--light secondary"
+      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
+    >
+      <div
+        class="v-toolbar__content"
+        style="height: 64px;"
+      >
+        <div
+          class="v-list theme--light"
+          role="list"
+        >
+          <div
+            role="listitem"
+          >
+            <div
+              class="v-list__tile theme--light"
+            >
+              <div
+                class="v-list__tile__title white--text"
+              >
+                Numbers settings
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </nav>
+    <hr
+      class="v-divider theme--light"
+    />
+  </div>
+  <div
+    class="v-navigation-drawer__border"
+  />
+</aside>
+`;
+
+exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settings 1`] = `
+<aside
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+>
+  <div>
+    <nav
+      class="v-toolbar theme--light secondary"
+      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
+    >
+      <div
+        class="v-toolbar__content"
+        style="height: 64px;"
+      >
+        <div
+          class="v-list theme--light"
+          role="list"
+        >
+          <div
+            role="listitem"
+          >
+            <div
+              class="v-list__tile theme--light"
+            >
+              <div
+                class="v-list__tile__title white--text"
+              >
+                Pie chart settings
               </div>
             </div>
           </div>

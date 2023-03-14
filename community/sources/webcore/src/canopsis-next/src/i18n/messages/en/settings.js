@@ -3,6 +3,7 @@ import {
   ENTITY_TYPES,
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
+  CHART_WIDGET_PRESET_TYPES,
 } from '@/constants';
 
 export default {
@@ -15,6 +16,10 @@ export default {
     [SIDE_BARS.counterSettings]: 'Counter settings',
     [SIDE_BARS.testingWeatherSettings]: 'Testing weather',
     [SIDE_BARS.mapSettings]: 'Mapping widget settings',
+    [SIDE_BARS.barChartSettings]: 'Bar chart settings',
+    [SIDE_BARS.lineChartSettings]: 'Line chart settings',
+    [SIDE_BARS.pieChartSettings]: 'Pie chart settings',
+    [SIDE_BARS.numbersSettings]: 'Numbers settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -214,5 +219,29 @@ export default {
     stackedBars: 'Stacked bars',
     selectMetrics: 'Select metrics',
     sharesType: 'Shares type',
+    showComparison: 'Show comparison',
+    preset: 'Preset',
+    presets: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Tickets statistics',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Ack cancellation',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Acks activity',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Not acked alarms statistics',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Non-displayed alarms statistics',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Manual instruction execution',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
+    },
+    presetChartHeaders: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistics of alarm acknowledges',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Tickets statistics',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Acknowledge cancel actions statistics',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Acknowledge actions statistics',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistics of not acknowledged alarms',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistics of non-displayed alarms',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Manual instruction execution',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
+    },
   },
 };
