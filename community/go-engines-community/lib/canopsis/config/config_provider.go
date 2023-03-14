@@ -55,6 +55,10 @@ type TechMetricsConfigProvider interface {
 	Get() TechMetricsConfig
 }
 
+type MetricsConfigProvider interface {
+	Get() MetricsConfig
+}
+
 type TemplateConfigProvider interface {
 	Get() SectionTemplate
 }
@@ -104,8 +108,10 @@ type DataStorageConfig struct {
 }
 
 type MetricsConfig struct {
-	FlushInterval time.Duration
-	SliInterval   time.Duration
+	FlushInterval             time.Duration
+	SliInterval               time.Duration
+	EnabledManualInstructions bool
+	EnabledNotAckedMetrics    bool
 }
 
 type ScheduledTime struct {
@@ -770,6 +776,55 @@ func parseTimeDurationByStrWithMax(
 	return d
 }
 
+func parseUpdatedTimeDurationByStrWithMax(
+	v string,
+	oldVal, maxVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (time.Duration, bool) {
+	if v == "" {
+		if oldVal > 0 {
+			logger.Warn().
+				Str("previous", oldVal.String()).
+				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		}
+
+		return 0, false
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		if oldVal > 0 {
+			logger.Err(err).
+				Str("previous", oldVal.String()).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
+		return 0, false
+	}
+
+	if d > maxVal {
+		logger.Err(err).
+			Str("previous", oldVal.String()).
+			Str("max", maxVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than max value, previous value is used instead", name, sectionName)
+
+		return 0, false
+	}
+
+	if d == oldVal {
+		return 0, false
+	}
+
+	logger.Info().
+		Str("previous", oldVal.String()).
+		Str("new", d.String()).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return d, true
+}
+
 func parseUpdatedTimeDurationByStr(
 	v string,
 	oldVal time.Duration,
@@ -1119,4 +1174,58 @@ func parseUpdatedJwtSigningMethod(
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
 	return m, true
+}
+
+type BaseMetricsSettingsConfigProvider struct {
+	conf   MetricsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetricsSettingsConfigProvider {
+	sectionName := "metrics"
+
+	return &BaseMetricsSettingsConfigProvider{
+		conf: MetricsConfig{
+			EnabledNotAckedMetrics:    parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
+			EnabledManualInstructions: parseBool(cfg.Metrics.EnabledManualInstructions, "EnabledManualInstructions", sectionName, logger),
+			FlushInterval:             parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+			SliInterval:               parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		},
+		logger: logger,
+	}
+}
+
+func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "metrics"
+
+	b, ok := parseUpdatedBool(cfg.Metrics.EnabledNotAckedMetrics, p.conf.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, p.logger)
+	if ok {
+		p.conf.EnabledNotAckedMetrics = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledManualInstructions, p.conf.EnabledManualInstructions, "EnabledManualInstructions", sectionName, p.logger)
+	if ok {
+		p.conf.EnabledManualInstructions = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.Metrics.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)
+	if ok {
+		p.conf.FlushInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStrWithMax(cfg.Metrics.SliInterval, p.conf.SliInterval, MetricsMaxSliInterval, "SliInterval", sectionName, p.logger)
+	if ok {
+		p.conf.SliInterval = d
+	}
+}
+
+func (p *BaseMetricsSettingsConfigProvider) Get() MetricsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
 }
