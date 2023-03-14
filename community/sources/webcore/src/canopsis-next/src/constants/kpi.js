@@ -61,8 +61,3 @@ export const AGGREGATE_FUNCTIONS = {
   min: 'min',
   max: 'max',
 };
-
-export const KPI_PIE_CHART_SHOW_MODES = {
-  percent: 'percent',
-  numbers: 'numbers',
-};

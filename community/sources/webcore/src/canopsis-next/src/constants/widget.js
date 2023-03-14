@@ -6,7 +6,7 @@ import { CANOPSIS_EDITION } from './permission';
 import { ALARM_METRIC_PARAMETERS } from './alarm';
 import { QUICK_RANGES } from './common';
 import { SAMPLINGS } from './date';
-import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODES } from './kpi';
+import { AGGREGATE_FUNCTIONS, KPI_PIE_CHART_SHOW_MODS } from './kpi';
 
 export const WIDGET_TYPES = {
   alarmList: 'AlarmsList',
@@ -302,7 +302,7 @@ export const PIE_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
     ],
   },
   [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: {
-    show_mode: KPI_PIE_CHART_SHOW_MODES.numbers,
+    show_mode: KPI_PIE_CHART_SHOW_MODS.numbers,
     aggregate_func: AGGREGATE_FUNCTIONS.avg,
     metrics: [
       { metric: ALARM_METRIC_PARAMETERS.notAckedInHourAlarms },
@@ -311,7 +311,7 @@ export const PIE_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
     ],
   },
   [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: {
-    show_mode: KPI_PIE_CHART_SHOW_MODES.numbers,
+    show_mode: KPI_PIE_CHART_SHOW_MODS.numbers,
     aggregate_func: AGGREGATE_FUNCTIONS.avg,
     metrics: [
       { metric: ALARM_METRIC_PARAMETERS.instructionAlarms },
@@ -320,7 +320,7 @@ export const PIE_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
     ],
   },
   [CHART_WIDGET_PRESET_TYPES.manualInstruction]: {
-    show_mode: KPI_PIE_CHART_SHOW_MODES.numbers,
+    show_mode: KPI_PIE_CHART_SHOW_MODS.numbers,
     aggregate_func: AGGREGATE_FUNCTIONS.avg,
     metrics: [
       { metric: ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms },
