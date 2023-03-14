@@ -7,8 +7,8 @@ import (
 	"time"
 
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -19,12 +19,12 @@ import (
 
 type Store interface {
 	Find(context.Context, ListRequest) (*AggregationResult, error)
-	FindEntities(ctx context.Context, id, apiKey string, query EntitiesListRequest) (*EntityAggregationResult, error)
+	FindEntities(ctx context.Context, id string, query EntitiesListRequest) (*EntityAggregationResult, error)
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
-	linksFetcher common.LinksFetcher,
+	linkGenerator link.Generator,
 	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
@@ -33,8 +33,8 @@ func NewStore(
 		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
 
-		alarmStore:   alarmStore,
-		linksFetcher: linksFetcher,
+		alarmStore:    alarmStore,
+		linkGenerator: linkGenerator,
 
 		timezoneConfigProvider: timezoneConfigProvider,
 
@@ -46,8 +46,8 @@ type store struct {
 	dbClient     mongo.DbClient
 	dbCollection mongo.DbCollection
 
-	linksFetcher common.LinksFetcher
-	alarmStore   alarmapi.Store
+	linkGenerator link.Generator
+	alarmStore    alarmapi.Store
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
@@ -78,7 +78,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesListRequest) (*EntityAggregationResult, error) {
+func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest) (*EntityAggregationResult, error) {
 	var service libtypes.Entity
 	err := s.dbCollection.FindOne(ctx, bson.M{
 		"_id":     id,
@@ -114,14 +114,32 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 		}
 	}
 
-	if r.WithInstructions {
-		alarmIds := make([]string, 0, len(res.Data))
+	var alarmIds []string
+	if r.WithDeclareTickets || r.WithInstructions {
+		alarmIds = make([]string, 0, len(res.Data))
 		for _, v := range res.Data {
 			if v.AlarmID != "" {
 				alarmIds = append(alarmIds, v.AlarmID)
 			}
 		}
+	}
 
+	if r.WithDeclareTickets {
+		assignedDeclareTicketsMap, err := s.alarmStore.GetAssignedDeclareTicketsMap(ctx, alarmIds)
+		if err != nil {
+			return nil, err
+		}
+
+		for idx, v := range res.Data {
+			sort.Slice(assignedDeclareTicketsMap[v.AlarmID], func(i, j int) bool {
+				return assignedDeclareTicketsMap[v.AlarmID][i].Name < assignedDeclareTicketsMap[v.AlarmID][j].Name
+			})
+
+			res.Data[idx].AssignedDeclareTicketRules = assignedDeclareTicketsMap[v.AlarmID]
+		}
+	}
+
+	if r.WithInstructions {
 		assignedInstructionsMap, err := s.alarmStore.GetAssignedInstructionsMap(ctx, alarmIds)
 		if err != nil {
 			return nil, err
@@ -152,7 +170,7 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 		}
 	}
 
-	err = s.fillLinks(ctx, apiKey, &res)
+	err = s.fillLinks(ctx, &res)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fill links")
 	}
@@ -160,35 +178,23 @@ func (s *store) FindEntities(ctx context.Context, id, apiKey string, r EntitiesL
 	return &res, nil
 }
 
-func (s *store) fillLinks(ctx context.Context, apiKey string, result *EntityAggregationResult) error {
-	reqEntities := make([]common.FetchLinksRequestItem, 0, len(result.Data))
-	entities := make(map[string][]int, len(result.Data))
-	for i, entity := range result.Data {
-		if _, ok := entities[entity.ID]; !ok {
-			reqEntities = append(reqEntities, common.FetchLinksRequestItem{
-				EntityID: entity.ID,
-			})
-			entities[entity.ID] = make([]int, 0, 1)
-		}
-		// map entity ID with record number in result.Data list
-		entities[entity.ID] = append(entities[entity.ID], i)
+func (s *store) fillLinks(ctx context.Context, result *EntityAggregationResult) error {
+	ids := make([]string, len(result.Data))
+	for i, v := range result.Data {
+		ids[i] = v.ID
 	}
-	res, err := s.linksFetcher.Fetch(ctx, apiKey, common.FetchLinksRequest{Entities: reqEntities})
-	if err != nil || res == nil {
+
+	linksByEntityId, err := s.linkGenerator.GenerateForEntities(ctx, ids)
+	if err != nil || len(linksByEntityId) == 0 {
 		return err
 	}
 
-	for _, rec := range res.Data {
-		if l, ok := entities[rec.EntityID]; ok {
-			for _, i := range l {
-				result.Data[i].Links = make([]WeatherLink, 0, len(rec.Links))
-				for category, link := range rec.Links {
-					result.Data[i].Links = append(result.Data[i].Links, WeatherLink{
-						Category: category,
-						Links:    link,
-					})
-				}
-			}
+	for i, v := range result.Data {
+		result.Data[i].Links = linksByEntityId[v.ID]
+		for _, links := range result.Data[i].Links {
+			sort.Slice(links, func(i, j int) bool {
+				return links[i].Label < links[j].Label
+			})
 		}
 	}
 

@@ -11,7 +11,7 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "http://localhost:3000/api/external_data",
+            "url": "{{ .dummyApiURL }}/api/external_data",
             "method": "GET"
           }
         }
@@ -96,7 +96,7 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "http://localhost:3000/api/external_data",
+            "url": "{{ .dummyApiURL }}/api/external_data",
             "method": "GET"
           }
         },
@@ -199,7 +199,7 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "http://localhost:3000/api/external_data_document_with_array",
+            "url": "{{ .dummyApiURL }}/api/external_data_document_with_array",
             "method": "GET"
           }
         }
@@ -284,7 +284,7 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "http://localhost:3000/api/external_data_response_is_array",
+            "url": "{{ .dummyApiURL }}/api/external_data_response_is_array",
             "method": "GET"
           }
         }
@@ -369,7 +369,7 @@ Feature: modify event on event filter
         "name": {
           "type": "api",
           "request": {
-            "url": "http://localhost:3000/api/external_data_response_is_nested_documents",
+            "url": "{{ .dummyApiURL }}/api/external_data_response_is_nested_documents",
             "method": "GET"
           }
         }

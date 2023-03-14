@@ -175,7 +175,7 @@ export default {
           legend: {
             position: 'right',
             align: 'start',
-            maxWidth: 300,
+            maxWidth: 600,
             labels: {
               font: {
                 size: 11,

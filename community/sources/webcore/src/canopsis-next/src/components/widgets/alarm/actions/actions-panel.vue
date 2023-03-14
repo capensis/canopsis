@@ -20,6 +20,7 @@ import featuresService from '@/services/features';
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
+import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
@@ -172,6 +173,19 @@ export default {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
 
+    linksActions() {
+      return harmonizeLinks(this.item.links).map((link) => {
+        const type = getLinkRuleLinkActionType(link);
+
+        return {
+          type,
+          icon: link.icon_name,
+          title: this.$t('alarm.followLink', { title: link.label }),
+          method: () => window.open(link.url, '_blank'),
+        };
+      });
+    },
+
     modalConfig() {
       return {
         items: [this.item],
@@ -182,7 +196,11 @@ export default {
     resolvedActions() {
       const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
 
-      return [pbehaviorList, variablesHelp];
+      return [
+        pbehaviorList,
+        ...this.linksActions,
+        variablesHelp,
+      ];
     },
 
     unresolvedActions() {
@@ -247,6 +265,8 @@ export default {
           );
         }
       }
+
+      actions.push(...this.linksActions);
 
       /**
        * Add actions for available instructions

@@ -8,6 +8,10 @@ export default {
   selectMetric: 'Select metric to display',
   customColor: 'Custom color',
   calculationMethod: 'Calculation method',
+  tabs: {
+    collectionSettings: 'Collection settings',
+    ratingSettings: 'Rating settings',
+  },
   aggregateFunctions: {
     [AGGREGATE_FUNCTIONS.sum]: 'Sum',
     [AGGREGATE_FUNCTIONS.avg]: 'Average',
@@ -38,8 +42,12 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
-      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} not acked alarms',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: '{value} not acked alarms with duration 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: '{value} not acked alarms with duration 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: '{value} not acked alarms older than 24h',
     },
   },
 
@@ -49,5 +57,12 @@ export default {
 
   ratingSettings: {
     helpInformation: 'The list of parameters to use for rating.',
+  },
+
+  collectionSetting: {
+    basicMetrics: 'Basic metrics',
+    optionalMetrics: 'Optional metrics',
+    manualInstructions: 'Number of alarms with manual instructions',
+    notAckedMetrics: 'Number of active not acked alarms of different durations',
   },
 };

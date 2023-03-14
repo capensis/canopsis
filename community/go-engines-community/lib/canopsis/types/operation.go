@@ -11,17 +11,18 @@ type OperationParameters struct {
 	Output string `bson:"output,omitempty" json:"output,omitempty"`
 	Author string `bson:"author,omitempty" json:"author,omitempty"`
 	User   string `bson:"user,omitempty" json:"user,omitempty"`
-	// AssocTicket and DeclareTicket
-	Ticket string `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	// DeclareTicket
-	Data map[string]string `bson:"data,omitempty" json:"data,omitempty"`
+	// AssocTicket and Webhook
+	TicketInfo `bson:",inline"`
+	// Webhook
+	WebhookRequest    bool   `bson:"webhook_request,omitempty" json:"webhook_request,omitempty"`
+	WebhookFailReason string `bson:"webhook_fail_reason,omitempty" json:"webhook_fail_reason,omitempty"`
 	// Snooze
 	Duration *DurationWithUnit `bson:"duration,omitempty" json:"duration,omitempty"`
 	// ChangeState
 	State *CpsNumber `bson:"state,omitempty" json:"state,omitempty"`
 	// Pbehavior
 	PbehaviorInfo *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	// Instruction
+	// Instruction and Webhook
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 	// Instruction is used only for manual instructions kpi metrics
 	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`

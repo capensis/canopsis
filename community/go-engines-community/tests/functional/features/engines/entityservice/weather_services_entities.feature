@@ -670,3 +670,252 @@ Feature: get service entities
       }
     }
     """
+
+  Scenario: given service and events, should return assigned declare ticket rules in get weather service entities request
+    Given I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector" : "test-connector-service-weather-entity-8",
+        "connector_name" : "test-connector_name-service-weather-entity-8",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-8",
+        "resource" : "test-resource-service-weather-entity-8-1",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-8",
+        "connector_name" : "test-connector_name-service-weather-entity-8",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-8",
+        "resource" : "test-resource-service-weather-entity-8-2",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-8",
+        "connector_name" : "test-connector_name-service-weather-entity-8",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-8",
+        "resource" : "test-resource-service-weather-entity-8-3",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-8",
+        "connector_name" : "test-connector_name-service-weather-entity-8",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-8",
+        "resource" : "test-resource-service-weather-entity-8-4",
+        "state" : 1,
+        "output" : "noveo alarm"
+      },
+      {
+        "connector" : "test-connector-service-weather-entity-8",
+        "connector_name" : "test-connector_name-service-weather-entity-8",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-service-weather-entity-8",
+        "resource" : "test-resource-service-weather-entity-8-5",
+        "state" : 1,
+        "output" : "noveo alarm"
+      }
+    ]
+    """
+    When I wait the end of 5 events processing
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-weather-service-rule-8-1",
+      "system_name": "test-alarm-service-rule-8-1-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "https://canopsis-test.com",
+            "method": "GET",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            },
+            "skip_verify": true,
+            "timeout": {
+              "value": 30,
+              "unit": "s"
+            },
+            "retry_count": 3,
+            "retry_delay": {
+              "value": 1,
+              "unit": "s"
+            }
+          },
+          "declare_ticket": {
+            "is_regexp": false,
+            "ticket_id": "_id",
+            "ticket_url": "url",
+            "ticket_custom": "custom",
+            "empty_response": false
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-8-1"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-8-2"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-8-3"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleID1={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-weather-service-rule-8-2",
+      "system_name": "test-alarm-service-rule-8-2-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "https://canopsis-test.com",
+            "method": "GET",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            },
+            "skip_verify": true,
+            "timeout": {
+              "value": 30,
+              "unit": "s"
+            },
+            "retry_count": 3,
+            "retry_delay": {
+              "value": 1,
+              "unit": "s"
+            }
+          },
+          "declare_ticket": {
+            "is_regexp": false,
+            "ticket_id": "_id",
+            "ticket_url": "url",
+            "ticket_custom": "custom",
+            "empty_response": false
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-8-3"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-service-weather-entity-8-4"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleID2={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services/test-service-weather-entity-8?with_declare_tickets=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "name": "test-resource-service-weather-entity-8-1",
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-weather-service-rule-8-1"
+            }
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-8-2",
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-weather-service-rule-8-1"
+            }
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-8-3",
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID1 }}",
+              "name": "test-weather-service-rule-8-1"
+            },
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-weather-service-rule-8-2"
+            }
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-8-4",
+          "assigned_declare_ticket_rules": [
+            {
+              "_id": "{{ .ruleID2 }}",
+              "name": "test-weather-service-rule-8-2"
+            }
+          ]
+        },
+        {
+          "name": "test-resource-service-weather-entity-8-5"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """
+    Then the response key "data.4.assigned_declare_ticket_rules" should not exist
