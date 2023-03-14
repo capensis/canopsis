@@ -3377,11 +3377,16 @@ default_entities:
     _id: test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
     name: test-resource-to-alarm-test-tag-filter-3
     component: test-component-to-alarm-test-tag-filter
+  connector_to_test_not_acked_metrics_axe:
+    <<: *connector
+    _id: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
+    name: test-connector-name-not-acked-metrics-axe
   component_to_test_not_acked_metrics_axe:
     <<: *component
     _id: test-component-not-acked-metrics-axe
     name: <Current()._id>
     component: <Current()._id>
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
     depends:
       - test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
       - test-resource-not-acked-metrics-axe-3/test-component-not-acked-metrics-axe
@@ -3397,46 +3402,55 @@ default_entities:
     _id: test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-2
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_3:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-3/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-3
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_4:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-4/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-4
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_5:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-5/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-5
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_6:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-6/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-6
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_7:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-7/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-7
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_8:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-8/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-8
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_9:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-9/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-9
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_10:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-10/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-10
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
 
   entity_manual_correlation_fail_1:
     <<: *resource
