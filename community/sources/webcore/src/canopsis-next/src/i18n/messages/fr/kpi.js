@@ -8,6 +8,10 @@ export default {
   selectMetric: 'Sélectionnez la métrique à afficher',
   customColor: 'Couleur personnalisée',
   calculationMethod: 'Méthode de calcul',
+  tabs: {
+    collectionSettings: 'Paramètres d\'évaluation',
+    ratingSettings: 'Paramètres d\'évaluation',
+  },
   aggregateFunctions: {
     [AGGREGATE_FUNCTIONS.sum]: 'Somme',
     [AGGREGATE_FUNCTIONS.avg]: 'Moyenne',
@@ -41,8 +45,12 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
-      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} alarmes corrigées manuellement',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} alarmes non acquittées',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: '{value} alarmes non acquittées avec une durée de 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: '{value} alarmes non acquittées d\'une durée de 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: '{value} alarmes non acquittées datant de plus de 24h',
     },
   },
 
@@ -52,5 +60,12 @@ export default {
 
   ratingSettings: {
     helpInformation: 'La liste des paramètres à utiliser pour la notation.',
+  },
+
+  collectionSetting: {
+    basicMetrics: 'Métriques de base',
+    optionalMetrics: 'Métriques facultatives',
+    manualInstructions: 'Nombre d\'alarmes avec instructions manuelles',
+    notAckedMetrics: 'Nombre d\'alarmes actives non acquittées de différentes durées',
   },
 };

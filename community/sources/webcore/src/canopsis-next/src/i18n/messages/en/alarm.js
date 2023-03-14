@@ -3,13 +3,7 @@ import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 export default {
   eventsCount: 'Events count',
   liveReporting: 'Set a custom date range',
-  stateMessage: 'State message',
-  stateValue: 'State value',
-  ticketAuthor: 'Ticket submitter',
-  ticketId: 'Ticket id',
-  ticketMessage: 'Ticket message',
   ackAuthor: 'Ack author',
-  ackMessage: 'Ack message',
   lastCommentAuthor: 'Last comment author',
   lastCommentMessage: 'Last comment message',
   metaAlarm: 'Meta alarm',
@@ -35,6 +29,7 @@ export default {
   otherTickets: 'Other tickets are available in the expand panel',
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
+  followLink: 'Follow the link "{title}"',
   actions: {
     titles: {
       ack: 'Ack',
@@ -160,6 +155,10 @@ export default {
     [ALARM_METRIC_PARAMETERS.averageResolve]: 'Average time to resolve alarms',
     [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Number of manually remediated alarms',
     [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Number of alarms with manual instructions',
+    [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Number of not acked alarms',
+    [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Number of not acked alarms with duration 1-4h',
+    [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Number of not acked alarms with duration 4-24h',
+    [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Number of not acked alarms older than 24h',
   },
   fields: {
     displayName: 'Display name',
@@ -172,6 +171,8 @@ export default {
     stateMessage: 'State message',
     statusMessage: 'Status message',
     totalStateChanges: 'Total state changes',
+    stateValue: 'State value',
+    statusValue: 'Status value',
     ackAt: 'Acked at',
     stateAt: 'State changed at',
     statusAt: 'Status changed at',
@@ -183,6 +184,9 @@ export default {
     activeDuration: 'Active duration',
     eventsCount: 'Events count',
     extraDetails: 'Extra details',
+    ticketAuthor: 'Ticket submitter',
+    ticketId: 'Ticket id',
+    ticketMessage: 'Ticket message',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
@@ -194,5 +198,6 @@ export default {
     entityOkEvents: 'Entity OK events',
     entityInfos: 'Entity infos',
     entityComponentInfos: 'Entity component infos',
+    entityLastPbehaviorDate: 'Entity last pbehavior date',
   },
 };

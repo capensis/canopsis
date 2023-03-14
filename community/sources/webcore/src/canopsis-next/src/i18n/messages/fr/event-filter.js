@@ -1,8 +1,5 @@
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES,
-  EVENT_FILTER_EXTERNAL_DATA_TYPES,
-  EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_TYPES,
 } from '@/constants';
 
@@ -33,20 +30,6 @@ export default {
   duringPeriod: 'Appliqué pendant cette période uniquement',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
-  noExternalData: 'Aucune donnée externe n\'a encore été ajoutée',
-  addExternalData: 'Ajouter des données externes',
-  reference: 'Référence',
-  collection: 'Collection',
-  sort: 'Sens du tri',
-  sortBy: 'Colonne de tri',
-  externalDataTypes: {
-    [EVENT_FILTER_EXTERNAL_DATA_TYPES.mongo]: 'Collection MongoDB',
-    [EVENT_FILTER_EXTERNAL_DATA_TYPES.api]: 'API',
-  },
-  externalDataConditionTypes: {
-    [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.select]: 'Select',
-    [EVENT_FILTER_EXTERNAL_DATA_CONDITION_TYPES.regexp]: 'Regexp',
-  },
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',
@@ -61,7 +44,6 @@ export default {
     removeRuleField: 'Supprimer le groupe/la règle',
     copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
       + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
-    reference: 'Sera utilisé dans les actions via <strong>.ExternalData.&lt;Reference&gt;</strong>',
   },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
@@ -94,13 +76,5 @@ export default {
       message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
       description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
     },
-  },
-  externalDataValues: {
-    [EVENT_FILTER_PATTERN_FIELDS.component]: 'Composant',
-    [EVENT_FILTER_PATTERN_FIELDS.connector]: 'Connecteur',
-    [EVENT_FILTER_PATTERN_FIELDS.connectorName]: 'Nom du connecteur',
-    [EVENT_FILTER_PATTERN_FIELDS.resource]: 'Ressource',
-    [EVENT_FILTER_PATTERN_FIELDS.output]: 'Output',
-    [EVENT_FILTER_PATTERN_FIELDS.extraInfos]: 'Extra infos',
   },
 };
