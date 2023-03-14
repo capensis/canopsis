@@ -13,7 +13,7 @@
 <script>
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
-import { KPI_PIE_CHART_SHOW_MODES } from '@/constants';
+import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 export default {
   components: { WidgetSettingsItem },
@@ -39,11 +39,11 @@ export default {
     showModes() {
       return [
         {
-          value: KPI_PIE_CHART_SHOW_MODES.numbers,
+          value: KPI_PIE_CHART_SHOW_MODS.numbers,
           label: this.$tc('common.number', 2),
         },
         {
-          value: KPI_PIE_CHART_SHOW_MODES.percent,
+          value: KPI_PIE_CHART_SHOW_MODS.percent,
           label: this.$tc('common.percent', 2),
         },
       ];
