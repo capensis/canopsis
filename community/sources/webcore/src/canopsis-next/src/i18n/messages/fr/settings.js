@@ -68,6 +68,7 @@ export default {
   modal: '(Modal)',
   headerTitle: 'Titre de l\'en-tête',
   defaultSampling: 'Default sampling',
+  defaultTimeRange: 'Plage horaire par défaut',
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
