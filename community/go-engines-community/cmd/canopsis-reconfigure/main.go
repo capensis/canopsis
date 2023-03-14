@@ -23,6 +23,7 @@ import (
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 func main() {
@@ -211,7 +212,18 @@ func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.D
 	if err != nil {
 		return fmt.Errorf("failed to update version config: %w", err)
 	}
-	err = config.NewAdapter(dbClient).UpsertConfig(ctx, conf.Canopsis)
+
+	//todo: fix it with config refactoring
+	globalConfAdapter := config.NewAdapter(dbClient)
+	prevGlobalConf, err := globalConfAdapter.GetConfig(ctx)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return fmt.Errorf("failed to fetch global config: %w", err)
+	}
+
+	conf.Canopsis.Metrics.EnabledManualInstructions = prevGlobalConf.Metrics.EnabledManualInstructions
+	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
+
+	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
 	if err != nil {
 		return fmt.Errorf("failed to update global config: %w", err)
 	}
