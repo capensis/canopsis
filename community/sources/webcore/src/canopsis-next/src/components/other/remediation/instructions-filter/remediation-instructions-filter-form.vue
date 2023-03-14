@@ -2,23 +2,23 @@
   div
     v-radio-group(
       v-field="form.with",
-      :label="$t('remediationInstructionsFilters.filterByInstructions')",
+      :label="$t('remediation.instructionsFilter.filterByInstructions')",
       name="with",
       hide-details
     )
       v-radio(
-        :label="$t('remediationInstructionsFilters.with')",
+        :label="$t('remediation.instructionsFilter.with')",
         :value="true",
         color="primary"
       )
       v-radio(
-        :label="$t('remediationInstructionsFilters.without')",
+        :label="$t('remediation.instructionsFilter.without')",
         :value="false",
         color="primary"
       )
     v-switch(
       :input-value="form.all",
-      :label="$t('remediationInstructionsFilters.selectAll')",
+      :label="$t('remediation.instructionsFilter.selectAll')",
       :disabled="hasAnyAnotherOppositeFilter",
       color="primary",
       @change="changeSelectedAll"
@@ -27,14 +27,14 @@
       v-flex(md3, xs6)
         v-checkbox(
           :input-value="form.auto",
-          :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
+          :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
           :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
           color="primary",
           @change="changeType('auto', $event)"
         )
       v-checkbox(
         :input-value="form.manual",
-        :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
+        :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
         :disabled="form.all || hasAnyAnotherOppositeFilterWithManual",
         color="primary",
         @change="changeType('manual', $event)"
@@ -45,7 +45,7 @@
       :items="preparedRemediationInstructions",
       :loading="remediationInstructionsPending",
       :disabled="isAll",
-      :label="$t('remediationInstructionsFilters.selectedInstructions')",
+      :label="$t('remediation.instructionsFilter.selectedInstructions')",
       :error-messages="errors.collect('instructions')",
       item-text="name",
       item-value="_id",
@@ -57,18 +57,18 @@
     )
       template(#append-outer="")
         c-help-icon(
-          :text="$t('remediationInstructionsFilters.selectedInstructionsHelp')",
+          :text="$t('remediation.instructionsFilter.selectedInstructionsHelp')",
           icon="help",
           left
         )
     v-radio-group(
       v-field="form.running",
-      :label="$t('remediationInstructionsFilters.alarmsListDisplay')",
+      :label="$t('remediation.instructionsFilter.alarmsListDisplay')",
       name="with",
       hide-details
     )
       v-radio(
-        :label="$t('remediationInstructionsFilters.allAlarms')",
+        :label="$t('remediation.instructionsFilter.allAlarms')",
         :value="null",
         color="primary"
       )
@@ -155,16 +155,16 @@ export default {
 
     showInProgressLabel() {
       const key = this.form.with
-        ? 'remediationInstructionsFilters.showWithInProgress'
-        : 'remediationInstructionsFilters.showWithoutInProgress';
+        ? 'remediation.instructionsFilter.showWithInProgress'
+        : 'remediation.instructionsFilter.showWithoutInProgress';
 
       return this.$t(key);
     },
 
     hideInProgressLabel() {
       const key = this.form.with
-        ? 'remediationInstructionsFilters.hideWithInProgress'
-        : 'remediationInstructionsFilters.hideWithoutInProgress';
+        ? 'remediation.instructionsFilter.hideWithInProgress'
+        : 'remediation.instructionsFilter.hideWithoutInProgress';
 
       return this.$t(key);
     },

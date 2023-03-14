@@ -90,13 +90,13 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediationStatistic.labels.notRemediated'),
+        label: this.$t('remediation.statistic.labels.notRemediated'),
         order: 2,
         data: assigned,
       }, {
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticExecutedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediationStatistic.labels.remediated'),
+        label: this.$t('remediation.statistic.labels.remediated'),
         order: 1,
         data: executed,
       }];
@@ -179,10 +179,10 @@ export default {
       const { raw } = tooltip;
 
       if (this.isPercentDataType) {
-        return this.$t('remediationStatistic.tooltips.remediated', { value: `${raw.y}%` });
+        return this.$t('remediation.statistic.tooltips.remediated', { value: `${raw.y}%` });
       }
 
-      return this.$t(`remediationStatistic.tooltips.${raw.assigned ? 'assigned' : 'remediated'}`, { value: raw.y });
+      return this.$t(`remediation.statistic.tooltips.${raw.assigned ? 'assigned' : 'remediated'}`, { value: raw.y });
     },
   },
 };

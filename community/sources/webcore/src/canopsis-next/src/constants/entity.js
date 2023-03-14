@@ -53,6 +53,10 @@ export const EVENT_ENTITY_TYPES = {
   delete: 'delete',
   changeState: 'changestate',
   declareTicket: 'declareticket',
+  declareTicketFail: 'declareticketfail',
+  webhookStart: 'webhookstart',
+  webhookComplete: 'webhookcomplete',
+  webhookFail: 'webhookfail',
   snooze: 'snooze',
   validate: 'validate',
   invalidate: 'invalidate',
@@ -236,6 +240,10 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.pbehaviorList]: 'list',
   [EVENT_ENTITY_TYPES.ackRemove]: 'not_interested',
   [EVENT_ENTITY_TYPES.declareTicket]: 'report_problem',
+  [EVENT_ENTITY_TYPES.declareTicketFail]: 'report_problem',
+  [EVENT_ENTITY_TYPES.webhookStart]: 'report_problem',
+  [EVENT_ENTITY_TYPES.webhookComplete]: 'report_problem',
+  [EVENT_ENTITY_TYPES.webhookFail]: 'report_problem',
   [EVENT_ENTITY_TYPES.assocTicket]: 'local_play',
   [EVENT_ENTITY_TYPES.delete]: 'delete',
   [EVENT_ENTITY_TYPES.changeState]: 'thumbs_up_down',
@@ -276,7 +284,6 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
 export const EVENT_ENTITY_COLORS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.ack]: COLORS.entitiesEvents.ack,
   [EVENT_ENTITY_TYPES.ackRemove]: COLORS.entitiesEvents.ackRemove,
-  [EVENT_ENTITY_TYPES.declareTicket]: COLORS.entitiesEvents.declareTicket,
   [EVENT_ENTITY_TYPES.snooze]: COLORS.entitiesEvents.snooze,
   [EVENT_ENTITY_TYPES.pbhenter]: COLORS.entitiesEvents.pbhenter,
   [EVENT_ENTITY_TYPES.pbhleave]: COLORS.entitiesEvents.pbhleave,
@@ -482,3 +489,10 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.links,
   ENTITY_FIELDS.pbehaviorInfo,
 ];
+
+export const ENTITY_PAYLOADS_VARIABLES = {
+  entity: '.Entity',
+  entities: '.Entities',
+  name: '.Name',
+  infosValue: '(index .Entity.Infos.%infos_name%).Value',
+};

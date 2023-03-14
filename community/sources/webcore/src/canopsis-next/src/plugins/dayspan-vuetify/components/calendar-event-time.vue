@@ -1,32 +1,31 @@
 <template lang="pug">
-  v-menu.ds-calendar-event(
-    :class="classWithKey",
+  v-menu(
     :content-class="contentClass",
     :disabled="!hasPopover",
-    :style="style",
     v-model="menu",
     v-bind="popoverProps"
   )
-    template(slot="activator")
-      .ds-calendar-event-span(
-        @click="editCheck",
-        @mouseenter="mouseEnterEvent",
-        @mouseleave="mouseLeaveEvent",
-        @mousedown="mouseDownEvent",
-        @mouseup="mouseUpEvent"
-      )
-        span(v-if="showName")
-          slot(name="eventTimeTitle", v-bind="{ calendarEvent, details }")
-            v-icon.ds-ev-icon(
-              v-if="hasIcon",
-              size="14",
-              :style="{ color: details.forecolor }"
-            ) {{ details.icon }}
-            strong.ds-ev-title {{ details.title }}
-            span.ds-ev-description {{ details.description }}
-        span(v-else)
-          slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
-      .ds-calendar-event-time-resize(v-show="canResize", @mousedown="resizeStartHandler")
+    template(#activator="{ on }")
+      div.ds-calendar-event(v-on="on", :style="style", :class="classWithKey")
+        div.ds-calendar-event-span(
+          @click="editCheck",
+          @mouseenter="mouseEnterEvent",
+          @mouseleave="mouseLeaveEvent",
+          @mousedown="mouseDownEvent",
+          @mouseup="mouseUpEvent"
+        )
+          span(v-if="showName")
+            slot(name="eventTimeTitle", v-bind="{ calendarEvent, details }")
+              v-icon.ds-ev-icon(
+                v-if="hasIcon",
+                size="14",
+                :style="{ color: details.forecolor }"
+              ) {{ details.icon }}
+              strong.ds-ev-title {{ details.title }}
+              span.ds-ev-description {{ details.description }}
+          span(v-else)
+            slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
+        div.ds-calendar-event-time-resize(v-show="canResize", @mousedown="resizeStartHandler")
     slot(
       name="eventPopover",
       v-if="isShownPopover",

@@ -16,9 +16,9 @@
             span {{ todayDate }}
       slot(name="pagination", v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }")
         v-flex.text-sm-center
-          v-tooltip.mx-2(bottom)
+          v-tooltip(bottom)
             template(#activator="{ on }")
-              v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
+              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
                 v-on="on",
                 icon,
                 depressed,
@@ -27,9 +27,9 @@
                 v-icon keyboard_arrow_left
             span {{ prevLabel }}
           calendar-app-period-picker(:calendar="calendar", @change="selectPeriod")
-          v-tooltip.mx-2(bottom)
+          v-tooltip(bottom)
             template(#activator="{ on }")
-              v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
+              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
                 v-on="on",
                 icon,
                 depressed,
