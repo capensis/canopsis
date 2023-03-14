@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sampling Renders \`sampling\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Default sampling"
+>
+  <c-sampling-field-stub
+    name="custom_name"
+    value="week"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`sampling Renders \`sampling\` with default props 1`] = `
+<widget-settings-item-stub
+  title="Default sampling"
+>
+  <c-sampling-field-stub />
+</widget-settings-item-stub>
+`;

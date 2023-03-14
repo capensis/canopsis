@@ -1,5 +1,7 @@
 import { omit } from 'lodash';
+
 import { AGGREGATE_FUNCTIONS } from '@/constants';
+
 import uid from '@/helpers/uid';
 
 /**
