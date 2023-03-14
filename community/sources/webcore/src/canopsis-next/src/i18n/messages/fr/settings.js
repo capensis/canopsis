@@ -71,6 +71,9 @@ export default {
   entitiesColumns: 'Colonnes de l\'explorateur de contexte',
   entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
   modal: '(Modal)',
+  headerTitle: 'Titre de l\'en-tête',
+  defaultSampling: 'Default sampling',
+  defaultTimeRange: 'Plage horaire par défaut',
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
@@ -211,6 +214,10 @@ export default {
   },
 
   chart: {
+    graphType: 'Type de graphique',
+    separateBars: 'Barres séparées',
+    stackedBars: 'Barres empilées',
+    selectMetrics: 'Select metrics',
     showComparison: 'Afficher la comparaison',
     preset: 'Préréglé',
     presets: {
