@@ -205,4 +205,10 @@ export default {
     compact: 'Compact view',
     ultraCompact: 'Ultra compact view',
   },
+
+  chart: {
+    graphType: 'Graph type',
+    separateBars: 'Separate bars',
+    stackedBars: 'Stacked bars',
+  },
 };
