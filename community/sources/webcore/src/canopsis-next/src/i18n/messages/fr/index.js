@@ -1,7 +1,3 @@
-import { merge } from 'lodash';
-
-import featureService from '@/services/features';
-
 import common from './common';
 import context from './context';
 import dynamicInfo from './dynamic-info';
@@ -56,8 +52,10 @@ import shareToken from './share-token';
 import techMetric from './tech-metric';
 import widgetTemplate from './widget-template';
 import declareTicket from './declare-ticket';
+import linkRule from './link-rule';
+import externalData from './external-data';
 
-export default merge({
+export default {
   common,
   context,
   dynamicInfo,
@@ -112,4 +110,6 @@ export default merge({
   techMetric,
   widgetTemplate,
   declareTicket,
-}, featureService.get('i18n.fr'));
+  linkRule,
+  externalData,
+};

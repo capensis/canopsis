@@ -32,9 +32,7 @@ import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wra
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueState from './alarm-column-value-state.vue';
 import AlarmColumnValueStatus from './alarm-column-value-status.vue';
-import AlarmColumnValueCategories from './alarm-column-value-categories.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
-import AlarmColumnValueLinks from './alarm-column-value-links.vue';
 
 /**
  * Component to format alarms list columns
@@ -50,9 +48,7 @@ export default {
     AlarmColumnCellPopupBody,
     AlarmColumnValueState,
     AlarmColumnValueStatus,
-    AlarmColumnValueCategories,
     AlarmColumnValueExtraDetails,
-    AlarmColumnValueLinks,
     ColorIndicatorWrapper,
   },
   props: {

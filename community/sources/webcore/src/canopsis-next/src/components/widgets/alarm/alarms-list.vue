@@ -121,7 +121,6 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import MassActionsPanel from './actions/mass-actions-panel.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
@@ -139,7 +138,6 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    MassActionsPanel,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },

@@ -98,6 +98,8 @@
 </template>
 
 <script>
+import { differenceBy } from 'lodash';
+
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
@@ -296,6 +298,14 @@ export default {
   },
 
   watch: {
+    alarms(alarms, prevAlarms) {
+      const diff = differenceBy(alarms, prevAlarms, '_id');
+
+      if (diff.length) {
+        this.clearSelected();
+      }
+    },
+
     stickyHeader(stickyHeader) {
       if (stickyHeader) {
         this.calculateHeaderOffsetPosition();

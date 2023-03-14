@@ -45,4 +45,5 @@ export const ENTITIES_TYPES = {
   alarmTag: 'alarmTag',
   shareToken: 'shareToken',
   declareTicketRule: 'declareTicketRule',
+  linkRule: 'linkRule',
 };
