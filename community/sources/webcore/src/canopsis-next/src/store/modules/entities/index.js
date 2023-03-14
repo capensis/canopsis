@@ -56,6 +56,7 @@ import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
 import templateValidatorModule from './template-validator';
 import LinkRuleRuleModule from './links-rule';
+import metricsSettingsModule from './metrics-settings';
 
 export default {
   alarm: alarmModule,
@@ -116,4 +117,5 @@ export default {
   declareTicketRule: declareTicketRuleModule,
   templateValidator: templateValidatorModule,
   linkRule: LinkRuleRuleModule,
+  metricsSettings: metricsSettingsModule,
 };
