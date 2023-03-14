@@ -1,8 +1,8 @@
 <template lang="pug">
   v-sheet.px-3.py-2(color="grey lighten-3")
-    div(v-if="isFailedJob") {{ $t('remediationInstructionExecute.jobs.failedReason') }}:&nbsp;
+    div(v-if="isFailedJob") {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
       span.pre-wrap(v-html="job.fail_reason")
-    div {{ $t('remediationInstructionExecute.jobs.output') }}:&nbsp;
+    div {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
       span.pre-line(v-html="output")
 </template>
 

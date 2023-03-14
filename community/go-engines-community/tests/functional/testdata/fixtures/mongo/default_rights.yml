@@ -242,6 +242,11 @@ default_rights:
     _id: api_rating_settings
     crecord_name: <Current()._id>
     description: Rating settings
+  permission_api_metrics_settings:
+    <<: *permission_crud
+    _id: api_metrics_settings
+    crecord_name: <Current()._id>
+    description: Metrics settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
@@ -287,6 +292,11 @@ default_rights:
     _id: api_declare_ticket_execution
     crecord_name: <Current()._id>
     description: Run declare ticket rules
+  permission_api_link_rule:
+    <<: *permission_crud
+    _id: api_link_rule
+    crecord_name: <Current()._id>
+    description: Link rule
 
   role_noperms:
     <<: *role
@@ -1270,6 +1280,9 @@ default_rights:
       "@permission_api_rating_settings":
         checksum: 15
         crecord_type: right
+      "@permission_api_metrics_settings":
+        checksum: 15
+        crecord_type: right
       "@permission_api_kpi_filter":
         checksum: 15
         crecord_type: right
@@ -1289,6 +1302,9 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_share_token":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_link_rule":
         checksum: 15
         crecord_type: right
       "@permission_api_declare_ticket_rule":

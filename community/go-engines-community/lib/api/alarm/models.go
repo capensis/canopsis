@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -232,8 +233,8 @@ type Alarm struct {
 	SuccessfulManualInstructions []string               `bson:"-" json:"successful_manual_instructions,omitempty"`
 	SuccessfulAutoInstructions   []string               `bson:"-" json:"successful_auto_instructions,omitempty"`
 
-	Links       map[string]interface{} `bson:"-" json:"links,omitempty"`
-	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
+	Links       link.LinksByCategory `bson:"-" json:"links,omitempty"`
+	ImpactState int64                `bson:"impact_state" json:"impact_state"`
 
 	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }
@@ -435,4 +436,8 @@ func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
 	}
 
 	return bson.M{"$and": and}, nil
+}
+
+type LinksRequest struct {
+	Ids []string `form:"ids[]" json:"ids" binding:"required,notblank"`
 }

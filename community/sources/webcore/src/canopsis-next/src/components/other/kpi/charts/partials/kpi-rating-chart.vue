@@ -155,7 +155,7 @@ export default {
         ? convertDurationToString(raw, DATETIME_FORMATS.refreshFieldFormat, this.maxDuration.unit)
         : raw;
 
-      return this.$t(`kpiMetrics.tooltip.${this.metric}`, { value });
+      return this.$t(`kpi.metrics.tooltip.${this.metric}`, { value });
     },
   },
 };
