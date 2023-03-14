@@ -31,7 +31,8 @@ Ce type de carte permet de dessiner une carte de type diagramme.
 
 ### Mermaid
 
-Permet de créer plein de type de carte grace au format [mermaid](https://mermaid-js.github.io/mermaid/)
+Le format [**Mermaid**](https://mermaid-js.github.io/mermaid/) vous permet de créer des diagrammes et des visualisations en utilisant du texte et du code.  
+Il s'agit d'un outil de création de diagrammes et de graphiques basé sur JavaScript qui rend les définitions de texte inspirées de Markdown pour créer et modifier les diagrammes de manière dynamique.
 
 ![Modale création mermaid](img/cartographie_mermaid_editor.png)
 
