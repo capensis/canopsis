@@ -5,13 +5,12 @@
       :label="$t('kpi.selectMetric')"
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
-      v-flex(xs11)
-        v-switch(
-          :label="$t('kpi.customColor')",
-          :input-value="!!preset.color",
-          color="primary",
-          @change="enableColor($event)"
-        )
+      v-switch(
+        :label="$t('kpi.customColor')",
+        :input-value="!!preset.color",
+        color="primary",
+        @change="enableColor($event)"
+      )
       c-color-picker-field.c-alarm-metric-preset-field__color-picker(
         v-show="preset.color",
         v-field="preset.color"
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-import { COLORS } from '@/config';
+import { getMetricColor } from '@/helpers/color';
 
 import { formMixin } from '@/mixins/form';
 
@@ -57,7 +56,7 @@ export default {
   },
   methods: {
     enableColor(value) {
-      this.updateField('color', value ? COLORS.metrics.createdAlarms : '');
+      this.updateField('color', value ? getMetricColor(this.preset.metric) : '');
     },
   },
 };
@@ -67,6 +66,7 @@ export default {
 .c-alarm-metric-preset-field {
   &__color-picker {
     width: max-content;
+    flex: unset;
   }
 }
 </style>
