@@ -16,7 +16,7 @@
     clearable
   )
     template(#selection="{ item, index }")
-      c-alarm-tag-chip(:color="item.color", close, @close="removeItemFromArray(index)") {{ item.value }}
+      c-alarm-action-chip(:color="item.color", closable, @close="removeItemFromArray(index)") {{ item.value }}
 </template>
 
 <script>

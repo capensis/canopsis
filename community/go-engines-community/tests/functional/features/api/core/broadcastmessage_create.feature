@@ -5,6 +5,7 @@ Feature: Create an broadcast message
   @standalone
   Scenario: given create request should return ok
     When I am admin
+    When I connect to websocket
     When I subscribe to websocket room "broadcast-messages"
     When I save response start={{ nowAdd "-2h" }}
     When I save response end={{ nowAdd "24h" }}

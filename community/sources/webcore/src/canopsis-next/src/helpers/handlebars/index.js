@@ -39,7 +39,11 @@ export async function compile(template, context) {
  * @returns {*}
  */
 export function registerHelper(name, helper) {
-  return Handlebars.registerHelper(name, helper);
+  if (Handlebars.helpers[name]) {
+    return;
+  }
+
+  Handlebars.registerHelper(name, helper);
 }
 
 /**
@@ -49,7 +53,7 @@ export function registerHelper(name, helper) {
  * @returns {*}
  */
 export function unregisterHelper(name) {
-  return Handlebars.unregisterHelper(name);
+  Handlebars.unregisterHelper(name);
 }
 
 /**
