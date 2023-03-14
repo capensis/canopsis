@@ -154,7 +154,7 @@ func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	}
 
 	for _, ticketStep := range a.Value.Tickets {
-		if ticketStep.Type == AlarmStepDeclareTicket {
+		if ticketStep.Type == AlarmStepDeclareTicket || ticketStep.Type == AlarmStepAssocTicket {
 			steps = append(steps, ticketStep)
 		}
 	}
