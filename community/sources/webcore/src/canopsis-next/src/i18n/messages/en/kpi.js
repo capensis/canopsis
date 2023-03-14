@@ -14,6 +14,9 @@ export default {
     [AGGREGATE_FUNCTIONS.min]: 'Min',
     [AGGREGATE_FUNCTIONS.max]: 'Max',
   },
+  errors: {
+    metricsMinLength: 'At least {count} metrics must be added',
+  },
 
   metrics: {
     parameter: 'Parameter to compare',
