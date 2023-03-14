@@ -1,10 +1,19 @@
-import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
 export default {
   alarmMetrics: 'Alarm metrics',
   sli: 'SLI',
   metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
   noData: 'No data available',
+  selectMetric: 'Select metric to display',
+  customColor: 'Custom color',
+  calculationMethod: 'Calculation method',
+  aggregateFunctions: {
+    [AGGREGATE_FUNCTIONS.sum]: 'Sum',
+    [AGGREGATE_FUNCTIONS.avg]: 'Average',
+    [AGGREGATE_FUNCTIONS.min]: 'Min',
+    [AGGREGATE_FUNCTIONS.max]: 'Max',
+  },
 
   metrics: {
     parameter: 'Parameter to compare',
