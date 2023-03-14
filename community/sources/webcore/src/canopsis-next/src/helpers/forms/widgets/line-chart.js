@@ -8,10 +8,9 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { metricPresetsToForm, formToMetricPresets } from '@/helpers/forms/metric';
 
 /**
- * @typedef {Object} BarChartWidgetParameters
+ * @typedef {Object} LineChartWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
  * @property {MetricPreset[]} metrics
- * @property {boolean} stacked
  * @property {string} chart_title
  * @property {string} default_time_range
  * @property {Sampling} default_sampling
@@ -19,19 +18,18 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/forms/metric
  */
 
 /**
- * @typedef {BarChartWidgetParameters} BarChartWidgetParametersForm
+ * @typedef {LineChartWidgetParameters} LineChartWidgetParametersForm
  */
 
 /**
- * Convert bar chart widget parameters to form
+ * Convert line chart widget parameters to form
  *
- * @param {BarChartWidgetParameters} parameters
- * @return {BarChartWidgetParametersForm}
+ * @param {LineChartWidgetParameters} parameters
+ * @return {LineChartWidgetParametersForm}
  */
-export const barChartWidgetParametersToForm = (parameters = {}) => ({
+export const lineChartWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
   metrics: metricPresetsToForm(parameters.metrics ?? [undefined]),
-  stacked: parameters.stacked ?? false,
   chart_title: parameters.chart_title ?? '',
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
   default_sampling: parameters.default_sampling ?? SAMPLINGS.day,
@@ -39,12 +37,12 @@ export const barChartWidgetParametersToForm = (parameters = {}) => ({
 });
 
 /**
- * Convert form to bar chart widget parameters
+ * Convert form to line chart widget parameters
  *
- * @param {BarChartWidgetParametersForm} form
- * @return {BarChartWidgetParameters}
+ * @param {LineChartWidgetParametersForm} form
+ * @return {LineChartWidgetParameters}
  */
-export const formToBarChartWidgetParameters = form => ({
+export const formToLineChartWidgetParameters = form => ({
   ...form,
 
   metrics: formToMetricPresets(form.metrics),

@@ -10,6 +10,7 @@
       field-alarm-metric-presets(v-model="form.parameters.metrics", with-color)
       v-divider
       field-bar-graph-type(v-model="form.parameters.stacked")
+    v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-chart-title(v-model="form.parameters.chart_title")
       v-divider
@@ -50,7 +51,7 @@ import FieldFilters from './fields/common/filters.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 
 export default {
-  name: SIDE_BARS.textSettings,
+  name: SIDE_BARS.barChartSettings,
   components: {
     WidgetSettings,
     WidgetSettingsGroup,
