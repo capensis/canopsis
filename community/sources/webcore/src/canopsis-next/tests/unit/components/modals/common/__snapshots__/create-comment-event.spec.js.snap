@@ -21,40 +21,428 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
       class="text"
     >
       <div
-        class="v-input v-text-field theme--light"
+        class="layout column"
       >
+        <!---->
         <div
-          class="v-input__control"
+          class="v-input v-text-field theme--light"
         >
           <div
-            class="v-input__slot"
+            class="v-input__control"
           >
             <div
-              class="v-text-field__slot"
-            >
-              <label
-                aria-hidden="true"
-                class="v-label theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Comment
-              </label>
-              <input
-                aria-label="Comment"
-                name="comment"
-                type="text"
-              />
-            </div>
-          </div>
-          <div
-            class="v-text-field__details"
-          >
-            <div
-              class="v-messages theme--light"
+              class="v-input__slot"
             >
               <div
-                class="v-messages__wrapper"
-              />
+                class="v-text-field__slot"
+              >
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: absolute;"
+                >
+                  Comment
+                </label>
+                <input
+                  aria-label="Comment"
+                  name="comment"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Save changes
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Add comment
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="layout column"
+      >
+        <div>
+          <div
+            class="v-subheader theme--light"
+          >
+            common.general
+          </div>
+          <div>
+            <div
+              class="v-table__overflow"
+            >
+              <table
+                class="v-datatable v-table theme--light"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      aria-label="common.author: Not sorted."
+                      aria-sort="none"
+                      class="column text-xs-left"
+                      role="columnheader"
+                      scope="col"
+                    >
+                      common.author
+                    </th>
+                    <th
+                      aria-label="common.connector: Not sorted."
+                      aria-sort="none"
+                      class="column text-xs-left"
+                      role="columnheader"
+                      scope="col"
+                    >
+                      common.connector
+                    </th>
+                    <th
+                      aria-label="common.component: Not sorted."
+                      aria-sort="none"
+                      class="column text-xs-left"
+                      role="columnheader"
+                      scope="col"
+                    >
+                      common.component
+                    </th>
+                    <th
+                      aria-label="common.resource: Not sorted."
+                      aria-sort="none"
+                      class="column text-xs-left"
+                      role="columnheader"
+                      scope="col"
+                    >
+                      common.resource
+                    </th>
+                  </tr>
+                  <tr
+                    class="v-datatable__progress"
+                  >
+                    <th
+                      class="column"
+                      colspan="4"
+                    />
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      s8h_gf+E'B
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      EyS7inu.Ap
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      Y!"m55&gt;mBh
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      }3{C)E!e5R
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      B%KlK:fb+#
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      F-;RxwhrAO
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      z-{]-){\\D(
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      IXQ*Jw^%['
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      [70)$isx9j
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      ]9'M&gt;iD\`%7
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      p&j4oI/"80
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      {ZJp7uG!q:
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      ,+y]$:_obp
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      {r%+z&?yBp
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      -Q*5J&gt;HO{}
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      KuDei(tGCU
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      )Fz9Ug%48_
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      c'IYkwVd53
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      46?Ia'',r*
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      lVOOiZ./O;
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      #Zni5z-Nq.
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      E-o_@'=(mL
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      Er(($L@oHC
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      T[E;L?-xHX
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      hBryiX._+&gt;
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      a|&gt;{iwhV3L
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      ;(C&gt;hY&gt;n!\\
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      MU4k&4&%|)
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      L"-,%o+{@*
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      8A2L;.t=hO
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      dguKx=J0zv
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      ;o-ViR}Fu#
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      U9Q=S{T|7h
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      xlD$_^=vcR
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      ?P|&.TLU^,
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      X^nvTXz^Vd
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="text-xs-left"
+                    >
+                      o}G)]m{?PV
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      S42B"zefTy
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      :Y9+rWqVVL
+                    </td>
+                    <td
+                      class="text-xs-left"
+                    >
+                      s1#fNyEYIi
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <hr
+          class="my-3 v-divider theme--light"
+        />
+        <div
+          class="v-input v-text-field theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+            >
+              <div
+                class="v-text-field__slot"
+              >
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: absolute;"
+                >
+                  Comment
+                </label>
+                <input
+                  aria-label="Comment"
+                  name="comment"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div
+              class="v-text-field__details"
+            >
+              <div
+                class="v-messages theme--light"
+              >
+                <div
+                  class="v-messages__wrapper"
+                />
+              </div>
             </div>
           </div>
         </div>
