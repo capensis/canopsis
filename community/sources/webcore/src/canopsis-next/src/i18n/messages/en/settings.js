@@ -48,8 +48,7 @@ export default {
   filterEditor: 'Filter',
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
-  linksCategoriesAsList: 'Display links as a list?',
-  linksCategoriesLimit: 'Number of category items',
+  inlineLinksCount: 'Inline links count',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   fastAckOutput: 'Fast-ack output',
@@ -146,6 +145,7 @@ export default {
     isHtml: 'Is it HTML?',
     withTemplate: 'Custom template',
     isState: 'Displayed as severity?',
+    onlyIcon: 'Show only links icons',
   },
   liveReporting: {
     title: 'Live reporting',

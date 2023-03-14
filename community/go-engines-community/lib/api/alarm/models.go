@@ -1,6 +1,8 @@
 package alarm
 
 import (
+	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
@@ -8,9 +10,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -46,8 +50,9 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	FilterRequest
 	SortRequest
-	WithInstructions bool `form:"with_instructions" json:"with_instructions"`
-	WithLinks        bool `form:"with_links" json:"with_links"`
+	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
+	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
+	WithLinks          bool `form:"with_links" json:"with_links"`
 }
 
 type FilterRequest struct {
@@ -122,11 +127,12 @@ type SortRequest struct {
 }
 
 type DetailsRequest struct {
-	ID               string               `json:"_id" binding:"required"`
-	Opened           *bool                `json:"opened"`
-	WithInstructions bool                 `json:"with_instructions"`
-	Steps            *StepsRequest        `json:"steps"`
-	Children         *ChildDetailsRequest `json:"children"`
+	ID                 string               `json:"_id" binding:"required"`
+	Opened             *bool                `json:"opened"`
+	WithInstructions   bool                 `json:"with_instructions"`
+	WithDeclareTickets bool                 `json:"with_declare_tickets"`
+	Steps              *StepsRequest        `json:"steps"`
+	Children           *ChildDetailsRequest `json:"children"`
 }
 
 type StepsRequest struct {
@@ -223,8 +229,10 @@ type Alarm struct {
 	SuccessfulManualInstructions []string               `bson:"-" json:"successful_manual_instructions,omitempty"`
 	SuccessfulAutoInstructions   []string               `bson:"-" json:"successful_auto_instructions,omitempty"`
 
-	Links       map[string]interface{} `bson:"-" json:"links,omitempty"`
-	ImpactState int64                  `bson:"impact_state" json:"impact_state"`
+	Links       link.LinksByCategory `bson:"-" json:"links,omitempty"`
+	ImpactState int64                `bson:"impact_state" json:"impact_state"`
+
+	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }
 
 type MetaAlarmRule struct {
@@ -239,7 +247,8 @@ type AlarmValue struct {
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
-	Ticket      *AlarmTicket       `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
+	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 
@@ -276,16 +285,6 @@ type AlarmValue struct {
 
 	RuleVersion map[string]string                 `bson:"infos_rule_version" json:"infos_rule_version"`
 	Infos       map[string]map[string]interface{} `bson:"infos" json:"infos"`
-}
-
-type AlarmTicket struct {
-	Type      string            `bson:"_t" json:"_t"`
-	Timestamp types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
-	Author    string            `bson:"a" json:"a"`
-	UserID    string            `bson:"user_id,omitempty" json:"user_id"`
-	Message   string            `bson:"m" json:"m"`
-	Value     string            `bson:"val" json:"val"`
-	Data      map[string]string `bson:"data" json:"data"`
 }
 
 type Pbehavior struct {
@@ -383,4 +382,58 @@ type Count struct {
 
 type GetOpenRequest struct {
 	ID string `form:"_id" json:"_id" binding:"required"`
+}
+
+type AssignedDeclareTicketRule struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
+}
+
+type DeclareTicketRule struct {
+	ID   string `bson:"_id" json:"_id"`
+	Name string `bson:"name" json:"name"`
+
+	savedpattern.AlarmPatternFields     `bson:",inline"`
+	savedpattern.EntityPatternFields    `bson:",inline"`
+	savedpattern.PbehaviorPatternFields `bson:",inline"`
+}
+
+func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
+	alarmPatternQuery, err := r.AlarmPattern.ToMongoQuery("")
+	if err != nil {
+		return nil, fmt.Errorf("invalid alarm pattern in declare ticket rule id=%q: %w", r.ID, err)
+	}
+
+	entityPatternQuery, err := r.EntityPattern.ToMongoQuery("entity")
+	if err != nil {
+		return nil, fmt.Errorf("invalid entity pattern in declare ticket rule id=%q: %w", r.ID, err)
+	}
+
+	pbhPatternQuery, err := r.PbehaviorPattern.ToMongoQuery("v")
+	if err != nil {
+		return nil, fmt.Errorf("invalid pbehavior pattern in declare ticket rule id=%q: %w", r.ID, err)
+	}
+
+	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 {
+		return nil, nil
+	}
+
+	var and []bson.M
+	if len(alarmPatternQuery) > 0 {
+		and = append(and, alarmPatternQuery)
+	}
+
+	if len(entityPatternQuery) > 0 {
+		and = append(and, entityPatternQuery)
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		and = append(and, pbhPatternQuery)
+	}
+
+	return bson.M{"$and": and}, nil
+}
+
+type LinksRequest struct {
+	Ids []string `form:"ids[]" json:"ids" binding:"required,notblank"`
 }

@@ -3,13 +3,7 @@ import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 export default {
   eventsCount: 'Les événements comptent',
   liveReporting: 'Définir un intervalle de dates',
-  stateMessage: 'Message d\'état',
-  stateValue: 'Valeur d\'état',
-  ticketAuthor: 'Auteur du ticket',
-  ticketId: 'ID du ticket',
-  ticketMessage: 'Message du ticket',
   ackAuthor: 'Confirmer l\'auteur',
-  ackMessage: 'Message de confirmation',
   lastCommentAuthor: 'Auteur du dernier commentaire',
   lastCommentMessage: 'Message du dernier commentaire',
   metaAlarm: 'Meta-alarmes',
@@ -35,6 +29,7 @@ export default {
   otherTickets: 'D\'autres tickets sont disponibles dans le panneau d\'expansion',
   noAlarmFound: 'Aucune alarme n\'est trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',
+  followLink: 'Suivez le lien "{title}"',
   actions: {
     titles: {
       ack: 'Acquitter',
@@ -160,6 +155,10 @@ export default {
     [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
     [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre d\'alarmes corrigées manuellement',
     [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre d\'alarmes avec instructions manuelles',
+    [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Nombre d\'alarmes non acquittées',
+    [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Nombre d\'alarmes non acquittées avec durée 1-4h',
+    [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Nombre d\'alarmes non acquittées avec durée 4-24h',
+    [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Nombre d\'alarmes non acquittées de plus de 24h',
   },
   fields: {
     displayName: 'Nom simplifié (DisplayName)',
@@ -172,6 +171,8 @@ export default {
     stateMessage: 'Message d\'état',
     statusMessage: 'Message de statut',
     totalStateChanges: 'Changements d\'état totaux',
+    stateValue: 'Valeur d\'état',
+    statusValue: 'valeur de statut',
     ackAt: 'Acquitté à',
     stateAt: 'État changé à',
     statusAt: 'Le statut a changé à',
@@ -183,6 +184,9 @@ export default {
     activeDuration: 'Durée active',
     eventsCount: 'Les événements comptent',
     extraDetails: 'Détails supplémentaires',
+    ticketAuthor: 'Auteur du ticket',
+    ticketId: 'ID du ticket',
+    ticketMessage: 'Message du ticket',
     entityId: 'ID d\'entité',
     entityName: 'Nom de l\'entité',
     entityCategoryName: 'Nom de la catégorie d\'entité',
@@ -194,5 +198,6 @@ export default {
     entityOkEvents: 'Événements d\'entité OK',
     entityInfos: 'Informations sur l\'entité',
     entityComponentInfos: 'Informations sur les composants de l\'entité',
+    entityLastPbehaviorDate: 'Date du dernier comportement de l\'entité',
   },
 };

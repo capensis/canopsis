@@ -417,7 +417,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_pbehavior
     crecord_name: <Current()._id>
-    description: "Exploitation: Pbehaviors"
+    description: "Exploitation: Pbehavior"
   permission_models_exploitation_snmpRule:
     <<: *permission_crud
     _id: models_exploitation_snmpRule
@@ -427,7 +427,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_dynamicInfo
     crecord_name: <Current()._id>
-    description: "Exploitation: Dynamic informations"
+    description: "Exploitation: Dynamic information rule"
   permission_models_exploitation_metaAlarmRule:
     <<: *permission_crud
     _id: models_exploitation_metaAlarmRule
@@ -437,22 +437,32 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_scenario
     crecord_name: <Current()._id>
-    description: "Exploitation: Scenarios"
+    description: "Exploitation: Scenario"
   permission_models_exploitation_idleRules:
     <<: *permission_crud
     _id: models_exploitation_idleRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Idle rules"
+    description: "Exploitation: Idle rule"
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Flapping rules"
+    description: "Exploitation: Flapping rule"
   permission_models_exploitation_resolveRules:
     <<: *permission_crud
     _id: models_exploitation_resolveRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Resolve rules"
+    description: "Exploitation: Resolve rule"
+  permission_models_exploitation_declareTicketRule:
+    <<: *permission_crud
+    _id: models_exploitation_declareTicketRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Declare ticket rule"
+  permission_models_exploitation_linkRule:
+    <<: *permission_crud
+    _id: models_exploitation_linkRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Link rule"
   permission_models_healthcheck:
     <<: *permission
     _id: models_healthcheck
@@ -1010,11 +1020,6 @@ default_rights:
     _id: api_associative_table
     crecord_name: <Current()._id>
     description: Associative table
-  permission_api_app_info_read:
-    <<: *permission
-    _id: api_app_info_read
-    crecord_name: <Current()._id>
-    description: Read app info
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
@@ -1070,6 +1075,11 @@ default_rights:
     _id: api_rating_settings
     crecord_name: <Current()._id>
     description: Rating settings
+  permission_api_metrics_settings:
+    <<: *permission_crud
+    _id: api_metrics_settings
+    crecord_name: <Current()._id>
+    description: Metrics settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
@@ -1115,6 +1125,21 @@ default_rights:
     _id: api_export_configurations
     crecord_name: <Current()._id>
     description: Export configurations
+  permission_api_declare_ticket_rule:
+    <<: *permission_crud
+    _id: api_declare_ticket_rule
+    crecord_name: <Current()._id>
+    description: Declare ticket rule
+  permission_api_declare_ticket_execution:
+    <<: *permission
+    _id: api_declare_ticket_execution
+    crecord_name: <Current()._id>
+    description: Run declare ticket rules
+  permission_api_link_rule:
+    <<: *permission_crud
+    _id: api_link_rule
+    crecord_name: <Current()._id>
+    description: Link rule
 
   # Views permissions
   permission_view_open_alarms:
@@ -1194,6 +1219,10 @@ default_rights:
       "@permission_models_exploitation_flappingRules":
         checksum: 15
       "@permission_models_exploitation_resolveRules":
+        checksum: 15
+      "@permission_models_exploitation_declareTicketRule":
+        checksum: 15
+      "@permission_models_exploitation_linkRule":
         checksum: 15
       "@permission_models_healthcheck":
         checksum: 1
@@ -1448,9 +1477,6 @@ default_rights:
       "@permission_api_associative_table":
         checksum: 15
         crecord_type: right
-      "@permission_api_app_info_read":
-        checksum: 1
-        crecord_type: right
       "@permission_api_user_interface_update":
         checksum: 1
         crecord_type: right
@@ -1484,6 +1510,9 @@ default_rights:
       "@permission_api_rating_settings":
         checksum: 15
         crecord_type: right
+      "@permission_api_metrics_settings":
+        checksum: 15
+        crecord_type: right
       "@permission_api_kpi_filter":
         checksum: 15
         crecord_type: right
@@ -1510,6 +1539,15 @@ default_rights:
         crecord_type: right
       "@permission_api_export_configurations":
         checksum: 1
+        crecord_type: right
+      "@permission_api_declare_ticket_rule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_declare_ticket_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_link_rule":
+        checksum: 15
         crecord_type: right
       # Views permissions
       "@permission_view_open_alarms":
