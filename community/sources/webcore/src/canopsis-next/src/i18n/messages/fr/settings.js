@@ -220,6 +220,7 @@ export default {
     selectMetrics: 'Select metrics',
     showComparison: 'Afficher la comparaison',
     preset: 'Préréglé',
+    metricsDisplay: 'Affichage des métriques',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques d\'accusé de réception',
