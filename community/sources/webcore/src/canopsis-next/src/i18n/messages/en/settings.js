@@ -211,6 +211,7 @@ export default {
   },
 
   chart: {
+    showComparison: 'Show comparison',
     preset: 'Preset',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
