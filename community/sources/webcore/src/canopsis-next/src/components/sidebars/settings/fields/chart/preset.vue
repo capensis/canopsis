@@ -2,20 +2,20 @@
   widget-settings-item(:title="$t('settings.chart.preset')")
     v-select(
       v-model="preset",
-      :items="presets",
+      :items="presetsWithCustom",
       :label="$t('settings.chart.preset')"
     )
       template(#item="{ item, tile, parent }")
         v-list-tile(v-bind="tile.props", v-on="tile.on")
           v-list-tile-content {{ item.text }}
-          v-list-tile-action
+          v-list-tile-action(v-if="item.helpText")
             c-help-icon(:text="item.helpText", icon="help", size="20", left)
 </template>
 
 <script>
 import { isEqual, isUndefined } from 'lodash';
 
-import { KPI_PIE_CHART_SHOW_MODES } from '@/constants';
+import { KPI_PIE_CHART_SHOW_MODES, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import { getWidgetChartPresetParameters, getWidgetChartPresetTypesByWidgetType } from '@/helpers/entities/widget';
 
@@ -51,11 +51,14 @@ export default {
   computed: {
     preset: {
       get() {
-        return this.presets.find(({ parameters }) => isEqual(this.parameters, { ...this.parameters, ...parameters }));
+        return this.presets.find(({ parameters }) => isEqual(this.parameters, { ...this.parameters, ...parameters }))
+          ?? CHART_PRESET_CUSTOM_ITEM_VALUE;
       },
 
       set(preset) {
-        this.updateModel(this.getParametersByPreset(preset));
+        if (preset !== CHART_PRESET_CUSTOM_ITEM_VALUE) {
+          this.updateModel(this.getParametersByPreset(preset));
+        }
       },
     },
 
@@ -75,6 +78,16 @@ export default {
           helpText,
         };
       });
+    },
+
+    presetsWithCustom() {
+      return [
+        {
+          value: CHART_PRESET_CUSTOM_ITEM_VALUE,
+          text: this.$t('common.custom'),
+        },
+        ...this.presets,
+      ];
     },
   },
   methods: {
