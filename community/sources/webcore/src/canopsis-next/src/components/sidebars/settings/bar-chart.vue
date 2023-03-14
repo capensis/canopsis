@@ -2,7 +2,10 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
+    pre {{form.parameters }}
     field-preset(v-model="form.parameters", :type="form.type")
+    v-divider
+    field-switcher(v-model="form.parameters.comparison", :title="$t('settings.chart.showComparison')")
     v-divider
 </template>
 
@@ -12,6 +15,7 @@ import { SIDE_BARS } from '@/constants';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 
 import FieldTitle from '@/components/sidebars/settings/fields/common/title.vue';
+import FieldSwitcher from '@/components/sidebars/settings/fields/common/switcher.vue';
 import FieldPreset from '@/components/sidebars/settings/fields/chart/preset.vue';
 
 import WidgetSettings from './partials/widget-settings.vue';
@@ -21,6 +25,7 @@ export default {
   components: {
     WidgetSettings,
     FieldTitle,
+    FieldSwitcher,
     FieldPreset,
   },
   mixins: [widgetSettingsMixin],

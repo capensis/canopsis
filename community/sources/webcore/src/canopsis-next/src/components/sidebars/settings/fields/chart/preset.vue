@@ -5,10 +5,17 @@
       :items="presets",
       :label="$t('settings.chart.preset')"
     )
+      template(#item="{ item, tile, parent }")
+        v-list-tile(v-bind="tile.props", v-on="tile.on")
+          v-list-tile-content {{ item.text }}
+          v-list-tile-action
+            c-help-icon(:text="item.helpText", icon="help", size="20", left)
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, isUndefined } from 'lodash';
+
+import { KPI_PIE_CHART_SHOW_MODES } from '@/constants';
 
 import { getWidgetChartPresetParameters, getWidgetChartPresetTypesByWidgetType } from '@/helpers/entities/widget';
 
@@ -44,7 +51,7 @@ export default {
   computed: {
     preset: {
       get() {
-        return this.availablePresetTypes.find(preset => isEqual(this.parameters, this.getParametersByPreset(preset)));
+        return this.presets.find(({ parameters }) => isEqual(this.parameters, { ...this.parameters, ...parameters }));
       },
 
       set(preset) {
@@ -57,10 +64,17 @@ export default {
     },
 
     presets() {
-      return this.availablePresetTypes.map(value => ({
-        value,
-        text: this.$t(`settings.chart.presets.${value}`),
-      }));
+      return this.availablePresetTypes.map((value) => {
+        const parameters = this.getParametersByPreset(value);
+        const helpText = this.getPresetHelpTextByParameters(parameters);
+
+        return {
+          value,
+          text: this.$t(`settings.chart.presets.${value}`),
+          parameters,
+          helpText,
+        };
+      });
     },
   },
   methods: {
@@ -70,6 +84,67 @@ export default {
         ...getWidgetChartPresetParameters(this.type, preset),
         chart_header: this.$t(`settings.chart.presetChartHeaders.${preset}`),
       };
+    },
+
+    getPresetHelpTextByParameters(parameters) {
+      const result = [{
+        label: this.$tc('common.header'),
+        value: parameters.chart_header,
+      }];
+
+      if (!isUndefined(parameters.stacked)) {
+        result.push({
+          label: this.$t('settings.chart.graphType'),
+          value: parameters.stacked ? this.$t('settings.chart.stackedBars') : this.$t('settings.chart.separateBars'),
+        });
+      }
+
+      if (parameters.aggregate_func) {
+        result.push({
+          label: this.$t('kpi.calculationMethod'),
+          value: parameters.aggregate_func,
+        });
+      }
+
+      if (!isUndefined(parameters.comparison)) {
+        result.push({
+          label: this.$t('settings.chart.showComparison'),
+          value: parameters.comparison ? this.$t('common.enabled') : this.$t('common.disabled'),
+        });
+      }
+
+      if (parameters.metrics) {
+        result.push({
+          label: this.$t('settings.chart.selectMetrics'),
+          value: parameters.metrics.map(({ metric }) => `\n  - ${this.$t(`alarm.metrics.${metric}`)}`).join(''),
+        });
+      }
+
+      if (parameters.default_time_range) {
+        result.push({
+          label: this.$t('settings.defaultTimeRange'),
+          value: this.$t(`quickRanges.types.${parameters.default_time_range}`),
+        });
+      }
+
+      if (parameters.sampling) {
+        result.push({
+          label: this.$t('settings.defaultSampling'),
+          value: parameters.sampling,
+        });
+      }
+
+      if (parameters.show_mode) {
+        result.push({
+          label: this.$t('settings.chart.sharesType'),
+          value: this.$tc(
+            `common.${parameters.show_mode === KPI_PIE_CHART_SHOW_MODES.numbers ? 'number' : 'percent'}`,
+            2,
+          ),
+        });
+      }
+
+      return result.map(({ label, value }) => `${label}: ${value}`).join('\n');
     },
   },
 };
