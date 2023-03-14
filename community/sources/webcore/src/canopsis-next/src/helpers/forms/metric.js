@@ -52,7 +52,7 @@ export const metricPresetsToForm = (presets = []) => presets.map(metricPresetToF
  * @returns {MetricPreset}
  */
 export const formToMetricPreset = (form) => {
-  const { color, aggregate_func: aggregateFunc, ...metricPreset } = form;
+  const { key, color, aggregate_func: aggregateFunc, ...metricPreset } = form;
 
   if (color) {
     metricPreset.color = color;
