@@ -18,6 +18,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
   * [Règles de bagot](menu-exploitation/regles-bagot.md)
+  * [Règles de déclaration de tickets](menu-exploitation/regles-declaration-tickets.md)
   * [Règles de méta alarme](menu-exploitation/regles-metaalarme.md)
   * [Règles de résolution](menu-exploitation/regles-resolution.md)
   * [Scenarios](menu-exploitation/scenarios.md)
