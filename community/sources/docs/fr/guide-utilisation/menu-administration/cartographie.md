@@ -1,7 +1,6 @@
 # Cartographie
 
-Depuis canopsis 22.10 il est possible de créer plusieurs types de widget cartographiques.  
-Ces widgets permettent de créer des cartes à différentes niveau d'abstraction.    
+Canopsis vous permet de créer plusieurs types de widgets cartographiques à différents niveaux d'abstractions.
 Rendez-vous dans le menu `Administration -> Cartographie`.
 
 ![Menu administration cartographie](img/cartographie_menu.png)
