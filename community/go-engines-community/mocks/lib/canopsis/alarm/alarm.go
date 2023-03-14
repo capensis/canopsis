@@ -10,6 +10,7 @@ import (
 	time "time"
 
 	config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	rpc "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
@@ -777,7 +778,7 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAckResources(arg0, arg
 }
 
 // ProcessAxeRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 types.RPCAxeEvent, arg2 types.RPCAxeResultEvent) error {
+func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 rpc.AxeEvent, arg2 rpc.AxeResultEvent) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessAxeRpc", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -790,16 +791,16 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAxeRpc(arg0, arg1, arg
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAxeRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessAxeRpc), arg0, arg1, arg2)
 }
 
-// ProcessWebhookRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessWebhookRpc(arg0 context.Context, arg1 types.RPCWebhookEvent, arg2 string, arg3 map[string]string) error {
+// ProcessTicketResources mocks base method.
+func (m *MockMetaAlarmEventProcessor) ProcessTicketResources(arg0 context.Context, arg1 types.Event) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessWebhookRpc", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "ProcessTicketResources", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ProcessWebhookRpc indicates an expected call of ProcessWebhookRpc.
-func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessWebhookRpc(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+// ProcessTicketResources indicates an expected call of ProcessTicketResources.
+func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessTicketResources(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessWebhookRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessWebhookRpc), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTicketResources", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessTicketResources), arg0, arg1)
 }

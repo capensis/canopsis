@@ -1,0 +1,24 @@
+eventfilter:
+  eventfilter_{1..100}:
+    _id: <UUID()>
+    priority: <RangeIndex()>
+    type: enrichment
+    description: <LoremIpsumSentence(3)>
+    enabled: true
+    author: root
+    config:
+      actions:
+        - name: <{info-<RangeIndex()>}>
+          type: set_entity_info_from_template
+          value: "{{ .Event.Resource }} {{ .Env.Location }}"
+      on_failure: pass
+      on_success: pass
+    created: <NowUnix()>
+    updated: <Current().created>
+    event_pattern:
+      - - field: source_type
+          cond:
+            type: eq
+            value: resource
+
+default_entities: {}

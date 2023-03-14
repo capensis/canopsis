@@ -101,12 +101,12 @@ func (p AlarmTicketRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
 	}
 
 	if !p.Value.Empty() {
-		query[fmt.Sprintf("%s.val", prefix)] = p.Value.AsMongoDriverQuery()
+		query[fmt.Sprintf("%s.ticket", prefix)] = p.Value.AsMongoDriverQuery()
 	}
 
 	if len(p.Data) > 0 {
 		for k, v := range p.Data {
-			query[fmt.Sprintf("%s.data.%s", prefix, k)] = v.AsMongoDriverQuery()
+			query[fmt.Sprintf("%s.ticket_data.%s", prefix, k)] = v.AsMongoDriverQuery()
 		}
 	}
 }
@@ -114,7 +114,7 @@ func (p AlarmTicketRefPattern) AsMongoDriverQuery(prefix string, query bson.M) {
 // Matches returns true if an alarm ticket step is matched by a pattern. If the
 // pattern contains regular expressions with sub-expressions, the values of the
 // sub-expressions are written in the matches argument.
-func (p AlarmTicketRefPattern) Matches(step *types.AlarmTicket, matches *AlarmTicketRegexMatches) bool {
+func (p AlarmTicketRefPattern) Matches(step *types.AlarmStep, matches *AlarmTicketRegexMatches) bool {
 	if p.ShouldBeNil {
 		return step == nil
 	}
@@ -129,14 +129,14 @@ func (p AlarmTicketRefPattern) Matches(step *types.AlarmTicket, matches *AlarmTi
 				p.Timestamp.Matches(step.Timestamp) &&
 				p.Author.Matches(step.Author, &matches.Author) &&
 				p.Message.Matches(step.Message, &matches.Message) &&
-				p.Value.Matches(step.Value, &matches.Value)
+				p.Value.Matches(step.TicketInfo.Ticket, &matches.Value)
 
 		dataMatch := true
 
 		for dataKey, stringPattern := range p.Data {
 			var regexMatches RegexMatches
 
-			if stringPattern.Matches(step.Data[dataKey], &regexMatches) {
+			if stringPattern.Matches(step.TicketInfo.TicketData[dataKey], &regexMatches) {
 				matches.Data[dataKey] = regexMatches
 			} else {
 				dataMatch = false

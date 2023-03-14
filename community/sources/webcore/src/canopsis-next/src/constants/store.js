@@ -44,4 +44,6 @@ export const ENTITIES_TYPES = {
   map: 'map',
   alarmTag: 'alarmTag',
   shareToken: 'shareToken',
+  declareTicketRule: 'declareTicketRule',
+  linkRule: 'linkRule',
 };

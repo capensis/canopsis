@@ -1,21 +1,21 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.contextTypeOfEntities.title') }}
-    v-container
-      v-checkbox(
-        v-for="entityType in entitiesTypes",
-        :input-value="value",
-        :label="entityType.label",
-        :value="entityType.value",
-        :key="entityType.value",
-        color="primary",
-        hide-details,
-        @change="$listeners.input"
-      )
+  widget-settings-item(:title="$t('settings.contextTypeOfEntities.title')")
+    v-checkbox(
+      v-for="entityType in entitiesTypes",
+      :input-value="value",
+      :label="entityType.label",
+      :value="entityType.value",
+      :key="entityType.value",
+      color="primary",
+      hide-details,
+      @change="$listeners.input"
+    )
 </template>
 
 <script>
 import { ENTITY_TYPES } from '@/constants';
+
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 /**
  * Component to select entities type to filter on entities-list
@@ -25,6 +25,7 @@ import { ENTITY_TYPES } from '@/constants';
  * @event value#input
  */
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Array,

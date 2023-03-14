@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
 
 import (
 	"fmt"
@@ -53,6 +53,10 @@ type UserInterfaceConfigProvider interface {
 
 type TechMetricsConfigProvider interface {
 	Get() TechMetricsConfig
+}
+
+type TemplateConfigProvider interface {
+	Get() SectionTemplate
 }
 
 type AlarmConfig struct {
@@ -562,6 +566,32 @@ func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) {
 }
 
 func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
+}
+
+type BaseTemplateConfigProvider struct {
+	conf SectionTemplate
+	mx   sync.RWMutex
+}
+
+func NewTemplateConfigProvider(cfg CanopsisConf) *BaseTemplateConfigProvider {
+	return &BaseTemplateConfigProvider{
+		conf: cfg.Template,
+		mx:   sync.RWMutex{},
+	}
+}
+
+func (p *BaseTemplateConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	p.conf = cfg.Template
+}
+
+func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
 	p.mx.RLock()
 	defer p.mx.RUnlock()
 

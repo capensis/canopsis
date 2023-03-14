@@ -1,14 +1,20 @@
 <template lang="pug">
   div.tree-of-dependencies__preview
     c-zoom-overlay
-      network-graph.fill-height(
+      network-graph.fill-height.black--text(
         ref="networkGraph",
         :options="options",
         :node-html-label-options="nodeHtmlLabelsOptions",
         ctrl-wheel-zoom
       )
-    c-help-icon.map-preview__help-icon(size="32", color="secondary", icon="help", top)
-      div.pre-wrap(v-html="$t('treeOfDependencies.panzoom.helpText')")
+    c-help-icon(
+      :text="$t('treeOfDependencies.panzoom.helpText')",
+      size="32",
+      icon-class="map-preview__help-icon",
+      color="secondary",
+      icon="help",
+      top
+    )
 </template>
 
 <script>
