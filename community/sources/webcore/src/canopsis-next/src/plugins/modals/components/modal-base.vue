@@ -25,6 +25,5 @@ export default {
   beforeCreate() {
     this.$clickOutside = new ClickOutside();
   },
-
 };
 </script>

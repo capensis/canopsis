@@ -20,15 +20,18 @@ Ctrl + Left mouse click + drag - pan the area"
   >
     <mermaid-code-preview-stub
       class="mermaid-preview__preview"
+      config="[object Object]"
+      name="mermaid"
       value="code"
     />
     <mermaid-points-preview-stub
       class="mermaid-preview__points"
-      color-indicator="state"
-      pbehavior-enabled="true"
+      colorindicator="state"
+      iconsize="24"
+      pbehaviorenabled="true"
       points="[object Object],[object Object]"
-      popup-actions="true"
-      popup-template="template"
+      popupactions="true"
+      popuptemplate="template"
     />
   </panzoom-stub>
 </c-zoom-overlay-stub>
@@ -54,10 +57,13 @@ Ctrl + Left mouse click + drag - pan the area"
   >
     <mermaid-code-preview-stub
       class="mermaid-preview__preview"
+      config="[object Object]"
+      name="mermaid"
       value="code"
     />
     <mermaid-points-preview-stub
       class="mermaid-preview__points"
+      iconsize="24"
       points="[object Object],[object Object]"
     />
   </panzoom-stub>

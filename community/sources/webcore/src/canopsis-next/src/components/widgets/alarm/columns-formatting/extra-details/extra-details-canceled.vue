@@ -5,7 +5,7 @@
         span.c-extra-details__badge.blue-grey(v-on="on")
           v-icon(color="white", small) {{ icon }}
       div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
+        strong {{ $t('alarm.actions.iconsTitles.canceled') }}
         div {{ $t('common.by') }} : {{ canceled.a }}
         div {{ $t('common.date') }} : {{ date }}
         div.c-extra-details__message(

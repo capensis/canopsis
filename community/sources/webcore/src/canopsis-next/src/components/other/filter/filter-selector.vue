@@ -14,7 +14,7 @@
     template(v-if="!hideMultiply", #prepend-item="")
       c-enabled-field.mx-3(
         v-model="isMultiple",
-        :label="$t('filterSelector.fields.mixFilters')",
+        :label="$t('filter.selector.fields.mixFilters')",
         hide-details
       )
       v-divider.mt-3

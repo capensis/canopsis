@@ -50,7 +50,6 @@ import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
 import FieldTitle from './fields/common/title.vue';
-import FieldDuration from './fields/common/duration.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldStorages from './fields/testing-weather/storages.vue';
@@ -63,7 +62,6 @@ export default {
   name: SIDE_BARS.testingWeatherSettings,
   components: {
     FieldTitle,
-    FieldDuration,
     FieldSwitcher,
     FieldPeriodicRefresh,
     FieldStorages,

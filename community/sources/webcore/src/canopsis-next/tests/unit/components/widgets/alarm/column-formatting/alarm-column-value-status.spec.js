@@ -1,8 +1,9 @@
 import { omit } from 'lodash';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
-
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+
 import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formatting/alarm-column-value-status.vue';
 
 const localVue = createVueInstance();
@@ -11,16 +12,15 @@ const stubs = {
   'c-no-events-icon': true,
 };
 
-const snapshotFactory = (options = {}) => mount(AlarmColumnValueStatus, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('alarm-column-value-status', () => {
-  it.each(Object.entries(ENTITIES_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', (_, state) => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(AlarmColumnValueStatus, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
+
+  it.each(Object.entries(ENTITIES_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', async (_, state) => {
+    snapshotFactory({
       propsData: {
         alarm: {
           entity: {},
@@ -36,13 +36,15 @@ describe('alarm-column-value-status', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
   it.each(
     Object.entries(omit(ENTITIES_STATUSES, ['ongoing', 'noEvents'])),
-  )('Renders `alarm-column-value-status` with status: %s', (_, status) => {
-    const wrapper = snapshotFactory({
+  )('Renders `alarm-column-value-status` with status: %s', async (_, status) => {
+    snapshotFactory({
       propsData: {
         alarm: {
           entity: {},
@@ -58,11 +60,13 @@ describe('alarm-column-value-status', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `alarm-column-value-status` with status: noEvents', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `alarm-column-value-status` with status: noEvents', async () => {
+    snapshotFactory({
       propsData: {
         alarm: {
           entity: {
@@ -77,6 +81,8 @@ describe('alarm-column-value-status', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

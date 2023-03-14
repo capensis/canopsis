@@ -5,11 +5,11 @@
         span.c-extra-details__badge.brown.darken-1(v-on="on")
           v-icon(color="white", small) {{ icon }}
       div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+        strong {{ $t('alarm.actions.iconsTitles.grouping') }}
         v-layout(column)
-          div {{ $tc('alarmList.actions.iconsFields.rule', rules.length) }}&nbsp;:
+          div {{ $tc('common.rule', rules.length) }}&nbsp;:
           div.rule-name(v-for="rule in rules", :key="rule.id") &nbsp;{{ rule.name }}
-        div {{ $t('alarmList.actions.iconsFields.parents') }} : {{ total }}
+        div {{ $t('alarm.actions.iconsFields.parents') }} : {{ total }}
 </template>
 
 <script>
