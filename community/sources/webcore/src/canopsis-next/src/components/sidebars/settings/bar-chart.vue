@@ -2,7 +2,6 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
-    pre {{form.parameters }}
     field-preset(v-model="form.parameters", :type="form.type")
     v-divider
     field-switcher(v-model="form.parameters.comparison", :title="$t('settings.chart.showComparison')")
