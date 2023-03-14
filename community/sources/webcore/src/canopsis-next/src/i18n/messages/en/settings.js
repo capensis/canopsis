@@ -67,6 +67,7 @@ export default {
   entityInfoPopup: 'Entity info popup',
   modal: '(Modal)',
   headerTitle: 'Header title',
+  defaultSampling: 'Default sampling',
   exportCsv: {
     title: 'Export CSV',
     fields: {
