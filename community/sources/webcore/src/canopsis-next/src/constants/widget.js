@@ -245,7 +245,7 @@ export const BAR_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE = {
       { metric: ALARM_METRIC_PARAMETERS.activeAlarms },
     ],
     default_time_range: QUICK_RANGES.last7Days.value,
-    default_default_sampling: SAMPLINGS.day,
+    default_sampling: SAMPLINGS.day,
   },
   [CHART_WIDGET_PRESET_TYPES.ackStatistics]: {
     stacked: true,
