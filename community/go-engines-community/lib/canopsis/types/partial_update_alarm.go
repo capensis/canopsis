@@ -25,6 +25,11 @@ func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role
 
 	a.AddUpdate("$set", bson.M{"v.ack": a.Value.ACK})
 	a.AddUpdate("$push", bson.M{"v.steps": a.Value.ACK})
+	a.AddUpdate("$unset", bson.M{
+		"not_acked_metric_type":      "",
+		"not_acked_metric_send_time": "",
+		"not_acked_since":            "",
+	})
 
 	return nil
 }
@@ -45,6 +50,9 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, ro
 
 	a.AddUpdate("$unset", bson.M{"v.ack": ""})
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	a.AddUpdate("$set", bson.M{
+		"not_acked_since": timestamp,
+	})
 
 	return nil
 }
@@ -127,6 +135,11 @@ func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo Pbehavior
 
 	if !a.Value.PbehaviorInfo.IsActive() {
 		a.startInactiveInterval(timestamp)
+		a.AddUpdate("$unset", bson.M{
+			"not_acked_metric_type":      "",
+			"not_acked_metric_send_time": "",
+			"not_acked_since":            "",
+		})
 	}
 
 	return nil
@@ -166,6 +179,9 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 		}
 
 		a.stopInactiveInterval(timestamp)
+		a.AddUpdate("$set", bson.M{
+			"not_acked_since": timestamp,
+		})
 	}
 
 	return nil
@@ -423,6 +439,11 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 		"v.duration":               a.Value.Duration,
 		"v.current_state_duration": a.Value.CurrentStateDuration,
 		"v.active_duration":        a.Value.ActiveDuration,
+	})
+	a.AddUpdate("$unset", bson.M{
+		"not_acked_metric_type":      "",
+		"not_acked_metric_send_time": "",
+		"not_acked_since":            "",
 	})
 
 	return nil

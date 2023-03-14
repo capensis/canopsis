@@ -3343,34 +3343,34 @@ Feature: create and update meta alarm
     """json
     [
       {
-        "connector": "test-connector-axe-correlation-18",
-        "connector_name": "test-connector-name-axe-correlation-18",
+        "connector": "test-connector-axe-correlation-19",
+        "connector_name": "test-connector-name-axe-correlation-19",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-axe-correlation-18",
-        "resource": "test-resource-axe-correlation-18-1",
+        "component":  "test-component-axe-correlation-19",
+        "resource": "test-resource-axe-correlation-19-1",
         "state": 1,
-        "output": "test-output-axe-correlation-18"
+        "output": "test-output-axe-correlation-19"
       },
       {
-        "connector": "test-connector-axe-correlation-18",
-        "connector_name": "test-connector-name-axe-correlation-18",
+        "connector": "test-connector-axe-correlation-19",
+        "connector_name": "test-connector-name-axe-correlation-19",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-axe-correlation-18",
-        "resource": "test-resource-axe-correlation-18-2",
+        "component":  "test-component-axe-correlation-19",
+        "resource": "test-resource-axe-correlation-19-2",
         "state": 2,
-        "output": "test-output-axe-correlation-18"
+        "output": "test-output-axe-correlation-19"
       },
       {
-        "connector": "test-connector-axe-correlation-18",
-        "connector_name": "test-connector-name-axe-correlation-18",
+        "connector": "test-connector-axe-correlation-19",
+        "connector_name": "test-connector-name-axe-correlation-19",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-axe-correlation-18",
-        "resource": "test-resource-axe-correlation-18-3",
+        "component":  "test-component-axe-correlation-19",
+        "resource": "test-resource-axe-correlation-19-3",
         "state": 3,
-        "output": "test-output-axe-correlation-18"
+        "output": "test-output-axe-correlation-19"
       }
     ]
     """
@@ -3383,23 +3383,23 @@ Feature: create and update meta alarm
       "source_type": "component",
       "event_type": "manual_metaalarm_group",
       "component":  "metaalarm",
-      "output": "test-output-axe-correlation-18",
-      "display_name": "test-metaAlarm-axe-correlation-18",
+      "output": "test-output-axe-correlation-19",
+      "display_name": "test-metaAlarm-axe-correlation-19",
       "ma_children": [
-        "test-resource-axe-correlation-18-1/test-component-axe-correlation-18",
-        "test-resource-axe-correlation-18-2/test-component-axe-correlation-18"
+        "test-resource-axe-correlation-19-1/test-component-axe-correlation-19",
+        "test-resource-axe-correlation-19-2/test-component-axe-correlation-19"
       ]
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-18-1&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-19-1&correlation=true
     Then the response code should be 200
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
-    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-18&correlation=true&sort_by=v.meta&sort=desc
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-19&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -3407,11 +3407,11 @@ Feature: create and update meta alarm
       "data": [
         {
           "v": {
-            "output": "test-output-axe-correlation-18",
+            "output": "test-output-axe-correlation-19",
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",
-            "display_name": "test-metaAlarm-axe-correlation-18",
+            "display_name": "test-metaAlarm-axe-correlation-19",
             "state": {
               "_t": "stateinc",
               "val": 2
@@ -3424,7 +3424,7 @@ Feature: create and update meta alarm
         },
         {
           "v": {
-            "resource": "test-resource-axe-correlation-18-3"
+            "resource": "test-resource-axe-correlation-19-3"
           }
         }
       ],
@@ -3446,7 +3446,7 @@ Feature: create and update meta alarm
       "event_type": "ack",
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
-      "output": "test-ack-18"
+      "output": "test-ack-19"
     }
     """
     When I wait the end of 3 events processing
@@ -3459,7 +3459,7 @@ Feature: create and update meta alarm
       "event_type": "assocticket",
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
-      "ticket": "ticket-18"
+      "ticket": "ticket-19"
     }
     """
     When I wait the end of 3 events processing
@@ -3472,7 +3472,7 @@ Feature: create and update meta alarm
       "event_type": "comment",
       "component":  "{{ .metaAlarmComponent }}",
       "resource": "{{ .metaAlarmResource }}",
-      "output": "comment-18"
+      "output": "comment-19"
     }
     """
     When I wait the end of 3 events processing
@@ -3497,10 +3497,10 @@ Feature: create and update meta alarm
       "source_type": "component",
       "event_type": "manual_metaalarm_update",
       "component":  "metaalarm",
-      "output": "test-output-axe-correlation-18",
+      "output": "test-output-axe-correlation-19",
       "ma_parents": [ "{{ .metaAlarmEntityID }}" ],
       "ma_children": [
-        "test-resource-axe-correlation-18-3/test-component-axe-correlation-18"
+        "test-resource-axe-correlation-19-3/test-component-axe-correlation-19"
       ]
     }
     """
@@ -3529,22 +3529,22 @@ Feature: create and update meta alarm
             "data": [
               {
                 "v": {
-                  "component": "test-component-axe-correlation-18",
-                  "connector": "test-connector-axe-correlation-18",
-                  "connector_name": "test-connector-name-axe-correlation-18",
-                  "resource": "test-resource-axe-correlation-18-1",
+                  "component": "test-component-axe-correlation-19",
+                  "connector": "test-connector-axe-correlation-19",
+                  "connector_name": "test-connector-name-axe-correlation-19",
+                  "resource": "test-resource-axe-correlation-19-1",
                   "parents": ["{{ .metaAlarmEntityID }}"],
                   "ack": {
                     "a": "root",
-                    "m": "test-ack-18"
+                    "m": "test-ack-19"
                   },
                   "ticket": {
                     "a": "root",
-                    "m": "ticket-18"
+                    "m": "Ticket ID: ticket-19."
                   },
                   "last_comment": {
                     "a": "root",
-                    "m": "comment-18"
+                    "m": "comment-19"
                   },
                   "snooze": {
                     "a": "root"
@@ -3553,22 +3553,22 @@ Feature: create and update meta alarm
               },
               {
                 "v": {
-                  "component": "test-component-axe-correlation-18",
-                  "connector": "test-connector-axe-correlation-18",
-                  "connector_name": "test-connector-name-axe-correlation-18",
-                  "resource": "test-resource-axe-correlation-18-2",
+                  "component": "test-component-axe-correlation-19",
+                  "connector": "test-connector-axe-correlation-19",
+                  "connector_name": "test-connector-name-axe-correlation-19",
+                  "resource": "test-resource-axe-correlation-19-2",
                   "parents": ["{{ .metaAlarmEntityID }}"],
                   "ack": {
                     "a": "root",
-                    "m": "test-ack-18"
+                    "m": "test-ack-19"
                   },
                   "ticket": {
                     "a": "root",
-                    "m": "ticket-18"
+                    "m": "Ticket ID: ticket-19."
                   },
                   "last_comment": {
                     "a": "root",
-                    "m": "comment-18"
+                    "m": "comment-19"
                   },
                   "snooze": {
                     "a": "root"
@@ -3577,22 +3577,22 @@ Feature: create and update meta alarm
               },
               {
                 "v": {
-                  "component": "test-component-axe-correlation-18",
-                  "connector": "test-connector-axe-correlation-18",
-                  "connector_name": "test-connector-name-axe-correlation-18",
-                  "resource": "test-resource-axe-correlation-18-3",
+                  "component": "test-component-axe-correlation-19",
+                  "connector": "test-connector-axe-correlation-19",
+                  "connector_name": "test-connector-name-axe-correlation-19",
+                  "resource": "test-resource-axe-correlation-19-3",
                   "parents": ["{{ .metaAlarmEntityID }}"],
                   "ack": {
                     "a": "root",
-                    "m": "test-ack-18"
+                    "m": "test-ack-19"
                   },
                   "ticket": {
                     "a": "root",
-                    "m": "ticket-18"
+                    "m": "Ticket ID: ticket-19."
                   },
                   "last_comment": {
                     "a": "root",
-                    "m": "comment-18"
+                    "m": "comment-19"
                   },
                   "snooze": {
                     "a": "root"
