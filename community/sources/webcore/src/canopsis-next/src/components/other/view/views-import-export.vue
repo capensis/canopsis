@@ -4,7 +4,7 @@
       v-flex.export-views-block.mr-0.ma-4(xs6)
         v-checkbox(
           v-model="isAllSelected",
-          :label="$t('importExportViews.selectAll')",
+          :label="$t('view.selectAll')",
           color="primary"
         )
         views-export-expansion-panel(v-model="selected", :groups="groups")

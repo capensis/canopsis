@@ -53,6 +53,8 @@ func (s *MongoStore) DeleteExpired(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	s.logger.Debug().Int64("deleted", deleted).Msg("deleted expired tokens")
+	if deleted > 0 {
+		s.logger.Debug().Int64("deleted", deleted).Msg("deleted expired tokens")
+	}
 	return nil
 }
