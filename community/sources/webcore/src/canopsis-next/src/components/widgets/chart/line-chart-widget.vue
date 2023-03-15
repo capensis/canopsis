@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
+
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { permissionsWidgetsLineChartInterval } from '@/mixins/permissions/widgets/chart/line/interval';
@@ -34,7 +36,6 @@ import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
-import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 
 export default {
   inject: ['$system'],
