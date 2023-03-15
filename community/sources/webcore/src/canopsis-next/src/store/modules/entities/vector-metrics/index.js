@@ -1,6 +1,7 @@
 import Vue from 'vue';
 
 import { API_ROUTES } from '@/config';
+
 import request from '@/services/request';
 
 export const types = {
