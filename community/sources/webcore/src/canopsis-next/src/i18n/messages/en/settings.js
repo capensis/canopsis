@@ -221,6 +221,7 @@ export default {
     sharesType: 'Shares type',
     showComparison: 'Show comparison',
     preset: 'Preset',
+    metricsDisplay: 'Metrics display',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',

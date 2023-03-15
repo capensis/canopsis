@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 
-import { metricPresetToForm } from '../forms/metric';
+import { metricPresetsToForm } from '../forms/metric';
 
 import {
   BAR_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE,
@@ -44,7 +44,7 @@ export const getWidgetChartPresetParameters = (type, preset) => {
   const { metrics, ...parameters } = parametersByPreset[preset] ?? {};
 
   if (metrics) {
-    parameters.metrics = metrics.map(metricPresetToForm);
+    parameters.metrics = metricPresetsToForm(metrics);
   }
 
   return parameters;
