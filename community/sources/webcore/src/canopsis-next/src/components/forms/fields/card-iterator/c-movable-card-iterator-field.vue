@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    slot(name="prepend")
     movable-card-iterator-item.my-2(
       v-for="(item, index) in items",
       :key="item[itemKey]",
@@ -11,6 +12,7 @@
     )
       template
         slot(name="item", :item="item", :index="index")
+    slot(name="append")
     v-btn.mx-0(color="primary", @click.prevent="$emit('add')") {{ $t('common.add') }}
 </template>
 

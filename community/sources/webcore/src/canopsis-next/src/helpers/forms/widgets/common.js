@@ -36,6 +36,10 @@ import {
   textWidgetParametersToForm,
 } from './text';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
+import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './pie-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
 
 /**
  * @typedef {
@@ -136,7 +140,11 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParameters |
  *   TextWidgetParameters |
- *   MapWidgetParameters
+ *   MapWidgetParameters |
+ *   BarChartWidgetParameters |
+ *   LineChartWidgetParameters |
+ *   PieChartWidgetParameters |
+ *   NumbersWidgetParameters
  * } WidgetParameters
  */
 
@@ -149,7 +157,11 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParametersForm |
  *   TextWidgetParameters |
- *   MapWidgetParameters
+ *   MapWidgetParameters |
+ *   BarChartWidgetParametersForm |
+ *   LineChartWidgetParametersForm |
+ *   PieChartWidgetParametersForm |
+ *   NumbersWidgetParametersForm
  * } WidgetParametersForm
  */
 
@@ -190,6 +202,10 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
+    [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
+    [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
+    [WIDGET_TYPES.pieChart]: pieChartWidgetParametersToForm,
+    [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
@@ -255,6 +271,10 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
+    [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
+    [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
+    [WIDGET_TYPES.pieChart]: formToPieChartWidgetParameters,
+    [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };

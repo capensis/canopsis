@@ -51,6 +51,15 @@ describe('c-alarm-metric-parameters-field', () => {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
         min: 2,
         name: 'customName',
+        hideDetails: true,
+        parameters: [
+          ALARM_METRIC_PARAMETERS.createdAlarms,
+          ALARM_METRIC_PARAMETERS.ratioInstructions,
+          ALARM_METRIC_PARAMETERS.ratioTickets,
+        ],
+        disabledParameters: [
+          ALARM_METRIC_PARAMETERS.ratioTickets,
+        ],
       },
     });
 

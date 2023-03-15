@@ -26,10 +26,14 @@ export default {
       type: String,
       default: 'aggregate_func',
     },
+    aggregateFunctions: {
+      type: Array,
+      default: () => Object.values(AGGREGATE_FUNCTIONS),
+    },
   },
   computed: {
     availableAggregateFunctions() {
-      return Object.values(AGGREGATE_FUNCTIONS).map(value => ({
+      return this.aggregateFunctions.map(value => ({
         value,
         label: this.$t(`kpi.aggregateFunctions.${value}`),
       }));

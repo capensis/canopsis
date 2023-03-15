@@ -1,4 +1,5 @@
 import {
+  AGGREGATE_FUNCTIONS,
   ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
   KPI_RATING_ENTITY_METRICS,
@@ -30,6 +31,7 @@ import { isOmitEqual } from '@/helpers/equal';
 export const isTimeMetric = metric => [
   USER_METRIC_PARAMETERS.totalUserActivity,
   ALARM_METRIC_PARAMETERS.averageAck,
+  ALARM_METRIC_PARAMETERS.averageResolve,
 ].includes(metric);
 
 /**
@@ -143,3 +145,64 @@ export const convertMetricsToTimezone = (metrics, timezone) => metrics.map(metri
 
   timestamp: convertDateToTimestampByTimezone(metric.timestamp, timezone),
 }));
+
+/**
+ * Get default aggregate function by metric
+ *
+ * @param {string} metric
+ * @returns {string}
+ */
+export const getDefaultAggregateFunctionByMetric = (metric) => {
+  switch (metric) {
+    case ALARM_METRIC_PARAMETERS.createdAlarms:
+    case ALARM_METRIC_PARAMETERS.ackAlarms:
+    case ALARM_METRIC_PARAMETERS.cancelAckAlarms:
+    case ALARM_METRIC_PARAMETERS.ratioCorrelation:
+    case ALARM_METRIC_PARAMETERS.ratioInstructions:
+    case ALARM_METRIC_PARAMETERS.ratioNonDisplayed:
+    case ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms:
+      return AGGREGATE_FUNCTIONS.sum;
+    default:
+      return AGGREGATE_FUNCTIONS.avg;
+  }
+};
+
+/**
+ * Get all available aggregate functions by metric
+ *
+ * @param {string} metric
+ * @returns {string[]}
+ */
+export const getAggregateFunctionsByMetric = (metric) => {
+  switch (metric) {
+    case ALARM_METRIC_PARAMETERS.activeAlarms:
+    case ALARM_METRIC_PARAMETERS.ackActiveAlarms:
+    case ALARM_METRIC_PARAMETERS.ticketActiveAlarms:
+    case ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms:
+    case ALARM_METRIC_PARAMETERS.averageAck:
+    case ALARM_METRIC_PARAMETERS.averageResolve:
+    case ALARM_METRIC_PARAMETERS.notAckedAlarms:
+    case ALARM_METRIC_PARAMETERS.notAckedInHourAlarms:
+    case ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms:
+    case ALARM_METRIC_PARAMETERS.notAckedInDayAlarms:
+      return [
+        AGGREGATE_FUNCTIONS.avg,
+        AGGREGATE_FUNCTIONS.min,
+        AGGREGATE_FUNCTIONS.max,
+      ];
+    case ALARM_METRIC_PARAMETERS.ratioCorrelation:
+    case ALARM_METRIC_PARAMETERS.ratioInstructions:
+    case ALARM_METRIC_PARAMETERS.ratioNonDisplayed:
+    case ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms:
+      return [AGGREGATE_FUNCTIONS.sum];
+    case ALARM_METRIC_PARAMETERS.ratioTickets:
+      return [AGGREGATE_FUNCTIONS.avg];
+    default:
+      return [
+        AGGREGATE_FUNCTIONS.sum,
+        AGGREGATE_FUNCTIONS.avg,
+        AGGREGATE_FUNCTIONS.min,
+        AGGREGATE_FUNCTIONS.max,
+      ];
+  }
+};
