@@ -50,16 +50,6 @@ export const widgetActionsPanelAlarmMixin = {
       return this.refreshAlarmsList();
     },
 
-    showCreateCommentModal() {
-      this.$modals.show({
-        name: MODALS.createCommentEvent,
-        config: {
-          ...this.modalConfig,
-          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
-        },
-      });
-    },
-
     showActionModal(name) {
       return () => this.$modals.show({
         name,
