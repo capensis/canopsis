@@ -74,6 +74,10 @@ export const USER_PERMISSIONS_PREFIXES = {
     testingWeather: 'testingweather',
     counter: 'counter',
     map: 'map',
+    barChart: 'barchart',
+    lineChart: 'linechart',
+    pieChart: 'piechart',
+    numbers: 'numbers',
   },
   api: 'api',
 };
@@ -244,6 +248,54 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.map}_category`,
+      },
+    },
+    barChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.barChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_userFilter`,
+      },
+    },
+    lineChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_userFilter`,
+      },
+    },
+    pieChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_userFilter`,
+      },
+    },
+    numbers: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.numbers}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
       },
     },
   },

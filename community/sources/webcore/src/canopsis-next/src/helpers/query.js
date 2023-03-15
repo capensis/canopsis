@@ -206,6 +206,24 @@ export function convertCounterWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts chart widgets to query Object
+ *
+ * @param {Widget} widget
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export function convertChartWidgetToQuery(widget) {
+  const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
+
+  return {
+    sampling: defaultSampling,
+    interval: {
+      from: QUICK_RANGES[defaultTimeRange].start,
+      to: QUICK_RANGES[defaultTimeRange].stop,
+    },
+  };
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -257,6 +275,26 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
 export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({ category });
 
 /**
+ * This function converts userPreference with widget type 'Map' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval } }) => {
+  const query = {};
+
+  if (sampling) {
+    query.sampling = sampling;
+  }
+
+  if (interval) {
+    query.interval = interval;
+  }
+
+  return query;
+};
+
+/**
  * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
@@ -289,6 +327,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
     [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+    [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -311,6 +350,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
     [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

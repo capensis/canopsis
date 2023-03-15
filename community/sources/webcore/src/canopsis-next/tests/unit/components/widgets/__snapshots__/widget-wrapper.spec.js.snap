@@ -136,8 +136,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and cat ed
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <bar-chart-widget
-      tab-id="tab-id"
+    <bar-chart-widget-stub
+      tabid="tab-id"
       widget="[object Object]"
     />
   </div>
@@ -152,9 +152,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and core e
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <bar-chart-widget
+    <bar-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -272,8 +272,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and cat e
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <line-chart-widget
-      tab-id="tab-id"
+    <line-chart-widget-stub
+      tabid="tab-id"
       widget="[object Object]"
     />
   </div>
@@ -288,9 +288,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and core 
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <line-chart-widget
+    <line-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -340,8 +340,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and cat edi
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <numbers-widget
-      tab-id="tab-id"
+    <numbers-widget-stub
+      tabid="tab-id"
       widget="[object Object]"
     />
   </div>
@@ -356,9 +356,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and core ed
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <numbers-widget
+    <numbers-widget-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -374,8 +374,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and cat ed
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <pie-chart-widget
-      tab-id="tab-id"
+    <pie-chart-widget-stub
+      tabid="tab-id"
       widget="[object Object]"
     />
   </div>
@@ -390,9 +390,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and core e
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <pie-chart-widget
+    <pie-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
