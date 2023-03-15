@@ -4,8 +4,10 @@ import { Day } from 'dayspan';
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
+
 import { convertDateToMoment } from '@/helpers/date/date';
+
+import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
@@ -14,9 +16,11 @@ const localVue = createVueInstance();
 localVue.use(DaySpanVuetifyPlugin);
 
 const stubs = {
+  'c-action-btn': true,
   'c-progress-overlay': true,
   'pbehavior-create-event': true,
   'pbehavior-planning-calendar-legend': true,
+  'calendar-app-period-picker': true,
 };
 
 describe('pbehavior-planning-calendar', () => {

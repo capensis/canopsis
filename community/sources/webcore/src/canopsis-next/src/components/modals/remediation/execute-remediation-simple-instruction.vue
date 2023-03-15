@@ -138,7 +138,7 @@ export default {
       if (!this.$socket.isConnectionOpen) {
         this.$modals.hide();
         this.$popups.error({
-          text: this.$t('remediationInstructionExecute.popups.connectionError'),
+          text: this.$t('remediation.instructionExecute.popups.connectionError'),
           autoClose: false,
         });
       }
@@ -150,7 +150,7 @@ export default {
     socketCloseRoomHandler() {
       this.$modals.hide();
       this.$popups.error({
-        text: this.$t('remediationInstructionExecute.popups.wasAborted', {
+        text: this.$t('remediation.instructionExecute.popups.wasAborted', {
           instructionName: this.instructionExecution?.name,
         }),
         autoClose: false,

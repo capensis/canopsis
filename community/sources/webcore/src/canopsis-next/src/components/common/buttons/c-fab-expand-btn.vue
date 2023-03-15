@@ -5,8 +5,8 @@
       v-speed-dial(
         v-if="hasAccess",
         v-model="fab",
-        direction="left",
-        :transition="transition"
+        :transition="transition",
+        direction="left"
       )
         template(#activator="")
           v-btn(v-model="fab", color="primary", fab)

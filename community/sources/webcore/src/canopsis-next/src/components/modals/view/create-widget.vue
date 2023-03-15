@@ -3,20 +3,18 @@
     template(#title="")
       span {{ $t('modals.createWidget.title') }}
     template(#text="")
-      v-layout(row, wrap)
-        v-flex.my-1(
-          v-for="type in availableTypes",
+      v-layout(column)
+        v-card.my-1.cursor-pointer(
+          v-for="{ type, text, icon } in availableTypes",
           :key="type",
-          xs12,
           @click="selectType(type)"
         )
-          v-card.cursor-pointer
-            v-card-title(primary-title)
-              v-layout(wrap, justify-between)
-                v-flex(xs11)
-                  div.subheading {{ $t(`modals.createWidget.types.${type}.title`) }}
-                v-flex
-                  v-icon {{ getIconByType(type) }}
+          v-card-title(primary-title)
+            v-layout(wrap, justify-between)
+              v-flex(xs11)
+                div.subheading {{ text }}
+              v-flex
+                v-icon {{ icon }}
 </template>
 
 <script>
@@ -51,35 +49,22 @@ export default {
      * @return {Array}
      */
     availableTypes() {
-      return [
-        WIDGET_TYPES.alarmList,
-        WIDGET_TYPES.context,
-        WIDGET_TYPES.serviceWeather,
-        WIDGET_TYPES.statsCalendar,
-        WIDGET_TYPES.text,
-        WIDGET_TYPES.counter,
-        WIDGET_TYPES.testingWeather,
-        WIDGET_TYPES.map,
-      ].filter((widgetType) => {
-        const rules = WIDGET_TYPES_RULES[widgetType];
+      return Object.values(WIDGET_TYPES).filter((type) => {
+        const rules = WIDGET_TYPES_RULES[type];
 
         if (!rules) {
           return true;
         }
 
         return rules.edition && rules.edition === this.edition;
-      });
-    },
-
-    tabWidgets() {
-      return this.config.tab?.widgets ?? [];
+      }).map(type => ({
+        type,
+        text: this.$t(`modals.createWidget.types.${type}.title`),
+        icon: WIDGET_ICONS[type],
+      }));
     },
   },
   methods: {
-    getIconByType(type) {
-      return WIDGET_ICONS[type];
-    },
-
     getWidgetWithUpdatedGridParametersByType(type) {
       const { tab } = this.config;
       const widget = getEmptyWidgetByType(type);

@@ -8,7 +8,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
       class="v-menu"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
@@ -39,58 +39,54 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
     class="v-list theme--light"
     role="list"
   >
-    <span>
-      <div
-        role="listitem"
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
+            edit
+          </i>
+          <span
+            class="body-1"
+          >
+            Edit title
+          </span>
+        </div>
+      </a>
+    </div>
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
+            delete
+          </i>
+          <span
+            class="body-1"
+          >
+            Delete title
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 `;
@@ -103,7 +99,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
       class="v-menu"
     >
       <button
-        class="v-btn v-btn--icon theme--light"
+        class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
       >
         <div
@@ -134,58 +130,54 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
     class="v-list theme--light"
     role="list"
   >
-    <span>
-      <div
-        role="listitem"
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-            <span
-              class="body-1"
-            >
-              Edit title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
-    <span>
-      <div
-        role="listitem"
+            edit
+          </i>
+          <span
+            class="body-1"
+          >
+            Edit title
+          </span>
+        </div>
+      </a>
+    </div>
+    <div
+      role="listitem"
+    >
+      <a
+        class="v-list__tile v-list__tile--link theme--light"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile__title"
         >
-          <div
-            class="v-list__tile__title"
+          <i
+            aria-hidden="true"
+            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-              style="font-size: 16px;"
-            >
-              delete
-            </i>
-            <span
-              class="body-1"
-            >
-              Delete title
-            </span>
-          </div>
-        </a>
-      </div>
-    </span>
+            delete
+          </i>
+          <span
+            class="body-1"
+          >
+            Delete title
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 `;
@@ -193,20 +185,16 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
 <div>
   <div>
-    <span>
-      <c-action-btn-stub
-        color="primary"
-        icon="edit"
-        tooltip="Edit title"
-      />
-    </span>
-    <span>
-      <c-action-btn-stub
-        color="secondary"
-        icon="delete"
-        tooltip="Delete title"
-      />
-    </span>
+    <c-action-btn-stub
+      color="primary"
+      icon="edit"
+      tooltip="Edit title"
+    />
+    <c-action-btn-stub
+      color="secondary"
+      icon="delete"
+      tooltip="Delete title"
+    />
   </div>
   <!---->
 </div>

@@ -1,17 +1,12 @@
 import { omit } from 'lodash';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsSnooze from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-snooze.vue';
 
 const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsSnooze, {
-  localVue,
-
-  ...options,
-});
 
 describe('extra-details-snooze', () => {
   const nowTimestamp = 1386435500000;
@@ -28,47 +23,49 @@ describe('extra-details-snooze', () => {
     val: prevDateTimestamp,
   };
 
-  it('Renders `extra-details-snooze` with full snooze', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ExtraDetailsSnooze, {
+    localVue,
+    attachTo: document.body,
+  });
+
+  it('Renders `extra-details-snooze` with full snooze', async () => {
+    snapshotFactory({
       propsData: {
         snooze,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-snooze` without initiator', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-snooze` without initiator', async () => {
+    snapshotFactory({
       propsData: {
         snooze: omit(snooze, ['initiator']),
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-snooze` without message', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-snooze` without message', async () => {
+    snapshotFactory({
       propsData: {
         snooze: omit(snooze, ['m']),
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-snooze` with date in previous month', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-snooze` with date in previous month', async () => {
+    snapshotFactory({
       propsData: {
         snooze: {
           ...snooze,
@@ -78,9 +75,8 @@ describe('extra-details-snooze', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

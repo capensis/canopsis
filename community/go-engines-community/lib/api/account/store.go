@@ -75,7 +75,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 				"in": bson.M{
 					"_id":         "$$each._id",
 					"name":        "$$each.crecord_name",
-					"description": "$$each.desc",
+					"description": "$$each.description",
 					"type":        "$$each.type",
 					"bitmask": bson.M{"$arrayElemAt": bson.A{
 						bson.M{"$map": bson.M{
@@ -101,11 +101,12 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			"name":                      bson.M{"$first": "$crecord_name"},
 			"lastname":                  bson.M{"$first": "$lastname"},
 			"firstname":                 bson.M{"$first": "$firstname"},
-			"email":                     bson.M{"$first": "$mail"},
+			"email":                     bson.M{"$first": "$email"},
 			"role":                      bson.M{"$first": "$role"},
 			"ui_language":               bson.M{"$first": "$ui_language"},
-			"ui_tours":                  bson.M{"$first": "$tours"},
-			"ui_groups_navigation_type": bson.M{"$first": "$groupsNavigationType"},
+			"ui_theme":                  bson.M{"$first": "$ui_theme"},
+			"ui_tours":                  bson.M{"$first": "$ui_tours"},
+			"ui_groups_navigation_type": bson.M{"$first": "$ui_groups_navigation_type"},
 			"enable":                    bson.M{"$first": "$enable"},
 			"defaultview":               bson.M{"$first": "$defaultview"},
 			"external_id":               bson.M{"$first": "$external_id"},

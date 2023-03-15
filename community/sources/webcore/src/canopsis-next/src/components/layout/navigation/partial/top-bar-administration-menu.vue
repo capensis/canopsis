@@ -1,6 +1,7 @@
 <template lang="pug">
   v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y)
-    v-btn.white--text(slot="activator", flat) {{ $t('common.administration') }}
+    template(#activator="{ on }")
+      v-btn.white--text(v-on="on", flat) {{ $t('common.administration') }}
     v-list.py-0
       template(v-for="(group, index) in administrationGroupedLinks")
         v-subheader.subheading(:key="`${group.title}-title`", @click.stop="") {{ group.title }}
@@ -146,7 +147,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar-administration-menu-link /deep/ span {
+.top-bar-administration-menu-link ::v-deep span {
   margin-left: 8px;
 }
 </style>

@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,6 +25,11 @@ func (a *Alarm) PartialUpdateAck(timestamp CpsTime, author, output, userID, role
 
 	a.AddUpdate("$set", bson.M{"v.ack": a.Value.ACK})
 	a.AddUpdate("$push", bson.M{"v.steps": a.Value.ACK})
+	a.AddUpdate("$unset", bson.M{
+		"not_acked_metric_type":      "",
+		"not_acked_metric_send_time": "",
+		"not_acked_since":            "",
+	})
 
 	return nil
 }
@@ -44,23 +50,26 @@ func (a *Alarm) PartialUpdateUnack(timestamp CpsTime, author, output, userID, ro
 
 	a.AddUpdate("$unset", bson.M{"v.ack": ""})
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	a.AddUpdate("$set", bson.M{
+		"not_acked_since": timestamp,
+	})
 
 	return nil
 }
 
 // PartialUpdateAssocTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, ticketData map[string]string, author, ticketNumber, userID, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepAssocTicket, timestamp, author, ticketNumber, userID, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, ticketData)
-	a.Value.Ticket = &ticketStep
-
-	err := a.Value.Steps.Add(newStep)
+func (a *Alarm) PartialUpdateAssocTicket(timestamp CpsTime, author, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepAssocTicket, timestamp, author, ticketInfo.GetStepMessage(), userID, role, initiator, ticketInfo)
+	err := a.Value.Steps.Add(ticketStep)
 	if err != nil {
 		return err
 	}
 
-	a.AddUpdate("$set", bson.M{"v.ticket": a.Value.Ticket})
-	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	a.Value.Tickets = append(a.Value.Tickets, ticketStep)
+	a.Value.Ticket = &ticketStep
+
+	a.AddUpdate("$set", bson.M{"v.ticket": ticketStep})
+	a.AddUpdate("$push", bson.M{"v.tickets": ticketStep, "v.steps": ticketStep})
 
 	return nil
 }
@@ -126,6 +135,11 @@ func (a *Alarm) PartialUpdatePbhEnter(timestamp CpsTime, pbehaviorInfo Pbehavior
 
 	if !a.Value.PbehaviorInfo.IsActive() {
 		a.startInactiveInterval(timestamp)
+		a.AddUpdate("$unset", bson.M{
+			"not_acked_metric_type":      "",
+			"not_acked_metric_send_time": "",
+			"not_acked_since":            "",
+		})
 	}
 
 	return nil
@@ -165,6 +179,9 @@ func (a *Alarm) PartialUpdatePbhLeave(timestamp CpsTime, author, output, userID,
 		}
 
 		a.stopInactiveInterval(timestamp)
+		a.AddUpdate("$set", bson.M{
+			"not_acked_since": timestamp,
+		})
 	}
 
 	return nil
@@ -233,17 +250,126 @@ func (a *Alarm) PartialUpdatePbhLeaveAndEnter(timestamp CpsTime, pbehaviorInfo P
 }
 
 // PartialUpdateDeclareTicket add ticket to alarm. It saves mongo updates.
-func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, output, ticketNumber string, data map[string]string, userID, role, initiator string) error {
-	newStep := NewAlarmStep(AlarmStepDeclareTicket, timestamp, author, output, userID, role, initiator)
-	ticketStep := newStep.NewTicket(ticketNumber, data)
+func (a *Alarm) PartialUpdateDeclareTicket(timestamp CpsTime, author, userID, role, initiator string, ticketInfo TicketInfo) error {
+	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, ticketInfo.GetStepMessage(), userID, role, initiator, ticketInfo)
+	err := a.Value.Steps.Add(ticketStep)
+	if err != nil {
+		return err
+	}
+
+	a.Value.Tickets = append(a.Value.Tickets, ticketStep)
 	a.Value.Ticket = &ticketStep
 
+	a.AddUpdate("$set", bson.M{"v.ticket": ticketStep})
+	a.AddUpdate("$push", bson.M{"v.tickets": ticketStep, "v.steps": ticketStep})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookDeclareTicket(timestamp CpsTime, execution, author, output, userID, role, initiator string, ticketInfo TicketInfo) error {
+	newStep := NewAlarmStep(AlarmStepWebhookComplete, timestamp, author, output, userID, role, initiator)
+	newStep.Execution = execution
 	err := a.Value.Steps.Add(newStep)
 	if err != nil {
 		return err
 	}
 
-	a.AddUpdate("$set", bson.M{"v.ticket": a.Value.Ticket})
+	ticketStep := NewTicketStep(AlarmStepDeclareTicket, timestamp, author, ticketInfo.GetStepMessage(), userID, role, initiator, ticketInfo)
+	ticketStep.Execution = execution
+	err = a.Value.Steps.Add(ticketStep)
+	if err != nil {
+		return err
+	}
+
+	a.Value.Tickets = append(a.Value.Tickets, ticketStep)
+	a.Value.Ticket = &ticketStep
+
+	a.AddUpdate("$set", bson.M{"v.ticket": ticketStep})
+	a.AddUpdate("$push", bson.M{"v.tickets": ticketStep, "v.steps": bson.M{"$each": bson.A{newStep, ticketStep}}})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookDeclareTicketFail(request bool, timestamp CpsTime, execution, author, output, failReason, userID, role, initiator string, ticketInfo TicketInfo) error {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(output)
+	if failReason != "" {
+		outputBuilder.WriteString(". Fail reason: ")
+		outputBuilder.WriteString(failReason)
+		outputBuilder.WriteRune('.')
+	}
+
+	ticketOutput := outputBuilder.String()
+	requestOutput := ticketOutput
+	stepType := AlarmStepWebhookFail
+	if request {
+		requestOutput = output
+		stepType = AlarmStepWebhookComplete
+	}
+
+	newStep := NewAlarmStep(stepType, timestamp, author, requestOutput, userID, role, initiator)
+	newStep.Execution = execution
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	newTicketStep := NewTicketStep(AlarmStepDeclareTicketFail, timestamp, author, ticketOutput, userID, role, initiator, ticketInfo)
+	newTicketStep.Execution = execution
+	err = a.Value.Steps.Add(newTicketStep)
+	if err != nil {
+		return err
+	}
+
+	a.Value.Tickets = append(a.Value.Tickets, newTicketStep)
+
+	a.AddUpdate("$push", bson.M{"v.tickets": newTicketStep, "v.steps": bson.M{"$each": bson.A{newStep, newTicketStep}}})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookStart(timestamp CpsTime, execution, author, output, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepWebhookStart, timestamp, author, output, userID, role, initiator)
+	newStep.Execution = execution
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookFail(timestamp CpsTime, execution, author, output, failReason, userID, role, initiator string) error {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(output)
+	if failReason != "" {
+		outputBuilder.WriteString(". Fail reason: ")
+		outputBuilder.WriteString(failReason)
+		outputBuilder.WriteRune('.')
+	}
+
+	newStep := NewAlarmStep(AlarmStepWebhookFail, timestamp, author, outputBuilder.String(), userID, role, initiator)
+	newStep.Execution = execution
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
+	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+
+	return nil
+}
+
+func (a *Alarm) PartialUpdateWebhookComplete(timestamp CpsTime, execution, author, output, userID, role, initiator string) error {
+	newStep := NewAlarmStep(AlarmStepWebhookComplete, timestamp, author, output, userID, role, initiator)
+	newStep.Execution = execution
+	err := a.Value.Steps.Add(newStep)
+	if err != nil {
+		return err
+	}
+
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
 
 	return nil
@@ -314,25 +440,11 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 		"v.current_state_duration": a.Value.CurrentStateDuration,
 		"v.active_duration":        a.Value.ActiveDuration,
 	})
-
-	return nil
-}
-
-func (a *Alarm) PartialUpdateDone(timestamp CpsTime, author, output, userID, role, initiator string) error {
-	if a.Value.Done != nil {
-		return nil
-	}
-
-	newStep := NewAlarmStep(AlarmStepDone, timestamp, author, output, userID, role, initiator)
-	a.Value.Done = &newStep
-
-	err := a.Value.Steps.Add(newStep)
-	if err != nil {
-		return err
-	}
-
-	a.AddUpdate("$set", bson.M{"v.done": a.Value.Done})
-	a.AddUpdate("$push", bson.M{"v.steps": a.Value.Done})
+	a.AddUpdate("$unset", bson.M{
+		"not_acked_metric_type":      "",
+		"not_acked_metric_send_time": "",
+		"not_acked_since":            "",
+	})
 
 	return nil
 }

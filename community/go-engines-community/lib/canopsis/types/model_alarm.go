@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//Alarm states
+// Alarm states
 const (
 	AlarmStateOK = iota
 	AlarmStateMinor
@@ -26,7 +26,7 @@ const (
 	AlarmStateTitleCritical = "critical"
 )
 
-//Alarm statuses
+// Alarm statuses
 const (
 	AlarmStatusOff = iota
 	AlarmStatusOngoing
@@ -44,7 +44,7 @@ const (
 	AlarmStatusTitleCancelled = "cancelled"
 )
 
-//Alarm steps
+// Alarm steps
 const (
 	AlarmStepStateIncrease   = "stateinc"
 	AlarmStepStateDecrease   = "statedec"
@@ -55,15 +55,19 @@ const (
 	AlarmStepCancel          = "cancel"
 	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
-	AlarmStepDone            = "done"
-	AlarmStepDeclareTicket   = "declareticket"
-	AlarmStepAssocTicket     = "assocticket"
 	AlarmStepSnooze          = "snooze"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+
+	AlarmStepAssocTicket       = "assocticket"
+	AlarmStepDeclareTicket     = "declareticket"
+	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepWebhookStart      = "webhookstart"
+	AlarmStepWebhookComplete   = "webhookcomplete"
+	AlarmStepWebhookFail       = "webhookfail"
 
 	// Following alarm steps are used for manual instruction execution.
 	AlarmStepInstructionStart    = "instructionstart"
@@ -110,6 +114,11 @@ type Alarm struct {
 	// is used only for manual instructions KPI metrics
 	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
 	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+
+	// is used only for not acked metrics
+	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -137,20 +146,26 @@ func (a *Alarm) CropSteps() bool {
 
 // GetAppliedActions fetches applied to alarm actions: ACK, Snooze, AssocTicket, DeclareTicket
 // Result is in a sorted by timestamp AlarmSteps, ticket data when defined
-func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
+func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	steps = make([]AlarmStep, 0, 3)
 
 	if a.Value.ACK != nil {
 		steps = append(steps, *a.Value.ACK)
 	}
-	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
+
+	for _, ticketStep := range a.Value.Tickets {
+		if ticketStep.Type == AlarmStepDeclareTicket || ticketStep.Type == AlarmStepAssocTicket {
+			steps = append(steps, ticketStep)
+		}
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
 	}
+	if a.Value.LastComment != nil {
+		steps = append(steps, *a.Value.LastComment)
+	}
 	sort.Sort(ByTimestamp{steps})
-	return steps, ticket
+	return steps
 }
 
 // CurrentState returns the Current State of the Alarm
@@ -341,17 +356,18 @@ func (a *Alarm) RemoveChild(childEID string) {
 	}
 }
 
-func (a *Alarm) AddParent(parentEID string) {
+func (a *Alarm) AddParent(parentEID string) bool {
 	if a.HasParentByEID(parentEID) {
-		return
+		return false
 	}
 
 	a.Value.Parents = append(a.Value.Parents, parentEID)
 	a.parentsUpdate = append(a.parentsUpdate, parentEID)
 	a.AddUpdate("$addToSet", bson.M{"v.parents": bson.M{"$each": a.parentsUpdate}})
+	return true
 }
 
-func (a *Alarm) RemoveParent(parentEID string) {
+func (a *Alarm) RemoveParent(parentEID string) bool {
 	removed := false
 	for idx, parent := range a.Value.Parents {
 		if parent == parentEID {
@@ -362,10 +378,13 @@ func (a *Alarm) RemoveParent(parentEID string) {
 		}
 	}
 
-	if removed {
-		a.parentsRemove = append(a.parentsRemove, parentEID)
-		a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	if !removed {
+		return false
 	}
+
+	a.parentsRemove = append(a.parentsRemove, parentEID)
+	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	return true
 }
 
 func (a *Alarm) SetMeta(meta string) {

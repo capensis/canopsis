@@ -2,7 +2,7 @@
   v-list.comments-list
     v-list-tile(v-if="!comments || !comments.length")
       v-list-tile-content
-        v-list-tile-title {{ $t('tables.noData') }}
+        v-list-tile-title {{ $t('common.noData') }}
     template(v-for="(comment, index) in comments")
       v-list-tile(:key="comment._id")
         v-list-tile-content
@@ -24,7 +24,7 @@ export default {
 
 <style lang="scss" scoped>
   .comments-list {
-    & /deep/ .v-list__tile {
+    & ::v-deep .v-list__tile {
       height: auto;
 
       &__sub-title {

@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         v-text-field(
           v-model="form.title",
           v-validate="'required'",
@@ -11,23 +11,26 @@
           :error-messages="errors.collect('title')",
           name="title"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
-        v-tooltip.ml-2(
+        v-tooltip(
           v-if="group && hasDeleteAnyViewAccess",
           :disabled="group.deletable",
           top
         )
-          v-btn.error(
-            slot="activator",
-            :disabled="submitting || !group.deletable",
-            @click="remove"
-          ) {{ $t('common.delete') }}
+          template(#activator="{ on }")
+            div.ml-2(v-on="on")
+              v-btn.error(
+                :disabled="submitting || !group.deletable",
+                :outline="$system.dark",
+                color="error",
+                @click="remove"
+              ) {{ $t('common.delete') }}
           span {{ $t('modals.group.errors.isNotEmpty') }}
 </template>
 
@@ -49,6 +52,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { ModalWrapper },
   mixins: [
     modalInnerMixin,

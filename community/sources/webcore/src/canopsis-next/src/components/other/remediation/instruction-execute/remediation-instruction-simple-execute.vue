@@ -1,23 +1,23 @@
 <template lang="pug">
   v-layout(column)
     v-layout.mb-4(row, align-center)
-      span.subheading.mr-5 {{ $t('remediationInstructionExecute.jobs.title') }}
+      span.subheading.mr-5 {{ $t('remediation.instructionExecute.jobs.title') }}
       v-btn.primary.ma-0(v-if="!isJobsFinished", :loading="executed", @click="$emit('run:jobs')")
-        span {{ $t('remediationInstructionExecute.runJobs') }}
+        span {{ $t('remediation.instructionExecute.runJobs') }}
         v-icon(right) arrow_right
       template(v-if="isJobsFinished")
         v-icon(:color="statusIcon.color") {{ statusIcon.name }}
         span.ml-2 {{ statusIcon.text }}
-    remediation-instruction-execute-simple-jobs-list(:jobs="jobs")
+    remediation-instruction-execute-jobs-table(:jobs="jobs")
 </template>
 
 <script>
 import { isJobExecutionSucceeded, isJobFinished } from '@/helpers/forms/remediation-job';
 
-import RemediationInstructionExecuteSimpleJobsList from './remediation-instruction-execute-simple-jobs-list.vue';
+import RemediationInstructionExecuteJobsTable from './remediation-instruction-assigned-jobs-table.vue';
 
 export default {
-  components: { RemediationInstructionExecuteSimpleJobsList },
+  components: { RemediationInstructionExecuteJobsTable },
   props: {
     jobs: {
       type: Array,
@@ -34,14 +34,14 @@ export default {
         return {
           name: 'check_circle',
           color: 'primary',
-          text: this.$t('remediationInstructionExecute.jobs.instructionComplete'),
+          text: this.$t('remediation.instructionExecute.jobs.instructionComplete'),
         };
       }
 
       return {
         name: 'error',
         color: 'error',
-        text: this.$t('remediationInstructionExecute.jobs.instructionFailed'),
+        text: this.$t('remediation.instructionExecute.jobs.instructionFailed'),
       };
     },
 

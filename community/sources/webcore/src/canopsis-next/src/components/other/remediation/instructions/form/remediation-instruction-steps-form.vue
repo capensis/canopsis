@@ -1,31 +1,31 @@
 <template lang="pug">
   v-layout(column)
     v-flex(v-if="!steps.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptySteps') }}
-    draggable(v-field="steps", :options="draggableOptions")
-      v-card.my-2(v-for="(step, index) in steps", :key="step.key")
-        v-card-text
-          remediation-instruction-step-field(
-            v-field="steps[index]",
-            :step-number="index + 1",
-            :disabled="disabled",
-            @remove="removeStep(index)"
-          )
+      v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptySteps') }}
+    c-card-iterator.mb-2(
+      v-field="steps",
+      item-key="key",
+      :disabled="disabled",
+      :draggable-group="draggableGroup"
+    )
+      template(#item="{ index }")
+        remediation-instruction-step-field(
+          v-field="steps[index]",
+          :step-number="index + 1",
+          :disabled="disabled",
+          @remove="removeStep(index)"
+        )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasStepsErrors ? 'error' : 'primary'",
         :disabled="disabled",
         outline,
         @click="addStep"
-      ) {{ $t('remediationInstructions.addStep') }}
-      span.error--text(v-show="hasStepsErrors") {{ $t('remediationInstructions.errors.stepRequired') }}
+      ) {{ $t('remediation.instruction.addStep') }}
+      span.error--text(v-show="hasStepsErrors") {{ $t('remediation.instruction.errors.stepRequired') }}
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
 import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -35,7 +35,6 @@ import RemediationInstructionStepField from './fields/remediation-instruction-st
 export default {
   inject: ['$validator'],
   components: {
-    Draggable,
     RemediationInstructionStepField,
   },
   mixins: [formArrayMixin],
@@ -67,15 +66,9 @@ export default {
       return this.errors.has(this.name);
     },
 
-    draggableOptions() {
+    draggableGroup() {
       return {
-        disabled: this.disabled,
-        animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.step-drag-handler',
-        ghostClass: 'white',
-        group: {
-          name: 'remediation-instruction-steps',
-        },
+        name: 'remediation-instruction-steps',
       };
     },
   },

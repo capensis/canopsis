@@ -46,6 +46,7 @@ export default {
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
         last_event_date: convertDateToStringWithFormatForToday,
+        last_pbehavior_date: convertDateToStringWithFormatForToday,
 
         ...this.columnsFiltersMap,
       };

@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
-<div>
+<div
+  class="v-sheet theme--light"
+>
   <div
     class="v-picker__title primary text-xs-center"
   >
@@ -268,7 +270,9 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
 `;
 
 exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = `
-<div>
+<div
+  class="v-sheet theme--light"
+>
   <!---->
   <div
     class="date-time-picker__body"
@@ -526,7 +530,9 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
 `;
 
 exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
-<div>
+<div
+  class="v-sheet theme--light"
+>
   <!---->
   <div
     class="date-time-picker__body"

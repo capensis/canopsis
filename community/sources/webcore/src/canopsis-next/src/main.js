@@ -50,6 +50,8 @@ import CInformationBlockRow from '@/components/common/block/c-information-block-
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CAlert from '@/components/common/alert/c-alert.vue';
+import CLinksList from '@/components/common/links/c-links-list.vue';
 
 /**
  * Overlays
@@ -62,8 +64,10 @@ import CZoomOverlay from '@/components/common/overlay/c-zoom-overlay.vue';
  * Chips
  */
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
-import CAlarmTagChip from '@/components/common/chips/c-alarm-tag-chip.vue';
+import CAlarmActionChip from '@/components/common/chips/c-alarm-action-chip.vue';
+import CAlarmActionsChips from '@/components/common/chips/c-alarm-actions-chips.vue';
 import CAlarmTagsChips from '@/components/common/chips/c-alarm-tags-chips.vue';
+import CAlarmLinksChips from '@/components/common/chips/c-alarm-links-chips.vue';
 import CStateCountChangesChips from '@/components/common/chips/c-state-count-changes-chips.vue';
 import CTestSuiteChip from '@/components/common/chips/c-test-suite-chip.vue';
 import CInstructionJobChip from '@/components/common/chips/c-instruction-job-chip.vue';
@@ -90,6 +94,8 @@ import CActionFabBtn from '@/components/common/buttons/c-action-fab-btn.vue';
 import CFabExpandBtn from '@/components/common/buttons/c-fab-expand-btn.vue';
 import CFabBtn from '@/components/common/buttons/c-fab-btn.vue';
 import CRefreshBtn from '@/components/common/buttons/c-refresh-btn.vue';
+import CRequestTextInformation from '@/components/common/request/c-request-text-information.vue';
+import CJsonTreeview from '@/components/common/request/c-json-treeview.vue';
 
 /**
  * Fields
@@ -102,16 +108,18 @@ import CActionTypeField from '@/components/forms/fields/c-action-type-field.vue'
 import CPatternsField from '@/components/forms/fields/pattern/c-patterns-field.vue';
 import CWorkflowField from '@/components/forms/fields/c-workflow-field.vue';
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
-import CRequestUrlField from '@/components/forms/fields/c-request-url-field.vue';
 import CTextPairsField from '@/components/forms/fields/text-pairs/c-text-pairs-field.vue';
 import CTextPairField from '@/components/forms/fields/text-pairs/c-text-pair-field.vue';
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
+import CPayloadTextareaField from '@/components/forms/fields/c-payload-textarea-field.vue';
+import CPayloadTextField from '@/components/forms/fields/c-payload-text-field.vue';
 import CRetryField from '@/components/forms/fields/c-retry-field.vue';
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
 import CColorPickerField from '@/components/forms/fields/color/c-color-picker-field.vue';
+import CEnabledColorPickerField from '@/components/forms/fields/color/c-enabled-color-picker-field.vue';
 import CEntityTypeField from '@/components/forms/fields/entity/c-entity-type-field.vue';
 import CImpactLevelField from '@/components/forms/fields/entity/c-impact-level-field.vue';
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
@@ -121,8 +129,11 @@ import CStoragesField from '@/components/forms/fields/c-storages-field.vue';
 import CStorageField from '@/components/forms/fields/c-storage-field.vue';
 import CFileNameMaskField from '@/components/forms/fields/c-file-name-mask-field.vue';
 import CPercentsField from '@/components/forms/fields/c-percents-field.vue';
-import CColumnsField from '@/components/forms/fields/c-columns-field.vue';
+import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue';
+import CColumnsWithTemplateField from '@/components/forms/fields/column/c-columns-with-template-field.vue';
 import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
+import CColorChromePickerField from '@/components/forms/fields/color/c-color-chrome-picker-field.vue';
+import CColorCompactPickerField from '@/components/forms/fields/color/c-color-compact-picker-field.vue';
 import CMiniBarChart from '@/components/common/chart/c-mini-bar-chart.vue';
 import CImagesViewer from '@/components/common/images-viewer/c-images-viewer.vue';
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
@@ -143,10 +154,10 @@ import CAlarmMetricParametersField from '@/components/forms/fields/alarm/c-alarm
 import CFilterField from '@/components/forms/fields/pattern/c-filter-field.vue';
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 import CRecordsPerPageField from '@/components/forms/fields/c-records-per-page-field.vue';
-import COperatorField from '@/components/forms/fields/c-operator-field.vue';
 import CIconField from '@/components/forms/fields/c-icon-field.vue';
 import CIdField from '@/components/forms/fields/c-id-field.vue';
 import CNameField from '@/components/forms/fields/c-name-field.vue';
+import CPasswordField from '@/components/forms/fields/c-password-field.vue';
 import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
 import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
@@ -163,15 +174,18 @@ import CServiceWeatherIconField from '@/components/forms/fields/service-weather/
 import CServiceWeatherStateCounterField from '@/components/forms/fields/service-weather/c-service-weather-state-counter-field.vue';
 import CContextmenu from '@/components/common/contextmenu/c-contextmenu.vue';
 import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
+import CLazySearchFieldField from '@/components/forms/fields/c-lazy-search-field.vue';
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 import CCoordinatesField from '@/components/forms/fields/map/c-coordinates-field.vue';
+import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
+import CCardIterator from '@/components/common/card-iterator/c-card-iterator.vue';
+import CCardIteratorItem from '@/components/common/card-iterator/c-card-iterator-item.vue';
 
 /**
  * Patterns
  */
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
-import CPatternInfosAttributeField from '@/components/forms/fields/pattern/c-pattern-infos-attribute-field.vue';
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
 import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-field.vue';
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
@@ -181,7 +195,9 @@ import CPatternEditorField from '@/components/forms/fields/pattern/c-pattern-edi
 import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
 import CAlarmPatternsField from '@/components/forms/fields/alarm/c-alarm-patterns-field.vue';
+import CAlarmInfosAttributeField from '@/components/forms/fields/alarm/c-alarm-infos-attribute-field.vue';
 import CAlarmTagField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
+import CAlarmField from '@/components/forms/fields/alarm/c-alarm-field.vue';
 import CPbehaviorPatternsField from '@/components/forms/fields/pbehavior/c-pbehavior-patterns-field.vue';
 import CEventFilterPatternsField from '@/components/forms/fields/event-filter/c-event-filter-patterns-field.vue';
 
@@ -197,6 +213,7 @@ import EngineeringIcon from '@/components/icons/engineering.vue';
 import InsightsIcon from '@/components/icons/insights.vue';
 import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
 import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
+import DensityLargeIcon from '@/components/icons/density_large.vue';
 import DensityMediumIcon from '@/components/icons/density_medium.vue';
 import DensitySmallIcon from '@/components/icons/density_small.vue';
 import NotificationImportantStrokeIcon from '@/components/icons/notification_important-stroke.vue';
@@ -204,6 +221,7 @@ import MediationIcon from '@/components/icons/mediation.vue';
 import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
 import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
+import RestartAlt from '@/components/icons/restart_alt.vue';
 
 /**
  * Groups
@@ -220,11 +238,11 @@ Vue.use(VueResizeText);
 Vue.use(PortalVue);
 Vue.use(Filters);
 Vue.use(Vuetify, {
-  iconfont: 'md',
-  theme: {
-    primary: config.COLORS.primary,
-    secondary: config.COLORS.secondary,
+  options: {
+    customProperties: true,
   },
+  iconfont: 'md',
+  theme: config.THEMES.canopsis.colors,
   icons: {
     bullhorn: {
       component: BullhornIcon,
@@ -247,6 +265,9 @@ Vue.use(Vuetify, {
     published_with_changes: {
       component: PublishedWithChangesIcon,
     },
+    density_large: {
+      component: DensityLargeIcon,
+    },
     density_medium: {
       component: DensityMediumIcon,
     },
@@ -267,6 +288,9 @@ Vue.use(Vuetify, {
     },
     manual_instruction: {
       component: ManualInstruction,
+    },
+    restart_alt: {
+      component: RestartAlt,
     },
   },
 });
@@ -335,9 +359,12 @@ Vue.use(DaySpanVuetifyPlugin, {
 Vue.component('alarms-list-table', AlarmsListTable);
 
 /* Global custom canopsis components */
+Vue.component('c-alert', CAlert);
 Vue.component('c-alarm-chip', CAlarmChip);
-Vue.component('c-alarm-tag-chip', CAlarmTagChip);
+Vue.component('c-alarm-action-chip', CAlarmActionChip);
+Vue.component('c-alarm-actions-chips', CAlarmActionsChips);
 Vue.component('c-alarm-tags-chips', CAlarmTagsChips);
+Vue.component('c-alarm-links-chips', CAlarmLinksChips);
 Vue.component('c-instruction-job-chip', CInstructionJobChip);
 Vue.component('c-test-suite-chip', CTestSuiteChip);
 Vue.component('c-engine-chip', CEngineChip);
@@ -361,6 +388,8 @@ Vue.component('c-table-pagination', CTablePagination);
 Vue.component('c-alert-overlay', CAlertOverlay);
 Vue.component('c-progress-overlay', CProgressOverlay);
 Vue.component('c-zoom-overlay', CZoomOverlay);
+Vue.component('c-card-iterator', CCardIterator);
+Vue.component('c-card-iterator-item', CCardIteratorItem);
 Vue.component('c-enabled-field', CEnabledField);
 Vue.component('c-duration-field', CDurationField);
 Vue.component('c-disable-during-periods-field', CDisableDuringPeriodsField);
@@ -369,16 +398,18 @@ Vue.component('c-action-type-field', CActionTypeField);
 Vue.component('c-workflow-field', CWorkflowField);
 Vue.component('c-draggable-step-number', CDraggableStepNumber);
 Vue.component('c-change-state-field', CChangeStateField);
-Vue.component('c-request-url-field', CRequestUrlField);
 Vue.component('c-text-pair-field', CTextPairField);
 Vue.component('c-text-pairs-field', CTextPairsField);
 Vue.component('c-json-field', CJsonField);
+Vue.component('c-payload-textarea-field', CPayloadTextareaField);
+Vue.component('c-payload-text-field', CPayloadTextField);
 Vue.component('c-retry-field', CRetryField);
 Vue.component('c-mixed-field', CMixedField);
 Vue.component('c-mixed-input-field', CMixedInputField);
 Vue.component('c-input-type-field', CInputTypeField);
 Vue.component('c-array-text-field', CArrayTextField);
 Vue.component('c-color-picker-field', CColorPickerField);
+Vue.component('c-enabled-color-picker-field', CEnabledColorPickerField);
 Vue.component('c-entity-type-field', CEntityTypeField);
 Vue.component('c-impact-level-field', CImpactLevelField);
 Vue.component('c-search-field', CSearchField);
@@ -389,7 +420,10 @@ Vue.component('c-storage-field', CStorageField);
 Vue.component('c-file-name-mask-field', CFileNameMaskField);
 Vue.component('c-percents-field', CPercentsField);
 Vue.component('c-color-indicator-field', CColorIndicatorField);
+Vue.component('c-color-chrome-picker-field', CColorChromePickerField);
+Vue.component('c-color-compact-picker-field', CColorCompactPickerField);
 Vue.component('c-columns-field', CColumnsField);
+Vue.component('c-columns-with-template-field', CColumnsWithTemplateField);
 Vue.component('c-mini-bar-chart', CMiniBarChart);
 Vue.component('c-images-viewer', CImagesViewer);
 Vue.component('c-clickable-tooltip', CClickableTooltip);
@@ -412,30 +446,33 @@ Vue.component('c-filter-field', CFilterField);
 Vue.component('c-state-count-changes-chips', CStateCountChangesChips);
 Vue.component('c-information-block', CInformationBlock);
 Vue.component('c-information-block-row', CInformationBlockRow);
+Vue.component('c-request-text-information', CRequestTextInformation);
+Vue.component('c-json-treeview', CJsonTreeview);
 Vue.component('c-responsive-list', CResponsiveList);
 Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
 Vue.component('c-entity-state-field', CEntityStateField);
 Vue.component('c-entity-status-field', CEntityStatusField);
 Vue.component('c-records-per-page-field', CRecordsPerPageField);
-Vue.component('c-operator-field', COperatorField);
 Vue.component('c-icon-field', CIconField);
 Vue.component('c-id-field', CIdField);
 Vue.component('c-name-field', CNameField);
+Vue.component('c-password-field', CPasswordField);
 Vue.component('c-description-field', CDescriptionField);
 Vue.component('c-event-filter-type-field', CEventFilterTypeField);
 Vue.component('c-draggable-list-field', CDraggableListField);
 Vue.component('c-number-field', CNumberField);
 Vue.component('c-select-field', CSelectField);
 Vue.component('c-entity-field', CEntityField);
+Vue.component('c-lazy-search-field', CLazySearchFieldField);
 Vue.component('c-pbehavior-reason-field', CPbehaviorReasonField);
 Vue.component('c-pbehavior-type-field', CPbehaviorTypeField);
 Vue.component('c-collapse-panel', CCollapsePanel);
 Vue.component('c-contextmenu', CContextmenu);
 Vue.component('c-column-size-field', CColumnSizeField);
+Vue.component('c-infos-attribute-field', CInfosAttributeField);
 
 Vue.component('c-pattern-attribute-field', CPatternAttributeField);
-Vue.component('c-pattern-infos-attribute-field', CPatternInfosAttributeField);
 Vue.component('c-pattern-operator-field', CPatternOperatorField);
 Vue.component('c-pattern-rule-field', CPatternRuleField);
 Vue.component('c-pattern-rules-field', CPatternRulesField);
@@ -449,11 +486,14 @@ Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-runtime-template', CRuntimeTemplate);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
+Vue.component('c-alarm-infos-attribute-field', CAlarmInfosAttributeField);
 Vue.component('c-alarm-tag-field', CAlarmTagField);
+Vue.component('c-alarm-field', CAlarmField);
 Vue.component('c-entity-patterns-field', CEntityPatternsField);
 Vue.component('c-pbehavior-patterns-field', CPbehaviorPatternsField);
 Vue.component('c-event-filter-patterns-field', CEventFilterPatternsField);
 Vue.component('c-service-weather-patterns-field', CServiceWeatherPatternsField);
+Vue.component('c-links-list', CLinksList);
 
 Vue.component('c-service-weather-icon-field', CServiceWeatherIconField);
 Vue.component('c-service-weather-state-counter-field', CServiceWeatherStateCounterField);
@@ -483,6 +523,7 @@ Vue.use(ModalsPlugin, {
   dialogPropsMap: {
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
+    [MODALS.createWidgetTemplate]: { maxWidth: 920, lazy: true },
     [MODALS.alarmsList]: { maxWidth: '95%', lazy: true },
     [MODALS.createFilter]: { maxWidth: 1100, lazy: true },
     [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
@@ -519,6 +560,10 @@ Vue.use(ModalsPlugin, {
     [MODALS.createGeoMap]: { maxWidth: 1280 },
     [MODALS.createFlowchartMap]: { maxWidth: 1600 },
     [MODALS.entityDependenciesList]: { maxWidth: 1600 },
+    [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
+    [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
+    [MODALS.executeDeclareTickets]: { maxWidth: 920 },
+    [MODALS.createLinkRule]: { maxWidth: 920 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
@@ -530,6 +575,7 @@ Vue.use(SidebarPlugin, {
 
   components: {
     ...sidebarsComponents,
+    ...featuresService.get('components.sidebars.components'),
   },
 });
 Vue.use(SetSeveralPlugin);

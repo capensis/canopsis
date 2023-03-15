@@ -14,7 +14,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     filters=""
   />
   <button
-    class="v-btn v-btn--icon v-btn--small theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon theme--light"
     type="button"
   >
     <div
@@ -22,7 +22,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light black--text"
+        class="v-icon material-icons theme--light"
       >
         assignment
       </i>
@@ -52,7 +52,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     filters="[object Object],[object Object]"
   />
   <button
-    class="v-btn v-btn--icon v-btn--small theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon theme--light"
     type="button"
   >
     <div
@@ -101,7 +101,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     filters=""
   />
   <button
-    class="v-btn v-btn--icon v-btn--small theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon theme--light"
     type="button"
   >
     <div

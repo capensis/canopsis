@@ -9,7 +9,7 @@ import { alarmSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
 
 const mockData = {
-  alarms: fakeAlarms({ count: 1 }),
+  alarms: fakeAlarms(1),
 };
 
 const storeConfig = {

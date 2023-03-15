@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     c-duration-field(v-field="form.interval")
     v-layout(row)
       c-enabled-field(v-field="form.enabled")

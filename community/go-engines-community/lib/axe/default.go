@@ -89,6 +89,16 @@ func NewEngine(
 		amqpChannel,
 		logger,
 	)
+	actionRpcClient := libengine.NewRPCClient(
+		canopsis.AxeRPCConsumerName,
+		canopsis.ActionAxeRPCClientQueueName,
+		"",
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		nil,
+		amqpChannel,
+		logger,
+	)
 	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
 	if options.WithRemediation {
@@ -254,6 +264,7 @@ func NewEngine(
 			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
+			ActionRpc:                actionRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			Encoder:                  json.NewEncoder(),
@@ -342,14 +353,11 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService, metricsSender))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
-	container.Set(types.EventTypeDeclareTicket, executor.NewDeclareTicketExecutor())
 	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider, metricsSender))
-	container.Set(types.EventTypeDone, executor.NewDoneExecutor(configProvider))
 	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService, metricsSender))
 	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider, metricsSender))
 	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider, metricsSender))
 	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider, metricsSender))
-	container.Set(types.EventTypeResolveDone, executor.NewResolveStatExecutor(executor.NewResolveDoneExecutor(), entityAdapter, metricsSender))
 	container.Set(types.EventTypeResolveCancel, executor.NewResolveStatExecutor(executor.NewResolveCancelExecutor(), entityAdapter, metricsSender))
 	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, metricsSender))
 	container.Set(types.EventTypeResolveDeleted, executor.NewResolveStatExecutor(executor.NewResolveDeletedExecutor(), entityAdapter, metricsSender))
@@ -358,6 +366,12 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeUnsnooze, executor.NewUnsnoozeExecutor())
 	container.Set(types.EventTypeUpdateStatus, executor.NewUpdateStatusExecutor(configProvider, alarmStatusService))
+	container.Set(types.EventTypeWebhookStarted, executor.NewWebhookStartExecutor())
+	container.Set(types.EventTypeWebhookCompleted, executor.NewWebhookCompleteExecutor(metricsSender))
+	container.Set(types.EventTypeWebhookFailed, executor.NewWebhookFailExecutor())
+	container.Set(types.EventTypeAutoWebhookStarted, executor.NewAutoWebhookStartExecutor())
+	container.Set(types.EventTypeAutoWebhookCompleted, executor.NewAutoWebhookCompleteExecutor(metricsSender))
+	container.Set(types.EventTypeAutoWebhookFailed, executor.NewAutoWebhookFailExecutor())
 	container.Set(types.EventTypeInstructionStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionPaused, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionResumed, executor.NewInstructionExecutor(metricsSender))
