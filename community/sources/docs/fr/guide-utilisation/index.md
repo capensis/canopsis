@@ -11,8 +11,10 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 *  [Formats et syntaxe](formats-et-syntaxe/index.md)
 *  [Limitations de Canopsis](limitations/index.md)
 
+
 ### Menu **Exploitation**
   * [Filtres d'événements](menu-exploitation/filtres-evenements.md)
+  * [Générateur de liens](menu-exploitation/generateur-liens.md)
   * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
   * [Règles de bagot](menu-exploitation/regles-bagot.md)
