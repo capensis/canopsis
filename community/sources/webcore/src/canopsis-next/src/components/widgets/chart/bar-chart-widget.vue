@@ -7,6 +7,7 @@
       :locked-value="lockedFilter",
       :filters="mainFilter",
       :interval="query.interval",
+      :min-interval-date="minAvailableDate",
       :sampling="query.sampling",
       :show-filter="hasAccessToUserFilter",
       :show-interval="hasAccessToInterval",
@@ -19,29 +20,29 @@
       @update:interval="updateInterval"
     )
     v-layout
+      pre {{ alarmsMetrics }}
 </template>
 
 <script>
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
 import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/sampling';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetFetchMetricsMixin } from '@/mixins/widget/chart/fetch-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
 export default {
-  inject: ['$system'],
   components: {
     ChartWidgetFilters,
   },
   mixins: [
     widgetFilterSelectMixin,
-    widgetFetchQueryMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetFetchMetricsMixin,
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,
     permissionsWidgetsBarChartFilters,
@@ -57,16 +58,9 @@ export default {
     },
   },
   methods: {
-    getQuery() {
-      return {
-        ...this.getIntervalQuery(),
-
-        sampling: this.query.sampling,
-        filter: this.query.filter,
-      };
+    fetchList() {
+      this.fetchVectorMetrics();
     },
-
-    fetchList() {},
   },
 };
 </script>
