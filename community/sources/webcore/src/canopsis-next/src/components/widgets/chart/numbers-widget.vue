@@ -19,17 +19,18 @@
       @update:interval="updateInterval"
     )
     v-layout
-      pre {{ alarmsMetrics }}
+      pre {{ aggregatedMetrics }}
 </template>
 
 <script>
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
 import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { widgetFetchMetricsMixin } from '@/mixins/widget/chart/fetch-metrics';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
@@ -39,13 +40,14 @@ export default {
     ChartWidgetFilters,
   },
   mixins: [
+    widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
-    widgetFetchMetricsMixin,
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
+    entitiesAggregatedMetricsMixin,
   ],
   props: {
     widget: {
@@ -58,8 +60,21 @@ export default {
     },
   },
   methods: {
+    getQuery() {
+      return {
+        ...this.getIntervalQuery(),
+
+        parameters: this.widget.parameters.metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
+          metric,
+          aggregate_func: aggregateFunc,
+        })),
+        sampling: this.query.sampling,
+        filter: this.query.filter,
+      };
+    },
+
     fetchList() {
-      this.fetchAggregatedMetrics();
+      this.fetchAggregatedMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
     },
   },
 };
