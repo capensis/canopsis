@@ -63,7 +63,7 @@ export default {
     },
     color: {
       type: String,
-      required: false,
+      default: 'black',
     },
     fontSize: {
       type: Number,

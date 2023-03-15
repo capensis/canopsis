@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-tooltip.logged-users-count(left)
-    v-badge(slot="activator", :color="badgeColor", right, overlap)
-      span(slot="badge") {{ count }}
-      v-btn(flat, icon, small)
-        v-icon(color="white", small) people
+  v-tooltip(left)
+    template(#activator="{ on }")
+      v-badge.logged-users-count(:color="badgeColor", overlap)
+        template(#badge="") {{ count }}
+        v-btn(v-on="on", flat, icon, small)
+          v-icon(color="white", small) people
     span {{ $t('layout.sideBar.loggedUsersCount') }}
 </template>
 
@@ -54,12 +55,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-  .logged-users-count /deep/ .v-badge__badge {
+<style lang="scss">
+.logged-users-count {
+  position: absolute;
+  top: 0;
+
+  .v-badge__badge {
     top: 2px;
     right: 2px;
     height: 17px;
     width: 17px;
     font-size: 12px;
   }
+}
 </style>

@@ -22,9 +22,11 @@
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
-        v-btn.error(
+        v-btn(
           v-if="view && hasDeleteViewAccess && !duplicate",
           :disabled="submitting",
+          :outline="$system.dark",
+          color="error",
           @click="remove"
         ) {{ $t('common.delete') }}
 </template>
@@ -32,7 +34,7 @@
 <script>
 import { find, isString } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { viewToForm, viewToRequest } from '@/helpers/forms/view';
 
@@ -55,7 +57,9 @@ export default {
   name: MODALS.createView,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
+  inject: ['$system'],
   components: { ViewForm, ModalWrapper },
   mixins: [
     modalInnerMixin,

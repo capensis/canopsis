@@ -1,9 +1,10 @@
 <template lang="pug">
   c-clickable-tooltip.c-extra-details(top)
     template(#activator="")
-      v-icon.white--text.purple.lighten-2.c-extra-details__badge(small) {{ icon }}
+      span.c-extra-details__badge.purple.lighten-2
+        v-icon(color="white", small) {{ icon }}
     div.text-md-center
-      strong {{ $t('alarmList.actions.iconsTitles.comment') }}
+      strong {{ $t('alarm.actions.iconsTitles.comment') }}
       div {{ $t('common.by') }}: {{ lastComment.a }}
       div {{ $t('common.date') }}: {{ date }}
       div.c-extra-details__message
@@ -12,8 +13,9 @@
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -29,7 +31,7 @@ export default {
     },
 
     icon() {
-      return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon;
+      return getEntityEventIcon(EVENT_ENTITY_TYPES.comment);
     },
   },
 };

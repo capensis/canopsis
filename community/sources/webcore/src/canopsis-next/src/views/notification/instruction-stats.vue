@@ -1,15 +1,16 @@
 <template lang="pug">
   div
     c-page-header
-    remediation-instruction-stats-list(
-      :remediation-instruction-stats="remediationInstructionStats",
-      :pending="remediationInstructionStatsPending",
-      :pagination.sync="pagination",
-      :total-items="remediationInstructionStatsMeta.total_count",
-      :accumulated-before="remediationInstructionStatsMeta.accumulated_before",
-      :interval="interval",
-      @rate="showRateInstructionModal"
-    )
+    v-card.ma-4.mt-0
+      remediation-instruction-stats-list(
+        :remediation-instruction-stats="remediationInstructionStats",
+        :pending="remediationInstructionStatsPending",
+        :pagination.sync="pagination",
+        :total-items="remediationInstructionStatsMeta.total_count",
+        :accumulated-before="remediationInstructionStatsMeta.accumulated_before",
+        :interval="interval",
+        @rate="showRateInstructionModal"
+      )
     c-fab-btn(@refresh="fetchList")
 </template>
 

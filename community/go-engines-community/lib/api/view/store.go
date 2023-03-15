@@ -825,7 +825,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 			"_id":          viewId,
 			"crecord_name": viewId,
 			"crecord_type": securitymodel.LineTypeObject,
-			"desc":         fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
+			"description":  fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
 			"type":         securitymodel.LineObjectTypeRW,
 		})
 		setRole["rights."+viewId] = bson.M{
@@ -876,7 +876,7 @@ func (s *store) updatePermissions(ctx context.Context, view Response) error {
 			"crecord_type": securitymodel.LineTypeObject,
 		},
 		bson.M{"$set": bson.M{
-			"desc": fmt.Sprintf("%s %s", permissionPrefix, view.Title),
+			"description": fmt.Sprintf("%s %s", permissionPrefix, view.Title),
 		}},
 	)
 

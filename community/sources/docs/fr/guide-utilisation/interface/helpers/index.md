@@ -168,6 +168,7 @@ Ce helper accepte les attributs suivants :
 *  `url` (obligatoire). URL de l'API JSON à interroger.
 *  `headers` (optionnel). Entêtes HTTP, au format JSON (`{"Nom-Entete": "valeur"}`), à intégrer lors de l'envoi de la requête.
     *  **Note :** tout entête envoyé doit apparaître dans la directive `Access-Control-Allow-Headers` du [serveur Nginx intégré à Canopsis](../../../guide-administration/administration-avancee/configuration-composants/reverse-proxy-nginx.md#configuration-de-nginx).
+*  `data` (optionnel). Payload d'une requête POST, au format JSON (`{"Nom": "valeur"}`).
 *  `username` (optionnel). Utilisateur pour l'authentification basique.
 *  `password` (optionnel). Mot de passe pour l'authentification basique.
     *  **Attention :** la requête étant exécutée par le navigateur client, ces identifiants peuvent être interceptés par un utilisateur.
@@ -203,6 +204,23 @@ Afficher une liste des identifiants d'utilisateurs inscrits à GitHub :
      {{#each users}}
        <li>{{login}}</li>
      {{/each}}
+{{/request}}
+</ul>
+```
+
+Ajouter un `todo` sur le site `https://jsonplaceholder.typicode.com`
+
+```handlebars
+<ul>
+{{#request 
+  method="post" 
+  url="https://jsonplaceholder.typicode.com/todos" 
+  variable="post" 
+  headers='{ "Content-Type": "application/json" }' 
+  data='{ "userId": "1", "title": "TEST321", "completed": false }'}}
+    {{#each post}}
+        <li><strong>{{@key}}</strong>: {{this}}</li>
+    {{/each}}
 {{/request}}
 </ul>
 ```
@@ -474,5 +492,13 @@ Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`
 ```
 
 Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'attend pas de paramètre.  
+
+### Helper `links`
+
+```handlebars
+{{links}}
+```
+
+Ce helper permet d'afficher les `liens` d'une alarme ou d'une entité.
 
 

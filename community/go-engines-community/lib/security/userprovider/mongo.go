@@ -37,7 +37,6 @@ func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*s
 	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"authkey":      apiKey,
-		"source":       bson.M{"$in": bson.A{"", nil}},
 	})
 }
 
@@ -52,7 +51,6 @@ func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User
 	return p.findByFilter(ctx, bson.M{
 		"crecord_type": model.LineTypeSubject,
 		"_id":          objID,
-		"source":       bson.M{"$in": bson.A{"", nil}},
 	})
 }
 

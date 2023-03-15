@@ -1,5 +1,11 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :options="alarmsChartOptions", :width="width", :height="height")
+  bar-chart(
+    :datasets="datasets",
+    :options="alarmsChartOptions",
+    :width="width",
+    :height="height",
+    :dark="$system.dark"
+  )
     template(#actions="{ chart }")
       kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
@@ -33,6 +39,7 @@ const Y_AXES_IDS = {
 };
 
 export default {
+  inject: ['$system'],
   components: { KpiChartExportActions, BarChart },
   props: {
     metrics: {
@@ -97,7 +104,7 @@ export default {
         backgroundColor: getMetricColor(metric),
         barPercentage: KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
         yAxisID: this.getMetricYAxisId(metric),
-        label: this.$t(`alarmList.metrics.${metric}`),
+        label: this.$t(`alarm.metrics.${metric}`),
         data: data.map(({ timestamp, value }) => ({
           x: timestamp * 1000,
           y: this.convertValueByMetricType(value, metric),
@@ -165,13 +172,10 @@ export default {
           mode: 'x',
         },
         plugins: {
-          background: {
-            color: 'white',
-          },
           legend: {
             position: 'right',
             align: 'start',
-            maxWidth: 300,
+            maxWidth: 600,
             labels: {
               font: {
                 size: 11,
@@ -247,7 +251,7 @@ export default {
         )
         : raw.y;
 
-      return this.$t(`kpiMetrics.tooltip.${dataset.metric}`, { value });
+      return this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value });
     },
 
     getChartTooltipTitle(data) {

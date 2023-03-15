@@ -38,10 +38,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    interval: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
@@ -54,35 +50,32 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('remediationInstructionStats.modifiedOn'),
+          text: this.$t('remediation.instructionStat.modifiedOn'),
           value: 'modified_on',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.averageCompletionTime'),
+          text: this.$t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.executionCount'),
+          text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmStates'),
+          text: this.$t('remediation.instructionStat.alarmStates'),
           value: 'alarm_states',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.okAlarmStates'),
+          text: this.$t('remediation.instructionStat.okAlarmStates'),
           value: 'ok_alarm_states',
           sortable: false,
         },
       ];
     },
-  },
-  watch: {
-    interval: 'fetchList',
   },
   mounted() {
     this.fetchList();
@@ -91,17 +84,12 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const params = this.getQuery();
-
-      params.from = this.interval.from;
-      params.to = this.interval.to;
-
       const {
         data: remediationInstructionChanges,
         meta,
       } = await this.fetchRemediationInstructionStatsChangesListWithoutStore({
         id: this.remediationInstruction._id,
-        params,
+        params: this.getQuery(),
       });
 
       this.remediationInstructionChanges = remediationInstructionChanges;

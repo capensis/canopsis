@@ -46,6 +46,7 @@ export const KPI_TABS = {
   graphs: 'graphs',
   filters: 'filters',
   ratingSettings: 'ratingSettings',
+  collectionSettings: 'collectionSettings',
 };
 
 export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;

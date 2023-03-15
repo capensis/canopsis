@@ -100,7 +100,7 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 			"snooze":         "v.snooze",
 			"ack":            "v.ack",
 			"cancel":         "v.cancel",
-			"ticket":         "v.ticket.val",
+			"ticket":         "v.ticket.ticket",
 			"output":         "v.output",
 			"opened":         "t",
 			"resolved":       "v.resolved",
@@ -134,13 +134,17 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now)
-	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.depends", "entity.impact"}
+	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handlePatterns(r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -192,14 +196,21 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	ctx context.Context,
-	match bson.M,
+	alarmMatch bson.M,
+	entityMatch bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
 	filterRequest FilterRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
-	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+	if len(alarmMatch) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmMatch})
+	}
+	if len(entityMatch) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
+	}
 
 	err := q.handleFilter(ctx, filterRequest)
 	if err != nil {
@@ -421,53 +432,29 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+				return common.NewValidationError("filter", "Filter doesn't exist.")
 			}
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
 
-		alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("")
+		err = q.handleAlarmPattern(filter.AlarmPattern)
 		if err != nil {
 			return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
 		}
 
-		if len(alarmPatternQuery) > 0 {
-			q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmPatternQuery})
-
-			if filter.AlarmPattern.HasInfosField() {
-				q.computedFieldsForAlarmMatch["v.infos_array"] = true
-				q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
-			}
-
-			for field := range q.computedFields {
-				if filter.AlarmPattern.HasField(field) {
-					q.computedFieldsForAlarmMatch[field] = true
-				}
-			}
-		}
-
-		pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("v")
+		err = q.handlePbehaviorPattern(filter.PbehaviorPattern)
 		if err != nil {
 			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
 		}
 
-		if len(pbhPatternQuery) > 0 {
-			q.alarmMatch = append(q.alarmMatch, bson.M{"$match": pbhPatternQuery})
-		}
-
-		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("entity")
+		err = q.handleEntityPattern(filter.EntityPattern)
 		if err != nil {
 			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
 		}
 
-		if len(entityPatternQuery) > 0 {
-			q.lookupsForAdditionalMatch["entity"] = true
-			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
-		}
-
-		if len(alarmPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(entityPatternQuery) == 0 &&
+		if len(r.AlarmPattern) == 0 && len(r.PbehaviorPattern) == 0 && len(r.EntityPattern) == 0 &&
 			len(filter.OldMongoQuery) > 0 {
-			var query map[string]interface{}
+			var query map[string]any
 			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
 			if err != nil {
 				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
@@ -497,6 +484,97 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 				}
 			}
 		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
+	if r.AlarmPattern != "" {
+		var alarmPattern pattern.Alarm
+		err := json.Unmarshal([]byte(r.AlarmPattern), &alarmPattern)
+		if err != nil {
+			return common.NewValidationError("alarm_pattern", "AlarmPattern is invalid.")
+		}
+		err = q.handleAlarmPattern(alarmPattern)
+		if err != nil {
+			return common.NewValidationError("alarm_pattern", "AlarmPattern is invalid.")
+		}
+	}
+
+	if r.PbehaviorPattern != "" {
+		var pbehaviorPattern pattern.PbehaviorInfo
+		err := json.Unmarshal([]byte(r.PbehaviorPattern), &pbehaviorPattern)
+		if err != nil {
+			return common.NewValidationError("pbehavior_pattern", "PbehaviorPattern is invalid.")
+		}
+		err = q.handlePbehaviorPattern(pbehaviorPattern)
+		if err != nil {
+			return common.NewValidationError("pbehavior_pattern", "PbehaviorPattern is invalid.")
+		}
+	}
+
+	if r.EntityPattern != "" {
+		var entityPattern pattern.Entity
+		err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+		err = q.handleEntityPattern(entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleAlarmPattern(alarmPattern pattern.Alarm) error {
+	alarmPatternQuery, err := alarmPattern.ToMongoQuery("")
+	if err != nil {
+		return err
+	}
+
+	if len(alarmPatternQuery) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmPatternQuery})
+
+		if alarmPattern.HasInfosField() {
+			q.computedFieldsForAlarmMatch["v.infos_array"] = true
+			q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
+		}
+
+		for field := range q.computedFields {
+			if alarmPattern.HasField(field) {
+				q.computedFieldsForAlarmMatch[field] = true
+			}
+		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.PbehaviorInfo) error {
+	pbhPatternQuery, err := pbehaviorPattern.ToMongoQuery("v")
+	if err != nil {
+		return err
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": pbhPatternQuery})
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
+	entityPatternQuery, err := entityPattern.ToMongoQuery("entity")
+	if err != nil {
+		return err
+	}
+
+	if len(entityPatternQuery) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
 	}
 
 	return nil
@@ -917,7 +995,7 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 	}
 }
 
-func (q *MongoQueryBuilder) resolveAliasesInQuery(query interface{}) interface{} {
+func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 	res := query
 	val := reflect.ValueOf(res)
 
@@ -1246,21 +1324,20 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$entity.impact",
-			"connectFromField":        "entity.impact",
-			"connectToField":          "_id",
-			"as":                      "service_impacts",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
-			"maxDepth":                0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "depends",
 		}},
 		{"$addFields": bson.M{
-			"entity.depends_count": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$eq": bson.A{"$entity.type", types.EntityTypeService}},
-				"then": bson.M{"$size": "$entity.depends"},
-				"else": 0,
-			}},
+			"entity.depends_count": bson.M{"$size": "$depends"},
 			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
 		}},
 		{"$project": bson.M{"service_impacts": 0}},

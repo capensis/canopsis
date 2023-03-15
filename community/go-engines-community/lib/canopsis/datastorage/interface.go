@@ -20,6 +20,7 @@ type Adapter interface {
 	UpdateHistoryEntity(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryPbehavior(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryHealthCheck(ctx context.Context, t types.CpsTime) error
+	UpdateHistoryWebhook(ctx context.Context, t types.CpsTime) error
 }
 
 type DataStorage struct {
@@ -32,8 +33,9 @@ type Config struct {
 		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"junit" json:"junit"`
 	Remediation struct {
-		AccumulateAfter *types.DurationWithEnabled `bson:"accumulate_after,omitempty" json:"accumulate_after"`
-		DeleteAfter     *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+		DeleteAfter         *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+		DeleteStatsAfter    *types.DurationWithEnabled `bson:"delete_stats_after,omitempty" json:"delete_stats_after"`
+		DeleteModStatsAfter *types.DurationWithEnabled `bson:"delete_mod_stats_after,omitempty" json:"delete_mod_stats_after"`
 	} `bson:"remediation" json:"remediation"`
 	Alarm struct {
 		ArchiveAfter *types.DurationWithEnabled `bson:"archive_after,omitempty" json:"archive_after"`
@@ -45,6 +47,10 @@ type Config struct {
 	HealthCheck struct {
 		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"health_check" json:"health_check"`
+	Webhook struct {
+		LogCredentials bool                       `bson:"log_credentials,omitempty" json:"log_credentials"`
+		DeleteAfter    *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"webhook" json:"webhook"`
 }
 
 type History struct {
@@ -54,6 +60,7 @@ type History struct {
 	Entity      *HistoryWithCount `bson:"entity" json:"entity"`
 	Pbehavior   *types.CpsTime    `bson:"pbehavior" json:"pbehavior" swaggertype:"integer"`
 	HealthCheck *types.CpsTime    `bson:"health_check" json:"health_check" swaggertype:"integer"`
+	Webhook     *types.CpsTime    `bson:"webhook" json:"webhook" swaggertype:"integer"`
 }
 
 type HistoryWithCount struct {

@@ -28,13 +28,13 @@
         :min="1",
         name="max_matched_items"
       )
-        c-help-icon(
-          slot="append",
-          :text="$t('userInterface.tooltips.maxMatchedItems')",
-          color="grey darken-1",
-          icon="help",
-          left
-        )
+        template(#append="")
+          c-help-icon(
+            :text="$t('userInterface.tooltips.maxMatchedItems')",
+            color="grey darken-1",
+            icon="help",
+            left
+          )
     v-layout(row)
       c-number-field(
         v-field="form.check_count_request_timeout",
@@ -42,13 +42,13 @@
         :min="1",
         name="check_count_request_timeout"
       )
-        c-help-icon(
-          slot="append",
-          :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
-          color="grey darken-1",
-          icon="help",
-          left
-        )
+        template(#append="")
+          c-help-icon(
+            :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
+            color="grey darken-1",
+            icon="help",
+            left
+          )
     v-layout(row)
       c-timezone-field(v-field="form.timezone", disabled)
     v-layout(row)
@@ -75,7 +75,7 @@
         )
     v-layout.mt-3(row)
       v-flex
-        span.theme--light.v-label.file-selector__label {{ $t('userInterface.logo') }}
+        span.v-label.file-selector__label {{ $t('userInterface.logo') }}
         v-layout(row)
           file-selector.mt-1(
             ref="fileSelector",

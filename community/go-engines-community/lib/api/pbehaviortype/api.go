@@ -3,9 +3,9 @@ package pbehaviortype
 import (
 	"context"
 	"errors"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -79,7 +79,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Create
-// @Param body body EditRequest true "body"
+// @Param body body CreateRequest true "body"
 // @Success 201 {object} pbehavior.Type
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
@@ -93,6 +93,12 @@ func (a *api) Create(c *gin.Context) {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
+		var fieldValErr common.ValidationError
+		if errors.As(err, &fieldValErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, fieldValErr.ValidationErrorResponse())
 			return
 		}
 
@@ -113,7 +119,7 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // Update
-// @Param body body EditRequest true "body"
+// @Param body body UpdateRequest true "body"
 // @Success 200 {object} pbehavior.Type
 func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
@@ -131,6 +137,12 @@ func (a *api) Update(c *gin.Context) {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
+		var fieldValErr common.ValidationError
+		if errors.As(err, &fieldValErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, fieldValErr.ValidationErrorResponse())
 			return
 		}
 

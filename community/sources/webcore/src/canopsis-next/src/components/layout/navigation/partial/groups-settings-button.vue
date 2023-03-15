@@ -2,8 +2,8 @@
   v-speed-dial(
     v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
     v-model="isVSpeedDialOpen",
-    transition="slide-y-reverse-transition",
-    v-bind="wrapperProps"
+    v-bind="wrapperProps",
+    transition="slide-y-reverse-transition"
   )
     template(#activator="")
       v-tooltip(
