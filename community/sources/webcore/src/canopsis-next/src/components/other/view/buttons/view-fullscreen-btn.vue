@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-tooltip(:left="leftTooltip", :top="topTooltip")
-    v-btn(
+  v-tooltip.view-fullscreen-btn(:left="leftTooltip", :top="topTooltip")
+    v-btn.view-fullscreen-btn__button(
       slot="activator",
       :value="value",
       :small="small",
@@ -40,3 +40,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.view-fullscreen-btn {
+  &__button  {
+    border-color: #212121 !important;
+    background-color: #212121 !important;
+
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
+  }
+}
+</style>

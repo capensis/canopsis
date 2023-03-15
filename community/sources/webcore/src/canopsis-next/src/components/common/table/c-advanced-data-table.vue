@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.c-advanced-data-table.white
+  div.c-advanced-data-table
     v-layout(row, wrap, v-bind="toolbarProps")
       v-flex(v-if="shownSearch", xs4)
         c-search-field(
@@ -47,9 +47,10 @@
       :hide-actions="hideActions || advancedPagination || noPagination",
       :multi-sort="multiSort",
       :table-class="tableClass",
+      :disable-initial-sort="disableInitialSort",
       @update:pagination="updatePagination"
     )
-      template(slot="items", slot-scope="props")
+      template(#items="props")
         slot(v-bind="getItemsProps(props)", name="items")
           tr(:key="props.item[itemKey] || props.index")
             td(v-if="selectAll || expand", @click.stop="")
@@ -66,12 +67,12 @@
                   c-expand-btn.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
             td(v-for="header in headers", :key="header.value")
               slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
-      template(v-if="hasExpandSlot", slot="expand", slot-scope="props")
+      template(v-if="hasExpandSlot", #expand="props")
         div.secondary.lighten-2(v-if="isExpandableItem(props.item)")
           slot(v-bind="props", name="expand")
-      template(slot="headerCell", slot-scope="props")
+      template(#headerCell="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
-      template(slot="progress", slot-scope="props")
+      template(#progress="props")
         slot(name="progress", v-bind="props")
     c-table-pagination(
       v-if="!noPagination && pagination && advancedPagination",
@@ -185,6 +186,10 @@ export default {
       type: String,
       required: false,
     },
+    disableInitialSort: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -273,7 +278,7 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-data-table {
-  /deep/ thead th {
+  ::v-deep thead th {
     vertical-align: middle;
   }
 

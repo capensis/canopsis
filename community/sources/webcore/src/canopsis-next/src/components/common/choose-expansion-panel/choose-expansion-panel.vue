@@ -1,9 +1,10 @@
 <template lang="pug">
-  .choose-expansion-panel
+  div.choose-expansion-panel
     v-expansion-panel.my-1
       v-expansion-panel-content.grey.darken-2.white--text(:class="{ error: errors.length }", lazy)
-        div.white--text(slot="header") {{ label }}
-        v-card.pt-1.white
+        template(#header="")
+          div.white--text {{ label }}
+        v-card.pt-1
           v-alert.pa-2.mx-2(type="error", :value="!!errors.length") {{ errors.join(' ') }}
           chips-list(
             :entities="entities",
@@ -62,7 +63,7 @@ export default {
 
 <style scoped lang="scss">
   .choose-expansion-panel {
-    & /deep/ .v-expansion-panel__header .v-icon {
+    & ::v-deep .v-expansion-panel__header .v-icon {
       color: white !important;
     }
   }

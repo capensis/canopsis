@@ -151,7 +151,7 @@ export const getGroupedPermissions = (permissions) => {
    */
   groupedPermissions.business = Object.entries(groupedPermissions.business)
     .map(([key, groupPermissions]) => ({
-      key: `permissions.business.${key}`,
+      key: `permission.business.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
@@ -160,7 +160,7 @@ export const getGroupedPermissions = (permissions) => {
    */
   groupedPermissions.technical = Object.entries(groupedPermissions.technical)
     .map(([key, groupPermissions]) => ({
-      key: `permissions.technical.${key}`,
+      key: `permission.technical.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
@@ -169,7 +169,7 @@ export const getGroupedPermissions = (permissions) => {
    */
   groupedPermissions.api = Object.entries(groupedPermissions.api)
     .map(([key, groupPermissions]) => ({
-      key: `permissions.api.${key}`,
+      key: `permission.api.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 

@@ -96,7 +96,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("name", errors.New("Name already exists."))
+			return common.NewValidationError("name", "Name already exists.")
 		}
 
 		_, err = s.dbCollection.InsertOne(ctx, doc)
@@ -325,7 +325,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("name", errors.New("Name already exists."))
+			return common.NewValidationError("name", "Name already exists.")
 		}
 
 		err = s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
@@ -333,7 +333,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("_id", errors.New("Cannot update a pbehavior with origin."))
+			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -420,7 +420,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 				return err
 			}
 			if err == nil {
-				return common.NewValidationError("name", errors.New("Name already exists."))
+				return common.NewValidationError("name", "Name already exists.")
 			}
 		}
 
@@ -429,7 +429,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("_id", errors.New("Cannot update a pbehavior with origin."))
+			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -538,7 +538,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("entity", errors.New("Pbehavior for origin already exists."))
+			return common.NewValidationError("entity", "Pbehavior for origin already exists.")
 		}
 
 		err = s.dbCollection.FindOne(ctx, bson.M{"name": doc.Name}).Err()
@@ -546,7 +546,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("name", errors.New("Name already exists."))
+			return common.NewValidationError("name", "Name already exists.")
 		}
 
 		_, err = s.dbCollection.InsertOne(ctx, doc)

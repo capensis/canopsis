@@ -27,6 +27,8 @@ export const ROUTES_NAMES = {
   exploitationIdleRules: 'exploitation-idle-rules',
   exploitationFlappingRules: 'exploitation-flapping-rules',
   exploitationResolveRules: 'exploitation-resolve-rules',
+  exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
+  exploitationLinkRules: 'exploitation-link-rules',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
 };
@@ -60,6 +62,8 @@ export const ROUTES = {
   exploitationIdleRules: '/exploitation/idle-rules',
   exploitationFlappingRules: '/exploitation/flapping-rules',
   exploitationResolveRules: '/exploitation/resolve-rules',
+  exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
+  exploitationLinkRules: '/exploitation/link-rules',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
 };
@@ -240,6 +244,8 @@ export const WORKFLOW_TYPES = {
 
 export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
 
+export const PAYLOAD_OPERATORS = ['range', 'end'];
+
 export const PATTERNS_TYPES = {
   alarm: 'alarm',
   event: 'event',
@@ -272,7 +278,6 @@ export const TRIGGERS = {
   cancel: 'cancel',
   uncancel: 'uncancel',
   comment: 'comment',
-  done: 'done',
   declareticket: 'declareticket',
   declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
@@ -300,3 +305,18 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
 ];
+
+export const DEPRECATED_TRIGGERS = [
+  TRIGGERS.declareticket,
+];
+
+export const HEADERS = {
+  authorization: 'Authorization',
+  contentType: 'Content-Type',
+};
+
+export const CONTENT_TYPES = {
+  json: 'application/json',
+  javascript: 'application/javascript',
+  xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
+};

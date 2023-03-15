@@ -2,11 +2,11 @@
   v-layout.mt-2(column)
     v-layout(row)
       v-flex(v-if="!operations.length", xs11)
-        v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyOperations') }}
+        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyOperations') }}
     draggable(
       v-field="operations",
       :options="draggableOptions",
-      :class="{ 'grey lighten-2': isDragging }",
+      :class="{ 'grey lighten-1': isDragging }",
       @start="startDragging",
       @end="endDragging"
     )
@@ -25,8 +25,8 @@
         :disabled="disabled",
         outline,
         @click="addOperation"
-      ) {{ $t('remediationInstructions.addOperation') }}
-      span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}
+      ) {{ $t('remediation.instruction.addOperation') }}
+      span.error--text(v-show="hasOperationsErrors") {{ $t('remediation.instruction.errors.operationRequired') }}
 </template>
 
 <script>
@@ -85,7 +85,7 @@ export default {
         disabled: this.disabled,
         animation: VUETIFY_ANIMATION_DELAY,
         handle: '.operation-drag-handler',
-        ghostClass: 'white',
+        ghostClass: 'grey',
         group: {
           name: 'remediation-instruction-operations',
           pull: false,

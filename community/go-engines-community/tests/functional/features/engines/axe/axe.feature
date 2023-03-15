@@ -1065,130 +1065,6 @@ Feature: create and update alarm by main event stream
     """
 
   @concurrent
-  Scenario: given done event should update alarm
-    Given I am admin
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "connector": "test-connector-axe-8",
-      "connector_name": "test-connector-name-axe-8",
-      "source_type": "resource",
-      "component":  "test-component-axe-8",
-      "resource": "test-resource-axe-8",
-      "state": 2,
-      "output": "test-output-axe-8",
-      "long_output": "test-long-output-axe-8",
-      "author": "test-author-axe-8",
-      "timestamp": {{ nowAdd "-10s" }}
-    }
-    """
-    When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "done",
-      "connector": "test-connector-axe-8",
-      "connector_name": "test-connector-name-axe-8",
-      "source_type": "resource",
-      "component":  "test-component-axe-8",
-      "resource": "test-resource-axe-8",
-      "output": "test-output-axe-8",
-      "long_output": "test-long-output-axe-8",
-      "author": "test-author-axe-8",
-      "user_id": "test-author-id-8",
-      "timestamp": {{ nowAdd "-5s" }}
-    }
-    """
-    When I save response doneEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I do GET /api/v4/alarms?search=test-resource-axe-8
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "done": {
-              "_t": "done",
-              "a": "test-author-axe-8",
-              "user_id": "test-author-id-8",
-              "m": "test-output-axe-8",
-              "t": {{ .doneEventTimestamp }},
-              "val": 0
-            },
-            "component": "test-component-axe-8",
-            "connector": "test-connector-axe-8",
-            "connector_name": "test-connector-name-axe-8",
-            "last_update_date": {{ .checkEventTimestamp }},
-            "resource": "test-resource-axe-8",
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 1
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "done",
-                "a": "test-author-axe-8",
-                "user_id": "test-author-id-8",
-                "m": "test-output-axe-8",
-                "t": {{ .doneEventTimestamp }},
-                "val": 0
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
-      }
-    ]
-    """
-
-  @concurrent
   Scenario: given assoc ticket event should update alarm
     Given I am admin
     When I send an event and wait the end of event processing:
@@ -1212,16 +1088,19 @@ Feature: create and update alarm by main event stream
     """json
     {
       "event_type": "assocticket",
-      "ticket": "testticket",
+      "ticket": "test-ticket",
+      "ticket_system_name": "test-system-name",
+      "ticket_url": "test-ticket-url",
+      "ticket_data": {
+        "ticket_param_1": "ticket_value_1"
+      },
+      "ticket_comment": "test-ticket-comment",
       "connector": "test-connector-axe-9",
       "connector_name": "test-connector-name-axe-9",
       "source_type": "resource",
       "component":  "test-component-axe-9",
       "resource": "test-resource-axe-9",
-      "output": "test-output-axe-9",
-      "long_output": "test-long-output-axe-9",
       "author": "test-author-axe-9",
-      "user_id": "test-author-id-9",
       "timestamp": {{ nowAdd "-5s" }}
     }
     """
@@ -1234,12 +1113,33 @@ Feature: create and update alarm by main event stream
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-9",
+                "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "t": {{ .ticketEventTimestamp }},
+                "ticket": "test-ticket",
+                "ticket_system_name": "test-system-name",
+                "ticket_url": "test-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-ticket-comment"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "test-author-axe-9",
-              "m": "testticket",
+              "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
               "t": {{ .ticketEventTimestamp }},
-              "val": "testticket"
+              "ticket": "test-ticket",
+              "ticket_system_name": "test-system-name",
+              "ticket_url": "test-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-ticket-comment"
             },
             "component": "test-component-axe-9",
             "connector": "test-connector-axe-9",
@@ -1294,10 +1194,15 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-9",
-                "user_id": "test-author-id-9",
-                "m": "testticket",
+                "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "t": {{ .ticketEventTimestamp }},
-                "val": 0
+                "ticket": "test-ticket",
+                "ticket_system_name": "test-system-name",
+                "ticket_url": "test-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-ticket-comment"
               }
             ],
             "meta": {
@@ -1768,138 +1673,6 @@ Feature: create and update alarm by main event stream
                 "m": "test-output-axe-12",
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 3
-            }
-          }
-        }
-      }
-    ]
-    """
-
-  @concurrent
-  Scenario: given resolve done event should update alarm
-    Given I am admin
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "connector": "test-connector-axe-13",
-      "connector_name": "test-connector-name-axe-13",
-      "source_type": "resource",
-      "component":  "test-component-axe-13",
-      "resource": "test-resource-axe-13",
-      "state": 2,
-      "output": "test-output-axe-13",
-      "long_output": "test-long-output-axe-13",
-      "author": "test-author-axe-13",
-      "timestamp": {{ nowAdd "-10s" }}
-    }
-    """
-    When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "done",
-      "connector": "test-connector-axe-13",
-      "connector_name": "test-connector-name-axe-13",
-      "source_type": "resource",
-      "component":  "test-component-axe-13",
-      "resource": "test-resource-axe-13",
-      "output": "test-output-axe-13",
-      "long_output": "test-long-output-axe-13",
-      "author": "test-author-axe-13",
-      "timestamp": {{ nowAdd "-7s" }}
-    }
-    """
-    When I save response doneEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "resolve_done",
-      "connector": "test-connector-axe-13",
-      "connector_name": "test-connector-name-axe-13",
-      "source_type": "resource",
-      "component":  "test-component-axe-13",
-      "resource": "test-resource-axe-13",
-      "output": "test-output-axe-13",
-      "long_output": "test-long-output-axe-13",
-      "author": "test-author-axe-13",
-      "timestamp": {{ nowAdd "-5s" }}
-    }
-    """
-    When I save response resolveTimestamp={{ now }}
-    When I do GET /api/v4/alarms?search=test-resource-axe-13
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-13",
-            "connector": "test-connector-axe-13",
-            "connector_name": "test-connector-name-axe-13",
-            "last_update_date": {{ .checkEventTimestamp }},
-            "resource": "test-resource-axe-13",
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 1
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I save response alarmResolve={{ (index .lastResponse.data 0).v.resolved }}
-    Then the difference between alarmResolve resolveTimestamp is in range -2,2
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "done",
-                "a": "test-author-axe-13",
-                "m": "test-output-axe-13",
-                "t": {{ .doneEventTimestamp }},
-                "val": 0
               }
             ],
             "meta": {
@@ -3021,6 +2794,190 @@ Feature: create and update alarm by main event stream
               "page_count": 1,
               "per_page": 10,
               "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given ticket resources event should update resource alarms
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-axe-22",
+      "long_output": "test-long-output-axe-22",
+      "author": "test-author-axe-22",
+      "timestamp": {{ nowAdd "-10s" }},
+      "connector": "test-connector-axe-22",
+      "connector_name": "test-connector-name-axe-22",
+      "component":  "test-component-axe-22",
+      "resource": "test-resource-axe-22",
+      "source_type": "resource"
+    }
+    """
+    When I save response checkEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-axe-22",
+      "long_output": "test-long-output-axe-22",
+      "author": "test-author-axe-22",
+      "timestamp": {{ nowAdd "-10s" }},
+      "connector": "test-connector-axe-22",
+      "connector_name": "test-connector-name-axe-22",
+      "component":  "test-component-axe-22",
+      "source_type": "component"
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "event_type": "assocticket",
+      "ticket_resources": true,
+      "ticket": "test-ticket-axe-22",
+      "ticket_system_name": "test-system-name-axe-22",
+      "ticket_url": "test-ticket-url-axe-22",
+      "ticket_data": {
+        "param1": "test-value-param-1-axe-22"
+      },
+      "ticket_comment": "test-ticket-comment-axe-22",
+      "author": "test-author-axe-22",
+      "timestamp": {{ nowAdd "-5s" }},
+      "connector": "test-connector-axe-22",
+      "connector_name": "test-connector-name-axe-22",
+      "component":  "test-component-axe-22",
+      "source_type": "component"
+    }
+    """
+    When I save response ackEventTimestamp={{ (index .lastResponse.sent_events 0).timestamp }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "assocticket",
+        "connector": "test-connector-axe-22",
+        "connector_name": "test-connector-name-axe-22",
+        "component":  "test-component-axe-22",
+        "source_type": "component"
+      },
+      {
+        "event_type": "assocticket",
+        "connector": "test-connector-axe-22",
+        "connector_name": "test-connector-name-axe-22",
+        "component":  "test-component-axe-22",
+        "resource":  "test-resource-axe-22",
+        "source_type": "resource"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-22
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ticket": {
+              "_t": "assocticket",
+              "a": "test-author-axe-22",
+              "m": "Ticket ID: test-ticket-axe-22. Ticket URL: test-ticket-url-axe-22. Ticket param1: test-value-param-1-axe-22.",
+              "ticket": "test-ticket-axe-22",
+              "ticket_system_name": "test-system-name-axe-22",
+              "ticket_url": "test-ticket-url-axe-22",
+              "ticket_data": {
+                "param1": "test-value-param-1-axe-22"
+              },
+              "ticket_comment": "test-ticket-comment-axe-22",
+              "t": {{ .ackEventTimestamp }},
+              "val": 0
+            },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-22",
+                "m": "Ticket ID: test-ticket-axe-22. Ticket URL: test-ticket-url-axe-22. Ticket param1: test-value-param-1-axe-22.",
+                "ticket": "test-ticket-axe-22",
+                "ticket_system_name": "test-system-name-axe-22",
+                "ticket_url": "test-ticket-url-axe-22",
+                "ticket_data": {
+                  "param1": "test-value-param-1-axe-22"
+                },
+                "ticket_comment": "test-ticket-comment-axe-22",
+                "t": {{ .ackEventTimestamp }},
+                "val": 0
+              }
+            ],
+            "component": "test-component-axe-22",
+            "connector": "test-connector-axe-22",
+            "connector_name": "test-connector-name-axe-22",
+            "last_update_date": {{ .checkEventTimestamp }},
+            "resource": "test-resource-axe-22",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-22",
+                "m": "Ticket ID: test-ticket-axe-22. Ticket URL: test-ticket-url-axe-22. Ticket param1: test-value-param-1-axe-22.",
+                "t": {{ .ackEventTimestamp }},
+                "val": 0
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
             }
           }
         }

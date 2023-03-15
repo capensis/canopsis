@@ -94,6 +94,8 @@ Feature: get an execution status
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
+    When I connect to websocket
+    When I authenticate in websocket
     When I subscribe to websocket room "execution/{{ .executionID }}"
     When I save response operationID={{ (index (index .lastResponse.steps 0).operations 0).operation_id }}
     When I do POST /api/v4/cat/job-executions:
@@ -123,7 +125,6 @@ Feature: get an execution status
           "name": "test-job-manual-instruction-websocket-1-1-name",
           "status": null,
           "fail_reason": "",
-          "output": "",
           "started_at": null,
           "launched_at": null,
           "completed_at": null,
@@ -134,7 +135,6 @@ Feature: get an execution status
           "name": "test-job-manual-instruction-websocket-1-2-name",
           "status": 1,
           "fail_reason": "",
-          "output": "test-job-execution-long-succeeded-output",
           "queue_number": null
         }
       ]
@@ -166,7 +166,6 @@ Feature: get an execution status
           "name": "test-job-manual-instruction-websocket-1-1-name",
           "status": 1,
           "fail_reason": "",
-          "output": "test-job-execution-succeeded-output",
           "queue_number": null
         },
         {
@@ -174,7 +173,6 @@ Feature: get an execution status
           "name": "test-job-manual-instruction-websocket-1-2-name",
           "status": 1,
           "fail_reason": "",
-          "output": "test-job-execution-long-succeeded-output",
           "queue_number": null
         }
       ]
@@ -268,6 +266,8 @@ Feature: get an execution status
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
+    When I connect to websocket
+    When I authenticate in websocket
     When I subscribe to websocket room "execution/{{ .executionID }}"
     Then I wait message from websocket room "execution/{{ .executionID }}" which contains:
     """json
@@ -277,7 +277,6 @@ Feature: get an execution status
         "name": "test-job-manual-instruction-websocket-2-1-name",
         "status": 0,
         "fail_reason": "",
-        "output": "",
         "completed_at": null,
         "queue_number": null
       },
@@ -286,7 +285,6 @@ Feature: get an execution status
         "name": "test-job-manual-instruction-websocket-2-2-name",
         "status": 0,
         "fail_reason": "",
-        "output": "",
         "started_at": null,
         "launched_at": null,
         "completed_at": null,
@@ -302,7 +300,6 @@ Feature: get an execution status
         "name": "test-job-manual-instruction-websocket-2-1-name",
         "status": 1,
         "fail_reason": "",
-        "output": "test-job-execution-long-succeeded-output",
         "queue_number": null
       },
       {
@@ -310,7 +307,6 @@ Feature: get an execution status
         "name": "test-job-manual-instruction-websocket-2-2-name",
         "status": 1,
         "fail_reason": "",
-        "output": "test-job-execution-succeeded-output",
         "queue_number": null
       }
     ]

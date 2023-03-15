@@ -1,22 +1,23 @@
 <template lang="pug">
   div.v-input.v-textarea.v-text-field.v-text-field--box.v-text-field--enclosed.v-input--is-label-active(
-    :class="['v-input--is-dirty', 'theme--light', { 'v-input--is-disabled': disabled }]"
+    :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }, themeClasses]"
   )
     div.v-input__control(@click="$emit('click', $event)")
       div.v-input__slot
         div.v-text-field__slot
-          label.v-label.theme--light(:class="{ 'v-label--active': value }") {{ label }}
+          label.v-label(:class="[{ 'v-label--active': value }, themeClasses]") {{ label }}
           div(ref="content", v-html="value", :class="{ 'v-text-field--input__disabled': disabled }")
       div.v-text-field__details(v-if="!hideDetails")
-        div.v-messages.theme--light.error--text
-          div.v-messages__wrapper
-            div.v-messages__message(v-for="errorMessage in errorMessages") {{ errorMessage }}
+        v-messages(:value="errorMessages", color="error")
 </template>
 
 <script>
+import Themeable from 'vuetify/es5/mixins/themeable';
+
 import { MODALS } from '@/constants';
 
 export default {
+  mixins: [Themeable],
   props: {
     value: {
       type: String,
@@ -92,7 +93,7 @@ export default {
     min-height: 150px;
     max-width: 100%;
 
-    & /deep/ img {
+    & ::v-deep img {
       cursor: pointer !important;
     }
   }
@@ -101,7 +102,7 @@ export default {
     &__disabled {
       color: rgba(0, 0, 0, 0.38);
 
-      & /deep/ img {
+      & ::v-deep img {
         pointer-events: all !important;
       }
     }

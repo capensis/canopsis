@@ -8,6 +8,7 @@ Feature: Update an account
     """json
     {
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "defaultview": "test-view-to-edit-user",
       "ui_tours": {
@@ -40,6 +41,7 @@ Feature: Update an account
       "source": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_tours": {
         "test-tour-to-update-user-1": true
       }
@@ -68,6 +70,7 @@ Feature: Update an account
       "email": "test-user-to-account-update-2-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",

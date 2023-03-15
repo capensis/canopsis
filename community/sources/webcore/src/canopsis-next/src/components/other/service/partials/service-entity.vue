@@ -1,6 +1,6 @@
 <template lang="pug">
   div.weather-service-entity-expansion-panel
-    v-expansion-panel(v-model="opened", dark)
+    v-expansion-panel(v-model="opened")
       v-expansion-panel-content(:style="{ backgroundColor: color }")
         template(#header="")
           service-entity-header(
@@ -12,7 +12,7 @@
             @update:selected="$listeners['update:selected']",
             @remove:unavailable="$listeners['remove:unavailable']"
           )
-        v-card(color="white black--text")
+        v-card
           v-card-text
             service-entity-info-tab(
               v-if="!isService && !hasAccessToPbehaviors",
@@ -27,8 +27,7 @@
               ref="tabs",
               v-model="activeTab",
               slider-color="primary",
-              fixed-tabs,
-              light
+              fixed-tabs
             )
               v-tab {{ $t('modals.service.entity.tabs.info') }}
               v-tab-item
@@ -143,8 +142,17 @@ export default {
         && this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors);
     },
 
+    allActions() {
+      return getAvailableActionsByEntity(this.entity);
+    },
+
     availableActions() {
-      return getAvailableActionsByEntity(this.entity).filter(this.actionsAccessFilterHandler);
+      return this.allActions
+        .filter(this.actionsAccessFilterHandler)
+        .map(action => ({
+          ...action,
+          loading: this.pendingByActionType[action.type],
+        }));
     },
   },
   watch: {
@@ -179,8 +187,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .weather-service-entity-expansion-panel /deep/ .v-expansion-panel__header {
+.weather-service-entity-expansion-panel {
+  & ::v-deep .v-expansion-panel__header {
     padding: 0 16px;
     height: auto;
   }
+
+  & ::v-deep .v-expansion-panel__header__icon .v-icon,
+  & ::v-deep .v-expansion-panel__header .v-input .v-icon {
+    color: white !important;
+  }
+}
 </style>

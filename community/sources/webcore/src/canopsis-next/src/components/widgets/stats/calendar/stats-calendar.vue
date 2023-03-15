@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout.white.calender-wrapper
+    v-layout.calender-wrapper
       c-progress-overlay(:pending="pending")
       c-alert-overlay(
         :value="hasError",
@@ -33,7 +33,7 @@ import { MODALS, MAX_LIMIT } from '@/constants';
 
 import { convertDateToTimestamp } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
@@ -162,7 +162,7 @@ export default {
     },
 
     showAlarmsListModal(meta) {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,
@@ -257,11 +257,11 @@ export default {
   .calender-wrapper {
     position: relative;
 
-    & /deep/ .ds-calendar-event {
+    & ::v-deep .ds-calendar-event {
       font-size: 14px;
     }
 
-    & /deep/ .ds-calendar-app.stats-calendar-app {
+    & ::v-deep .ds-calendar-app.stats-calendar-app {
       .ds-calendar-event {
         cursor: pointer !important;
       }
@@ -305,7 +305,7 @@ export default {
       }
 
       &:not(.single) {
-        & /deep/ .ds-calendar-event-menu {
+        & ::v-deep .ds-calendar-event-menu {
           position: relative;
           height: 20px;
 
@@ -320,13 +320,13 @@ export default {
       }
     }
 
-    & /deep/ .ds-week-view {
+    & ::v-deep .ds-week-view {
       .ds-ev-title {
         display: block;
       }
     }
 
-    & /deep/ .ds-day {
+    & ::v-deep .ds-day {
       position: relative;
 
       .ds-dom {
@@ -338,6 +338,10 @@ export default {
 
         &.ds-today-dom {
           background-color: #4285f4;
+        }
+
+        .theme--dark & {
+          background-color: black;
         }
       }
 

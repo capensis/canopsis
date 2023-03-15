@@ -4,7 +4,7 @@ exports[`alarm-header-priority Renders \`alarm-header-priority\` with slot 1`] =
 <span>
   Default text slot
   <c-help-icon-stub
-    class="priority-help-icon ml-1"
+    icon-class="priority-help-icon ml-1"
     size="16"
     text="The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised"
     top="top"
@@ -15,7 +15,7 @@ exports[`alarm-header-priority Renders \`alarm-header-priority\` with slot 1`] =
 exports[`alarm-header-priority Renders \`alarm-header-priority\` without slot 1`] = `
 <span>
   <c-help-icon-stub
-    class="priority-help-icon ml-1"
+    icon-class="priority-help-icon ml-1"
     size="16"
     text="The priority parameter is derived from the alarm severity multiplied by impact level of the entity on which the alarm is raised"
     top="top"

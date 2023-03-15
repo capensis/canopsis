@@ -21,6 +21,22 @@ export const getMostReadableTextColor = (color, options = {}) => {
 };
 
 /**
+ * Get color by entity impact state
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getImpactStateColor = value => COLORS.impactState[value];
+
+/**
+ * Get color by entity impact state
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getEntityStateColor = value => get(ENTITIES_STATES_STYLES, [value, 'color']);
+
+/**
  * Get color for a entity by colorIndicator and isGrey parameters
  *
  * @param {Service | Entity | {}} [entity = {}]
@@ -35,10 +51,10 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
     const state = isNumber(entity.state) ? entity.state : entity.state?.val;
 
-    return get(ENTITIES_STATES_STYLES, [state, 'color']);
+    return getEntityStateColor(state);
   }
 
-  return COLORS.impactState[entity.impact_state];
+  return getImpactStateColor(entity.impact_state);
 };
 
 /**
@@ -97,13 +113,6 @@ export const colorToHex = color => tinycolor(color).toHexString();
  * @return {boolean}
  */
 export const isValidColor = color => tinycolor(color).isValid();
-
-/**
- * Generate random hex color
- *
- * @return {string}
- */
-export const getRandomHexColor = () => tinycolor.random().toHexString();
 
 /**
  * Get color for metric
