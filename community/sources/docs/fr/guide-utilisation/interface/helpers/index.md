@@ -493,4 +493,12 @@ Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`
 
 Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'attend pas de paramètre.  
 
+### Helper `links`
+
+```handlebars
+{{links}}
+```
+
+Ce helper permet d'afficher les `liens` d'une alarme ou d'une entité.
+
 
