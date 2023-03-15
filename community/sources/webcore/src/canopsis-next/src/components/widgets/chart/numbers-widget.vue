@@ -19,16 +19,17 @@
       @update:interval="updateInterval"
     )
     v-layout
+      pre {{ alarmsMetrics }}
 </template>
 
 <script>
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
 import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/sampling';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetFetchMetricsMixin } from '@/mixins/widget/chart/fetch-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
@@ -39,9 +40,9 @@ export default {
   },
   mixins: [
     widgetFilterSelectMixin,
-    widgetFetchQueryMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetFetchMetricsMixin,
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
@@ -57,16 +58,9 @@ export default {
     },
   },
   methods: {
-    getQuery() {
-      return {
-        ...this.getIntervalQuery(),
-
-        sampling: this.query.sampling,
-        filter: this.query.filter,
-      };
+    fetchList() {
+      this.fetchAggregatedMetrics();
     },
-
-    fetchList() {},
   },
 };
 </script>
