@@ -17,10 +17,6 @@ export default {
       return request.get(API_ROUTES.metrics.alarm, { params });
     },
 
-    fetchAggregateMetricsWithoutStore(context, { params } = {}) {
-      return request.post(API_ROUTES.metrics.aggregate, params);
-    },
-
     createKpiAlarmExport(context, { data }) {
       return request.post(API_ROUTES.metrics.exportAlarm, null, { params: data });
     },
