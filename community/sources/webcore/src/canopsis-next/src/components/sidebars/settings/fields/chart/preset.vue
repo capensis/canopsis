@@ -15,9 +15,10 @@
 <script>
 import { isEqual, isUndefined } from 'lodash';
 
-import { KPI_PIE_CHART_SHOW_MODES, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
+import { KPI_PIE_CHART_SHOW_MODS, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import { getWidgetChartPresetParameters, getWidgetChartPresetTypesByWidgetType } from '@/helpers/entities/widget';
+import { formToMetricPresets } from '@/helpers/forms/metric';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -51,8 +52,13 @@ export default {
   computed: {
     preset: {
       get() {
-        return this.presets.find(({ parameters }) => isEqual(this.parameters, { ...this.parameters, ...parameters }))
-          ?? CHART_PRESET_CUSTOM_ITEM_VALUE;
+        return this.presets.find(({ parameters }) => {
+          const { metrics: oldMetrics, ...oldParameters } = this.parameters;
+          const { metrics: newMetrics, ...newParameters } = { ...this.parameters, ...parameters };
+
+          return isEqual(oldParameters, newParameters)
+            && isEqual(formToMetricPresets(oldMetrics), formToMetricPresets(newMetrics));
+        }) ?? CHART_PRESET_CUSTOM_ITEM_VALUE;
       },
 
       set(preset) {
@@ -95,14 +101,14 @@ export default {
       return {
         ...this.parameters,
         ...getWidgetChartPresetParameters(this.type, preset),
-        chart_header: this.$t(`settings.chart.presetChartHeaders.${preset}`),
+        chart_title: this.$t(`settings.chart.presetChartHeaders.${preset}`),
       };
     },
 
     getPresetHelpTextByParameters(parameters) {
       const result = [{
         label: this.$tc('common.header'),
-        value: parameters.chart_header,
+        value: parameters.chart_title,
       }];
 
       if (!isUndefined(parameters.stacked)) {
@@ -151,7 +157,7 @@ export default {
         result.push({
           label: this.$t('settings.chart.sharesType'),
           value: this.$tc(
-            `common.${parameters.show_mode === KPI_PIE_CHART_SHOW_MODES.numbers ? 'number' : 'percent'}`,
+            `common.${parameters.show_mode === KPI_PIE_CHART_SHOW_MODS.numbers ? 'number' : 'percent'}`,
             2,
           ),
         });

@@ -3,7 +3,10 @@
     c-alarm-metric-presets-field(
       v-field="value",
       :with-color="withColor",
-      :with-aggregate-function="withAggregateFunction"
+      :with-aggregate-function="withAggregateFunction",
+      :parameters="parameters",
+      :only-group="onlyGroup",
+      :min="min"
     )
 </template>
 
@@ -24,6 +27,18 @@ export default {
     withAggregateFunction: {
       type: Boolean,
       default: false,
+    },
+    parameters: {
+      type: Array,
+      required: false,
+    },
+    onlyGroup: {
+      type: Boolean,
+      default: false,
+    },
+    min: {
+      type: Number,
+      required: false,
     },
   },
 };
