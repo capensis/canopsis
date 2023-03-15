@@ -1,22 +1,15 @@
 <template lang="pug">
-  v-toolbar.white(dense, flat)
-    v-text-field(
+  v-layout.c-search-field(row, align-end)
+    v-text-field.ma-0(
       :value="localValue",
       :label="$t('common.search')",
-      data-test="searchingTextField",
       hide-details,
       single-line,
       @keydown.enter.prevent="submit",
       @input="input"
     )
-    v-tooltip(bottom)
-      v-btn(slot="activator", data-test="submitSearchButton", icon, @click="submit")
-        v-icon search
-      span {{ $t('search.submit') }}
-    v-tooltip(bottom)
-      v-btn(slot="activator", data-test="clearSearchButton", icon, @click="clear")
-        v-icon clear
-      span {{ $t('search.clear') }}
+    c-action-btn(:tooltip="$t('common.search')", icon="search", @click="submit")
+    c-action-btn(:tooltip="$t('common.clearSearch')", icon="clear", @click="clear")
     slot
 </template>
 
@@ -61,3 +54,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-search-field {
+  padding: 0 24px;
+
+  .v-btn--icon {
+    margin: 0 6px !important;
+  }
+
+  &>:last-child .v-btn--icon {
+    margin-right: -6px !important;
+  }
+}
+</style>

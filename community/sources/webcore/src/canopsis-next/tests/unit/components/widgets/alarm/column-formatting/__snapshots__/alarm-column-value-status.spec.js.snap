@@ -1,162 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(245, 105, 84); caret-color: #f56954;"
-    >
-      warning
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(245, 105, 84); caret-color: #f56954;">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(255, 153, 0); caret-color: #ff9900;"
-    >
-      warning
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(255, 153, 0); caret-color: #ff9900;">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(252, 220, 0); caret-color: #fcdc00;"
-    >
-      warning
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(252, 220, 0); caret-color: #fcdc00;">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(0, 166, 90); caret-color: #00a65a;"
-    >
-      warning
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(0, 166, 90); caret-color: #00a65a;">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(117, 117, 117); caret-color: #757575;"
-    >
-      highlight_off
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Canceled</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(117, 117, 117); caret-color: #757575;">highlight_off</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(47, 171, 99); caret-color: #2fab63;"
-    >
-      check_circle_outline
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Closed</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(47, 171, 99); caret-color: #2fab63;">check_circle_outline</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(43, 62, 79); caret-color: #2b3E4F;"
-    >
-      swap_vert
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Flapping</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(43, 62, 79); caret-color: #2b3E4F;">swap_vert</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `
-<c-no-events-icon-stub
-  class="mr-1"
-  color="red"
-  top="top"
-  value="1386435600000"
-/>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `<c-no-events-icon-stub value="1386435600000" color="error" top="top"></c-no-events-icon-stub>`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 1`] = `
-<span
-  class="v-tooltip v-tooltip--top"
->
-  <transition-stub
-    name="slide-y-reverse-transition"
-  />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light"
-      style="color: rgb(117, 117, 117); caret-color: #757575;"
-    >
-      swap_vert
-    </i>
-  </span>
-</span>
-`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Stealth</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="color: rgb(117, 117, 117); caret-color: #757575;">swap_vert</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;

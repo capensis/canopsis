@@ -47,7 +47,7 @@ export default {
         actions.push({
           icon: 'delete',
           iconColor: 'error',
-          title: this.$t('pbehaviors.massRemove'),
+          title: this.$t('pbehavior.massRemove'),
           method: this.showRemovePbehaviorsModal,
         });
       }
@@ -56,7 +56,7 @@ export default {
         actions.push({
           icon: 'check_circle',
           iconColor: 'primary',
-          title: this.$t('pbehaviors.massEnable'),
+          title: this.$t('pbehavior.massEnable'),
           method: this.showEnablePbehaviorsModal,
         });
       }
@@ -65,7 +65,7 @@ export default {
         actions.push({
           icon: 'cancel',
           iconColor: 'error',
-          title: this.$t('pbehaviors.massDisable'),
+          title: this.$t('pbehavior.massDisable'),
           method: this.showDisablePbehaviorsModal,
         });
       }

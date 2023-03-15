@@ -12,25 +12,32 @@
       v-layout(align-center)
         c-enabled-field(
           v-model="showFailed",
-          :label="$t('remediationInstructionStats.showFailedExecutions')",
+          :label="$t('remediation.instructionStat.showFailedExecutions')",
           hide-details
         )
     template(#executed_on="{ item }")
-      span.c-nowrap {{ item.executed_on | date }}
+      span.c-nowrap {{ (item.alarm ? item.executed_on : item.instruction_modified_on) | date }}
     template(#result="{ item }")
-      c-enabled(:value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed")
+      c-enabled(
+        v-if="item.alarm",
+        :value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed"
+      )
     template(#duration="{ item }")
       span {{ item.duration | duration }}
     template(#resolved="{ item }")
       span {{ item.alarm | get('v.resolved') | date }}
     template(#timeline="{ item }")
-      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediationInstructionStats.instructionChanged') }}
+      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediation.instructionStat.instructionChanged') }}
       alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
 </template>
 
 <script>
-import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
+import {
+  prepareRemediationInstructionExecutionsForAlarmTimeline,
+} from '@/helpers/entities/remediation-instruction-execution';
+
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import AlarmHorizontalTimeLine from '@/components/widgets/alarm/time-line/horizontal-time-line.vue';
 
@@ -59,7 +66,7 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('remediationInstructionStats.executedAt'),
+          text: this.$t('remediation.instructionStat.executedAt'),
           value: 'executed_on',
           sortable: false,
         },
@@ -74,12 +81,12 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.remediationDuration'),
+          text: this.$t('remediation.instructionStat.remediationDuration'),
           value: 'duration',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmResolvedDate'),
+          text: this.$t('remediation.instructionStat.alarmResolvedDate'),
           value: 'resolved',
           sortable: false,
         },
@@ -115,7 +122,9 @@ export default {
         id: this.remediationInstruction._id,
       });
 
-      this.remediationInstructionExecutions = remediationInstructionExecutions;
+      this.remediationInstructionExecutions = prepareRemediationInstructionExecutionsForAlarmTimeline(
+        remediationInstructionExecutions,
+      );
       this.totalItems = meta.total_count;
       this.pending = false;
     },

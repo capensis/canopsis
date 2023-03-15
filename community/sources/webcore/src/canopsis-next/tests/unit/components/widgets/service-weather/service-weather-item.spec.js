@@ -15,11 +15,11 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   USERS_PERMISSIONS,
 } from '@/constants';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { getImpactStateColor } from '@/helpers/color';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceWeatherItem from '@/components/widgets/service-weather/service-weather-item.vue';
-import { COLORS } from '@/config';
 
 const localVue = createVueInstance();
 
@@ -112,7 +112,7 @@ describe('service-weather-item', () => {
 
     selectButton(wrapper).vm.$emit('click', new MouseEvent('click'));
 
-    const alarmListWidget = generateDefaultAlarmListWidget();
+    const alarmListWidget = generatePreparedDefaultAlarmListWidget();
     alarmListWidget.parameters.serviceDependenciesColumns = widget.parameters.serviceDependenciesColumns;
 
     expect($modals.show).toBeCalledWith(
@@ -208,7 +208,7 @@ describe('service-weather-item', () => {
       {
         name: MODALS.serviceEntities,
         config: {
-          color: COLORS.impactState[3],
+          color: getImpactStateColor(3),
           service,
           widgetParameters: newParameters,
         },

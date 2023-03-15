@@ -1,10 +1,10 @@
 <template lang="pug">
   modal-wrapper
-    template(slot="title")
+    template(#title="")
       span {{ $t('modals.clickOutsideConfirmation.title') }}
-    template(slot="text")
+    template(#text="")
       span.subheading {{ $t('modals.clickOutsideConfirmation.text') }}
-    template(slot="actions")
+    template(#actions="")
       v-btn(
         depressed,
         flat,

@@ -52,7 +52,7 @@ describe('alarm-column-value-extra-details', () => {
       last_comment: {
         m: ' ',
       },
-      ticket: {},
+      tickets: [{}],
       canceled: {},
       snooze: {},
       pbehavior_info: {

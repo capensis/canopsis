@@ -64,8 +64,10 @@ func main() {
 		enforcer,
 		providers,
 		logger,
+		nil,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
+		nil,
 		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)

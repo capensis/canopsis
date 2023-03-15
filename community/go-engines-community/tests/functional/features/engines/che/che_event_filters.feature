@@ -644,13 +644,7 @@ Feature: modify event on event filter
       "enabled": false,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": [],
-      "impact": [
-        "test-component-che-event-filters-6"
-      ],
-      "depends": [
-        "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
-      ]
+      "infos": []
     }
     """
     Then the response code should be 200
@@ -1574,7 +1568,7 @@ Feature: modify event on event filter
       "exdates": [
         {
           "begin": {{ now }},
-          "end": {{ nowAdd "6s" }}
+          "end": {{ nowAdd "8s" }}
         }
       ],
       "description": "test-event-filter-che-event-filters-21-description",
@@ -1583,6 +1577,7 @@ Feature: modify event on event filter
     }
     """
     Then the response code should be 201
+    When I wait the next periodical process
     When I wait the next periodical process
     When I send an event:
     """json
@@ -1665,7 +1660,7 @@ Feature: modify event on event filter
       "exdates":[
         {
           "begin": {{ now }},
-          "end": {{ nowAdd "6s" }},
+          "end": {{ nowAdd "8s" }},
           "type": "test-type-to-exception-edit-1"
         }
       ]
@@ -1703,6 +1698,7 @@ Feature: modify event on event filter
     }
     """
     Then the response code should be 201
+    When I wait the next periodical process
     When I wait the next periodical process
     When I send an event:
     """json
@@ -1932,6 +1928,7 @@ Feature: modify event on event filter
     }
     """
     Then the response code should be 201
+    When I wait the next periodical process
     When I wait the next periodical process
     When I send an event:
     """json

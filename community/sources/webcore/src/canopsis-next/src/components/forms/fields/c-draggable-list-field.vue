@@ -60,7 +60,7 @@ export default {
         animation: this.animation,
         disabled: this.disabled,
         handle: this.handle,
-        ghostClass: this.ghostClass,
+        ghostClass: 'grey',
         group: this.group,
       };
     },

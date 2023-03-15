@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -23,7 +22,6 @@ type API interface {
 	Get(c *gin.Context)
 	GetOpen(c *gin.Context)
 	GetDetails(c *gin.Context)
-	ListManual(c *gin.Context)
 	ListByService(c *gin.Context)
 	ListByComponent(c *gin.Context)
 	ResolvedList(c *gin.Context)
@@ -31,6 +29,7 @@ type API interface {
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
+	GetLinks(c *gin.Context)
 }
 
 type api struct {
@@ -81,9 +80,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
-
-	aggregationResult, err := a.store.Find(c.Request.Context(), apiKey, r)
+	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -105,8 +102,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
-	apiKey := c.MustGet(auth.ApiKey).(string)
-	alarm, err := a.store.GetByID(c.Request.Context(), c.Param("id"), apiKey)
+	alarm, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -127,8 +123,7 @@ func (a *api) GetOpen(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
 	}
-	apiKey := c.MustGet(auth.ApiKey).(string)
-	alarm, ok, err := a.store.GetOpenByEntityID(c.Request.Context(), r.ID, apiKey)
+	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -167,7 +162,6 @@ func (a *api) GetDetails(c *gin.Context) {
 		return
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
 	defaultQuery := pagination.GetDefaultQuery()
 	response := make([]DetailsResponse, len(rawObjects))
 
@@ -220,7 +214,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			continue
 		}
 
-		details, err := a.store.GetDetails(c.Request.Context(), apiKey, request)
+		details, err := a.store.GetDetails(c, request)
 		if err != nil {
 			response[idx].ID = request.ID
 			response[idx].Status = http.StatusInternalServerError
@@ -244,23 +238,6 @@ func (a *api) GetDetails(c *gin.Context) {
 	c.JSON(http.StatusMultiStatus, response)
 }
 
-// ListManual
-// @Success 200 {array} ManualResponse
-func (a *api) ListManual(c *gin.Context) {
-	var r ManualRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
-		return
-	}
-
-	alarms, err := a.store.FindManual(c.Request.Context(), r.Search)
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(http.StatusOK, alarms)
-}
-
 // ListByService
 // @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
 func (a *api) ListByService(c *gin.Context) {
@@ -272,8 +249,7 @@ func (a *api) ListByService(c *gin.Context) {
 		return
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindByService(c.Request.Context(), c.Param("id"), apiKey, r)
+	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r)
 	if err != nil {
 		panic(err)
 	}
@@ -303,8 +279,7 @@ func (a *api) ListByComponent(c *gin.Context) {
 		return
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindByComponent(c.Request.Context(), r, apiKey)
+	aggregationResult, err := a.store.FindByComponent(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -334,8 +309,7 @@ func (a *api) ResolvedList(c *gin.Context) {
 		return
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
-	aggregationResult, err := a.store.FindResolved(c.Request.Context(), r, apiKey)
+	aggregationResult, err := a.store.FindResolved(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -364,7 +338,7 @@ func (a *api) Count(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.Count(c.Request.Context(), r)
+	res, err := a.store.Count(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -388,13 +362,11 @@ func (a *api) StartExport(c *gin.Context) {
 		exportFields = a.defaultExportFields
 	}
 
-	apiKey := c.MustGet(auth.ApiKey).(string)
-
-	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
+	taskID, err := a.exportExecutor.StartExecute(c, export.Task{
 		Filename:     "alarms",
 		ExportFields: exportFields,
 		Separator:    separator,
-		DataFetcher: getDataFetcher(a.store, apiKey, r, exportFields.Fields(),
+		DataFetcher: getDataFetcher(a.store, r, exportFields.Fields(),
 			a.timezoneConfigProvider.Get().Location),
 	})
 	if err != nil {
@@ -411,7 +383,7 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.GetStatus(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -429,7 +401,7 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.GetStatus(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -444,4 +416,31 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.Header("Content-Type", "text/csv")
 	c.ContentType()
 	c.File(t.File)
+}
+
+// GetLinks
+// @Success 200 {array} link.Link
+func (a *api) GetLinks(c *gin.Context) {
+	var r LinksRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, links)
 }

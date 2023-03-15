@@ -12,7 +12,7 @@
     v-layout(v-else, fill-height, align-center)
       app-logo.canopsis-logo.mr-2
       v-layout.version.ml-1(fill-height, align-end)
-        logged-users-count(badgeColor="secondary")
+        logged-users-count(badge-color="secondary")
         app-version
     top-bar-title(:title="appTitle")
     healthcheck-chips-list(v-if="isProVersion && hasAccessToHealthcheckStatus")
@@ -23,7 +23,8 @@
       top-bar-administration-menu
       top-bar-notifications-menu
       top-bar-user-menu
-    groups-top-bar(v-if="isShownGroupsTopBar", slot="extension")
+    template(v-if="isShownGroupsTopBar", #extension="")
+      groups-top-bar
 </template>
 
 <script>
@@ -85,9 +86,7 @@ export default {
   font-size: 0.7em;
   position: relative;
 
-  & /deep/ .logged-users-count {
-    position: absolute;
-    top: 0;
+  & ::v-deep .logged-users-count {
     left: -8px;
   }
 }
@@ -105,11 +104,11 @@ export default {
 }
 
 .top-bar {
-  & /deep/ .v-toolbar__content {
+  & ::v-deep .v-toolbar__content {
     padding: 0;
   }
 
-  & /deep/ .v-toolbar__extension {
+  & ::v-deep .v-toolbar__extension {
     padding: 0;
   }
 }

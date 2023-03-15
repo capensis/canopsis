@@ -16,7 +16,7 @@
               :label="$t('snmpRule.moduleMibObjects')",
               hide-details
             )
-              template(#append="", v-if="large")
+              template(v-if="large", #append="")
                 v-btn(
                   :class="{ active: isVisible }",
                   icon,
@@ -103,7 +103,7 @@ export default {
     }
   }
 
-  .vars-input /deep/ .v-input__slot {
+  .vars-input ::v-deep .v-input__slot {
     height: 56px;
   }
 </style>

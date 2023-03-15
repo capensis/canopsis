@@ -41,10 +41,12 @@ describe('filter-selector', () => {
     {
       _id: '1',
       title: 'Locked filter 1',
+      filter: { _id: 1 },
     },
     {
       _id: '2',
       title: 'Locked filter 2',
+      filter: { _id: 2 },
     },
   ];
 
@@ -52,10 +54,12 @@ describe('filter-selector', () => {
     {
       _id: '3',
       title: 'Filter 1',
+      filter: { _id: 1 },
     },
     {
       _id: '4',
       title: 'Filter 2',
+      filter: { _id: 2 },
     },
   ];
 

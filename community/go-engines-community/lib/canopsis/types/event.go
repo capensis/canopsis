@@ -39,29 +39,27 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
-	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
-	// to trigger webhook with declare ticket parameter.
-	EventTypeDeclareTicket = "declareticket"
-	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
-	EventTypeDone              = "done"
-	EventTypeChangestate       = "changestate"
-	EventTypeKeepstate         = "keepstate"
-	EventTypePerf              = "perf"
-	EventTypeSnooze            = "snooze"
-	EventTypeUnsnooze          = "unsnooze"
-	EventTypeStatCounterInc    = "statcounterinc"
-	EventTypeStatDuration      = "statduration"
-	EventTypeStatStateInterval = "statstateinterval"
-	EventTypeUncancel          = "uncancel"
+	EventTypeChangestate = "changestate"
+	EventTypeKeepstate   = "keepstate"
+	EventTypePerf        = "perf"
+	EventTypeSnooze      = "snooze"
+	EventTypeUnsnooze    = "unsnooze"
+	EventTypeUncancel    = "uncancel"
+
+	EventTypeDeclareTicketWebhook = "declareticketwebhook"
+	EventTypeWebhookStarted       = "webhookstarted"
+	EventTypeWebhookCompleted     = "webhookcompleted"
+	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeAutoWebhookStarted   = "autowebhookstarted"
+	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
+	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
-	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
 	EventTypeResolveDeleted     = "resolve_deleted"
@@ -160,17 +158,19 @@ type Event struct {
 
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
-	// It also adds declare ticket to all resource alarms on ack webhook.
-	// It's still used by some old users but meta alarms must be used instead.
-	AckResources bool                   `json:"ack_resources"`
-	Duration     CpsNumber              `json:"duration"`
-	Ticket       string                 `bson:"ticket" json:"ticket"`
-	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
-	StatName     string                 `bson:"stat_name" json:"stat_name"`
-	Debug        bool                   `bson:"debug" json:"debug"`
-	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
-	ExtraInfos   map[string]interface{} `json:"extra"`
-	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
+	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
+	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
+
+	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
+	StatName    string                 `bson:"stat_name" json:"stat_name"`
+	Debug       bool                   `bson:"debug" json:"debug"`
+	Role        string                 `bson:"role,omitempty" json:"role,omitempty"`
+	ExtraInfos  map[string]interface{} `bson:"extra_infos" json:"extra"`
+	AlarmChange *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+
+	// Ticket related fields
+	TicketInfo `bson:",inline"`
 
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`
@@ -211,41 +211,6 @@ type Event struct {
 
 	// TODO: should be refactored
 	IsEntityUpdated bool `bson:"-" json:"-"`
-}
-
-// ContextInformation regroup context values necessary for creating a new entity
-type ContextInformation struct {
-	ID      string // Entity ID
-	Name    string
-	Type    string
-	Impacts []string
-	Depends []string
-}
-
-// NewEventFromJSON create an Event from a raw json
-func NewEventFromJSON(body []byte) (Event, error) {
-	var event Event
-	err := json.Unmarshal(body, &event)
-	if err != nil {
-		return event, fmt.Errorf("NewEvent error: %v", err)
-	}
-	event.Format()
-
-	return event, nil
-}
-
-func NewEventFromAlarm(alarm Alarm) Event {
-	event := Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Resource:      alarm.Value.Resource,
-		Component:     alarm.Value.Component,
-		Alarm:         &alarm,
-		Timestamp:     CpsTime{Time: time.Now()},
-	}
-	event.SourceType = event.DetectSourceType()
-
-	return event
 }
 
 // Format an event
@@ -317,7 +282,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 // IsContextable tells you if the given event can lead to context enrichment.
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
-	case EventTypeCheck, EventTypePerf, EventTypeDeclareTicket, EventTypeMetaAlarm,
+	case EventTypeCheck, EventTypePerf, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
@@ -449,50 +414,6 @@ func (e *Event) GetRequiredKeys() []string {
 	return values
 }
 
-// GenerateContextInformations generate connector, component and resource entity informations.
-// First element is always connector
-// Second element is always component
-// Third element doesnt exists if event is not SourceTypeResource, otherwise it is resource
-func (e *Event) GenerateContextInformations() []ContextInformation {
-	connectorID := e.Connector + "/" + e.ConnectorName
-	componentID := e.Component
-
-	connector := ContextInformation{
-		ID:      connectorID,
-		Name:    e.ConnectorName,
-		Type:    EntityTypeConnector,
-		Impacts: []string{},
-		Depends: []string{componentID},
-	}
-
-	component := ContextInformation{
-		ID:      componentID,
-		Name:    e.Component,
-		Type:    EntityTypeComponent,
-		Impacts: []string{connectorID},
-		Depends: []string{},
-	}
-
-	if e.SourceType != SourceTypeResource {
-		return []ContextInformation{connector, component}
-	}
-
-	resourceID := e.Resource + "/" + e.Component
-
-	connector.Impacts = append(connector.Impacts, resourceID)
-	component.Depends = append(component.Depends, resourceID)
-
-	resource := ContextInformation{
-		ID:      resourceID,
-		Name:    e.Resource,
-		Type:    EntityTypeResource,
-		Impacts: []string{componentID},
-		Depends: []string{connectorID},
-	}
-
-	return []ContextInformation{connector, component, resource}
-}
-
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
 var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
 var cpsTimeType = reflect.TypeOf(CpsTime{})
@@ -600,14 +521,11 @@ func isValidEventType(t string) bool {
 		EventTypeAssocTicket,
 		EventTypeCancel,
 		EventTypeComment,
-		EventTypeDeclareTicket,
 		EventTypeDeclareTicketWebhook,
-		EventTypeDone,
 		EventTypeChangestate,
 		EventTypeSnooze,
 		EventTypeUnsnooze,
 		EventTypeUncancel,
-		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
 		EventTypeResolveDeleted,

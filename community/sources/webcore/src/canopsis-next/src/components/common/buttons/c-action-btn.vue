@@ -4,6 +4,7 @@
     :right="right",
     :bottom="bottom",
     :left="left",
+    :disabled="disabled",
     :custom-activator="customTooltipActivator"
   )
     template(#activator="{ on: tooltipOn }")
@@ -27,16 +28,18 @@
             :disabled="disabled",
             :loading="loading",
             :small="small",
+            :color="btnColor",
             icon,
             @click.stop.prevent="$listeners.click"
           )
             v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-        v-btn.mx-1.c-action-btn__button(
+        v-btn.mx-1.my-0.c-action-btn__button(
           v-else,
           v-on="tooltipOn",
           :disabled="disabled",
           :loading="loading",
           :small="small",
+          :color="btnColor",
           icon,
           @click.stop.prevent="$listeners.click"
         )
@@ -95,6 +98,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    btnColor: {
+      type: String,
+      required: false,
+    },
     badgeValue: {
       type: Boolean,
       default: false,
@@ -150,7 +157,7 @@ export default {
 .c-action-btn__badge {
   margin: 6px 4px;
 
-  & /deep/ .v-badge__badge {
+  & ::v-deep .v-badge__badge {
     font-size: 11px;
     top: -4px;
     right: -4px;

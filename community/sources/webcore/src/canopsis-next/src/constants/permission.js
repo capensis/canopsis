@@ -46,6 +46,7 @@ export const EXPLOITATION_PAGES_RULES = {
   dynamicInfo: { edition: CANOPSIS_EDITION.pro },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
+  declareTicketRule: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
@@ -102,8 +103,10 @@ export const USERS_PERMISSIONS = {
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
+    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -114,6 +117,8 @@ export const USERS_PERMISSIONS = {
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -165,8 +170,6 @@ export const USERS_PERMISSIONS = {
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
-        // TODO: USERS_RIGHTS Should be removed after create MR in all features
-        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
     },
@@ -269,12 +272,15 @@ export const USERS_PERMISSIONS = {
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
       metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      metricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_metrics_settings`,
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
       api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
+      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -287,7 +293,8 @@ export const USERS_PERMISSIONS = {
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
-      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
@@ -326,11 +333,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
     [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup]:
+    [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup]:
-    USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUpdate]:
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,
@@ -350,10 +355,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction,
-
-    // TODO: Should be removed after create MR in all features
-    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
-    ...featuresService.get('constants.BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {
@@ -416,6 +417,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
   /**
    * Notifications pages

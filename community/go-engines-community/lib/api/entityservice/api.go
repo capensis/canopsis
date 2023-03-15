@@ -85,7 +85,7 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetDependencies(c, c.MustGet(auth.ApiKey).(string), r)
+	aggregationResult, err := a.store.GetDependencies(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +115,7 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetImpacts(c, c.MustGet(auth.ApiKey).(string), r)
+	aggregationResult, err := a.store.GetImpacts(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -238,7 +238,7 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, alarm, err := a.store.Delete(c, id)
+	ok, err := a.store.Delete(c, id)
 
 	if err != nil {
 		panic(err)
@@ -253,7 +253,6 @@ func (a *api) Delete(c *gin.Context) {
 		ID:                      id,
 		EntityType:              types.EntityTypeService,
 		IsServicePatternChanged: true,
-		ServiceAlarm:            alarm,
 	})
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
@@ -511,7 +510,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, alarm, err := a.store.Delete(c, request.ID)
+		ok, err := a.store.Delete(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot delete entity service")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -527,7 +526,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 			ID:                      request.ID,
 			EntityType:              types.EntityTypeService,
 			IsServicePatternChanged: true,
-			ServiceAlarm:            alarm,
 		})
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
@@ -559,9 +557,9 @@ func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {
 	}
 }
 
-func (a *api) transformEditRequest(c context.Context, request *EditRequest) error {
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
 	var err error
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(c, request.EntityPatternFieldsRequest)
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
 	if err != nil {
 		return err
 	}

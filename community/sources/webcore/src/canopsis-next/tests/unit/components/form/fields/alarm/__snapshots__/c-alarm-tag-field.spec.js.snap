@@ -24,12 +24,12 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
         <div
           class="v-select__selections"
         >
-          <c-alarm-tag-chip-stub
-            close="close"
+          <c-alarm-action-chip-stub
+            closable="closable"
             color="#444"
           >
             Tag 1
-          </c-alarm-tag-chip-stub>
+          </c-alarm-action-chip-stub>
           <input
             aria-label="Custom label"
             aria-readonly="false"
