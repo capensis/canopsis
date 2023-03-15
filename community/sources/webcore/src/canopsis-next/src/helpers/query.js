@@ -328,6 +328,9 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
     [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
     [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -351,6 +354,9 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.numbers]: convertChartWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

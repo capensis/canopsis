@@ -7,6 +7,7 @@
       :locked-value="lockedFilter",
       :filters="mainFilter",
       :interval="query.interval",
+      :min-interval-date="minAvailableDate",
       :sampling="query.sampling",
       :show-filter="hasAccessToUserFilter",
       :show-interval="hasAccessToInterval",
@@ -19,16 +20,17 @@
       @update:interval="updateInterval"
     )
     v-layout
+      pre {{ alarmsMetrics }}
 </template>
 
 <script>
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { permissionsWidgetsLineChartInterval } from '@/mixins/permissions/widgets/chart/line/interval';
 import { permissionsWidgetsLineChartSampling } from '@/mixins/permissions/widgets/chart/line/sampling';
 import { permissionsWidgetsLineChartFilters } from '@/mixins/permissions/widgets/chart/line/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/sampling';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetFetchMetricsMixin } from '@/mixins/widget/chart/fetch-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
@@ -39,9 +41,9 @@ export default {
   },
   mixins: [
     widgetFilterSelectMixin,
-    widgetFetchQueryMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetFetchMetricsMixin,
     permissionsWidgetsLineChartInterval,
     permissionsWidgetsLineChartSampling,
     permissionsWidgetsLineChartFilters,
@@ -57,16 +59,9 @@ export default {
     },
   },
   methods: {
-    getQuery() {
-      return {
-        ...this.getIntervalQuery(),
-
-        sampling: this.query.sampling,
-        filter: this.query.filter,
-      };
+    fetchList() {
+      this.fetchVectorMetrics();
     },
-
-    fetchList() {},
   },
 };
 </script>
