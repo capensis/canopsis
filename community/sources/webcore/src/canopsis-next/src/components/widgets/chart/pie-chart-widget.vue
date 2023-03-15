@@ -19,17 +19,18 @@
       @update:interval="updateInterval"
     )
     v-layout
-      pre {{ alarmsMetrics }}
+      pre {{ aggregatedMetrics }}
 </template>
 
 <script>
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
 import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { widgetFetchMetricsMixin } from '@/mixins/widget/chart/fetch-metrics';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
@@ -39,13 +40,14 @@ export default {
     ChartWidgetFilters,
   },
   mixins: [
+    widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
-    widgetFetchMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
     permissionsWidgetsPieChartFilters,
+    entitiesAggregatedMetricsMixin,
   ],
   props: {
     widget: {
@@ -58,8 +60,21 @@ export default {
     },
   },
   methods: {
+    getQuery() {
+      return {
+        ...this.getIntervalQuery(),
+
+        parameters: this.widget.parameters.metrics.map(({ metric }) => ({
+          metric,
+          aggregate_func: this.widget.parameters.aggregate_func,
+        })),
+        sampling: this.query.sampling,
+        filter: this.query.filter,
+      };
+    },
+
     fetchList() {
-      this.fetchAggregatedMetrics();
+      this.fetchAggregatedMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
     },
   },
 };

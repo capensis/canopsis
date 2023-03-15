@@ -20,32 +20,35 @@
       @update:interval="updateInterval"
     )
     v-layout
-      pre {{ alarmsMetrics }}
+      pre {{ vectorMetrics }}
 </template>
 
 <script>
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
 import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { widgetFetchMetricsMixin } from '@/mixins/widget/chart/fetch-metrics';
+import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 
 export default {
   components: {
     ChartWidgetFilters,
   },
   mixins: [
+    widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
-    widgetFetchMetricsMixin,
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,
     permissionsWidgetsBarChartFilters,
+    entitiesVectorMetricsMixin,
   ],
   props: {
     widget: {
@@ -57,9 +60,43 @@ export default {
       default: '',
     },
   },
+  computed: {
+    minAvailableDate() {
+      const { min_date: minDate } = this.vectorMetricsMeta;
+
+      return minDate
+        ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
+        : null;
+    },
+  },
+  watch: {
+    minAvailableDate() {
+      const { from } = this.getIntervalQuery();
+
+      if (from < this.minAvailableDate) {
+        this.query = {
+          ...this.query,
+          interval: {
+            from: this.minAvailableDate,
+            to: this.query.interval.to,
+          },
+        };
+      }
+    },
+  },
   methods: {
+    getQuery() {
+      return {
+        ...this.getIntervalQuery(),
+
+        parameters: this.widget.parameters.metrics.map(({ metric }) => metric),
+        sampling: this.query.sampling,
+        filter: this.query.filter,
+      };
+    },
+
     fetchList() {
-      this.fetchVectorMetrics();
+      this.fetchVectorMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
     },
   },
 };
