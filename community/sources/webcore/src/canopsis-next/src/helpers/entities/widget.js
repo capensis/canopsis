@@ -10,6 +10,7 @@ import {
   PIE_CHART_WIDGET_PRESET_TYPES,
   WIDGET_TYPES,
 } from '@/constants';
+import { getDefaultAggregateFunctionByMetric } from '@/helpers/metrics';
 
 /**
  * Get chart preset types by widget type
@@ -45,6 +46,13 @@ export const getWidgetChartPresetParameters = (type, preset) => {
 
   if (metrics) {
     parameters.metrics = metricPresetsToForm(metrics);
+
+    if (type === WIDGET_TYPES.numbers) {
+      parameters.metrics = parameters.metrics.map(metric => ({
+        ...metric,
+        aggregate_func: metric.aggregate_func || getDefaultAggregateFunctionByMetric(metric.metric),
+      }));
+    }
   }
 
   return parameters;

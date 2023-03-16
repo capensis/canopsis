@@ -31,7 +31,7 @@
         with-alarm,
         with-entity,
         with-pbehavior
-    )
+      )
 </template>
 
 <script>

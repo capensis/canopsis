@@ -222,6 +222,7 @@ export default {
     showComparison: 'Show comparison',
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
+    showTrend: 'Show trend',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',
