@@ -204,6 +204,8 @@ export const ALARM_BASIC_METRIC_PARAMETERS = {
   ratioRemediatedAlarms: 'ratio_remediated_alarms',
   averageAck: 'average_ack',
   averageResolve: 'average_resolve',
+  timeToAck: 'time_to_ack',
+  timeToResolve: 'time_to_resolve',
 };
 
 export const ALARM_OPTIONAL_METRIC_PARAMETERS = {
