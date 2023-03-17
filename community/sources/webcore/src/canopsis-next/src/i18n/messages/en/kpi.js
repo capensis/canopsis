@@ -20,7 +20,7 @@ export default {
   },
   errors: {
     metricsMinLength: 'At least {count} metrics must be added',
-    emptyMetrics: 'All preset metrics is empty',
+    emptyMetrics: 'No data to display',
   },
 
   metrics: {
