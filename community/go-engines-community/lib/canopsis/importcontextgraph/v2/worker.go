@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -606,7 +605,7 @@ func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
 func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now types.CpsTime) {
 	switch ci.Type {
 	case types.EntityTypeService:
-		ci.ID = utils.NewID()
+		ci.ID = ci.Name
 	case types.EntityTypeResource:
 		ci.ID = ci.Name + "/" + ci.Component
 	case types.EntityTypeComponent:
@@ -652,6 +651,10 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]types.Info)
+	}
+
+	if oldEntity.Infos == nil {
+		oldEntity.Infos = make(map[string]types.Info)
 	}
 
 	if mergeInfos {
