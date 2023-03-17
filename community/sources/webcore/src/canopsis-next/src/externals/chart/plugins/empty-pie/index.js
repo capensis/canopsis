@@ -1,10 +1,16 @@
 /**
- * @type {Object} ChartEmptyPieOptions
- * @property {number} value
- * @property {string} backgroundColor
- * @property {string} borderColor
- * @property {number} borderWidth
- * @property {Array} borderDash
+ * @typedef {Object} ChartEmptyPieFontOptions
+ * @property {number} size
+ * @property {string} family
+ * @property {string} color
+ */
+
+/**
+ * @typedef {Object} ChartEmptyPieOptions
+ * @property {number} width
+ * @property {string} color
+ * @property {string} text
+ * @property {ChartEmptyPieFontOptions} font
  */
 
 export const ChartEmptyPiePlugin = {
