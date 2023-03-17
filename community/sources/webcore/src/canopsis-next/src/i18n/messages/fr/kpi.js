@@ -20,7 +20,7 @@ export default {
   },
   errors: {
     metricsMinLength: 'Au moins {count} statistiques doivent être ajoutées',
-    emptyMetrics: 'Toutes les statistiques prédéfinies sont vides',
+    emptyMetrics: 'Aucune donnée à afficher',
   },
 
   metrics: {
