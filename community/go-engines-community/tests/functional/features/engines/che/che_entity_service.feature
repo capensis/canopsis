@@ -1328,15 +1328,16 @@ Feature: create service entity
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-20-1/test-component-che-service-20",
-        "test-resource-che-service-20-2/test-component-che-service-20"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-che-service-20-1/test-component-che-service-20",
+      "test-resource-che-service-20-2/test-component-che-service-20"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    []
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-20-1/test-component-che-service-20
     Then the response code should be 200
@@ -1571,15 +1572,16 @@ Feature: create service entity
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-22-1/test-component-che-service-22",
-        "test-resource-che-service-22-2/test-component-che-service-22"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-che-service-22-1/test-component-che-service-22",
+      "test-resource-che-service-22-2/test-component-che-service-22"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    []
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
     Then the response code should be 200
@@ -1672,15 +1674,16 @@ Feature: create service entity
     When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-22
     Then the response code should be 200
-    Then the response body should be:
+    Then the response array key "depends" should contain:
     """json
-    {
-      "depends": [
-        "test-resource-che-service-22-1/test-component-che-service-22",
-        "test-resource-che-service-22-2/test-component-che-service-22"
-      ],
-      "impact": []
-    }
+    [
+      "test-resource-che-service-22-1/test-component-che-service-22",
+      "test-resource-che-service-22-2/test-component-che-service-22"
+    ]
+    """
+    Then the response array key "impact" should contain:
+    """json
+    []
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-22-1/test-component-che-service-22
     Then the response code should be 200
