@@ -20,7 +20,7 @@ Le `import-context-graph` peut importer
 1. [Options](#options)<br>
 2. [Variables d'environnement](#variables-denvironnement)<br>
 3. [Configuration](#configuration)<br>
-4. [Importer des entités](#importer-des-entités)<br>
+4. [Importer des entités](#importer-des-entites)<br>
 5. [Importer des informations](#importer-des-informations-complementaires)<br>
 6. [Exécution](#execution)<br>
 7. [Résultats dans Canopsis](#resultats-dans-canopsis)
@@ -96,15 +96,47 @@ Dans cette section, vous pouvez définir les règles de translation entre la ré
 
 #### Composants
 
-A compléter
+Pour importer un composant, vous devez spécifier le champ de la réponse d'API qui sera utilisé comme nom d'entité dans Canopsis.  
+Le reste concerne [les informations complémentaires](#importer-des-informations-complementaires) à importer.
+
+Exemple :
+
+```yaml
+  component:
+    name: external_id
+    description: external_description
+```
 
 #### Ressources
 
-A compléter
+L'import d'une ressource nécessite de spécifier le champ de la réponse d'API qui permettra à la ressource d'être liée à un composant.
 
-#### Serices
+Exemple :
 
-A compléter
+```yaml
+  resource:
+    name: external_id
+    description: external_description
+    # resource mapping should contain component field in the external api response
+    component: external_component
+```
+
+Le reste concerne [les informations complémentaires](#importer-des-informations-complementaires) à importer.
+
+#### Services
+
+Pour importer un service, vous devez spécifier ses dépendances au travers d'un champ de réponse de l'API.  
+Chaque dépendance sera insérée dans le pattern du service grâce à l'opérateur `is_one_of` appliqué sur le champ `name` des entités.
+
+Exemple :
+
+```yaml
+service:
+  name: codeApplication
+  description: external_description
+  dependencies: deps.composants.codeComposant
+```
+
 
 ### Importer des informations complémentaires
 
