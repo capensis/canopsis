@@ -20,6 +20,7 @@ import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
 } from './date/date-intervals';
+import { isResolvedAlarm } from './entities';
 
 /**
  * WIDGET CONVERTERS
@@ -386,7 +387,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
-    opened: widget.parameters.opened,
+    opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     steps: {
       reversed: true,
       page: 1,
