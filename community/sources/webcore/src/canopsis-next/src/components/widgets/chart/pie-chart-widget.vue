@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout.px-3.pb-3(column)
-    chart-widget-filters(
+  v-layout(column)
+    chart-widget-filters.px-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -18,8 +18,19 @@
       @update:sampling="updateSampling",
       @update:interval="updateInterval"
     )
-    v-layout
-      pre {{ aggregatedMetrics }}
+    v-layout.pa-3(column)
+      template(v-if="aggregatedMetricsPending")
+        v-fade-transition(v-if="aggregatedMetrics.length", key="progress", mode="out-in")
+          v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
+        v-layout.pa-4(v-else, justify-center)
+          v-progress-circular(color="primary", indeterminate)
+      pie-chart-metrics(
+        v-if="aggregatedMetrics.length",
+        :metrics="aggregatedMetrics",
+        :colors-by-metrics="colorsByMetrics",
+        :title="widget.parameters.chart_title",
+        :show-mode="widget.parameters.show_mode"
+      )
 </template>
 
 <script>
@@ -33,10 +44,12 @@ import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import PieChartMetrics from '@/components/widgets/chart/partials/pie-chart-metrics.vue';
 
 export default {
   inject: ['$system'],
   components: {
+    PieChartMetrics,
     ChartWidgetFilters,
   },
   mixins: [
@@ -57,6 +70,17 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+  },
+  computed: {
+    colorsByMetrics() {
+      return this.widget.parameters.metrics.reduce((acc, { color, metric }) => {
+        if (color) {
+          acc[metric] = color;
+        }
+
+        return acc;
+      }, {});
     },
   },
   methods: {
