@@ -21,7 +21,6 @@ import { isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertAlarmWidgetToQuery, convertWidgetQueryToRequest } from '@/helpers/query';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -54,7 +53,7 @@ export default {
     },
 
     widget() {
-      return this.config.widget ?? generateDefaultAlarmListWidget();
+      return this.config.widget;
     },
   },
   watch: {
