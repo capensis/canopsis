@@ -6,7 +6,7 @@
       :labels="labels",
       :options="chartOptions",
       :width="700",
-      :height="530"
+      :height="400"
     )
 </template>
 
@@ -93,8 +93,9 @@ export default {
                 size: 11,
                 family: 'Arial, sans-serif',
               },
-              boxWidth: 20,
-              boxHeight: 20,
+              boxWidth: 15,
+              boxHeight: 15,
+              padding: 8,
             },
           },
           emptyPie: {
