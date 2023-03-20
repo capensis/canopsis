@@ -15,9 +15,9 @@ import uid from './uid';
  * @returns {TextPairObject}
  */
 export const textPairToForm = (textPair = {}) => ({
-  key: textPair.key || uid(),
-  text: textPair.text || '',
-  value: textPair.value || '',
+  key: textPair.key ?? uid(),
+  text: textPair.text ?? '',
+  value: textPair.value ?? '',
 });
 
 /**

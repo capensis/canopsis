@@ -4,21 +4,24 @@
     direction="bottom",
     transition="scale-transition"
   )
-    v-tooltip(slot="activator", top)
-      v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", dark, fab, small)
-        v-icon add
-        v-icon close
-      span {{ $t('context.fab.common') }}
+    template(#activator="")
+      v-tooltip(top)
+        template(#activator="{ on }")
+          v-btn.primary(v-on="on", :input-value="isVSpeedDialOpen", dark, fab, small)
+            v-icon add
+            v-icon close
+        span {{ $t('context.fab.common') }}
     v-tooltip(bottom)
-      v-btn(
-        slot="activator",
-        color="indigo",
-        fab,
-        dark,
-        small,
-        @click.prevent.stop="showCreateServiceModal"
-      )
-        v-icon(size="24") $vuetify.icons.engineering
+      template(#activator="{ on }")
+        v-btn(
+          v-on="on",
+          color="indigo",
+          fab,
+          dark,
+          small,
+          @click.prevent.stop="showCreateServiceModal"
+        )
+          v-icon(size="24") $vuetify.icons.engineering
       span {{ $t('context.fab.addService') }}
 </template>
 

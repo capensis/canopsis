@@ -1,78 +1,40 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
-import { createInputStub } from '@unit/stubs/input';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
-import {
-  EVENT_DEFAULT_ORIGIN,
-  EVENT_ENTITY_TYPES,
-  EVENT_INITIATORS,
-} from '@/constants';
 
-import CreateAssociateTicketEvent from '@/components/modals/alarm/create-associate-ticket-event.vue';
+import CreateAssociateTicketEvent from '@/components/modals/declare-ticket/create-associate-ticket-event.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-alert': true,
   'alarm-general-table': true,
-  'v-text-field': createInputStub('v-text-field'),
+  'associate-ticket-event-form': true,
+  'c-description-field': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'c-alert': true,
   'alarm-general-table': true,
+  'associate-ticket-event-form': true,
+  'c-description-field': true,
 };
-
-const factory = (options = {}) => shallowMount(CreateAssociateTicketEvent, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateAssociateTicketEvent, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectTextField = wrapper => wrapper.find('.v-text-field');
+const selectAssociateTicketEventForm = wrapper => wrapper.find('associate-ticket-event-form-stub');
 
 describe('create-associate-ticket-event', () => {
   const timestamp = 1386435600000;
@@ -100,27 +62,13 @@ describe('create-associate-ticket-event', () => {
     },
   };
   const items = [alarm];
-  const eventData = {
-    id: alarm._id,
-    component: alarm.v.component,
-    connector: alarm.v.connector,
-    connector_name: alarm.v.connector_name,
-    resource: alarm.v.resource,
-    crecord_type: EVENT_ENTITY_TYPES.assocTicket,
-    event_type: EVENT_ENTITY_TYPES.assocTicket,
-    initiator: EVENT_INITIATORS.user,
-    origin: EVENT_DEFAULT_ORIGIN,
-    ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
-    source_type: alarm.entity.type,
-    state: alarm.v.state.val,
-    state_type: alarm.v.status.val,
-    timestamp: timestamp / 1000,
-  };
   const assocTicketEventData = {
-    ...eventData,
-
-    output: 'Associated ticket number',
+    ticket_comment: '',
     ticket: '',
+    ticket_data: {},
+    ticket_system_name: '',
+    ticket_resources: false,
+    ticket_url: '',
   };
 
   const createEvent = jest.fn();
@@ -132,25 +80,55 @@ describe('create-associate-ticket-event', () => {
   };
   const store = createMockedStoreModules([eventModule]);
 
+  const factory = generateShallowRenderer(CreateAssociateTicketEvent, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+    propsData: {
+      modal: {
+        config: {
+          items: [],
+        },
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+    mocks: {
+      $modals,
+      $popups,
+    },
+  });
+
+  const snapshotFactory = generateRenderer(CreateAssociateTicketEvent, {
+    localVue,
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {
+          items: [],
+        },
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+    mocks: {
+      $modals,
+      $popups,
+    },
+  });
+
   afterEach(() => {
     createEvent.mockClear();
   });
 
-  test('Default parameters applied to form', () => {
-    const wrapper = factory({
-      store,
-      mocks: {
-        $modals,
-      },
-    });
-
-    const textField = selectTextField(wrapper);
-
-    expect(textField.vm.value).toBe('');
-  });
-
   test('Form submitted after trigger submit button', async () => {
-    const afterSubmit = jest.fn();
+    const action = jest.fn();
     const wrapper = factory({
       store,
       propsData: {
@@ -163,38 +141,24 @@ describe('create-associate-ticket-event', () => {
                 ack: {},
               },
             }],
-            afterSubmit,
+            action,
           },
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-    const textField = selectTextField(wrapper);
-
-    const ticket = Faker.datatype.string();
-
-    textField.setValue(ticket);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...assocTicketEventData,
-          ticket,
-        }],
-      },
-      undefined,
-    );
-    expect(afterSubmit).toBeCalled();
+    expect(action).toBeCalledWith({
+      ticket_comment: '',
+      ticket: '',
+      ticket_data: {},
+      ticket_system_name: '',
+      ticket_resources: false,
+      ticket_url: '',
+    });
     expect($modals.hide).toBeCalledWith();
   });
 
@@ -208,14 +172,21 @@ describe('create-associate-ticket-event', () => {
           },
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    const associateTicketEventForm = selectAssociateTicketEventForm(wrapper);
 
-    submitButton.trigger('click');
+    const validator = wrapper.getValidator();
+
+    validator.attach({
+      name: 'name',
+      rules: 'required:true',
+      getter: () => false,
+      context: () => associateTicketEventForm.vm,
+      vm: associateTicketEventForm.vm,
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -225,18 +196,17 @@ describe('create-associate-ticket-event', () => {
 
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
-      ticket: 'Ticket error',
+      ticket_id: 'Ticket id error',
+      ticket_url: 'Ticket url error',
+      system_name: 'System name error',
     };
-    createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    const fastAckOutput = {
-      enabled: true,
-      value: Faker.datatype.string(),
-    };
+    const action = jest.fn().mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
       store,
       propsData: {
         modal: {
           config: {
+            action,
             items: [{
               ...alarm,
               v: {
@@ -244,43 +214,19 @@ describe('create-associate-ticket-event', () => {
                 ack: null,
               },
             }],
-            fastAckOutput,
           },
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-    const textField = selectTextField(wrapper);
-
-    const ticket = Faker.datatype.string();
-
-    textField.setValue(ticket);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
-    expect(formErrors).toEqual(addedErrors);
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...eventData,
-          crecord_type: EVENT_ENTITY_TYPES.ack,
-          event_type: EVENT_ENTITY_TYPES.ack,
-          output: fastAckOutput.value,
-          ticket,
-        }],
-      },
-      undefined,
-    );
+    expect(addedErrors).toEqual(formErrors);
+    expect(action).toBeCalledWith(assocTicketEventData);
     expect($modals.hide).not.toBeCalledWith();
   });
 
@@ -290,13 +236,14 @@ describe('create-associate-ticket-event', () => {
       unavailableField: 'Error',
       anotherUnavailableField: 'Second error',
     };
-    createEvent.mockRejectedValueOnce(errors);
+    const action = jest.fn().mockRejectedValueOnce(errors);
 
     const wrapper = factory({
       store,
       propsData: {
         modal: {
           config: {
+            action,
             items: [{
               ...alarm,
               v: {
@@ -307,20 +254,9 @@ describe('create-associate-ticket-event', () => {
           },
         },
       },
-      mocks: {
-        $modals,
-        $popups,
-      },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-    const textField = selectTextField(wrapper);
-
-    const ticket = Faker.datatype.string();
-
-    textField.setValue(ticket);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -328,75 +264,31 @@ describe('create-associate-ticket-event', () => {
     expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...assocTicketEventData,
-          ticket,
-        }],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith(assocTicketEventData);
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
   });
 
   test('Modal submitted with correct data after trigger form with ticket', async () => {
+    const action = jest.fn();
     const wrapper = factory({
       store,
       propsData: {
         modal: {
           config: {
+            action,
             items,
           },
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
-    const textField = selectTextField(wrapper);
-
-    const ticket = Faker.datatype.string();
-
-    textField.vm.$emit('input', ticket);
-
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(2);
-    expect(createEvent).toHaveBeenNthCalledWith(
-      1,
-      expect.any(Object),
-      {
-        data: [{
-          ...eventData,
-          crecord_type: EVENT_ENTITY_TYPES.ack,
-          event_type: EVENT_ENTITY_TYPES.ack,
-          output: '',
-          ticket,
-        }],
-      },
-      undefined,
-    );
-    expect(createEvent).toHaveBeenNthCalledWith(
-      2,
-      expect.any(Object),
-      {
-        data: [{
-          ...assocTicketEventData,
-          ticket,
-        }],
-      },
-      undefined,
-    );
+    expect(action).toHaveBeenCalledWith(assocTicketEventData);
     expect($modals.hide).toBeCalled();
   });
 
@@ -409,9 +301,6 @@ describe('create-associate-ticket-event', () => {
             items,
           },
         },
-      },
-      mocks: {
-        $modals,
       },
     });
 
@@ -434,9 +323,6 @@ describe('create-associate-ticket-event', () => {
           },
         },
       },
-      mocks: {
-        $modals,
-      },
     });
 
     expect(wrapper.element).toMatchSnapshot();
@@ -455,9 +341,6 @@ describe('create-associate-ticket-event', () => {
             },
           },
         },
-      },
-      mocks: {
-        $modals,
       },
     });
 

@@ -15,6 +15,7 @@ import (
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -55,17 +56,14 @@ func Default(
 	ctx context.Context,
 	options Options,
 	mongoClient mongo.DbClient,
+	cfg config.CanopsisConf,
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	templateConfigProvider *config.BaseTemplateConfigProvider,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	var m depmake.DependencyMaker
 
-	cfg := m.DepConfig(ctx, mongoClient)
-	config.SetDbClientRetry(mongoClient, cfg)
-	if timezoneConfigProvider == nil {
-		timezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
-	}
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
@@ -97,9 +95,10 @@ func Default(
 		logger,
 	)
 
+	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, timezoneConfigProvider))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, templateExecutor))
 	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
@@ -236,6 +235,7 @@ func Default(
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		dataStorageConfigProvider,
+		templateConfigProvider,
 	))
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {

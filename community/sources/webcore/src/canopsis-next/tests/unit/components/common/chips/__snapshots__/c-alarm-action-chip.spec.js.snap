@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with custom props and slot 1`] = `
+<span
+  class="v-chip c-alarm-action-chip v-chip--small theme--light"
+  close="true"
+  style="background-color: rgb(0, 0, 0); border-color: #000;"
+  tabindex="0"
+>
+  <span
+    class="v-chip__content"
+  >
+    <span
+      class="white--text"
+    >
+      <div
+        class="default-slot"
+      />
+    </span>
+    <!---->
+  </span>
+</span>
+`;
+
+exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with default props 1`] = `
+<span
+  class="v-chip c-alarm-action-chip v-chip--small theme--light"
+  tabindex="0"
+>
+  <span
+    class="v-chip__content"
+  >
+    <span
+      class="white--text"
+    />
+    <!---->
+  </span>
+</span>
+`;

@@ -9,15 +9,7 @@
         @input="$emit('remove', entity)"
       ) {{ contentKey ? entity[contentKey] : entity }}
     v-flex(v-if="clearable && removableEntities.length", xs1)
-      v-tooltip(right)
-        v-btn(
-          slot="activator",
-          small,
-          icon,
-          @click="clear"
-        )
-          v-icon(color="error") delete
-        span {{ $t('common.deleteAll') }}
+      c-action-btn(:tooltip="$t('common.deleteAll')", type="delete", color="red", small, @click="clear")
 </template>
 
 <script>

@@ -14,7 +14,7 @@
 <script>
 import { WIDGET_TYPES } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
@@ -38,7 +38,7 @@ export default {
   data() {
     return {
       pending: false,
-      widget: generateDefaultAlarmListWidget(),
+      widget: generatePreparedDefaultAlarmListWidget(),
     };
   },
   computed: {
@@ -51,11 +51,9 @@ export default {
     },
 
     columns() {
-      return this.widget.parameters.widgetColumns.map(({ label: text, value, ...rest }) => ({
-        ...rest,
+      return this.widget.parameters.widgetColumns.map(column => ({
+        ...column,
 
-        value,
-        text,
         sortable: false,
       }));
     },

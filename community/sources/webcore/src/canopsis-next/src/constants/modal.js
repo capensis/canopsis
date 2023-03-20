@@ -5,7 +5,6 @@ export const MODALS = {
   createAssociateTicketEvent: 'create-associate-ticket-event',
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
-  createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
   createEntity: 'create-entity',
@@ -22,10 +21,13 @@ export const MODALS = {
   confirmationPhrase: 'confirmation-phrase',
   clickOutsideConfirmation: 'click-outside-confirmation',
   createWidget: 'create-widget',
+  selectWidgetTemplateType: 'select-widget-template-type',
+  createWidgetTemplate: 'create-widget-template',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
+  textEditorWithTemplate: 'text-editor-with-template',
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
@@ -91,5 +93,12 @@ export const MODALS = {
   createFlowchartMap: 'create-flowchart-map',
   createMermaidMap: 'create-mermaid-map',
   createTreeOfDependenciesMap: 'create-tree-of-dependencies-map',
+
   createShareToken: 'create-share-token',
+
+  createDeclareTicketEvent: 'create-declare-ticket-event',
+  createDeclareTicketRule: 'create-declare-ticket-rule',
+  executeDeclareTickets: 'execute-declare-tickets',
+
+  createLinkRule: 'create-link-rule',
 };

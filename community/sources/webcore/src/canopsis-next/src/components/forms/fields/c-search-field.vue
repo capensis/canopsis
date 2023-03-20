@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.c-search-field(row, align-center)
+  v-layout.c-search-field(row, align-end)
     v-text-field.ma-0(
       :value="localValue",
       :label="$t('common.search')",
@@ -8,8 +8,8 @@
       @keydown.enter.prevent="submit",
       @input="input"
     )
-    c-action-btn(:tooltip="$t('search.submit')", icon="search", @click="submit")
-    c-action-btn(:tooltip="$t('search.clear')", icon="clear", @click="clear")
+    c-action-btn(:tooltip="$t('common.search')", icon="search", @click="submit")
+    c-action-btn(:tooltip="$t('common.clearSearch')", icon="clear", @click="clear")
     slot
 </template>
 
@@ -60,7 +60,7 @@ export default {
   padding: 0 24px;
 
   .v-btn--icon {
-    margin: 6px !important;
+    margin: 0 6px !important;
   }
 
   &>:last-child .v-btn--icon {

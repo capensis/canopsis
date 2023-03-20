@@ -1,22 +1,19 @@
 <template lang="pug">
-  v-list-group(:disabled="disabled", hide-on-disabled)
-    v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ title }}
-    v-container.pr-2
-      c-storage-field(
-        v-field="storage",
-        v-on="$listeners",
-        :required="required",
-        :disabled="disabled"
-      )
+  widget-settings-item(:title="title")
+    c-storage-field(
+      v-field="storage",
+      v-on="$listeners",
+      :required="required",
+      :disabled="disabled"
+    )
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
   inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
+  components: { WidgetSettingsItem },
   model: {
     prop: 'storage',
     event: 'input',

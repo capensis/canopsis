@@ -59,6 +59,7 @@ require (
 )
 
 require (
+	github.com/dop251/goja v0.0.0-20230203172422-5460598cfa32
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
 	github.com/goccy/go-yaml v1.9.5
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -67,7 +68,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.1
 	github.com/pelletier/go-toml/v2 v2.0.5
 	github.com/rabbitmq/amqp091-go v1.5.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -80,6 +80,7 @@ require (
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
+	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -120,6 +121,7 @@ require (
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // No effect on the real canopsis-community repo, but necessary when it's part of the canopsis-pro monorepo
