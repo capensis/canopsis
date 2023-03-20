@@ -257,6 +257,9 @@ widgets:
       widgetColumnsTemplate: "@tpl_entity_columns"
       widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_entity_columns
+      serviceDependenciesColumnsTemplate: "@tpl_entity_columns"
+      serviceDependenciesColumnsTemplateTitle: Default columns
+      serviceDependenciesColumns: *widget_entity_columns
       sort:
         order: ASC
       itemsPerPage: 10
