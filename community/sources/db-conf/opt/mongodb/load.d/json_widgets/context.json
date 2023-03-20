@@ -16,6 +16,14 @@
         "label": "Type"
       }
     ],
+    "serviceDependenciesColumns": [
+      {
+        "value": "name"
+      },
+      {
+        "value": "type"
+      }
+    ],
     "sort": {
       "order": "ASC"
     },
