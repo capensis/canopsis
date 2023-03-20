@@ -23,7 +23,7 @@
         )
         h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
       v-tab-item(lazy)
-        healthcheck-graphs(:max-queue-length="maxQueueLength")
+        healthcheck-graphs(:max-queue-length="maxQueueLength", :max-messages-length="maxMessagesLength")
       v-tab-item(lazy)
         healthcheck-parameters
       v-tab-item(lazy)
@@ -63,7 +63,8 @@ export default {
       enginesGraph: {},
       enginesParameters: {},
       hasInvalidEnginesOrder: false,
-      maxQueueLength: 0,
+      maxQueueLength: Infinity,
+      maxMessagesLength: Infinity,
       hasServerError: false,
     };
   },
@@ -101,7 +102,8 @@ export default {
           parameters: enginesParameters = {},
         },
         has_invalid_engines_order: hasInvalidEnginesOrder = false,
-        max_queue_length: maxQueueLength = 0,
+        max_queue_length: maxQueueLength,
+        max_messages_length: maxMessagesLength,
       } = data;
 
       const preparedData = {
@@ -109,7 +111,8 @@ export default {
         enginesGraph,
         enginesParameters,
         hasInvalidEnginesOrder,
-        maxQueueLength,
+        maxQueueLength: maxQueueLength || Infinity,
+        maxMessagesLength: maxMessagesLength || Infinity,
       };
 
       Object.entries(preparedData).forEach(([key, value]) => {
