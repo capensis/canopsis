@@ -32,39 +32,30 @@
           )
 
     c-fab-expand-btn(@refresh="refresh", :has-access="hasAccessToCreatePattern")
-      v-tooltip(top)
-        v-btn(
-          slot="activator",
-          color="grey darken-1",
-          fab,
-          dark,
-          small,
-          @click.stop="showCreatePbehaviorPatternModal"
-        )
-          v-icon pause
-        span {{ createPbehaviorTitle }}
-      v-tooltip(top)
-        v-btn(
-          slot="activator",
-          color="blue",
-          fab,
-          dark,
-          small,
-          @click.stop="showCreateEntityPatternModal"
-        )
-          v-icon perm_identity
-        span {{ createEntityTitle }}
-      v-tooltip(top)
-        v-btn(
-          slot="activator",
-          color="error",
-          fab,
-          dark,
-          small,
-          @click.stop="showCreateAlarmPatternModal"
-        )
-          v-icon notification_important
-        span {{ createAlarmTitle }}
+      c-action-fab-btn(
+        :tooltip="createPbehaviorTitle",
+        icon="pause",
+        color="grey darken-1",
+        top,
+        small,
+        @click.stop="showCreatePbehaviorPatternModal"
+      )
+      c-action-fab-btn(
+        :tooltip="createEntityTitle",
+        icon="perm_identity",
+        color="blue",
+        top,
+        small,
+        @click.stop="showCreateEntityPatternModal"
+      )
+      c-action-fab-btn(
+        :tooltip="createAlarmTitle",
+        icon="notification_important",
+        color="error",
+        top,
+        small,
+        @click.stop="showCreateAlarmPatternModal"
+      )
 </template>
 
 <script>

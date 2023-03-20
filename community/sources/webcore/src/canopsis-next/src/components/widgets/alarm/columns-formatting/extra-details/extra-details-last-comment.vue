@@ -4,7 +4,7 @@
       span.c-extra-details__badge.purple.lighten-2
         v-icon(color="white", small) {{ icon }}
     div.text-md-center
-      strong {{ $t('alarmList.actions.iconsTitles.comment') }}
+      strong {{ $t('alarm.actions.iconsTitles.comment') }}
       div {{ $t('common.by') }}: {{ lastComment.a }}
       div {{ $t('common.date') }}: {{ date }}
       div.c-extra-details__message

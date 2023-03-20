@@ -10,7 +10,7 @@ const localVue = createVueInstance();
 const stubs = {
   'color-indicator-wrapper': true,
   'alarm-column-cell': true,
-  'v-runtime-template': true,
+  'c-runtime-template': true,
 };
 
 const snapshotFactory = (options = {}) => mount(AlarmColumnValue, {
@@ -46,8 +46,8 @@ describe('alarm-column-value', () => {
         widget: {},
         column: {
           colorIndicator: COLOR_INDICATOR_TYPES.impactState,
+          colorIndicatorEnabled: true,
         },
-        columnsFilters: [{}, {}],
         selectedTag: 'tag',
       },
     });
@@ -69,6 +69,7 @@ describe('alarm-column-value', () => {
           colorIndicator: COLOR_INDICATOR_TYPES.impactState,
           value: 'entity.name',
           template: '{{ value }} === {{ entity.name }} in the {{ alarm.name }}',
+          colorIndicatorEnabled: true,
         },
       },
     });

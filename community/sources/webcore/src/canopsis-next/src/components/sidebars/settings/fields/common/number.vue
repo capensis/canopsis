@@ -17,7 +17,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: undefined,
+      required: false,
     },
     title: {
       type: String,

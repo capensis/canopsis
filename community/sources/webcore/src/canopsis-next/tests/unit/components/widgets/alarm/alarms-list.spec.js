@@ -18,7 +18,7 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
@@ -130,7 +130,7 @@ describe('alarms-list', () => {
     status: EXPORT_STATUSES.failed,
   };
   const widget = {
-    ...generateDefaultAlarmListWidgetForm(),
+    ...generatePreparedDefaultAlarmListWidget(),
 
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
@@ -320,6 +320,7 @@ describe('alarms-list', () => {
           multiSortBy: [],
           page: 1,
           with_instructions: true,
+          with_declare_tickets: true,
           with_links: true,
           opened: true,
         },
@@ -352,6 +353,7 @@ describe('alarms-list', () => {
           multiSortBy: [],
           page: 1,
           with_instructions: true,
+          with_declare_tickets: true,
           with_links: true,
           opened: true,
         },
@@ -931,8 +933,8 @@ describe('alarms-list', () => {
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: nowUnix,
-          fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
-            label,
+          fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
+            label: text,
             name: value,
           })),
           separator: widget.parameters.exportCsvSeparator,
@@ -1021,8 +1023,8 @@ describe('alarms-list', () => {
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: nowUnix,
-          fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
-            label,
+          fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
+            label: text,
             name: value,
           })),
           separator: widget.parameters.exportCsvSeparator,
@@ -1086,8 +1088,8 @@ describe('alarms-list', () => {
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: nowUnix,
-          fields: widget.parameters.widgetColumns.map(({ label, value }) => ({
-            label,
+          fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
+            label: text,
             name: value,
           })),
           separator: widget.parameters.exportCsvSeparator,

@@ -30,6 +30,14 @@ type Sender interface {
 	SendInstructionAssignForInstruction(instructionID string, timestamp time.Time, value int64)
 	SendInstructionAssignForInstructions(instructionIDs []string, timestamp time.Time, value int64)
 	SendInstructionExecutionForInstruction(instructionID string, timestamp time.Time)
+
+	SendNotAckedInHourInc(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInFourHoursInc(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInDayInc(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInHourDec(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInFourHoursDec(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInDayDec(alarm types.Alarm, timestamp time.Time)
+	SendRemoveNotAckedMetric(alarm types.Alarm, timestamp time.Time)
 }
 
 type nullSender struct{}
@@ -106,5 +114,33 @@ func (s *nullSender) SendInstructionAssignForInstructions(_ []string, _ time.Tim
 }
 
 func (s *nullSender) SendInstructionExecutionForInstruction(_ string, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInHourInc(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInFourHoursInc(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInDayInc(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInHourDec(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInFourHoursDec(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInDayDec(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendRemoveNotAckedMetric(_ types.Alarm, _ time.Time) {
 
 }

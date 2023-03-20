@@ -83,45 +83,6 @@ Timezone = "Europe/Paris"
 
 ## Administration de la planification
 
-### Configuration des types de comportements périodiques
+Vous trouverez la documentation d'administration de la planification dans la documentation du menu d'administration.
 
-Rendez-vous dans le menu Administration puis dans Administration de la planification.
-
-![Menu administration de la planification](./img/menu-administration-planification.png)
-
-Les types par défaut s'affichent à l'écran : `actif`, `inactif`, `maintenance` et `pause`. Ils ne peuvent être ni supprimés, ni modifiés. La priorité des types est gérée dans l'ordre croissant : `0` est la priorité la plus faible et `3` est la plus forte et sera traitée avant les autres. Un seul type de comportement périodique peut être actif sur une entité à un moment donné.
-
-![Types de comportements périodiques](./img/admin-planification-types-defaut.png)
-
-### Création d'un type personnalisé
-
-Cliquez sur le bouton `+` en bas à droite de la fenêtre pour ouvrir la fenêtre de création.
-
-![Créer un type personnalisé](./img/admin-planification-creer-type.png)
-
-Renseignez les différents champs, choisissez un type parmi la liste et affectez-lui une priorité et une icône.
-
-!!! Attention
-    Deux types ne peuvent avoir la même priorité.
-
-![Formulaire type personnalisé](./img/admin-planification-type-personnalise.png)
-
-Cliquez sur le bouton Soumettre et votre type personnalisé apparaît dans la liste.
-
-![Liste des types personnalisés](./img/admin-planification-liste-type-perso.png)
-
-### Configuration des raisons
-
-Cliquez sur l'onglet Raison. Par défaut, la liste des raisons est vide. Comme pour les types, vous pouvez cliquer sur le bouton `+` pour créer une nouvelle raison. Chaque raison doit avoir un nom et une description.
-
-Voici, par exemple, une liste de raisons personnalisées :
-
-![Liste de raisons personnalisées](./img/admin-planification-liste-raisons.png)
-
-## Configuration des dates d'exception
-
-Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela, cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
-
-Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. À chaque date vous pourrez associer un des types existants.
-
-![Créer une liste d'exceptions](./img/admin-planification-liste-exceptions.png)
+[Guide utilisation - Menu administration - Planification](../../guide-utilisation/menu-administration/planification.md)
