@@ -30,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -53,6 +54,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/sharetoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/userpreferences"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
@@ -61,13 +63,16 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -86,10 +91,11 @@ func RegisterRoutes(
 	router gin.IRouter,
 	security Security,
 	enforcer libsecurity.Enforcer,
-	legacyUrl string,
+	linkGenerator link.Generator,
 	dbClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- libpbehavior.ComputeTask,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
@@ -109,7 +115,6 @@ func RegisterRoutes(
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
 ) {
-	linksFetcher := common.NewLinksFetcher(legacyUrl)
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router, dbClient)
@@ -243,7 +248,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linksFetcher, logger)
+		alarmStore := alarm.NewStore(dbClient, linkGenerator, logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider, logger)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -262,6 +267,11 @@ func RegisterRoutes(
 			"/alarm-details",
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.GetDetails,
+		)
+		protected.GET(
+			"/alarm-links/:id",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmAPI.GetLinks,
 		)
 		protected.GET(
 			"/entityservice-alarms/:id",
@@ -511,7 +521,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linksFetcher, logger), entityPublChan,
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, logger), entityPublChan,
 			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
@@ -637,7 +647,7 @@ func RegisterRoutes(
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
 				dbClient,
-				linksFetcher,
+				linkGenerator,
 				alarmStore,
 				timezoneConfigProvider,
 				logger,
@@ -696,7 +706,7 @@ func RegisterRoutes(
 		}
 
 		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(enforcer, appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, securityConfig.AuthProviders,
 			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
@@ -788,7 +798,12 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetAPI := widget.NewApi(widget.NewStore(dbClient), enforcer, common.NewPatternFieldsTransformer(dbClient), actionLogger)
+		widgetAPI := widget.NewApi(
+			widget.NewStore(dbClient),
+			enforcer,
+			widget.NewRequestTransformer(common.NewPatternFieldsTransformer(dbClient), dbClient),
+			actionLogger,
+		)
 		widgetRouter := protected.Group("/widgets")
 		{
 			widgetRouter.POST(
@@ -852,6 +867,38 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
 			widgetFilterAPI.UpdatePositions,
 		)
+
+		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(dbClient), actionLogger)
+		widgetTemplateRouter := protected.Group("/widget-templates")
+		{
+			widgetTemplateRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionRead, enforcer),
+				widgetTemplateAPI.List,
+			)
+			widgetTemplateRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				widgetTemplateAPI.Create,
+			)
+			widgetTemplateRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionRead, enforcer),
+				widgetTemplateAPI.Get,
+			)
+			widgetTemplateRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				widgetTemplateAPI.Update,
+			)
+			widgetTemplateRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjWidgetTemplate, model.PermissionDelete, enforcer),
+				widgetTemplateAPI.Delete,
+			)
+		}
 
 		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(dbClient), actionLogger)
 		viewGroupRouter := protected.Group("/view-groups")
@@ -1210,6 +1257,56 @@ func RegisterRoutes(
 			middleware.OnlyAuth(),
 			patternAPI.Count,
 		)
+		protected.POST(
+			"/patterns-alarms",
+			middleware.OnlyAuth(),
+			patternAPI.GetAlarms,
+		)
+
+		linkRuleAPI := linkrule.NewApi(
+			linkrule.NewStore(dbClient),
+			common.NewPatternFieldsTransformer(dbClient),
+			actionLogger,
+			logger,
+		)
+		linkRuleRouter := protected.Group("/link-rules")
+		{
+			linkRuleRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				linkRuleAPI.Create,
+			)
+			linkRuleRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+				linkRuleAPI.List,
+			)
+			linkRuleRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+				linkRuleAPI.Get,
+			)
+			linkRuleRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				linkRuleAPI.Update,
+			)
+			linkRuleRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionDelete, enforcer),
+				linkRuleAPI.Delete,
+			)
+		}
+		linkCategoryRouter := protected.Group("/link-categories")
+		{
+			linkCategoryRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+				linkRuleAPI.GetCategories,
+			)
+		}
 
 		bulkRouter := protected.Group("/bulk")
 		{
@@ -1385,6 +1482,16 @@ func RegisterRoutes(
 					entityAPI.BulkDisable,
 				)
 			}
+
+			linkRuleRouter := bulkRouter.Group("/link-rules")
+			{
+				linkRuleRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					linkRuleAPI.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -1547,6 +1654,25 @@ func RegisterRoutes(
 				techMetricsAPI.DownloadExport,
 			)
 		}
+
+		templateValidatorApi := template.NewApi(validator.NewValidator(timezoneConfigProvider), templateConfigProvider)
+		templateValidatorRouter := protected.Group("/template-validator")
+		{
+			templateValidatorRouter.POST(
+				"/declare-ticket-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateDeclareTicketRules,
+			)
+			templateValidatorRouter.POST(
+				"/scenarios",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateScenarios,
+			)
+		}
+		protected.GET(
+			"/template-vars",
+			templateValidatorApi.GetEnvVars,
+		)
 	}
 }
 

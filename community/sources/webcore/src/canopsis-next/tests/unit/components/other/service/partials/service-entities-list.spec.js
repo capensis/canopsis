@@ -2,8 +2,14 @@ import Faker from 'faker';
 
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { createAuthModule, createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
+import {
+  createAlarmModule,
+  createAuthModule, createDeclareTicketModule,
+  createMockedStoreModules,
+  createPbehaviorTypesModule,
+} from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+import flushPromises from 'flush-promises';
 import {
   ENTITIES_STATES,
   MODALS,
@@ -58,9 +64,15 @@ describe('service-entities-list', () => {
     },
   ];
   const { authModule } = createAuthModule();
+  const { alarmModule } = createAlarmModule();
+  const {
+    declareTicketRuleModule,
+    bulkCreateDeclareTicketExecution,
+    fetchAssignedDeclareTicketsWithoutStore,
+  } = createDeclareTicketModule();
   const { pbehaviorTypesModule, fetchPbehaviorTypesListWithoutStore } = createPbehaviorTypesModule();
 
-  const store = createMockedStoreModules([authModule, pbehaviorTypesModule]);
+  const store = createMockedStoreModules([alarmModule, authModule, declareTicketRuleModule, pbehaviorTypesModule]);
 
   const applyAction = jest.fn();
   const refresh = jest.fn();
@@ -213,29 +225,29 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAssocTicket);
 
+    await flushPromises();
+
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.textFieldEditor,
+        name: MODALS.createAssociateTicketEvent,
         config: {
-          title: 'Associate ticket number',
-          field: {
-            name: 'ticket',
-            label: 'Number of the ticket',
-            validationRules: 'required',
-          },
+          items: [{}],
           action: expect.any(Function),
         },
       },
     );
 
     const [modalArguments] = $modals.show.mock.calls[0];
-    const ticket = Faker.datatype.string();
+    const event = {
+      ticket: Faker.datatype.string(),
+      ticket_url: Faker.datatype.string(),
+    };
 
-    modalArguments.config.action(ticket);
+    modalArguments.config.action(event);
 
     expect(wrapper).toEmit('apply:action', {
       actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
-      payload: { ticket },
+      payload: event,
       entities: [entity],
     });
   });
@@ -455,10 +467,34 @@ describe('service-entities-list', () => {
   });
 
   test('Declare ticket action applied after trigger mass declare ticket action', async () => {
+    bulkCreateDeclareTicketExecution.mockResolvedValueOnce([
+      {
+        id: 'execution-id',
+        item: { _id: 'ticket-id', alarms: [] },
+        status: 200,
+      },
+    ]);
+    const rule = {
+      _id: Faker.datatype.string(),
+      name: Faker.datatype.string(),
+    };
+
+    const byRules = {
+      [rule._id]: {
+        name: rule.name,
+        alarms: [],
+      },
+    };
+    const byAlarms = {};
+    fetchAssignedDeclareTicketsWithoutStore.mockResolvedValueOnce({
+      by_rules: byRules,
+      by_alarms: byAlarms,
+    });
     const entity = {
       _id: Faker.datatype.string(),
       pbehaviors: [],
     };
+
     const wrapper = factory({
       propsData: {
         serviceEntities: [
@@ -471,10 +507,40 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.declareTicket);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.declareTicket,
-      entities: [entity],
-    });
+    await flushPromises();
+
+    expect(fetchAssignedDeclareTicketsWithoutStore).toBeCalled();
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.createDeclareTicketEvent,
+        config: {
+          alarmsByTickets: byRules,
+          ticketsByAlarms: {},
+          items: [{}],
+          action: expect.any(Function),
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const events = [{ _id: rule._id }];
+
+    $modals.show.mockReset();
+    await config.action(events);
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.executeDeclareTickets,
+        config: {
+          executions: events,
+          alarms: [{}],
+          tickets: [rule],
+          onExecute: expect.any(Function),
+        },
+      },
+    );
   });
 
   test('Unavailable action not applied', async () => {

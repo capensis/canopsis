@@ -30,7 +30,7 @@ export default {
         },
         {
           value: REMEDIATION_STATISTICS_CHART_DATA_TYPE.remediation,
-          text: this.$t('remediationStatistic.remediation'),
+          text: this.$t('remediation.statistic.remediation'),
         },
       ];
     },

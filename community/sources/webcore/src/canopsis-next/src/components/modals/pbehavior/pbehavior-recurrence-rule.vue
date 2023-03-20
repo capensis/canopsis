@@ -1,8 +1,8 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ config.pbehavior.name }}
-    template(slot="text")
+    template(#text="")
       pbehavior-recurrence-rule-calendar(:pbehavior="config.pbehavior")
 </template>
 

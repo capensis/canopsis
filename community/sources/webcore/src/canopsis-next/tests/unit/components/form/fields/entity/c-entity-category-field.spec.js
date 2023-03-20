@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
@@ -136,46 +136,41 @@ const entityCategories = [
   },
 ];
 
-const factory = (options = {}) => shallowMount(CEntityCategoryField, {
-  localVue,
-  stubs,
-  store: createMockedStoreModules([{ name: 'entityCategory' }]),
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
-  localVue,
-  stubs: snapshotStubs,
-  store: createMockedStoreModules([{
-    name: 'entityCategory',
-    getters: {
-      pending: false,
-      items: entityCategories,
-    },
-    actions: {
-      fetchList: jest.fn(),
-      create: jest.fn(),
-    },
-  }]),
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 describe('c-entity-category-field', () => {
   const name = 'category';
+
+  const factory = generateShallowRenderer(CEntityCategoryField, {
+    localVue,
+    stubs,
+    store: createMockedStoreModules([{ name: 'entityCategory' }]),
+
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CEntityCategoryField, {
+    localVue,
+    stubs: snapshotStubs,
+    store: createMockedStoreModules([{
+      name: 'entityCategory',
+      getters: {
+        pending: false,
+        items: entityCategories,
+      },
+      actions: {
+        fetchList: jest.fn(),
+        create: jest.fn(),
+      },
+    }]),
+
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   it('Check fetch list call', () => {
     const fetchListMock = jest.fn();

@@ -16,9 +16,7 @@ import {
 
 import {
   ALARMS_OPENED_VALUES,
-
   EXPORT_CSV_DATETIME_FORMATS,
-
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
   TIME_UNITS,
@@ -30,8 +28,13 @@ import {
 
 import ClickOutside from '@/services/click-outside';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
-import { formWidgetColumnsToColumns } from '@/helpers/forms/widgets/alarm';
+import {
+  widgetToForm,
+  formToWidget,
+  getEmptyWidgetByType,
+  widgetParametersToForm, formToWidgetParameters,
+} from '@/helpers/forms/widgets/common';
+import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 
@@ -51,11 +54,11 @@ const stubs = {
   'field-remediation-instructions-filters': createInputStub('field-remediation-instructions-filters'),
   'field-live-reporting': createInputStub('field-live-reporting'),
   'field-info-popup': createInputStub('field-info-popup'),
-  'field-text-editor': createInputStub('field-text-editor'),
+  'field-text-editor-with-template': createInputStub('field-text-editor-with-template'),
   'field-grid-range-size': createInputStub('field-grid-range-size'),
   'field-switcher': createInputStub('field-switcher'),
   'field-fast-ack-output': createInputStub('field-fast-ack-output'),
-  'field-enabled-limit': createInputStub('field-enabled-limit'),
+  'field-number': createInputStub('field-number'),
   'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
   'v-btn': createButtonStub('v-btn'),
@@ -75,11 +78,11 @@ const snapshotStubs = {
   'field-remediation-instructions-filters': true,
   'field-live-reporting': true,
   'field-info-popup': true,
-  'field-text-editor': true,
+  'field-text-editor-with-template': true,
   'field-grid-range-size': true,
   'field-switcher': true,
   'field-fast-ack-output': true,
-  'field-enabled-limit': true,
+  'field-number': true,
   'field-density': true,
   'export-csv-form': true,
 };
@@ -120,7 +123,7 @@ const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRemediationInstructionsFilters = wrapper => wrapper.find('input.field-remediation-instructions-filters');
 const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-reporting');
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
-const selectFieldTextEditor = wrapper => wrapper.find('input.field-text-editor');
+const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('input.field-text-editor-with-template');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
 const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-switcher').at(0);
 const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
@@ -128,7 +131,7 @@ const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switc
 const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
 const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-output');
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
-const selectFieldLinksCategoriesAsList = wrapper => wrapper.find('input.field-enabled-limit');
+const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
 
@@ -149,6 +152,9 @@ describe('alarm', () => {
     widgetModule,
     authModule,
     userPreferenceModule,
+    widgetTemplateModule,
+    serviceModule,
+    infosModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -172,6 +178,9 @@ describe('alarm', () => {
     userPreferenceModule,
     authModule,
     userPreferenceModule,
+    widgetTemplateModule,
+    serviceModule,
+    infosModule,
   ]);
 
   afterEach(() => {
@@ -351,7 +360,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetColumns(wrapper);
 
     const columns = [{
-      label: Faker.datatype.string(),
+      ...widgetColumnToForm(),
+
       value: Faker.datatype.string(),
     }];
 
@@ -363,7 +373,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -382,6 +392,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: `alarm.${Faker.datatype.string()}`,
       isHtml: false,
@@ -396,7 +408,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formWidgetColumnsToColumns(columns)),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -415,6 +427,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetGroupColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: Faker.datatype.string(),
     }];
@@ -427,7 +441,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -446,6 +460,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldServiceDependenciesColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: Faker.datatype.string(),
     }];
@@ -458,7 +474,8 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', columns),
+        data:
+          getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', formToWidgetColumns(columns)),
       },
     });
   });
@@ -523,6 +540,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -568,6 +588,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -602,10 +625,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty(widget, 'parameters', {
-          ...widget.parameters,
-          mainFilter: filter,
-        }),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'mainFilter', filter),
       },
     });
   });
@@ -616,6 +636,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -730,7 +753,7 @@ describe('alarm', () => {
     });
   });
 
-  it('More info template popup changed after trigger text field', async () => {
+  it('More info template changed after trigger text field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -741,11 +764,12 @@ describe('alarm', () => {
       },
     });
 
-    const fieldTextEditor = selectFieldTextEditor(wrapper);
+    const fieldTextEditor = selectFieldTextEditorWithTemplate(wrapper);
 
     const moreInfoTemplate = 'More info template';
+    const moreInfoTemplateTemplate = 'template-id';
 
-    fieldTextEditor.vm.$emit('input', moreInfoTemplate);
+    fieldTextEditor.vm.$emit('input', moreInfoTemplate, moreInfoTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -753,7 +777,15 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'moreInfoTemplate', moreInfoTemplate),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            moreInfoTemplate,
+            moreInfoTemplateTemplate,
+          },
+        ),
       },
     });
   });
@@ -957,7 +989,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Link categories as list required changed after trigger links categories as list field', async () => {
+  it('Inline links count changed after trigger', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -968,14 +1000,10 @@ describe('alarm', () => {
       },
     });
 
-    const fieldLinksCategoriesAsList = selectFieldLinksCategoriesAsList(wrapper);
+    const fieldInlineLinksCount = selectFieldInlineLinksCount(wrapper);
+    const inlineLinksCount = 4;
 
-    const linksCategoriesAsList = {
-      enabled: Faker.datatype.boolean(),
-      limit: Faker.datatype.number(),
-    };
-
-    fieldLinksCategoriesAsList.vm.$emit('input', linksCategoriesAsList);
+    fieldInlineLinksCount.vm.$emit('input', inlineLinksCount);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -983,7 +1011,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'linksCategoriesAsList', linksCategoriesAsList),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'inlineLinksCount', inlineLinksCount),
       },
     });
   });
@@ -1002,7 +1030,7 @@ describe('alarm', () => {
     const fieldExportCsvForm = selectFieldExportCsvForm(wrapper);
 
     const exportProperties = {
-      ...widget.parameters,
+      ...widgetParametersToForm(widget),
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: [],
@@ -1016,7 +1044,15 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty(widget, 'parameters', exportProperties),
+        data:
+          getWidgetRequestWithNewProperty(
+            widget,
+            'parameters',
+            formToWidgetParameters({
+              type: WIDGET_TYPES.alarmList,
+              parameters: exportProperties,
+            }),
+          ),
       },
     });
   });
@@ -1113,6 +1149,9 @@ describe('alarm', () => {
         activeViewModule,
         widgetModule,
         userPreferenceModule,
+        widgetTemplateModule,
+        infosModule,
+        serviceModule,
         {
           ...authModule,
           getters: {

@@ -1,25 +1,26 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{$t('settings.colorsSelector.title')}}
-    v-container
-      v-layout(wrap)
-        v-flex(
-          v-for="level in $constants.STATS_CRITICITY",
-          :key="level",
-          xs12
+  widget-settings-item(:title="$t('settings.colorsSelector.title')")
+    v-layout(wrap)
+      v-flex(
+        v-for="level in $constants.STATS_CRITICITY",
+        :key="level",
+        xs12
+      )
+        c-color-picker-field(
+          v-field="levelsColors[level]",
+          :label="getButtonText(level)",
+          :type="colorType",
+          splitted
         )
-          c-color-picker-field(
-            v-field="levelsColors[level]",
-            :label="getButtonText(level)",
-            :type="colorType",
-            splitted
-          )
 </template>
 
 <script>
 import { ALARM_LEVELS_COLORS, STATS_CRITICITY } from '@/constants';
 
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   model: {
     prop: 'levelsColors',
     event: 'input',

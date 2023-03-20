@@ -27,6 +27,26 @@ template:
     updated: <Current().created>,
     author: root
   }
+  - &widget_alarm_columns [
+    { value: v.connector },
+    { value: v.connector_name },
+    { value: v.component },
+    { value: v.resource },
+    { value: v.output },
+    { value: extra_details },
+    { value: v.state.val },
+    { value: v.status.val }
+  ]
+  - &widget_entity_columns [
+    { value: name },
+    { value: type }
+  ]
+  - &widget_tpl {
+    _id: <UUID()>,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    author: root
+  }
   - &filter {
     _id: <UUID()>,
     is_private: false,
@@ -115,6 +135,40 @@ viewtabs:
     view: "@view_context_explorer"
     position: 0
 
+widget_templates:
+  tpl_alarm_columns:
+    <<: *widget_tpl
+    title: Default columns
+    type: alarm_columns
+    columns: *widget_alarm_columns
+  tpl_entity_columns:
+    <<: *widget_tpl
+    title: Default columns
+    type: entity_columns
+    columns: *widget_entity_columns
+  tpl_weather_item:
+    <<: *widget_tpl
+    title: Default item
+    type: weather_item
+    content: |
+      <p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
+      <hr id="null">
+      <p>{{ entity.output }}</p>
+      <p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
+  tpl_weather_modal:
+    <<: *widget_tpl
+    title: Default modal
+    type: weather_modal
+    content: "{{ entities name=\"entity._id\" }}"
+  tpl_weather_entity:
+    <<: *widget_tpl
+    title: Default entity
+    type: weather_entity
+    content: |
+      <ul>
+        <li><strong>Libellé</strong> : {{entity.name}}</li>
+      </ul>
+
 widgets:
   widget_open_alarms:
     <<: *widget
@@ -122,23 +176,9 @@ widgets:
     type: AlarmsList
     tab: "@tab_open_alarms"
     parameters:
-      widgetColumns:
-        - value: v.connector
-          label: Connector
-        - value: v.connector_name
-          label: Connector name
-        - value: v.component
-          label: Component
-        - value: v.resource
-          label: Resource
-        - value: v.output
-          label: Output
-        - value: extra_details
-          label: Extra details
-        - value: v.state.val
-          label: State
-        - value: v.status.val
-          label: Status
+      widgetColumnsTemplate: "@tpl_alarm_columns"
+      widgetColumnsTemplateTitle: Default columns
+      widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -175,23 +215,9 @@ widgets:
     type: AlarmsList
     tab: "@tab_resolved_alarms"
     parameters:
-      widgetColumns:
-        - value: v.connector
-          label: Connector
-        - value: v.connector_name
-          label: Connector name
-        - value: v.component
-          label: Component
-        - value: v.resource
-          label: Resource
-        - value: v.output
-          label: Output
-        - value: extra_details
-          label: Extra details
-        - value: v.state.val
-          label: State
-        - value: v.status.val
-          label: Status
+      widgetColumnsTemplate: "@tpl_alarm_columns"
+      widgetColumnsTemplateTitle: Default columns
+      widgetColumns: *widget_alarm_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -228,11 +254,9 @@ widgets:
     type: Context
     tab: "@tab_context_explorer"
     parameters:
-      widgetColumns:
-        - value: name
-          label: Name
-        - value: type
-          label: Type
+      widgetColumnsTemplate: "@tpl_entity_columns"
+      widgetColumnsTemplateTitle: Default columns
+      widgetColumns: *widget_entity_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -393,7 +417,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_pbehavior
     crecord_name: <Current()._id>
-    description: "Exploitation: Pbehaviors"
+    description: "Exploitation: Pbehavior"
   permission_models_exploitation_snmpRule:
     <<: *permission_crud
     _id: models_exploitation_snmpRule
@@ -403,7 +427,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_dynamicInfo
     crecord_name: <Current()._id>
-    description: "Exploitation: Dynamic informations"
+    description: "Exploitation: Dynamic information rule"
   permission_models_exploitation_metaAlarmRule:
     <<: *permission_crud
     _id: models_exploitation_metaAlarmRule
@@ -413,22 +437,32 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_scenario
     crecord_name: <Current()._id>
-    description: "Exploitation: Scenarios"
+    description: "Exploitation: Scenario"
   permission_models_exploitation_idleRules:
     <<: *permission_crud
     _id: models_exploitation_idleRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Idle rules"
+    description: "Exploitation: Idle rule"
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Flapping rules"
+    description: "Exploitation: Flapping rule"
   permission_models_exploitation_resolveRules:
     <<: *permission_crud
     _id: models_exploitation_resolveRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Resolve rules"
+    description: "Exploitation: Resolve rule"
+  permission_models_exploitation_declareTicketRule:
+    <<: *permission_crud
+    _id: models_exploitation_declareTicketRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Declare ticket rule"
+  permission_models_exploitation_linkRule:
+    <<: *permission_crud
+    _id: models_exploitation_linkRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Link rule"
   permission_models_healthcheck:
     <<: *permission
     _id: models_healthcheck
@@ -479,6 +513,11 @@ default_rights:
     _id: models_techmetrics
     crecord_name: <Current()._id>
     description: "Tech metrics"
+  permission_models_widgetTemplate:
+    <<: *permission_crud
+    _id: models_widgetTemplate
+    crecord_name: <Current()._id>
+    description: "Widget templates"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -886,6 +925,11 @@ default_rights:
     _id: api_view
     crecord_name: <Current()._id>
     description: Views
+  api_widgettemplate:
+    <<: *permission_crud
+    _id: api_widgettemplate
+    crecord_name: <Current()._id>
+    description: Widget templates
   permission_api_pbehavior:
     <<: *permission_crud
     _id: api_pbehavior
@@ -976,11 +1020,6 @@ default_rights:
     _id: api_associative_table
     crecord_name: <Current()._id>
     description: Associative table
-  permission_api_app_info_read:
-    <<: *permission
-    _id: api_app_info_read
-    crecord_name: <Current()._id>
-    description: Read app info
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
@@ -1036,11 +1075,21 @@ default_rights:
     _id: api_rating_settings
     crecord_name: <Current()._id>
     description: Rating settings
+  permission_api_metrics_settings:
+    <<: *permission_crud
+    _id: api_metrics_settings
+    crecord_name: <Current()._id>
+    description: Metrics settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
     crecord_name: <Current()._id>
     description: KPI filters
+  permission_api_ocws_noc:
+    <<: *permission_crud
+    _id: api_ocws_noc
+    crecord_name: <Current()._id>
+    description: OCWS-NOC
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
@@ -1076,6 +1125,21 @@ default_rights:
     _id: api_export_configurations
     crecord_name: <Current()._id>
     description: Export configurations
+  permission_api_declare_ticket_rule:
+    <<: *permission_crud
+    _id: api_declare_ticket_rule
+    crecord_name: <Current()._id>
+    description: Declare ticket rule
+  permission_api_declare_ticket_execution:
+    <<: *permission
+    _id: api_declare_ticket_execution
+    crecord_name: <Current()._id>
+    description: Run declare ticket rules
+  permission_api_link_rule:
+    <<: *permission_crud
+    _id: api_link_rule
+    crecord_name: <Current()._id>
+    description: Link rule
 
   # Views permissions
   permission_view_open_alarms:
@@ -1156,6 +1220,10 @@ default_rights:
         checksum: 15
       "@permission_models_exploitation_resolveRules":
         checksum: 15
+      "@permission_models_exploitation_declareTicketRule":
+        checksum: 15
+      "@permission_models_exploitation_linkRule":
+        checksum: 15
       "@permission_models_healthcheck":
         checksum: 1
       "@permission_models_healthcheckStatus":
@@ -1176,6 +1244,8 @@ default_rights:
         checksum: 15
       "@permission_models_techmetrics":
         checksum: 1
+      "@permission_models_widgetTemplate":
+        checksum: 15
       "@permission_listalarm_ack":
         checksum: 1
       "@permission_listalarm_fastAck":
@@ -1350,6 +1420,9 @@ default_rights:
       "@permission_api_view":
         checksum: 15
         crecord_type: right
+      "@api_widgettemplate":
+        checksum: 15
+        crecord_type: right
       "@permission_api_pbehavior":
         checksum: 15
         crecord_type: right
@@ -1404,9 +1477,6 @@ default_rights:
       "@permission_api_associative_table":
         checksum: 15
         crecord_type: right
-      "@permission_api_app_info_read":
-        checksum: 1
-        crecord_type: right
       "@permission_api_user_interface_update":
         checksum: 1
         crecord_type: right
@@ -1440,7 +1510,13 @@ default_rights:
       "@permission_api_rating_settings":
         checksum: 15
         crecord_type: right
+      "@permission_api_metrics_settings":
+        checksum: 15
+        crecord_type: right
       "@permission_api_kpi_filter":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_ocws_noc":
         checksum: 15
         crecord_type: right
       "@permission_api_snmprule":
@@ -1463,6 +1539,15 @@ default_rights:
         crecord_type: right
       "@permission_api_export_configurations":
         checksum: 1
+        crecord_type: right
+      "@permission_api_declare_ticket_rule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_declare_ticket_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_link_rule":
+        checksum: 15
         crecord_type: right
       # Views permissions
       "@permission_view_open_alarms":

@@ -1,16 +1,329 @@
-package template_test
+package template
 
 import (
 	"bytes"
+	"errors"
 	"io"
+	"strconv"
 	"testing"
 	"text/template"
 	"time"
 
-	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	. "github.com/smartystreets/goconvey/convey"
+	"github.com/kylelemons/godebug/pretty"
 )
+
+func TestFunctions(t *testing.T) {
+	dataSets := map[string][]struct {
+		Tpl         string
+		TplData     any
+		Tz          string
+		ExpectedRes string
+		ExpectedErr error
+	}{
+		"split": {
+			{
+				Tpl: `{{ split .Sep .Index .Input }}`,
+				TplData: map[string]any{
+					"Sep":   ",",
+					"Index": 0,
+					"Input": "NgocHa,MinhNghia,Minh",
+				},
+				ExpectedRes: "NgocHa",
+			},
+			{
+				Tpl: `{{ split .Sep .Index .Input }}`,
+				TplData: map[string]any{
+					"Sep":   ",",
+					"Index": -1,
+					"Input": "NgocHa,MinhNghia,Minh",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{ split .Sep .Index .Input }}`,
+				TplData: map[string]any{
+					"Sep":   " ",
+					"Index": 1,
+					"Input": "This is space",
+				},
+				ExpectedRes: "is",
+			},
+		},
+		"trim": {
+			{
+				Tpl:         `{{ trim . }}`,
+				TplData:     "  ",
+				ExpectedRes: "",
+			},
+			{
+				Tpl:         `{{ trim . }}`,
+				TplData:     " kratos ",
+				ExpectedRes: "kratos",
+			},
+			{
+				Tpl:         `{{ trim . }}`,
+				TplData:     "\tkratos\n ",
+				ExpectedRes: "kratos",
+			},
+		},
+		"uppercase": {
+			{
+				Tpl:         `{{ uppercase . }}`,
+				TplData:     "  ",
+				ExpectedRes: "  ",
+			},
+			{
+				Tpl:         `{{ uppercase . }}`,
+				TplData:     "kratos",
+				ExpectedRes: "KRATOS",
+			},
+			{
+				Tpl:         `{{ uppercase . }}`,
+				TplData:     "KraTos",
+				ExpectedRes: "KRATOS",
+			},
+		},
+		"lowercase": {
+			{
+				Tpl:         `{{ lowercase . }}`,
+				TplData:     "  ",
+				ExpectedRes: "  ",
+			},
+			{
+				Tpl:         `{{ lowercase . }}`,
+				TplData:     "kratos",
+				ExpectedRes: "kratos",
+			},
+			{
+				Tpl:         `{{ lowercase . }}`,
+				TplData:     "KraTos",
+				ExpectedRes: "kratos",
+			},
+			{
+				Tpl:         `{{ lowercase . }}`,
+				TplData:     "KRATOS",
+				ExpectedRes: "kratos",
+			},
+		},
+		"localtime": {
+			{
+				Tpl: `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" "Australia/Queensland" }}`,
+				TplData: map[string]any{
+					"TestDate": types.CpsTime{
+						Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
+					},
+				},
+				ExpectedRes: "Thu, 28 Oct 2021 17:05:00 AEST",
+			},
+			{
+				Tpl: `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" }}`,
+				TplData: map[string]any{
+					"TestDate": types.CpsTime{
+						Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
+					},
+				},
+				Tz:          "Australia/Queensland",
+				ExpectedRes: "Thu, 28 Oct 2021 17:05:00 AEST",
+			},
+		},
+	}
+
+	for name, v := range dataSets {
+		for i, data := range v {
+			t.Run(name+"/"+strconv.Itoa(i), func(t *testing.T) {
+				var loc *time.Location
+				if data.Tz != "" {
+					loc, _ = time.LoadLocation("Australia/Queensland")
+				}
+
+				tpl, err := template.New("test").
+					Funcs(GetFunctions(loc)).
+					Parse(data.Tpl)
+				if err != nil {
+					t.Fatalf("unexpected error %v", err)
+				}
+				res, err := executeTemplate(tpl, data.TplData)
+				if !errors.Is(err, data.ExpectedErr) {
+					t.Errorf("expected err %v but got %v", data.ExpectedErr, err)
+				}
+				if res != data.ExpectedRes {
+					t.Errorf("expected res %q but got %q", data.ExpectedRes, res)
+				}
+			})
+		}
+	}
+}
+
+func TestAddEnvVarsToData(t *testing.T) {
+	alarm := types.Alarm{ID: "test-alarm"}
+	envVars := map[string]any{
+		"Location": "FR",
+	}
+	type Activatable interface {
+		Activate()
+	}
+	type activatableWithEnabled struct {
+		Activatable
+		Enabled bool
+	}
+	type alarmWithEnabled struct {
+		types.Alarm
+		Enabled bool
+	}
+	type alarmPtrWithEnabled struct {
+		*types.Alarm
+		Enabled bool
+	}
+
+	dataSet := []struct {
+		Data        any
+		ExpectedRes any
+	}{
+		{
+			Data: map[string]types.Alarm{
+				"Alarm": alarm,
+			},
+			ExpectedRes: map[string]any{
+				"Alarm": alarm,
+				"Env":   envVars,
+			},
+		},
+		{
+			Data: alarm,
+			ExpectedRes: map[string]any{
+				"EntityID":                alarm.EntityID,
+				"ID":                      alarm.ID,
+				"KPIAssignedInstructions": alarm.KPIAssignedInstructions,
+				"KPIExecutedInstructions": alarm.KPIExecutedInstructions,
+				"Tags":                    alarm.Tags,
+				"Time":                    alarm.Time,
+				"Value":                   alarm.Value,
+				"NotAckedMetricSendTime":  alarm.NotAckedMetricSendTime,
+				"NotAckedMetricType":      alarm.NotAckedMetricType,
+				"NotAckedSince":           alarm.NotAckedSince,
+				"Env":                     envVars,
+			},
+		},
+		{
+			Data: &alarm,
+			ExpectedRes: map[string]any{
+				"EntityID":                alarm.EntityID,
+				"ID":                      alarm.ID,
+				"KPIAssignedInstructions": alarm.KPIAssignedInstructions,
+				"KPIExecutedInstructions": alarm.KPIExecutedInstructions,
+				"Tags":                    alarm.Tags,
+				"Time":                    alarm.Time,
+				"Value":                   alarm.Value,
+				"NotAckedMetricSendTime":  alarm.NotAckedMetricSendTime,
+				"NotAckedMetricType":      alarm.NotAckedMetricType,
+				"NotAckedSince":           alarm.NotAckedSince,
+				"Env":                     envVars,
+			},
+		},
+		{
+			Data: Activatable(&alarm),
+			ExpectedRes: map[string]any{
+				"EntityID":                alarm.EntityID,
+				"ID":                      alarm.ID,
+				"KPIAssignedInstructions": alarm.KPIAssignedInstructions,
+				"KPIExecutedInstructions": alarm.KPIExecutedInstructions,
+				"Tags":                    alarm.Tags,
+				"Time":                    alarm.Time,
+				"Value":                   alarm.Value,
+				"NotAckedMetricSendTime":  alarm.NotAckedMetricSendTime,
+				"NotAckedMetricType":      alarm.NotAckedMetricType,
+				"NotAckedSince":           alarm.NotAckedSince,
+				"Env":                     envVars,
+			},
+		},
+		{
+			Data: alarmWithEnabled{
+				Alarm:   alarm,
+				Enabled: true,
+			},
+			ExpectedRes: map[string]any{
+				"EntityID":                alarm.EntityID,
+				"Enabled":                 true,
+				"ID":                      alarm.ID,
+				"KPIAssignedInstructions": alarm.KPIAssignedInstructions,
+				"KPIExecutedInstructions": alarm.KPIExecutedInstructions,
+				"Tags":                    alarm.Tags,
+				"Time":                    alarm.Time,
+				"Value":                   alarm.Value,
+				"NotAckedMetricSendTime":  alarm.NotAckedMetricSendTime,
+				"NotAckedMetricType":      alarm.NotAckedMetricType,
+				"NotAckedSince":           alarm.NotAckedSince,
+				"Env":                     envVars,
+			},
+		},
+		{
+			Data: alarmPtrWithEnabled{
+				Alarm:   &alarm,
+				Enabled: true,
+			},
+			ExpectedRes: map[string]any{
+				"EntityID":                alarm.EntityID,
+				"Enabled":                 true,
+				"ID":                      alarm.ID,
+				"KPIAssignedInstructions": alarm.KPIAssignedInstructions,
+				"KPIExecutedInstructions": alarm.KPIExecutedInstructions,
+				"Tags":                    alarm.Tags,
+				"Time":                    alarm.Time,
+				"Value":                   alarm.Value,
+				"NotAckedMetricSendTime":  alarm.NotAckedMetricSendTime,
+				"NotAckedMetricType":      alarm.NotAckedMetricType,
+				"NotAckedSince":           alarm.NotAckedSince,
+				"Env":                     envVars,
+			},
+		},
+		{
+			Data: activatableWithEnabled{
+				Activatable: Activatable(&alarm),
+				Enabled:     true,
+			},
+			ExpectedRes: map[string]any{
+				"EntityID":                alarm.EntityID,
+				"Enabled":                 true,
+				"ID":                      alarm.ID,
+				"KPIAssignedInstructions": alarm.KPIAssignedInstructions,
+				"KPIExecutedInstructions": alarm.KPIExecutedInstructions,
+				"Tags":                    alarm.Tags,
+				"Time":                    alarm.Time,
+				"Value":                   alarm.Value,
+				"NotAckedMetricSendTime":  alarm.NotAckedMetricSendTime,
+				"NotAckedMetricType":      alarm.NotAckedMetricType,
+				"NotAckedSince":           alarm.NotAckedSince,
+				"Env":                     envVars,
+			},
+		},
+		{
+			Data: map[int]types.Alarm{
+				1: alarm,
+			},
+			ExpectedRes: map[int]types.Alarm{
+				1: alarm,
+			},
+		},
+		{
+			Data:        []types.Alarm{alarm},
+			ExpectedRes: []types.Alarm{alarm},
+		},
+		{
+			Data:        1,
+			ExpectedRes: 1,
+		},
+	}
+
+	for i, data := range dataSet {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			res := addEnvVarsToData(data.Data, envVars)
+			if diff := pretty.Compare(res, data.ExpectedRes); diff != "" {
+				t.Errorf("unexpected result %s", diff)
+			}
+		})
+	}
+}
 
 func executeTemplate(tmpl *template.Template, payload interface{}) (string, error) {
 	var b bytes.Buffer
@@ -19,143 +332,4 @@ func executeTemplate(tmpl *template.Template, payload interface{}) (string, erro
 		return "", err
 	}
 	return b.String(), nil
-}
-
-func TestTemplate_Split(t *testing.T) {
-	Convey("template use function should be good", t, func() {
-		Convey("split function", func() {
-			templateText := `{{ split .Sep .Index .Input }}`
-			tmpl, err := template.New("func-split-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
-			if err != nil {
-				t.Fatalf("parsing: %s", err)
-			}
-			testCase := struct {
-				Sep   string
-				Index int
-				Input string
-			}{
-				Sep: ",", Index: 0, Input: "NgocHa,MinhNghia,Minh",
-			}
-			output, err := executeTemplate(tmpl, testCase)
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "NgocHa")
-
-			testCase.Index = -1
-			output, err = executeTemplate(tmpl, testCase)
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "")
-
-			testCase.Index = 1
-			testCase.Sep = " "
-			testCase.Input = "This is space"
-			output, err = executeTemplate(tmpl, testCase)
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "is")
-		})
-
-		Convey("trim function", func() {
-			templateText := `{{ trim . }}`
-			tmpl, err := template.New("func-trim-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
-			if err != nil {
-				t.Fatalf("parsing: %s", err)
-			}
-
-			output, err := executeTemplate(tmpl, "  ")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "")
-
-			output, err = executeTemplate(tmpl, " kratos ")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "kratos")
-
-			output, err = executeTemplate(tmpl, "\tkratos\n ")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "kratos")
-		})
-
-		Convey("upper function", func() {
-			templateText := `{{ uppercase . }}`
-			tmpl, err := template.New("func-upper-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
-			if err != nil {
-				t.Fatalf("parsing: %s", err)
-			}
-
-			output, err := executeTemplate(tmpl, "  ")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "  ")
-
-			output, err = executeTemplate(tmpl, "kratos")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "KRATOS")
-
-			output, err = executeTemplate(tmpl, "KraTos")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "KRATOS")
-		})
-
-		Convey("lowercase function", func() {
-			templateText := `{{ lowercase . }}`
-			tmpl, err := template.New("func-lower-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
-			if err != nil {
-				t.Fatalf("parsing: %s", err)
-			}
-
-			output, err := executeTemplate(tmpl, "  ")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "  ")
-
-			output, err = executeTemplate(tmpl, "kratos")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "kratos")
-
-			output, err = executeTemplate(tmpl, "KraTos")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "kratos")
-
-			output, err = executeTemplate(tmpl, "KRATOS")
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "kratos")
-		})
-	})
-}
-
-func TestTemplate_localtime(t *testing.T) {
-	Convey("template use function should be good", t, func() {
-		Convey("localtime function", func() {
-			templateText := `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" "Australia/Queensland" }}`
-			tmpl, err := template.New("func-localtime-test").Funcs(libtemplate.GetFunctions(nil)).Parse(templateText)
-			if err != nil {
-				t.Fatalf("parsing: %s", err)
-			}
-			testCase := struct {
-				TestDate types.CpsTime
-			}{
-				TestDate: types.CpsTime{
-					Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
-				},
-			}
-			output, err := executeTemplate(tmpl, testCase)
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "Thu, 28 Oct 2021 17:05:00 AEST")
-		})
-
-		Convey("localtime function with no timezone provided", func() {
-			loc, _ := time.LoadLocation("Australia/Queensland")
-			templateText := `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" }}`
-			tmpl, err := template.New("func-localtime-test").Funcs(libtemplate.GetFunctions(loc)).Parse(templateText)
-			if err != nil {
-				t.Fatalf("parsing: %s", err)
-			}
-			testCase := struct {
-				TestDate types.CpsTime
-			}{
-				TestDate: types.CpsTime{
-					Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
-				},
-			}
-			output, err := executeTemplate(tmpl, testCase)
-			So(err, ShouldBeNil)
-			So(output, ShouldEqual, "Thu, 28 Oct 2021 17:05:00 AEST")
-		})
-	})
 }
