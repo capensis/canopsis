@@ -233,6 +233,11 @@ widgets:
           label: Name
         - value: type
           label: Type
+      serviceDependenciesColumns:
+        - value: name
+          label: Name
+        - value: type
+          label: Type
       sort:
         order: ASC
       itemsPerPage: 10
