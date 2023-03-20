@@ -1129,6 +1129,24 @@ instruction:
       unit: s
       value: 1
 
+  instruction_to_run_auto_instruction_13:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-13
+    enabled: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: regexp
+            value: test-resource-to-run-auto-instruction-13-\d
+    alarm_pattern:
+    name: test-instruction-to-run-auto-instruction-13-name
+    timeout_after_execution:
+      unit: s
+      value: 1
+    jobs:
+      - job: test-job-to-run-auto-instruction-13
+        stop_on_fail: true
+
   instruction_without_patterns:
     <<: *instruction_auto
     _id: test-instruction-without-patterns

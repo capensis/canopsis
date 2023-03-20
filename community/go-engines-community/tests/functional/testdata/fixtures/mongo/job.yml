@@ -263,3 +263,17 @@ job:
     _id: test-job-to-run-manual-simplified-instruction-5
     name: test-job-to-run-manual-simplified-instruction-5-name
     payload: '{"test-job-to-run-manual-simplified-instruction-5-key": "test-job-to-run-manual-simplified-instruction-5-val"}'
+
+  test-job-to-run-auto-instruction-13:
+    <<: *job
+    _id: test-job-to-run-auto-instruction-13
+    config: test-job-config-to-run-auto-instruction-13
+    external_id: test-job-params-concurrent
+    name: test-job-to-run-auto-instruction-13-name
+    query:
+      connector_name: "{{ .Alarm.Value.ConnectorName }}"
+      display_name: "{{ .Alarm.Value.DisplayName }}"
+      resource: "{{ .Alarm.Value.Resource }}"
+      component: "{{ .Alarm.Value.Component }}"
+      connector: "{{ .Alarm.Value.Connector }}"
+    multiple_executions: true
