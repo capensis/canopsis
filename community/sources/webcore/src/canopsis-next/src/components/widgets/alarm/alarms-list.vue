@@ -1,23 +1,24 @@
 <template lang="pug">
   div
-    v-layout(row, wrap, justify-space-between, align-center)
+    v-layout(:class="{ 'mb-4': !dense }", row, wrap, justify-space-between, align-end)
       v-flex
         c-advanced-search-field(
           :query.sync="query",
-          :columns="columns",
-          :tooltip="$t('search.alarmAdvancedSearch')"
+          :columns="widget.parameters.widgetColumns",
+          :tooltip="$t('alarm.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+        c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
       v-flex(v-if="hasAccessToCorrelation")
-        v-switch(
+        v-switch.mt-0(
           :value="query.correlation",
           :label="$t('common.correlation')",
           color="primary",
+          hide-details,
           @change="updateCorrelation"
         )
       v-flex
-        v-layout(v-if="hasAccessToUserFilter", row, align-center)
+        v-layout(v-if="hasAccessToUserFilter", row, align-end)
           filter-selector(
             :label="$t('settings.selectAFilter')",
             :filters="userPreference.filters",
@@ -26,6 +27,7 @@
             :value="mainFilter",
             :disabled="!hasAccessToListFilters",
             :clearable="!widget.parameters.clearFilterDisabled",
+            hide-details,
             @input="updateSelectedFilter"
           )
           filters-list-btn(
@@ -53,7 +55,7 @@
           @input="removeHistoryFilter"
         ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
-          :tooltip="$t('liveReporting.button')",
+          :tooltip="$t('alarm.liveReporting')",
           :color="activeRange ? 'primary' : ''",
           icon="schedule",
           @click="showEditLiveReportModal"
@@ -65,7 +67,7 @@
           icon="cloud_download",
           @click="exportAlarmsList"
         )
-    alarms-list-table(
+    alarms-list-table.mt-1(
       ref="alarmsTable",
       :widget="widget",
       :alarms="alarms",
@@ -74,7 +76,7 @@
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
       :hide-children="!query.correlation",
-      :columns="columns",
+      :columns="widget.parameters.widgetColumns",
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
       :refresh-alarms-list="fetchList",
@@ -102,7 +104,6 @@ import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -120,7 +121,6 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import MassActionsPanel from './actions/mass-actions-panel.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
@@ -138,14 +138,12 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    MassActionsPanel,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsAlarmMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
@@ -331,7 +329,7 @@ export default {
     },
 
     async fetchList() {
-      if (this.hasColumns) {
+      if (this.widget.parameters.widgetColumns.length) {
         const params = this.getQuery();
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
@@ -364,7 +362,7 @@ export default {
       return {
         ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
-        fields: columns.map(({ label, value }) => ({ label, name: value })),
+        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**

@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isBoolean, isNull } from 'lodash';
 
 import {
   WIDGET_TYPES,
@@ -14,6 +14,7 @@ import {
 } from './alarm';
 import {
   contextWidgetParametersToForm,
+  formToContextWidgetParameters,
 } from './context';
 import {
   serviceWeatherWidgetParametersToForm,
@@ -175,7 +176,7 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  * @param {WidgetParameters} [parameters = {}]
  * @return {WidgetParametersForm}
  */
-export const widgetParametersToForm = ({ type, parameters } = {}) => {
+export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: alarmListWidgetParametersToForm,
     [WIDGET_TYPES.context]: contextWidgetParametersToForm,
@@ -191,11 +192,7 @@ export const widgetParametersToForm = ({ type, parameters } = {}) => {
 
   const preparer = widgetsMap[type];
 
-  if (preparer) {
-    return preparer(parameters);
-  }
-
-  return parameters ? cloneDeep(parameters) : {};
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
@@ -248,6 +245,7 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
 export const formToWidgetParameters = ({ type, parameters }) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
+    [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
@@ -259,7 +257,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
 
   const preparer = widgetsMap[type];
 
-  return preparer ? preparer(parameters) : parameters;
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
@@ -273,3 +271,17 @@ export const formToWidget = form => ({
 
   parameters: formToWidgetParameters(form),
 });
+
+/**
+ * Convert opened field widget
+ *
+ * @param  {boolean | null} [opened]
+ * @returns {boolean | null}
+ */
+export const openedToForm = (opened) => {
+  if (isBoolean(opened) || isNull(opened)) {
+    return opened;
+  }
+
+  return true;
+};

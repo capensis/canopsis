@@ -1,6 +1,7 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 
@@ -11,6 +12,7 @@ const stubs = {
   'widget-wrapper-menu': true,
   'grid-layout': true,
   'grid-item': true,
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const snapshotStubs = {
@@ -26,29 +28,24 @@ const snapshotStubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(GridEditWidgets, {
-  localVue,
-  stubs,
-  mocks: {
-    $mq: 'l',
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(GridEditWidgets, {
-  localVue,
-  stubs: snapshotStubs,
-  mocks: {
-    $mq: 'l',
-  },
-
-  ...options,
-});
-
 const selectGridItems = wrapper => wrapper.findAll('grid-item-stub');
 
 describe('grid-edit-widgets', () => {
+  const factory = generateShallowRenderer(GridEditWidgets, {
+    localVue,
+    stubs,
+    mocks: {
+      $mq: 'l',
+    },
+  });
+  const snapshotFactory = generateRenderer(GridEditWidgets, {
+    localVue,
+    stubs: snapshotStubs,
+    mocks: {
+      $mq: 'l',
+    },
+  });
+
   const widgets = [
     {
       _id: 'widget_Context_505742f9-faf5-445e-a537-2288a84fc58e',
@@ -105,6 +102,8 @@ describe('grid-edit-widgets', () => {
         },
       },
     });
+
+    await flushPromises();
 
     const updateAutoHeightButton = selectGridItems(wrapper)
       .at(0)

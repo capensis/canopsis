@@ -7,6 +7,8 @@ import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createInputStub } from '@unit/stubs/input';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+import { fakeAlarms } from '@unit/data/alarm';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateCommentEvent from '@/components/modals/common/create-comment-event.vue';
@@ -22,6 +24,7 @@ const stubs = {
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
+  'alarm-general-table': true,
 };
 
 const factory = (options = {}) => shallowMount(CreateCommentEvent, {
@@ -204,6 +207,11 @@ describe('create-comment-event', () => {
 
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {},
+        },
+      },
       mocks: {
         $modals,
       },
@@ -220,6 +228,28 @@ describe('create-comment-event', () => {
 
   test('Renders `create-comment-event` with empty modal', () => {
     const wrapper = snapshotFactory({
+      propsData: {
+        modal: {
+          config: {},
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `create-comment-event` with items', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        modal: {
+          config: {
+            items: fakeAlarms(10),
+          },
+        },
+      },
       mocks: {
         $modals,
       },

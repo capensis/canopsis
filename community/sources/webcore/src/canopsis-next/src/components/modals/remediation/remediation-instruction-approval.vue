@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.remediationInstructionApproval.title') }}
-      template(slot="text")
+      template(#text="")
         v-fade-transition
           v-layout(v-if="!remediationInstructionApproval", justify-center)
             v-progress-circular(color="primary", indeterminate)
@@ -15,7 +15,7 @@
               :original="remediationInstructionApproval.original",
               :updated="remediationInstructionApproval.updated"
             )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,

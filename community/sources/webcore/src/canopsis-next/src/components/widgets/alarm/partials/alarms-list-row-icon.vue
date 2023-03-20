@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip(top)
     template(#activator="{ on }")
-      v-icon.instruction-icon(v-on="on", :class="iconClass", size="24") {{ iconName }}
+      v-icon.instruction-icon(v-on="on", :class="iconClass", size="22") {{ iconName }}
     span.pre-wrap(v-html="iconTooltip")
 </template>
 
@@ -99,7 +99,7 @@ export default {
       }).reduce((acc, [key, instructions]) => {
         if (instructions?.length) {
           acc.push(this.$tc(
-            `alarmList.tooltips.${key}`,
+            `alarm.tooltips.${key}`,
             instructions.length,
             { title: instructions.join(', ') },
           ));
@@ -109,7 +109,7 @@ export default {
       }, []);
 
       if (assignedInstructions?.length) {
-        tooltips.push(this.$tc('alarmList.tooltips.hasManualInstruction', assignedInstructions.length));
+        tooltips.push(this.$tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
       }
 
       return tooltips.join('\n');

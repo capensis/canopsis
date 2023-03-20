@@ -1,6 +1,8 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
 
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+
+import { COLOR_INDICATOR_TYPES, ENTITIES_STATES } from '@/constants';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -8,22 +10,21 @@ const localVue = createVueInstance();
 
 const stubs = {};
 
-const snapshotFactory = (options = {}) => mount(ColorIndicatorWrapper, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('color-indicator-wrapper', () => {
-  it('Renders `color-indicator-wrapper` with state type and default slot', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ColorIndicatorWrapper, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
+
+  it('Renders `color-indicator-wrapper` with state type and default slot', async () => {
+    snapshotFactory({
       propsData: {
         entity: {},
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: ENTITIES_STATES.major,
             },
           },
         },
@@ -34,20 +35,19 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `color-indicator-wrapper` without type but with default slot', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `color-indicator-wrapper` without type but with default slot', async () => {
+    snapshotFactory({
       propsData: {
         entity: {},
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: ENTITIES_STATES.critical,
             },
           },
         },
@@ -58,29 +58,30 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `color-indicator-wrapper` with unresolved type', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `color-indicator-wrapper` with unresolved type', async () => {
+    snapshotFactory({
       propsData: {
         entity: {},
         alarm: {},
         type: 'unresolved-type',
       },
+      slots: {
+        default: '<div class="default-slot" />',
+      },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `color-indicator-wrapper` with entity impact level and impact state', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `color-indicator-wrapper` with entity impact level and impact state', async () => {
+    snapshotFactory({
       propsData: {
         entity: {
           impact_level: 2,
@@ -90,14 +91,13 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `color-indicator-wrapper` with entity impact level and alarm state', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `color-indicator-wrapper` with entity impact level and alarm state', async () => {
+    snapshotFactory({
       propsData: {
         entity: {
           impact_level: 2,
@@ -105,7 +105,7 @@ describe('color-indicator-wrapper', () => {
         alarm: {
           v: {
             state: {
-              val: 6,
+              val: ENTITIES_STATES.minor,
             },
           },
         },
@@ -113,9 +113,8 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });
