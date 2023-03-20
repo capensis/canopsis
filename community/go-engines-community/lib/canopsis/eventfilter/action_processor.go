@@ -3,6 +3,7 @@ package eventfilter
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -150,26 +151,25 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 }
 
 func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
-	info, ok := entity.Infos[name]
-
-	entityUpdated := false
-	valueChanged := !ok || info.Value != value
-	if valueChanged {
-		entityUpdated = true
-		p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
+	if info, ok := entity.Infos[name]; ok {
+		if reflect.DeepEqual(info.Value, value) {
+			return entity, false
+		}
 	}
-
-	info.Name = name
-	info.Description = description
-	info.Value = value
 
 	if entity.Infos == nil {
-		entity.Infos = make(map[string]types.Info)
+		entity.Infos = make(map[string]types.Info, 1)
 	}
 
-	entity.Infos[name] = info
+	entity.Infos[name] = types.Info{
+		Name:        name,
+		Description: description,
+		Value:       value,
+	}
 
-	return entity, entityUpdated
+	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
+
+	return entity, true
 }
 
 var ErrShouldBeAString = fmt.Errorf("value should be a string")
