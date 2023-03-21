@@ -90,6 +90,7 @@ type TaskStatus struct {
 func NewTaskExecutor(
 	client mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	configProvider config.ApiConfigProvider,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
@@ -100,6 +101,7 @@ func NewTaskExecutor(
 		removeInterval: 5 * time.Minute,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+		configProvider:         configProvider,
 	}
 }
 
@@ -113,6 +115,7 @@ type taskExecutor struct {
 	taskChMx       sync.Mutex
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+	configProvider         config.ApiConfigProvider
 }
 
 func (e *taskExecutor) Execute(parentCtx context.Context) {
@@ -226,7 +229,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, t taskWithID) {
 	var fileName string
 
 	if t.DataFetcher != nil {
-		fileName, err = ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher)
+		fileName, err = ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher, int64(e.configProvider.Get().ExportBulkSize))
 	} else {
 		fileName, err = ExportCsvByCursor(ctx, t.ExportFields, t.Separator, t.DataCursor)
 	}

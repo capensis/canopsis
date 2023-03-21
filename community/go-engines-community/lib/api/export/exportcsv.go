@@ -19,14 +19,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-const pageLimit = 5000
-
 // ExportCsv fetches data by page and saves it in csv file.
 func ExportCsv(
 	ctx context.Context,
 	exportFields Fields,
 	separator rune,
 	dataFetcher DataFetcher,
+	limit int64,
 ) (resFileName string, resErr error) {
 	if len(exportFields) == 0 {
 		return "", fmt.Errorf("exportFields is empty")
@@ -64,7 +63,6 @@ func ExportCsv(
 		return "", err
 	}
 
-	var limit int64 = pageLimit
 	data, totalCount, err := dataFetcher(ctx, 1, limit)
 	if err != nil {
 		return "", err
