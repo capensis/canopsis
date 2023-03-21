@@ -29,13 +29,14 @@ type EngineParameters struct {
 	Enabled bool `bson:"enabled" json:"enabled"`
 }
 
-type QueueParameters struct {
+type LimitParameters struct {
 	Limit   int  `bson:"limit" json:"limit"`
 	Enabled bool `bson:"enabled" json:"enabled"`
 }
 
 type HealthCheckParameters struct {
-	Queue        QueueParameters  `bson:"queue" json:"queue"`
+	Queue        LimitParameters  `bson:"queue" json:"queue"`
+	Messages     LimitParameters  `bson:"messages" json:"messages"`
 	Fifo         EngineParameters `bson:"engine-fifo" json:"engine-fifo"`
 	Che          EngineParameters `bson:"engine-che" json:"engine-che"`
 	PBehavior    EngineParameters `bson:"engine-pbehavior" json:"engine-pbehavior"`
