@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`bar-chart Renders \`bar-chart\` widget settings with custom props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    value="Map widget"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <field-preset-stub
+    name="preset"
+    parameters="[object Object]"
+    type="BarChart"
+  />
+  <widget-settings-group-stub
+    title="Metrics display"
+  >
+    <field-alarm-metric-presets-stub
+      onlygroup="true"
+      value="[object Object]"
+      withcolor="true"
+    />
+    <field-bar-graph-type-stub
+      name="stacked"
+      value="true"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-chart-title-stub
+      name="parameters.chart_title"
+      value="Chart title"
+    />
+    <field-quick-date-interval-type-stub
+      value="last30Days"
+    />
+    <field-sampling-stub
+      value="day"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters="[object Object]"
+      hideselector="true"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+    <field-switcher-stub
+      title="Show comparison"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;
+
+exports[`bar-chart Renders \`bar-chart\` widget settings with default props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    value=""
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <field-preset-stub
+    name="preset"
+    parameters="[object Object]"
+    type="BarChart"
+  />
+  <widget-settings-group-stub
+    title="Metrics display"
+  >
+    <field-alarm-metric-presets-stub
+      onlygroup="true"
+      value=""
+      withcolor="true"
+    />
+    <field-bar-graph-type-stub
+      name="stacked"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-chart-title-stub
+      name="parameters.chart_title"
+      value=""
+    />
+    <field-quick-date-interval-type-stub
+      value="last30Days"
+    />
+    <field-sampling-stub
+      value="day"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters=""
+      hideselector="true"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+    <field-switcher-stub
+      title="Show comparison"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;
