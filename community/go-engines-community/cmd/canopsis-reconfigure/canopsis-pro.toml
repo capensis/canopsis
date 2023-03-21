@@ -312,6 +312,7 @@ FilePattern = "/tmp/import_%s.json"
 TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+ExportBulkSize = 5000
 
 [Canopsis.metrics]
 # FlushInterval defines how often metrics are flushed from memory to TimescaleDB.

@@ -229,3 +229,4 @@ FilePattern = "/tmp/import_%s.json"
 TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+ExportBulkSize = 5000
