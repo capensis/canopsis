@@ -67,6 +67,7 @@ type SectionApi struct {
 	TokenExpiration    string `toml:"TokenExpiration"`
 	TokenSigningMethod string `toml:"TokenSigningMethod"`
 	BulkMaxSize        int    `toml:"BulkMaxSize"`
+	ExportBulkSize     int    `toml:"ExportBulkSize"`
 }
 
 type SectionLogger struct {
