@@ -571,6 +571,12 @@ export const createActiveViewModule = () => {
     },
   };
 
+  afterEach(() => {
+    fetchActiveView.mockClear();
+    registerEditingOffHandler.mockClear();
+    unregisterEditingOffHandler.mockClear();
+  });
+
   return {
     registerEditingOffHandler,
     unregisterEditingOffHandler,
