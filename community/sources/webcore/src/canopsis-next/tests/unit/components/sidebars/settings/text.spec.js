@@ -79,7 +79,6 @@ describe('text', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     fetchUserPreference,
     activeViewModule,
@@ -112,7 +111,6 @@ describe('text', () => {
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
     fetchUserPreference.mockReset();
   });
@@ -173,9 +171,8 @@ describe('text', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
