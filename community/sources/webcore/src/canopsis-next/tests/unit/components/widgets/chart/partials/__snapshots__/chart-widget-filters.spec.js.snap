@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`chart-widget-filters Renders \`chart-widget-filters\` with custom props 1`] = `
+<div
+  class="layout chart-widget-filters wrap"
+>
+  <c-quick-date-interval-field-stub
+    class="mr-4"
+    interval="[object Object]"
+    min="1633737600"
+  />
+  <c-sampling-field-stub
+    class="chart-widget-filters__sampling mr-4"
+    value="month"
+  />
+  <div
+    class="layout row align-end"
+  >
+    <filter-selector-stub
+      class="chart-widget-filters__filter-selector mr-4"
+      clearable="true"
+      disabled="true"
+      filters="[object Object],[object Object],[object Object]"
+      hidedetails="true"
+      itemtext="title"
+      itemvalue="_id"
+      label="Select a filter"
+      lockedfilters="[object Object],[object Object],[object Object],[object Object]"
+      lockedvalue="locked-filter-id"
+      value="[object Object],[object Object]"
+    />
+    <filters-list-btn-stub
+      addable="true"
+      editable="true"
+      private="true"
+      widgetid="id"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+  </div>
+</div>
+`;
+
+exports[`chart-widget-filters Renders \`chart-widget-filters\` with required props 1`] = `
+<div
+  class="layout chart-widget-filters wrap"
+>
+  <!---->
+  <!---->
+  <!---->
+</div>
+`;
