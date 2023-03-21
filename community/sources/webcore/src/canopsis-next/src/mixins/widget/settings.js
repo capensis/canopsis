@@ -62,7 +62,7 @@ export const widgetSettingsMixin = {
           data.tab = tabId;
 
           if (this.duplicate) {
-            await this.copyWidget({ id: widgetId, data });
+            await this.createWidget({ data });
           } else if (widgetId) {
             await this.updateWidget({ id: widgetId, data });
           } else {
