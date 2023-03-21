@@ -41,7 +41,8 @@
     "api": {
       "tokenexpiration": "24h",
       "tokensigningmethod": "HS256",
-      "bulkmaxsize": 10000
+      "bulkmaxsize": 10000,
+      "exportbulksize": 5000
     },
     "metrics": {
       "flushinterval": "1s",

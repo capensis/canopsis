@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -88,6 +89,7 @@ type TaskStatus struct {
 
 func NewTaskExecutor(
 	client mongo.DbClient,
+	configProvider config.ApiConfigProvider,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
@@ -96,12 +98,14 @@ func NewTaskExecutor(
 		logger:         logger,
 		workerCount:    10,
 		removeInterval: 5 * time.Minute,
+		configProvider: configProvider,
 	}
 }
 
 type taskExecutor struct {
 	client         mongo.DbClient
 	collection     mongo.DbCollection
+	configProvider config.ApiConfigProvider
 	logger         zerolog.Logger
 	workerCount    int
 	removeInterval time.Duration
@@ -218,7 +222,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, t taskWithID) {
 	var fileName string
 
 	if t.DataFetcher != nil {
-		fileName, err = ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher)
+		fileName, err = ExportCsv(ctx, t.ExportFields, t.Separator, t.DataFetcher, int64(e.configProvider.Get().ExportBulkSize))
 	} else {
 		fileName, err = ExportCsvByCursor(ctx, t.ExportFields, t.Separator, t.DataCursor)
 	}
