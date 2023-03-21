@@ -26,7 +26,7 @@ Votre installation de Canopsis doit obligatoirement comporter les adresses et do
 | `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v4.2/reference/connection-string/)) |
 | `CPS_OLD_API_URL` | (vide) | URI de connexion à l'ancienne API Gunicorn de Canopsis |
 | `CPS_POSTGRES_URL` | (vide) | URI de connexion PostgreSQL/TimescaleDB (cf. [Spécification d'URI PostgreSQL](https://www.postgresql.org/docs/13/libpq-connect.html#LIBPQ-CONNSTRING)) |
-| `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
+| `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis))</br>Il est possible de cumuler une session avec mot de passe Redis et Redis Sentinel grâce à cette URI spéciale :</br>`CPS_REDIS_URL=redis-sentinel://${REDIS_SENTINEL_USER}:${REDIS_SENTINEL_PASSWORD}@${REDIS_SENTINEL_HOST}:${REDIS_SENTINEL_PORT}/0?sentinelMasterId=${REDIS_SENTINEL_MASTERID}&redisPassword=${REDIS_PASSWORD}` |
 
 ### Tentatives de connexion aux services externes
 
