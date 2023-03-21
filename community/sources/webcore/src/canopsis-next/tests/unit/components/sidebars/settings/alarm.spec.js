@@ -136,7 +136,6 @@ describe('alarm', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     fetchUserPreference,
     activeViewModule,
@@ -171,7 +170,6 @@ describe('alarm', () => {
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
     fetchUserPreference.mockReset();
   });
@@ -232,9 +230,8 @@ describe('alarm', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
