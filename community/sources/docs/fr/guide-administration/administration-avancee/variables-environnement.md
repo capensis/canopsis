@@ -26,7 +26,7 @@ Votre installation de Canopsis doit obligatoirement comporter les adresses et do
 | `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v4.2/reference/connection-string/)) |
 | `CPS_OLD_API_URL` | (vide) | URI de connexion à l'ancienne API Gunicorn de Canopsis |
 | `CPS_POSTGRES_URL` | (vide) | URI de connexion PostgreSQL/TimescaleDB (cf. [Spécification d'URI PostgreSQL](https://www.postgresql.org/docs/13/libpq-connect.html#LIBPQ-CONNSTRING)) |
-| `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis))</br>Il est possible de cumuler une session avec mot de passe Redis et Redis Sentinel grâce à cette URI spéciale :</br>`CPS_REDIS_URL=redis-sentinel://${REDIS_SENTINEL_USER}:${REDIS_SENTINEL_PASSWORD}@${REDIS_SENTINEL_HOST}:${REDIS_SENTINEL_PORT}/0?sentinelMasterId=${REDIS_SENTINEL_MASTERID}&redisPassword=${REDIS_PASSWORD}` |
+| `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
 
 ### Tentatives de connexion aux services externes
 
@@ -39,6 +39,17 @@ Elles servent notamment à gérer le cas où les moteurs démarrent avant que ce
 | `CPS_MAX_RETRY` | `10` | Nombre maximum de tentatives de connexion aux services externes |
 | `CPS_MAX_DELAY` | `30` | Temps maximum d'attente, en secondes, lors de chaque tentative de connexion à un service externe |
 | `CPS_WAIT_FIRST_ATTEMPT` | `10` | Temps d'attente obligatoire, en secondes, avant la première tentative de connexion aux services externes |
+
+### Redis
+
+Il est possible de cumuler une session avec mot de passe **Redis** et **Redis Sentinel** :  
+
+```
+redis-sentinel://${SENTINEL_USER}:${SENTINEL_PASSWORD}@${SENTINEL_HOST}:${SENTINEL_PORT}/0?sentinelMasterId=${SENTINEL_MASTERID}&redisPassword=${REDIS_PASSWORD}`
+```
+
+Les paramètres `SENTINEL_PASSWORD` et `REDIS_PASSWORD` sont optionnels. Les spécifier selon vos besoins.
+
 
 ### Utilisation d'un proxy HTTP ou HTTPS
 
