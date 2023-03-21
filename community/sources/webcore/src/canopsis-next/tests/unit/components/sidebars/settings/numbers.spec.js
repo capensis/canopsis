@@ -338,7 +338,7 @@ describe('numbers', () => {
 
   test('Filters changed after trigger field filters', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.pieChart.actions.listFilters]: { actions: [] },
+      [USERS_PERMISSIONS.business.numbers.actions.listFilters]: { actions: [] },
     });
     const wrapper = factory({
       propsData: {

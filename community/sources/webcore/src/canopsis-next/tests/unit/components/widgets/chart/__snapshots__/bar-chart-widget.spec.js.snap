@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`bar-chart-widget Renders \`bar-chart-widget\` with custom props 1`] = `
+<div
+  class="layout px-3 pb-3 column"
+>
+  <chart-widget-filters-stub
+    filterdisabled="true"
+    widgetfilters=""
+    widgetid="bar-chart-widget-id"
+  />
+  <div
+    class="layout"
+  >
+    <pre>
+      false
+    </pre>
+  </div>
+</div>
+`;
+
+exports[`bar-chart-widget Renders \`bar-chart-widget\` with required props 1`] = `
+<div
+  class="layout px-3 pb-3 column"
+>
+  <chart-widget-filters-stub
+    filterdisabled="true"
+    widgetfilters=""
+    widgetid="bar-chart-widget-id"
+  />
+  <div
+    class="layout"
+  >
+    <pre>
+      false
+    </pre>
+  </div>
+</div>
+`;
