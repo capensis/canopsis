@@ -421,7 +421,7 @@ export const createPbehaviorReasonModule = () => {
 export const createUserPreferenceModule = () => {
   const fetchUserPreference = jest.fn();
   const getUserPreferenceByWidgetId = jest.fn()
-    .mockReturnValue({ content: {} });
+    .mockReturnValue(() => ({ content: {} }));
   const updateUserPreference = jest.fn();
 
   const userPreferenceModule = {
@@ -431,7 +431,7 @@ export const createUserPreferenceModule = () => {
       update: updateUserPreference,
     },
     getters: {
-      getItemByWidgetId: () => getUserPreferenceByWidgetId,
+      getItemByWidgetId: getUserPreferenceByWidgetId,
     },
   };
 
@@ -654,11 +654,13 @@ export const createPbehaviorTimespanModule = () => {
 
 export const createAlarmModule = () => {
   const fetchAlarmItem = jest.fn();
+  const fetchOpenAlarmsListWithoutStore = jest.fn();
   const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
     fetchAlarmItemWithoutStore.mockClear();
+    fetchOpenAlarmsListWithoutStore.mockClear();
   });
 
   const alarmModule = {
@@ -666,12 +668,14 @@ export const createAlarmModule = () => {
     actions: {
       fetchItem: fetchAlarmItem,
       fetchItemWithoutStore: fetchAlarmItemWithoutStore,
+      fetchOpenAlarmsListWithoutStore,
     },
   };
 
   return {
     fetchAlarmItem,
     fetchAlarmItemWithoutStore,
+    fetchOpenAlarmsListWithoutStore,
     alarmModule,
   };
 };
@@ -804,5 +808,39 @@ export const createDeclareTicketModule = () => {
     declareTicketRuleModule,
     bulkCreateDeclareTicketExecution,
     fetchAssignedDeclareTicketsWithoutStore,
+  };
+};
+
+export const createVectorMetricsModule = () => {
+  const getVectorMetricsListByWidgetId = jest.fn().mockReturnValue(() => false);
+  const getVectorMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
+  const getVectorMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
+  const fetchVectorMetricsList = jest.fn();
+
+  afterEach(() => {
+    getVectorMetricsListByWidgetId.mockClear();
+    getVectorMetricsPendingByWidgetId.mockClear();
+    getVectorMetricsMetaByWidgetId.mockClear();
+    fetchVectorMetricsList.mockClear();
+  });
+
+  const vectorMetricsModule = {
+    name: 'vectorMetrics',
+    getters: {
+      getListByWidgetId: getVectorMetricsListByWidgetId,
+      getPendingByWidgetId: getVectorMetricsPendingByWidgetId,
+      getMetaByWidgetId: getVectorMetricsMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchVectorMetricsList,
+    },
+  };
+
+  return {
+    vectorMetricsModule,
+    getVectorMetricsListByWidgetId,
+    getVectorMetricsPendingByWidgetId,
+    getVectorMetricsMetaByWidgetId,
+    fetchVectorMetricsList,
   };
 };
