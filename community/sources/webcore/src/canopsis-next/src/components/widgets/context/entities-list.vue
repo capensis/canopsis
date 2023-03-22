@@ -268,7 +268,7 @@ export default {
       }
     },
 
-    exportContextList() {
+    async exportContextList() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -281,7 +281,7 @@ export default {
         : widgetColumns;
 
       try {
-        this.exportAsCsv({
+        await this.exportAsCsv({
           name: `${this.widget._id}-${new Date().toLocaleString()}`,
           widgetId: this.widget._id,
           data: {
