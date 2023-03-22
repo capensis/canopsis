@@ -66,3 +66,21 @@ Feature: update a reason
       "description": "test-reason-to-update-description-updated"
     }
     """
+    When I do PUT /api/v4/pbehavior-reasons/test-reason-to-update:
+    """json
+    {
+      "name": "test-reason-to-update-name-updated",
+      "description": "test-reason-to-update-description-updated",
+      "hidden": true
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-reason-to-update",
+      "name": "test-reason-to-update-name-updated",
+      "description": "test-reason-to-update-description-updated",
+      "hidden": true
+    }
+    """

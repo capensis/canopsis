@@ -7,6 +7,7 @@ import (
 type ListRequest struct {
 	pagination.FilteredQuery
 	OnlyDefault bool     `form:"default"`
+	WithHidden  bool     `form:"with_hidden"`
 	SortBy      string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority"`
 	Types       []string `form:"types[]" json:"types"`
 }
@@ -17,6 +18,8 @@ type EditRequest struct {
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
 	Priority    *int   `json:"priority" binding:"required"`
 	Color       string `json:"color" binding:"required,iscolor"`
+
+	Hidden *bool `json:"hidden,omitempty"`
 }
 
 type CreateRequest struct {
@@ -41,6 +44,9 @@ type Type struct {
 	Color       string `bson:"color" json:"color"`
 	Default     *bool  `bson:"default,omitempty" json:"default,omitempty"`
 	Deletable   *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
 }
 
 type AggregationResult struct {
