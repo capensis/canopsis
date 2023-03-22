@@ -162,7 +162,7 @@ describe('kpi-alarms', () => {
       store: createMockedStoreModules([{
         name: 'metrics',
         actions: {
-          fetchAlarmsMetricsWithoutStore: jest.fn().mockRejectedValue(),
+          fetchAlarmsMetricsWithoutStore: jest.fn().mockRejectedValue({}),
         },
       }]),
     });
