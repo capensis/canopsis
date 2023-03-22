@@ -112,6 +112,32 @@ Feature: Update a pbehavior type
       "color": "#FFFFFF"
     }
     """
+    When I do PUT /api/v4/pbehavior-types/test-type-to-update:
+    """json
+    {
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF",
+      "hidden": true
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-type-to-update",
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF",
+      "hidden": true
+    }
+    """
 
   Scenario: given update request with already exists priority and name should return error
     When I am admin

@@ -49,6 +49,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 	}
 
 	match := bson.M{}
+	if !r.WithHidden {
+		match["hidden"] = bson.M{"$in": bson.A{false, nil}}
+	}
 
 	if r.OnlyDefault {
 		match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}

@@ -73,6 +73,34 @@ Feature: Create a pbehavior type
     }
     """
 
+  Scenario: given create request with hidden type should return ok
+    When I am admin
+    When I do POST /api/v4/pbehavior-types:
+    """json
+    {
+      "name": "Active State hidden",
+      "description": "Active state type",
+      "type": "active",
+      "priority": 1177,
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF",
+      "hidden": true
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "name": "Active State hidden",
+      "description": "Active state type",
+      "type": "active",
+      "priority": 1177,
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF",
+      "hidden": true
+    }
+    """
+
   Scenario: given create request with custom id should return ok
     When I am admin
     When I do POST /api/v4/pbehavior-types:
