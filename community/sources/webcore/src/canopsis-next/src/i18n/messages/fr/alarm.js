@@ -30,6 +30,9 @@ export default {
   noAlarmFound: 'Aucune alarme n\'est trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',
   followLink: 'Suivez le lien "{title}"',
+  popups: {
+    exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
+  },
   actions: {
     titles: {
       ack: 'Acquitter',
