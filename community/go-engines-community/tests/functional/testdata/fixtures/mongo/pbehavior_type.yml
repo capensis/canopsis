@@ -217,3 +217,14 @@ pbehavior_type:
     _id: test-pause-type-to-engine
     description: Engine pause
     name: Engine pause
+
+  type_to_test_hidden_1:
+    <<: *type_maintenance
+    _id: test-type-to-test-hidden-1
+    name: test-type-to-test-hidden-1
+
+  type_to_test_hidden_2:
+    <<: *type_maintenance
+    _id: test-type-to-test-hidden-2
+    name: test-type-to-test-hidden-2
+    hidden: true

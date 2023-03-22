@@ -16,6 +16,7 @@ func (modelTransformer) TransformCreateRequestToModel(request CreateRequest) *Re
 		ID:          request.ID,
 		Name:        request.Name,
 		Description: request.Description,
+		Hidden:      request.Hidden,
 	}
 }
 

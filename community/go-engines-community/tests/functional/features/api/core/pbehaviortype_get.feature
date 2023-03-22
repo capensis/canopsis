@@ -163,3 +163,56 @@ Feature: Get a pbehavior type
       }
     }
     """
+
+  Scenario: given search request should hide/not hide types
+    When I am admin
+    When I do GET /api/v4/pbehavior-types?search=test-hidden
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-type-to-test-hidden-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/pbehavior-types?search=test-hidden&with_hidden=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-type-to-test-hidden-1"
+        },
+        {
+          "_id": "test-type-to-test-hidden-2"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  Scenario: given get request shouldn't hide hidden types
+    When I am admin
+    When I do GET /api/v4/pbehavior-types/test-type-to-test-hidden-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-type-to-test-hidden-2"
+    }
+    """
