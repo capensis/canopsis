@@ -550,6 +550,7 @@ export default merge({
     },
     popups: {
       massDeleteWarning: 'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
+      exportFailed: 'Échec de l\'exportation des entités au format CSV',
     },
   },
   search: {
@@ -608,6 +609,9 @@ export default merge({
     },
   },
   alarmList: {
+    popups: {
+      exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
+    },
     actions: {
       titles: {
         ack: 'Acquitter',
@@ -3081,6 +3085,9 @@ export default merge({
     sli: 'SLI',
     metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
     noData: 'Pas de données disponibles',
+    popups: {
+      exportFailed: 'Échec de l\'exportation du graphique au format CSV',
+    },
   },
 
   kpiMetrics: {
