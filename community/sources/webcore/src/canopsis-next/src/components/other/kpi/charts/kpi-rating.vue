@@ -179,7 +179,7 @@ export default {
 
         this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
       } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
       } finally {
         this.downloading = false;
       }
