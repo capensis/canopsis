@@ -8,6 +8,7 @@ export default {
   selectMetric: 'Sélectionnez la métrique à afficher',
   customColor: 'Couleur personnalisée',
   calculationMethod: 'Méthode de calcul',
+  periodTrend: '{count} pour la période\n{from} - {to}',
   tabs: {
     collectionSettings: 'Paramètres d\'évaluation',
     ratingSettings: 'Paramètres d\'évaluation',
@@ -46,6 +47,8 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
+      [ALARM_METRIC_PARAMETERS.timeToAck]: '{value} accuser les alarmes',
+      [ALARM_METRIC_PARAMETERS.timeToResolve]: '{value} pour résoudre les alarmes',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} alarmes corrigées manuellement',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
       [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} alarmes non acquittées',
