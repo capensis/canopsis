@@ -9,12 +9,12 @@
       :interval="query.interval",
       :min-interval-date="minAvailableDate",
       :sampling="query.sampling",
-      :show-filter="true",
-      :show-interval="true",
-      :show-sampling="true",
-      :filter-disabled="!true",
-      :filter-addable="true",
-      :filter-editable="true",
+      :show-filter="hasAccessToUserFilter",
+      :show-interval="hasAccessToInterval",
+      :show-sampling="hasAccessToSampling",
+      :filter-disabled="!hasAccessToListFilters",
+      :filter-addable="hasAccessToAddFilter",
+      :filter-editable="hasAccessToEditFilter",
       @update:filters="updateSelectedFilter",
       @update:sampling="updateSampling",
       @update:interval="updateInterval"
@@ -88,7 +88,7 @@ export default {
       return this.vectorMetrics.map(metric => ({
         ...metric,
 
-        color: this.widgetMetricsMap.color,
+        color: this.widgetMetricsMap[metric.title].color,
       }));
     },
   },

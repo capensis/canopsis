@@ -11,16 +11,4 @@ export const ChartBackgroundPlugin = {
       ctx.restore();
     }
   },
-/*  beforeDatasetDraw(chart, dataset) {
-    dataset.meta.data.forEach((bar) => {
-      bar.x = bar.x - 96.00582885742182;
-    });
-  },
-  afterDatasetDraw(chart, dataset) {
-    console.log(dataset, chart.canvas.getContext('2d'));
-
-    dataset.meta.data.forEach((bar) => {
-      bar.x = bar.x + 96.00582885742182;
-    });
-  }, */
 };
