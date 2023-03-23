@@ -1,9 +1,9 @@
-import { BAR_X_AXES_IDS, BAR_Y_AXES_IDS, DATETIME_FORMATS } from '@/constants';
+import { X_AXES_IDS, Y_AXES_IDS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
 import { getDateLabelBySampling, getMaxTimeDurationForMetrics, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
 
-export const chartBarMetricsOptionsMixin = {
+export const chartMetricsOptionsMixin = {
   computed: {
     maxTimeDuration() {
       return getMaxTimeDurationForMetrics(this.metrics);
@@ -18,7 +18,7 @@ export const chartBarMetricsOptionsMixin = {
 
     xAxes() {
       return {
-        [BAR_X_AXES_IDS.default]: {
+        [X_AXES_IDS.default]: {
           type: 'time',
           min: this.interval.from * 1000,
           max: this.interval.to * 1000,
@@ -38,14 +38,14 @@ export const chartBarMetricsOptionsMixin = {
 
     yAxes() {
       return {
-        [BAR_Y_AXES_IDS.default]: {
+        [Y_AXES_IDS.default]: {
           stacked: this.stacked,
           beginAtZero: true,
           ticks: {
             font: this.labelsFont,
           },
         },
-        [BAR_Y_AXES_IDS.percent]: {
+        [Y_AXES_IDS.percent]: {
           stacked: this.stacked,
           display: 'auto',
           position: 'right',
@@ -56,7 +56,7 @@ export const chartBarMetricsOptionsMixin = {
             font: this.labelsFont,
           },
         },
-        [BAR_Y_AXES_IDS.time]: {
+        [Y_AXES_IDS.time]: {
           stacked: this.stacked,
           display: 'auto',
           position: 'right',
@@ -84,14 +84,14 @@ export const chartBarMetricsOptionsMixin = {
 
     getMetricYAxisId(metric) {
       if (isRatioMetric(metric)) {
-        return BAR_Y_AXES_IDS.percent;
+        return Y_AXES_IDS.percent;
       }
 
       if (isTimeMetric(metric)) {
-        return BAR_Y_AXES_IDS.time;
+        return Y_AXES_IDS.time;
       }
 
-      return BAR_Y_AXES_IDS.default;
+      return Y_AXES_IDS.default;
     },
 
     getChartTooltipTitle(data) {
