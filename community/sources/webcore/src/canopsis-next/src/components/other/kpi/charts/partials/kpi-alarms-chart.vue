@@ -13,34 +13,26 @@
 <script>
 import { debounce } from 'lodash';
 import {
-  DATETIME_FORMATS,
   KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,
   TIME_UNITS,
 } from '@/constants';
 
-import {
-  convertDurationToMaxUnitDuration,
-  convertDurationToString,
-  fromSeconds,
-} from '@/helpers/date/duration';
-import { getDateLabelBySampling, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
+import { fromSeconds } from '@/helpers/date/duration';
+import { isTimeMetric } from '@/helpers/metrics';
 import { getMetricColor } from '@/helpers/color';
 import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
+
+import { chartBarMetricsOptionsMixin } from '@/mixins/chart/bar-metrics-options';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
 import KpiChartExportActions from './kpi-chart-export-actions.vue';
 
-const Y_AXES_IDS = {
-  default: 'y',
-  percent: 'yPercent',
-  time: 'yTime',
-};
-
 export default {
   inject: ['$system'],
   components: { KpiChartExportActions, BarChart },
+  mixins: [chartBarMetricsOptionsMixin],
   props: {
     metrics: {
       type: Array,
@@ -79,25 +71,6 @@ export default {
     },
   },
   computed: {
-    maxTimeValue() {
-      return Math.max.apply(null, this.metrics.reduce((acc, { title: metric, data }) => {
-        if (isTimeMetric(metric)) {
-          const maxDatasetValue = Math.max.apply(null, data.map(({ value }) => value));
-
-          acc.push(maxDatasetValue);
-        }
-
-        return acc;
-      }, []));
-    },
-
-    maxTimeDuration() {
-      return convertDurationToMaxUnitDuration({
-        value: this.maxTimeValue,
-        unit: TIME_UNITS.second,
-      });
-    },
-
     datasets() {
       return this.metrics.map(({ title: metric, data }) => ({
         metric,
@@ -117,55 +90,8 @@ export default {
         animation: false,
         responsive: this.responsive,
         scales: {
-          x: {
-            type: 'time',
-            min: this.interval.from * 1000,
-            max: this.interval.to * 1000,
-            ticks: {
-              min: this.minDate * 1000,
-              max: Date.now(),
-              source: 'data',
-              callback: this.getChartTimeTickLabel,
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-            },
-          },
-          [Y_AXES_IDS.default]: {
-            beginAtZero: true,
-            ticks: {
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-            },
-          },
-          [Y_AXES_IDS.percent]: {
-            display: 'auto',
-            position: 'right',
-            beginAtZero: true,
-            max: 100,
-            ticks: {
-              callback: this.getChartYPercentTick,
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-            },
-          },
-          [Y_AXES_IDS.time]: {
-            display: 'auto',
-            position: 'right',
-            beginAtZero: true,
-            ticks: {
-              callback: this.getChartYTimeTick,
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-            },
-          },
+          ...this.xAxes,
+          ...this.yAxes,
         },
         interaction: {
           intersect: false,
@@ -177,10 +103,7 @@ export default {
             align: 'start',
             maxWidth: 600,
             labels: {
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
+              font: this.labelsFont,
               boxWidth: 15,
               boxHeight: 15,
             },
@@ -242,57 +165,12 @@ export default {
       this.$emit('zoom', interval);
     },
 
-    getChartTooltipLabel({ raw, dataset }) {
-      const value = isTimeMetric(dataset.metric)
-        ? convertDurationToString(
-          raw.y,
-          DATETIME_FORMATS.refreshFieldFormat,
-          this.maxTimeDuration.unit,
-        )
-        : raw.y;
-
-      return this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value });
-    },
-
-    getChartTooltipTitle(data) {
-      const [dataset] = data;
-      const { x: timestamp } = dataset.raw;
-
-      return getDateLabelBySampling(timestamp, this.sampling);
-    },
-
     convertValueByMetricType(value, metric) {
       if (isTimeMetric(metric)) {
         return fromSeconds(value, this.maxTimeDuration.unit);
       }
 
       return value;
-    },
-
-    getMetricYAxisId(metric) {
-      if (isRatioMetric(metric)) {
-        return Y_AXES_IDS.percent;
-      }
-
-      if (isTimeMetric(metric)) {
-        return Y_AXES_IDS.time;
-      }
-
-      return Y_AXES_IDS.default;
-    },
-
-    getChartYPercentTick(value) {
-      return `${value}%`;
-    },
-
-    getChartYTimeTick(value) {
-      return `${value}${this.maxTimeDuration.unit}`;
-    },
-
-    getChartTimeTickLabel(_, index, data) {
-      const { value } = data[index] ?? {};
-
-      return getDateLabelBySampling(value, this.sampling);
     },
   },
 };
