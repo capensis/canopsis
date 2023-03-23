@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -40,33 +41,6 @@ func NewStore(
 	}
 }
 
-func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
-	exdates := make([]types.Exdate, len(r.Exdates))
-	for i := range r.Exdates {
-		exdates[i].Begin = r.Exdates[i].Begin
-		exdates[i].End = r.Exdates[i].End
-	}
-
-	return eventfilter.Rule{
-		Author:              r.Author,
-		Description:         r.Description,
-		Type:                r.Type,
-		Priority:            r.Priority,
-		Enabled:             r.Enabled,
-		Config:              r.Config,
-		ExternalData:        r.ExternalData,
-		EventPattern:        r.EventPattern,
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
-		RRule:               r.RRule,
-		Start:               r.Start,
-		Stop:                r.Stop,
-		ResolvedStart:       r.Start,
-		ResolvedStop:        r.Stop,
-		Exdates:             exdates,
-		Exceptions:          r.Exceptions,
-	}
-}
-
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.ID = request.ID
@@ -82,6 +56,11 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		_, err := s.dbCollection.InsertOne(ctx, model)
+		if err != nil {
+			return err
+		}
+
+		err = priority.UpdateFollowing(ctx, s.dbCollection, model.ID, model.Priority)
 		if err != nil {
 			return err
 		}
@@ -211,6 +190,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
+		err = priority.UpdateFollowing(ctx, s.dbCollection, model.ID, model.Priority)
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetById(ctx, model.ID)
 		return err
 	})
@@ -225,4 +209,31 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
+}
+
+func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
+	exdates := make([]types.Exdate, len(r.Exdates))
+	for i := range r.Exdates {
+		exdates[i].Begin = r.Exdates[i].Begin
+		exdates[i].End = r.Exdates[i].End
+	}
+
+	return eventfilter.Rule{
+		Author:              r.Author,
+		Description:         r.Description,
+		Type:                r.Type,
+		Priority:            r.Priority,
+		Enabled:             r.Enabled,
+		Config:              r.Config,
+		ExternalData:        r.ExternalData,
+		EventPattern:        r.EventPattern,
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
+		RRule:               r.RRule,
+		Start:               r.Start,
+		Stop:                r.Stop,
+		ResolvedStart:       r.Start,
+		ResolvedStop:        r.Stop,
+		Exdates:             exdates,
+		Exceptions:          r.Exceptions,
+	}
 }

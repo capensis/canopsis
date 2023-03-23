@@ -109,12 +109,17 @@ Feature: Create a pbehavior type
     }
     """
 
-  Scenario: given create request with already exists priority should return error
+  Scenario: given create request with priority of default type should return error
     When I am admin
     When I do POST /api/v4/pbehavior-types:
     """json
     {
-      "priority": 10
+      "priority": 1,
+      "name": "new type",
+      "description": "new type",
+      "type": "pause",
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 400
@@ -122,7 +127,7 @@ Feature: Create a pbehavior type
     """json
     {
       "errors": {
-        "priority": "Priority already exists."
+        "priority": "Priority is taken by default type."
       }
     }
     """

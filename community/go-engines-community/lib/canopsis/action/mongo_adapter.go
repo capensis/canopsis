@@ -2,9 +2,10 @@ package action
 
 import (
 	"context"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoAdapter struct {
@@ -18,13 +19,11 @@ func NewAdapter(dbClient mongo.DbClient) Adapter {
 }
 
 func (a *mongoAdapter) GetEnabled(ctx context.Context) ([]Scenario, error) {
-	cursor, err := a.dbCollection.Find(ctx, bson.M{"$or": []bson.M{
+	pipeline := append([]bson.M{{"$match": bson.M{"$or": []bson.M{
 		{"enabled": true},
 		{"enabled": bson.M{"$exists": false}},
-	}}, options.Find().SetSort(bson.D{
-		{Key: PriorityField, Value: 1},
-		{Key: IdField, Value: 1},
-	}))
+	}}}}, priority.GetSortPipeline()...)
+	cursor, err := a.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -65,16 +64,14 @@ func (a *mongoAdapter) GetEnabledById(ctx context.Context, id string) (Scenario,
 }
 
 func (a *mongoAdapter) GetEnabledByIDs(ctx context.Context, ids []string) ([]Scenario, error) {
-	cursor, err := a.dbCollection.Find(ctx, bson.M{"$and": []bson.M{
+	pipeline := append([]bson.M{{"$match": bson.M{"$and": []bson.M{
 		{"_id": bson.M{"$in": ids}},
 		{"$or": []bson.M{
 			{"enabled": true},
 			{"enabled": bson.M{"$exists": false}},
 		}},
-	}}, options.Find().SetSort(bson.D{
-		{Key: PriorityField, Value: 1},
-		{Key: IdField, Value: 1},
-	}))
+	}}}}, priority.GetSortPipeline()...)
+	cursor, err := a.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}

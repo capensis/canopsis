@@ -14,4 +14,3 @@ var ErrLinkedTypeToPbehavior = ValidationError{Err: errors.New("type is linked t
 var ErrLinkedTypeToException = ValidationError{Err: errors.New("type is linked to exception")}
 var ErrLinkedToActionType = ValidationError{Err: errors.New("type is linked to action")}
 var ErrDefaultType = ValidationError{Err: errors.New("type is default")}
-var ErrorDuplicatePriority = ValidationError{Err: errors.New("duplicate priority value")}
