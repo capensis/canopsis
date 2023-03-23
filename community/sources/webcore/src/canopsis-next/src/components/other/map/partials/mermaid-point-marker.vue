@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { isNumber } from 'chart.js/helpers';
+import { isNumber } from 'lodash';
 
 import PointIcon from './point-icon.vue';
 

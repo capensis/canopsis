@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { isArray } from 'lodash';
+import { isArray, omit } from 'lodash';
 
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
@@ -50,7 +50,7 @@ export default {
     },
     parameters: {
       type: Array,
-      default: () => Object.values(ALARM_METRIC_PARAMETERS),
+      default: () => Object.values(omit(ALARM_METRIC_PARAMETERS, ['timeToAck', 'timeToResolve'])),
     },
     disabledParameters: {
       type: Array,
