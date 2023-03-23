@@ -1,3 +1,5 @@
+import Faker from 'faker';
+
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { ENTITIES_TYPES } from '@/constants';
@@ -24,6 +26,8 @@ const stubs = {
 };
 
 const selectAddCardButton = wrapper => wrapper.find('.add-item-btn');
+const selectColumnFields = wrapper => wrapper.findAll('column-field-stub');
+const selectColumnFieldByIndex = (wrapper, index) => selectColumnFields(wrapper).at(index);
 
 describe('c-columns-field', () => {
   const columns = [
@@ -52,6 +56,28 @@ describe('c-columns-field', () => {
         key: expect.any(String),
         label: '',
       },
+    ]);
+  });
+
+  test('Column changed after trigger column field', () => {
+    const wrapper = factory({
+      propsData: {
+        columns,
+      },
+    });
+
+    const newColumn = {
+      ...columns[2],
+      label: Faker.datatype.string(),
+    };
+
+    selectColumnFieldByIndex(wrapper, 2).vm.$emit('input', newColumn);
+
+    expect(wrapper).toEmit('input', [
+      columns[0],
+      columns[1],
+      newColumn,
+      columns[3],
     ]);
   });
 
