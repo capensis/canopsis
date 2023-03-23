@@ -10,19 +10,19 @@ import {
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
-  createVectorMetricsModule,
+  createAggregatedMetricsModule,
 } from '@unit/utils/store';
 import { randomArrayItem } from '@unit/utils/array';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
+import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
-import BarChartWidget from '@/components/widgets/chart/bar-chart-widget.vue';
+import NumbersWidget from '@/components/widgets/chart/numbers-widget.vue';
 
 const stubs = {
   'chart-widget-filters': true,
 };
 
-describe('bar-chart-widget', () => {
+describe('numbers-widget', () => {
   const nowTimestamp = 1386435500000;
   mockDateNow(nowTimestamp);
 
@@ -34,7 +34,7 @@ describe('bar-chart-widget', () => {
   const { userPreferenceModule, fetchUserPreference } = createUserPreferenceModule();
   const { serviceModule } = createServiceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
-  const { vectorMetricsModule, fetchVectorMetricsList } = createVectorMetricsModule();
+  const { aggregatedMetricsModule, fetchAggregatedMetricsList } = createAggregatedMetricsModule();
 
   const store = createMockedStoreModules([
     authModule,
@@ -43,7 +43,7 @@ describe('bar-chart-widget', () => {
     alarmModule,
     serviceModule,
     queryModule,
-    vectorMetricsModule,
+    aggregatedMetricsModule,
   ]);
 
   const widget = {
@@ -52,12 +52,15 @@ describe('bar-chart-widget', () => {
       default_sampling: SAMPLINGS.month,
       default_time_range: QUICK_RANGES.last7Days.value,
       metrics: [
-        { metric: ALARM_METRIC_PARAMETERS.createdAlarms },
+        {
+          metric: ALARM_METRIC_PARAMETERS.createdAlarms,
+          aggregate_func: AGGREGATE_FUNCTIONS.sum,
+        },
       ],
     },
   };
 
-  const factory = generateShallowRenderer(BarChartWidget, {
+  const factory = generateShallowRenderer(NumbersWidget, {
     stubs,
     parentComponent: {
       provide: {
@@ -65,7 +68,7 @@ describe('bar-chart-widget', () => {
       },
     },
   });
-  const snapshotFactory = generateRenderer(BarChartWidget, {
+  const snapshotFactory = generateRenderer(NumbersWidget, {
     stubs,
     parentComponent: {
       provide: {
@@ -122,7 +125,7 @@ describe('bar-chart-widget', () => {
         alarmModule,
         serviceModule,
         queryModule,
-        vectorMetricsModule,
+        aggregatedMetricsModule,
       ]),
       propsData: {
         widget,
@@ -131,7 +134,7 @@ describe('bar-chart-widget', () => {
 
     await wrapper.vm.fetchList();
 
-    expect(fetchVectorMetricsList).toBeCalledWith(
+    expect(fetchAggregatedMetricsList).toBeCalledWith(
       expect.any(Object),
       {
         widgetId: widget._id,
@@ -140,21 +143,24 @@ describe('bar-chart-widget', () => {
           sampling,
           from: 1383843500,
           to: 1386435500,
-          parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
+          parameters: [{
+            metric: ALARM_METRIC_PARAMETERS.createdAlarms,
+            aggregate_func: AGGREGATE_FUNCTIONS.sum,
+          }],
         },
       },
       undefined,
     );
   });
 
-  test('Renders `bar-chart-widget` with required props', async () => {
+  test('Renders `numbers-widget` with required props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         widget: {
-          _id: 'bar-chart-widget-id',
-          type: WIDGET_TYPES.barChart,
-          title: 'Default bar chart',
+          _id: 'numbers-widget-id',
+          type: WIDGET_TYPES.numbers,
+          title: 'Default numbers',
           parameters: {
             default_sampling: SAMPLINGS.day,
             default_time_range: QUICK_RANGES.last7Days.value,
@@ -166,14 +172,14 @@ describe('bar-chart-widget', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `bar-chart-widget` with custom props', async () => {
+  test('Renders `numbers-widget` with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         widget: {
-          _id: 'bar-chart-widget-id',
-          type: WIDGET_TYPES.barChart,
-          title: 'Default bar chart',
+          _id: 'numbers-widget-id',
+          type: WIDGET_TYPES.numbers,
+          title: 'Default numbers',
           parameters: {
             default_sampling: SAMPLINGS.month,
             default_time_range: QUICK_RANGES.last7Days.value,

@@ -844,3 +844,37 @@ export const createVectorMetricsModule = () => {
     fetchVectorMetricsList,
   };
 };
+
+export const createAggregatedMetricsModule = () => {
+  const getAggregatedMetricsListByWidgetId = jest.fn().mockReturnValue(() => false);
+  const getAggregatedMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
+  const getAggregatedMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
+  const fetchAggregatedMetricsList = jest.fn();
+
+  afterEach(() => {
+    getAggregatedMetricsListByWidgetId.mockClear();
+    getAggregatedMetricsPendingByWidgetId.mockClear();
+    getAggregatedMetricsMetaByWidgetId.mockClear();
+    fetchAggregatedMetricsList.mockClear();
+  });
+
+  const aggregatedMetricsModule = {
+    name: 'aggregatedMetrics',
+    getters: {
+      getListByWidgetId: getAggregatedMetricsListByWidgetId,
+      getPendingByWidgetId: getAggregatedMetricsPendingByWidgetId,
+      getMetaByWidgetId: getAggregatedMetricsMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchAggregatedMetricsList,
+    },
+  };
+
+  return {
+    aggregatedMetricsModule,
+    getAggregatedMetricsListByWidgetId,
+    getAggregatedMetricsPendingByWidgetId,
+    getAggregatedMetricsMetaByWidgetId,
+    fetchAggregatedMetricsList,
+  };
+};
