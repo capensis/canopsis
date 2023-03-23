@@ -1,0 +1,340 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with custom props 1`] = `
+<div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs5"
+      >
+        <span
+          class="pl-2"
+        >
+          <button
+            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </button>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_downward
+              </i>
+            </div>
+          </button>
+        </span>
+      </div>
+      <div
+        class="flex text-xs-right pr-2 xs3"
+      >
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light error--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="layout px-3 pb-3 justify-center column"
+    />
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs5"
+      >
+        <span
+          class="pl-2"
+        >
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </button>
+          <button
+            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_downward
+              </i>
+            </div>
+          </button>
+        </span>
+      </div>
+      <div
+        class="flex text-xs-right pr-2 xs3"
+      >
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light error--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="layout px-3 pb-3 justify-center column"
+    />
+  </div>
+  <button
+    class="mx-0 v-btn theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      Add
+    </div>
+  </button>
+</div>
+`;
+
+exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with default props 1`] = `
+<div>
+  <button
+    class="mx-0 v-btn theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      Add
+    </div>
+  </button>
+</div>
+`;
+
+exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with slots props 1`] = `
+<div>
+  <div
+    class="prepend-slot"
+  />
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs5"
+      >
+        <span
+          class="pl-2"
+        >
+          <button
+            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </button>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_downward
+              </i>
+            </div>
+          </button>
+        </span>
+      </div>
+      <div
+        class="flex text-xs-right pr-2 xs3"
+      >
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light error--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="layout px-3 pb-3 justify-center column"
+    >
+      <div
+        class="item-slot"
+      >
+        {"item":{"id":"id-1","text":"text-1"},"index":0}
+      </div>
+    </div>
+  </div>
+  <div
+    class="my-2 v-card v-sheet theme--light"
+  >
+    <div
+      class="layout pt-2 justify-space-between"
+    >
+      <div
+        class="flex xs5"
+      >
+        <span
+          class="pl-2"
+        >
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_upward
+              </i>
+            </div>
+          </button>
+          <button
+            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_downward
+              </i>
+            </div>
+          </button>
+        </span>
+      </div>
+      <div
+        class="flex text-xs-right pr-2 xs3"
+      >
+        <button
+          class="v-btn v-btn--icon theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light error--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="layout px-3 pb-3 justify-center column"
+    >
+      <div
+        class="item-slot"
+      >
+        {"item":{"id":"id-2","text":"text-2"},"index":1}
+      </div>
+    </div>
+  </div>
+  <div
+    class="append-slot"
+  />
+  <button
+    class="mx-0 v-btn theme--light primary"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      Add
+    </div>
+  </button>
+</div>
+`;
