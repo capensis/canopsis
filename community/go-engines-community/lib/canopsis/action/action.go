@@ -8,11 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-const (
-	PriorityField = "priority"
-	IdField       = "_id"
-)
-
 type Scenario struct {
 	ID                   string                  `bson:"_id,omitempty" json:"_id,omitempty"`
 	Name                 string                  `bson:"name" json:"name"`
@@ -21,7 +16,7 @@ type Scenario struct {
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
 	Triggers             []string                `bson:"triggers" json:"triggers"`
 	Actions              []Action                `bson:"actions" json:"actions"`
-	Priority             int                     `bson:"priority" json:"priority"`
+	Priority             int64                   `bson:"priority" json:"priority"`
 	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`
 	Created              types.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
 	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`

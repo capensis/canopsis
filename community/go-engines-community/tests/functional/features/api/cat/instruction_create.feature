@@ -882,7 +882,6 @@ Feature: Create a instruction
         "enabled": "Enabled is missing.",
         "jobs": "Jobs is missing.",
         "name": "Name is missing.",
-        "priority": "Priority is missing.",
         "triggers": "Triggers is missing.",
         "timeout_after_execution": "TimeoutAfterExecution is missing."
       }

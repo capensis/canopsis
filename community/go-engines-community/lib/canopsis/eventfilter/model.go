@@ -57,7 +57,7 @@ type Rule struct {
 	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
 	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int                               `bson:"priority" json:"priority"`
+	Priority     int64                             `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
 	OldPatterns  oldpattern.EventPatternList       `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
