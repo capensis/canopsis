@@ -1,11 +1,13 @@
 <template lang="pug">
-  bar-chart(
-    :options="chartOptions",
-    :datasets="datasets",
-    :width="width",
-    :height="height",
-    :dark="$system.dark"
-  )
+  v-layout.chart-metrics-widget(column, align-center)
+    h4.chart-metrics-widget__title {{ title }}
+    bar-chart.chart-metrics-widget__chart(
+      :options="chartOptions",
+      :datasets="datasets",
+      :width="width",
+      :height="height",
+      :dark="$system.dark"
+    )
 </template>
 
 <script>
@@ -28,6 +30,10 @@ export default {
     metrics: {
       type: Array,
       default: () => [],
+    },
+    title: {
+      type: String,
+      required: false,
     },
     width: {
       default: 600,
@@ -154,3 +160,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.chart-metrics-widget__chart {
+  width: 100%;
+}
+</style>

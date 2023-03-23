@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout.pie-chart-metrics(column, align-center)
-    h4.pie-chart-metrics__title {{ title }}
-    pie-chart.pie-chart-metrics__chart(
+  v-layout.chart-metrics-widget(column, align-center)
+    h4.chart-metrics-widget__title {{ title }}
+    pie-chart.chart-metrics-widget__chart(
       :datasets="datasets",
       :labels="labels",
       :options="chartOptions",
@@ -142,16 +142,8 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.pie-chart-metrics {
-  &__title {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-
-  &__chart {
-    max-width: 100%;
-  }
+<style lang="scss" scoped>
+.chart-metrics-widget__chart {
+  max-width: 100%;
 }
 </style>
