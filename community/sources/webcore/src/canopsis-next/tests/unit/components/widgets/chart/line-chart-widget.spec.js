@@ -16,13 +16,13 @@ import { randomArrayItem } from '@unit/utils/array';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
-import BarChartWidget from '@/components/widgets/chart/bar-chart-widget.vue';
+import LineChartWidget from '@/components/widgets/chart/line-chart-widget.vue';
 
 const stubs = {
   'chart-widget-filters': true,
 };
 
-describe('bar-chart-widget', () => {
+describe('line-chart-widget', () => {
   const nowTimestamp = 1386435500000;
   mockDateNow(nowTimestamp);
 
@@ -57,7 +57,7 @@ describe('bar-chart-widget', () => {
     },
   };
 
-  const factory = generateShallowRenderer(BarChartWidget, {
+  const factory = generateShallowRenderer(LineChartWidget, {
     stubs,
     parentComponent: {
       provide: {
@@ -65,7 +65,7 @@ describe('bar-chart-widget', () => {
       },
     },
   });
-  const snapshotFactory = generateRenderer(BarChartWidget, {
+  const snapshotFactory = generateRenderer(LineChartWidget, {
     stubs,
     parentComponent: {
       provide: {
@@ -147,14 +147,14 @@ describe('bar-chart-widget', () => {
     );
   });
 
-  test('Renders `bar-chart-widget` with required props', async () => {
+  test('Renders `line-chart-widget` with required props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         widget: {
-          _id: 'bar-chart-widget-id',
-          type: WIDGET_TYPES.barChart,
-          title: 'Default bar chart',
+          _id: 'line-chart-widget-id',
+          type: WIDGET_TYPES.lineChart,
+          title: 'Default line chart',
           parameters: {
             default_sampling: SAMPLINGS.day,
             default_time_range: QUICK_RANGES.last7Days.value,
@@ -166,14 +166,14 @@ describe('bar-chart-widget', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `bar-chart-widget` with custom props', async () => {
+  test('Renders `line-chart-widget` with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         widget: {
-          _id: 'bar-chart-widget-id',
-          type: WIDGET_TYPES.barChart,
-          title: 'Default bar chart',
+          _id: 'line-chart-widget-id',
+          type: WIDGET_TYPES.lineChart,
+          title: 'Default line chart',
           parameters: {
             default_sampling: SAMPLINGS.month,
             default_time_range: QUICK_RANGES.last7Days.value,

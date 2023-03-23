@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pie-chart-widget Renders \`pie-chart-widget\` with custom props 1`] = `
+<div
+  class="layout px-3 pb-3 column"
+>
+  <chart-widget-filters-stub
+    filterdisabled="true"
+    widgetfilters=""
+    widgetid="pie-chart-widget-id"
+  />
+  <div
+    class="layout"
+  >
+    <pre>
+      false
+    </pre>
+  </div>
+</div>
+`;
+
+exports[`pie-chart-widget Renders \`pie-chart-widget\` with required props 1`] = `
+<div
+  class="layout px-3 pb-3 column"
+>
+  <chart-widget-filters-stub
+    filterdisabled="true"
+    widgetfilters=""
+    widgetid="pie-chart-widget-id"
+  />
+  <div
+    class="layout"
+  >
+    <pre>
+      false
+    </pre>
+  </div>
+</div>
+`;
