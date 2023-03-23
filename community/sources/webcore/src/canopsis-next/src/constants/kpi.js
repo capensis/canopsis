@@ -63,13 +63,13 @@ export const AGGREGATE_FUNCTIONS = {
   max: 'max',
 };
 
-export const BAR_Y_AXES_IDS = {
+export const Y_AXES_IDS = {
   default: 'y',
   percent: 'yPercent',
   time: 'yTime',
 };
 
-export const BAR_X_AXES_IDS = {
+export const X_AXES_IDS = {
   default: 'x',
   history: 'xHistory',
 };
