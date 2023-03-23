@@ -19,17 +19,18 @@
       @update:sampling="updateSampling",
       @update:interval="updateInterval"
     )
-    v-layout.ma-4(column)
-      div.position-relative
-        bar-chart-metrics(
-          :metrics="preparedVectorMetrics",
-          :sampling="query.sampling",
-          :stacked="widget.parameters.stacked"
-        )
+    v-layout.pa-3(column)
+      c-progress-overlay(:pending="vectorMetricsPending", transition)
+      bar-chart-metrics(
+        :metrics="preparedVectorMetrics",
+        :title="widget.parameters.chart_title",
+        :sampling="query.sampling",
+        :stacked="widget.parameters.stacked"
+      )
 </template>
 
 <script>
-import { omit, keyBy } from 'lodash';
+import { pick, keyBy } from 'lodash';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -111,7 +112,7 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-        ...omit(this.query, ['interval']),
+        ...pick(this.query, ['parameters', 'sampling', 'filter', 'with_history']),
       };
     },
 
