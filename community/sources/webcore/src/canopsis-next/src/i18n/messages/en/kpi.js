@@ -8,6 +8,7 @@ export default {
   selectMetric: 'Select metric to display',
   customColor: 'Custom color',
   calculationMethod: 'Calculation method',
+  periodTrend: '{count} for the period\n{from} - {to}',
   tabs: {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
@@ -20,6 +21,7 @@ export default {
   },
   errors: {
     metricsMinLength: 'At least {count} metrics must be added',
+    emptyMetrics: 'No data to display',
   },
 
   metrics: {
@@ -45,6 +47,8 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.timeToAck]: '{value} to ack alarms',
+      [ALARM_METRIC_PARAMETERS.timeToResolve]: '{value} to resolve alarms',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
       [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} not acked alarms',
