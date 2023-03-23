@@ -32,6 +32,8 @@ export const isTimeMetric = metric => [
   USER_METRIC_PARAMETERS.totalUserActivity,
   ALARM_METRIC_PARAMETERS.averageAck,
   ALARM_METRIC_PARAMETERS.averageResolve,
+  ALARM_METRIC_PARAMETERS.timeToAck,
+  ALARM_METRIC_PARAMETERS.timeToResolve,
 ].includes(metric);
 
 /**
@@ -181,6 +183,8 @@ export const getAggregateFunctionsByMetric = (metric) => {
     case ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms:
     case ALARM_METRIC_PARAMETERS.averageAck:
     case ALARM_METRIC_PARAMETERS.averageResolve:
+    case ALARM_METRIC_PARAMETERS.timeToAck:
+    case ALARM_METRIC_PARAMETERS.timeToResolve:
     case ALARM_METRIC_PARAMETERS.notAckedAlarms:
     case ALARM_METRIC_PARAMETERS.notAckedInHourAlarms:
     case ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms:
