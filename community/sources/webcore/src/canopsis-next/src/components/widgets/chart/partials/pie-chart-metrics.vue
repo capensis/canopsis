@@ -87,7 +87,6 @@ export default {
           legend: {
             position: 'right',
             maxWidth: 300,
-            onClick: false,
             labels: {
               font: {
                 size: 11,
