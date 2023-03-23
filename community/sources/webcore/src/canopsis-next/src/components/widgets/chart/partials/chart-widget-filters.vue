@@ -4,6 +4,7 @@
       v-if="showInterval",
       :interval="interval",
       :min="minIntervalDate",
+      :quick-ranges="quickRanges",
       @input="$emit('update:interval', $event)"
     )
     c-sampling-field.chart-widget-filters__sampling.mr-4(
@@ -35,6 +36,8 @@
 </template>
 
 <script>
+import { METRICS_QUICK_RANGES } from '@/constants';
+
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
@@ -96,6 +99,11 @@ export default {
     filterDisabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    quickRanges() {
+      return Object.values(METRICS_QUICK_RANGES);
     },
   },
 };

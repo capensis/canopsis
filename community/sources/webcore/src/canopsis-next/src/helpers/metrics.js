@@ -12,6 +12,7 @@ import {
 
 import { addUnitToDate, convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { isOmitEqual } from '@/helpers/equal';
+import { convertDurationToMaxUnitDuration } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling
@@ -205,4 +206,27 @@ export const getAggregateFunctionsByMetric = (metric) => {
         AGGREGATE_FUNCTIONS.max,
       ];
   }
+};
+
+/**
+ * Get max time duration for metrics array
+ *
+ * @param {Metric[]} metrics
+ * @returns {Duration}
+ */
+export const getMaxTimeDurationForMetrics = (metrics) => {
+  const maxTimeValue = Math.max.apply(null, metrics.reduce((acc, { title: metric, data }) => {
+    if (isTimeMetric(metric)) {
+      const maxDatasetValue = Math.max.apply(null, data.map(({ value }) => value));
+
+      acc.push(maxDatasetValue);
+    }
+
+    return acc;
+  }, []));
+
+  return convertDurationToMaxUnitDuration({
+    value: maxTimeValue,
+    unit: TIME_UNITS.second,
+  });
 };
