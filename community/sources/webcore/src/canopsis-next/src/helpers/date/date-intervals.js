@@ -10,6 +10,18 @@ import {
 } from '@/helpers/date/date';
 
 /**
+ * @typedef {Object} Interval
+ * @property {number} from
+ * @property {number} to
+ */
+
+/**
+ * @typedef {Object} IntervalForm
+ * @property {number | string} from
+ * @property {number | string} to
+ */
+
+/**
  * Convert a date interval string to moment date object
  *
  * @param {string} string
@@ -306,3 +318,32 @@ export const getQuickRangeByDiffBetweenStartAndStop = (
   diff,
   ranges = Object.values(QUICK_RANGES),
 ) => ranges.find(range => getDiffBetweenStartAndStopQuickInterval(range.value) === diff) || QUICK_RANGES.custom;
+
+/**
+ * Convert interval form to timestamp interval
+ *
+ * @param {IntervalForm} [interval = {}]
+ * @param {string} [format = DATETIME_FORMATS.datePicker]
+ * @param {string} [unit = SAMPLING.day]
+ * @param {string} [timezone = getLocaleTimezone()]
+ * @returns {Interval}
+ */
+export const convertIntervalToTimestamp = (
+  interval = {},
+  format = DATETIME_FORMATS.datePicker,
+  unit = SAMPLINGS.day,
+  timezone = getLocaleTimezone(),
+) => ({
+  from: convertStartDateIntervalToTimestampByTimezone(
+    interval.from,
+    format,
+    unit,
+    timezone,
+  ),
+  to: convertStopDateIntervalToTimestampByTimezone(
+    interval.to,
+    format,
+    unit,
+    timezone,
+  ),
+});
