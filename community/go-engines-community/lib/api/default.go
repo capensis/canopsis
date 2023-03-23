@@ -21,7 +21,6 @@ import (
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -204,13 +203,6 @@ func Default(
 		p.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	}
 
-	// Create and compute scenario priority intervals.
-	scenarioPriorityIntervals := action.NewPriorityIntervals()
-	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
-	if err != nil {
-		return nil, nil, fmt.Errorf("cannot recalculate scenario preority: %w", err)
-	}
-
 	// Create csv exporter.
 	if exportExecutor == nil {
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
@@ -317,7 +309,6 @@ func Default(
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			p.UserInterfaceConfigProvider,
-			scenarioPriorityIntervals,
 			cfg.File.Upload,
 			websocketHub,
 			websocketStore,

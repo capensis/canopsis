@@ -21,7 +21,7 @@ type EditRequest struct {
 	Name     string `json:"name" binding:"required,max=255"`
 	Author   string `json:"author" binding:"required,max=255"`
 	Enabled  *bool  `json:"enabled" binding:"required"`
-	Priority *int   `json:"priority" binding:"gt=0"`
+	Priority int64  `json:"priority" binding:"min=0"`
 
 	// Possible trigger values.
 	//   * `create` - Alarm creation
@@ -73,19 +73,6 @@ type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type GetMinimalPriorityResponse struct {
-	Priority int `json:"priority"`
-}
-
-type CheckPriorityRequest struct {
-	Priority int `json:"priority" binding:"required,gt=0"`
-}
-
-type CheckPriorityResponse struct {
-	Valid               bool `json:"valid"`
-	RecommendedPriority int  `json:"recommended_priority,omitempty"`
-}
-
 type ActionRequest struct {
 	Type                     string                       `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
 	Parameters               action.Parameters            `json:"parameters,omitempty"`
@@ -107,7 +94,7 @@ type Scenario struct {
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
 	Triggers             []string                `bson:"triggers" json:"triggers"`
 	Actions              []Action                `bson:"actions" json:"actions"`
-	Priority             int                     `bson:"priority" json:"priority"`
+	Priority             int64                   `bson:"priority" json:"priority"`
 	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`
 	Created              types.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`

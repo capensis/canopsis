@@ -128,15 +128,12 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	pbhTypeUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "ID")
 	pbhTypeUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Name")
-	pbhTypeUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Priority")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhTypeUniqueIDValidator.Validate(ctx, sl)
 		pbhTypeUniqueNameValidator.Validate(ctx, sl)
-		pbhTypeUniquePriorityValidator.Validate(ctx, sl)
 	}, pbehaviortype.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhTypeUniqueNameValidator.Validate(ctx, sl)
-		pbhTypeUniquePriorityValidator.Validate(ctx, sl)
 	}, pbehaviortype.UpdateRequest{})
 
 	pbhExceptionUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorExceptionMongoCollection, "ID")

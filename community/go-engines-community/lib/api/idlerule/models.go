@@ -22,7 +22,7 @@ type EditRequest struct {
 	Author               string                 `json:"author" swaggerignore:"true"`
 	Enabled              *bool                  `json:"enabled" binding:"required"`
 	Type                 string                 `json:"type" binding:"required"`
-	Priority             *int64                 `json:"priority" binding:"required"`
+	Priority             int64                  `json:"priority" binding:"min=0"`
 	Duration             types.DurationWithUnit `json:"duration" binding:"required"`
 	Comment              string                 `json:"comment"`
 	DisableDuringPeriods []string               `json:"disable_during_periods"`

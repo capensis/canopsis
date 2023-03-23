@@ -64,7 +64,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -106,7 +105,6 @@ func RegisterRoutes(
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
@@ -571,20 +569,17 @@ func RegisterRoutes(
 			)
 			pbhTypeAuthorizeRead := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionRead, enforcer)
 			pbhTypeAuthorizeCreate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionCreate, enforcer)
+			pbhTypeAuthorizeUpdate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer)
+			pbhTypeAuthorizeDelete := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer)
 
 			typeRouter.GET("", pbhTypeAuthorizeRead, pbehaviorTypeApi.List)
 			typeRouter.POST("", pbhTypeAuthorizeCreate, pbehaviorTypeApi.Create)
-
-			pbhTypeIDGroup := typeRouter.Group("")
-			{
-				pbhTypeAuthorizeUpdate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer)
-				pbhTypeAuthorizeDelete := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer)
-
-				pbhTypeIDGroup.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeApi.Get)
-				pbhTypeIDGroup.PUT("/:id", pbhTypeAuthorizeUpdate, pbehaviorTypeApi.Update)
-				pbhTypeIDGroup.DELETE("/:id", pbhTypeAuthorizeDelete, pbehaviorTypeApi.Delete)
-			}
+			typeRouter.GET("/next-priority", pbhTypeAuthorizeRead, pbehaviorTypeApi.GetNextPriority)
+			typeRouter.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeApi.Get)
+			typeRouter.PUT("/:id", pbhTypeAuthorizeUpdate, pbehaviorTypeApi.Update)
+			typeRouter.DELETE("/:id", pbhTypeAuthorizeDelete, pbehaviorTypeApi.Delete)
 		}
+
 		reasonRouter := protected.Group("/pbehavior-reasons")
 		{
 			reasonAPI := pbehaviorreason.NewApi(
@@ -1053,7 +1048,7 @@ func RegisterRoutes(
 			)
 		}
 
-		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger, scenarioPriorityIntervals)
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger)
 		scenarioRouter := protected.Group("/scenarios")
 		{
 			scenarioRouter.POST(
@@ -1082,16 +1077,6 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjAction, model.PermissionDelete, enforcer),
 				scenarioAPI.Delete,
-			)
-			scenarioRouter.GET(
-				"/minimal-priority",
-				middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
-				scenarioAPI.GetMinimalPriority,
-			)
-			scenarioRouter.POST(
-				"/check-priority",
-				middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
-				scenarioAPI.CheckPriority,
 			)
 		}
 
