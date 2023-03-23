@@ -10,6 +10,7 @@ import {
   PIE_CHART_WIDGET_PRESET_TYPES,
   WIDGET_TYPES,
 } from '@/constants';
+
 import { getDefaultAggregateFunctionByMetric } from '@/helpers/metrics';
 
 /**
