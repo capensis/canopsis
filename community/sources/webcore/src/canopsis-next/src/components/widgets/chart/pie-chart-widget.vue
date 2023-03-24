@@ -32,12 +32,13 @@
 <script>
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
 import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
@@ -56,10 +57,11 @@ export default {
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
+    entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
     permissionsWidgetsPieChartFilters,
-    entitiesAggregatedMetricsMixin,
   ],
   props: {
     widget: {

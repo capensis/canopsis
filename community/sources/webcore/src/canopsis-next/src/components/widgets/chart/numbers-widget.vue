@@ -33,12 +33,13 @@ import { isRatioMetric } from '@/helpers/metrics';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
 import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
@@ -57,10 +58,11 @@ export default {
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
+    entitiesAggregatedMetricsMixin,
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
-    entitiesAggregatedMetricsMixin,
   ],
   props: {
     widget: {
