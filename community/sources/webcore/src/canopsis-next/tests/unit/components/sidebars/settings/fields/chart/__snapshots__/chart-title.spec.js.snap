@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`chart-title Renders \`chart-title\` with custom props 1`] = `
+<widget-settings-item-stub
+  optional="true"
+  title="Header"
+>
+  <div
+    class="v-input mt-0 pt-0 v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            name="custom_name"
+            placeholder="Header title"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</widget-settings-item-stub>
+`;
+
+exports[`chart-title Renders \`chart-title\` with default props 1`] = `
+<widget-settings-item-stub
+  optional="true"
+  title="Header"
+>
+  <div
+    class="v-input mt-0 pt-0 v-text-field v-text-field--placeholder theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <input
+            name="parameters.chart_title"
+            placeholder="Header title"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</widget-settings-item-stub>
+`;

@@ -265,6 +265,18 @@ export default {
       [WIDGET_TYPES.map]: {
         title: 'Mapping',
       },
+      [WIDGET_TYPES.barChart]: {
+        title: 'Bar chart',
+      },
+      [WIDGET_TYPES.lineChart]: {
+        title: 'Line chart',
+      },
+      [WIDGET_TYPES.pieChart]: {
+        title: 'Pie chart',
+      },
+      [WIDGET_TYPES.numbers]: {
+        title: 'Numbers',
+      },
     },
   },
   manageHistogramGroups: {

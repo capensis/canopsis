@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-draggable-list-field.c-card-iterator(
+  c-draggable-list-field.c-card-iterator-field(
     v-field="data",
     handle=".item-drag-handler",
     ghost-class="grey",
@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style lang="scss">
-.c-card-iterator {
+.c-card-iterator-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
