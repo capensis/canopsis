@@ -40,6 +40,14 @@ export default {
       type: String,
       default: KPI_PIE_CHART_SHOW_MODS.numbers,
     },
+    responsive: {
+      type: Boolean,
+      default: true,
+    },
+    animation: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     totalDataValue() {
@@ -75,6 +83,8 @@ export default {
 
     chartOptions() {
       return {
+        responsive: this.responsive,
+        animation: this.animation,
         plugins: {
           datalabels: {
             color: ({ dataIndex, dataset }) => {
@@ -83,6 +93,10 @@ export default {
               return getMostReadableTextColor(dataColor, { level: 'AA', size: 'large' });
             },
             formatter: this.formatDataLabel,
+            font: {
+              size: 11,
+              family: 'Arial, sans-serif',
+            },
           },
           legend: {
             position: 'right',
