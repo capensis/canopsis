@@ -281,7 +281,7 @@ describe('kpi-rating', () => {
       store: createMockedStoreModules([{
         name: 'metrics',
         actions: {
-          fetchRatingMetricsWithoutStore: jest.fn().mockRejectedValue(),
+          fetchRatingMetricsWithoutStore: jest.fn().mockRejectedValue({}),
         },
       }]),
     });
