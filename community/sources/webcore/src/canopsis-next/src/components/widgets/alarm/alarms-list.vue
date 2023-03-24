@@ -389,7 +389,7 @@ export default {
 
         this.downloadFile(`${API_HOST}${API_ROUTES.alarmListExport}/${fileData._id}/download`);
       } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('alarmList.popups.exportFailed') });
       } finally {
         this.downloading = false;
       }
