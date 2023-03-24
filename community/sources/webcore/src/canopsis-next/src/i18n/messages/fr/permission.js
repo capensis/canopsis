@@ -15,7 +15,7 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.counter]: 'Droits pour le widget : Compteur',
     [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Droits pour le widget : Scénario des tests',
     [USER_PERMISSIONS_PREFIXES.business.map]: 'Droits pour le widget : Cartographie',
-    [USER_PERMISSIONS_PREFIXES.business.barChart]: 'Droits pour le widget : Diagramme à bandes',
+    [USER_PERMISSIONS_PREFIXES.business.barChart]: 'Droits pour le widget : Histogramme',
     [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Droits pour le widget : Graphique en ligne',
     [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Droits pour le widget : Diagramme circulaire',
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Droits pour le widget : Nombres',
