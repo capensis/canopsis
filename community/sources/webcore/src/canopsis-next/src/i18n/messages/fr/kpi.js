@@ -13,15 +13,21 @@ export default {
     collectionSettings: 'Paramètres d\'évaluation',
     ratingSettings: 'Paramètres d\'évaluation',
   },
+
   aggregateFunctions: {
     [AGGREGATE_FUNCTIONS.sum]: 'Somme',
     [AGGREGATE_FUNCTIONS.avg]: 'Moyenne',
     [AGGREGATE_FUNCTIONS.min]: 'Min',
     [AGGREGATE_FUNCTIONS.max]: 'Max',
   },
+
   errors: {
     metricsMinLength: 'Au moins {count} statistiques doivent être ajoutées',
     emptyMetrics: 'Aucune donnée à afficher',
+  },
+
+  popups: {
+    exportFailed: 'Échec de l\'exportation du graphique au format CSV',
   },
 
   metrics: {

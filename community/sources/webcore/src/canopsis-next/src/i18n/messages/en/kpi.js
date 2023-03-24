@@ -13,15 +13,21 @@ export default {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
   },
+
   aggregateFunctions: {
     [AGGREGATE_FUNCTIONS.sum]: 'Sum',
     [AGGREGATE_FUNCTIONS.avg]: 'Average',
     [AGGREGATE_FUNCTIONS.min]: 'Min',
     [AGGREGATE_FUNCTIONS.max]: 'Max',
   },
+
   errors: {
     metricsMinLength: 'At least {count} metrics must be added',
     emptyMetrics: 'No data to display',
+  },
+
+  popups: {
+    exportFailed: 'Failed to export chart in CSV format',
   },
 
   metrics: {
