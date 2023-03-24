@@ -50,9 +50,7 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with custom props 1`] =
       editable="true"
       filters="[object Object]"
       hideselector="true"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
   </widget-settings-group-stub>
 </widget-settings-stub>
@@ -108,9 +106,7 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with default props 1`] 
       editable="true"
       filters=""
       hideselector="true"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
   </widget-settings-group-stub>
 </widget-settings-stub>

@@ -139,7 +139,7 @@ describe('pie-chart-widget', () => {
       {
         widgetId: widget._id,
         params: {
-          filter,
+          widget_filters: [filter],
           sampling,
           from: 1383843500,
           to: 1386435500,

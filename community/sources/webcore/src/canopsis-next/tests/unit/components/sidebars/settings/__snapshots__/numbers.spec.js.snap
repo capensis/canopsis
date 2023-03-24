@@ -42,9 +42,7 @@ exports[`numbers Renders \`numbers\` widget settings with custom props 1`] = `
       editable="true"
       filters="[object Object]"
       hideselector="true"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
     <field-switcher-stub
       title="Show trend"
@@ -96,9 +94,7 @@ exports[`numbers Renders \`numbers\` widget settings with default props 1`] = `
       editable="true"
       filters=""
       hideselector="true"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
     <field-switcher-stub
       title="Show trend"
