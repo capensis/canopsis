@@ -49,6 +49,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    responsive: {
+      type: Boolean,
+      default: true,
+    },
+    animation: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     hasHistoryData() {
@@ -89,7 +97,8 @@ export default {
 
     chartOptions() {
       return {
-        responsive: true,
+        responsive: this.responsive,
+        animation: this.animation,
         interaction: {
           mode: 'x',
           intersect: false,

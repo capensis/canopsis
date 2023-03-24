@@ -2,7 +2,7 @@
 
 exports[`pie-chart-widget Renders \`pie-chart-widget\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout py-2 column"
 >
   <chart-widget-filters-stub
     class="px-3"
@@ -51,7 +51,7 @@ exports[`pie-chart-widget Renders \`pie-chart-widget\` with custom props 1`] = `
 
 exports[`pie-chart-widget Renders \`pie-chart-widget\` with required props 1`] = `
 <div
-  class="layout column"
+  class="layout py-2 column"
 >
   <chart-widget-filters-stub
     class="px-3"

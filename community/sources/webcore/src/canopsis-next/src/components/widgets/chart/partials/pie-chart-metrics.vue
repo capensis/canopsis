@@ -154,9 +154,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.chart-metrics-widget__chart {
-  max-width: 100%;
-}
-</style>
