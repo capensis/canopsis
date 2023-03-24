@@ -214,6 +214,7 @@ FilePattern = "/tmp/import_%s.json"
 [Canopsis.api]
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+ExportBulkSize = 5000
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
