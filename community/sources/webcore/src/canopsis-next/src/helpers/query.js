@@ -206,12 +206,12 @@ export function convertCounterWidgetToQuery(widget) {
 }
 
 /**
- * This function converts chart widgets to query Object
+ * This function converts chart widgets default parameters to query Object
  *
  * @param {Widget} widget
  * @returns {{ sampling: string, interval: Object }}
  */
-export function convertChartWidgetToQuery(widget) {
+export function convertChartWidgetDefaultParametersToQuery(widget) {
   const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
 
   return {
@@ -220,6 +220,22 @@ export function convertChartWidgetToQuery(widget) {
       from: QUICK_RANGES[defaultTimeRange].start,
       to: QUICK_RANGES[defaultTimeRange].stop,
     },
+  };
+}
+
+/**
+ * This function converts bar chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertChartWidgetToQuery(widget) {
+  const { parameters: { comparison = false, metrics = [] } } = widget;
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    with_history: comparison,
+    parameters: metrics.map(({ metric }) => metric),
   };
 }
 
@@ -355,8 +371,8 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
-    [WIDGET_TYPES.pieChart]: convertChartWidgetToQuery,
-    [WIDGET_TYPES.numbers]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartWidgetDefaultParametersToQuery,
+    [WIDGET_TYPES.numbers]: convertChartWidgetDefaultParametersToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };
