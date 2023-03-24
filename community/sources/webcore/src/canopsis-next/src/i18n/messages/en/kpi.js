@@ -9,6 +9,9 @@ export default {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
   },
+  popups: {
+    exportFailed: 'Failed to export chart in CSV format',
+  },
 
   metrics: {
     parameter: 'Parameter to compare',
