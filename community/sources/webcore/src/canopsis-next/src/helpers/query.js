@@ -206,12 +206,12 @@ export function convertCounterWidgetToQuery(widget) {
 }
 
 /**
- * This function converts chart widgets to query Object
+ * This function converts chart widgets default parameters to query Object
  *
  * @param {Widget} widget
  * @returns {{ sampling: string, interval: Object }}
  */
-export function convertChartWidgetToQuery(widget) {
+export function convertChartWidgetDefaultParametersToQuery(widget) {
   const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
 
   return {
@@ -229,10 +229,10 @@ export function convertChartWidgetToQuery(widget) {
  * @param {Widget} widget
  * @returns {Object}
  */
-export function convertBarChartWidgetToQuery(widget) {
+export function convertChartWidgetToQuery(widget) {
   const { parameters: { comparison = false, metrics = [] } } = widget;
   return {
-    ...convertChartWidgetToQuery(widget),
+    ...convertChartWidgetDefaultParametersToQuery(widget),
 
     with_history: comparison,
     parameters: metrics.map(({ metric }) => metric),
@@ -369,10 +369,10 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
     [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
-    [WIDGET_TYPES.barChart]: convertBarChartWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
-    [WIDGET_TYPES.pieChart]: convertChartWidgetToQuery,
-    [WIDGET_TYPES.numbers]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartWidgetDefaultParametersToQuery,
+    [WIDGET_TYPES.numbers]: convertChartWidgetDefaultParametersToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };
