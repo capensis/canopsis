@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout.chart-metrics-widget(column, align-center)
     h4.chart-metrics-widget__title {{ title }}
-    bar-chart.chart-metrics-widget__chart(
+    line-chart.chart-metrics-widget__chart(
       :options="chartOptions",
       :datasets="datasets",
       :width="width",
@@ -14,15 +14,15 @@
 import { X_AXES_IDS, SAMPLINGS } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
-import { getDateLabelBySampling, hasHistoryData } from '@/helpers/metrics';
+import { hasHistoryData } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
-const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
+const LineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/line-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { BarChart },
+  components: { LineChart },
   mixins: [chartMetricsOptionsMixin],
   props: {
     metrics: {
@@ -45,10 +45,6 @@ export default {
       type: String,
       default: SAMPLINGS.day,
     },
-    stacked: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     hasHistoryData() {
@@ -58,7 +54,6 @@ export default {
     xAxes() {
       const xAxes = {
         [X_AXES_IDS.default]: {
-          stacked: this.stacked,
           type: 'time',
           ticks: {
             source: 'data',
@@ -69,16 +64,11 @@ export default {
       };
 
       if (this.hasHistoryData) {
-        const [metric] = this.metrics;
-
-        const labels = metric?.data.map(({ history_timestamp: timestamp }) => (
-          getDateLabelBySampling(timestamp, this.sampling).split('\n')
-        )) ?? [];
-
         xAxes[X_AXES_IDS.history] = {
-          type: 'category',
-          labels,
+          type: 'time',
           ticks: {
+            source: 'data',
+            callback: this.getChartTimeTickLabel,
             font: this.labelsFont,
           },
         };
@@ -123,6 +113,8 @@ export default {
         const defaultDataset = {
           metric,
           backgroundColor: metricColor,
+          borderColor: metricColor,
+          xAxisID: X_AXES_IDS.default,
           yAxisID: this.getMetricYAxisId(metric),
           label: this.$t(`alarm.metrics.${metric}`),
           data: data.map(({ timestamp, value }) => ({
@@ -131,28 +123,22 @@ export default {
           })),
         };
 
-        if (this.stacked) {
-          defaultDataset.stack = 'default';
-        }
-
         acc.push(defaultDataset);
 
         if (this.hasHistoryData) {
+          const historyMetricColor = colorToRgba(metricColor, 0.5);
           const historyDataset = {
             metric,
-            backgroundColor: colorToRgba(metricColor, 0.5),
+            backgroundColor: historyMetricColor,
+            borderColor: historyMetricColor,
+            xAxisID: X_AXES_IDS.history,
             yAxisID: this.getMetricYAxisId(metric),
             label: `${this.$t(`alarm.metrics.${metric}`)} (${this.$t('common.previous')})`,
-            data: data.map(({ timestamp, history_timestamp: historyTimestamp, history_value: historyValue }) => ({
-              x: timestamp * 1000,
+            data: data.map(({ history_timestamp: historyTimestamp, history_value: historyValue }) => ({
+              x: historyTimestamp * 1000,
               y: historyValue,
-              originalX: historyTimestamp * 1000,
             })),
           };
-
-          if (this.stacked) {
-            historyDataset.stack = 'history';
-          }
 
           acc.push(historyDataset);
         }

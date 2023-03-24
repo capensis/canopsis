@@ -23,7 +23,7 @@ import { isTimeMetric } from '@/helpers/metrics';
 import { getMetricColor } from '@/helpers/color';
 import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 
-import { chartBarMetricsOptionsMixin } from '@/mixins/chart/bar-metrics-options';
+import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
@@ -32,7 +32,7 @@ import KpiChartExportActions from './kpi-chart-export-actions.vue';
 export default {
   inject: ['$system'],
   components: { KpiChartExportActions, BarChart },
-  mixins: [chartBarMetricsOptionsMixin],
+  mixins: [chartMetricsOptionsMixin],
   props: {
     metrics: {
       type: Array,

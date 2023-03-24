@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout.px-3.pb-3(column)
-    chart-widget-filters(
+  v-layout.py-2(column)
+    chart-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -20,8 +20,9 @@
       @update:interval="updateInterval"
     )
     v-layout.pa-3(column)
-      c-progress-overlay(:pending="vectorMetricsPending", transition)
+      chart-loader(v-if="vectorMetricsPending", :has-metrics="hasMetrics")
       bar-chart-metrics(
+        v-if="hasMetrics",
         :metrics="preparedVectorMetrics",
         :title="widget.parameters.chart_title",
         :sampling="query.sampling",
@@ -31,12 +32,14 @@
 
 <script>
 import { pick, keyBy } from 'lodash';
+
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
@@ -44,12 +47,14 @@ import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
+import ChartLoader from './partials/chart-loader.vue';
 import BarChartMetrics from './partials/bar-chart-metrics.vue';
 
 export default {
   inject: ['$system'],
   components: {
     ChartWidgetFilters,
+    ChartLoader,
     BarChartMetrics,
   },
   mixins: [
@@ -57,6 +62,7 @@ export default {
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
     entitiesVectorMetricsMixin,
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,
@@ -73,6 +79,10 @@ export default {
     },
   },
   computed: {
+    hasMetrics() {
+      return !!this.vectorMetrics.length;
+    },
+
     minAvailableDate() {
       const { min_date: minDate } = this.vectorMetricsMeta;
 
