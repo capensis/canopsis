@@ -252,7 +252,7 @@ export const USERS_PERMISSIONS = {
     },
     barChart: {
       actions: {
-        interval: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
+        interval: `${USER_PERMISSIONS_PREFIXES.business.barChart}_interval`,
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
 
@@ -264,7 +264,7 @@ export const USERS_PERMISSIONS = {
     },
     lineChart: {
       actions: {
-        interval: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
+        interval: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_interval`,
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
 
@@ -276,7 +276,7 @@ export const USERS_PERMISSIONS = {
     },
     pieChart: {
       actions: {
-        interval: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
+        interval: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_interval`,
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
 
@@ -288,7 +288,7 @@ export const USERS_PERMISSIONS = {
     },
     numbers: {
       actions: {
-        interval: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
+        interval: `${USER_PERMISSIONS_PREFIXES.business.numbers}_interval`,
 
         sampling: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
 
