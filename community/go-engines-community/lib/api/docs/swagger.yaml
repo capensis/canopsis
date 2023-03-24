@@ -6518,6 +6518,47 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /pbehavior-exception-import:
+    post:
+      tags:
+        - pbehavior-exceptions
+      summary: Import pbehavior exception
+      description: |
+        Import pbehavior exception.
+
+        -  PERMISSIONS: `api_pbehaviorexception:create`
+      operationId: pbehavior-exceptions-import
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - file
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /pbehavior-exceptions:
     get:
       tags:
