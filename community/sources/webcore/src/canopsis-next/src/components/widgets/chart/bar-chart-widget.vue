@@ -39,6 +39,7 @@ import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
@@ -61,6 +62,7 @@ export default {
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
     entitiesVectorMetricsMixin,
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,

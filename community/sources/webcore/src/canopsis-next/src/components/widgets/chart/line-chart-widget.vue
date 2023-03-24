@@ -38,6 +38,7 @@ import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsLineChartInterval } from '@/mixins/permissions/widgets/chart/line/interval';
 import { permissionsWidgetsLineChartSampling } from '@/mixins/permissions/widgets/chart/line/sampling';
@@ -60,10 +61,11 @@ export default {
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
+    entitiesVectorMetricsMixin,
     permissionsWidgetsLineChartInterval,
     permissionsWidgetsLineChartSampling,
     permissionsWidgetsLineChartFilters,
-    entitiesVectorMetricsMixin,
   ],
   props: {
     widget: {
