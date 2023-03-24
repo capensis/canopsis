@@ -16,6 +16,7 @@ import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 /**
  * @typedef {Object} HealthcheckParameters
  * @property {QueueLimit} queue
+ * @property {QueueLimit} messages
  * @property {EngineParameters} engine-webhook
  * @property {EngineParameters} engine-fifo
  * @property {EngineParameters} engine-axe
@@ -36,6 +37,10 @@ import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
  */
 export const healthcheckParametersToForm = (healthcheckParameters = {}) => ({
   queue: healthcheckParameters.queue || {
+    limit: 0,
+    enabled: false,
+  },
+  messages: healthcheckParameters.messages || {
     limit: 0,
     enabled: false,
   },

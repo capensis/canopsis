@@ -125,6 +125,22 @@ Si par exemple l'output d'un événement vaut `"SERVER#69420#DOWN"`, `{{ .Event.
 
 La fonction `trim` permet de supprimer les blancs en début et fin de chaîne de caractères. Les blancs pris en compte sont ceux définis par Unicode et ils comprennent l'espace, la tabulation, l'espace insécable ainsi que les caractères de fin de ligne.
 
+Si le champ `.Event.Output` vaut `  une chaine  `, en appliquant la fonction `trim` :
+
+```json
+{
+    "message": "{{ .Event.Output | trim }}"
+}
+```
+
+le résultat sera 
+
+```json
+{
+    "message": "une chaine"
+}
+```
+
 ##### `replace`
 
 `replace` prend en paramètre une expression régulière (ou regex) et une chaîne de caractères. Cette fonction va remplacer toutes les occurrences de la regex par la chaîne.
@@ -197,7 +213,7 @@ Le payload de ce webhook sera donc constitué d'un attribut `message` dont la va
 }
 ```
 
-## Tester l'exitence d'une clé
+## Tester l'exitence d'une clé dans les informations custom d'une entité ou d'une alarme
 
 Si vous appelez une clé non existente dans un template, la compilation de celui-ci échouera.  
 Pour éviter cette situation, la fonction `map_has_key` permet de contrôler l'existence de la clé avant son utilisation.  
@@ -207,6 +223,10 @@ Exemple, Tester l'existence de la clé `une_cle` :
 ```
 {{if map_has_key .Entity.Infos "une_cle" }}{{.Entity.Infos.une_cle.Value}}{{else}}default value{{end}}
 ```
+
+!!! warning "Avertissement"
+
+    Cette fonction ne doit être appelée que pour tester l'existence d'une clé dans les informations personnalisées des entités ou alarmes
 
 ## Concaténer des variables de type `chaine`
 

@@ -148,7 +148,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.comment,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
           title: this.$t('alarm.actions.titles.comment'),
-          method: this.showCreateCommentModal,
+          method: this.showCreateCommentEventModal,
         },
         removeAlarmsFromManualMetaAlarm: {
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
@@ -341,6 +341,16 @@ export default {
 
     showDeclareTicketModal() {
       this.showDeclareTicketModalByAlarms([this.item]);
+    },
+
+    showCreateCommentEventModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
+        },
+      });
     },
 
     showRemoveAlarmsFromManualMetaAlarmModal() {
