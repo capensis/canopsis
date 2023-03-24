@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    Custom title
+  </h4>
+  <div
+    class="chart-metrics-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="400"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 400px; width: 700px;"
+        width="700"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with default props 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    
+  </h4>
+  <!---->
+</div>
+`;
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    
+  </h4>
+  <div
+    class="chart-metrics-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="400"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 400px; width: 700px;"
+        width="700"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels props 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    
+  </h4>
+  <div
+    class="chart-metrics-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="400"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 400px; width: 700px;"
+        width="700"
+      />
+    </div>
+  </div>
+</div>
+`;
