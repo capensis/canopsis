@@ -244,6 +244,6 @@ export const getMaxTimeDurationForMetrics = (metrics) => {
 export const hasHistoryData = (metrics = []) => {
   const [firstMetric = {}] = metrics;
 
-  return firstMetric.data.length
+  return firstMetric.data?.length
     && firstMetric.data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp);
 };
