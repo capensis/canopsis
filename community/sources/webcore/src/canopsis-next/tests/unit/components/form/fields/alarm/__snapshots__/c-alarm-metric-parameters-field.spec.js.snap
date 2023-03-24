@@ -18,7 +18,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            24 parameters to display
+            26 parameters to display
           </span>
           <input
             aria-readonly="false"

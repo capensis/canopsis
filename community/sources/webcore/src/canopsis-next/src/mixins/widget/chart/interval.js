@@ -1,4 +1,4 @@
-import { DATETIME_FORMATS, SAMPLINGS } from '@/constants';
+import { DATETIME_FORMATS } from '@/constants';
 
 import {
   convertStartDateIntervalToTimestampByTimezone,
@@ -17,13 +17,13 @@ export const widgetIntervalFilterMixin = {
         from: convertStartDateIntervalToTimestampByTimezone(
           this.query.interval.from,
           DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
+          this.query.sampling,
           this.$system.timezone,
         ),
         to: convertStopDateIntervalToTimestampByTimezone(
           this.query.interval.to,
           DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
+          this.query.sampling,
           this.$system.timezone,
         ),
       };

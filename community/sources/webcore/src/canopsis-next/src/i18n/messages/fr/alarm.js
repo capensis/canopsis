@@ -153,6 +153,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '% d\'alarmes non affichées',
     [ALARM_METRIC_PARAMETERS.averageAck]: 'Délai moyen d\'acquittement des alarmes',
     [ALARM_METRIC_PARAMETERS.averageResolve]: 'Temps moyen pour résoudre les alarmes',
+    [ALARM_METRIC_PARAMETERS.timeToAck]: 'Temps d\'acquittement des alarmes',
+    [ALARM_METRIC_PARAMETERS.timeToResolve]: 'Temps de résolution des alarmes',
     [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre d\'alarmes corrigées manuellement',
     [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre d\'alarmes avec instructions manuelles',
     [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Nombre d\'alarmes non acquittées',
