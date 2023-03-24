@@ -304,7 +304,7 @@ export default {
       }
     },
 
-    exportAlarmsList() {
+    async exportAlarmsList() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -316,21 +316,25 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportAsCsv({
-        name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        widgetId: this.widget._id,
-        data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
+      try {
+        await this.exportAsCsv({
+          name: `${this.widget._id}-${new Date().toLocaleString()}`,
+          widgetId: this.widget._id,
+          data: {
+            ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
-          fields: columns.map(({ label, value }) => ({ label, name: value })),
-          filter: JSON.stringify(query.filter),
-          separator: exportCsvSeparator,
-          /**
-           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
-           */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
-        },
-      });
+            fields: columns.map(({ label, value }) => ({ label, name: value })),
+            filter: JSON.stringify(query.filter),
+            separator: exportCsvSeparator,
+            /**
+             * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+             */
+            time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('alarmList.popups.exportFailed') });
+      }
     },
   },
 };
