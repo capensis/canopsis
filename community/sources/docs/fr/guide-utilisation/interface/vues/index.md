@@ -132,4 +132,4 @@ Voir : [Widgets](../index.md)
 
 ## Importation / Exportation
 
-Vous avez aussi la possibilité d'importer et d'exporter vos vues et vos groupes. La procédure complète est disponible en suivant [ce lien](import-export.md)
+Vous avez aussi la possibilité d'importer et d'exporter vos vues et vos groupes. La procédure complète est disponible en suivant [ce lien](../../menu-administration/parametres.md#importexport)

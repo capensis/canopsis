@@ -16,7 +16,7 @@ Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues
 
 Les vues peuvent être affichées sous forme de playlists c'est-à-dire les unes après les autres avec un délai associé.
 
-Pour savoir comment utiliser cette fonctionnalité, rendez-vous sur cette [page explicative](./playlists/index.md).
+Pour savoir comment utiliser cette fonctionnalité, rendez-vous sur cette [page explicative](../menu-administration/listes-de-lecture.md).
 
 ## Les widgets
 
@@ -26,7 +26,7 @@ Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonct
 
 Plusieurs options sont disponibles pour personnaliser l'interface de Canopsis.
 
-Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
+Pour les découvrir, cliquez [ici](../menu-administration/parametres.md)
 
 ## Helpers Handlebars
 
@@ -40,4 +40,4 @@ Pour plus de détails, consultez la [documentation des helpers Handlebars de Can
 
 Il est possible de programmer l'affichage d'un bandeau contenant des messages d'information qui apparaîtront dans l'interface de Canopsis.
 
-Reportez vous à cette [page](broadcast-messages.md) pour en savoir plus.
+Reportez vous à cette [page](../menu-administration/diffusion-de-messages.md) pour en savoir plus.
