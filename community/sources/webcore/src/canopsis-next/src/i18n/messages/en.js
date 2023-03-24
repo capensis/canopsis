@@ -550,6 +550,7 @@ export default merge({
     },
     popups: {
       massDeleteWarning: 'The mass deletion cannot be applied for some of selected elements, so they won\'t be deleted.',
+      exportFailed: 'Failed to export entities in CSV format',
     },
   },
   search: {
@@ -608,6 +609,9 @@ export default merge({
     },
   },
   alarmList: {
+    popups: {
+      exportFailed: 'Failed to export alarms list in CSV format',
+    },
     actions: {
       titles: {
         ack: 'Ack',
@@ -3084,6 +3088,9 @@ export default merge({
     sli: 'SLI',
     metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
     noData: 'No data available',
+    popups: {
+      exportFailed: 'Failed to export chart in CSV format',
+    },
   },
 
   kpiMetrics: {
