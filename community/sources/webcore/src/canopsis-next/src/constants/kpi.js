@@ -1,5 +1,5 @@
-import { ALARM_METRIC_PARAMETERS } from '@/constants/alarm';
-import { USER_METRIC_PARAMETERS } from '@/constants/user';
+import { ALARM_METRIC_PARAMETERS } from './alarm';
+import { USER_METRIC_PARAMETERS } from './user';
 
 export const KPI_SLI_GRAPH_BAR_PERCENTAGE = 0.5;
 
@@ -8,6 +8,11 @@ export const KPI_ALARMS_GRAPH_BAR_PERCENTAGE = 0.75;
 export const KPI_SLI_GRAPH_DATA_TYPE = {
   percent: 'percent',
   time: 'time',
+};
+
+export const KPI_PIE_CHART_SHOW_MODS = {
+  percent: 'percent',
+  numbers: 'numbers',
 };
 
 export const KPI_RATING_CRITERIA = {
@@ -50,3 +55,21 @@ export const KPI_TABS = {
 };
 
 export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;
+
+export const AGGREGATE_FUNCTIONS = {
+  sum: 'sum',
+  avg: 'avg',
+  min: 'min',
+  max: 'max',
+};
+
+export const Y_AXES_IDS = {
+  default: 'y',
+  percent: 'yPercent',
+  time: 'yTime',
+};
+
+export const X_AXES_IDS = {
+  default: 'x',
+  history: 'xHistory',
+};

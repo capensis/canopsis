@@ -3,6 +3,7 @@ import {
   ENTITY_TYPES,
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
+  CHART_WIDGET_PRESET_TYPES,
 } from '@/constants';
 
 export default {
@@ -15,6 +16,10 @@ export default {
     [SIDE_BARS.counterSettings]: 'Paramètres du widget compteur',
     [SIDE_BARS.testingWeatherSettings]: 'Paramètres du widget scénario des tests',
     [SIDE_BARS.mapSettings]: 'Paramètres du widget de cartographie',
+    [SIDE_BARS.barChartSettings]: 'Paramètres du graphique à barres',
+    [SIDE_BARS.lineChartSettings]: 'Paramètres du graphique en courbes',
+    [SIDE_BARS.pieChartSettings]: 'Paramètres du graphique à secteurs',
+    [SIDE_BARS.numbersSettings]: 'Paramètres des nombres',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -65,6 +70,9 @@ export default {
   entitiesColumns: 'Colonnes de l\'explorateur de contexte',
   entityInfoPopup: 'Fenêtre contextuelle d\'informations sur l\'entité',
   modal: '(Modal)',
+  headerTitle: 'Titre de l\'en-tête',
+  defaultSampling: 'Default sampling',
+  defaultTimeRange: 'Plage horaire par défaut',
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
@@ -203,5 +211,39 @@ export default {
     comfort: 'Vue confort',
     compact: 'Vue compacte',
     ultraCompact: 'Vue ultra compacte',
+  },
+
+  chart: {
+    graphType: 'Type de graphique',
+    separateBars: 'Barres séparées',
+    stackedBars: 'Barres empilées',
+    selectMetrics: 'Select metrics',
+    sharesType: 'Type d\'actions',
+    showComparison: 'Afficher la comparaison',
+    preset: 'Préréglé',
+    metricsDisplay: 'Affichage des métriques',
+    showTrend: 'Afficher la tendance',
+    presets: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Statistiques des tickets',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Statistiques des acquittements annulés',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Statistiques des alarmes actives acquittées',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistiques des alarmes non acquittées',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistiques des alarmes non affichées',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
+    },
+    presetChartHeaders: {
+      [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
+      [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements d\'alarme',
+      [CHART_WIDGET_PRESET_TYPES.ticketsStatistics]: 'Statistiques des tickets',
+      [CHART_WIDGET_PRESET_TYPES.ackCancellation]: 'Statistiques des acquittements annulés',
+      [CHART_WIDGET_PRESET_TYPES.activeAck]: 'Statistiques des alarmes actives acquittées',
+      [CHART_WIDGET_PRESET_TYPES.notAckedAlarms]: 'Statistiques des alarmes non acquittées',
+      [CHART_WIDGET_PRESET_TYPES.nonDisplayedAlarms]: 'Statistiques des alarmes non affichées',
+      [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
+      [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
+    },
   },
 };
