@@ -9,6 +9,9 @@ export default {
     collectionSettings: 'Paramètres d\'évaluation',
     ratingSettings: 'Paramètres d\'évaluation',
   },
+  popups: {
+    exportFailed: 'Échec de l\'exportation du graphique au format CSV',
+  },
 
   metrics: {
     parameter: 'Paramètre à comparer',
