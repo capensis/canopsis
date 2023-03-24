@@ -1,4 +1,4 @@
-// ics contains ics calendar implementation.
+// Package ics contains ics calendar implementation.
 package ics
 
 import (
@@ -8,7 +8,8 @@ import (
 	"time"
 )
 
-const timeFormat = "20060102T150405Z"
+const utcTimeFormat = "20060102T150405Z"
+const timeFormat = "20060102T150405"
 const (
 	UndefinedPriority = 0
 	MinPriority       = 1
@@ -133,7 +134,7 @@ type dateTimeProperty struct {
 func (p *dateTimeProperty) serialize(w io.Writer) {
 	if !p.value.IsZero() {
 		if p.value.Location() == time.UTC {
-			_, _ = fmt.Fprintf(w, "%s:%s\n", p.propertyName, p.value.Format(timeFormat))
+			_, _ = fmt.Fprintf(w, "%s:%s\n", p.propertyName, p.value.Format(utcTimeFormat))
 		} else {
 			_, _ = fmt.Fprintf(
 				w,

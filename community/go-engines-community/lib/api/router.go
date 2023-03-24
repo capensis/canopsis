@@ -612,15 +612,15 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionDelete, enforcer),
 				reasonAPI.Delete)
 		}
+		exceptionAPI := pbehaviorexception.NewApi(
+			pbehaviorexception.NewModelTransformer(dbClient),
+			pbehaviorexception.NewStore(dbClient, timezoneConfigProvider),
+			pbhComputeChan,
+			actionLogger,
+			logger,
+		)
 		exceptionRouter := protected.Group("/pbehavior-exceptions")
 		{
-			exceptionAPI := pbehaviorexception.NewApi(
-				pbehaviorexception.NewModelTransformer(dbClient),
-				pbehaviorexception.NewStore(dbClient),
-				pbhComputeChan,
-				actionLogger,
-				logger,
-			)
 			exceptionRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer),
@@ -642,6 +642,12 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionDelete, enforcer),
 				exceptionAPI.Delete)
 		}
+
+		protected.POST(
+			"/pbehavior-exception-import",
+			middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer),
+			exceptionAPI.Import,
+		)
 
 		weatherRouter := protected.Group("/weather-services")
 		{

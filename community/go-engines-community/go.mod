@@ -59,6 +59,7 @@ require (
 )
 
 require (
+	github.com/apognu/gocal v0.9.0
 	github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
 	github.com/goccy/go-yaml v1.9.5
@@ -72,6 +73,7 @@ require (
 
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20220621081337-cb9428e4ac1e // indirect
+	github.com/ChannelMeter/iso8601duration v0.0.0-20150204201828-8da3af7a2a61 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/coreos/go-systemd/v22 v22.3.3-0.20220203105225-a9a7ef127534 // indirect
 	github.com/cucumber/gherkin-go/v19 v19.0.3 // indirect
