@@ -2,38 +2,98 @@
 
 exports[`numbers-widget Renders \`numbers-widget\` with custom props 1`] = `
 <div
-  class="layout px-3 pb-3 column"
+  class="layout column"
 >
   <chart-widget-filters-stub
+    class="mx-3"
     filterdisabled="true"
     widgetfilters=""
     widgetid="numbers-widget-id"
   />
   <div
-    class="layout"
+    class="layout pa-3 column"
   >
-    <pre>
-      false
-    </pre>
+    <div
+      class="layout pa-4 justify-center"
+    >
+      <div
+        aria-valuemax="100"
+        aria-valuemin="0"
+        class="v-progress-circular v-progress-circular--indeterminate primary--text"
+        role="progressbar"
+        style="height: 32px; width: 32px;"
+      >
+        <svg
+          style="transform: rotate(0deg);"
+          viewBox="22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            class="v-progress-circular__overlay"
+            cx="45.714285714285715"
+            cy="45.714285714285715"
+            fill="transparent"
+            r="20"
+            stroke-dasharray="125.664"
+            stroke-dashoffset="125.66370614359172px"
+            stroke-width="5.714285714285714"
+          />
+        </svg>
+        <div
+          class="v-progress-circular__info"
+        />
+      </div>
+    </div>
+    <!---->
   </div>
 </div>
 `;
 
 exports[`numbers-widget Renders \`numbers-widget\` with required props 1`] = `
 <div
-  class="layout px-3 pb-3 column"
+  class="layout column"
 >
   <chart-widget-filters-stub
+    class="mx-3"
     filterdisabled="true"
     widgetfilters=""
     widgetid="numbers-widget-id"
   />
   <div
-    class="layout"
+    class="layout pa-3 column"
   >
-    <pre>
-      false
-    </pre>
+    <div
+      class="layout pa-4 justify-center"
+    >
+      <div
+        aria-valuemax="100"
+        aria-valuemin="0"
+        class="v-progress-circular v-progress-circular--indeterminate primary--text"
+        role="progressbar"
+        style="height: 32px; width: 32px;"
+      >
+        <svg
+          style="transform: rotate(0deg);"
+          viewBox="22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            class="v-progress-circular__overlay"
+            cx="45.714285714285715"
+            cy="45.714285714285715"
+            fill="transparent"
+            r="20"
+            stroke-dasharray="125.664"
+            stroke-dashoffset="125.66370614359172px"
+            stroke-width="5.714285714285714"
+          />
+        </svg>
+        <div
+          class="v-progress-circular__info"
+        />
+      </div>
+    </div>
+    <!---->
   </div>
 </div>
 `;
