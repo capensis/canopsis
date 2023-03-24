@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`line-chart-metrics Renders \`line-chart-metrics\` with custom props 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    Custom title
+  </h4>
+  <div
+    class="chart-metrics-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="500"
+        id="line-chart"
+        style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 500px; width: 600px;"
+        width="600"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`line-chart-metrics Renders \`line-chart-metrics\` with default props 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    
+  </h4>
+  <!---->
+</div>
+`;
+
+exports[`line-chart-metrics Renders \`line-chart-metrics\` with empty data 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    
+  </h4>
+  <div
+    class="chart-metrics-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="440"
+        id="line-chart"
+        style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 440px; width: 600px;"
+        width="600"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`line-chart-metrics Renders \`line-chart-metrics\` with history data props 1`] = `
+<div
+  class="layout chart-metrics-widget column align-center"
+>
+  <h4
+    class="chart-metrics-widget__title"
+  >
+    
+  </h4>
+  <div
+    class="chart-metrics-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="440"
+        id="line-chart"
+        style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 440px; width: 600px;"
+        width="600"
+      />
+    </div>
+  </div>
+</div>
+`;
