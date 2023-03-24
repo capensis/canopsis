@@ -4,12 +4,21 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 )
+
+type requestCounter struct {
+	m sync.Mutex
+	s map[string]int
+}
 
 func RunDummyHttpServer(ctx context.Context, addr string) error {
 	mux := http.NewServeMux()
 	dummyRoutes := getDummyRoutes(addr)
+	rc := &requestCounter{
+		s: make(map[string]int),
+	}
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		response, ok := dummyRoutes[r.URL.Path]
 		if !ok {
@@ -23,6 +32,11 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 
 		if response.Method != r.Method {
 			http.Error(w, r.Method, http.StatusNotFound)
+			return
+		}
+
+		if response.Handler != nil {
+			response.Handler(w, r, rc)
 			return
 		}
 
@@ -76,6 +90,7 @@ type dummyResponse struct {
 	Body    string
 	Headers map[string]string
 	Timeout time.Duration
+	Handler func(w http.ResponseWriter, r *http.Request, s *requestCounter)
 }
 
 func getDummyRoutes(addr string) map[string]dummyResponse {
@@ -243,6 +258,40 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
+		},
+		"/job/test-job-params-concurrent-succeeded/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-concurrent\",\"result\":\"SUCCESS\"}",
+		},
+		"/job/test-job-params-concurrent/test-job-execution-concurrent/consoleText": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-params-concurrent-execution-succeeded-output",
+		},
+		"/queue/item/test-job-params-concurrent-started/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-params-started\", \"executable\": {\"url\": \"/job/test-job-params-concurrent-succeeded\"}}",
+		},
+		"/job/test-job-params-concurrent/buildWithParameters": {
+			// the handler responds with error to request with not unique query parameters (issue #4840)
+			Code:   http.StatusNoContent,
+			Method: http.MethodPost,
+			Handler: func(w http.ResponseWriter, r *http.Request, c *requestCounter) {
+				defer r.Body.Close()
+				k := fmt.Sprintf("%#v", r.URL.Query())
+				c.m.Lock()
+				defer c.m.Unlock()
+				c.s[k]++
+				if c.s[k] > 1 {
+					http.Error(w, "Not Found", http.StatusNotFound)
+					return
+				}
+				w.Header().Set("Location", "/queue/item/test-job-params-concurrent-started")
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprintln(w, "{\"message\": 1}")
+			},
 		},
 		// External data
 		"/api/external_data": {
