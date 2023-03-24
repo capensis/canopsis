@@ -104,3 +104,7 @@ job_config:
   job_config_metrics_axe:
     <<: *condig_dummy_rundeck
     _id: test-job-config-metrics-axe
+
+  job-config-to-run-auto-instruction-13:
+    <<: *condig_dummy_jenkins
+    _id: test-job-config-to-run-auto-instruction-13
