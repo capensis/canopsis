@@ -11,7 +11,7 @@ import {
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
-import { defaultColumnsToColumns } from './entities';
+import { defaultColumnsToColumns, isResolvedAlarm } from './entities';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
@@ -378,7 +378,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
   const query = {
     _id: alarm._id,
     with_instructions: true,
-    opened: widget.parameters.opened,
+    opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     steps: {
       reversed: true,
       page: 1,
