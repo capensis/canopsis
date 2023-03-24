@@ -35,9 +35,7 @@ exports[`chart-widget-filters Renders \`chart-widget-filters\` with custom props
       editable="true"
       private="true"
       widgetid="id"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
   </div>
 </div>

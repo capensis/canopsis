@@ -33,6 +33,7 @@
 import { keyBy, pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
+import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -121,7 +122,8 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-        ...pick(this.query, ['parameters', 'sampling', 'filter', 'with_history']),
+        ...pick(this.query, ['parameters', 'sampling', 'with_history']),
+        widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
 

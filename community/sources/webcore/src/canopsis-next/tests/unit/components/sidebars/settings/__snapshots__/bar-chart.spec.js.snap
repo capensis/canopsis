@@ -46,9 +46,7 @@ exports[`bar-chart Renders \`bar-chart\` widget settings with custom props 1`] =
       editable="true"
       filters="[object Object]"
       hideselector="true"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
     <field-switcher-stub
       title="Show comparison"
@@ -102,9 +100,7 @@ exports[`bar-chart Renders \`bar-chart\` widget settings with default props 1`] 
       editable="true"
       filters=""
       hideselector="true"
-      withalarm="true"
       withentity="true"
-      withpbehavior="true"
     />
     <field-switcher-stub
       title="Show comparison"

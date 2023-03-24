@@ -29,9 +29,7 @@
         :addable="filterAddable",
         :editable="filterEditable",
         private,
-        with-alarm,
-        with-entity,
-        with-pbehavior
+        with-entity
       )
 </template>
 

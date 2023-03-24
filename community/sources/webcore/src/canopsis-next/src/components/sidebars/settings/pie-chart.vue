@@ -20,9 +20,7 @@
         :filters.sync="form.filters",
         addable,
         editable,
-        with-alarm,
         with-entity,
-        with-pbehavior,
         hide-selector
       )
 </template>

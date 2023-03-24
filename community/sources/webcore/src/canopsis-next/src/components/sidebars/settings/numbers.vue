@@ -17,9 +17,7 @@
         :filters.sync="form.filters",
         addable,
         editable,
-        with-alarm,
         with-entity,
-        with-pbehavior,
         hide-selector
       )
       field-switcher(v-model="form.parameters.show_trend", :title="$t('settings.chart.showTrend')")
