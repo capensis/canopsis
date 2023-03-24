@@ -8,6 +8,7 @@ exports[`chart-widget-filters Renders \`chart-widget-filters\` with custom props
     class="mr-4"
     interval="[object Object]"
     min="1633737600"
+    quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
   <c-sampling-field-stub
     class="chart-widget-filters__sampling mr-4"

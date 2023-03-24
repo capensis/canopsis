@@ -231,6 +231,7 @@ export function convertChartWidgetDefaultParametersToQuery(widget) {
  */
 export function convertChartWidgetToQuery(widget) {
   const { parameters: { comparison = false, metrics = [] } } = widget;
+
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
