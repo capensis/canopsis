@@ -19,7 +19,7 @@ exports[`numbers Renders \`numbers\` widget settings with custom props 1`] = `
     title="Metrics display"
   >
     <field-alarm-metric-presets-stub
-      parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,ratio_correlation,ratio_instructions,ratio_tickets,ratio_non_displayed,ratio_remediated_alarms,average_ack,average_resolve,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
+      parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,ratio_correlation,ratio_instructions,ratio_tickets,ratio_non_displayed,ratio_remediated_alarms,time_to_ack,time_to_resolve,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
       value="[object Object]"
       withaggregatefunction="true"
     />
@@ -73,7 +73,7 @@ exports[`numbers Renders \`numbers\` widget settings with default props 1`] = `
     title="Metrics display"
   >
     <field-alarm-metric-presets-stub
-      parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,ratio_correlation,ratio_instructions,ratio_tickets,ratio_non_displayed,ratio_remediated_alarms,average_ack,average_resolve,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
+      parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,ratio_correlation,ratio_instructions,ratio_tickets,ratio_non_displayed,ratio_remediated_alarms,time_to_ack,time_to_resolve,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
       value=""
       withaggregatefunction="true"
     />
