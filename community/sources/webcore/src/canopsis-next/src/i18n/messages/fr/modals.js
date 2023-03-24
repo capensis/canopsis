@@ -266,7 +266,7 @@ export default {
         title: 'Cartographie',
       },
       [WIDGET_TYPES.barChart]: {
-        title: 'Diagramme à bandes',
+        title: 'Histogramme',
       },
       [WIDGET_TYPES.lineChart]: {
         title: 'Graphique en ligne',
