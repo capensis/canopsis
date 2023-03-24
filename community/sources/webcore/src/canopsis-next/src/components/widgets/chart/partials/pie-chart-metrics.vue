@@ -18,7 +18,7 @@ import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
 
-import PieChart from '@/components/common/chart/pie-chart.vue';
+const PieChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/pie-chart.vue');
 
 export default {
   inject: ['$system'],
@@ -87,7 +87,6 @@ export default {
           legend: {
             position: 'right',
             maxWidth: 300,
-            onClick: false,
             labels: {
               font: {
                 size: 11,

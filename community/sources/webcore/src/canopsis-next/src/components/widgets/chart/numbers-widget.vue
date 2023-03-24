@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout.py-2(column)
     chart-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
@@ -19,13 +19,9 @@
       @update:interval="updateInterval"
     )
     v-layout.pa-3(column)
-      template(v-if="aggregatedMetricsPending")
-        v-fade-transition(v-if="aggregatedMetrics.length", key="progress", mode="out-in")
-          v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
-        v-layout.pa-4(v-else, justify-center)
-          v-progress-circular(color="primary", indeterminate)
+      chart-loader(v-if="aggregatedMetricsPending", :has-metrics="hasMetrics")
       numbers-metrics(
-        v-if="aggregatedMetrics.length",
+        v-if="hasMetrics",
         :metrics="aggregatedMetrics",
         :title="widget.parameters.chart_title",
         :show-trend="widget.parameters.show_trend"
@@ -37,31 +33,36 @@ import { isRatioMetric } from '@/helpers/metrics';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
 import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
-import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
+
+import ChartLoader from './partials/chart-loader.vue';
+import NumbersMetrics from './partials/numbers-metrics.vue';
 
 export default {
   inject: ['$system'],
   components: {
-    NumbersMetrics,
     ChartWidgetFilters,
+    ChartLoader,
+    NumbersMetrics,
   },
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
+    entitiesAggregatedMetricsMixin,
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
-    entitiesAggregatedMetricsMixin,
   ],
   props: {
     widget: {
@@ -71,6 +72,11 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+  },
+  computed: {
+    hasMetrics() {
+      return !!this.aggregatedMetrics.length;
     },
   },
   methods: {
