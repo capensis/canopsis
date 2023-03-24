@@ -224,6 +224,22 @@ export function convertChartWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts bar chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertBarChartWidgetToQuery(widget) {
+  const { parameters: { comparison = false, metrics = [] } } = widget;
+  return {
+    ...convertChartWidgetToQuery(widget),
+
+    with_history: comparison,
+    parameters: metrics.map(({ metric }) => metric),
+  };
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -353,7 +369,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
     [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
-    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertBarChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.pieChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertChartWidgetToQuery,

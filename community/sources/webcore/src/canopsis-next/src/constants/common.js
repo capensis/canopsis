@@ -229,6 +229,24 @@ export const QUICK_RANGES = {
   },
 };
 
+export const METRICS_QUICK_RANGES = {
+  [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
+  [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
+  [QUICK_RANGES.last7Days.value]: QUICK_RANGES.last7Days,
+  [QUICK_RANGES.last30Days.value]: QUICK_RANGES.last30Days,
+  [QUICK_RANGES.last1Year.value]: QUICK_RANGES.last1Year,
+  [QUICK_RANGES.yesterday.value]: QUICK_RANGES.yesterday,
+  [QUICK_RANGES.previousWeek.value]: QUICK_RANGES.previousWeek,
+  [QUICK_RANGES.previousMonth.value]: QUICK_RANGES.previousMonth,
+  [QUICK_RANGES.today.value]: QUICK_RANGES.today,
+  [QUICK_RANGES.todaySoFar.value]: QUICK_RANGES.todaySoFar,
+  [QUICK_RANGES.thisWeek.value]: QUICK_RANGES.thisWeek,
+  [QUICK_RANGES.thisWeekSoFar.value]: QUICK_RANGES.thisWeekSoFar,
+  [QUICK_RANGES.thisMonth.value]: QUICK_RANGES.thisMonth,
+  [QUICK_RANGES.thisMonthSoFar.value]: QUICK_RANGES.thisMonthSoFar,
+  [QUICK_RANGES.custom.value]: QUICK_RANGES.custom,
+};
+
 export const GRID_SIZES = {
   min: 0,
   max: 12,
