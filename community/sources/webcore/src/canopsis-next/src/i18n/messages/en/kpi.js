@@ -1,14 +1,31 @@
-import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
 export default {
   alarmMetrics: 'Alarm metrics',
   sli: 'SLI',
   metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
   noData: 'No data available',
+  selectMetric: 'Select metric to display',
+  customColor: 'Custom color',
+  calculationMethod: 'Calculation method',
+  periodTrend: '{count} for the period\n{from} - {to}',
   tabs: {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
   },
+
+  aggregateFunctions: {
+    [AGGREGATE_FUNCTIONS.sum]: 'Sum',
+    [AGGREGATE_FUNCTIONS.avg]: 'Average',
+    [AGGREGATE_FUNCTIONS.min]: 'Min',
+    [AGGREGATE_FUNCTIONS.max]: 'Max',
+  },
+
+  errors: {
+    metricsMinLength: 'At least {count} metrics must be added',
+    emptyMetrics: 'No data to display',
+  },
+
   popups: {
     exportFailed: 'Failed to export chart in CSV format',
   },
@@ -36,6 +53,8 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms]: '{value}% of manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} to ack alarms',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} to resolve alarms',
+      [ALARM_METRIC_PARAMETERS.timeToAck]: '{value} to ack alarms',
+      [ALARM_METRIC_PARAMETERS.timeToResolve]: '{value} to resolve alarms',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} manually remediated alarms',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarms with manual instructions',
       [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} not acked alarms',
