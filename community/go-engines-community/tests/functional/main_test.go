@@ -104,7 +104,7 @@ func TestMain(m *testing.M) {
 		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), logger)
 	opts := godog.Options{
 		StopOnFailure:  true,
-		Format:         "pretty",
+		Format:         "progress",
 		Paths:          flags.paths,
 		DefaultContext: ctx,
 		Randomize:      flags.randomize,
@@ -137,48 +137,33 @@ func TestMain(m *testing.M) {
 	wsUrl.Path = websocketRoute
 	websocketClient := bdd.NewWebsocketClient(wsUrl.String(), templater)
 
-	testSuiteInitializer := InitializeTestSuite(ctx, flags, loader, redisClient, logger)
+	if !flags.clearOnScenario {
+		err := clearStores(ctx, flags, loader, redisClient, logger)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("")
+		}
+
+		logger.Info().Msg("waiting the next periodical process")
+		time.Sleep(flags.periodicalWaitTime)
+	}
+
 	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, websocketClient, loader, redisClient, logger)
 	status := godog.TestSuite{
-		Name:                 "canopsis",
-		TestSuiteInitializer: testSuiteInitializer,
-		ScenarioInitializer:  scenarioInitializer,
-		Options:              &opts,
+		Name:                "canopsis",
+		ScenarioInitializer: scenarioInitializer,
+		Options:             &opts,
 	}.Run()
 
 	if st := m.Run(); st > status {
 		status = st
 	}
 
-	os.Exit(status)
-}
-
-func InitializeTestSuite(
-	ctx context.Context,
-	flags Flags,
-	loader fixtures.Loader,
-	redisClient redismod.Cmdable,
-	logger zerolog.Logger,
-) func(*godog.TestSuiteContext) {
-	return func(godogCtx *godog.TestSuiteContext) {
-		if !flags.clearOnScenario {
-			godogCtx.BeforeSuite(func() {
-				err := clearStores(ctx, flags, loader, redisClient, logger)
-				if err != nil {
-					logger.Fatal().Err(err).Msg("")
-				}
-
-				logger.Info().Msg("waiting the next periodical process")
-				time.Sleep(flags.periodicalWaitTime)
-			})
-		}
-		godogCtx.AfterSuite(func() {
-			err := clearStores(ctx, flags, loader, redisClient, logger)
-			if err != nil {
-				logger.Fatal().Err(err).Msg("")
-			}
-		})
+	err = clearStores(ctx, flags, loader, redisClient, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("")
 	}
+
+	os.Exit(status)
 }
 
 func InitializeScenario(
