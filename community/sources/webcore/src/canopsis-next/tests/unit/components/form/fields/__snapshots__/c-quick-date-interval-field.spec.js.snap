@@ -17,7 +17,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
       class="mr-4"
       disabled="true"
       hide-details="hide-details"
-      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       return-object="return-object"
       value="[object Object]"
     />
@@ -40,7 +40,7 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
     <c-quick-date-interval-type-field-stub
       class="ml-4"
       hide-details="hide-details"
-      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       return-object="return-object"
       value="[object Object]"
     />
