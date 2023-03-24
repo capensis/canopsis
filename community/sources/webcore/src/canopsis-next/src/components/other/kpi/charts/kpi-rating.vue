@@ -151,12 +151,16 @@ export default {
     async exportRatingMetricsAsCsv() {
       this.downloading = true;
 
-      await this.exportAsCsv({
-        name: this.getFileName(),
-        data: this.getQuery(),
-      });
-
-      this.downloading = false;
+      try {
+        await this.exportAsCsv({
+          name: this.getFileName(),
+          data: this.getQuery(),
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };

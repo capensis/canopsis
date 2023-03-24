@@ -30,13 +30,9 @@ export const exportCsvMixinCreator = ({ createExport, fetchExport, fetchExportFi
     },
 
     async exportAsCsv({ data, name, ...params }) {
-      try {
-        const file = await this.generateFile({ data, ...params });
+      const file = await this.generateFile({ data, ...params });
 
-        saveCsvFile(file, name);
-      } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
-      }
+      saveCsvFile(file, name);
     },
 
     waitGeneratingCsvFile({ id, ...params }) {

@@ -268,7 +268,7 @@ export default {
       }
     },
 
-    exportContextList() {
+    async exportContextList() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -280,21 +280,27 @@ export default {
         ? widgetExportColumns
         : widgetColumns;
 
-      this.exportAsCsv({
-        name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        widgetId: this.widget._id,
-        data: {
-          fields: columns.map(({ label, value }) => ({ label, name: value })),
-          search: query.search,
-          category: query.category,
-          filter: JSON.stringify(query.filter),
-          separator: exportCsvSeparator,
-          /**
-           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
-           */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
-        },
-      });
+      try {
+        await this.exportAsCsv({
+          name: `${this.widget._id}-${new Date().toLocaleString()}`,
+          widgetId: this.widget._id,
+          data: {
+            fields: columns.map(({ label, value }) => ({ label, name: value })),
+            search: query.search,
+            category: query.category,
+            filter: JSON.stringify(query.filter),
+            separator: exportCsvSeparator,
+            /**
+             * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+             */
+            time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('context.popups.exportFailed') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };
