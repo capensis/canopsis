@@ -14,6 +14,7 @@
 import { X_AXES_IDS, SAMPLINGS } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
+import { hasHistoryData } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
@@ -46,8 +47,12 @@ export default {
     },
   },
   computed: {
+    hasHistoryData() {
+      return hasHistoryData(this.metrics);
+    },
+
     xAxes() {
-      return {
+      const xAxes = {
         [X_AXES_IDS.default]: {
           type: 'time',
           ticks: {
@@ -56,15 +61,20 @@ export default {
             font: this.labelsFont,
           },
         },
-        [X_AXES_IDS.history]: {
+      };
+
+      if (this.hasHistoryData) {
+        xAxes[X_AXES_IDS.history] = {
           type: 'time',
           ticks: {
             source: 'data',
             callback: this.getChartTimeTickLabel,
             font: this.labelsFont,
           },
-        },
-      };
+        };
+      }
+
+      return xAxes;
     },
 
     chartOptions() {
@@ -115,9 +125,7 @@ export default {
 
         acc.push(defaultDataset);
 
-        const hasHistoryData = data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp);
-
-        if (hasHistoryData) {
+        if (this.hasHistoryData) {
           const historyMetricColor = colorToRgba(metricColor, 0.5);
           const historyDataset = {
             metric,
