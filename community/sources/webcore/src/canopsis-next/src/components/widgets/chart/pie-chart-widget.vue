@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout.py-2(column)
     chart-widget-filters.px-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
@@ -19,13 +19,9 @@
       @update:interval="updateInterval"
     )
     v-layout.pa-3(column)
-      template(v-if="aggregatedMetricsPending")
-        v-fade-transition(v-if="aggregatedMetrics.length", key="progress", mode="out-in")
-          v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
-        v-layout.pa-4(v-else, justify-center)
-          v-progress-circular(color="primary", indeterminate)
+      chart-loader(v-if="aggregatedMetricsPending", :has-metrics="hasMetrics")
       pie-chart-metrics(
-        v-if="aggregatedMetrics.length",
+        v-if="hasMetrics",
         :metrics="aggregatedMetrics",
         :colors-by-metrics="colorsByMetrics",
         :title="widget.parameters.chart_title",
@@ -36,31 +32,36 @@
 <script>
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
+import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
 import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
-import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
-import PieChartMetrics from '@/components/widgets/chart/partials/pie-chart-metrics.vue';
+
+import ChartLoader from './partials/chart-loader.vue';
+import PieChartMetrics from './partials/pie-chart-metrics.vue';
 
 export default {
   inject: ['$system'],
   components: {
-    PieChartMetrics,
     ChartWidgetFilters,
+    ChartLoader,
+    PieChartMetrics,
   },
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    widgetPeriodicRefreshMixin,
+    entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
     permissionsWidgetsPieChartFilters,
-    entitiesAggregatedMetricsMixin,
   ],
   props: {
     widget: {
@@ -73,6 +74,10 @@ export default {
     },
   },
   computed: {
+    hasMetrics() {
+      return !!this.aggregatedMetrics.length;
+    },
+
     colorsByMetrics() {
       return this.widget.parameters.metrics.reduce((acc, { color, metric }) => {
         if (color) {
