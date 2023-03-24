@@ -181,7 +181,7 @@ func Default(
 
 	// Create csv exporter.
 	if exportExecutor == nil {
-		exportExecutor = export.NewTaskExecutor(dbClient, logger)
+		exportExecutor = export.NewTaskExecutor(dbClient, apiConfigProvider, logger)
 	}
 
 	websocketHub := newWebsocketHub(enforcer, security.GetTokenProvider(), logger)

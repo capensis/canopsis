@@ -15,6 +15,7 @@ const (
 	ApiTokenExpiration    = 24 * time.Hour
 	ApiTokenSigningMethod = "HS256"
 	ApiBulkMaxSize        = 10000
+	ApiExportBulkSize     = 5000
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3
