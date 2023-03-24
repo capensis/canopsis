@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { convertFilterToQuery } from '@/helpers/query';
+
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
@@ -98,7 +100,7 @@ export default {
           aggregate_func: this.widget.parameters.aggregate_func,
         })),
         sampling: this.query.sampling,
-        filter: this.query.filter,
+        widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
 

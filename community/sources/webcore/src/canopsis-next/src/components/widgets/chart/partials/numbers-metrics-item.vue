@@ -3,7 +3,7 @@
     v-layout(row, align-center)
       div.numbers-metrics-item__value {{ value }}
       c-help-icon(
-        v-if="showTrend && trendExist",
+        v-if="showTrend && trendEnabled",
         :text="trendTooltipText",
         :icon-class="{ 'numbers-metrics-item__trend--up': trendUp }",
         icon="arrow_downward",
@@ -59,6 +59,10 @@ export default {
 
     trendExist() {
       return !isUndefined(this.metric.previous_metric);
+    },
+
+    trendEnabled() {
+      return this.trendExist && this.metric.value !== this.metric.previous_metric;
     },
 
     trendUp() {
