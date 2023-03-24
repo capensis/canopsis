@@ -160,7 +160,7 @@ describe('kpi-sli', () => {
       store: createMockedStoreModules([{
         name: 'metrics',
         actions: {
-          fetchSliMetricsWithoutStore: jest.fn().mockRejectedValue(),
+          fetchSliMetricsWithoutStore: jest.fn().mockRejectedValue({}),
         },
       }]),
     });
