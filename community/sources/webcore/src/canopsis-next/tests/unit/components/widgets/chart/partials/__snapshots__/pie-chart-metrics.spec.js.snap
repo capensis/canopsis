@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] = `
+<div
+  class="layout pie-chart-metrics column align-center"
+>
+  <h4
+    class="pie-chart-metrics__title"
+  >
+    Custom title
+  </h4>
+  <div
+    class="pie-chart-metrics__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="400"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 400px; width: 700px;"
+        width="700"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with default props 1`] = `
+<div
+  class="layout pie-chart-metrics column align-center"
+>
+  <h4
+    class="pie-chart-metrics__title"
+  >
+    
+  </h4>
+  <div
+    class="pie-chart-metrics__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="0"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 0px; width: 0px;"
+        width="0"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
+<div
+  class="layout pie-chart-metrics column align-center"
+>
+  <h4
+    class="pie-chart-metrics__title"
+  >
+    
+  </h4>
+  <div
+    class="pie-chart-metrics__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="400"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 400px; width: 700px;"
+        width="700"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels props 1`] = `
+<div
+  class="layout pie-chart-metrics column align-center"
+>
+  <h4
+    class="pie-chart-metrics__title"
+  >
+    
+  </h4>
+  <div
+    class="pie-chart-metrics__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="400"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 400px; width: 700px;"
+        width="700"
+      />
+    </div>
+  </div>
+</div>
+`;
