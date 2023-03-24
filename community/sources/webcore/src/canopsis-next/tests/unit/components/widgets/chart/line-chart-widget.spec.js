@@ -104,10 +104,12 @@ describe('line-chart-widget', () => {
   test('Vectors metrics fetched with correct query', async () => {
     const filter = Faker.datatype.string();
     const sampling = randomArrayItem(Object.values(SAMPLINGS));
+    const parameters = [randomArrayItem(Object.values(ALARM_METRIC_PARAMETERS))];
 
     getQueryById.mockReturnValueOnce(() => ({
       filter,
       sampling,
+      parameters,
       interval: {
         from: QUICK_RANGES.last30Days.start,
         to: QUICK_RANGES.last30Days.stop,
@@ -140,7 +142,7 @@ describe('line-chart-widget', () => {
           sampling,
           from: 1383843500,
           to: 1386435500,
-          parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
+          parameters,
         },
       },
       undefined,
