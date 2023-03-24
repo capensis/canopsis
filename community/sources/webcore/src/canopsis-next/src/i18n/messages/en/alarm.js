@@ -30,6 +30,9 @@ export default {
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
   followLink: 'Follow the link "{title}"',
+  popups: {
+    exportFailed: 'Failed to export alarms list in CSV format',
+  },
   actions: {
     titles: {
       ack: 'Ack',
