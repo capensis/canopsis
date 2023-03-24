@@ -30,6 +30,7 @@
 
 <script>
 import { isRatioMetric } from '@/helpers/metrics';
+import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -89,7 +90,7 @@ export default {
           aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
         })),
         sampling: this.query.sampling,
-        filter: this.query.filter,
+        widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
 

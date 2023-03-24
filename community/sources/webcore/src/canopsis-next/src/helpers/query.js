@@ -297,8 +297,10 @@ export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({
  * @param {Object} userPreference
  * @returns {{ sampling: string, interval: Object }}
  */
-export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval } }) => {
-  const query = {};
+export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval, mainFilter } }) => {
+  const query = {
+    filter: mainFilter,
+  };
 
   if (sampling) {
     query.sampling = sampling;
@@ -417,7 +419,7 @@ export function prepareQuery(widget, userPreference) {
  * @param {string | string[]} filter
  * @returns {string[]}
  */
-const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
+export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**
  * Convert locked filter and main filter to query filters
