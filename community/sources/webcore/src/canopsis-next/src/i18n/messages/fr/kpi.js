@@ -1,14 +1,31 @@
-import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
 export default {
   alarmMetrics: 'Métriques d\'alarme',
   sli: 'SLI',
   metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
   noData: 'Pas de données disponibles',
+  selectMetric: 'Sélectionnez la métrique à afficher',
+  customColor: 'Couleur personnalisée',
+  calculationMethod: 'Méthode de calcul',
+  periodTrend: '{count} pour la période\n{from} - {to}',
   tabs: {
     collectionSettings: 'Paramètres d\'évaluation',
     ratingSettings: 'Paramètres d\'évaluation',
   },
+
+  aggregateFunctions: {
+    [AGGREGATE_FUNCTIONS.sum]: 'Somme',
+    [AGGREGATE_FUNCTIONS.avg]: 'Moyenne',
+    [AGGREGATE_FUNCTIONS.min]: 'Min',
+    [AGGREGATE_FUNCTIONS.max]: 'Max',
+  },
+
+  errors: {
+    metricsMinLength: 'Au moins {count} statistiques doivent être ajoutées',
+    emptyMetrics: 'Aucune donnée à afficher',
+  },
+
   popups: {
     exportFailed: 'Échec de l\'exportation du graphique au format CSV',
   },
@@ -36,6 +53,8 @@ export default {
       [ALARM_METRIC_PARAMETERS.ratioNonDisplayed]: '{value}% des alarmes non affichées',
       [ALARM_METRIC_PARAMETERS.averageAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
+      [ALARM_METRIC_PARAMETERS.timeToAck]: '{value} accuser les alarmes',
+      [ALARM_METRIC_PARAMETERS.timeToResolve]: '{value} pour résoudre les alarmes',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} alarmes corrigées manuellement',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
       [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} alarmes non acquittées',

@@ -207,6 +207,41 @@ export function convertCounterWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts chart widgets default parameters to query Object
+ *
+ * @param {Widget} widget
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export function convertChartWidgetDefaultParametersToQuery(widget) {
+  const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
+
+  return {
+    sampling: defaultSampling,
+    interval: {
+      from: QUICK_RANGES[defaultTimeRange].start,
+      to: QUICK_RANGES[defaultTimeRange].stop,
+    },
+  };
+}
+
+/**
+ * This function converts bar chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertChartWidgetToQuery(widget) {
+  const { parameters: { comparison = false, metrics = [] } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    with_history: comparison,
+    parameters: metrics.map(({ metric }) => metric),
+  };
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -258,6 +293,28 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
 export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({ category });
 
 /**
+ * This function converts userPreference with widget type 'Map' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval, mainFilter } }) => {
+  const query = {
+    filter: mainFilter,
+  };
+
+  if (sampling) {
+    query.sampling = sampling;
+  }
+
+  if (interval) {
+    query.interval = interval;
+  }
+
+  return query;
+};
+
+/**
  * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
@@ -290,6 +347,10 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
     [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
     [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+    [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -312,6 +373,10 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
     [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartWidgetDefaultParametersToQuery,
+    [WIDGET_TYPES.numbers]: convertChartWidgetDefaultParametersToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };
@@ -355,7 +420,7 @@ export function prepareQuery(widget, userPreference) {
  * @param {string | string[]} filter
  * @returns {string[]}
  */
-const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
+export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**
  * Convert locked filter and main filter to query filters

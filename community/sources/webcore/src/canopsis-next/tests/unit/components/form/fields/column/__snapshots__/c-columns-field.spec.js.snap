@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
+<div
+  class="c-movable-card-iterator-field"
+>
+  <div>
+    <column-field-stub
+      column="[object Object]"
+      name="key-1"
+      type="entity"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+  </div>
+  <div>
+    <column-field-stub
+      column="[object Object]"
+      name="key-1"
+      type="entity"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+  </div>
+   
+  <button
+    class="add-item-btn"
+    type="button"
+  />
+</div>
+`;
+
+exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
+<div
+  class="c-movable-card-iterator-field"
+>
+   
+  <button
+    class="add-item-btn"
+    type="button"
+  />
+</div>
+`;

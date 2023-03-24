@@ -1,4 +1,5 @@
 import { API_ROUTES } from '@/config';
+
 import request from '@/services/request';
 
 export default {

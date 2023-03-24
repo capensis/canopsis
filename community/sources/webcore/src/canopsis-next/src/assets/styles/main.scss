@@ -288,3 +288,15 @@ $mobileBreakpoint: 450px;
     }
   }
 }
+
+.chart-metrics-widget {
+  &__title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+ &__chart {
+   width: 100%;
+ }
+}
