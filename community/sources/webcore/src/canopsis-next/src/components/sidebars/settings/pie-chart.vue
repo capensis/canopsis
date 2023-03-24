@@ -1,11 +1,8 @@
 <template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
+  widget-settings(:submitting="submitting", divider, @submit="submit")
     field-title(v-model="form.title")
-    v-divider
     field-periodic-refresh(v-model="form.parameters.periodic_refresh")
-    v-divider
     field-preset(v-model="form.parameters", :type="form.type")
-    v-divider
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
       field-alarm-metric-presets(
         v-model="form.parameters.metrics",
@@ -13,18 +10,12 @@
         :min="2",
         with-color
       )
-      v-divider
       field-pie-show-mode(v-model="form.parameters.show_mode")
-    v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-chart-title(v-model="form.parameters.chart_title")
-      v-divider
       field-quick-date-interval-type(v-model="form.parameters.default_time_range")
-      v-divider
       field-sampling(v-model="form.parameters.default_sampling")
-      v-divider
       field-alarm-metric-aggregate-function(v-model="form.parameters.aggregate_func")
-      v-divider
       field-filters(
         :filters.sync="form.filters",
         addable,
@@ -34,7 +25,6 @@
         with-pbehavior,
         hide-selector
       )
-    v-divider
 </template>
 
 <script>

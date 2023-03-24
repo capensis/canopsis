@@ -66,7 +66,7 @@ export default {
     },
     widgetFilters: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     lockedFilter: {
       type: [String, Array],
