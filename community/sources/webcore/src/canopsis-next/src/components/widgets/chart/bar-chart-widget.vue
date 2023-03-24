@@ -19,37 +19,48 @@
       @update:sampling="updateSampling",
       @update:interval="updateInterval"
     )
-    v-layout
-      pre {{ vectorMetrics }}
+    v-layout.pa-3(column)
+      c-progress-overlay(:pending="vectorMetricsPending", transition)
+      bar-chart-metrics(
+        :metrics="preparedVectorMetrics",
+        :title="widget.parameters.chart_title",
+        :sampling="query.sampling",
+        :stacked="widget.parameters.stacked"
+      )
 </template>
 
 <script>
+import { pick, keyBy } from 'lodash';
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
-import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
-import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
+import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
+import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
+import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 
+import BarChartMetrics from './partials/bar-chart-metrics.vue';
+
 export default {
+  inject: ['$system'],
   components: {
     ChartWidgetFilters,
+    BarChartMetrics,
   },
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
+    entitiesVectorMetricsMixin,
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,
     permissionsWidgetsBarChartFilters,
-    entitiesVectorMetricsMixin,
   ],
   props: {
     widget: {
@@ -68,6 +79,18 @@ export default {
       return minDate
         ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
         : null;
+    },
+
+    widgetMetricsMap() {
+      return keyBy(this.widget.parameters?.metrics ?? [], 'metric');
+    },
+
+    preparedVectorMetrics() {
+      return this.vectorMetrics.map(metric => ({
+        ...metric,
+
+        color: this.widgetMetricsMap[metric.title].color,
+      }));
     },
   },
   watch: {
@@ -89,15 +112,12 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-
-        parameters: this.widget.parameters.metrics.map(({ metric }) => metric),
-        sampling: this.query.sampling,
-        filter: this.query.filter,
+        ...pick(this.query, ['parameters', 'sampling', 'filter', 'with_history']),
       };
     },
 
-    fetchList() {
-      this.fetchVectorMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
+    async fetchList() {
+      this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
     },
   },
 };

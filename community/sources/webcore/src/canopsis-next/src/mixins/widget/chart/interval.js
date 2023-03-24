@@ -1,32 +1,18 @@
 import { DATETIME_FORMATS } from '@/constants';
 
-import {
-  convertStartDateIntervalToTimestampByTimezone,
-  convertStopDateIntervalToTimestampByTimezone,
-} from '@/helpers/date/date-intervals';
+import { convertIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 export const widgetIntervalFilterMixin = {
   inject: ['$system'],
   methods: {
     getIntervalQuery() {
-      if (!this.query.interval) {
+      const { interval, sampling } = this.query;
+
+      if (!interval) {
         return {};
       }
 
-      return {
-        from: convertStartDateIntervalToTimestampByTimezone(
-          this.query.interval.from,
-          DATETIME_FORMATS.datePicker,
-          this.query.sampling,
-          this.$system.timezone,
-        ),
-        to: convertStopDateIntervalToTimestampByTimezone(
-          this.query.interval.to,
-          DATETIME_FORMATS.datePicker,
-          this.query.sampling,
-          this.$system.timezone,
-        ),
-      };
+      return convertIntervalToTimestamp(interval, DATETIME_FORMATS.datePicker, sampling, this.$system.timezone);
     },
 
     updateInterval(interval) {
