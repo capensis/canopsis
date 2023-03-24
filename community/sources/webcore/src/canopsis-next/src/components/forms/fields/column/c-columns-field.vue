@@ -12,11 +12,7 @@
 </template>
 
 <script>
-import {
-  MODALS,
-  ENTITIES_TYPES,
-  COLOR_INDICATOR_TYPES,
-} from '@/constants';
+import { ENTITIES_TYPES } from '@/constants';
 
 import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
@@ -58,27 +54,6 @@ export default {
     },
   },
   methods: {
-    showEditTemplateModal(index) {
-      const column = this.columns[index];
-
-      this.$modals.show({
-        name: MODALS.textEditor,
-        config: {
-          text: column.template,
-          title: this.$t('settings.columns.withTemplate'),
-          label: this.$t('common.template'),
-          rules: {
-            required: true,
-          },
-          action: value => this.updateFieldInArrayItem(index, 'template', value),
-        },
-      });
-    },
-
-    switchChangeColorIndicator(index, value) {
-      return this.updateFieldInArrayItem(index, 'colorIndicator', value ? COLOR_INDICATOR_TYPES.state : null);
-    },
-
     add() {
       this.addItemIntoArray(widgetColumnToForm());
     },

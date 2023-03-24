@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`line-chart Renders \`line-chart\` widget settings with custom props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    value="Map widget"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <widget-settings-group-stub
+    title="Metrics display"
+  >
+    <field-alarm-metric-presets-stub
+      value="[object Object]"
+      withcolor="true"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-chart-title-stub
+      name="parameters.chart_title"
+      value="Chart title"
+    />
+    <field-quick-date-interval-type-stub
+      value="last30Days"
+    />
+    <field-sampling-stub
+      value="day"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters="[object Object]"
+      hideselector="true"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+    <field-switcher-stub
+      title="Show comparison"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;
+
+exports[`line-chart Renders \`line-chart\` widget settings with default props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    value=""
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <widget-settings-group-stub
+    title="Metrics display"
+  >
+    <field-alarm-metric-presets-stub
+      value=""
+      withcolor="true"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-chart-title-stub
+      name="parameters.chart_title"
+      value=""
+    />
+    <field-quick-date-interval-type-stub
+      value="last30Days"
+    />
+    <field-sampling-stub
+      value="day"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters=""
+      hideselector="true"
+      withalarm="true"
+      withentity="true"
+      withpbehavior="true"
+    />
+    <field-switcher-stub
+      title="Show comparison"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;
