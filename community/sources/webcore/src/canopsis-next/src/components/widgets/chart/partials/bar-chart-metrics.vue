@@ -14,7 +14,7 @@
 import { X_AXES_IDS, SAMPLINGS } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
-import { getDateLabelBySampling } from '@/helpers/metrics';
+import { getDateLabelBySampling, hasHistoryData } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
@@ -51,14 +51,12 @@ export default {
     },
   },
   computed: {
+    hasHistoryData() {
+      return hasHistoryData(this.metrics);
+    },
+
     xAxes() {
-      const [metric] = this.metrics;
-
-      const labels = metric?.data.map(({ history_timestamp: timestamp }) => (
-        getDateLabelBySampling(timestamp, this.sampling).split('\n')
-      )) ?? [];
-
-      return {
+      const xAxes = {
         [X_AXES_IDS.default]: {
           stacked: this.stacked,
           type: 'time',
@@ -68,14 +66,25 @@ export default {
             font: this.labelsFont,
           },
         },
-        [X_AXES_IDS.history]: {
+      };
+
+      if (this.hasHistoryData) {
+        const [metric] = this.metrics;
+
+        const labels = metric?.data.map(({ history_timestamp: timestamp }) => (
+          getDateLabelBySampling(timestamp, this.sampling).split('\n')
+        )) ?? [];
+
+        xAxes[X_AXES_IDS.history] = {
           type: 'category',
           labels,
           ticks: {
             font: this.labelsFont,
           },
-        },
-      };
+        };
+      }
+
+      return xAxes;
     },
 
     chartOptions() {
@@ -128,9 +137,7 @@ export default {
 
         acc.push(defaultDataset);
 
-        const hasHistoryData = data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp);
-
-        if (hasHistoryData) {
+        if (this.hasHistoryData) {
           const historyDataset = {
             metric,
             backgroundColor: colorToRgba(metricColor, 0.5),

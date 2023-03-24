@@ -234,3 +234,16 @@ export const getMaxTimeDurationForMetrics = (metrics) => {
     unit: TIME_UNITS.second,
   });
 };
+
+/**
+ * Check if metrics has history data
+ *
+ * @param {Metric[]} [metrics = {}]
+ * @return {boolean}
+ */
+export const hasHistoryData = (metrics = []) => {
+  const [firstMetric = {}] = metrics;
+
+  return firstMetric.data.length
+    && firstMetric.data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp);
+};
