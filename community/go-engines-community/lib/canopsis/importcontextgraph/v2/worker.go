@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"io"
 	"os"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -47,12 +49,15 @@ type worker struct {
 
 	publisher         importcontextgraph.EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
+
+	logger zerolog.Logger
 }
 
 func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher importcontextgraph.EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
+	logger zerolog.Logger,
 ) importcontextgraph.Worker {
 	return &worker{
 		entityCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
@@ -62,6 +67,8 @@ func NewWorker(
 
 		publisher:         publisher,
 		metricMetaUpdater: metricMetaUpdater,
+
+		logger: logger,
 	}
 }
 
@@ -248,6 +255,11 @@ func (w *worker) parseEntities(
 		err = w.validate(ci)
 		if err != nil {
 			return res, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
+		}
+
+		if ci.Type == types.EntityTypeService && !ci.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+			w.logger.Warn().Str("name", ci.Name).Msg("invalid entity pattern, skip")
+			continue
 		}
 
 		w.fillDefaultFields(&ci, source, now)
