@@ -124,7 +124,6 @@ export const API_ROUTES = {
   },
   widget: {
     list: '/api/v4/widgets',
-    copy: '/api/v4/widget-copy',
     gridPositions: '/api/v4/widget-grid-positions',
     filters: '/api/v4/widget-filters',
     filterPositions: '/api/v4/widget-filter-positions',
