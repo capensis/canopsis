@@ -4,7 +4,7 @@
       template(#title="")
         span {{ $t('modals.createPbehaviorType.title') }}
       template(#text="")
-        pbehavior-type-form(v-model="form", :only-color="onlyColor")
+        pbehavior-type-form(v-model="form", :only-color="onlyColor", :pending-priority="pendingPriority")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
@@ -40,6 +40,7 @@ export default {
   ],
   data() {
     return {
+      pendingPriority: true,
       form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
     };
   },
@@ -63,9 +64,17 @@ export default {
   },
   methods: {
     async setMinimalPriority() {
-      const { priority } = await this.fetchNextPbehaviorTypePriority();
+      this.pendingPriority = true;
 
-      this.form.priority = priority;
+      try {
+        const { priority } = await this.fetchNextPbehaviorTypePriority();
+
+        this.form.priority = priority;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pendingPriority = false;
+      }
     },
 
     async submit() {

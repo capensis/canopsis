@@ -3,6 +3,7 @@
     v-field="value",
     :label="label || $t('common.priority')",
     :disabled="disabled",
+    :loading="loading",
     :name="name",
     :min="min",
     :required="required"
@@ -38,6 +39,10 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },
