@@ -17,6 +17,7 @@ import { pbehaviorTypeToForm } from '@/helpers/forms/type-pbehavior';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 
 import PbehaviorTypeForm from '@/components/other/pbehavior/types/form/pbehavior-type-form.vue';
 
@@ -34,6 +35,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
+    entitiesPbehaviorTypeMixin,
     submittableMixinCreator(),
   ],
   data() {
@@ -42,11 +44,30 @@ export default {
     };
   },
   computed: {
+    pbehaviorType() {
+      return this.modal.config.pbehaviorType;
+    },
+
     onlyColor() {
-      return this.config.pbehaviorType?.default;
+      return this.pbehaviorType?.default;
+    },
+
+    isNew() {
+      return !this.pbehaviorType?._id;
     },
   },
+  mounted() {
+    if (this.isNew) {
+      this.setMinimalPriority();
+    }
+  },
   methods: {
+    async setMinimalPriority() {
+      const { priority } = await this.fetchNextPbehaviorTypePriority();
+
+      this.form.priority = priority;
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
