@@ -97,7 +97,6 @@ describe('map', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     currentUserPermissionsById,
     activeViewModule,
@@ -132,7 +131,6 @@ describe('map', () => {
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
   });
 
@@ -192,9 +190,8 @@ describe('map', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });

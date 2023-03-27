@@ -41,10 +41,6 @@ export default {
       return request.delete(`${API_ROUTES.widget.list}/${id}`);
     },
 
-    copy(context, { id, data } = {}) {
-      return request.post(`${API_ROUTES.widget.copy}/${id}`, data);
-    },
-
     updateGridPositions(context, { data } = {}) {
       return request.put(API_ROUTES.widget.gridPositions, data);
     },
