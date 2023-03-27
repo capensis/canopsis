@@ -86,7 +86,7 @@ export default {
     entityUrlVariables() {
       return [
         {
-          value: ENTITY_PAYLOADS_VARIABLES.entity,
+          value: ENTITY_PAYLOADS_VARIABLES.entities,
           enumerable: true,
           variables: [
             {
