@@ -55,7 +55,6 @@ import (
 )
 
 const chanBuf = 10
-const sessionStoreSessionMaxAge = 24 * time.Hour
 const linkFetchTimeout = 30 * time.Second
 
 //go:embed swaggerui/*
@@ -137,10 +136,7 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot load security config: %w", err)
 	}
 
-	cookieOptions := CookieOptions{
-		FileAccessName: "token",
-		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-	}
+	cookieOptions := DefaultCookieOptions()
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
