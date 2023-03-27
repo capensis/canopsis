@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     c-id-field(v-field="form._id", :disabled="isDisabledIdField")
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     c-enabled-field(v-field="form.enabled")
     c-disable-during-periods-field(v-field="form.disable_during_periods")
     c-description-field(v-field="form.description", required)

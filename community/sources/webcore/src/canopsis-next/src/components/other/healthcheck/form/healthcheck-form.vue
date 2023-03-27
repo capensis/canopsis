@@ -1,13 +1,23 @@
 <template lang="pug">
   v-layout(column)
     c-information-block(:title="$t('healthcheck.queueLimit')")
-      template(slot="subtitle") {{ $t('healthcheck.notifyUsersQueueLimit') }}
+      template(#subtitle="") {{ $t('healthcheck.notifyUsersQueueLimit') }}
       c-enabled-limit-field(
         v-field="form.queue",
-        :label="$t('healthcheck.defineQueueLimit')"
+        :label="$t('healthcheck.defineQueueLimit')",
+        :min="1",
+        name="queue"
+      )
+    c-information-block(:title="$t('healthcheck.messagesLimit')")
+      template(#subtitle="") {{ $t('healthcheck.notifyUsersMessagesLimit') }}
+      c-enabled-limit-field(
+        v-field="form.messages",
+        :label="$t('healthcheck.defineMessageLimit')",
+        :min="1",
+        name="messages"
       )
     c-information-block(:title="$t('healthcheck.numberOfInstances')")
-      template(slot="subtitle") {{ $t('healthcheck.notifyUsersNumberOfInstances') }}
+      template(#subtitle="") {{ $t('healthcheck.notifyUsersNumberOfInstances') }}
       healthcheck-engine-instance-field(
         v-for="engineName in engineNames",
         v-field="form[engineName]",

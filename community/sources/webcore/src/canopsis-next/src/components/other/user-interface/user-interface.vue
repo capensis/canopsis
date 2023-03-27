@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { VALIDATION_DELAY } from '@/constants';
+
 import { userInterfaceToForm } from '@/helpers/forms/user-interface';
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 
@@ -30,6 +32,7 @@ import UserInterfaceForm from './form/user-interface-form.vue';
 export default {
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     UserInterfaceForm,

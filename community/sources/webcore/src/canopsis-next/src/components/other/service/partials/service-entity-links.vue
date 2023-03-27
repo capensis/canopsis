@@ -1,17 +1,17 @@
 <template lang="pug">
-  div.mt-1
-    div(v-for="category in linkList", :key="category.cat_name")
-      span.category.mr-2 {{ category.cat_name }}
+  div.mt-1(v-if="hasAccessToLinks")
+    div(v-for="(categoryLinks, category) in preparedLinks", :key="category")
+      span.category.mr-2 {{ category }}
       v-divider(light)
-      div(v-for="(link, index) in category.links", :key="`links-${index}`")
+      div(v-for="(link, index) in categoryLinks", :key="`links-${index}`")
         div.pa-2.text-xs-right
-          a(:href="link.link", target="_blank") {{ link.label }}
+          a(:href="link.url", target="_blank") {{ link.label }}
 </template>
 
 <script>
 import { BUSINESS_USER_PERMISSIONS_ACTIONS_MAP, WEATHER_ACTIONS_TYPES } from '@/constants';
 
-import { harmonizeLinks } from '@/helpers/links';
+import { harmonizeCategoryLinks, harmonizeCategoriesLinks } from '@/helpers/links';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -19,8 +19,8 @@ export default {
   mixins: [authMixin],
   props: {
     links: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
     category: {
       type: String,
@@ -28,40 +28,14 @@ export default {
     },
   },
   computed: {
-    filteredLinks() {
-      return this.links
-        ? this.links.filter(({ cat_name: catName, links = [] }) => {
-          const isCategoriesEqual = !this.category || (this.category && catName === this.category);
-
-          return links.length && isCategoriesEqual && this.checkAccessForSpecialCategory(catName);
-        })
-        : [];
-    },
-
-    linkList() {
-      return this.filteredLinks.map((category) => {
-        const categoryLinks = harmonizeLinks(category.links, category.cat_name);
-
-        return {
-          cat_name: category.cat_name,
-          links: categoryLinks,
-        };
-      });
-    },
-
-    /**
-     * Check if user has access to all links/categories
-     */
     hasAccessToLinks() {
       return this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[WEATHER_ACTIONS_TYPES.entityLinks]);
     },
-  },
-  methods: {
-    checkAccessForSpecialCategory(category) {
-      const permissionPrefix = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.weather[WEATHER_ACTIONS_TYPES.entityLinks];
-      const permission = `${permissionPrefix}_${category}`;
 
-      return this.hasAccessToLinks || this.checkAccess(permission);
+    preparedLinks() {
+      return this.category
+        ? { [this.category]: harmonizeCategoryLinks(this.links, this.category) }
+        : harmonizeCategoriesLinks(this.links);
     },
   },
 };

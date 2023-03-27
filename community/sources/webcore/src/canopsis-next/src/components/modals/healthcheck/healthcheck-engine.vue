@@ -1,10 +1,10 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ title }}
-    template(slot="text")
+    template(#text="")
       healthcheck-engine-information(:engine="engine", :max-queue-length="maxQueueLength")
-    template(slot="actions")
+    template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 

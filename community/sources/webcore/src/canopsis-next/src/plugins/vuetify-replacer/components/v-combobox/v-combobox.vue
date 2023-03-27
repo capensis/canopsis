@@ -7,6 +7,16 @@ import { consoleWarn } from 'vuetify/es5/util/console';
 
 import VMenu from '../v-menu/v-menu.vue';
 
+/**
+ * Check is attach prop enabled
+ *
+ * @param {string | boolean} attach
+ * @returns {boolean}
+ */
+const isAttached = attach => attach === '' // If used as a boolean prop (<v-menu attach>)
+  || attach === true // If bound to a boolean (<v-menu :attach="true">)
+  || attach === 'attach'; // If bound as boolean prop in pug (v-menu(attach))
+
 export default {
   extends: VCombobox,
   props: {
@@ -90,14 +100,7 @@ export default {
        * Attach to root el so that
        * menu covers prepend/append icons
        */
-      if (
-        /**
-         * TODO: make this a computed property or helper or something
-         */
-        this.attach === '' // If used as a boolean prop (<v-menu attach>)
-        || this.attach === true // If bound to a boolean (<v-menu :attach="true">)
-        || this.attach === 'attach' // If bound as boolean prop in pug (v-menu(attach))
-      ) {
+      if (isAttached(this.attach)) {
         props.attach = this.$el;
       } else {
         props.attach = this.attach;

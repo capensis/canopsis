@@ -44,7 +44,7 @@ Ce Guide de migration ne prend pas en charge la migration d'un environnement Deb
 
 ## Étape 1 : vérification de votre version actuelle de Canopsis
 
-Sur votre installation actuelle de Canopsis, rendez-vous sur la [page de connexion](../../guide-utilisation/interface/parametres-de-linterface/index.md#3-page-de-connexion-avance), et observez le numéro de version de Canopsis dans le coin inférieur droit de l'interface. Ce numéro de version est aussi affiché à droite du logo de l'application, une fois que vous êtes connecté.
+Sur votre installation actuelle de Canopsis, rendez-vous sur la [page de connexion](../../guide-utilisation/menu-administration/parametres.md#3-page-de-connexion-avance), et observez le numéro de version de Canopsis dans le coin inférieur droit de l'interface. Ce numéro de version est aussi affiché à droite du logo de l'application, une fois que vous êtes connecté.
 
 Ce numéro de version doit **obligatoirement être 3.48.0 et déjà utiliser les moteurs Go**. Si vous disposez d'une version plus ancienne de Canopsis, vous devez obligatoirement avoir [réalisé toutes les mises à jour consécutives](../../guide-administration/mise-a-jour/index.md) jusqu'à [Canopsis 3.48.0](../3.48.0.md) au préalable.
 

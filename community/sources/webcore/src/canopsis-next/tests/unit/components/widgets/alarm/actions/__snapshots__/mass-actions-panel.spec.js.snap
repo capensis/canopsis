@@ -30,6 +30,16 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     Cancel alarm|delete|cancel
   </button>
   <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
     class="action-associateTicket"
   >
     Associate ticket|local_play|associateTicket
@@ -80,6 +90,16 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     class="action-cancel"
   >
     Cancel alarm|delete|cancel
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
   </button>
   <button
     class="action-associateTicket"

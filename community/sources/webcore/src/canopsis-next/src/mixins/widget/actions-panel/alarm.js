@@ -8,13 +8,15 @@ import {
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
@@ -24,7 +26,13 @@ export const widgetActionsPanelAlarmMixin = {
     queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
+    entitiesDeclareTicketRuleMixin,
   ],
+  data() {
+    return {
+      ticketsForAlarmsPending: false,
+    };
+  },
   methods: {
     ...mapActions({
       fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
@@ -42,20 +50,83 @@ export const widgetActionsPanelAlarmMixin = {
       return this.refreshAlarmsList();
     },
 
-    showCreateCommentModal() {
-      this.$modals.show({
-        name: MODALS.createCommentEvent,
-        config: {
-          ...this.modalConfig,
-          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
-        },
-      });
-    },
-
     showActionModal(name) {
       return () => this.$modals.show({
         name,
         config: this.modalConfig,
+      });
+    },
+
+    async showDeclareTicketModalByAlarms(alarms) {
+      this.ticketsForAlarmsPending = true;
+
+      try {
+        const {
+          by_rules: alarmsByTickets,
+          by_alarms: ticketsByAlarms,
+        } = await this.fetchAssignedDeclareTicketsWithoutStore({
+          params: {
+            alarms: mapIds(alarms),
+          },
+        });
+
+        this.$modals.show({
+          name: MODALS.createDeclareTicketEvent,
+          config: {
+            items: alarms,
+            alarmsByTickets,
+            ticketsByAlarms,
+            action: (events) => {
+              this.$modals.show({
+                name: MODALS.executeDeclareTickets,
+                config: {
+                  executions: events,
+                  tickets: events.map(({ _id: id }) => ({
+                    _id: id,
+                    name: alarmsByTickets[id].name,
+                  })),
+                  alarms,
+                  onExecute: this.afterSubmit,
+                },
+              });
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.ticketsForAlarmsPending = false;
+      }
+    },
+
+    showAssociateTicketModalByAlarms(alarms, ignoreAck = false) {
+      this.$modals.show({
+        name: MODALS.createAssociateTicketEvent,
+        config: {
+          items: alarms,
+          ignoreAck,
+          action: async (event) => {
+            const events = [];
+
+            if (!ignoreAck) {
+              const itemsWithoutAck = alarms.filter(alarm => !alarm.v.ack);
+
+              const { fastAckOutput } = this.widget.parameters;
+
+              events.push(...prepareEventsByAlarms(
+                EVENT_ENTITY_TYPES.ack,
+                itemsWithoutAck,
+                { output: fastAckOutput?.enabled ? fastAckOutput.value : '' },
+              ));
+            }
+
+            events.push(...prepareEventsByAlarms(EVENT_ENTITY_TYPES.assocTicket, alarms, event));
+
+            await this.createEventAction({ data: events });
+
+            this.afterSubmit();
+          },
+        },
       });
     },
 
@@ -70,12 +141,36 @@ export const widgetActionsPanelAlarmMixin = {
     },
 
     showAckModal() {
+      this.showAckModalByAlarms([this.item]);
+    },
+
+    showAckModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.createAckEvent,
         config: {
-          ...this.modalConfig,
-
+          items: alarms,
           isNoteRequired: this.widget.parameters.isAckNoteRequired,
+          action: async (event, { needDeclareTicket, needAssociateTicket }) => {
+            const ackEvents = prepareEventsByAlarms(
+              EVENT_ENTITY_TYPES.ack,
+              alarms,
+              event,
+            );
+
+            await this.createEventAction({ data: ackEvents });
+
+            await this.$emit('clear:items');
+            await this.refreshAlarmsList();
+
+            if (needAssociateTicket) {
+              this.showAssociateTicketModalByAlarms(alarms, true);
+            } else if (needDeclareTicket) {
+              const alarmsWithRules = alarms.filter(
+                ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
+              );
+              await this.showDeclareTicketModalByAlarms(alarmsWithRules);
+            }
+          },
         },
       });
     },

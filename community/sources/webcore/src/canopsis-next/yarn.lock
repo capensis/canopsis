@@ -4012,6 +4012,11 @@ chartjs-plugin-annotation@^1.0.2:
   resolved "https://registry.yarnpkg.com/chartjs-plugin-annotation/-/chartjs-plugin-annotation-1.0.2.tgz#59ea0971b52b91c78690a5ba328e4ed38940f864"
   integrity sha512-asqP2/B+9tv105e3rwkzqoIgzhDBQRMzFRh/0ZTKqormxDXMP68uzxI5t3Fx8bxZSMNeEph0sY+0GIXXU0PeBQ==
 
+chartjs-plugin-datalabels@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/chartjs-plugin-datalabels/-/chartjs-plugin-datalabels-2.2.0.tgz#369578e131d743c2e34b5fbe2d3f9335f6639b8f"
+  integrity sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==
+
 chartjs-plugin-zoom@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/chartjs-plugin-zoom/-/chartjs-plugin-zoom-1.1.1.tgz#8a28923a17fcb5eb57a0dc94c5113bf402677647"
@@ -6923,6 +6928,11 @@ fast-json-stable-stringify@^2.0.0:
 fast-levenshtein@~2.0.4, fast-levenshtein@~2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
+
+fast-plist@^0.1.2:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/fast-plist/-/fast-plist-0.1.3.tgz#328cd9335e93a2479ac90814a1302437574ea925"
+  integrity sha512-d9cEfo/WcOezgPLAC/8t8wGb6YOD6JTCPMw2QcG2nAdFmyY+9rTUizCTaGjIZAloWENTEUMAPpkUAIJJJ0i96A==
 
 fastq@^1.6.0:
   version "1.12.0"
@@ -11177,6 +11187,13 @@ monaco-mermaid@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/monaco-mermaid/-/monaco-mermaid-1.0.6.tgz#2f0db5b38cb0c6539a28d5e5758dc24f88d931f3"
   integrity sha512-ntPXb1DPQ9k4/3pV3GLXF39KZOXrpns9nfB5On77nFATuUwN81N/clOR9SvGnoQhcP7n8A0ppE8JVNeYfVF97g==
+
+monaco-themes@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/monaco-themes/-/monaco-themes-0.4.3.tgz#087e4c8e2e4531334b8b433bf0434bded40bbacf"
+  integrity sha512-Ajt8osGYtdxPLp5CeLljWijm6GZZukK9t8b2JuVKlSleiwrVDEd/n47uQdm/uxYKCsWvSFmngAOhqZvC/wcxQg==
+  dependencies:
+    fast-plist "^0.1.2"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
