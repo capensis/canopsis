@@ -73,7 +73,7 @@ export const idleRuleToForm = (idleRule = {}) => {
     duration: idleRule.duration
       ? durationToForm(idleRule.duration)
       : { value: 1, unit: TIME_UNITS.minute },
-    priority: idleRule.priority ?? 1,
+    priority: idleRule.priority,
     disable_during_periods: idleRule.disable_during_periods ?? [],
     alarm_condition: idleRule.alarm_condition ?? IDLE_RULE_ALARM_CONDITIONS.lastEvent,
     operation: {

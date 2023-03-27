@@ -239,7 +239,7 @@ const remediationInstructionJobsToForm = (jobs = [undefined]) => jobs.map(remedi
 export const remediationInstructionToForm = (remediationInstruction = {}) => {
   const form = {
     name: remediationInstruction.name || '',
-    priority: remediationInstruction.priority || 0,
+    priority: remediationInstruction.priority,
     type: !isUndefined(remediationInstruction.type)
       ? remediationInstruction.type
       : REMEDIATION_INSTRUCTION_TYPES.manual,

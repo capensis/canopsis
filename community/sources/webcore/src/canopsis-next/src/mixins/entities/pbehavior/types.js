@@ -19,6 +19,7 @@ export const entitiesPbehaviorTypeMixin = {
       updatePbehaviorType: 'update',
       removePbehaviorType: 'remove',
       fetchPbehaviorTypeByEntityId: 'fetchListByEntityId',
+      fetchNextPbehaviorTypePriority: 'fetchNextPriority',
     }),
 
     async fetchDefaultPbehaviorTypes() {
