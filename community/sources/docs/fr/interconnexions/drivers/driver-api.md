@@ -24,6 +24,7 @@ Le `import-context-graph` peut importer
 5. [Importer des informations](#importer-des-informations-complementaires)<br>
 6. [Exécution](#execution)<br>
 7. [Résultats dans Canopsis](#resultats-dans-canopsis)
+7. [Cas d'usage complet](../cas-d-usage-complet/)
 
 ## Options
 
@@ -103,9 +104,15 @@ Exemple :
 
 ```yaml
   component:
-    name: external_id
-    description: external_description
+    name: 
+      type: copy
+      value: external_id
+    description: 
+      type: set
+      value: external_description
 ```
+
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).
 
 #### Ressources
 
@@ -115,32 +122,89 @@ Exemple :
 
 ```yaml
   resource:
-    name: external_id
-    description: external_description
+    name:
+      type: template
+      field: external_id
+      value: '{{uppercase .Field}}'
+    description: 
+      type: copy
+      value: external_description
     # resource mapping should contain component field in the external api response
-    component: external_component
+    component: 
+      type: copy
+      value: external_component
 ```
 
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).  
 Le reste concerne [les informations complémentaires](#importer-des-informations-complementaires) à importer.
 
 #### Services
 
 Pour importer un service, vous devez spécifier ses dépendances au travers d'un champ de réponse de l'API.  
-Chaque dépendance sera insérée dans le pattern du service grâce à l'opérateur `is_one_of` appliqué sur le champ `name` des entités.
+C'est l'attribut `pattern` qui permet de définir cette configuration.
 
-Exemple :
+
+Exemple, le pattern du service sera de type `is_one_of` appliqué sur l'attribut `name` et constitué de toutes les valeurs de `codeComposant` :
 
 ```yaml
 service:
-  name: codeApplication
-  description: external_description
-  dependencies: deps.composants.codeComposant
+  name: 
+    type: copy
+    value: codeApplication
+  description: 
+    type: copy
+    value: external_description
+  category: 
+    type: set
+    value: une_categorie_existante
+  pattern:
+    cond: is_one_of
+    field: name
+    value:
+      type: copy
+      value: codeComposant
 ```
 
+Autre exemple où le pattern vaut `infos.test` eq `infoValue` :
+
+```
+pattern:
+  cond: eq
+  field: infos.test
+  field_type: string
+  value:
+    type: template
+    field: infoValue
+    value: '{{.Field}}'
+```
+
+!!! note
+
+    La catérogie associée au service que l'on importe doit exister préalablement.
+
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).
 
 ### Importer des informations complémentaires
 
-Il existe 4 moyens d'importer des informations complémentaires aux API
+En plus des valeurs spécifiques à chaque type d'entité, vous pouvez importer des informations complémentaires.  
+il suffit de préciser dans la section `mapping` les nouvelles informations que vous souhaitez importer.  
+
+Exemple, l'API renvoie un attribut `codeEnvironnement` que vous souhaitez importer en tant que `environnement` :
+
+```yaml
+infos:
+  environnement:
+    value:
+      type: copy
+      value: env.codeEnvironnement
+    description: Environnement
+```
+
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).
+
+### Les différentes actions
+
+Il existe 4 moyens d'importer des informations en provenance d'API tierces :
 
 1. `set` : depuis une constante
 2. `copy` : en recopiant une réponse de l'API
