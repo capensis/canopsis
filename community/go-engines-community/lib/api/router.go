@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -86,7 +85,6 @@ import (
 const baseUrl = "/api/v4"
 
 func RegisterRoutes(
-	ctx context.Context,
 	conf config.CanopsisConf,
 	router gin.IRouter,
 	security Security,
@@ -733,7 +731,7 @@ func RegisterRoutes(
 		protected.GET(
 			"/engine-runinfo",
 			middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
-			engineinfo.GetRunInfo(ctx, runInfoManager),
+			engineinfo.GetRunInfo(runInfoManager),
 		)
 
 		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient))), enforcer, actionLogger)
