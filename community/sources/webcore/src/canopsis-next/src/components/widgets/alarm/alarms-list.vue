@@ -5,7 +5,7 @@
         c-advanced-search-field(
           :query.sync="query",
           :columns="widget.parameters.widgetColumns",
-          :tooltip="$t('search.alarmAdvancedSearch')"
+          :tooltip="$t('alarm.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
@@ -55,7 +55,7 @@
           @input="removeHistoryFilter"
         ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
-          :tooltip="$t('liveReporting.button')",
+          :tooltip="$t('alarm.liveReporting')",
           :color="activeRange ? 'primary' : ''",
           icon="schedule",
           @click="showEditLiveReportModal"
@@ -121,7 +121,6 @@ import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import MassActionsPanel from './actions/mass-actions-panel.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
@@ -139,7 +138,6 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    MassActionsPanel,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },
@@ -387,7 +385,7 @@ export default {
 
         this.downloadFile(`${API_HOST}${API_ROUTES.alarmListExport}/${fileData._id}/download`);
       } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('alarm.popups.exportFailed') });
       } finally {
         this.downloading = false;
       }

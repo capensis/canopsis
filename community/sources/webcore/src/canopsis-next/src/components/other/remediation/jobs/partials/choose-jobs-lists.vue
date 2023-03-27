@@ -9,18 +9,18 @@
     select-all,
     advanced-pagination
   )
-    template(#toolbar="props")
+    template(#toolbar="{ clearSearch, updateSearch }")
       v-layout(row)
-        c-search-field(@submit="props.updateSearch", @clear="props.clearSearch")
-    template(#actions="props")
-      v-btn(:disabled="props.disabled", icon, small, @click="$emit('select', [props.item])")
+        c-search-field(@submit="updateSearch", @clear="clearSearch")
+    template(#actions="{ disabled, item }")
+      v-btn(:disabled="disabled", icon, small, @click="$emit('select', [item])")
         v-icon add
-    template(#mass-actions="props")
+    template(#mass-actions="{ selected, item, count }")
       v-btn.ma-2(
         outline,
         color="primary",
-        @click="$emit('select', props.selected)"
-      ) {{ $tc('remediationJobs.addJobs', props.count, { count: props.count }) }}
+        @click="$emit('select', selected)"
+      ) {{ $tc('remediation.job.addJobs', count, { count: count }) }}
 </template>
 
 <script>

@@ -199,6 +199,7 @@ $mobileBreakpoint: 450px;
 
 .c-extra-details {
   &__badge {
+    height: 22px;
     padding: 3px 7px;
     text-align: center;
     white-space: nowrap;
@@ -286,4 +287,16 @@ $mobileBreakpoint: 450px;
       font-size: 11px;
     }
   }
+}
+
+.chart-metrics-widget {
+  &__title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+ &__chart {
+   width: 100%;
+ }
 }

@@ -2,7 +2,7 @@
   v-layout(column)
     template(v-if="!isEntityType")
       idle-rule-alarm-type-field.mb-2(v-field="form.alarm_condition", :label="$t('common.type')")
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     c-description-field(v-field="form.description", required)
     v-layout(row, justify-space-between)
       v-flex(xs7)
@@ -17,12 +17,18 @@
     template(v-if="!isEntityType")
       c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
       action-parameters-form(v-model="parameters", :type="form.operation.type", name="operation.parameters")
+      c-description-field(
+        v-if="isAssociateTicketAction",
+        v-field="form.comment",
+        :label="$tc('common.comment')",
+        name="comment"
+      )
 </template>
 
 <script>
 import { ACTION_TYPES } from '@/constants';
 
-import { isPbehaviorActionType } from '@/helpers/forms/action';
+import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
@@ -49,10 +55,6 @@ export default {
     },
   },
   computed: {
-    isPbehaviorOperation() {
-      return isPbehaviorActionType(this.form.operation.type);
-    },
-
     parameters: {
       get() {
         const { type, parameters } = this.form.operation;
@@ -63,6 +65,10 @@ export default {
       set(value) {
         this.updateField(`operation.parameters.${this.form.operation.type}`, value);
       },
+    },
+
+    isAssociateTicketAction() {
+      return isAssociateTicketActionType(this.form.operation.type);
     },
 
     actionTypes() {

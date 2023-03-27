@@ -82,6 +82,7 @@ export const SOCKET_ROOMS = {
   loggedUserCount: 'logged-user-count',
   broadcastMessages: 'broadcast-messages',
   execution: 'execution',
+  declareticket: 'declareticket',
 };
 
 export const API_ROUTES = {
@@ -94,6 +95,7 @@ export const API_ROUTES = {
   resolvedAlarms: '/api/v4/resolved-alarms',
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
+  alarmLinks: '/api/v4/alarm-links',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
@@ -123,7 +125,6 @@ export const API_ROUTES = {
   },
   widget: {
     list: '/api/v4/widgets',
-    copy: '/api/v4/widget-copy',
     gridPositions: '/api/v4/widget-grid-positions',
     filters: '/api/v4/widget-filters',
     filterPositions: '/api/v4/widget-filter-positions',
@@ -197,6 +198,13 @@ export const API_ROUTES = {
   patternsCount: '/api/v4/patterns-count',
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
+  templateVars: '/api/v4/template-vars',
+  templateValidator: {
+    declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
+    scenarios: '/api/v4/template-validator/scenarios',
+  },
+  linkRule: '/api/v4/link-rules',
+  linkCategories: '/api/v4/link-categories',
 
   /**
    * Cat routes
@@ -231,6 +239,7 @@ export const API_ROUTES = {
     parameters: '/api/v4/cat/healthcheck/parameters',
   },
   metrics: {
+    settings: '/api/v4/cat/metrics-settings',
     alarm: '/api/v4/cat/metrics/alarm',
     exportAlarm: '/api/v4/cat/metrics-export/alarm',
     exportRating: '/api/v4/cat/metrics-export/rating',
@@ -239,11 +248,21 @@ export const API_ROUTES = {
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
     remediation: '/api/v4/cat/metrics/remediation',
+    aggregate: '/api/v4/cat/metrics/aggregate',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
   manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
+  declareTicket: {
+    rules: '/api/v4/cat/declare-ticket-rules',
+    bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
+    alarmsAssigned: '/api/v4/cat/declare-ticket-assigned',
+    testExecution: '/api/v4/cat/test-declare-ticket-executions',
+    testExecutionWebhooks: '/api/v4/cat/test-declare-ticket-webhooks',
+    declareTicketExecution: '/api/v4/cat/declare-ticket-executions',
+    bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
+  },
 };
 
 export const COLORS = {
@@ -352,6 +371,10 @@ export const COLORS = {
     remediationStatisticAssignedRemediations: '#FFA800',
     remediationStatisticExecutedRemediations: '#5B6E7F',
     remediationStatisticRatioRemediations: '#5B6E7F',
+    notAckedAlarms: '#dce775',
+    notAckedInHourAlarms: '#1fbcd3',
+    notAckedInFourHoursAlarms: '#afb42b',
+    notAckedInDayAlarms: '#fff176',
   },
   mermaid: {
     primaryColor: '#bfe4ce',
@@ -457,21 +480,25 @@ export const THEMES_NAMES = {
 const CANOPSIS_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
+  background: '#ffffff',
 };
 
 const CANOPSIS_DARK_THEME_COLORS = {
   ...CANOPSIS_THEME_COLORS,
   error: '#ff8b8b',
+  background: '#303030',
 };
 
 const COLOR_BLIND_THEME_COLORS = {
   primary: '#2196f3',
   secondary: COLORS.secondary,
+  background: CANOPSIS_THEME_COLORS.background,
 };
 
 const COLOR_BLIND_DARK_THEME_COLORS = {
   ...COLOR_BLIND_THEME_COLORS,
   error: CANOPSIS_DARK_THEME_COLORS.error,
+  background: CANOPSIS_DARK_THEME_COLORS.background,
 };
 
 export const THEMES = {
@@ -498,8 +525,6 @@ export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
-
-export const DEFAULT_CATEGORIES_LIMIT = 3;
 
 export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 

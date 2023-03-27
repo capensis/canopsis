@@ -14,26 +14,26 @@ import (
 )
 
 type ScenarioExecutionStorage interface {
-	Get(ctx context.Context, executionID string) (*ScenarioExecution, error)
+	Get(ctx context.Context, key string) (*ScenarioExecution, error)
 	GetAbandoned(ctx context.Context) ([]ScenarioExecution, error)
-	Create(ctx context.Context, execution ScenarioExecution) (string, error)
+	Create(ctx context.Context, execution ScenarioExecution) (bool, error)
 	Update(ctx context.Context, execution ScenarioExecution) error
-	Del(ctx context.Context, executionID string) error
-	Inc(ctx context.Context, id string, inc int64, drop bool) (int64, error)
+	Del(ctx context.Context, key string) error
+	Inc(ctx context.Context, key string, inc int64, drop bool) (int64, error)
 }
 
 type redisScenarioExecutionStorage struct {
-	key         string
-	redisClient redis.Cmdable
-	encoder     encoding.Encoder
-	decoder     encoding.Decoder
-	logger      zerolog.Logger
+	redisKeyPrefix string
+	redisClient    redis.Cmdable
+	encoder        encoding.Encoder
+	decoder        encoding.Decoder
+	logger         zerolog.Logger
 
 	lastRetryInterval time.Duration
 }
 
 func NewRedisScenarioExecutionStorage(
-	key string,
+	redisKeyPrefix string,
 	redisClient redis.Cmdable,
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
@@ -41,18 +41,18 @@ func NewRedisScenarioExecutionStorage(
 	logger zerolog.Logger,
 ) ScenarioExecutionStorage {
 	return &redisScenarioExecutionStorage{
-		key:         key,
-		redisClient: redisClient,
-		encoder:     encoder,
-		decoder:     decoder,
-		logger:      logger,
+		redisKeyPrefix: redisKeyPrefix,
+		redisClient:    redisClient,
+		encoder:        encoder,
+		decoder:        decoder,
+		logger:         logger,
 
 		lastRetryInterval: lastRetryInterval,
 	}
 }
 
-func (s *redisScenarioExecutionStorage) Get(ctx context.Context, executionID string) (*ScenarioExecution, error) {
-	res := s.redisClient.Get(ctx, s.getKey(executionID))
+func (s *redisScenarioExecutionStorage) Get(ctx context.Context, key string) (*ScenarioExecution, error) {
+	res := s.redisClient.Get(ctx, s.getRedisKey(key))
 	if err := res.Err(); err != nil {
 		if err == redis.Nil {
 			return nil, nil
@@ -67,35 +67,25 @@ func (s *redisScenarioExecutionStorage) Get(ctx context.Context, executionID str
 		return nil, err
 	}
 
-	execution.ID = executionID
-	execution.AlarmID, execution.ScenarioID, err = s.parseExecutionID(executionID)
-	if err != nil {
-		return nil, err
-	}
-
 	return &execution, nil
 }
 
 func (s *redisScenarioExecutionStorage) Create(
 	ctx context.Context,
 	execution ScenarioExecution,
-) (string, error) {
+) (bool, error) {
 	encoded, err := s.encoder.Encode(execution)
 	if err != nil {
-		return "", err
+		return false, err
 	}
 
-	executionID := s.getExecutionID(execution)
-	res := s.redisClient.SetNX(ctx, s.getKey(executionID), encoded, 0)
+	key := execution.GetCacheKey()
+	res := s.redisClient.SetNX(ctx, s.getRedisKey(key), encoded, 0)
 	if err := res.Err(); err != nil {
-		return "", err
+		return false, err
 	}
 
-	if !res.Val() {
-		return "", nil
-	}
-
-	return executionID, nil
+	return res.Val(), nil
 }
 
 func (s *redisScenarioExecutionStorage) Update(ctx context.Context, execution ScenarioExecution) error {
@@ -104,7 +94,7 @@ func (s *redisScenarioExecutionStorage) Update(ctx context.Context, execution Sc
 		return err
 	}
 
-	res := s.redisClient.SetXX(ctx, s.getKey(execution.ID), encoded, 0)
+	res := s.redisClient.SetXX(ctx, s.getRedisKey(execution.GetCacheKey()), encoded, 0)
 	if err := res.Err(); err != nil {
 		return err
 	}
@@ -116,13 +106,13 @@ func (s *redisScenarioExecutionStorage) Update(ctx context.Context, execution Sc
 	return nil
 }
 
-func (s *redisScenarioExecutionStorage) updateWithoutPrefix(ctx context.Context, executionID string, execution ScenarioExecution) error {
+func (s *redisScenarioExecutionStorage) updateWithoutPrefix(ctx context.Context, redisKey string, execution ScenarioExecution) error {
 	encoded, err := s.encoder.Encode(execution)
 	if err != nil {
 		return err
 	}
 
-	res := s.redisClient.SetXX(ctx, executionID, encoded, 0)
+	res := s.redisClient.SetXX(ctx, redisKey, encoded, 0)
 	if err := res.Err(); err != nil {
 		return err
 	}
@@ -134,24 +124,24 @@ func (s *redisScenarioExecutionStorage) updateWithoutPrefix(ctx context.Context,
 	return nil
 }
 
-func (s *redisScenarioExecutionStorage) Del(ctx context.Context, executionID string) error {
-	return s.redisClient.Del(ctx, s.getKey(executionID)).Err()
+func (s *redisScenarioExecutionStorage) Del(ctx context.Context, key string) error {
+	return s.redisClient.Del(ctx, s.getRedisKey(key)).Err()
 }
 
-func (s *redisScenarioExecutionStorage) delWithoutPrefix(ctx context.Context, executionID string) error {
-	return s.redisClient.Del(ctx, executionID).Err()
+func (s *redisScenarioExecutionStorage) delWithoutPrefix(ctx context.Context, redisKey string) error {
+	return s.redisClient.Del(ctx, redisKey).Err()
 }
 
-func (s *redisScenarioExecutionStorage) Inc(ctx context.Context, id string, inc int64, drop bool) (int64, error) {
-	key := s.getIncKey(id)
+func (s *redisScenarioExecutionStorage) Inc(ctx context.Context, key string, inc int64, drop bool) (int64, error) {
+	incRedisKey := s.getRedisIncKey(key)
 	if drop {
-		res := s.redisClient.Del(ctx, key)
+		res := s.redisClient.Del(ctx, incRedisKey)
 		if err := res.Err(); err != nil {
 			return 0, err
 		}
 	}
 
-	res := s.redisClient.IncrBy(ctx, key, inc)
+	res := s.redisClient.IncrBy(ctx, incRedisKey, inc)
 	if err := res.Err(); err != nil {
 		return 0, err
 	}
@@ -165,7 +155,7 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 	processedKeys := make(map[string]bool)
 
 	for {
-		res := s.redisClient.Scan(ctx, cursor, s.getKey("*"), 50)
+		res := s.redisClient.Scan(ctx, cursor, s.getRedisKey("*"), 50)
 		if err := res.Err(); err != nil {
 			return nil, err
 		}
@@ -187,7 +177,7 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 			}
 
 			for i, v := range resGet.Val() {
-				key := unprocessedKeys[i]
+				redisKey := unprocessedKeys[i]
 
 				if se, ok := v.(string); ok {
 					var execution ScenarioExecution
@@ -197,35 +187,24 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 					}
 
 					if execution.LastUpdate > 0 && time.Since(time.Unix(execution.LastUpdate, 0)) > s.lastRetryInterval {
+						key := s.parseRedisKey(redisKey)
 						execution.Tries++
 						if execution.Tries > MaxRetries {
-							err := s.delWithoutPrefix(ctx, key)
+							err := s.delWithoutPrefix(ctx, redisKey)
 							if err != nil {
-								s.logger.Warn().Err(err).Str("execution_id", key).Msg("Scenario execution storage: Failed to delete execution, since it has reached max number of retries.")
+								s.logger.Warn().Err(err).Str("execution", key).Msg("Scenario execution storage: Failed to delete execution, since it has reached max number of retries.")
 								continue
 							}
 
-							s.logger.Debug().Str("execution_id", key).Msg("Scenario execution storage: execution has been deleted, since it reached max number of retries.")
+							s.logger.Debug().Str("execution", key).Msg("Scenario execution storage: execution has been deleted, since it reached max number of retries.")
 
 							continue
 						}
 
-						err := s.updateWithoutPrefix(ctx, key, execution)
+						err := s.updateWithoutPrefix(ctx, redisKey, execution)
 						if err != nil {
 							s.logger.Warn().Err(err).Msg("Scenario execution storage: Failed to update execution tries, abandoned execution will be skipped.")
 						} else {
-							executionID := s.getParseKey(key)
-							execution.ID = executionID
-							execution.AlarmID, execution.ScenarioID, err = s.parseExecutionID(executionID)
-							if err != nil {
-								s.logger.Warn().Err(err).Str("execution_id", key).Msgf("Scenario execution storage: execution will be removed")
-								err = s.delWithoutPrefix(ctx, key)
-								if err != nil {
-									s.logger.Warn().Err(err).Str("execution_id", key).Msg("Scenario execution storage: Failed to delete execution.")
-									continue
-								}
-							}
-
 							executions = append(executions, execution)
 						}
 					}
@@ -243,28 +222,14 @@ func (s *redisScenarioExecutionStorage) GetAbandoned(ctx context.Context) ([]Sce
 	return executions, nil
 }
 
-func (s *redisScenarioExecutionStorage) getExecutionID(execution ScenarioExecution) string {
-	return fmt.Sprintf("%s$$%s", execution.AlarmID, execution.ScenarioID)
+func (s *redisScenarioExecutionStorage) getRedisKey(key string) string {
+	return s.redisKeyPrefix + "-execution-" + key
 }
 
-func (s *redisScenarioExecutionStorage) parseExecutionID(executionID string) (string, string, error) {
-	parts := strings.Split(executionID, "$$")
-	if len(parts) < 2 {
-		return "", "", errors.New("invalid execution id")
-
-	}
-
-	return parts[0], parts[1], nil
+func (s *redisScenarioExecutionStorage) parseRedisKey(key string) string {
+	return strings.ReplaceAll(key, s.redisKeyPrefix+"-execution-", "")
 }
 
-func (s *redisScenarioExecutionStorage) getKey(id string) string {
-	return fmt.Sprintf("%s-execution-%s", s.key, id)
-}
-
-func (s *redisScenarioExecutionStorage) getParseKey(key string) string {
-	return strings.ReplaceAll(key, fmt.Sprintf("%s-execution-", s.key), "")
-}
-
-func (s *redisScenarioExecutionStorage) getIncKey(id string) string {
-	return fmt.Sprintf("%s-inc-%s", s.key, id)
+func (s *redisScenarioExecutionStorage) getRedisIncKey(key string) string {
+	return s.redisKeyPrefix + "-inc-" + key
 }
