@@ -9,23 +9,23 @@
       :value="remediationInstruction.last_modified | date"
     )
     remediation-instruction-stats-summary-row(
-      :label="$t('remediationInstructionStats.totalExecutions')",
+      :label="$t('remediation.instructionStat.totalExecutions')",
       :value="remediationInstruction.execution_count"
     )
     remediation-instruction-stats-summary-row(
-      :label="$t('remediationInstructionStats.successfulExecutions')",
+      :label="$t('remediation.instructionStat.successfulExecutions')",
       :value="remediationInstruction.successful"
     )
     remediation-instruction-stats-summary-row(
-      :label="$t('remediationInstructionStats.lastExecutedOn')",
+      :label="$t('remediation.instructionStat.lastExecutedOn')",
       :value="remediationInstruction.last_executed_on | date"
     )
-    remediation-instruction-stats-summary-row(:label="$t('remediationInstructionStats.alarmStates')")
+    remediation-instruction-stats-summary-row(:label="$t('remediation.instructionStat.alarmStates')")
       affect-alarm-states.remediation-instruction-stats-summary--alarm-states(
         v-if="remediationInstruction.alarm_states",
         :alarm-states="remediationInstruction.alarm_states"
       )
-    remediation-instruction-stats-summary-row(:label="$t('remediationInstructionStats.okAlarmStates')")
+    remediation-instruction-stats-summary-row(:label="$t('remediation.instructionStat.okAlarmStates')")
       span.c-state-count-changes-chip.primary {{ remediationInstruction.ok_alarm_states }}
 </template>
 

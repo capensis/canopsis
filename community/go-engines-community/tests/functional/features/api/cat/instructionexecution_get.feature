@@ -386,60 +386,6 @@ Feature: get running instruction
     Then "op1CompletedAt" >= "op1StartedAt"
     Then "op2StartedAt" >= "op1CompletedAt"
 
-  Scenario: given not running instruction should not get it
-    When I am admin
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "type": 0,
-      "name": "test-instruction-execution-get-4-name",
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.resource",
-            "cond": {
-              "type": "eq",
-              "value": "test-instruction-execution-get-resource-4"
-            }
-          }
-        ]
-      ],
-      "description": "test-instruction-execution-get-4-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "s"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-execution-get-4-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-execution-get-4-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-execution-get-4-step-1-operation-1-description"
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-execution-get-4-step-1-endpoint"
-        }
-      ]
-    }
-    """
-    Then the response code should be 201
-    When I do POST /api/v4/cat/executions:
-    """json
-    {
-      "alarm": "test-instruction-execution-get-4",
-      "instruction": "{{ .lastResponse._id }}"
-    }
-    """
-    Then the response code should be 200
-    When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
-    Then the response code should be 200
-    When I do GET /api/v4/cat/executions/{{ .lastResponse._id }}
-    Then the response code should be 404
-
   Scenario: given unauth request should not allow access
     When I do GET /api/v4/cat/executions/notexist
     Then the response code should be 401

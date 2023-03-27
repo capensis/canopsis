@@ -64,6 +64,10 @@ const (
 	ValueTypeMap = "map"
 
 	ValueTypeShareToken = "sharetoken"
+
+	ValueTypeDeclareTicketRule = "declareticketrule"
+
+	ValueTypeLinkRule = "linkrule"
 )
 
 type ActionLogger interface {

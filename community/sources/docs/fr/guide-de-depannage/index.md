@@ -4,7 +4,7 @@ Ce guide vous accompagne dans le débogage de Canopsis et son environnement.
 
 Il comporte les sections suivantes :
 
-- [Module Healthcheck](module-healthcheck.md)
+- [Module Healthcheck](../guide-utilisation/menu-administration/bilan-de-sante.md)
 - [Requêtes vers la base de données](bdd-requetes-de-base.md)  
 - [État des composants de Canopsis](etat-des-composants.md)  
 - [Interface d'administration de RabbitMQ](rabbitmq-webui.md)  

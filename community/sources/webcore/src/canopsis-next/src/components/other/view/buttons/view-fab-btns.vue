@@ -8,15 +8,15 @@
         direction="top",
         transition="slide-y-reverse-transition"
       )
-        v-btn(
-          slot="activator",
-          :input-value="opened",
-          color="primary",
-          dark,
-          fab
-        )
-          v-icon menu
-          v-icon close
+        template(#activator="")
+          v-btn(
+            :input-value="opened",
+            color="primary",
+            dark,
+            fab
+          )
+            v-icon menu
+            v-icon close
         view-share-link-btn(v-if="hasCreateAnyShareTokenAccess", :view="view", :tab="activeTab")
         view-fullscreen-btn(
           :value="fullscreen",

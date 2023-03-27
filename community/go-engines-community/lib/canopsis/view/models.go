@@ -190,6 +190,7 @@ type WidgetColumn struct {
 	Value          string `bson:"value," json:"value" binding:"required"`
 	Label          string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
 	IsHtml         bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
+	IconOnly       bool   `bson:"iconOnly,omitempty" json:"iconOnly,omitempty"`
 	ColorIndicator string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
 	Template       string `bson:"template,omitempty" json:"template,omitempty"`
 }

@@ -13,7 +13,7 @@ export const convertObjectToTreeview = (parent, parentKey, parentPath = '', isPa
   const basePath = !parentPath ? parentKey : parentPath;
 
   const children = Object.entries(parent).reduce((acc, [key, value]) => {
-    const path = isParentArray ? `${basePath}.[${key}]` : `${basePath}.${key}`;
+    const path = [basePath, isParentArray ? `[${key}]` : key].filter(Boolean).join('.');
 
     if (isArray(value)) {
       acc.push({

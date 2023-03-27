@@ -13,15 +13,13 @@
         c-advanced-search-field(
           :query.sync="query",
           :columns="columns",
-          :tooltip="$t('search.contextAdvancedSearch')"
+          :tooltip="$t('context.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
@@ -77,29 +75,16 @@ export default {
       };
     },
 
-    getQuery() { // TODO: move this logic to helpers
-      const query = omit(this.query, [
-        'sortKey',
-        'sortDir',
-      ]);
-
-      query.with_flags = true;
-
-      if (this.query.sortKey) {
-        query.sort = this.query.sortDir.toLowerCase();
-        query.sort_by = this.query.sortKey;
-      }
-
-      return query;
-    },
-
     async fetchList() {
       try {
         this.pending = true;
 
+        const params = this.getQuery();
+        params.with_flags = true;
+
         const { data, meta } = await this.fetchDependenciesList({
           id: this.entityId,
-          params: this.getQuery(),
+          params,
         });
 
         this.entities = data;

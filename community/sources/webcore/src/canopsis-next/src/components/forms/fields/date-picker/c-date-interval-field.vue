@@ -9,11 +9,12 @@
     )
       template(#append="")
         v-icon calendar_today
-    c-date-picker-field.ml-4(
+    c-date-picker-field(
       v-field="value.to",
       :label="$t('common.to')",
       :disabled="disabled",
       :allowed-dates="isAllowedToDate",
+      content-class="ml-4",
       hide-details
     )
       template(#append="")

@@ -46,6 +46,7 @@ export const EXPLOITATION_PAGES_RULES = {
   dynamicInfo: { edition: CANOPSIS_EDITION.pro },
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
+  declareTicketRule: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
@@ -73,6 +74,10 @@ export const USER_PERMISSIONS_PREFIXES = {
     testingWeather: 'testingweather',
     counter: 'counter',
     map: 'map',
+    barChart: 'barchart',
+    lineChart: 'linechart',
+    pieChart: 'piechart',
+    numbers: 'numbers',
   },
   api: 'api',
 };
@@ -102,6 +107,7 @@ export const USERS_PERMISSIONS = {
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
@@ -115,6 +121,8 @@ export const USERS_PERMISSIONS = {
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
@@ -242,6 +250,54 @@ export const USERS_PERMISSIONS = {
         category: `${USER_PERMISSIONS_PREFIXES.business.map}_category`,
       },
     },
+    barChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.barChart}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.barChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_userFilter`,
+      },
+    },
+    lineChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_userFilter`,
+      },
+    },
+    pieChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_userFilter`,
+      },
+    },
+    numbers: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.numbers}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.numbers}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
+      },
+    },
   },
   api: {
     general: {
@@ -268,12 +324,15 @@ export const USERS_PERMISSIONS = {
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
       metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      metricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_metrics_settings`,
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
       api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
+      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -286,7 +345,8 @@ export const USERS_PERMISSIONS = {
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
-      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
@@ -409,6 +469,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
   /**
    * Notifications pages

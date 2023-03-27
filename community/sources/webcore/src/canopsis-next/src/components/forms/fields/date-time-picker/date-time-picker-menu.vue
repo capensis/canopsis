@@ -9,14 +9,15 @@
     lazy-with-unmount,
     lazy
   )
-    v-btn(
-      slot="activator",
-      color="secondary",
-      icon,
-      fab,
-      small
-    )
-      v-icon calendar_today
+    template(#activator="{ on }")
+      v-btn(
+        v-on="on",
+        color="secondary",
+        icon,
+        fab,
+        small
+      )
+        v-icon calendar_today
     date-time-picker(
       v-field="value",
       :label="label",

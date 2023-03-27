@@ -7,7 +7,7 @@
     v-data-table(
       :headers="headers",
       :items="form",
-      :no-data-text="$t('tables.noData')",
+      :no-data-text="$t('common.noData')",
       item-key="key"
     )
       template(#items="{ item }")

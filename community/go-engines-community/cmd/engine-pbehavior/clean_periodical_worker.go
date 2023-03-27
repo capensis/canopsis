@@ -63,8 +63,10 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 	maxUpdates := int64(w.DataStorageConfigProvider.Get().MaxUpdates)
 	deleted, err := cleaner.Clean(ctx, d.SubFrom(now), maxUpdates)
 	if err != nil {
-		w.Logger.Err(err).Msg("cannot accumulate week statistics")
-	} else if deleted > 0 {
+		w.Logger.Err(err).Msg("cannot delete pbehaviors")
+		return
+	}
+	if deleted > 0 {
 		w.Logger.Info().Int64("count", deleted).Msg("pbehaviors were deleted")
 	}
 

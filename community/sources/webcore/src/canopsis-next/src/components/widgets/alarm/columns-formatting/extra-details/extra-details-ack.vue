@@ -5,7 +5,7 @@
         span.c-extra-details__badge.purple(v-on="on")
           v-icon(color="white", small) {{ icon }}
       div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.ack') }}
+        strong {{ $t('alarm.actions.iconsTitles.ack') }}
         div {{ $t('common.by') }} : {{ ack.a }}
         div {{ $t('common.date') }} : {{ date }}
         div(v-if="ack.initiator") {{ $t('common.initiator') }} : {{ ack.initiator }}

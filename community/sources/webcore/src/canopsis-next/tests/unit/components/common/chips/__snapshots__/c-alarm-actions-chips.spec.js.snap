@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` with selected tag and dropdown 1`] = `
+<div
+  class="layout row wrap align-center"
+>
+  <span
+    class="c-alarm-action-chip"
+    color="color3"
+  />
+  <span
+    class="c-alarm-action-chip"
+    color="color1"
+  />
+  <div
+    class="v-menu"
+  >
+    <button
+      class="v-btn v-btn--icon v-btn--small theme--light grey"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          more_horiz
+        </i>
+      </div>
+    </button>
+    <transition-stub
+      name="v-menu-transition"
+    />
+  </div>
+</div>
+`;
+
+exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` with selected tag and dropdown 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-card v-sheet theme--light"
+  >
+    <div
+      class="v-card__text"
+    >
+      <span
+        class="c-alarm-action-chip"
+        color="color2"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected tag and dropdown 1`] = `
+<div
+  class="layout row wrap align-center"
+>
+  <span
+    class="c-alarm-action-chip"
+    color="color1"
+  />
+  <span
+    class="c-alarm-action-chip"
+    color="color2"
+  />
+  <span
+    class="c-alarm-action-chip"
+    color="color3"
+  />
+  <!---->
+</div>
+`;
+
+exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected tag and with dropdown 1`] = `
+<div
+  class="layout row wrap align-center"
+>
+  <span
+    class="c-alarm-action-chip"
+    color="color1"
+  />
+  <div
+    class="v-menu"
+  >
+    <button
+      class="v-btn v-btn--icon v-btn--small theme--light grey"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          more_horiz
+        </i>
+      </div>
+    </button>
+    <transition-stub
+      name="v-menu-transition"
+    />
+  </div>
+</div>
+`;
+
+exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected tag and with dropdown 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-card v-sheet theme--light"
+  >
+    <div
+      class="v-card__text"
+    >
+      <span
+        class="c-alarm-action-chip"
+        color="color2"
+      />
+      <span
+        class="c-alarm-action-chip"
+        color="color3"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -397,6 +397,7 @@ func getAlarmLookup() []bson.M {
 			"creation_date": "$alarm.v.creation_date",
 			"display_name":  "$alarm.v.display_name",
 			"ticket":        "$alarm.v.ticket",
+			"tickets":       "$alarm.v.tickets",
 		}},
 		{"$project": bson.M{"alarm": 0}},
 	}

@@ -12,7 +12,7 @@
         v-icon.pl-1(v-if="filter.locked", color="white", small) lock
         strong.pl-2.text-uppercase {{ conditionTypeMessage }}
         span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
-        strong.pl-1.text-uppercase(v-if="hasRunning") {{ $t('remediationInstructionsFilters.inProgress') }}
+        strong.pl-1.text-uppercase(v-if="hasRunning") {{ $t('remediation.instructionsFilter.inProgress') }}
 </template>
 
 <script>
@@ -96,8 +96,8 @@ export default {
     },
 
     conditionTypeMessage() {
-      const allMessage = this.isAll ? ` ${this.$t('remediationInstructionsFilters.chip.all')}` : ':';
-      const conditionMessage = this.$t(`remediationInstructionsFilters.chip.${this.filter.with ? 'with' : 'without'}`);
+      const allMessage = this.isAll ? ` ${this.$t('remediation.instructionsFilter.chip.all')}` : ':';
+      const conditionMessage = this.$t(`remediation.instructionsFilter.chip.${this.filter.with ? 'with' : 'without'}`);
 
       return `${this.conditionalTypeMessagePrefix}${conditionMessage}${allMessage}`;
     },
@@ -106,11 +106,11 @@ export default {
       const types = [];
 
       if (this.filter.manual) {
-        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.manual}`));
+        types.push(this.$t(`remediation.instruction.types.${REMEDIATION_INSTRUCTION_TYPES.manual}`));
       }
 
       if (this.filter.auto) {
-        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
+        types.push(this.$t(`remediation.instruction.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
       }
 
       return [...types, ...this.instructionsNames].join(', ');

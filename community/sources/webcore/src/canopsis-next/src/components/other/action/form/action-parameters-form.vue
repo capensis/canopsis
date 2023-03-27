@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    component(v-field="value", :is="component", :name="name")
+    component(v-field="value", v-bind="props")
 </template>
 
 <script>
@@ -41,6 +41,10 @@ export default {
       type: String,
       default: 'parameters',
     },
+    hasPreviousWebhook: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     component() {
@@ -54,6 +58,19 @@ export default {
         [ACTION_TYPES.cancel]: 'action-note-form',
         [ACTION_TYPES.webhook]: 'action-webhook-form',
       }[this.type];
+    },
+
+    props() {
+      const props = {
+        is: this.component,
+        name: this.name,
+      };
+
+      if (this.type === ACTION_TYPES.webhook) {
+        props.hasPrevious = this.hasPreviousWebhook;
+      }
+
+      return props;
     },
   },
 };

@@ -72,12 +72,12 @@ export default {
           value: 'name',
         },
         {
-          text: this.$t('users.firstName'),
+          text: this.$t('user.firstName'),
           value: 'firstname',
           sortable: false,
         },
         {
-          text: this.$t('users.lastName'),
+          text: this.$t('user.lastName'),
           value: 'lastname',
           sortable: false,
         },
@@ -86,7 +86,7 @@ export default {
           value: 'role.name',
         },
         {
-          text: this.$t('users.active'),
+          text: this.$t('user.active'),
           value: 'active',
           sortable: false,
         },
@@ -95,11 +95,11 @@ export default {
           value: 'enable',
         },
         {
-          text: this.$t('users.auth'),
+          text: this.$t('user.auth'),
           value: 'source',
         },
         {
-          text: this.$t('users.activeConnects'),
+          text: this.$t('user.activeConnects'),
           value: 'active_connects',
           sortable: false,
         },

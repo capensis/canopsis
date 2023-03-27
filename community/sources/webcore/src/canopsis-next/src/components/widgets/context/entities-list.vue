@@ -13,7 +13,7 @@
         c-advanced-search-field(
           :query.sync="query",
           :columns="widget.parameters.widgetColumns",
-          :tooltip="$t('search.contextAdvancedSearch')"
+          :tooltip="$t('context.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
@@ -191,7 +191,7 @@ export default {
 
         this.downloadFile(`${API_HOST}${API_ROUTES.contextExport}/${fileData._id}/download`);
       } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('context.popups.exportFailed') });
       } finally {
         this.downloading = false;
       }

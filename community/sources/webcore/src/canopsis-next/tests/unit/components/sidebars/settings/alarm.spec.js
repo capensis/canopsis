@@ -58,7 +58,7 @@ const stubs = {
   'field-grid-range-size': createInputStub('field-grid-range-size'),
   'field-switcher': createInputStub('field-switcher'),
   'field-fast-ack-output': createInputStub('field-fast-ack-output'),
-  'field-enabled-limit': createInputStub('field-enabled-limit'),
+  'field-number': createInputStub('field-number'),
   'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
   'v-btn': createButtonStub('v-btn'),
@@ -82,7 +82,7 @@ const snapshotStubs = {
   'field-grid-range-size': true,
   'field-switcher': true,
   'field-fast-ack-output': true,
-  'field-enabled-limit': true,
+  'field-number': true,
   'field-density': true,
   'export-csv-form': true,
 };
@@ -131,7 +131,7 @@ const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switc
 const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
 const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-output');
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
-const selectFieldLinksCategoriesAsList = wrapper => wrapper.find('input.field-enabled-limit');
+const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
 
@@ -145,7 +145,6 @@ describe('alarm', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     fetchUserPreference,
     activeViewModule,
@@ -186,7 +185,6 @@ describe('alarm', () => {
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
     fetchUserPreference.mockReset();
   });
@@ -247,9 +245,8 @@ describe('alarm', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
@@ -989,7 +986,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Link categories as list required changed after trigger links categories as list field', async () => {
+  it('Inline links count changed after trigger', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1000,14 +997,10 @@ describe('alarm', () => {
       },
     });
 
-    const fieldLinksCategoriesAsList = selectFieldLinksCategoriesAsList(wrapper);
+    const fieldInlineLinksCount = selectFieldInlineLinksCount(wrapper);
+    const inlineLinksCount = 4;
 
-    const linksCategoriesAsList = {
-      enabled: Faker.datatype.boolean(),
-      limit: Faker.datatype.number(),
-    };
-
-    fieldLinksCategoriesAsList.vm.$emit('input', linksCategoriesAsList);
+    fieldInlineLinksCount.vm.$emit('input', inlineLinksCount);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1015,7 +1008,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'linksCategoriesAsList', linksCategoriesAsList),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'inlineLinksCount', inlineLinksCount),
       },
     });
   });

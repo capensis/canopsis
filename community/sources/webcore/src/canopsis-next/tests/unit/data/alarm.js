@@ -68,10 +68,10 @@ export const fakeAlarm = () => ({
   links: {},
 });
 
-export const fakeAlarms = ({ count, limit = 10 } = {}) => Faker.datatype.array(count % limit).map(fakeAlarm);
+export const fakeAlarms = (count = 10) => Faker.datatype.array(count).map(fakeAlarm);
 
 export const fakeAlarmsResponse = ({ count, limit = 10, page = 1 } = {}) => ({
-  data: fakeAlarms({ count, limit }),
+  data: fakeAlarms(count > limit ? count % limit : count),
   meta: fakeMeta({ count, limit, page }),
 });
 
@@ -136,7 +136,7 @@ export const fakeStaticAlarms = ({
   links: {},
 }));
 
-export const fakeAlarmDetails = () => ({ // TODO: finish it
+export const fakeAlarmDetails = () => ({
   children: {
     data: [fakeStaticAlarms()],
     meta: {

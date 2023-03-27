@@ -2,23 +2,24 @@
   v-speed-dial(
     v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
     v-model="isVSpeedDialOpen",
-    transition="slide-y-reverse-transition",
-    v-bind="wrapperProps"
+    v-bind="wrapperProps",
+    transition="slide-y-reverse-transition"
   )
-    v-tooltip(
-      slot="activator",
-      :right="tooltipRight",
-      :left="tooltipLeft",
-      z-index="10"
-    )
-      v-btn.primary(
-        slot="activator",
-        :input-value="isVSpeedDialOpen",
-        v-bind="buttonProps"
+    template(#activator="")
+      v-tooltip(
+        :right="tooltipRight",
+        :left="tooltipLeft",
+        z-index="10"
       )
-        v-icon settings
-        v-icon close
-      span {{ $t('layout.sideBar.buttons.settings') }}
+        template(#activator="{ on }")
+          v-btn.primary(
+            v-on="on",
+            v-bind="buttonProps",
+            :input-value="isVSpeedDialOpen"
+          )
+            v-icon settings
+            v-icon close
+        span {{ $t('layout.sideBar.buttons.settings') }}
     v-tooltip(
       v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
       :right="tooltipRight",

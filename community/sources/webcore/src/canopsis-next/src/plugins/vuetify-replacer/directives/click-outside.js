@@ -66,7 +66,7 @@ export default {
   inserted(el, binding) {
     const onClick = e => directive(e, el, binding);
     const app = document.querySelector('[data-app]') || document.body;
-    const { same, zIndex } = binding.modifiers;
+    const { same, zIndex, contextmenu } = binding.modifiers;
 
     if (same) {
       let mousedownWasOnElement = false;
@@ -87,7 +87,7 @@ export default {
       el._mousedownOutside = mousedownOutside;
       el._mouseupOutside = mouseupOutside;
     } else {
-      app.addEventListener('click', onClick, true);
+      app.addEventListener(contextmenu ? 'contextmenu' : 'click', onClick, true);
 
       el._clickOutside = onClick;
     }
@@ -102,7 +102,7 @@ export default {
       return;
     }
 
-    const { same } = binding.modifiers;
+    const { same, contextmenu } = binding.modifiers;
 
     if (same) {
       if (el._mousedownOutside) {
@@ -115,7 +115,7 @@ export default {
         delete el._mouseupOutside;
       }
     } else if (el._clickOutside) {
-      app.removeEventListener('click', el._clickOutside, true);
+      app.removeEventListener(contextmenu ? 'contextmenu' : 'click', el._clickOutside, true);
       delete el._clickOutside;
     }
   },

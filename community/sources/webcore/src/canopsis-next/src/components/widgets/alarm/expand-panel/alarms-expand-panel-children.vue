@@ -9,7 +9,8 @@
     :columns="widget.parameters.widgetGroupColumns",
     :editing="editing",
     :loading="pending",
-    :refresh-alarms-list="refreshAlarmsList"
+    :refresh-alarms-list="refreshAlarmsList",
+    expandable
   )
 </template>
 

@@ -13,6 +13,7 @@
       :label="label",
       :error-messages="errors.collect('text')",
       :variables="variables",
+      :dark="$system.dark",
       name="text",
       @input="updateText"
     )
@@ -26,7 +27,7 @@ import { formMixin } from '@/mixins/form';
 import TextEditorField from './text-editor.vue';
 
 export default {
-  inject: ['$validator'],
+  inject: ['$validator', '$system'],
   components: { TextEditorField },
   mixins: [formMixin],
   model: {

@@ -22,24 +22,19 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with custom props 1`] =
      
   </div>
   <c-help-icon-stub
-    class="map-preview__help-icon"
     color="secondary"
     icon="help"
+    icon-class="map-preview__help-icon"
     size="32"
-    top="top"
-  >
-    <div
-      class="pre-wrap"
-    >
-      Useful shortcuts:
+    text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Ctrl + Left mouse click + drag - pan the area
 Middle mouse click + drag - pan the area
 Shift + mouse wheel - horizontal scroll
 Alt + mouse wheel - vertical scroll
-
-    </div>
-  </c-help-icon-stub>
+"
+    top="top"
+  />
 </div>
 `;
 
@@ -61,23 +56,18 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with required props 1`]
      
   </div>
   <c-help-icon-stub
-    class="map-preview__help-icon"
     color="secondary"
     icon="help"
+    icon-class="map-preview__help-icon"
     size="32"
-    top="top"
-  >
-    <div
-      class="pre-wrap"
-    >
-      Useful shortcuts:
+    text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Ctrl + Left mouse click + drag - pan the area
 Middle mouse click + drag - pan the area
 Shift + mouse wheel - horizontal scroll
 Alt + mouse wheel - vertical scroll
-
-    </div>
-  </c-help-icon-stub>
+"
+    top="top"
+  />
 </div>
 `;

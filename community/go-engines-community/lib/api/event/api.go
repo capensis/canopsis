@@ -166,7 +166,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeCancel ||
 		eventType == types.EventTypeComment ||
 		eventType == types.EventTypeUncancel ||
-		eventType == types.EventTypeDeclareTicket ||
 		eventType == types.EventTypeAssocTicket ||
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeKeepstate ||

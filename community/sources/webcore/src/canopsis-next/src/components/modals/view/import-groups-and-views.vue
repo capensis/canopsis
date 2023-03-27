@@ -1,8 +1,8 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ $t('modals.importExportViews.title') }}
-    template(slot="text")
+    template(#text="")
       v-layout(row)
         v-flex.pl-1.pr-1(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.groups') }}
@@ -26,7 +26,7 @@
             view-put,
             @change:group="changeCurrentGroupHandler"
           )
-    template(slot="actions")
+    template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(
         :loading="submitting",

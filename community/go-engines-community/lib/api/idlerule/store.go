@@ -246,6 +246,7 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 		Type:                 r.Type,
 		Priority:             *r.Priority,
 		Duration:             r.Duration,
+		Comment:              r.Comment,
 		DisableDuringPeriods: r.DisableDuringPeriods,
 		AlarmCondition:       r.AlarmCondition,
 		Operation:            operation,

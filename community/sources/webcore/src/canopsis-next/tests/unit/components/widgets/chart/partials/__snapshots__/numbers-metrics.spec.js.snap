@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
+<div
+  class="layout numbers-metrics column align-center"
+>
+  <h4
+    class="numbers-metrics__title"
+  >
+    Custom title
+  </h4>
+  <div
+    class="layout numbers-metrics__list row wrap"
+  >
+    <numbers-metrics-item-stub
+      metric="[object Object]"
+      showtrend="true"
+    />
+    <numbers-metrics-item-stub
+      metric="[object Object]"
+      showtrend="true"
+    />
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
+<div
+  class="layout numbers-metrics column align-center"
+>
+  <h4
+    class="numbers-metrics__title"
+  >
+    
+  </h4>
+  <div
+    class="layout numbers-metrics__list row wrap"
+  />
+</div>
+`;

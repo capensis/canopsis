@@ -6,8 +6,8 @@ import AlarmHeaderTag from '@/components/widgets/alarm/headers-formatting/alarm-
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-alarm-tag-chip': {
-    template: '<span v-on="$listeners" class="c-alarm-tag-chip"></span>',
+  'c-alarm-action-chip': {
+    template: '<span v-on="$listeners" class="c-alarm-action-chip"></span>',
   },
 };
 
@@ -25,7 +25,7 @@ const snapshotFactory = (options = {}) => mount(AlarmHeaderTag, {
   ...options,
 });
 
-const selectChip = wrapper => wrapper.find('.c-alarm-tag-chip');
+const selectChip = wrapper => wrapper.find('.c-alarm-action-chip');
 
 describe('alarm-header-tag', () => {
   const tags = [

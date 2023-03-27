@@ -43,7 +43,7 @@ export default {
       return [
         {
           _id: '',
-          name: this.$t('remediationStatistic.fields.all'),
+          name: this.$t('remediation.statistic.fields.all'),
         },
 
         ...this.instructions,
