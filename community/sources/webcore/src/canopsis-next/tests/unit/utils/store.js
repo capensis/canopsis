@@ -446,7 +446,6 @@ export const createUserPreferenceModule = () => {
 export const createWidgetModule = () => {
   const createWidget = jest.fn();
   const updateWidget = jest.fn();
-  const copyWidget = jest.fn();
   const createWidgetFilter = jest.fn();
   const updateWidgetFilter = jest.fn();
   const removeWidgetFilter = jest.fn();
@@ -454,7 +453,6 @@ export const createWidgetModule = () => {
   afterEach(() => {
     createWidget.mockClear();
     updateWidget.mockClear();
-    copyWidget.mockClear();
     createWidgetFilter.mockClear();
     updateWidgetFilter.mockClear();
     removeWidgetFilter.mockClear();
@@ -465,7 +463,6 @@ export const createWidgetModule = () => {
     actions: {
       create: createWidget,
       update: updateWidget,
-      copy: copyWidget,
       createWidgetFilter,
       updateWidgetFilter,
       removeWidgetFilter,
@@ -476,7 +473,6 @@ export const createWidgetModule = () => {
     widgetModule,
     createWidget,
     updateWidget,
-    copyWidget,
     createWidgetFilter,
     updateWidgetFilter,
     removeWidgetFilter,

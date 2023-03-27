@@ -14,7 +14,6 @@ export const entitiesWidgetMixin = {
       fetchWidgetWithoutStore: 'fetchItemWithoutStore',
       createWidget: 'create',
       updateWidget: 'update',
-      copyWidget: 'copy',
       removeWidget: 'remove',
       updateWidgetGridPositions: 'updateGridPositions',
       fetchWidgetFilters: 'fetchWidgetFilters',
