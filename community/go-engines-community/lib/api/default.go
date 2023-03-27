@@ -293,7 +293,6 @@ func Default(
 
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
-			ctx,
 			cfg,
 			router,
 			security,
