@@ -143,9 +143,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ctx := c
-
-	err = a.transformEditRequest(ctx, &request.EditRequest)
+	err = a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -155,7 +153,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	newScenario, err := a.store.Update(ctx, request)
+	newScenario, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -235,7 +233,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	ctx := c
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -258,7 +255,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(ctx, &request.EditRequest)
+		err = a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
@@ -271,7 +268,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		scenario, err := a.store.Insert(ctx, request)
+		scenario, err := a.store.Insert(c, request)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot create scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -317,7 +314,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
-	ctx := c
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -352,7 +348,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(ctx, &request.EditRequest)
+		err = a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
@@ -365,7 +361,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		scenario, err := a.store.Update(ctx, UpdateRequest(request))
+		scenario, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil {
 			a.logger.Err(err).Msg("cannot update scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -416,7 +412,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	ctx := c
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -451,7 +446,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, err := a.store.Delete(ctx, request.ID)
+		ok, err := a.store.Delete(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot delete scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
