@@ -257,6 +257,9 @@ widgets:
       widgetColumnsTemplate: "@tpl_entity_columns"
       widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_entity_columns
+      serviceDependenciesColumnsTemplate: "@tpl_entity_columns"
+      serviceDependenciesColumnsTemplateTitle: Default columns
+      serviceDependenciesColumns: *widget_entity_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -417,7 +420,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_pbehavior
     crecord_name: <Current()._id>
-    description: "Exploitation: Pbehaviors"
+    description: "Exploitation: Pbehavior"
   permission_models_exploitation_snmpRule:
     <<: *permission_crud
     _id: models_exploitation_snmpRule
@@ -427,7 +430,7 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_dynamicInfo
     crecord_name: <Current()._id>
-    description: "Exploitation: Dynamic informations"
+    description: "Exploitation: Dynamic information rule"
   permission_models_exploitation_metaAlarmRule:
     <<: *permission_crud
     _id: models_exploitation_metaAlarmRule
@@ -437,22 +440,32 @@ default_rights:
     <<: *permission_crud
     _id: models_exploitation_scenario
     crecord_name: <Current()._id>
-    description: "Exploitation: Scenarios"
+    description: "Exploitation: Scenario"
   permission_models_exploitation_idleRules:
     <<: *permission_crud
     _id: models_exploitation_idleRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Idle rules"
+    description: "Exploitation: Idle rule"
   permission_models_exploitation_flappingRules:
     <<: *permission_crud
     _id: models_exploitation_flappingRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Flapping rules"
+    description: "Exploitation: Flapping rule"
   permission_models_exploitation_resolveRules:
     <<: *permission_crud
     _id: models_exploitation_resolveRules
     crecord_name: <Current()._id>
-    description: "Exploitation: Resolve rules"
+    description: "Exploitation: Resolve rule"
+  permission_models_exploitation_declareTicketRule:
+    <<: *permission_crud
+    _id: models_exploitation_declareTicketRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Declare ticket rule"
+  permission_models_exploitation_linkRule:
+    <<: *permission_crud
+    _id: models_exploitation_linkRule
+    crecord_name: <Current()._id>
+    description: "Exploitation: Link rule"
   permission_models_healthcheck:
     <<: *permission
     _id: models_healthcheck
@@ -1010,11 +1023,6 @@ default_rights:
     _id: api_associative_table
     crecord_name: <Current()._id>
     description: Associative table
-  permission_api_app_info_read:
-    <<: *permission
-    _id: api_app_info_read
-    crecord_name: <Current()._id>
-    description: Read app info
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
@@ -1070,6 +1078,11 @@ default_rights:
     _id: api_rating_settings
     crecord_name: <Current()._id>
     description: Rating settings
+  permission_api_metrics_settings:
+    <<: *permission_crud
+    _id: api_metrics_settings
+    crecord_name: <Current()._id>
+    description: Metrics settings
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
@@ -1115,6 +1128,21 @@ default_rights:
     _id: api_export_configurations
     crecord_name: <Current()._id>
     description: Export configurations
+  permission_api_declare_ticket_rule:
+    <<: *permission_crud
+    _id: api_declare_ticket_rule
+    crecord_name: <Current()._id>
+    description: Declare ticket rule
+  permission_api_declare_ticket_execution:
+    <<: *permission
+    _id: api_declare_ticket_execution
+    crecord_name: <Current()._id>
+    description: Run declare ticket rules
+  permission_api_link_rule:
+    <<: *permission_crud
+    _id: api_link_rule
+    crecord_name: <Current()._id>
+    description: Link rule
 
   # Views permissions
   permission_view_open_alarms:
@@ -1137,6 +1165,126 @@ default_rights:
     _id: models_remediationStatistic
     crecord_name: <Current()._id>
     description: Remediation statistics
+  permission_barchart_interval:
+    <<: *permission_rw
+    _id: barchart_interval
+    crecord_name: <Current()._id>
+    description: Barchart interval
+  permission_barchart_sampling:
+    <<: *permission_rw
+    _id: barchart_sampling
+    crecord_name: <Current()._id>
+    description: Barchart sampling
+  permission_barchart_listFilters:
+    <<: *permission_rw
+    _id: barchart_listFilters
+    crecord_name: <Current()._id>
+    description: Barchart list filters
+  permission_barchart_editFilter:
+    <<: *permission_rw
+    _id: barchart_editFilter
+    crecord_name: <Current()._id>
+    description: Barchart edit filter
+  permission_barchart_addFilter:
+    <<: *permission_rw
+    _id: barchart_addFilter
+    crecord_name: <Current()._id>
+    description: Barchart add filter
+  permission_barchart_userFilter:
+    <<: *permission_rw
+    _id: barchart_userFilter
+    crecord_name: <Current()._id>
+    description: Barchart user filter
+  permission_linechart_interval:
+    <<: *permission_rw
+    _id: linechart_interval
+    crecord_name: <Current()._id>
+    description: Linechart interval
+  permission_linechart_sampling:
+    <<: *permission_rw
+    _id: linechart_sampling
+    crecord_name: <Current()._id>
+    description: Linechart sampling
+  permission_linechart_listFilters:
+    <<: *permission_rw
+    _id: linechart_listFilters
+    crecord_name: <Current()._id>
+    description: Linechart list filters
+  permission_linechart_editFilter:
+    <<: *permission_rw
+    _id: linechart_editFilter
+    crecord_name: <Current()._id>
+    description: Linechart edit filter
+  permission_linechart_addFilter:
+    <<: *permission_rw
+    _id: linechart_addFilter
+    crecord_name: <Current()._id>
+    description: Linechart add filter
+  permission_linechart_userFilter:
+    <<: *permission_rw
+    _id: linechart_userFilter
+    crecord_name: <Current()._id>
+    description: Linechart user filter
+  permission_piechart_interval:
+    <<: *permission_rw
+    _id: piechart_interval
+    crecord_name: <Current()._id>
+    description: Piechart interval
+  permission_piechart_sampling:
+    <<: *permission_rw
+    _id: piechart_sampling
+    crecord_name: <Current()._id>
+    description: Piechart sampling
+  permission_piechart_listFilters:
+    <<: *permission_rw
+    _id: piechart_listFilters
+    crecord_name: <Current()._id>
+    description: Piechart list filters
+  permission_piechart_editFilter:
+    <<: *permission_rw
+    _id: piechart_editFilter
+    crecord_name: <Current()._id>
+    description: Piechart edit filter
+  permission_piechart_addFilter:
+    <<: *permission_rw
+    _id: piechart_addFilter
+    crecord_name: <Current()._id>
+    description: Piechart add filter
+  permission_piechart_userFilter:
+    <<: *permission_rw
+    _id: piechart_userFilter
+    crecord_name: <Current()._id>
+    description: Piechart user filter
+  permission_numbers_interval:
+    <<: *permission_rw
+    _id: numbers_interval
+    crecord_name: <Current()._id>
+    description: Numbers interval
+  permission_numbers_sampling:
+    <<: *permission_rw
+    _id: numbers_sampling
+    crecord_name: <Current()._id>
+    description: Numbers sampling
+  permission_numbers_listFilters:
+    <<: *permission_rw
+    _id: numbers_listFilters
+    crecord_name: <Current()._id>
+    description: Numbers list filters
+  permission_numbers_editFilter:
+    <<: *permission_rw
+    _id: numbers_editFilter
+    crecord_name: <Current()._id>
+    description: Numbers edit filter
+  permission_numbers_addFilter:
+    <<: *permission_rw
+    _id: numbers_addFilter
+    crecord_name: <Current()._id>
+    description: Numbers add filter
+  permission_numbers_userFilter:
+    <<: *permission_rw
+    _id: numbers_userFilter
+    crecord_name: <Current()._id>
+    description: Numbers user filter
 
   role_admin:
     <<: *role
@@ -1194,6 +1342,10 @@ default_rights:
       "@permission_models_exploitation_flappingRules":
         checksum: 15
       "@permission_models_exploitation_resolveRules":
+        checksum: 15
+      "@permission_models_exploitation_declareTicketRule":
+        checksum: 15
+      "@permission_models_exploitation_linkRule":
         checksum: 15
       "@permission_models_healthcheck":
         checksum: 1
@@ -1448,9 +1600,6 @@ default_rights:
       "@permission_api_associative_table":
         checksum: 15
         crecord_type: right
-      "@permission_api_app_info_read":
-        checksum: 1
-        crecord_type: right
       "@permission_api_user_interface_update":
         checksum: 1
         crecord_type: right
@@ -1484,6 +1633,9 @@ default_rights:
       "@permission_api_rating_settings":
         checksum: 15
         crecord_type: right
+      "@permission_api_metrics_settings":
+        checksum: 15
+        crecord_type: right
       "@permission_api_kpi_filter":
         checksum: 15
         crecord_type: right
@@ -1511,6 +1663,15 @@ default_rights:
       "@permission_api_export_configurations":
         checksum: 1
         crecord_type: right
+      "@permission_api_declare_ticket_rule":
+        checksum: 15
+        crecord_type: right
+      "@permission_api_declare_ticket_execution":
+        checksum: 1
+        crecord_type: right
+      "@permission_api_link_rule":
+        checksum: 15
+        crecord_type: right
       # Views permissions
       "@permission_view_open_alarms":
         checksum: 15
@@ -1524,7 +1685,78 @@ default_rights:
       "@permission_models_remediation_statistics":
         checksum: 1
         crecord_type: right
-
+      "@permission_barchart_interval":
+        checksum: 15
+        crecord_type: right
+      "@permission_barchart_sampling":
+        checksum: 15
+        crecord_type: right
+      "@permission_barchart_listFilters":
+        checksum: 15
+        crecord_type: right
+      "@permission_barchart_editFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_barchart_addFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_barchart_userFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_linechart_interval":
+        checksum: 15
+        crecord_type: right
+      "@permission_linechart_sampling":
+        checksum: 15
+        crecord_type: right
+      "@permission_linechart_listFilters":
+        checksum: 15
+        crecord_type: right
+      "@permission_linechart_editFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_linechart_addFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_linechart_userFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_piechart_interval":
+        checksum: 15
+        crecord_type: right
+      "@permission_piechart_sampling":
+        checksum: 15
+        crecord_type: right
+      "@permission_piechart_listFilters":
+        checksum: 15
+        crecord_type: right
+      "@permission_piechart_editFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_piechart_addFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_piechart_userFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_numbers_interval":
+        checksum: 15
+        crecord_type: right
+      "@permission_numbers_sampling":
+        checksum: 15
+        crecord_type: right
+      "@permission_numbers_listFilters":
+        checksum: 15
+        crecord_type: right
+      "@permission_numbers_editFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_numbers_addFilter":
+        checksum: 15
+        crecord_type: right
+      "@permission_numbers_userFilter":
+        checksum: 15
+        crecord_type: right
   user_admin:
     <<: *user
     _id: root

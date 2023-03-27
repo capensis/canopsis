@@ -77,6 +77,7 @@
         template(#expand="{ item, index }")
           alarms-expand-panel(
             :alarm="item",
+            :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
@@ -97,6 +98,8 @@
 </template>
 
 <script>
+import { differenceBy } from 'lodash';
+
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
@@ -288,9 +291,21 @@ export default {
     isSmallHeight() {
       return this.dense === ALARM_DENSE_TYPES.small;
     },
+
+    parentAlarmId() {
+      return this.parentAlarm?._id;
+    },
   },
 
   watch: {
+    alarms(alarms, prevAlarms) {
+      const diff = differenceBy(alarms, prevAlarms, '_id');
+
+      if (diff.length) {
+        this.clearSelected();
+      }
+    },
+
     stickyHeader(stickyHeader) {
       if (stickyHeader) {
         this.calculateHeaderOffsetPosition();

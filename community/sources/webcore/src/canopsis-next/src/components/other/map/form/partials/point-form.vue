@@ -9,6 +9,7 @@
       :item-disabled="isEntityExist",
       :item-text="getItemText",
       return-object,
+      autocomplete,
       @input="updateEntity"
     )
       template(v-if="coordinates", #icon="{ item }")

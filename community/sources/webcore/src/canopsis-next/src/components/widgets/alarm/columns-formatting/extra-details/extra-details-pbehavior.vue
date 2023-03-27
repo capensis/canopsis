@@ -5,7 +5,7 @@
         span.c-extra-details__badge(v-on="on", :style="{ backgroundColor: color }")
           v-icon(:color="iconColor", small) {{ pbehaviorInfo.icon_name }}
       div
-        strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
+        strong {{ $t('alarm.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
           div(v-if="pbehavior.author") {{ $t('common.author') }}: {{ pbehavior.author.name }}

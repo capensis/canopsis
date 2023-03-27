@@ -1,17 +1,17 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createPbehaviorReason.title') }}
-      template(slot="text")
+      template(#text="")
         create-pbehavior-reason-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { pbehaviorReasonToForm } from '@/helpers/forms/reason-pbehavior';
 
@@ -26,6 +26,7 @@ export default {
   name: MODALS.createPbehaviorReason,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     CreatePbehaviorReasonForm,

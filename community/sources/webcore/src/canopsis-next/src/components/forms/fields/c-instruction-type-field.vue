@@ -1,7 +1,7 @@
 <template lang="pug">
   v-radio-group.mt-0(
     v-field="value",
-    :label="$t('remediationInstructions.type')",
+    :label="$t('remediation.instruction.type')",
     :disabled="disabled",
     hide-details,
     mandatory
@@ -37,7 +37,7 @@ export default {
     types() {
       return Object.values(REMEDIATION_INSTRUCTION_TYPES).map(value => ({
         value,
-        label: this.$t(`remediationInstructions.types.${value}`),
+        label: this.$t(`remediation.instruction.types.${value}`),
       }));
     },
   },

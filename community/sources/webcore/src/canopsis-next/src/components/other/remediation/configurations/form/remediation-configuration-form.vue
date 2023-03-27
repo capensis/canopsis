@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     v-layout(row)
       v-flex.pr-3(xs6)
         v-select(

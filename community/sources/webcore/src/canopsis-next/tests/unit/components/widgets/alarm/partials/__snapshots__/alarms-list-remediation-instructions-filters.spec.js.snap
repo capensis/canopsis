@@ -14,7 +14,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     filters=""
   />
   <button
-    class="ma-0 v-btn v-btn--icon theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon theme--light"
     type="button"
   >
     <div
@@ -52,7 +52,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     filters="[object Object],[object Object]"
   />
   <button
-    class="ma-0 v-btn v-btn--icon theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon theme--light"
     type="button"
   >
     <div
@@ -101,7 +101,7 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     filters=""
   />
   <button
-    class="ma-0 v-btn v-btn--icon theme--light"
+    class="mx-1 my-0 v-btn v-btn--icon theme--light"
     type="button"
   >
     <div

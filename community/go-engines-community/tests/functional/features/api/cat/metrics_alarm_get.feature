@@ -2,11 +2,12 @@ Feature: Get alarm metrics
   I need to be able to get alarm metrics
   Only admin should be able to get alarm metrics
 
+  @concurrent
   Scenario: given get created_alarms hour request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -118,6 +119,171 @@ Feature: Get alarm metrics
     }
     """
 
+  Scenario: given get created_alarms hour request should return metrics with history
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get&with_history=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 01:00" }},
+              "value": 2,
+              "history_timestamp": {{ parseTime "22-11-2021 01:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 02:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 02:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 03:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 03:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 04:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 04:00" }},
+              "history_value": 1
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 05:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 05:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 06:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 06:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 07:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 07:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 08:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 08:00" }},
+              "history_value": 1
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 09:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 09:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "value": 1,
+              "history_timestamp": {{ parseTime "22-11-2021 10:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 11:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 12:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 13:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 14:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 15:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 16:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 17:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 18:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 19:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 20:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 21:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 22:00" }},
+              "history_value": 1
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTime "22-11-2021 23:00" }},
+              "history_value": 0
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "min_date": 1625097600
+      }
+    }
+    """
+
+  @concurrent
   Scenario: given get created_alarms day request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -139,7 +305,7 @@ Feature: Get alarm metrics
           },
           {
             "timestamp": {{ parseTime "22-11-2021 00:00" }},
-            "value": 0
+            "value": 3
           },
           {
             "timestamp": {{ parseTime "23-11-2021 00:00" }},
@@ -155,6 +321,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms week request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -192,6 +359,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms month request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -229,6 +397,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms request with empty interval should return metrics with zeros
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -258,6 +427,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms request with filter by entity infos should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get-by-entity-infos
@@ -279,7 +449,7 @@ Feature: Get alarm metrics
           },
           {
             "timestamp": {{ parseTime "22-11-2021 00:00" }},
-            "value": 0
+            "value": 3
           },
           {
             "timestamp": {{ parseTime "23-11-2021 00:00" }},
@@ -295,6 +465,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms hour request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -408,6 +579,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms day request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -445,6 +617,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms week request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -482,6 +655,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get active_alarms month request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=active_alarms&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -519,6 +693,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets hour request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -632,6 +807,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets day request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -669,6 +845,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets week request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=week&from={{ parseTime "06-09-2021 00:00" }}&to={{ parseTime "10-10-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -706,6 +883,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get ratio_tickets month request should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=ratio_tickets&sampling=month&from={{ parseTime "01-06-2021 00:00" }}&to={{ parseTime "31-10-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get
@@ -743,6 +921,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get request with invalid query params should return bad request
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm
@@ -799,15 +978,18 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/cat/metrics/alarm
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/cat/metrics/alarm
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request with all parameters should return all metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=non_displayed_alarms&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=correlation_alarms&parameters[]=ack_alarms&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&parameters[]=ratio_correlation&parameters[]=ratio_instructions&parameters[]=ratio_tickets&parameters[]=ratio_non_displayed&parameters[]=average_ack&parameters[]=average_resolve&sampling=day&from={{ parseTime "22-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&filter=test-kpi-filter-to-all-alarm-metrics-get
@@ -1109,11 +1291,12 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given filter with old pattern should return metrics
     When I am admin
     When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&filter=test-kpi-filter-to-alarm-metrics-get-by-old-pattern
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -1221,6 +1404,282 @@ Feature: Get alarm metrics
       ],
       "meta": {
         "min_date": 1625097600
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given get created_alarms hour request should return metrics by widget filter
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 01:00" }},
+              "value": 4
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 02:00" }},
+              "value": 2
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 03:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 04:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 05:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 06:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 07:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 08:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 09:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "value": 0
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "min_date": 1625097600
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given get created_alarms hour request should return metrics by widget filters
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get-2&widget_filters[]=test-widget-filter-to-alarm-metrics-get-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "title": "created_alarms",
+          "data": [
+            {
+              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 01:00" }},
+              "value": 2
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 02:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 03:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 04:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 05:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 06:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 07:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 08:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 09:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "value": 0
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "min_date": 1625097600
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given get created_alarms hour request with both metrics and widget filters should return error
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get&filter=test-kpi-filter-to-alarm-metrics-get
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "widget_filters": "Can't be present both WidgetFilters and KpiFilter."
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given get created_alarms hour request with not exist widget filter should return error
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-not-exist
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "widget_filters": "filter \"test-widget-filter-not-exist\" not found"
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given get created_alarms hour request with invalid widget filter should return error
+    When I am admin
+    When I do GET /api/v4/cat/metrics/alarm?parameters[]=created_alarms&sampling=hour&from={{ parseTime "23-11-2021 00:00" }}&to={{ parseTime "23-11-2021 00:00" }}&widget_filters[]=test-widget-filter-to-alarm-metrics-get-3
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "widget_filters": "filter \"test-widget-filter-to-alarm-metrics-get-3\" cannot be applied"
       }
     }
     """

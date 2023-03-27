@@ -55,14 +55,19 @@ const (
 	AlarmStepCancel          = "cancel"
 	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
-	AlarmStepDeclareTicket   = "declareticket"
-	AlarmStepAssocTicket     = "assocticket"
 	AlarmStepSnooze          = "snooze"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"
 	AlarmStepPbhLeave        = "pbhleave"
 	AlarmStepMetaAlarmAttach = "metaalarmattach"
+
+	AlarmStepAssocTicket       = "assocticket"
+	AlarmStepDeclareTicket     = "declareticket"
+	AlarmStepDeclareTicketFail = "declareticketfail"
+	AlarmStepWebhookStart      = "webhookstart"
+	AlarmStepWebhookComplete   = "webhookcomplete"
+	AlarmStepWebhookFail       = "webhookfail"
 
 	// Following alarm steps are used for manual instruction execution.
 	AlarmStepInstructionStart    = "instructionstart"
@@ -109,6 +114,11 @@ type Alarm struct {
 	// is used only for manual instructions KPI metrics
 	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
 	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+
+	// is used only for not acked metrics
+	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -136,20 +146,26 @@ func (a *Alarm) CropSteps() bool {
 
 // GetAppliedActions fetches applied to alarm actions: ACK, Snooze, AssocTicket, DeclareTicket
 // Result is in a sorted by timestamp AlarmSteps, ticket data when defined
-func (a *Alarm) GetAppliedActions() (steps AlarmSteps, ticket *AlarmTicket) {
+func (a *Alarm) GetAppliedActions() (steps AlarmSteps) {
 	steps = make([]AlarmStep, 0, 3)
 
 	if a.Value.ACK != nil {
 		steps = append(steps, *a.Value.ACK)
 	}
-	if ticket = a.Value.Ticket; ticket != nil {
-		steps = append(steps, NewAlarmStep(ticket.Type, ticket.Timestamp, ticket.Author, ticket.Message, ticket.UserID, ticket.Role, ""))
+
+	for _, ticketStep := range a.Value.Tickets {
+		if ticketStep.Type == AlarmStepDeclareTicket || ticketStep.Type == AlarmStepAssocTicket {
+			steps = append(steps, ticketStep)
+		}
 	}
 	if a.IsSnoozed() {
 		steps = append(steps, *a.Value.Snooze)
 	}
+	if a.Value.LastComment != nil {
+		steps = append(steps, *a.Value.LastComment)
+	}
 	sort.Sort(ByTimestamp{steps})
-	return steps, ticket
+	return steps
 }
 
 // CurrentState returns the Current State of the Alarm

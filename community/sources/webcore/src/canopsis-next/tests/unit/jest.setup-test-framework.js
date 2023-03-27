@@ -3,6 +3,7 @@ import { toMatchSnapshot } from 'jest-snapshot';
 import registerRequireContextHook from 'babel-plugin-require-context-hook/register';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import ResizeObserver from 'resize-observer-polyfill';
+import flatten from 'flat';
 
 registerRequireContextHook();
 
@@ -88,5 +89,21 @@ expect.extend({
     }
 
     return { pass: true };
+  },
+  toStructureEqual(received, expected) {
+    const flattenReceived = flatten(received);
+    const flattenExpected = flatten(expected);
+
+    try {
+      expect(flattenReceived).toEqual(Object.keys(flattenExpected).reduce((acc, key) => {
+        acc[key] = expect.any(String);
+
+        return acc;
+      }, {}));
+
+      return { pass: true };
+    } catch (err) {
+      return err.matcherResult;
+    }
   },
 });

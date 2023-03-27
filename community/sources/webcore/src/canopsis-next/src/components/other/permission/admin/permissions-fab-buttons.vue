@@ -52,10 +52,14 @@ export default {
     showCreateRoleModal() {
       this.$modals.show({
         name: MODALS.createRole,
-        action: async (data) => {
-          await this.createRole({ data });
+        config: {
+          action: async (data) => {
+            await this.createRole({ data });
 
-          this.$popups.success({ text: this.$t('success.default') });
+            this.$popups.success({ text: this.$t('success.default') });
+
+            this.refresh();
+          },
         },
       });
     },

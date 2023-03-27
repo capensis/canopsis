@@ -12,6 +12,7 @@
       v-validate="'required'",
       :error-messages="errors.collect('content')",
       :variables="variables",
+      :dark="$system.dark",
       name="content"
     )
 </template>
@@ -25,7 +26,7 @@ import { entityVariablesMixin } from '@/mixins/widget/variables/entity';
 import TextEditorField from '@/components/common/text-editor/text-editor.vue';
 
 export default {
-  inject: ['$validator'],
+  inject: ['$validator', '$system'],
   components: { TextEditorField },
   mixins: [alarmVariablesMixin, entityVariablesMixin],
   model: {

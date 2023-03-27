@@ -33,10 +33,11 @@ type SectionAlarm struct {
 
 // SectionGlobal ...
 type SectionGlobal struct {
-	PrefetchCount                int `toml:"PrefetchCount"`
-	PrefetchSize                 int `toml:"PrefetchSize"`
-	ReconnectTimeoutMilliseconds int `toml:"ReconnectTimeoutMilliseconds"`
-	ReconnectRetries             int `toml:"ReconnectRetries"`
+	PrefetchCount                int   `toml:"PrefetchCount"`
+	PrefetchSize                 int   `toml:"PrefetchSize"`
+	ReconnectTimeoutMilliseconds int   `toml:"ReconnectTimeoutMilliseconds"`
+	ReconnectRetries             int   `toml:"ReconnectRetries"`
+	MaxExternalResponseSize      int64 `toml:"MaxExternalResponseSize"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -84,13 +85,19 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	FlushInterval string `toml:"FlushInterval"`
-	SliInterval   string `toml:"SliInterval"`
+	FlushInterval             string `toml:"FlushInterval"`
+	SliInterval               string `toml:"SliInterval"`
+	EnabledManualInstructions bool   `toml:"EnabledManualInstructions"`
+	EnabledNotAckedMetrics    bool   `toml:"EnabledNotAckedMetrics"`
 }
 
 type SectionTechMetrics struct {
 	Enabled          bool   `toml:"Enabled"`
 	DumpKeepInterval string `toml:"DumpKeepInterval"`
+}
+
+type SectionTemplate struct {
+	Vars map[string]any `toml:"vars"`
 }
 
 // CanopsisConf represents a generic configuration object.
@@ -106,6 +113,7 @@ type CanopsisConf struct {
 	API         SectionApi         `bson:"api" toml:"api"`
 	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
 	TechMetrics SectionTechMetrics `bson:"tech_metrics" toml:"tech_metrics"`
+	Template    SectionTemplate    `bson:"template" toml:"template"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

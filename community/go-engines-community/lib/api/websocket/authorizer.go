@@ -18,6 +18,7 @@ type Authorizer interface {
 	AddRoom(room string, perms []string) error
 	// RemoveRoom removes room.
 	RemoveRoom(room string) error
+	HasRoom(room string) bool
 }
 
 func NewAuthorizer(
@@ -101,4 +102,12 @@ func (a *authorizer) RemoveRoom(room string) error {
 
 	delete(a.roomPerms, room)
 	return nil
+}
+
+func (a *authorizer) HasRoom(room string) bool {
+	a.roomPermsMx.RLock()
+	defer a.roomPermsMx.RUnlock()
+
+	_, ok := a.roomPerms[room]
+	return ok
 }

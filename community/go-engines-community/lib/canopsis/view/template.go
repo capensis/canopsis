@@ -53,6 +53,7 @@ var columnsByType = map[string][]string{
 		"entity.impact_level",
 		"entity.ko_events",
 		"entity.ok_events",
+		"entity.last_pbehavior_date",
 	},
 	WidgetTemplateTypeEntityColumns: {
 		"_id",
@@ -63,6 +64,7 @@ var columnsByType = map[string][]string{
 		"connector",
 		"impact_level",
 		"last_event_date",
+		"last_pbehavior_date",
 		"ko_events",
 		"ok_events",
 		"pbehavior_info",

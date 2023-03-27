@@ -8,8 +8,8 @@
       @keydown.enter.prevent="submit",
       @input="input"
     )
-    c-action-btn(:tooltip="$t('search.submit')", icon="search", @click="submit")
-    c-action-btn(:tooltip="$t('search.clear')", icon="clear", @click="clear")
+    c-action-btn(:tooltip="$t('common.search')", icon="search", @click="submit")
+    c-action-btn(:tooltip="$t('common.clearSearch')", icon="clear", @click="clear")
     slot
 </template>
 

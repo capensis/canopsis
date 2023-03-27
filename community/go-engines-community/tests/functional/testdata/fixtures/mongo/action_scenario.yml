@@ -261,7 +261,6 @@ action_scenario:
         emit_trigger: false
         parameters:
           author: test-scenario-backward-compatibility-actions-1-author
-          output: test-scenario-backward-compatibility-actions-1-output
           ticket: test-scenario-backward-compatibility-actions-1-ticket
         type: assocticket
       - old_alarm_patterns:
@@ -274,39 +273,3 @@ action_scenario:
         type: changestate
     triggers:
       - create
-
-  scenario_metrics_axe_12_1:
-    <<: *scenario
-    _id: test-scenario-metrics-axe-12-1
-    actions:
-      - drop_scenario_if_not_matched: false
-        emit_trigger: false
-        entity_pattern:
-          - - field: name
-              cond:
-                type: eq
-                value: test-resource-metrics-axe-12-2
-        parameters:
-          author: test-author-metrics-axe-12
-          output: test-scenario-metrics-axe-12-output
-          ticket: test-scenario-metrics-axe-12-ticket
-        type: assocticket
-
-  scenario_metrics_axe_12_2:
-    <<: *scenario
-    _id: test-scenario-metrics-axe-12-2
-    actions:
-      - drop_scenario_if_not_matched: false
-        emit_trigger: false
-        entity_pattern:
-          - - field: name
-              cond:
-                type: eq
-                value: test-resource-metrics-axe-12-3
-        parameters:
-          declare_ticket:
-            ticket_id: ticket_id
-          request:
-            method: POST
-            url: http://localhost:3000/webhook/ticket
-        type: webhook

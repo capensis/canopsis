@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         state-setting-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
 
@@ -32,6 +32,7 @@ export default {
   name: MODALS.stateSetting,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     StateSettingForm,

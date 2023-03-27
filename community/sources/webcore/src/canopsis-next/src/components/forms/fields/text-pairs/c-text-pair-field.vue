@@ -1,32 +1,26 @@
 <template lang="pug">
-  v-layout.text-pair(justify-space-between, align-center)
-    v-flex.pa-1(xs6)
-      v-text-field(
-        v-field="item[itemText]",
-        v-validate="textValidationRules",
-        :label="textLabel",
-        :disabled="disabled",
-        :name="textFieldName",
-        :error-messages="errors.collect(textFieldName)"
-      )
-    v-flex.pa-1(xs6)
-      v-text-field(
-        v-if="!mixed",
-        v-field="item[itemValue]",
-        v-validate="valueValidationRules",
-        :label="valueLabel",
-        :disabled="disabled",
-        :name="valueFieldName",
-        :error-messages="errors.collect(valueFieldName)"
-      )
-      c-mixed-field(
-        v-else,
-        v-field="item[itemValue]",
-        v-validate="valueValidationRules",
-        :name="valueFieldName",
-        :disabled="disabled",
-        :error-messages="errors.collect(valueFieldName)"
-      )
+  v-layout(align-center)
+    v-layout(row)
+      v-flex.mr-3(xs6)
+        v-text-field(
+          v-field="item[itemText]",
+          v-validate="textValidationRules",
+          :label="textLabel",
+          :disabled="disabled",
+          :name="textFieldName",
+          :error-messages="errors.collect(textFieldName)"
+        )
+      v-flex(xs6)
+        v-text-field(
+          v-field="item[itemValue]",
+          v-validate="valueValidationRules",
+          :label="valueLabel",
+          :disabled="disabled",
+          :name="valueFieldName",
+          :error-messages="errors.collect(valueFieldName)"
+        )
+          template(#append="")
+            slot(name="append-value")
     c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
@@ -62,24 +56,32 @@ export default {
       type: String,
       default: 'item',
     },
-    textValidationRules: {
-      type: String,
-      default: 'required',
-    },
-    valueValidationRules: {
-      type: String,
-      default: null,
-    },
     disabled: {
       type: Boolean,
       default: false,
     },
-    mixed: {
+    textRequired: {
+      type: Boolean,
+      default: false,
+    },
+    valueRequired: {
       type: Boolean,
       default: false,
     },
   },
   computed: {
+    textValidationRules() {
+      return {
+        required: this.textRequired,
+      };
+    },
+
+    valueValidationRules() {
+      return {
+        required: this.valueRequired,
+      };
+    },
+
     textFieldName() {
       return `${this.name}.${this.itemText}`;
     },

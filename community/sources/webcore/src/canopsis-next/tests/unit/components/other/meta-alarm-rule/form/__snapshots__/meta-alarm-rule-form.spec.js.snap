@@ -7,6 +7,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`attribute\
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -111,6 +112,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` 
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -219,6 +221,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` ty
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -326,6 +329,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`manualgrou
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -424,6 +428,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`relation\`
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -527,6 +532,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`timebased\
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -632,6 +638,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`valuegroup
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -743,6 +750,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
     value="meta-alarm-rule-id"
   />
   <c-name-field-stub
+    required="required"
     value="event-filter-name"
   />
   <c-description-field-stub
@@ -849,7 +857,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
   <c-id-field-stub
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
   />
-  <c-name-field-stub />
+  <c-name-field-stub
+    required="required"
+  />
   <c-description-field-stub
     help-text=<p>The accessible variables are:</p>
 <p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>

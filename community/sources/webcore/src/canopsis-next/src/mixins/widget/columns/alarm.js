@@ -2,7 +2,7 @@ import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import {
   getAlarmsListWidgetColumnValueFilter,
-  getAlarmsListWidgetColumnValueComponentGetter,
+  getAlarmsListWidgetColumnComponentGetter,
 } from '@/helpers/widgets';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -38,7 +38,7 @@ export const widgetColumnsAlarmMixin = {
 
         popupTemplate: this.infoPopupsMap[column.value],
         filter: this.$i18n.locale && this.getColumnFilter(column.value),
-        getComponent: getAlarmsListWidgetColumnValueComponentGetter(column.value, this.widget),
+        getComponent: getAlarmsListWidgetColumnComponentGetter(column, this.widget),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
       }));
     },

@@ -72,6 +72,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -125,6 +126,7 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -182,6 +184,7 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -241,6 +244,7 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -292,6 +296,7 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(false, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -334,6 +339,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Eq(""), gomock.Eq(room)).Return(false, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -354,7 +360,7 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
 		Type:  libwebsocket.WMessageFail,
 		Room:  room,
-		Error: "cannot authorize user",
+		Error: http.StatusUnauthorized,
 	})).Return(nil)
 	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
@@ -385,6 +391,7 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any()).Return(true, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
@@ -406,7 +413,8 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	}).Times(3)
 	mockConnection.EXPECT().WriteJSON(gomock.Eq(libwebsocket.WMessage{
 		Type:  libwebsocket.WMessageFail,
-		Error: "invalid message",
+		Error: http.StatusBadRequest,
+		Msg:   "cannot parse JSON",
 	})).Return(nil)
 	mockConnection.EXPECT().WriteControl(gomock.Eq(websocket.CloseMessage), gomock.Any(), gomock.Any()).MaxTimes(1)
 
@@ -438,6 +446,7 @@ func TestHub_Connect_GivenAuthUser_ShouldSendLoggedUserCountMessage(t *testing.T
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
+	mockAuthorizer.EXPECT().HasRoom(gomock.Any()).Return(true)
 	mockAuthorizer.EXPECT().Authorize(gomock.Eq(""), gomock.Eq(libwebsocket.RoomLoggedUserCount)).Return(true, nil)
 	mockAuthorizer.EXPECT().Authenticate(gomock.Any(), gomock.Eq(token)).Return(user, nil)
 	hub := libwebsocket.NewHub(mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())

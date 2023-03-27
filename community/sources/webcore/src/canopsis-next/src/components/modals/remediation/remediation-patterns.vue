@@ -11,7 +11,7 @@
           with-alarm,
           with-entity
         )
-        c-collapse-panel.mt-3(:title="$t('remediationPatterns.tabs.pbehaviorTypes.title')")
+        c-collapse-panel.mt-3(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
           remediation-patterns-pbehavior-types-form(v-model="form")
       template(#actions="")
         v-btn(
@@ -35,6 +35,7 @@ import {
   OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   QUICK_RANGES,
+  VALIDATION_DELAY,
 } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
@@ -52,6 +53,7 @@ export default {
   name: MODALS.remediationPatterns,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     RemediationPatternsPbehaviorTypesForm,

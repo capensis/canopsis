@@ -43,6 +43,7 @@ configuration:
       prefetchsize: 0
       reconnectretries: 3
       reconnecttimeoutmilliseconds: 8
+      maxexternalresponsesize: 10485760
     import_ctx:
       filepattern: /tmp/import_%s.json
       thdcritminperimport: 60m
@@ -50,11 +51,17 @@ configuration:
     metrics:
       flushinterval: 1s
       sliinterval: 1h
+      enabledmanualinstructions: true
+      enablednotackedmetrics: true
     tech_metrics:
       enabled: false
       dumpkeepinterval: 1h
     timezone:
       timezone: Europe/Paris
+    template:
+      vars:
+        Name: Test
+        Location: FR
 
   configuration_remediation:
     _id: remediation

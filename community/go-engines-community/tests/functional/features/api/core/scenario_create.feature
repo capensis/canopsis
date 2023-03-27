@@ -91,18 +91,22 @@ Feature: Create a scenario
                 "password": "test-scenario-to-create-1-action-2-password"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"test-scenario-to-create-1-action-2-payload\": \"test-scenario-to-create-1-action-2-paload-value\"}"
+              "payload": "{\"test-scenario-to-create-1-action-2-payload\": \"test-scenario-to-create-1-action-2-paload-value\"}",
+              "timeout": {
+                "value": 1,
+                "unit": "m"
+              },
+              "retry_count": 3,
+              "retry_delay": {
+                "value": 3,
+                "unit": "s"
+              }
             },
             "declare_ticket": {
               "empty_response": false,
               "is_regexp": false,
               "ticket_id": "test-scenario-to-create-1-action-2-ticket",
               "test-scenario-to-create-1-action-2-info": "test-scenario-to-create-1-action-2-info-value"
-            },
-            "retry_count": 3,
-            "retry_delay": {
-              "value": 3,
-              "unit": "s"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -236,18 +240,22 @@ Feature: Create a scenario
                 "password": "test-scenario-to-create-1-action-2-password"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"test-scenario-to-create-1-action-2-payload\": \"test-scenario-to-create-1-action-2-paload-value\"}"
+              "payload": "{\"test-scenario-to-create-1-action-2-payload\": \"test-scenario-to-create-1-action-2-paload-value\"}",
+              "timeout": {
+                "value": 1,
+                "unit": "m"
+              },
+              "retry_count": 3,
+              "retry_delay": {
+                "value": 3,
+                "unit": "s"
+              }
             },
             "declare_ticket": {
               "empty_response": false,
               "is_regexp": false,
               "ticket_id": "test-scenario-to-create-1-action-2-ticket",
               "test-scenario-to-create-1-action-2-info": "test-scenario-to-create-1-action-2-info-value"
-            },
-            "retry_count": 3,
-            "retry_delay": {
-              "value": 3,
-              "unit": "s"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -310,7 +318,7 @@ Feature: Create a scenario
     When I do GET /api/v4/scenarios/test-scenario-to-create-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-scenario-to-create-1",
       "name": "test-scenario-to-create-1-name",
@@ -395,18 +403,22 @@ Feature: Create a scenario
                 "password": "test-scenario-to-create-1-action-2-password"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"test-scenario-to-create-1-action-2-payload\": \"test-scenario-to-create-1-action-2-paload-value\"}"
+              "payload": "{\"test-scenario-to-create-1-action-2-payload\": \"test-scenario-to-create-1-action-2-paload-value\"}",
+              "timeout": {
+                "value": 1,
+                "unit": "m"
+              },
+              "retry_count": 3,
+              "retry_delay": {
+                "value": 3,
+                "unit": "s"
+              }
             },
             "declare_ticket": {
               "empty_response": false,
               "is_regexp": false,
               "ticket_id": "test-scenario-to-create-1-action-2-ticket",
               "test-scenario-to-create-1-action-2-info": "test-scenario-to-create-1-action-2-info-value"
-            },
-            "retry_count": 3,
-            "retry_delay": {
-              "value": 3,
-              "unit": "s"
             }
           },
           "drop_scenario_if_not_matched": false,
@@ -937,7 +949,7 @@ Feature: Create a scenario
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "actions.0.alarm_pattern": "AlarmPattern is invalid alarm pattern.",

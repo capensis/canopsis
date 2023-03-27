@@ -5,7 +5,7 @@
     template(#text="")
       v-treeview(:items="config.variables", item-key="name")
         template(#prepend="{ item }")
-          div.caption.font-italic(v-if="item.isArray") {{`(${$t('variableTypes.array')})`}}
+          div.caption.font-italic(v-if="item.isArray") {{`(${$t('common.variableTypes.array')})`}}
 
         template(#label="{ item, leaf }")
           div {{ item.name }}

@@ -239,6 +239,20 @@ func (mr *MockAuthorizerMockRecorder) Authorize(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorize", reflect.TypeOf((*MockAuthorizer)(nil).Authorize), arg0, arg1)
 }
 
+// HasRoom mocks base method.
+func (m *MockAuthorizer) HasRoom(arg0 string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasRoom", arg0)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasRoom indicates an expected call of HasRoom.
+func (mr *MockAuthorizerMockRecorder) HasRoom(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasRoom", reflect.TypeOf((*MockAuthorizer)(nil).HasRoom), arg0)
+}
+
 // RemoveRoom mocks base method.
 func (m *MockAuthorizer) RemoveRoom(arg0 string) error {
 	m.ctrl.T.Helper()

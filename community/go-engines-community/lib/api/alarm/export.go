@@ -2,12 +2,13 @@ package alarm
 
 import (
 	"context"
+	"strconv"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"strconv"
-	"time"
 )
 
 var stateTitles = map[int]string{
@@ -26,13 +27,12 @@ var statusTitles = map[int]string{
 
 func getDataFetcher(
 	store Store,
-	apiKey string,
 	r ExportRequest,
 	exportFields []string,
 	location *time.Location,
 ) export.DataFetcher {
 	return func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
-		res, err := store.Find(ctx, apiKey, ListRequestWithPagination{
+		res, err := store.Find(ctx, ListRequestWithPagination{
 			Query: pagination.Query{Page: page, Limit: limit, Paginate: true},
 			ListRequest: ListRequest{
 				FilterRequest: FilterRequest{
