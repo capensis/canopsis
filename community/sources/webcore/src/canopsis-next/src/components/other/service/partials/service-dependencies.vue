@@ -42,10 +42,12 @@
         td(v-for="(header, index) in headers", :key="header.value")
           c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
           color-indicator-wrapper(
+            v-if="header.colorIndicator",
             v-else-if="item.entity",
             :entity="item.entity",
             :type="header.colorIndicator"
           ) {{ item | get(header.value) }}
+          span(v-else) {{ item | get(header.value) }}
 </template>
 
 <script>
