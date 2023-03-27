@@ -136,10 +136,10 @@ export const payloadVariablesMixin = {
       ];
     },
 
-    entityPayloadVariables() {
+    entityPayloadSubVariables() {
       return [
         {
-          value: `${ENTITY_PAYLOADS_VARIABLES.entity}${ENTITY_PAYLOADS_VARIABLES.name}`,
+          value: ENTITY_PAYLOADS_VARIABLES.name,
           text: this.$t('common.name'),
         },
         {
