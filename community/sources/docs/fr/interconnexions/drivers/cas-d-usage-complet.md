@@ -37,6 +37,12 @@ classDiagram
     }
 ```
 
+!!! note "Information"
+
+    Les `composants` décrits dans cette organisation n'ont pas de lien avec les entités de type `composant` de Canopsis.
+    Ils représentent ici un ensemble de `Serveurs applicatifs`.
+
+
 Les imports sont lancés via une ligne de commande qu'il vous faut adapter à votre configuration.  
 Voici un exemple pour les serveurs d'applications.
 
