@@ -2838,6 +2838,9 @@ definitions:
       description:
         maxLength: 255
         type: string
+      icon_name:
+        maxLength: 255
+        type: string
       name:
         maxLength: 255
         type: string
@@ -2852,6 +2855,7 @@ definitions:
         type: string
     required:
     - description
+    - icon_name
     - name
     - priority
     - type
