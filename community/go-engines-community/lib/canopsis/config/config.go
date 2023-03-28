@@ -85,10 +85,10 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	FlushInterval             string `toml:"FlushInterval"`
-	SliInterval               string `toml:"SliInterval"`
-	EnabledManualInstructions bool   `toml:"EnabledManualInstructions"`
-	EnabledNotAckedMetrics    bool   `toml:"EnabledNotAckedMetrics"`
+	FlushInterval          string `toml:"FlushInterval"`
+	SliInterval            string `toml:"SliInterval"`
+	EnabledInstructions    bool   `toml:"EnabledInstructions"`
+	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
 }
 
 type SectionTechMetrics struct {
