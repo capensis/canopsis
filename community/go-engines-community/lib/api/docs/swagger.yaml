@@ -2583,16 +2583,12 @@ paths:
       summary: Clean disabled entities
       description: Clean disabled entities
       operationId: entities-clean
-      parameters:
-        - name: archive
-          in: query
-          required: true
-          schema:
-            type: boolean
-        - name: archive_dependencies
-          in: query
-          schema:
-            type: boolean
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.CleanRequest'
       responses:
         202:
           description: OK
