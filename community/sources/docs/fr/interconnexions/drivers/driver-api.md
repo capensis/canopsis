@@ -50,7 +50,6 @@ Si votre API ne nécessite pas d'authentification, il vous suffit de ne pas spé
 Le format de fichier de configuration est le YAML. Il doit être entièrement rédigé à partir du JSON retourné par l'API externe.
 
 Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/sources/canopsis-pro-sources/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example){target=_blank}.
-Un exemple donné à titre indicatif est également disponible [ci-après](#exemple).
 
 Ce fichier de configuration doit comprendre trois sections :
 
