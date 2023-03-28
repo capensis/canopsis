@@ -4,11 +4,15 @@ import { Validator } from 'vee-validate';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 
 import {
-  ALARM_PATTERN_FIELDS, EVENT_FILTER_PATTERN_FIELDS,
-  PATTERN_CONDITIONS, PATTERN_FIELD_TYPES, PATTERN_RULE_TYPES, TIME_UNITS,
+  ALARM_PATTERN_FIELDS,
+  EVENT_FILTER_PATTERN_FIELDS,
+  PATTERN_CONDITIONS,
+  PATTERN_FIELD_TYPES,
+  PATTERN_RULE_TYPES,
+  TIME_UNITS,
 } from '@/constants';
 
-import CPatternAdvancedEditorField from '@/components/forms/fields/pattern/c-pattern-advanced-editor-field.vue';
+import PatternAdvancedEditorField from '@/components/forms/fields/pattern/pattern-advanced-editor-field.vue';
 
 const localVue = createVueInstance();
 
@@ -16,14 +20,14 @@ const stubs = {
   'c-json-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternAdvancedEditorField, {
+const factory = (options = {}) => shallowMount(PatternAdvancedEditorField, {
   localVue,
   stubs,
 
   ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternAdvancedEditorField, {
+const snapshotFactory = (options = {}) => mount(PatternAdvancedEditorField, {
   localVue,
   stubs,
 
@@ -32,7 +36,7 @@ const snapshotFactory = (options = {}) => mount(CPatternAdvancedEditorField, {
 
 const selectJsonFieldNode = wrapper => wrapper.vm.$children[0];
 
-describe('c-pattern-advanced-editor-field', () => {
+describe('pattern-advanced-editor-field', () => {
   test('Patterns invalid with wrong structure', () => {
     jest.useFakeTimers('legacy');
 
@@ -320,7 +324,7 @@ describe('c-pattern-advanced-editor-field', () => {
     expect(wrapper).toEmit('input', patterns);
   });
 
-  test('Renders `c-pattern-advanced-editor-field` with default props', () => {
+  test('Renders `pattern-advanced-editor-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: [[]],
@@ -331,7 +335,7 @@ describe('c-pattern-advanced-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-advanced-editor-field` with custom props', () => {
+  test('Renders `pattern-advanced-editor-field` with custom props', () => {
     const name = Faker.datatype.string();
     const wrapper = snapshotFactory({
       propsData: {
