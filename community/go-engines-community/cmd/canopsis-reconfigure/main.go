@@ -220,7 +220,7 @@ func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.D
 		return fmt.Errorf("failed to fetch global config: %w", err)
 	}
 
-	conf.Canopsis.Metrics.EnabledManualInstructions = prevGlobalConf.Metrics.EnabledManualInstructions
+	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
 
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
