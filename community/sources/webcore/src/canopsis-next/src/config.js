@@ -244,6 +244,7 @@ export const API_ROUTES = {
     exportAlarm: '/api/v4/cat/metrics-export/alarm',
     exportRating: '/api/v4/cat/metrics-export/rating',
     exportSli: '/api/v4/cat/metrics-export/sli',
+    exportAggregate: '/api/v4/cat/metrics-export/aggregate',
     exportMetric: '/api/v4/cat/metrics-export',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
