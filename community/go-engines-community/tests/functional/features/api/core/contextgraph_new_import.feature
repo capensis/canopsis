@@ -242,7 +242,7 @@ Feature: New import entities
         "action": "set",
         "component": "test-component-contextgraph-new-import-1",
         "enabled": true,
-        "category": "test-category-to-import-contextgraph-4-name"
+        "category": "test-category-to-import-contextgraph-not-exist"
       }
     ]
     """
@@ -279,8 +279,7 @@ Feature: New import entities
       "type": "resource",
       "impact_level": 1,
       "category": {
-        "_id": "test-category-to-import-contextgraph-4",
-        "name": "test-category-to-import-contextgraph-4-name"
+        "name": "test-category-to-import-contextgraph-not-exist"
       }
     }
     """

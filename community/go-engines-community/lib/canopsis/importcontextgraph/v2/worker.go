@@ -10,11 +10,13 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -250,7 +252,7 @@ func (w *worker) parseEntities(
 		var ci importcontextgraph.EntityConfiguration
 		err := decoder.Decode(&ci)
 		if err != nil {
-			return res, fmt.Errorf("failed to decode cis item: %v", err)
+			return res, fmt.Errorf("failed to decode cis item: %w", err)
 		}
 
 		err = w.validate(ci)
@@ -264,18 +266,25 @@ func (w *worker) parseEntities(
 		}
 
 		if ci.CategoryName != "" {
-			var category struct {
-				ID string `bson:"_id"`
-			}
+			var category entitycategory.Category
 
 			err = w.categoryCollection.FindOne(ctx, bson.M{"name": ci.CategoryName}).Decode(&category)
 			if err != nil {
-				if errors.Is(err, mongo.ErrNoDocuments) {
-					w.logger.Warn().Str("entity_name", ci.Name).Msg("category not found, skip")
-					continue
+				if !errors.Is(err, mongo.ErrNoDocuments) {
+					return res, fmt.Errorf("failed to find a category with name = %s: %w", category.Name, err)
 				}
 
-				return res, err
+				category = entitycategory.Category{
+					ID:      utils.NewID(),
+					Name:    ci.CategoryName,
+					Created: &now,
+					Updated: &now,
+				}
+
+				_, err = w.categoryCollection.InsertOne(ctx, category)
+				if err != nil {
+					return res, fmt.Errorf("failed to create a category with name = %s: %w", category.Name, err)
+				}
 			}
 
 			ci.CategoryID = category.ID
