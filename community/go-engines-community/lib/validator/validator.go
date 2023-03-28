@@ -319,6 +319,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("invalid", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("not_supported", trans, func(ut ut.Translator) error {
+		return ut.Add("not_supported", "{0} is not supported.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("not_supported", fe.StructField())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.
