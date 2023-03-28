@@ -43,7 +43,7 @@ L'identifiant et le mot de passe de connexion à l'API sont définis via des var
 
 Seule l'authentification [basique](https://fr.wikipedia.org/wiki/Authentification_HTTP#M%C3%A9thode_%C2%AB_Basic_%C2%BB){target=_blank} est supportée.
 
-Si votre API ne nécessite pas d'authentification, il vous suffit de ne pas spécifier ces varaibles d'environnement.
+Si votre API ne nécessite pas d'authentification, il vous suffit de ne pas spécifier ces variables d'environnement.
 
 ## Configuration
 
@@ -207,7 +207,7 @@ Il existe 4 moyens d'importer des informations en provenance d'API tierces :
 
 1. `set` : depuis une constante
 2. `copy` : en recopiant une réponse de l'API
-3. `template` : en appliquant une template (pouvant utiliser une réponse de l'API)
+3. `template` : en appliquant un template (pouvant utiliser une réponse de l'API)
 4. `regexp` : en exécutant un groupe de capture via une expression régulière
 
 
@@ -244,7 +244,7 @@ Résultat:
 #### Action **template**
 
 Pour exécuter un template, vous devez spécifier le nom du champ de la réponse d'API dans `field` et le template lui-même dans `value`.  
-La valeur du champ `field` est accessible grâce à la var"iable `.Field`.
+La valeur du champ `field` est accessible grâce à la variable `.Field`.
 
 ```yaml
 infos:
