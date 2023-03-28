@@ -355,7 +355,7 @@ Vous pouvez visualiser l'arbre de dépendances de l'application `Doc-APP1` en vo
 
 ![Exploit1](./img/casdusage-exploit1.png)
 
-Vous constatez alors que `Doc-APP1` dépend de `DOC-COMPSANT1` et `DOC-COMPSANT2` eux mêmes dépendants de `Doc-ServeurAPP1`, `Doc-ServeurAPP2`, et `Doc-ServeurAPP3`.
+Vous constatez alors que `Doc-APP1` dépend de `DOC-COMPOSANT1` et `DOC-COMPOSANT2` eux mêmes dépendants de `Doc-ServeurAPP1`, `Doc-ServeurAPP2`, et `Doc-ServeurAPP3`.
 
 Vous pour également utiliser le widget `Cartographie` pour visualiser cet arbre : 
 
@@ -380,7 +380,7 @@ curl -H "Content-Type: application/json" -X POST -u root:root -d '{
 ![Exploit3](./img/casdusage-exploit3.png)
 
 L'alarme émise à eu un impact sur le composant `Doc-COMPOSANT1` qui lui-même a eu un impact sur l'application `Doc-APP1`.  
-L'arbre de dépendance est visible dans la colonne `Track Source` des alarmes de services.
+L'arbre de dépendance est visible dans la colonne `TRACK SOURCE` des alarmes de services.
 
 Par ailleurs, la cartographie est elle aussi mise à jour en conséquence
 
