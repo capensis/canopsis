@@ -24,7 +24,7 @@ Le `import-context-graph` peut importer
 5. [Importer des informations](#importer-des-informations-complementaires)<br>
 6. [Exécution](#execution)<br>
 7. [Résultats dans Canopsis](#resultats-dans-canopsis)
-7. [Cas d'usage complet](../cas-d-usage-complet/)
+8. [Cas d'usage complet](#cas-dusage-complet)
 
 ## Options
 
@@ -342,3 +342,6 @@ Retour :
 
 ![](./img/var_alarm.png)
 
+## Cas d'usage complet
+
+[Ici](../cas-d-usage-complet/)
