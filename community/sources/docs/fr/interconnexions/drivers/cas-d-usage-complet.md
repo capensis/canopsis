@@ -45,7 +45,7 @@ docker run \
 -e EXTERNAL_API_USERNAME='[testuser]' \
 -e EXTERNAL_API_PASSWORD='[testpassword]' \
 -e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb:27017/canopsis' \
--e 'CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq:5672/canopsis' \
+-e CPS_AMQP_URL='amqp://cpsrabbit:canopsis@rabbitmq:5672/canopsis' \
 -e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' \
 --network=canopsis-pro_default -it --rm -v \
 "${PWD}/import-serveursapplications.yml:/opt/canopsis/share/config/import-context-graph/api.yml" \
