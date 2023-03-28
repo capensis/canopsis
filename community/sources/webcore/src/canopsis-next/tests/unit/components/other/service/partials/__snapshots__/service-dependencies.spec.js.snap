@@ -132,24 +132,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   <c-no-events-icon-stub
                     top="top"
                   />
-                </td>
-                <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Root alarm entity
-                  </color-indicator-wrapper-stub>
-                </td>
-                <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <span>
                     
-                  </color-indicator-wrapper-stub>
+                  </span>
+                </td>
+                <td>
+                  <!---->
+                  <span>
+                    Root alarm entity
+                  </span>
+                </td>
+                <td>
+                  <!---->
+                  <span>
+                    
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -361,24 +358,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
+                  <span>
+                    
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     Data alarm 1 entity
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     service
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
               </tr>
               <tr>
@@ -386,24 +380,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
+                  <span>
+                    
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     Data alarm 2 entity
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     service
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
               </tr>
               <tr>
@@ -411,24 +402,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
+                  <span>
+                    
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     Data alarm 3 entity
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     connector
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
               </tr>
               <tr>
@@ -436,24 +424,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
+                  <span>
+                    
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     Data alarm 4 entity
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     service
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -638,24 +623,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <c-no-events-icon-stub
                     top="top"
                   />
+                  <span>
+                    
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     Data alarm 1 entity
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     service
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
               </tr>
               <tr>
@@ -663,24 +645,21 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <c-no-events-icon-stub
                     top="top"
                   />
+                  <span>
+                    
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     Data alarm 2 entity
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
+                  <!---->
+                  <span>
                     service
-                  </color-indicator-wrapper-stub>
+                  </span>
                 </td>
               </tr>
             </tbody>
