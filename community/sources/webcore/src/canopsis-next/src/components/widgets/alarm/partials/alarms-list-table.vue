@@ -552,9 +552,22 @@ export default {
     }
 
     &.columns-md .v-table {
+      @media screen and (max-width: 1700px) {
+        td, th {
+          padding: 0 12px;
+        }
+      }
+
+      @media screen and (max-width: 1250px) {
+        td, th {
+          padding: 0 8px;
+        }
+      }
+
       @media screen and (max-width: 1150px) {
         td, th {
           font-size: 0.85em;
+          padding: 0 4px;
         }
 
         .badge {
