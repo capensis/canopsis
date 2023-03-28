@@ -82,7 +82,6 @@ describe('line-chart', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     currentUserPermissionsById,
     activeViewModule,
@@ -193,9 +192,8 @@ describe('line-chart', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
