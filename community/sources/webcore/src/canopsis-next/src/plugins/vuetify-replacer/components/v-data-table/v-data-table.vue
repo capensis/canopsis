@@ -301,7 +301,7 @@ table.v-datatable {
 
     tbody, thead {
       td, th {
-        padding: 0 $densePadding;
+        padding: 0 $densePadding !important;
       }
 
       td:not(.v-datatable__expand-col) {
@@ -317,7 +317,7 @@ table.v-datatable {
 
     tbody, thead {
       td, th {
-        padding: 0 $ultraDensePadding;
+        padding: 0 $ultraDensePadding !important;
       }
 
       td:not(.v-datatable__expand-col) {
@@ -331,7 +331,7 @@ table.v-datatable {
     tbody, thead {
       td:not(.v-datatable__expand-col) {
         td, th {
-          padding: 0 $densePadding;
+          padding: 0 $densePadding !important;
         }
 
         .v-btn {
@@ -340,7 +340,7 @@ table.v-datatable {
         }
 
         .color-indicator {
-          padding: $denseColorIndicatorPadding;
+          padding: $denseColorIndicatorPadding !important;
         }
 
         .c-action-btn__button {
