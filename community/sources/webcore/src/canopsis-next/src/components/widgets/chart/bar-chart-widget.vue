@@ -26,11 +26,15 @@
         :metrics="preparedVectorMetrics",
         :title="widget.parameters.chart_title",
         :sampling="query.sampling",
-        :stacked="widget.parameters.stacked"
+        :stacked="widget.parameters.stacked",
+        :downloading="downloading",
+        @export:png="exportMetricsAsPng",
+        @export:csv="exportMetricsAsCsv"
       )
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { pick, keyBy } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
@@ -40,6 +44,7 @@ import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
@@ -50,6 +55,8 @@ import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget
 
 import ChartLoader from './partials/chart-loader.vue';
 import BarChartMetrics from './partials/bar-chart-metrics.vue';
+
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 
 export default {
   inject: ['$system'],
@@ -68,6 +75,10 @@ export default {
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,
     permissionsWidgetsBarChartFilters,
+    widgetChartExportMixinCreator({
+      createExport: 'createKpiAlarmExport',
+      fetchExport: 'fetchMetricExport',
+    }),
   ],
   props: {
     widget: {
@@ -120,6 +131,11 @@ export default {
     },
   },
   methods: {
+    ...mapMetricsActions({
+      createKpiAlarmExport: 'createKpiAlarmExport',
+      fetchMetricExport: 'fetchMetricExport',
+    }),
+
     getQuery() {
       return {
         ...this.getIntervalQuery(),
