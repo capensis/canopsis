@@ -304,7 +304,7 @@ Résultat:
     
     Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/){target=_blank}" ou une autre solution de coffre-fort.
 
-#### Programme installé par packets :
+#### Programme installé par paquets RPM :
 
 ``` shell
 export EXTERNAL_API_USERNAME=test
