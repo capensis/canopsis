@@ -260,6 +260,7 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
+$ultraDensePadding: 6px;
 
 $denseCellHeight: 32px;
 $ultraDenseCellHeight: 24px;
@@ -315,6 +316,10 @@ table.v-datatable {
     }
 
     tbody, thead {
+      td, th {
+        padding: 0 $ultraDensePadding;
+      }
+
       td:not(.v-datatable__expand-col) {
         height: $ultraDenseCellHeight;
       }
