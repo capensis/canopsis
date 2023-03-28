@@ -1501,7 +1501,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "widget_filters": "filter \"test-widget-filter-not-exist\" not found"
+        "widget_filters.0": "WidgetFilter doesn't exist."
       }
     }
     """
