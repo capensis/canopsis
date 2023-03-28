@@ -21,20 +21,6 @@
               v-flex(xs6)
                 c-entity-type-field(v-field="form.type", required, disabled)
         c-coordinates-field(v-field="form.coordinates", row)
-        v-layout(column)
-          entities-select(
-            v-field="form.impact",
-            :label="$t('entity.impact')",
-            :disabled-entities-ids="form.disabled_impact",
-            name="impact"
-          )
-          entities-select(
-            v-field="form.depends",
-            :label="$t('entity.depends')",
-            :disabled-entities-ids="form.disabled_depends",
-            :existing-entities-ids="form.impact",
-            name="depends"
-          )
     v-tab {{ $t('entity.manageInfos') }}
     v-tab-item
       manage-infos(v-field="form.infos")
@@ -42,12 +28,10 @@
 
 <script>
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
-import EntitiesSelect from '@/components/widgets/context/entities-select.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    EntitiesSelect,
     ManageInfos,
   },
   model: {
