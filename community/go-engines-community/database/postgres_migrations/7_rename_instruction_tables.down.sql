@@ -1,0 +1,12 @@
+BEGIN;
+
+ALTER TABLE instruction_assigned_instructions RENAME TO manual_instruction_assigned_instructions;
+ALTER TABLE instruction_executed_instructions RENAME TO manual_instruction_executed_instructions;
+
+ALTER INDEX instruction_assigned_instructions_instruction_id_time_idx RENAME TO manual_instruction_assigned_instructions_instruction_id_time_idx;
+ALTER INDEX instruction_executed_instructions_instruction_id_time_idx RENAME TO manual_instruction_executed_instructions_instruction_id_time_idx;
+
+ALTER TABLE manual_instruction_assigned_instructions DROP COLUMN instruction_type;
+ALTER TABLE manual_instruction_executed_instructions DROP COLUMN instruction_type;
+
+COMMIT;
