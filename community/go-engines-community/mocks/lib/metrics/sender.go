@@ -60,16 +60,40 @@ func (mr *MockSenderMockRecorder) SendAck(arg0, arg1, arg2 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAck", reflect.TypeOf((*MockSender)(nil).SendAck), arg0, arg1, arg2)
 }
 
-// SendAutoInstructionStart mocks base method.
-func (m *MockSender) SendAutoInstructionStart(arg0 types.Alarm, arg1 time.Time) {
+// SendAutoInstructionAssignForInstructions mocks base method.
+func (m *MockSender) SendAutoInstructionAssignForInstructions(arg0 []string, arg1 time.Time) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendAutoInstructionStart", arg0, arg1)
+	m.ctrl.Call(m, "SendAutoInstructionAssignForInstructions", arg0, arg1)
 }
 
-// SendAutoInstructionStart indicates an expected call of SendAutoInstructionStart.
-func (mr *MockSenderMockRecorder) SendAutoInstructionStart(arg0, arg1 interface{}) *gomock.Call {
+// SendAutoInstructionAssignForInstructions indicates an expected call of SendAutoInstructionAssignForInstructions.
+func (mr *MockSenderMockRecorder) SendAutoInstructionAssignForInstructions(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAutoInstructionStart", reflect.TypeOf((*MockSender)(nil).SendAutoInstructionStart), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAutoInstructionAssignForInstructions", reflect.TypeOf((*MockSender)(nil).SendAutoInstructionAssignForInstructions), arg0, arg1)
+}
+
+// SendAutoInstructionExecutionForInstruction mocks base method.
+func (m *MockSender) SendAutoInstructionExecutionForInstruction(arg0 string, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendAutoInstructionExecutionForInstruction", arg0, arg1)
+}
+
+// SendAutoInstructionExecutionForInstruction indicates an expected call of SendAutoInstructionExecutionForInstruction.
+func (mr *MockSenderMockRecorder) SendAutoInstructionExecutionForInstruction(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAutoInstructionExecutionForInstruction", reflect.TypeOf((*MockSender)(nil).SendAutoInstructionExecutionForInstruction), arg0, arg1)
+}
+
+// SendAutoInstructionExecutionStart mocks base method.
+func (m *MockSender) SendAutoInstructionExecutionStart(arg0 types.Alarm, arg1 time.Time) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendAutoInstructionExecutionStart", arg0, arg1)
+}
+
+// SendAutoInstructionExecutionStart indicates an expected call of SendAutoInstructionExecutionStart.
+func (mr *MockSenderMockRecorder) SendAutoInstructionExecutionStart(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAutoInstructionExecutionStart", reflect.TypeOf((*MockSender)(nil).SendAutoInstructionExecutionStart), arg0, arg1)
 }
 
 // SendCancelAck mocks base method.
@@ -157,15 +181,15 @@ func (mr *MockSenderMockRecorder) SendInstructionAssignForInstruction(arg0, arg1
 }
 
 // SendInstructionAssignForInstructions mocks base method.
-func (m *MockSender) SendInstructionAssignForInstructions(arg0 []string, arg1 time.Time, arg2 int64) {
+func (m *MockSender) SendInstructionAssignForInstructions(arg0 []string, arg1 time.Time) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendInstructionAssignForInstructions", arg0, arg1, arg2)
+	m.ctrl.Call(m, "SendInstructionAssignForInstructions", arg0, arg1)
 }
 
 // SendInstructionAssignForInstructions indicates an expected call of SendInstructionAssignForInstructions.
-func (mr *MockSenderMockRecorder) SendInstructionAssignForInstructions(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) SendInstructionAssignForInstructions(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstructions", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstructions), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendInstructionAssignForInstructions", reflect.TypeOf((*MockSender)(nil).SendInstructionAssignForInstructions), arg0, arg1)
 }
 
 // SendInstructionExecutionForAlarm mocks base method.
