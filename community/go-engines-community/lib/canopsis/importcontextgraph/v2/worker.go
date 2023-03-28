@@ -3,12 +3,13 @@ package v2
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"io"
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -258,8 +259,26 @@ func (w *worker) parseEntities(
 		}
 
 		if ci.Type == types.EntityTypeService && !ci.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
-			w.logger.Warn().Str("name", ci.Name).Msg("invalid entity pattern, skip")
+			w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
 			continue
+		}
+
+		if ci.CategoryName != "" {
+			var category struct {
+				ID string `bson:"_id"`
+			}
+
+			err = w.categoryCollection.FindOne(ctx, bson.M{"name": ci.CategoryName}).Decode(&category)
+			if err != nil {
+				if errors.Is(err, mongo.ErrNoDocuments) {
+					w.logger.Warn().Str("entity_name", ci.Name).Msg("category not found, skip")
+					continue
+				}
+
+				return res, err
+			}
+
+			ci.CategoryID = category.ID
 		}
 
 		w.fillDefaultFields(&ci, source, now)
