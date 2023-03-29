@@ -132,21 +132,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Root alarm entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -358,21 +355,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Data alarm 1 entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    service
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -380,21 +374,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Data alarm 2 entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    service
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -402,21 +393,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Data alarm 3 entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    connector
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -424,21 +412,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Data alarm 4 entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    service
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -623,21 +608,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Data alarm 1 entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    service
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -645,21 +627,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <c-no-events-icon-stub
                     top="top"
                   />
-                  <span>
-                    
-                  </span>
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    Data alarm 2 entity
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <!---->
-                  <span>
-                    service
-                  </span>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
             </tbody>

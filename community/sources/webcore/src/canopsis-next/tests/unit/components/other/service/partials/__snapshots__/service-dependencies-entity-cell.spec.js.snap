@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with column 1`] = `
+<span>
+  <span>
+    Data alarm 2 entity
+  </span>
+</span>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with column with impact state color indicator 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="impact_state"
+>
+  <span>
+    Data alarm 2 entity
+  </span>
+</color-indicator-wrapper-stub>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with column with state color indicator 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="state"
+>
+  <span>
+    Data alarm 2 entity
+  </span>
+</color-indicator-wrapper-stub>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with state column 1`] = `
+<span>
+  <c-alarm-chip-stub
+    value="1"
+  />
+</span>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with state column with impact state color indicator 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="impact_state"
+>
+  <c-alarm-chip-stub
+    value="1"
+  />
+</color-indicator-wrapper-stub>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with state column with state color indicator 1`] = `
+<color-indicator-wrapper-stub
+  alarm="[object Object]"
+  entity="[object Object]"
+  type="state"
+>
+  <c-alarm-chip-stub
+    value="1"
+  />
+</color-indicator-wrapper-stub>
+`;

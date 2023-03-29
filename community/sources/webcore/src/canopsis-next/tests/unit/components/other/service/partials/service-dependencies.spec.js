@@ -21,7 +21,7 @@ const localVue = createVueInstance();
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
   'c-no-events-icon': true,
-  'color-indicator-wrapper': true,
+  'service-dependencies-entity-cell': true,
 };
 
 const selectTreeviewTable = wrapper => wrapper.find('.service-dependencies');
@@ -47,6 +47,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-1-entity',
       name: 'Data alarm 1 entity',
       type: ENTITY_TYPES.service,
+      state: 0,
       impact_level: 5,
       impact_state: 0,
       has_impacts: false,
@@ -56,6 +57,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-2-entity',
       name: 'Data alarm 2 entity',
       type: ENTITY_TYPES.service,
+      state: 1,
       impact_level: 1,
       impact_state: 0,
       has_impacts: false,
@@ -64,6 +66,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-3-entity',
       name: 'Data alarm 3 entity',
       type: ENTITY_TYPES.connector,
+      state: 2,
       impact_level: 5,
       impact_state: 0,
       has_impacts: false,
@@ -72,6 +75,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-4-entity',
       name: 'Data alarm 4 entity',
       type: ENTITY_TYPES.service,
+      state: 3,
       impact_level: 1,
       impact_state: 0,
       has_impacts: false,
