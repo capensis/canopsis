@@ -35,7 +35,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { pick, keyBy } from 'lodash';
+import { pick, keyBy, isEqual } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
@@ -128,6 +128,14 @@ export default {
           },
         };
       }
+    },
+
+    'widget.parameters': {
+      handler(parameters, oldParameters) {
+        if (!isEqual(parameters, oldParameters)) {
+          this.fetchList();
+        }
+      },
     },
   },
   methods: {

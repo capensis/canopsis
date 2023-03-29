@@ -32,6 +32,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { isEqual } from 'lodash';
 import { isRatioMetric } from '@/helpers/metrics';
 import { convertFilterToQuery } from '@/helpers/query';
 
@@ -88,6 +89,15 @@ export default {
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
+    },
+  },
+  watch: {
+    'widget.parameters': {
+      handler(parameters, oldParameters) {
+        if (!isEqual(parameters, oldParameters)) {
+          this.fetchList();
+        }
+      },
     },
   },
   methods: {
