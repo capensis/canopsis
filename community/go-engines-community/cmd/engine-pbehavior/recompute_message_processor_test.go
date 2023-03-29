@@ -1,14 +1,14 @@
-package pbehavior_test
+package main
 
 import (
 	"context"
 	"testing"
-	"time"
 
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
@@ -18,36 +18,26 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
+func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockService := mock_pbehavior.NewMockService(ctrl)
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
 
+	mockDecoder.EXPECT().Decode(gomock.Any(), gomock.Any()).Do(func(_ []byte, event *rpc.PbehaviorRecomputeEvent) {
+		*event = rpc.PbehaviorRecomputeEvent{Ids: []string{pbehaviorID}}
+	})
+
 	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Eq([]string{pbehaviorID}))
 
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collection string) mongo.DbCollection {
-		switch collection {
-		case mongo.AlarmMongoCollection:
-			return mockAlarmDbCollection
-		case mongo.EntityMongoCollection:
-			return mockEntityDbCollection
-		case mongo.PbehaviorMongoCollection:
-			return mockPbhDbCollection
-		}
-		t.Errorf("uknown collection")
-		return nil
-	}).AnyTimes()
 	mockSingleResultHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 	mockPbhDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -64,90 +54,82 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldRecomputePbehavior(t 
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false).Times(2)
 	mockCursor.EXPECT().Close(gomock.Any()).Times(2)
 
-	computer := pbehavior.NewCancelableComputer(mockService, mockDbClient, mockPublisher, mockEventManager, mockDecoder,
-		mockEncoder, "test-queue", zerolog.Nop())
-
-	ch := make(chan pbehavior.ComputeTask, 1)
-	ch <- pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbehaviorID},
+	p := recomputeMessageProcessor{
+		PbhService:          mockService,
+		PbehaviorCollection: mockPbhDbCollection,
+		EntityCollection:    mockEntityDbCollection,
+		EventGenerator:      libevent.NewGenerator("", ""),
+		EventManager:        mockEventManager,
+		Encoder:             mockEncoder,
+		Decoder:             mockDecoder,
+		Publisher:           mockPublisher,
+		Exchange:            "",
+		Queue:               "test-queue",
+		Logger:              zerolog.Nop(),
 	}
-	defer close(ch)
 
-	go func() {
-		time.Sleep(50 * time.Millisecond)
-		cancel()
-	}()
-
-	computer.Compute(ctx, ch)
+	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
 }
 
-func TestCancelableComputer_Compute_GivenEmptyPbehaviorID_ShouldRecomputeAllPbehaviors(t *testing.T) {
+func TestRecomputeMessageProcessor_Process_GivenEmptyPbehaviorID_ShouldRecomputeAllPbehaviors(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockService := mock_pbehavior.NewMockService(ctrl)
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collection string) mongo.DbCollection {
-		switch collection {
-		case mongo.AlarmMongoCollection:
-			return mockAlarmDbCollection
-		case mongo.EntityMongoCollection:
-			return mockEntityDbCollection
-		case mongo.PbehaviorMongoCollection:
-			return mockPbhDbCollection
-		}
-		t.Errorf("uknown collection")
-		return nil
-	}).AnyTimes()
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 
+	mockDecoder.EXPECT().Decode(gomock.Any(), gomock.Any())
+
 	mockService.EXPECT().Recompute(gomock.Any())
 
-	computer := pbehavior.NewCancelableComputer(mockService, mockDbClient, mockPublisher, mockEventManager, mockDecoder,
-		mockEncoder, "test-queue", zerolog.Nop())
+	p := recomputeMessageProcessor{
+		PbhService:          mockService,
+		PbehaviorCollection: mockPbhDbCollection,
+		EntityCollection:    mockEntityDbCollection,
+		EventGenerator:      libevent.NewGenerator("", ""),
+		EventManager:        mockEventManager,
+		Encoder:             mockEncoder,
+		Decoder:             mockDecoder,
+		Publisher:           mockPublisher,
+		Exchange:            "",
+		Queue:               "test-queue",
+		Logger:              zerolog.Nop(),
+	}
 
-	ch := make(chan pbehavior.ComputeTask, 1)
-	ch <- pbehavior.ComputeTask{}
-	defer close(ch)
-
-	go func() {
-		time.Sleep(50 * time.Millisecond)
-		cancel()
-	}()
-
-	computer.Compute(ctx, ch)
+	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"\"}")})
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
 }
 
-func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t *testing.T) {
+func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorEvent(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockService := mock_pbehavior.NewMockService(ctrl)
-	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockAlarmDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 	mockPublisher := mock_amqp.NewMockPublisher(ctrl)
 	pbehaviorID := "test-pbehavior-id"
 	queue := "test-queue"
-	alarm := types.Alarm{Value: types.AlarmValue{
-		Connector:     "test-connector",
-		ConnectorName: "test-connector-name",
-		Component:     "test-component",
-		Resource:      "test-resource",
-	}}
-	entity := types.Entity{ID: "test-entity-id"}
+	entity := types.Entity{
+		ID:        "test-entity-id",
+		Type:      types.EntityTypeResource,
+		Component: "test-component",
+	}
 	resolveResult := pbehavior.ResolveResult{
 		ResolvedType: pbehavior.Type{
 			ID:   "test-type-id",
@@ -157,23 +139,15 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	}
 	event := types.Event{EventType: types.EventTypePbhEnter}
 	body := []byte("test-body")
+
+	mockDecoder.EXPECT().Decode(gomock.Any(), gomock.Any()).Do(func(_ []byte, event *rpc.PbehaviorRecomputeEvent) {
+		*event = rpc.PbehaviorRecomputeEvent{Ids: []string{pbehaviorID}}
+	})
+
 	mockResolver := mock_pbehavior.NewMockComputedEntityTypeResolver(ctrl)
 	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Any()).Return(mockResolver, nil)
 	mockResolver.EXPECT().Resolve(gomock.Any(), gomock.Any(), gomock.Any()).Return(resolveResult, nil)
 
-	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(collectionName string) mongo.DbCollection {
-		switch collectionName {
-		case mongo.PbehaviorMongoCollection:
-			return mockPbhDbCollection
-		case mongo.AlarmMongoCollection:
-			return mockAlarmDbCollection
-		case mongo.EntityMongoCollection:
-			return mockEntityDbCollection
-		}
-
-		t.Errorf("uknown collection")
-		return nil
-	}).AnyTimes()
 	mockPbhSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
 	mockPbhDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockPbhSingleResult)
 	mockPbhSingleResult.EXPECT().Decode(gomock.Any()).Do(func(pbh *pbehavior.PBehavior) {
@@ -187,10 +161,8 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	}).Return(nil)
 	mockEntityCursor := mock_mongo.NewMockCursor(ctrl)
 	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockEntityCursor, nil)
-	gomock.InOrder(
-		mockEntityCursor.EXPECT().Next(gomock.Any()).Return(true),
-		mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false),
-	)
+	mockEntityCursor.EXPECT().Next(gomock.Any()).Return(true)
+	mockEntityCursor.EXPECT().Next(gomock.Any()).Return(false)
 	mockEntityCursor.EXPECT().Decode(gomock.Any()).Do(func(e *types.Entity) {
 		*e = entity
 	}).Return(nil)
@@ -199,11 +171,6 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 	mockEntityDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockEntityCursor2, nil)
 	mockEntityCursor2.EXPECT().Next(gomock.Any()).Return(false)
 	mockEntityCursor2.EXPECT().Close(gomock.Any())
-	mockAlarmSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockAlarmDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockAlarmSingleResult)
-	mockAlarmSingleResult.EXPECT().Decode(gomock.Any()).Do(func(a *types.Alarm) {
-		*a = alarm
-	}).Return(nil)
 
 	mockEventManager.EXPECT().GetEventType(gomock.Eq(resolveResult), gomock.Any()).
 		Return(event.EventType, event.Output)
@@ -217,17 +184,22 @@ func TestCancelableComputer_Compute_GivenPbehaviorID_ShouldSendPbehaviorEvent(t 
 			DeliveryMode: amqp.Persistent,
 		}))
 
-	computer := pbehavior.NewCancelableComputer(mockService, mockDbClient, mockPublisher, mockEventManager, mockDecoder,
-		mockEncoder, queue, zerolog.Nop())
+	p := recomputeMessageProcessor{
+		PbhService:          mockService,
+		PbehaviorCollection: mockPbhDbCollection,
+		EntityCollection:    mockEntityDbCollection,
+		EventGenerator:      libevent.NewGenerator("", ""),
+		EventManager:        mockEventManager,
+		Encoder:             mockEncoder,
+		Decoder:             mockDecoder,
+		Publisher:           mockPublisher,
+		Exchange:            "",
+		Queue:               "test-queue",
+		Logger:              zerolog.Nop(),
+	}
 
-	ch := make(chan pbehavior.ComputeTask, 1)
-	ch <- pbehavior.ComputeTask{PbehaviorIds: []string{pbehaviorID}}
-	defer close(ch)
-
-	go func() {
-		time.Sleep(50 * time.Millisecond)
-		cancel()
-	}()
-
-	computer.Compute(ctx, ch)
+	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
 }

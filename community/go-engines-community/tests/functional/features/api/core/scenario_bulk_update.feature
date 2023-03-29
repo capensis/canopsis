@@ -125,48 +125,6 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 2,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_pattern": [
-              [
-                {
-                  "field": "v.component",
-                  "cond": {
-                    "type": "eq",
-                    "value": "test-scenario-to-bulk-update-4-alarm"
-                  }
-                }
-              ]
-            ],
-            "entity_pattern": [
-              [
-                {
-                  "field": "name",
-                  "cond": {
-                    "type": "eq",
-                    "value": "test-scenario-to-bulk-update-4-resource"
-                  }
-                }
-              ]
-            ],
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
         "triggers": ["create"],
         "actions": [{}]
       },
@@ -638,55 +596,6 @@ Feature: Bulk update a scenario
               "parameters": {
                 "output": "test snooze",
                   "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "priority": "Priority already exists.",
-          "_id": "ID is missing."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 2,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "alarm_pattern": [
-                [
-                  {
-                    "field": "v.component",
-                    "cond": {
-                      "type": "eq",
-                      "value": "test-scenario-to-bulk-update-4-alarm"
-                    }
-                  }
-                ]
-              ],
-              "entity_pattern": [
-                [
-                  {
-                    "field": "name",
-                    "cond": {
-                      "type": "eq",
-                      "value": "test-scenario-to-bulk-update-4-resource"
-                    }
-                  }
-                ]
-              ],
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
                   "seconds": 3,
                   "unit": "s"
                 }

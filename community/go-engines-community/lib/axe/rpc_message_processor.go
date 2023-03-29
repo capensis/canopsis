@@ -118,10 +118,10 @@ func (p *rpcMessageProcessor) getRpcEvent(event rpc.AxeResultEvent) ([]byte, err
 }
 
 func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event rpc.AxeEvent, d amqp.Delivery) ([]byte, error) {
-	body, err := p.Encoder.Encode(types.RPCPBehaviorEvent{
+	body, err := p.Encoder.Encode(rpc.PbehaviorEvent{
 		Alarm:  event.Alarm,
 		Entity: event.Entity,
-		Params: types.RPCPBehaviorParameters{
+		Params: rpc.PbehaviorParameters{
 			Author:         event.Parameters.Author,
 			UserID:         event.Parameters.User,
 			Name:           event.Parameters.Name,

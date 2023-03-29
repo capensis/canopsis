@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -33,11 +32,10 @@ type API interface {
 }
 
 type api struct {
-	store                  Store
-	exportExecutor         export.TaskExecutor
-	defaultExportFields    export.Fields
-	exportSeparators       map[string]rune
-	timezoneConfigProvider config.TimezoneConfigProvider
+	store               Store
+	exportExecutor      export.TaskExecutor
+	defaultExportFields export.Fields
+	exportSeparators    map[string]rune
 
 	logger zerolog.Logger
 }
@@ -45,7 +43,6 @@ type api struct {
 func NewApi(
 	store Store,
 	executor export.TaskExecutor,
-	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
@@ -64,8 +61,7 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
-		timezoneConfigProvider: timezoneConfigProvider,
-		logger:                 logger,
+		logger: logger,
 	}
 }
 
@@ -357,25 +353,29 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	separator := a.exportSeparators[r.Separator]
-	exportFields := r.Fields
-	if len(exportFields) == 0 {
-		exportFields = a.defaultExportFields
+	if len(r.Fields) == 0 {
+		r.Fields = a.defaultExportFields
 	}
 
-	taskID, err := a.exportExecutor.StartExecute(c, export.Task{
-		Filename:     "alarms",
-		ExportFields: exportFields,
-		Separator:    separator,
-		DataFetcher: getDataFetcher(a.store, r, exportFields.Fields(),
-			a.timezoneConfigProvider.Get().Location),
+	params, err := json.Marshal(r.ExportFetchParameters)
+	if err != nil {
+		panic(err)
+	}
+
+	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
+		Type:           "alarm",
+		Parameters:     string(params),
+		Fields:         r.Fields,
+		Separator:      separator,
+		FilenamePrefix: "alarms",
 	})
 	if err != nil {
 		panic(err)
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
-		ID:     taskID,
-		Status: export.TaskStatusRunning,
+		ID:     task.ID,
+		Status: task.Status,
 	})
 }
 
@@ -383,7 +383,7 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c, id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -401,7 +401,7 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c, id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
