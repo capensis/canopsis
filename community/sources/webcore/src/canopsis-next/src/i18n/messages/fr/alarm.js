@@ -158,6 +158,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.averageResolve]: 'Délai moyen de résolution des alarmes',
     [ALARM_METRIC_PARAMETERS.timeToAck]: 'Délai d\'acquittement des alarmes',
     [ALARM_METRIC_PARAMETERS.timeToResolve]: 'Délai de résolution des alarmes',
+    [ALARM_METRIC_PARAMETERS.minAck]: 'Temps minimum pour acquitter les alarmes',
+    [ALARM_METRIC_PARAMETERS.maxAck]: 'Délai maximum pour acquitter les alarmes',
     [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre d\'alarmes remédiées manuellement',
     [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre d\'alarmes avec remédiation manuelle',
     [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Nombre d\'alarmes non acquittées',
