@@ -7210,6 +7210,23 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /pbehavior-types/next-priority:
+    get:
+      tags:
+        - pbehavior-types
+      summary: Get next priority
+      description: |
+        Get next priority.
+
+        -  PERMISSIONS: `api_pbehaviortype:read`
+      operationId: pbehavior-types-get-next-priority
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.PriorityResponse'
   /pbehaviors:
     delete:
       tags:
@@ -9344,53 +9361,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /scenarios/check-priority:
-    post:
-      tags:
-        - scenarios
-      summary: Check priority
-      description: |
-        Check priority.
-        
-        -  PERMISSIONS: `api_action:read`
-      operationId: scenarios-check-priority
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/scenario.CheckPriorityRequest'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/scenario.CheckPriorityResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /scenarios/minimal-priority:
-    get:
-      tags:
-        - scenarios
-      summary: Get minimal priority
-      description: |
-        Get minimal priority.
-        
-        -  PERMISSIONS: `api_action:read`
-      operationId: scenarios-get-minimal-priority
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/scenario.GetMinimalPriorityResponse'
   /share-tokens:
     get:
       tags:

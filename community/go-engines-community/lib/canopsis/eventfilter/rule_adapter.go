@@ -3,9 +3,9 @@ package eventfilter
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoAdapter struct {
@@ -38,7 +38,8 @@ func (a mongoAdapter) GetByTypes(ctx context.Context, types []string) ([]Rule, e
 }
 
 func (a mongoAdapter) find(ctx context.Context, filter bson.M) ([]Rule, error) {
-	cursor, err := a.dbCollection.Find(ctx, filter, options.Find().SetSort(bson.M{"priority": 1}))
+	pipeline := append([]bson.M{{"$match": filter}}, priority.GetSortPipeline()...)
+	cursor, err := a.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
