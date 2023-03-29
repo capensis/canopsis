@@ -15,6 +15,10 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
     [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
     [USER_PERMISSIONS_PREFIXES.business.map]: 'Rights for Mapping',
+    [USER_PERMISSIONS_PREFIXES.business.barChart]: 'Rights for Bar Chart',
+    [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Rights for Line Chart',
+    [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Rights for Pie Chart',
+    [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Rights for Numbers',
   },
   api: {
     general: 'General',

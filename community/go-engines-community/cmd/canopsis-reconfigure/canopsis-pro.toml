@@ -244,6 +244,7 @@ noWait = false
 
 [[RabbitMQ.queues]]
 name = "Engine_snmp"
+name = "Engine_pbehavior_recompute"
 durable = true
 autoDelete = false
 exclusive = false
@@ -252,6 +253,14 @@ noWait = false
 [RabbitMQ.queues.bind]
 key = "#"
 exchange = "canopsis.snmp"
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
+name = "Engine_pbehavior_recompute"
+durable = true
+autoDelete = false
+exclusive = false
 noWait = false
 # args =
 

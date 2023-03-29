@@ -144,3 +144,15 @@ entity_category:
   category_to_entityservice_alarm_get_2:
     <<: *category
     _id: test-category-to-entityservice-alarm-get-2
+  category_to_import_contextgraph_1:
+    <<: *category
+    _id: test-category-to-import-contextgraph-1
+    name: test-category-to-import-contextgraph-1-name
+  category_to_import_contextgraph_2:
+    <<: *category
+    _id: test-category-to-import-contextgraph-2
+    name: test-category-to-import-contextgraph-2-name
+  category_to_import_contextgraph_3:
+    <<: *category
+    _id: test-category-to-import-contextgraph-3
+    name: test-category-to-import-contextgraph-3-name

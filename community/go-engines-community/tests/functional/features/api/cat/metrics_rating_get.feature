@@ -450,7 +450,7 @@ Feature: Get metrics rating
     """json
     {
       "errors": {
-        "metric": "Metric \"not-exist\" is not supported."
+        "metric": "Metric doesn't exist."
       }
     }
     """
@@ -460,7 +460,7 @@ Feature: Get metrics rating
     """json
     {
       "errors": {
-        "criteria": "Criteria 1000000 not found."
+        "criteria": "Criteria doesn't exist."
       }
     }
     """
@@ -470,7 +470,7 @@ Feature: Get metrics rating
     """json
     {
       "errors": {
-        "filter": "Filter \"not-exist\" not found."
+        "filter": "Filter doesn't exist."
       }
     }
     """
@@ -480,7 +480,7 @@ Feature: Get metrics rating
     """json
     {
       "errors": {
-        "criteria": "Criteria \"username\" is not supported by metric \"created_alarms\"."
+        "criteria": "Criteria doesn't exist."
       }
     }
     """
@@ -490,7 +490,7 @@ Feature: Get metrics rating
     """json
     {
       "errors": {
-        "criteria": "Criteria \"name\" is not supported by metric \"total_user_activity\"."
+        "criteria": "Criteria doesn't exist."
       }
     }
     """
@@ -500,7 +500,7 @@ Feature: Get metrics rating
     """json
     {
       "errors": {
-        "metric": "Metric \"total_user_activity\" doesn't support filter."
+        "filter": "Filter is not empty."
       }
     }
     """

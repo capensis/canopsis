@@ -23,7 +23,9 @@ const (
 )
 
 const (
-	filenameDumpPattern = "cps_tech_metrics_*.bak"
+	filenameDumpPattern   = "cps_tech_metrics_*.bak"
+	abandonedTickInterval = 4 * time.Minute
+	abandonedInterval     = 5 * time.Minute
 )
 
 // TaskExecutor is used to implement export task executor.
@@ -40,6 +42,7 @@ type Task struct {
 	Status    int
 	Filepath  string
 	Created   time.Time
+	LastPing  time.Time
 	Started   *time.Time
 	Completed *time.Time
 }
@@ -121,6 +124,42 @@ func (e *taskExecutor) Run(ctx context.Context) {
 		}
 	}()
 
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				pgPool, err := e.getPgPool(ctx)
+				if err != nil {
+					e.logger.Err(err).Msg("cannot connect to postgres")
+					continue
+				}
+
+				var runningTaskId int
+				res := pgPool.QueryRow(ctx, "SELECT id FROM export WHERE status = $1 AND started IS NOT NULL AND last_ping < $2",
+					TaskStatusRunning, time.Now().Add(-abandonedInterval).UTC())
+				err = res.Scan(&runningTaskId)
+				if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+					e.logger.Err(err).Msg("cannot fetch abandoned export")
+					continue
+				}
+				if runningTaskId > 0 {
+					select {
+					case <-ctx.Done():
+						return
+					case ch <- struct{}{}:
+					}
+				}
+			}
+		}
+	}()
+
 	wg.Wait()
 }
 
@@ -148,8 +187,13 @@ func (e *taskExecutor) StartExecute(ctx context.Context) (Task, error) {
 			return nil
 		}
 
-		task = Task{Status: TaskStatusRunning, Created: now}
-		res = tx.QueryRow(ctx, "INSERT INTO export (status, created, filepath) VALUES ($1, $2, '') RETURNING id", task.Status, task.Created)
+		task = Task{
+			Status:   TaskStatusRunning,
+			Created:  now,
+			LastPing: now,
+		}
+		res = tx.QueryRow(ctx, "INSERT INTO export (status, created, last_ping, filepath) VALUES ($1, $2, $3, '') RETURNING id",
+			task.Status, task.Created, task.LastPing)
 		err = res.Scan(&task.ID)
 		return err
 	})
@@ -203,9 +247,10 @@ func (e *taskExecutor) executeLastTask(ctx context.Context) {
 		return
 	}
 
-	now := time.Now().UTC()
+	now := time.Now()
 	var lastTaskId int
-	res := pgPool.QueryRow(ctx, "UPDATE export SET started = $2 WHERE status = $1 RETURNING id", TaskStatusRunning, now)
+	res := pgPool.QueryRow(ctx, "UPDATE export SET started = $2 WHERE status = $1 AND (started IS NULL OR last_ping < $3) RETURNING id",
+		TaskStatusRunning, now.UTC(), now.Add(-abandonedInterval).UTC())
 	err = res.Scan(&lastTaskId)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		e.logger.Err(err).Msg("cannot update status")
@@ -215,15 +260,15 @@ func (e *taskExecutor) executeLastTask(ctx context.Context) {
 		return
 	}
 
-	filepath, err := e.dumpDb(ctx)
+	filepath, err := e.dumpDb(ctx, lastTaskId, pgPool)
 	status := TaskStatusSucceeded
 	if err != nil {
 		e.logger.Err(err).Msg("cannot dump tech metrics")
 		status = TaskStatusFailed
 	}
 
-	now = time.Now().UTC()
-	_, err = pgPool.Exec(ctx, "UPDATE export SET status = $2, completed = $3, filepath = $4 WHERE id = $1", lastTaskId, status, now, filepath)
+	_, err = pgPool.Exec(ctx, "UPDATE export SET status = $2, completed = $3, filepath = $4 WHERE id = $1",
+		lastTaskId, status, time.Now().UTC(), filepath)
 	if err != nil {
 		e.logger.Err(err).Msg("cannot update status")
 	}
@@ -308,12 +353,16 @@ func (e *taskExecutor) closePgPool() {
 	}
 }
 
-func (e *taskExecutor) dumpDb(ctx context.Context) (string, error) {
+func (e *taskExecutor) dumpDb(
+	ctx context.Context,
+	id int,
+	pgPool postgres.Pool,
+) (string, error) {
 	var err error
-	done := make(chan struct{})
+	reportCtx, cancel := context.WithCancel(context.Background())
 	var dumpFilepath string
 	go func() {
-		defer close(done)
+		defer cancel()
 
 		var pgConnStr string
 		pgConnStr, err = postgres.GetTechConnStr()
@@ -333,18 +382,26 @@ func (e *taskExecutor) dumpDb(ctx context.Context) (string, error) {
 		}
 
 		err = postgres.Dump(pgConnStr, dumpFilepath)
-		if err != nil {
-			return
-		}
 	}()
 
-	select {
-	case <-ctx.Done():
-		return "", nil
-	case <-done:
-		if err != nil {
-			return "", err
+	ticket := time.NewTicker(abandonedTickInterval)
+	defer ticket.Stop()
+
+	for {
+		select {
+		case <-reportCtx.Done():
+			if err != nil {
+				return "", err
+			}
+			return dumpFilepath, nil
+		case <-ctx.Done():
+			return "", ctx.Err()
+		case <-ticket.C:
+			now := time.Now().UTC()
+			_, err = pgPool.Exec(reportCtx, "UPDATE export SET last_ping = $2 WHERE id = $1", id, now)
+			if err != nil {
+				e.logger.Err(err).Msg("cannot update last ping")
+			}
 		}
-		return dumpFilepath, nil
 	}
 }

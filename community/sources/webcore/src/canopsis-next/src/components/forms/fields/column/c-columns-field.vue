@@ -1,29 +1,18 @@
 <template lang="pug">
-  div
-    column-field.my-2(
-      v-for="(column, index) in columns",
-      v-field="columns[index]",
-      :key="column.key",
-      :name="column.key",
-      :type="type",
-      :with-html="withHtml",
-      :with-template="withTemplate",
-      :with-color-indicator="withColorIndicator",
-      :disabled-up="index === 0",
-      :disabled-down="index === columns.length - 1",
-      @up="up(index)",
-      @down="down(index)",
-      @remove="removeItemFromArray(index)"
-    )
-    v-btn.mx-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
+  c-movable-card-iterator-field(v-field="columns", @add="add")
+    template(#item="{ item, index }")
+      column-field(
+        v-field="columns[index]",
+        :name="item.key",
+        :type="type",
+        :with-html="withHtml",
+        :with-template="withTemplate",
+        :with-color-indicator="withColorIndicator"
+      )
 </template>
 
 <script>
-import {
-  MODALS,
-  ENTITIES_TYPES,
-  COLOR_INDICATOR_TYPES,
-} from '@/constants';
+import { ENTITIES_TYPES } from '@/constants';
 
 import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
@@ -65,53 +54,8 @@ export default {
     },
   },
   methods: {
-    showEditTemplateModal(index) {
-      const column = this.columns[index];
-
-      this.$modals.show({
-        name: MODALS.textEditor,
-        config: {
-          text: column.template,
-          title: this.$t('settings.columns.withTemplate'),
-          label: this.$t('common.template'),
-          rules: {
-            required: true,
-          },
-          action: value => this.updateFieldInArrayItem(index, 'template', value),
-        },
-      });
-    },
-
-    switchChangeColorIndicator(index, value) {
-      return this.updateFieldInArrayItem(index, 'colorIndicator', value ? COLOR_INDICATOR_TYPES.state : null);
-    },
-
     add() {
       this.addItemIntoArray(widgetColumnToForm());
-    },
-
-    up(index) {
-      if (index > 0) {
-        const columns = [...this.columns];
-        const temp = columns[index];
-
-        columns[index] = columns[index - 1];
-        columns[index - 1] = temp;
-
-        this.updateModel(columns);
-      }
-    },
-
-    down(index) {
-      if (index < this.columns.length - 1) {
-        const columns = [...this.columns];
-        const temp = columns[index];
-
-        columns[index] = columns[index + 1];
-        columns[index + 1] = temp;
-
-        this.updateModel(columns);
-      }
     },
   },
 };

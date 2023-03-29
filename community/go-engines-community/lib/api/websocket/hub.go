@@ -42,16 +42,16 @@ type Hub interface {
 	Connect(w http.ResponseWriter, r *http.Request) error
 	// Send sends message to all listeners in room.
 	Send(room string, msg any)
+	SendGroupRoom(group, id string, msg any)
 	// RegisterRoom adds room with permissions.
 	RegisterRoom(room string, perms ...string) error
-	// CloseRoom removes room.
-	CloseRoom(room string) error
-	CloseRoomAndNotify(room string) error
-	// RoomHasConnection returns true if room listens at least one connection.
-	RoomHasConnection(room string) bool
-	// GetUsers returns users from all connections with their tokens.
-	GetUsers() map[string][]string
-	GetAuthConnectionsCount() int
+	RegisterGroup(group string, check GroupCheck, perms ...string) error
+	GetGroupIds(group string) []string
+	GetConnectedGroupIds(group string) []string
+	CloseGroupRoom(group, id string) error
+	CloseGroupRoomAndNotify(group, id string) error
+	GetUserTokens() []string
+	GetConnections() []UserConnection
 }
 
 func NewHub(
@@ -84,6 +84,12 @@ type WMessage struct {
 	Error int    `json:"error,omitempty"`
 }
 
+type UserConnection struct {
+	ID     string
+	UserID string
+	Token  string
+}
+
 type hub struct {
 	upgrader   Upgrader
 	roomsMx    sync.RWMutex
@@ -114,23 +120,12 @@ loop:
 		case <-ctx.Done():
 			break loop
 		case <-ticker.C:
-			updated := false
 			closedConns := h.pingConnections()
 			h.closeConnections(closedConns...)
-			if len(closedConns) > 0 {
-				updated = true
-			}
 
 			closedConns, connsToDisconnect := h.checkAuth(ctx)
 			h.closeConnections(closedConns...)
 			h.disconnectConnections(connsToDisconnect...)
-			if len(closedConns) > 0 || len(connsToDisconnect) > 0 {
-				updated = true
-			}
-
-			if updated {
-				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
-			}
 		}
 	}
 
@@ -182,22 +177,53 @@ func (h *hub) Send(room string, b any) {
 	})
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
-		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 	}
 }
 
+func (h *hub) SendGroupRoom(group, id string, b any) {
+	h.Send(group+id, b)
+}
+
 func (h *hub) RegisterRoom(room string, perms ...string) error {
-	defer func() {
-		h.logger.Debug().Str("room", room).Msg("register websocket room")
-	}()
+	defer h.logger.Debug().Str("room", room).Msg("register websocket room")
 	return h.authorizer.AddRoom(room, perms)
 }
 
-func (h *hub) CloseRoom(room string) error {
-	defer func() {
-		h.logger.Debug().Str("room", room).Msg("close websocket room")
-	}()
-	err := h.authorizer.RemoveRoom(room)
+func (h *hub) RegisterGroup(group string, check GroupCheck, perms ...string) error {
+	defer h.logger.Debug().Str("group", group).Msg("register websocket group")
+	return h.authorizer.AddGroup(group, perms, check)
+}
+
+func (h *hub) GetGroupIds(group string) []string {
+	return h.authorizer.GetGroupIds(group)
+}
+
+func (h *hub) GetConnectedGroupIds(group string) []string {
+	ids := h.GetGroupIds(group)
+	if len(ids) == 0 {
+		return nil
+	}
+
+	h.roomsMx.RLock()
+	defer h.roomsMx.RUnlock()
+
+	k := 0
+	for _, id := range ids {
+		room := group + id
+		if len(h.rooms[room]) > 0 {
+			ids[k] = id
+			k++
+		}
+	}
+
+	return ids[:k]
+}
+
+func (h *hub) CloseGroupRoom(group, id string) error {
+	room := group + id
+	defer h.logger.Debug().Str("room", room).Msg("close websocket room")
+
+	err := h.authorizer.RemoveGroupRoom(group, id)
 	if err != nil {
 		return err
 	}
@@ -210,89 +236,79 @@ func (h *hub) CloseRoom(room string) error {
 	return nil
 }
 
-func (h *hub) CloseRoomAndNotify(room string) error {
+func (h *hub) CloseGroupRoomAndNotify(group, id string) error {
+	room := group + id
 	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageCloseRoom,
 		Room: room,
 	})
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
-		h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 	}
 
-	return h.CloseRoom(room)
+	return h.CloseGroupRoom(group, id)
 }
 
-func (h *hub) RoomHasConnection(room string) bool {
-	h.roomsMx.RLock()
-	defer h.roomsMx.RUnlock()
-
-	return len(h.rooms[room]) > 0
-}
-
-func (h *hub) GetUsers() map[string][]string {
+func (h *hub) GetUserTokens() []string {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
-	users := make(map[string][]string)
+	tokens := make([]string, 0)
 	uniqueTokens := make(map[string]struct{}, len(h.conns))
-	for _, conn := range h.conns {
-		if conn.userId != "" {
-			if _, ok := users[conn.userId]; !ok {
-				users[conn.userId] = make([]string, 0, 1)
-			}
-			if _, ok := uniqueTokens[conn.token]; !ok {
-				users[conn.userId] = append(users[conn.userId], conn.token)
-				uniqueTokens[conn.token] = struct{}{}
-			}
-		}
-	}
-
-	return users
-}
-
-func (h *hub) GetAuthConnectionsCount() int {
-	h.connsMx.RLock()
-	defer h.connsMx.RUnlock()
-
-	uniqueTokens := make(map[string]struct{})
 	for _, conn := range h.conns {
 		if conn.token != "" {
 			if _, ok := uniqueTokens[conn.token]; !ok {
+				tokens = append(tokens, conn.token)
 				uniqueTokens[conn.token] = struct{}{}
 			}
 		}
 	}
 
-	return len(uniqueTokens)
+	return tokens
 }
 
-func (h *hub) join(connId, room string) (closed bool) {
+func (h *hub) GetConnections() []UserConnection {
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
+
+	conns := make([]UserConnection, 0, len(h.conns))
+	for connId, conn := range h.conns {
+		if conn.userId != "" {
+			conns = append(conns, UserConnection{
+				ID:     connId,
+				UserID: conn.userId,
+				Token:  conn.token,
+			})
+		}
+	}
+
+	return conns
+}
+
+func (h *hub) join(ctx context.Context, connId, room string) (closed bool) {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
 	c := h.conns[connId]
 	userId := c.userId
 	conn := c.conn
-
-	ok := h.authorizer.HasRoom(room)
-	if !ok {
-		err := conn.WriteJSON(WMessage{
-			Type:  WMessageFail,
-			Room:  room,
-			Error: http.StatusNotFound,
-		})
-		if err != nil {
-			closed = true
-			h.logger.Err(err).
-				Str("addr", conn.RemoteAddr().String()).
-				Msg("cannot write message to connection, connection will be closed")
-		}
-		return
-	}
-
-	ok, err := h.authorizer.Authorize(userId, room)
+	ok, err := h.authorizer.Authorize(ctx, userId, room)
 	if err != nil {
+		if errors.Is(err, ErrNotFoundRoom) {
+			err := conn.WriteJSON(WMessage{
+				Type:  WMessageFail,
+				Room:  room,
+				Error: http.StatusNotFound,
+			})
+			if err != nil {
+				closed = true
+				h.logger.Err(err).
+					Str("addr", conn.RemoteAddr().String()).
+					Msg("cannot write message to connection, connection will be closed")
+			}
+			return
+		}
+
 		h.logger.Err(err).Msg("cannot authorize user")
 
 		err := conn.WriteJSON(WMessage{
@@ -531,7 +547,7 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 	h.roomsMx.Lock()
 	defer h.roomsMx.Unlock()
 	for room := range h.rooms {
-		closed := h.checkRoomAuth(room, checked)
+		closed := h.checkRoomAuth(ctx, room, checked)
 		if len(closed) > 0 {
 			closedConns = append(closedConns, closed...)
 		}
@@ -540,7 +556,7 @@ func (h *hub) checkAuth(ctx context.Context) ([]string, []string) {
 	return closedConns, connsToDisconnect
 }
 
-func (h *hub) checkRoomAuth(room string, checked map[string]bool) []string {
+func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string]bool) []string {
 	roomConns := h.rooms[room]
 	authRoomConns := make([]string, 0, len(roomConns))
 	closedConns := make([]string, 0)
@@ -553,7 +569,7 @@ func (h *hub) checkRoomAuth(room string, checked map[string]bool) []string {
 		c := h.conns[connId]
 		conn := c.conn
 		userId := c.userId
-		ok, err := h.authorizer.Authorize(userId, room)
+		ok, err := h.authorizer.Authorize(ctx, userId, room)
 		if err != nil {
 			h.logger.Err(err).Msg("cannot authorize user")
 
@@ -604,7 +620,6 @@ func (h *hub) listen(connId string, conn Connection) {
 	for {
 		if closed {
 			h.closeConnections(connId)
-			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -640,7 +655,6 @@ func (h *hub) listen(connId string, conn Connection) {
 				h.disconnectConnections(connId)
 			}
 
-			h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			return
 		}
 
@@ -675,7 +689,6 @@ func (h *hub) listen(connId string, conn Connection) {
 			} else {
 				h.setConnAuth(connId, userId, msg.Token)
 				closed = h.sendToConn(connId, WMessage{Type: WMessageAuthSuccess})
-				h.Send(RoomLoggedUserCount, h.GetAuthConnectionsCount())
 			}
 		case RMessageJoin:
 			if msg.Room == "" {
@@ -686,7 +699,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 				continue
 			}
-			closed = h.join(connId, msg.Room)
+			closed = h.join(ctx, connId, msg.Room)
 		case RMessageLeave:
 			if msg.Room == "" {
 				closed = h.sendToConn(connId, WMessage{

@@ -10,17 +10,23 @@ Ce programme se situe :
 * à l'emplacement `/opt/canopsis/bin/import-context-graph` lors d'une installation par paquets.
 * dans le conteneur `pro/import-context-graph` en Docker.
 
+Le `import-context-graph` peut importer 
+
+* Des composants
+* Des ressources
+* Des services
+
 #### Table des matières
 1. [Options](#options)<br>
 2. [Variables d'environnement](#variables-denvironnement)<br>
 3. [Configuration](#configuration)<br>
-4. [Exemple](#exemple)<br>
-5. [Exécution](#execution)<br>
-6. [Résultats dans Canopsis](#resultats-dans-canopsis)
+4. [Importer des entités](#importer-des-entites)<br>
+5. [Importer des informations](#importer-des-informations-complementaires)<br>
+6. [Exécution](#execution)<br>
+7. [Résultats dans Canopsis](#resultats-dans-canopsis)
+8. [Cas d'usage complet](#cas-dusage-complet)
 
-## Utilisation
-
-### Options
+## Options
 
 | Option  | Argument                 | Description                                           |
 |---------|--------------------------|-------------------------------------------------------|
@@ -28,7 +34,7 @@ Ce programme se situe :
 | `-d`    |                          | Activer le mode debug                                 |
 | `-c`    | `/chemin/du/fichier.yml` |Indiquer le chemin complet du fichier de configuration |
 
-### Variables d'environnement
+## Variables d'environnement
 
 L'identifiant et le mot de passe de connexion à l'API sont définis via des variables d'environnement :
 
@@ -37,12 +43,13 @@ L'identifiant et le mot de passe de connexion à l'API sont définis via des var
 
 Seule l'authentification [basique](https://fr.wikipedia.org/wiki/Authentification_HTTP#M%C3%A9thode_%C2%AB_Basic_%C2%BB){target=_blank} est supportée.
 
-### Configuration
+Si votre API ne nécessite pas d'authentification, il vous suffit de ne pas spécifier ces variables d'environnement.
+
+## Configuration
 
 Le format de fichier de configuration est le YAML. Il doit être entièrement rédigé à partir du JSON retourné par l'API externe.
 
-Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example){target=_blank}.
-Un exemple donné à titre indicatif est également disponible [ci-après](#exemple).
+Un exemple de fichier de configuration est disponible sur le dépôt [Canopsis Pro](https://git.canopsis.net/sources/canopsis-pro-sources/-/tree/develop/pro/go-engines-pro/config/import-context-graph/api.yml.example){target=_blank}.
 
 Ce fichier de configuration doit comprendre trois sections :
 
@@ -50,108 +57,245 @@ Ce fichier de configuration doit comprendre trois sections :
  2. `import` qui permet de spécifier les paramètres de l'import.
  3. `mapping` qui permet de spécifier les associations entre les champs de l'entité dans Canopsis et la réponse de l'API.
 
-Concernant les types d'actions d'import :
 
-  *  `action` : Action effectuée sur l'entité reçue dans la réponse de l'API
-     *  `create` : Création de l'entité en base
-     *  `set`: La même chose que `create` mais peut être partielle si l'API ne retourne pas tous les champs
-     *  `update` : Mise à jour de l'entité en base. Si l'entité n'existe pas, aucune modification ne sera appliquée
-     *  `enable` : Active l'entité (passage à `true` du champ `enable` de l'entité en base)
-  *  `missing_action` : Action effectuée sur les entités manquantes de la réponse de l'API
-     *  `delete` : Suppression de l'entité en base
-     *  `disable` : Désactive l'entité (action inverse de l'action `enable`)
-     *  (chaîne vide) : le paramètre `missing_action` peut ne pas avoir d'action et donc ne rien faire
+### Section `api`
 
-Pour plus de détails, référez-vous à la [documentation d'import de contexte](https://doc.canopsis.net/guide-developpement/swagger/#/contextgraph-import){target=_blank} disponible dans Swagger.
+Vous définissez ici l'URL, la méthode, les entêtes, et le corps de la requête vers l'API tierce.
 
-### Exemple
+| Paramètre            | Valeur                                                                    |
+| -------------------- | ------------------------------------------------------------------------- |
+| url                  | URL de l'API à interroger                                                 | 
+| method               | Méthode HTTP (GET, POST, PUT, etc)                                        |
+| headers              | Entêtes HTTP (ex : Content-type: application/json)                        |
+| body                 | Corps de la requête sous forme de clé/valeur (ex : key: value)            |
+| insecure_skip_verify | Si `true` alors vérification de la chaine de certification et du hostname |
 
-Prenons l'exemple d'une API externe retournant le JSON ci-dessous :
+### Section `import`
 
-``` json
-[
-    {
-        "ci": "composant1",
-        "nom": "composant 1",
-        "societe": "CAPENSIS",
-        "statut": "actif",
-        "responsable": "Service technique",
-        "localisation": "DC1",
-        "commentaire": "Il s agit du composant 1",
-        "impact": 5
-    }
-]
+| Paramètre            | Valeur                                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| source         | Permet de spécifier le nom de cet import. Ce nom sera présent dans les entités importées                                     |
+| action         | Vaut `set` ou `enable`                                                                                                       |
+| missing_action | Vaut `delete` ou `disable`. Action exécutée lorsque les entités spécifiées par "source" sont absentes de la réponse de l'API |
+
+
+### Section `mapping`
+
+Dans cette section, vous pouvez définir les règles de translation entre la réponse fournie par l'API et les entités Canopsis qui vont être importées.
+
+| Paramètre            | Valeur                                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| path      | Chemin à partir duquel les données seront lues (peut être vide). <br>Par exemple, "data.nested" si la réponse est de la forme  `{"data": {"nested": [ {...}, {...} ]}}` | 
+| is_map    | Type de structure renvoyée par l'API. <br>Si la réponse de l'API est un tableau `[ {...}, {...} ]`, positionner `is_map: false`.<br> Si la réponse de l'API est une map `{"key1": {...}, "key2": {...}}`, positionner `is_map: true`. | 
+| component | Spécifie les paramètres propres aux imports de composants  |
+| resource  | Spécifie les paramètres propres aux imports de ressources  |
+| service   | Spécifie les paramètres propres aux imports de services  |
+
+
+### Importer des entités
+
+#### Composants
+
+Pour importer un composant, vous devez spécifier le champ de la réponse d'API qui sera utilisé comme nom d'entité dans Canopsis.  
+Le reste concerne [les informations complémentaires](#importer-des-informations-complementaires) à importer.
+
+Exemple :
+
+```yaml
+  component:
+    name: 
+      type: copy
+      value: external_id
+    description: 
+      type: set
+      value: external_description
 ```
 
-Le fichier de configuration avec les commentaires explicatifs :
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).
 
-``` yaml
-# Ce bloc permet de spécifier les propriétés de la requête HTTP à envoyer à l'API externe.
-api:
-  # Spécifier l'URL de l'API
-  url: http://mon.api/?filtre=filtre1
-  # Spécifier le type de requête HTTP (GET, POST, PUT etc)
-  method: GET
-  # Spécifier les en-têtes de la requête
-  headers:
-  # Le payload contient le body
-  body:
-    key: value
-  # Activer (false) ou désactiver (true) la vérification de la chaîne de certification TLS du serveur
-  insecure_skip_verify: false
+#### Ressources
 
-# Ce bloc spécifie les paramètres de l'import
-import:
-  # Définit la source de l'import à l'entité
-  source: import-context-graph
-  # Définit le type d'action à effectuer sur les entités reçues de la réponse de l'API
-  # Valeurs possibles : create, set, update, enable
-  action: create
-  # Définit le type d'action à effectuer sur les entités manquantes de la réponse de l'API
-  # Les entités manquantes sont trouvées par source d'import
-  # Valeurs possibles : delete, disable. Si rien n’est défini, les entités manquantes ne seront pas mises à jour.
-  missing_action: disable
+L'import d'une ressource nécessite de spécifier le champ de la réponse d'API qui permettra à la ressource d'être liée à un composant.
 
-# Ce bloc spécifie l'association entre les champs de l'entité et la réponse de l'API
-# Le champ _id est requis, les autres champs sont optionnels
-# Seul le JSON qui contient un tableau d'objets est pris en charge
-mapping:
-  # path spécifie le chemin d’où importer les données
-  # Par exemple, "data.nested" si la réponse est {"data": {"nested": [ {...}, {...} ]}}.
-  # Peut être vide.
-  path:
-  # is_map spécifie le type des données importées.
-  # Devrait être false si la réponse est array [ {...}, {...} ].
-  # Devrait être true si la réponse est map {"key1": {...}, "key2": {...}}.
-  is_map: false
-  # Association de l'ID de l'entité
-  _id: ci
-  # Association de la description
-  description: commentaire
-  # Association du niveau d'impact
-  impact_level: impact
-  # Association d'informations complémentaires
-  infos:
-    nom:
-      value: nom
-      description: nom
-    societe:
-      value: societe
-      description: societe
-    statut:
-      value: statut
-      description: statut
-    responsable:
-      value: responsable
-      description: responsable
+Exemple :
+
+```yaml
+  resource:
+    name:
+      type: template
+      field: external_id
+      value: '{{uppercase .Field}}'
+    description: 
+      type: copy
+      value: external_description
+    # resource mapping should contain component field in the external api response
+    component: 
+      type: copy
+      value: external_component
 ```
 
-Exemple pour ITop :
-``` yaml
-api:
-  url: http://mon.itop/webservices/rest.php?version=1.3
-  method: POST
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).  
+Le reste concerne [les informations complémentaires](#importer-des-informations-complementaires) à importer.
+
+#### Services
+
+Pour importer un service, vous devez spécifier ses dépendances au travers d'un champ de réponse de l'API.  
+C'est l'attribut `pattern` qui permet de définir cette configuration.
+
+
+Exemple, le pattern du service sera de type `is_one_of` appliqué sur l'attribut `name` et constitué de toutes les valeurs de `codeComposant` :
+
+```yaml
+service:
+  name: 
+    type: copy
+    value: codeApplication
+  description: 
+    type: copy
+    value: external_description
+  category: 
+    type: set
+    value: une_categorie_existante
+  pattern:
+    cond: is_one_of
+    field: name
+    value:
+      type: copy
+      value: codeComposant
 ```
+
+Autre exemple où le pattern vaut `infos.test` eq `infoValue` :
+
+```
+pattern:
+  cond: eq
+  field: infos.test
+  field_type: string
+  value:
+    type: template
+    field: infoValue
+    value: '{{.Field}}'
+```
+
+!!! note
+
+    La catérogie associée au service que l'on importe doit exister préalablement.
+
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).
+
+### Importer des informations complémentaires
+
+En plus des valeurs spécifiques à chaque type d'entité, vous pouvez importer des informations complémentaires.  
+il suffit de préciser dans la section `mapping` les nouvelles informations que vous souhaitez importer.  
+
+Exemple, l'API renvoie un attribut `codeEnvironnement` que vous souhaitez importer en tant que `environnement` :
+
+```yaml
+infos:
+  environnement:
+    value:
+      type: copy
+      value: env.codeEnvironnement
+    description: Environnement
+```
+
+Les différents types d'actions sont documentés dans [cette section](#les-differentes-actions).
+
+### Les différentes actions
+
+Il existe 4 moyens d'importer des informations en provenance d'API tierces :
+
+1. `set` : depuis une constante
+2. `copy` : en recopiant une réponse de l'API
+3. `template` : en appliquant un template (pouvant utiliser une réponse de l'API)
+4. `regexp` : en exécutant un groupe de capture via une expression régulière
+
+
+#### Action **set**
+
+```yaml
+infos:
+  constant:
+    value:
+      type: set
+      value: my-constant
+    description: set constant
+```
+
+Resultat:
+
+![Constant](./img/driver-api-constant.png)
+
+#### Action **copy**
+
+```yaml
+infos:
+  copy:
+    value:
+      type: copy
+      value: env.codeEnv
+    description: copy field
+```
+
+Résultat:
+
+![Copy](./img/driver-api-copy.png)
+
+#### Action **template**
+
+Pour exécuter un template, vous devez spécifier le nom du champ de la réponse d'API dans `field` et le template lui-même dans `value`.  
+La valeur du champ `field` est accessible grâce à la variable `.Field`.
+
+```yaml
+infos:
+  template:
+    value:
+      type: template
+      field: env.codeEnv
+      value: 'my template value {{ .Field }}'
+    description: execute template
+```
+
+Résultat:
+
+![Template](./img/driver-api-template.png)
+
+Il est également possible d'utiliser des fonctions dans les templates ([Liste des fonctions disponibles](../../../guide-administration/architecture-interne/templates-golang/))
+
+```yaml
+infos:
+  template:
+    value:
+      type: template
+      field: env.codeEnv
+      value: 'my template value {{ lowercase .Field }}'
+    description: execute template with function
+```
+
+Résultat:
+
+![Template-function](./img/driver-api-template-function.png)
+
+#### Action **regexp**
+
+Vous pouvez appliquer une expression régulière et utiliser des groupes de capture dans les valeurs finales.  
+Pour cela, vous devez définir l'expression regulière dans `regexp` et utiliser le résultat grâce à la variable `.RegexMatch`.
+
+```yaml
+infos:
+  regexp:
+    value:
+      type: template
+      field: test_regexp
+      regexp: CMDB:(?P<SI_CMDB>.*?)($|,)
+      value: "regexp value {{ .RegexMatch.SI_CMDB }}"
+    description: regexp example
+```
+
+Résultat:
+
+![Regexp](./img/driver-api-regexp.png)
+
 
 ### Exécution
 
@@ -160,7 +304,7 @@ api:
     
     Dans le cadre d'un usage via Docker, il est conseillé d'utiliser "[Docker Secrets](https://docs.docker.com/engine/swarm/secrets/){target=_blank}" ou une autre solution de coffre-fort.
 
-#### Programme installé par packets :
+#### Programme installé par paquets RPM :
 
 ``` shell
 export EXTERNAL_API_USERNAME=test
@@ -179,11 +323,11 @@ docker run \
 -e EXTERNAL_API_USERNAME='[testuser]' \
 -e EXTERNAL_API_PASSWORD='[testpassword]' \
 -e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb/canopsis' \
--e 'CPS_AMQP_URL=amqp://cpsrabbit:canopsis@rabbitmq/canopsis' \
+-e CPS_AMQP_URL='amqp://cpsrabbit:canopsis@rabbitmq/canopsis' \
 -e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' \
 --network=canopsis-pro_default -it --rm -v \
 "[/chemin/vers]/pro/deployment/canopsis/docker/files/api.yml:/opt/canopsis/share/config/import-context-graph/api.yml" \
-docker.canopsis.net/docker/pro/import-context-graph:'[4.5]'
+docker.canopsis.net/docker/pro/import-context-graph:'[23.04.1]'
 ```
 Retour :
 ``` shell
@@ -197,3 +341,7 @@ Retour :
 ![](./img/linked_alarm.png)
 
 ![](./img/var_alarm.png)
+
+## Cas d'usage complet
+
+[Ici](../cas-d-usage-complet/)

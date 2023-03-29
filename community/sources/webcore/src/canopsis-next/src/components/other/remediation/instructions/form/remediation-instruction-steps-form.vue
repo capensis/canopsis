@@ -2,7 +2,7 @@
   v-layout(column)
     v-flex(v-if="!steps.length", xs12)
       v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptySteps') }}
-    c-card-iterator.mb-2(
+    c-card-iterator-field.mb-2(
       v-field="steps",
       item-key="key",
       :disabled="disabled",

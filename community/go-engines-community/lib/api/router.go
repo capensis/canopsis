@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -64,7 +63,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -86,7 +84,6 @@ import (
 const baseUrl = "/api/v4"
 
 func RegisterRoutes(
-	ctx context.Context,
 	conf config.CanopsisConf,
 	router gin.IRouter,
 	security Security,
@@ -97,7 +94,7 @@ func RegisterRoutes(
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
-	pbhComputeChan chan<- libpbehavior.ComputeTask,
+	pbhComputeChan chan<- []string,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
 	runInfoManager engine.RunInfoManager,
@@ -105,11 +102,10 @@ func RegisterRoutes(
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
-	jobQueue contextgraph.JobQueue,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	scenarioPriorityIntervals action.PriorityIntervals,
 	filesRoot string,
 	websocketHub websocket.Hub,
+	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
@@ -122,7 +118,7 @@ func RegisterRoutes(
 		security.GetTokenService(),
 		security.GetTokenProviders(),
 		security.GetAuthProviders(),
-		websocketHub,
+		websocketStore,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		logger,
@@ -170,7 +166,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketHub), actionLogger, logger,
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore), actionLogger, logger,
 			metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
@@ -248,8 +244,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linkGenerator, logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, timezoneConfigProvider, logger)
+		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -298,6 +294,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.Count,
 		)
+		exportExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
 		{
 			alarmExportRouter.POST(
@@ -325,8 +322,9 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
+		entityStore := entity.NewStore(dbClient, timezoneConfigProvider)
 		entityAPI := entity.NewApi(
-			entity.NewStore(dbClient, timezoneConfigProvider),
+			entityStore,
 			exportExecutor,
 			entityCleanerTaskChan,
 			entityPublChan,
@@ -335,6 +333,7 @@ func RegisterRoutes(
 			logger,
 		)
 
+		exportExecutor.RegisterType("entity", entityStore.Export)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -568,20 +567,17 @@ func RegisterRoutes(
 			)
 			pbhTypeAuthorizeRead := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionRead, enforcer)
 			pbhTypeAuthorizeCreate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionCreate, enforcer)
+			pbhTypeAuthorizeUpdate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer)
+			pbhTypeAuthorizeDelete := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer)
 
 			typeRouter.GET("", pbhTypeAuthorizeRead, pbehaviorTypeApi.List)
 			typeRouter.POST("", pbhTypeAuthorizeCreate, pbehaviorTypeApi.Create)
-
-			pbhTypeIDGroup := typeRouter.Group("")
-			{
-				pbhTypeAuthorizeUpdate := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionUpdate, enforcer)
-				pbhTypeAuthorizeDelete := middleware.Authorize(apisecurity.ObjPbehaviorType, model.PermissionDelete, enforcer)
-
-				pbhTypeIDGroup.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeApi.Get)
-				pbhTypeIDGroup.PUT("/:id", pbhTypeAuthorizeUpdate, pbehaviorTypeApi.Update)
-				pbhTypeIDGroup.DELETE("/:id", pbhTypeAuthorizeDelete, pbehaviorTypeApi.Delete)
-			}
+			typeRouter.GET("/next-priority", pbhTypeAuthorizeRead, pbehaviorTypeApi.GetNextPriority)
+			typeRouter.GET("/:id", pbhTypeAuthorizeRead, pbehaviorTypeApi.Get)
+			typeRouter.PUT("/:id", pbhTypeAuthorizeUpdate, pbehaviorTypeApi.Update)
+			typeRouter.DELETE("/:id", pbhTypeAuthorizeDelete, pbehaviorTypeApi.Delete)
 		}
+
 		reasonRouter := protected.Group("/pbehavior-reasons")
 		{
 			reasonAPI := pbehaviorreason.NewApi(
@@ -730,7 +726,7 @@ func RegisterRoutes(
 		protected.GET(
 			"/engine-runinfo",
 			middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
-			engineinfo.GetRunInfo(ctx, runInfoManager),
+			engineinfo.GetRunInfo(runInfoManager),
 		)
 
 		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient))), enforcer, actionLogger)
@@ -1050,7 +1046,7 @@ func RegisterRoutes(
 			)
 		}
 
-		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger, scenarioPriorityIntervals)
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger)
 		scenarioRouter := protected.Group("/scenarios")
 		{
 			scenarioRouter.POST(
@@ -1080,19 +1076,9 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjAction, model.PermissionDelete, enforcer),
 				scenarioAPI.Delete,
 			)
-			scenarioRouter.GET(
-				"/minimal-priority",
-				middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
-				scenarioAPI.GetMinimalPriority,
-			)
-			scenarioRouter.POST(
-				"/check-priority",
-				middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
-				scenarioAPI.CheckPriority,
-			)
 		}
 
-		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		contextGraphRouter := protected.Group("/contextgraph")
 		{
 			contextGraphRouter.PUT(
@@ -1112,7 +1098,7 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, jobQueue, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),

@@ -946,6 +946,80 @@ periodical_alarm:
       <<: *alarm_value
       resource: test-resource-to-instruction-execution-next-step-7
 
+  alarm_to_export_1:
+    <<: *alarm
+    _id: test-alarm-to-export-1
+    d: test-resource-to-alarm-export-1/test-component-default
+    t: 1596942720
+    v:
+      <<: *alarm_value
+      resource: test-alarm-to-export-resource-1
+      creation_date: 1596942720
+      last_event_date: 1596942720
+      last_update_date: 1596942720
+      ack:
+        _t: ack
+        a: system
+        initiator: user
+        m: test-alarm-to-export-ack
+        role: admin
+        t: 1597033041
+        val: 0
+      state:
+        <<: *alarm_step
+        _t: stateinc
+        t: 1596942720
+        val: 3
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        t: 1596942720
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          t: 1596942720
+          val: 3
+        - <<: *alarm_step
+          _t: statusinc
+          t: 1596942720
+          val: 1
+        - <<: *alarm_step
+          _t: ack
+          a: system
+          initiator: user
+          t: 1597033041
+  alarm_to_export_2:
+    <<: *alarm
+    _id: test-alarm-to-export-2
+    d: test-resource-to-alarm-export-2/test-component-default
+    t: 1597030219
+    v:
+      <<: *alarm_value
+      resource: test-alarm-to-export-resource-2
+      creation_date: 1597030219
+      last_event_date: 1597030219
+      last_update_date: 1597030219
+      state:
+        <<: *alarm_step
+        _t: stateinc
+        t: 1597030219
+        val: 1
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        t: 1597030219
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          t: 1597030219
+          val: 1
+        - <<: *alarm_step
+          _t: statusinc
+          t: 1597030219
+          val: 1
+
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
     d: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
@@ -1895,117 +1969,6 @@ periodical_alarm:
       output: test-alarm-to-delete-entity-linked-to-alarm-output
       parents: [ ]
       resource: test-entitybasic-to-delete-linked-to-alarm-resource
-      total_state_changes: 1
-  periodical_alarm_50:
-    _id: test-alarm-to-export-1
-    d: test-entity-to-export-resource-1/test-entity-to-export-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      ack:
-        _t: ack
-        a: system
-        initiator: user
-        m: test-alarm-to-export-ack
-        role: admin
-        t: 1597033041
-        val: 0
-      children: [ ]
-      component: test-alarm-to-export-component
-      connector: test-alarm-to-export-connector
-      connector_name: test-alarm-to-export-connector-name
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-to-export-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: ""
-      long_output_history:
-        - ""
-      output: test-alarm-to-export-output
-      parents: [ ]
-      resource: test-alarm-to-export-resource-1
-      state:
-        _t: stateinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connector-name
-        m: test-alarm-to-export-output
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connector-name
-        m: test-alarm-to-export-output
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1596942720
-          val: 1
-        - _t: ack
-          a: system
-          initiator: user
-          m: test-alarm-to-export-ack
-          role: admin
-          t: 1597033041
-          val: 0
-      total_state_changes: 1
-  periodical_alarm_51:
-    _id: test-alarm-to-export-2
-    d: test-entity-to-export-resource-2/test-entity-to-export-component
-    t: 1597030219
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-alarm-to-export-component
-      connector: test-alarm-to-export-connector
-      connector_name: test-alarm-to-export-connector-name
-      creation_date: 1597030219
-      display_name: PU-YA-QB
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-to-export-output
-      last_event_date: 1597030219
-      last_update_date: 1597030219
-      long_output: ""
-      long_output_history:
-        - ""
-      output: test-alarm-to-export-output
-      parents: [ ]
-      resource: test-alarm-to-export-resource-2
-      state:
-        _t: stateinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-        m: test-alarm-to-export-output
-        t: 1597030219
-        val: 1
-      status:
-        _t: statusinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-        m: test-alarm-to-export-output
-        t: 1597030219
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1597030219
-          val: 1
-        - _t: statusinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1597030219
-          val: 1
       total_state_changes: 1
   periodical_alarm_57:
     _id: test-alarm-to-not-run-auto-instruction-manually
