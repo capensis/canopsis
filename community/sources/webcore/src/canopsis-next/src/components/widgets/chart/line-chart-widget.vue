@@ -34,7 +34,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { isEqual, keyBy, pick } from 'lodash';
+import { keyBy, pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
@@ -89,6 +89,11 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      widgetMetricsMap: {},
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.vectorMetrics.length;
@@ -100,10 +105,6 @@ export default {
       return minDate
         ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
         : null;
-    },
-
-    widgetMetricsMap() {
-      return keyBy(this.widget.parameters?.metrics ?? [], 'metric');
     },
 
     preparedVectorMetrics() {
@@ -128,14 +129,9 @@ export default {
         };
       }
     },
-
-    'widget.parameters': {
-      handler(parameters, oldParameters) {
-        if (!isEqual(parameters, oldParameters)) {
-          this.fetchList();
-        }
-      },
-    },
+  },
+  created() {
+    this.setWidgetMetricsMap();
   },
   methods: {
     ...mapMetricsActions({
@@ -151,8 +147,14 @@ export default {
       };
     },
 
+    setWidgetMetricsMap() {
+      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
+    },
+
     async fetchList() {
-      this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
+      await this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
+
+      this.setWidgetMetricsMap();
     },
   },
 };
