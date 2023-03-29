@@ -163,6 +163,7 @@ export const API_ROUTES = {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
     types: '/api/v4/pbehavior-types',
+    nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
     pbehaviors: '/api/v4/pbehaviors',
     bulkPbehaviors: '/api/v4/bulk/pbehaviors',
     pbehaviorComments: '/api/v4/pbehavior-comments',
@@ -182,8 +183,6 @@ export const API_ROUTES = {
   },
   scenario: {
     scenarios: '/api/v4/scenarios',
-    checkPriority: '/api/v4/scenarios/check-priority',
-    minimalPriority: '/api/v4/scenarios/minimal-priority',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',

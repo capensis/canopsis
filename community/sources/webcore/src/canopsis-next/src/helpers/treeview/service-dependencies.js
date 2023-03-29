@@ -43,6 +43,7 @@ import uid from '../uid';
 export const alarmToServiceDependency = alarm => ({
   ...alarm.entity,
 
+  state: alarm?.v?.state?.val ?? 0,
   impact_state: alarm?.impact_state,
 });
 
