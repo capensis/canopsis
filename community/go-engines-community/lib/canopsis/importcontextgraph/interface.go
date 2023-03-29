@@ -45,7 +45,8 @@ type EntityConfiguration struct {
 	OutputTemplate string                `json:"output_template" bson:"output_template,omitempty"`
 	Infos          map[string]types.Info `json:"infos" bson:"infos"`
 	Type           string                `json:"type" bson:"type" binding:"required"`
-	Category       string                `json:"category" bson:"category,omitempty"`
+	CategoryName   string                `json:"category" bson:"-"`
+	CategoryID     string                `json:"-" bson:"category,omitempty"`
 	ImpactLevel    int64                 `json:"impact_level" bson:"impact_level,omitempty"`
 	Enabled        bool                  `json:"enabled" bson:"enabled,omitempty"`
 	Action         string                `json:"action" bson:"-"`
