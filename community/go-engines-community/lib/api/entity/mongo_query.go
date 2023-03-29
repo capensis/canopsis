@@ -148,6 +148,43 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	)
 }
 
+func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
+	q.clear(now)
+
+	err := q.handleWidgetFilter(ctx, r.ListRequest, now)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleFilter(r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	beforeLimit, _ := q.createAggregationPipeline()
+
+	return beforeLimit, nil
+}
+
+func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Context, r ListRequest, now types.CpsTime) ([]bson.M, error) {
+	q.clear(now)
+
+	err := q.handleWidgetFilter(ctx, r, now)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleFilter(r)
+	if err != nil {
+		return nil, err
+	}
+	q.handleSort(r.SortRequest)
+
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+
+	pipeline := append(beforeLimit, q.sort)
+	pipeline = append(pipeline, afterLimit...)
+	return pipeline, nil
+}
+
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
 	addedComputedFields := make(map[string]bool)

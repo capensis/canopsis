@@ -119,7 +119,7 @@ Feature: Export SLI metrics
     """json
     {
       "errors": {
-        "filter": "Filter \"not-exist\" not found."
+        "filter": "Filter doesn't exist."
       }
     }
     """

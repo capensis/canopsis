@@ -4,9 +4,10 @@ package idlerule
 
 import (
 	"context"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // RuleAdapter interface is used to implement an storage adapter.
@@ -27,8 +28,8 @@ func NewRuleAdapter(client mongo.DbClient) RuleAdapter {
 }
 
 func (a *mongoAdapter) GetEnabled(ctx context.Context) ([]Rule, error) {
-	cursor, err := a.collection.Find(ctx, bson.M{"enabled": true},
-		options.Find().SetSort(bson.M{"priority": 1}))
+	pipeline := append([]bson.M{{"$match": bson.M{"enabled": true}}}, priority.GetSortPipeline()...)
+	cursor, err := a.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
