@@ -13,18 +13,16 @@ import (
 )
 
 type EditRequest struct {
-	Author       string                                        `bson:"author" json:"author" swaggerignore:"true"`
-	Description  string                                        `bson:"description" json:"description" binding:"required,max=255"`
-	Type         string                                        `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int                                           `bson:"priority" json:"priority"`
-	Enabled      bool                                          `bson:"enabled" json:"enabled"`
-	Config       eventfilter.RuleConfig                        `bson:"config" json:"config" binding:"dive"`
-	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty" binding:"dive"`
-	Created      *types.CpsTime                                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *types.CpsTime                                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Author       string                                        `json:"author" swaggerignore:"true"`
+	Description  string                                        `json:"description" binding:"required,max=255"`
+	Type         string                                        `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Priority     int64                                         `json:"priority" binding:"min=0"`
+	Enabled      bool                                          `json:"enabled"`
+	Config       eventfilter.RuleConfig                        `json:"config" binding:"dive"`
+	ExternalData map[string]eventfilter.ExternalDataParameters `json:"external_data,omitempty" binding:"dive"`
 
 	common.EntityPatternFieldsRequest
-	EventPattern pattern.Event `json:"event_pattern" bson:"event_pattern" binding:"event_pattern"`
+	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
 
 	RRule      string           `json:"rrule,omitempty"`
 	Start      *types.CpsTime   `json:"start,omitempty" swaggertype:"integer"`
@@ -38,7 +36,7 @@ type Response struct {
 	Author                           *author.Author                                `bson:"author" json:"author" swaggerignore:"true"`
 	Description                      string                                        `bson:"description" json:"description"`
 	Type                             string                                        `bson:"type" json:"type"`
-	Priority                         int                                           `bson:"priority" json:"priority"`
+	Priority                         int64                                         `bson:"priority" json:"priority"`
 	Enabled                          bool                                          `bson:"enabled" json:"enabled"`
 	Config                           eventfilter.RuleConfig                        `bson:"config" json:"config"`
 	ExternalData                     map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`

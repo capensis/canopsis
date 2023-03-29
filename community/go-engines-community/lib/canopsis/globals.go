@@ -39,7 +39,9 @@ const (
 
 	PBehaviorEngineName         = "engine-pbehavior"
 	PBehaviorRPCQueueServerName = "Engine_pbehavior_rpc_server"
+	PBehaviorQueueRecomputeName = "Engine_pbehavior_recompute"
 	PBehaviorRPCConsumerName    = "pbehavior_rpc"
+	PBehaviorConsumerName       = "pbehavior"
 
 	ServiceEngineName         = "engine-service"
 	ServiceQueueName          = "Engine_service"

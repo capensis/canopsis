@@ -56,65 +56,14 @@ export default {
     title() {
       return this.config.title ?? this.$t('modals.createScenario.create.title');
     },
-
-    scenario() {
-      return this.config?.scenario ?? {};
-    },
-
-    originalPriority() {
-      return this.scenario.priority;
-    },
-
-    isNew() {
-      return !this.scenario._id;
-    },
-  },
-  mounted() {
-    if (this.isNew) {
-      this.setMinimalPriority();
-    }
   },
   methods: {
-    async setMinimalPriority() {
-      const { priority } = await this.fetchMinimalScenarioPriority();
-
-      this.form.priority = priority;
-    },
-
-    showConfirmScenarioPriorityChange(priority) {
-      return new Promise((resolve) => {
-        this.$modals.show({
-          name: MODALS.confirmation,
-          dialogProps: { persistent: true },
-          config: {
-            text: this.$t('scenario.errors.priorityExist', { priority }),
-            action: () => {
-              this.form.priority = priority;
-
-              resolve();
-            },
-            cancel: resolve,
-          },
-        });
-      });
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         try {
           if (this.config.action) {
-            if (this.isNew || this.form.priority !== this.originalPriority) {
-              const { valid, recommended_priority: recommendedPriority } = await this.checkScenarioPriority({
-                data: { priority: this.form.priority },
-              });
-
-              if (!valid) {
-                await this.showConfirmScenarioPriorityChange(recommendedPriority);
-              }
-            }
-
             await this.config.action(formToScenario(this.form, this.$system.timezone));
           }
 
