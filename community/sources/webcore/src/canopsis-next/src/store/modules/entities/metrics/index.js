@@ -22,7 +22,7 @@ export default {
     },
 
     createKpiAlarmAggregateExport(context, { data }) {
-      return request.post(API_ROUTES.metrics.exportAggregate, null, { params: data });
+      return request.post(API_ROUTES.metrics.exportAggregate, data);
     },
 
     createKpiRatingExport(context, { data }) {
