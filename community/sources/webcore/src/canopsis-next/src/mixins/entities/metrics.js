@@ -8,6 +8,7 @@ export const entitiesMetricsMixin = {
       fetchSliMetricsWithoutStore: 'fetchSliMetricsWithoutStore',
       fetchRatingMetricsWithoutStore: 'fetchRatingMetricsWithoutStore',
       fetchAlarmsMetricsWithoutStore: 'fetchAlarmsMetricsWithoutStore',
+      fetchAggregateMetrics: 'fetchAggregateMetrics',
       createKpiAlarmExport: 'createKpiAlarmExport',
       createKpiRatingExport: 'createKpiRatingExport',
       createKpiSliExport: 'createKpiSliExport',

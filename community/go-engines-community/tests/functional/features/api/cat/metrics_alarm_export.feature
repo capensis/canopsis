@@ -20,7 +20,7 @@ Feature: Export alarm metrics
     metric,timestamp,value
     created_alarms,{{ parseTime "20-11-2021 00:00" }},0
     created_alarms,{{ parseTime "21-11-2021 00:00" }},1
-    created_alarms,{{ parseTime "22-11-2021 00:00" }},0
+    created_alarms,{{ parseTime "22-11-2021 00:00" }},3
     created_alarms,{{ parseTime "23-11-2021 00:00" }},3
     created_alarms,{{ parseTime "24-11-2021 00:00" }},0
 
@@ -66,7 +66,7 @@ Feature: Export alarm metrics
     metric,timestamp,value
     created_alarms,{{ parseTime "20-11-2021 00:00" }},0
     created_alarms,{{ parseTime "21-11-2021 00:00" }},0
-    created_alarms,{{ parseTime "22-11-2021 00:00" }},0
+    created_alarms,{{ parseTime "22-11-2021 00:00" }},3
     created_alarms,{{ parseTime "23-11-2021 00:00" }},2
     created_alarms,{{ parseTime "24-11-2021 00:00" }},0
 
@@ -93,7 +93,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "filter": "Filter \"not-exist\" not found."
+        "filter": "Filter doesn't exist."
       }
     }
     """
@@ -103,7 +103,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "Parameter \"not-exist\" is not supported."
+        "parameters.0": "Parameter doesn't exist."
       }
     }
     """
@@ -113,7 +113,7 @@ Feature: Export alarm metrics
     """json
     {
       "errors": {
-        "parameter.0": "Parameter \"total_user_activity\" is not supported."
+        "parameters.0": "Parameter doesn't exist."
       }
     }
     """

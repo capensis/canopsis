@@ -1,28 +1,13 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 
 import KpiAlarmsChart from '@/components/other/kpi/charts/partials/kpi-alarms-chart';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'kpi-chart-export-actions': true,
 };
-
-const snapshotFactory = (options = {}) => mount(KpiAlarmsChart, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
 
 describe('kpi-alarms-chart', () => {
   const metricsInPercentByHour = [
@@ -187,6 +172,16 @@ describe('kpi-alarms-chart', () => {
       value: 2312,
     },
   ];
+
+  const snapshotFactory = generateRenderer(KpiAlarmsChart, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Export csv event emitted', async () => {
     const exportCsv = jest.fn();

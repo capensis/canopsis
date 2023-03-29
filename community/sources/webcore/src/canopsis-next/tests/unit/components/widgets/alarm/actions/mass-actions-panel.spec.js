@@ -656,6 +656,52 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
+  it('Comment modal showed after trigger snooze action', () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items,
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const commentAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
+
+    commentAction.trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.createCommentEvent,
+        config: {
+          items,
+          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    config.afterSubmit();
+
+    const clearItemsEvent = wrapper.emitted('clear:items');
+
+    expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
   it('Renders `mass-actions-panel` with empty items', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([

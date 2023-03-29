@@ -2,9 +2,12 @@ package entity
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -18,6 +21,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
+	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 }
 
 type store struct {
@@ -330,6 +334,48 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 	}
 
 	return nil, nil
+}
+
+func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
+	r := BaseFilterRequest{}
+	err := json.Unmarshal([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+		BaseFilterRequest: r,
+		SearchBy:          t.Fields.Fields(),
+	}, now)
+	if err != nil {
+		return nil, err
+	}
+
+	project := make(bson.M, len(t.Fields))
+	for _, field := range t.Fields {
+		found := false
+		for anotherField := range project {
+			if strings.HasPrefix(field.Name, anotherField) {
+				found = true
+				break
+			} else if strings.HasPrefix(anotherField, field.Name) {
+				delete(project, anotherField)
+				break
+			}
+		}
+		if !found {
+			project[field.Name] = 1
+		}
+	}
+	pipeline = append(pipeline, bson.M{"$project": project})
+
+	cursor, err := s.mainCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
 }
 
 func (s *store) fillConnectorType(result *AggregationResult) {

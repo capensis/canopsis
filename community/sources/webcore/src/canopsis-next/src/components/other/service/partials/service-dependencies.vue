@@ -41,11 +41,11 @@
       tr
         td(v-for="(header, index) in headers", :key="header.value")
           c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
-          color-indicator-wrapper(
+          service-dependencies-entity-cell(
             v-else-if="item.entity",
-            :entity="item.entity",
-            :type="header.colorIndicator"
-          ) {{ item | get(header.value) }}
+            :item="item",
+            :column="header"
+           )
 </template>
 
 <script>
@@ -56,6 +56,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import {
   MODALS,
   ENTITY_TYPES,
+  ENTITY_FIELDS,
   COLOR_INDICATOR_TYPES,
 } from '@/constants';
 
@@ -70,10 +71,10 @@ import {
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
-import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
+import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
 
 export default {
-  components: { ColorIndicatorWrapper },
+  components: { ServiceDependenciesEntityCell },
   mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
@@ -139,7 +140,10 @@ export default {
       return [
         { sortable: false, text: '', value: 'no-events-icon' },
 
-        ...this.columns,
+        ...this.columns.map(column => ({
+          ...column,
+          isState: column.value?.endsWith(ENTITY_FIELDS.state),
+        })),
       ];
     },
 

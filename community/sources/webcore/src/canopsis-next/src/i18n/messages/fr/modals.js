@@ -265,6 +265,18 @@ export default {
       [WIDGET_TYPES.map]: {
         title: 'Cartographie',
       },
+      [WIDGET_TYPES.barChart]: {
+        title: 'Histogramme',
+      },
+      [WIDGET_TYPES.lineChart]: {
+        title: 'Graphique en ligne',
+      },
+      [WIDGET_TYPES.pieChart]: {
+        title: 'Diagramme circulaire',
+      },
+      [WIDGET_TYPES.numbers]: {
+        title: 'Nombres',
+      },
     },
   },
   manageHistogramGroups: {

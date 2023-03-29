@@ -17,7 +17,8 @@
         :label="fieldLabel",
         :name="limitFieldName",
         :disabled="!value.enabled",
-        :required="value.enabled"
+        :required="value.enabled",
+        :min="min"
       )
     v-flex(xs9)
       v-messages(:value="errors.collect(name)", color="error")
@@ -50,6 +51,10 @@ export default {
     name: {
       type: String,
       default: 'limit',
+    },
+    min: {
+      type: Number,
+      required: false,
     },
   },
   computed: {
