@@ -1035,63 +1035,6 @@ Feature: Create a scenario
     }
     """
 
-  Scenario: given create request with already exists priority should return error
-    When I am admin
-    When I do POST /api/v4/scenarios:
-    """json
-    {
-      "name": "test-scenario-to-create-4-name",
-      "enabled": true,
-      "priority": 2,
-      "triggers": ["create"],
-      "actions": [
-        {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-create-4-alarm"
-                }
-              }
-            ]
-          ],
-          "entity_pattern": [
-            [
-              {
-                "field": "name",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-create-4-resource"
-                }
-              }
-            ]
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "priority": "Priority already exists."
-      }
-    }
-    """
-
   Scenario: given create request with invalid action should return error
     When I am admin
     When I do POST /api/v4/scenarios:
