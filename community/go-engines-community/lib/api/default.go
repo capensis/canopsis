@@ -181,6 +181,7 @@ func Default(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
+			logger,
 		),
 		logger,
 	)
