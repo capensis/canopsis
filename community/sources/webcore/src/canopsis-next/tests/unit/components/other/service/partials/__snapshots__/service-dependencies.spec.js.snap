@@ -68,7 +68,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                       <span
                         class="px-2 body-2 font-weight-bold"
                       >
-
+                        
                       </span>
                     </span>
                   </span>
