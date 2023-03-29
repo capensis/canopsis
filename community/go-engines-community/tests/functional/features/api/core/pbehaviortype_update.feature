@@ -113,13 +113,12 @@ Feature: Update a pbehavior type
     }
     """
 
-  Scenario: given update request with already exists priority and name should return error
+  Scenario: given update request with already name should return error
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-type-to-update:
     """json
     {
-      "name": "Some State",
-      "priority": 4
+      "name": "Some State"
     }
     """
     Then the response code should be 400
@@ -127,8 +126,7 @@ Feature: Update a pbehavior type
     """json
     {
       "errors": {
-        "name": "Name already exists.",
-        "priority": "Priority already exists."
+        "name": "Name already exists."
       }
     }
     """

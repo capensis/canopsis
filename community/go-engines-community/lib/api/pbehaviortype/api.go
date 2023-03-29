@@ -13,6 +13,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
+type API interface {
+	common.CrudAPI
+	GetNextPriority(c *gin.Context)
+}
+
 type api struct {
 	store        Store
 	transformer  ModelTransformer
@@ -27,7 +32,7 @@ func NewApi(
 	computeChan chan<- []string,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
-) common.CrudAPI {
+) API {
 	return &api{
 		transformer:  transformer,
 		store:        store,
@@ -48,7 +53,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	types, err := a.store.Find(c.Request.Context(), r)
+	types, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +70,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} pbehavior.Type
 func (a *api) Get(c *gin.Context) {
-	pt, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	pt, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +93,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	pt := a.transformer.TransformCreateRequestToModel(request)
-	if err := a.store.Insert(c.Request.Context(), pt); err != nil {
+	if err := a.store.Insert(c, pt); err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -131,7 +136,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	pt := a.transformer.TransformUpdateRequestToModel(request)
-	ok, err := a.store.Update(c.Request.Context(), c.Param("id"), pt)
+	ok, err := a.store.Update(c, c.Param("id"), pt)
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
@@ -167,7 +172,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
@@ -193,6 +198,17 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// GetNextPriority
+// @Success 200 {object} PriorityResponse
+func (a *api) GetNextPriority(c *gin.Context) {
+	priority, err := a.store.GetNextPriority(c)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, PriorityResponse{Priority: priority})
 }
 
 func (a *api) sendComputeTask() {
