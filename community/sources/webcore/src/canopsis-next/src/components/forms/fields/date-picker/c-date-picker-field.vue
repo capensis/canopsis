@@ -12,6 +12,7 @@
     template(#activator="{ on }")
       v-text-field(
         v-on="on",
+        :class="contentClass",
         :value="value | date(format)",
         :label="label",
         :error="error",
@@ -102,6 +103,10 @@ export default {
     clearable: {
       type: Boolean,
       default: false,
+    },
+    contentClass: {
+      type: String,
+      required: false,
     },
   },
   data() {

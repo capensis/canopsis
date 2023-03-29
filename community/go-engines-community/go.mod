@@ -2,7 +2,7 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 
 // Needs to be synced with .env:GOLANG_VERSION and go.mod from Pro
 // Only two integers are allowed here (https://golang.org/ref/mod#go-mod-file-go)
-go 1.19
+go 1.20
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
@@ -24,9 +24,9 @@ require (
 	github.com/dlclark/regexp2 v1.7.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-ldap/ldap/v3 v3.4.4
-	github.com/go-playground/locales v0.14.0
-	github.com/go-playground/universal-translator v0.18.0
-	github.com/go-playground/validator/v10 v10.11.1
+	github.com/go-playground/locales v0.14.1
+	github.com/go-playground/universal-translator v0.18.1
+	github.com/go-playground/validator/v10 v10.11.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.5.9
@@ -36,17 +36,17 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/json-iterator/go v1.1.12
 	github.com/mailru/easyjson v0.7.7
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	github.com/russellhaering/gosaml2 v0.8.1
 	github.com/russellhaering/goxmldsig v1.2.0
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/teambition/rrule-go v1.8.0
 	github.com/tidwall/pretty v1.1.0 // indirect
-	github.com/valyala/fastjson v1.6.3
+	github.com/valyala/fastjson v1.6.4
 	go.mongodb.org/mongo-driver v1.11.1
-	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
-	golang.org/x/text v0.4.0
+	golang.org/x/sync v0.1.0
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/text v0.8.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -59,14 +59,14 @@ require (
 )
 
 require (
-	github.com/dop251/goja v0.0.0-20230203172422-5460598cfa32
+	github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
 	github.com/goccy/go-yaml v1.9.5
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/jackc/pgconn v1.13.0
 	github.com/jackc/pgproto3/v2 v2.3.1
-	github.com/pelletier/go-toml/v2 v2.0.5
+	github.com/pelletier/go-toml/v2 v2.0.7
 	github.com/rabbitmq/amqp091-go v1.5.0
 )
 
@@ -84,6 +84,7 @@ require (
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
@@ -117,8 +118,8 @@ require (
 	github.com/xdg-go/stringprep v1.0.3 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
+	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
