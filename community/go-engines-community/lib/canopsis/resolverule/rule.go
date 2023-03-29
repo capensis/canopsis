@@ -16,7 +16,7 @@ type Rule struct {
 	Duration          types.DurationWithUnit       `bson:"duration"`
 	OldAlarmPatterns  oldpattern.AlarmPatternList  `bson:"old_alarm_patterns,omitempty"`
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty"`
-	Priority          int                          `bson:"priority"`
+	Priority          int64                        `bson:"priority"`
 	Author            string                       `bson:"author"`
 	Created           types.CpsTime                `bson:"created,omitempty"`
 	Updated           types.CpsTime                `bson:"updated,omitempty"`

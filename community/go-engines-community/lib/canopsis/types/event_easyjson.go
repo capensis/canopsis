@@ -1157,6 +1157,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "pbehavior_info":
 			easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes5(in, &out.PbehaviorInfo)
+		case "last_pbehavior_date":
+			if in.IsNull() {
+				in.Skip()
+				out.LastPbehaviorDate = nil
+			} else {
+				if out.LastPbehaviorDate == nil {
+					out.LastPbehaviorDate = new(CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.LastPbehaviorDate).UnmarshalJSON(data))
+				}
+			}
 		case "sli_avail_state":
 			out.SliAvailState = int64(in.Int64())
 		case "soft_deleted":
@@ -1349,6 +1361,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"pbehavior_info\":"
 		out.RawString(prefix)
 		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes5(out, in.PbehaviorInfo)
+	}
+	if in.LastPbehaviorDate != nil {
+		const prefix string = ",\"last_pbehavior_date\":"
+		out.RawString(prefix)
+		out.Raw((*in.LastPbehaviorDate).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"sli_avail_state\":"
