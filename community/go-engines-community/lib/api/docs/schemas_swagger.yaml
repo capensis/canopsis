@@ -798,6 +798,8 @@ definitions:
         type: string
       info:
         type: string
+      last_ping:
+        type: string
       source:
         type: string
       stats:
@@ -1481,8 +1483,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1513,6 +1513,7 @@ definitions:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
         type: integer
       rrule:
         type: string
@@ -1527,8 +1528,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - _id
     - description
@@ -1542,8 +1541,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1574,6 +1571,7 @@ definitions:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
         type: integer
       rrule:
         type: string
@@ -1588,8 +1586,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - description
     - type
@@ -1713,8 +1709,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1745,6 +1739,7 @@ definitions:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
         type: integer
       rrule:
         type: string
@@ -1759,8 +1754,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - description
     - type
@@ -1865,12 +1858,12 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
     - freq_limit
     - name
-    - priority
     type: object
   flappingrule.Response:
     properties:
@@ -1946,12 +1939,12 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
     - freq_limit
     - name
-    - priority
     type: object
   idlerule.BulkDeleteRequestItem:
     properties:
@@ -2001,6 +1994,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -2009,7 +2003,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.CreateRequest:
@@ -2053,6 +2046,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -2060,7 +2054,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.EditRequest:
@@ -2102,6 +2095,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -2109,7 +2103,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.Operation:
@@ -3185,6 +3178,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 1
         type: integer
       type:
         enum:
@@ -3200,6 +3194,11 @@ definitions:
     - name
     - priority
     - type
+    type: object
+  pbehaviortype.PriorityResponse:
+    properties:
+      priority:
+        type: integer
     type: object
   pbehaviortype.Type:
     properties:
@@ -3236,6 +3235,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 1
         type: integer
       type:
         enum:
@@ -3428,6 +3428,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
@@ -3504,6 +3505,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
@@ -3703,6 +3705,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3742,20 +3745,6 @@ definitions:
     - name
     - triggers
     type: object
-  scenario.CheckPriorityRequest:
-    properties:
-      priority:
-        type: integer
-    required:
-    - priority
-    type: object
-  scenario.CheckPriorityResponse:
-    properties:
-      recommended_priority:
-        type: integer
-      valid:
-        type: boolean
-    type: object
   scenario.CreateRequest:
     properties:
       _id:
@@ -3779,6 +3768,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3838,6 +3828,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3875,11 +3866,6 @@ definitions:
     - enabled
     - name
     - triggers
-    type: object
-  scenario.GetMinimalPriorityResponse:
-    properties:
-      priority:
-        type: integer
     type: object
   scenario.Parameters:
     properties:

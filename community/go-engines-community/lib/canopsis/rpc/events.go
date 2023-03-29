@@ -57,11 +57,41 @@ type WebhookEvent struct {
 	Execution string `json:"execution"`
 }
 
+type PbehaviorRecomputeEvent struct {
+	Ids []string `json:"ids"`
+}
+
+type PbehaviorEvent struct {
+	Alarm  *types.Alarm        `json:"alarm"`
+	Entity *types.Entity       `json:"entity"`
+	Params PbehaviorParameters `json:"params"`
+}
+
+type PbehaviorParameters struct {
+	Author         string                  `json:"author"`
+	UserID         string                  `json:"user"`
+	Name           string                  `json:"name"`
+	Reason         string                  `json:"reason"`
+	Type           string                  `json:"type"`
+	RRule          string                  `json:"rrule"`
+	Tstart         *types.CpsTime          `json:"tstart,omitempty"`
+	Tstop          *types.CpsTime          `json:"tstop,omitempty"`
+	StartOnTrigger *bool                   `json:"start_on_trigger,omitempty"`
+	Duration       *types.DurationWithUnit `json:"duration,omitempty"`
+}
+
+type PbehaviorResultEvent struct {
+	Alarm    *types.Alarm  `json:"alarm"`
+	Entity   *types.Entity `json:"entity"`
+	PbhEvent types.Event   `json:"event"`
+	Error    *Error        `json:"error"`
+}
+
 type Error struct {
 	Error error
 }
 
-func (e Error) MarshalJSON() ([]byte, error) {
+func (e *Error) MarshalJSON() ([]byte, error) {
 	return json.Marshal(e.Error.Error())
 }
 

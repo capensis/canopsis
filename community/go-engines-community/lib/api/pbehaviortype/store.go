@@ -2,10 +2,12 @@ package pbehaviortype
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	libpriority "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -22,6 +24,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Type, error)
 	Update(ctx context.Context, id string, model *Type) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	GetNextPriority(ctx context.Context) (int64, error)
 }
 
 type store struct {
@@ -121,66 +124,114 @@ func (s *store) Insert(ctx context.Context, pt *Type) error {
 		pt.ID = utils.NewID()
 	}
 
-	_, err := s.dbCollection.InsertOne(ctx, pt)
+	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
-		if mongodriver.IsDuplicateKeyError(err) {
-			return ErrorDuplicatePriority
-		}
-
 		return err
 	}
 
-	return nil
+	for _, p := range prioritiesOfDefaultTypes {
+		if p == pt.Priority {
+			return common.NewValidationError("priority", "Priority is taken by default type.")
+		}
+	}
+
+	return s.db.WithTransaction(ctx, func(ctx context.Context) error {
+		err := libpriority.UpdateFollowing(ctx, s.dbCollection, pt.ID, pt.Priority)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, pt)
+		return err
+	})
 }
 
 // Update pbehavior type.
 func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
-	isDefault, err := s.IsDefault(ctx, id)
+	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return false, err
 	}
-	if pt.IconName == "" && (!isDefault || pt.Type != pbehavior.TypeActive) {
-		return false, common.NewValidationError("icon_name", "IconName is missing.")
-	}
-	if isDefault {
-		filter := bson.M{
-			"_id":         id,
-			"name":        pt.Name,
-			"description": pt.Description,
-			"type":        pt.Type,
-			"priority":    pt.Priority,
-			"icon_name":   pt.IconName,
-		}
-		if pt.IconName == "" {
-			filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
-		}
-		result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{
-			"color": pt.Color,
-		}})
+
+	pt.ID = id
+	updated := false
+	err = s.db.WithTransaction(ctx, func(ctx context.Context) error {
+		updated = false
+
+		var oldType Type
+		err = s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&oldType)
 		if err != nil {
-			return false, err
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
 		}
 
-		if result.MatchedCount == 0 {
-			return false, ErrDefaultType
+		isDefault := false
+		for _, priority := range prioritiesOfDefaultTypes {
+			if oldType.Priority == priority {
+				isDefault = true
+				break
+			}
 		}
 
-		return true, nil
-	}
+		if pt.IconName == "" && (!isDefault || pt.Type != pbehavior.TypeActive) {
+			return common.NewValidationError("icon_name", "IconName is missing.")
+		}
 
-	if pt.ID != id {
-		pt.ID = id
-	}
-	result, err := s.dbCollection.ReplaceOne(ctx, bson.M{"_id": id}, pt)
-	if err != nil {
-		return false, err
-	}
-	return result.MatchedCount > 0, nil
+		if isDefault {
+			filter := bson.M{
+				"_id":         id,
+				"name":        pt.Name,
+				"description": pt.Description,
+				"type":        pt.Type,
+				"priority":    pt.Priority,
+				"icon_name":   pt.IconName,
+			}
+			if pt.IconName == "" {
+				filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
+			}
+			result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{
+				"color": pt.Color,
+			}})
+			if err != nil {
+				return err
+			}
+
+			if result.MatchedCount == 0 {
+				return ErrDefaultType
+			}
+
+			updated = true
+			return nil
+		}
+
+		for _, priority := range prioritiesOfDefaultTypes {
+			if pt.Priority == priority {
+				return common.NewValidationError("priority", "Priority is taken by default type.")
+			}
+		}
+
+		err := libpriority.UpdateFollowing(ctx, s.dbCollection, pt.ID, pt.Priority)
+		if err != nil {
+			return err
+		}
+
+		result, err := s.dbCollection.ReplaceOne(ctx, bson.M{"_id": id}, pt)
+		if err != nil {
+			return err
+		}
+
+		updated = result.MatchedCount > 0
+		return nil
+	})
+
+	return updated, err
 }
 
 // Delete pbehavior type by id
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	isDefault, err := s.IsDefault(ctx, id)
+	isDefault, err := s.isDefault(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -212,6 +263,30 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	r, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 
 	return r > 0, err
+}
+
+func (s *store) GetNextPriority(ctx context.Context) (int64, error) {
+	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+		{"$group": bson.M{
+			"_id":      nil,
+			"priority": bson.M{"$max": "$priority"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+	res := struct {
+		Priority int64 `bson:"priority"`
+	}{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return res.Priority + 1, nil
 }
 
 // isLinkedToPbehavior checks if there is pbehavior with linked type.
@@ -263,33 +338,31 @@ func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	return false, nil
 }
 
-func (s *store) IsDefault(ctx context.Context, id string) (bool, error) {
+func (s *store) isDefault(ctx context.Context, id string) (bool, error) {
 	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return false, err
 	}
 
-	res := s.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if err := res.Err(); err == nil {
-		var pbhType Type
-		err = res.Decode(&pbhType)
-		if err != nil {
-			return false, err
+	var pbhType Type
+	err = s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&pbhType)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, nil
 		}
-
-		for _, priority := range prioritiesOfDefaultTypes {
-			if pbhType.Priority == priority {
-				return true, nil
-			}
-		}
-	} else if err != mongodriver.ErrNoDocuments {
 		return false, err
+	}
+
+	for _, priority := range prioritiesOfDefaultTypes {
+		if pbhType.Priority == priority {
+			return true, nil
+		}
 	}
 
 	return false, nil
 }
 
-func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) {
+func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int64, error) {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$group": bson.M{
 			"_id":      "$type",
@@ -301,15 +374,14 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 	}
 
 	var doc []struct {
-		Type     string `bson:"_id"`
-		Priority int    `bson:"priority"`
+		Priority int64 `bson:"priority"`
 	}
 	err = cursor.All(ctx, &doc)
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]int, len(doc))
+	res := make([]int64, len(doc))
 	i := 0
 	for _, d := range doc {
 		res[i] = d.Priority
@@ -319,7 +391,7 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 	return res, nil
 }
 
-func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
+func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int64) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,

@@ -13,7 +13,7 @@ type EditRequest struct {
 	Name        string                 `json:"name" binding:"required,max=255"`
 	Description string                 `json:"description" binding:"max=255"`
 	Duration    types.DurationWithUnit `json:"duration" binding:"required"`
-	Priority    int                    `json:"priority" binding:"required,gt=0"`
+	Priority    int64                  `json:"priority" binding:"required,min=0"`
 	Author      string                 `json:"author" swaggerignore:"true"`
 
 	common.AlarmPatternFieldsRequest
@@ -37,7 +37,7 @@ type Response struct {
 	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
 	OldAlarmPatterns  oldpattern.AlarmPatternList  `bson:"old_alarm_patterns" json:"old_alarm_patterns"`
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns" json:"old_entity_patterns"`
-	Priority          int                          `bson:"priority" json:"priority"`
+	Priority          int64                        `bson:"priority" json:"priority"`
 	Author            *author.Author               `bson:"author" json:"author"`
 	Created           types.CpsTime                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated           types.CpsTime                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
