@@ -60,7 +60,7 @@ type FilterRequest struct {
 	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
-func (r FilterRequest) GetOpenedFilter() int {
+func (r BaseFilterRequest) GetOpenedFilter() int {
 	if r.Opened == nil {
 		return OpenedAndRecentResolved
 	}
@@ -185,10 +185,14 @@ type ChildrenDetails struct {
 }
 
 type ExportRequest struct {
+	ExportFetchParameters
+	Fields    export.Fields `json:"fields"`
+	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+}
+
+type ExportFetchParameters struct {
 	BaseFilterRequest
-	Fields     export.Fields `json:"fields"`
-	Separator  string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
-	TimeFormat string        `json:"time_format" binding:"time_format"`
+	TimeFormat string `json:"time_format" binding:"time_format"`
 }
 
 type ExportResponse struct {
@@ -197,7 +201,7 @@ type ExportResponse struct {
 	//   * `0` - Running
 	//   * `1` - Succeeded
 	//   * `2` - Failed
-	Status int `json:"status"`
+	Status int64 `json:"status"`
 }
 
 type Alarm struct {
