@@ -914,6 +914,15 @@ definitions:
       name:
         type: string
     type: object
+  entity.CleanRequest:
+    properties:
+      archive:
+        type: boolean
+      archive_dependencies:
+        type: boolean
+    required:
+    - archive
+    type: object
   entity.ContextGraphResponse:
     properties:
       depends:
