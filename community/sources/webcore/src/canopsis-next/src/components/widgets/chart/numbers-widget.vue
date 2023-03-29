@@ -32,8 +32,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { isEqual } from 'lodash';
-import { isRatioMetric } from '@/helpers/metrics';
+import { pick } from 'lodash';
+
 import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -91,15 +91,6 @@ export default {
       return !!this.aggregatedMetrics.length;
     },
   },
-  watch: {
-    'widget.parameters': {
-      handler(parameters, oldParameters) {
-        if (!isEqual(parameters, oldParameters)) {
-          this.fetchList();
-        }
-      },
-    },
-  },
   methods: {
     ...mapMetricsActions({
       createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
@@ -109,12 +100,7 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-
-        parameters: this.widget.parameters.metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
-          metric,
-          aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
-        })),
-        sampling: this.query.sampling,
+        ...pick(this.query, ['parameters', 'sampling']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },

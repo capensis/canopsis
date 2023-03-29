@@ -34,7 +34,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { isEqual } from 'lodash';
+import { pick } from 'lodash';
+
 import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -102,15 +103,6 @@ export default {
       }, {});
     },
   },
-  watch: {
-    'widget.parameters': {
-      handler(parameters, oldParameters) {
-        if (!isEqual(parameters, oldParameters)) {
-          this.fetchList();
-        }
-      },
-    },
-  },
   methods: {
     ...mapMetricsActions({
       createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
@@ -120,12 +112,7 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-
-        parameters: this.widget.parameters.metrics.map(({ metric }) => ({
-          metric,
-          aggregate_func: this.widget.parameters.aggregate_func,
-        })),
-        sampling: this.query.sampling,
+        ...pick(this.query, ['parameters', 'sampling']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
