@@ -83,13 +83,14 @@ export const filterPatternsToForm = (
  *
  * @param {Object} [filter = {}]
  * @param {Array} [fields]
+ * @param {Array} [oldFields]
  * @returns {FilterForm}
  */
-export const filterToForm = (filter = {}, fields) => ({
+export const filterToForm = (filter = {}, fields, oldFields) => ({
   title: filter.title ?? '',
   old_mongo_query: filter.old_mongo_query,
   is_private: filter.is_private ?? false,
-  ...filterPatternsToForm(filter, fields),
+  ...filterPatternsToForm(filter, fields, oldFields),
 });
 
 /**
