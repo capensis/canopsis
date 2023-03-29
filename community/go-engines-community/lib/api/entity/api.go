@@ -191,6 +191,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.File(t.File)
 }
 
+// Clean
+// @Param body body CleanRequest true "body"
 func (a *api) Clean(c *gin.Context) {
 	var r CleanRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
