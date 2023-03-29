@@ -34,6 +34,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import { isEqual } from 'lodash';
 import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -99,6 +100,15 @@ export default {
 
         return acc;
       }, {});
+    },
+  },
+  watch: {
+    'widget.parameters': {
+      handler(parameters, oldParameters) {
+        if (!isEqual(parameters, oldParameters)) {
+          this.fetchList();
+        }
+      },
     },
   },
   methods: {
