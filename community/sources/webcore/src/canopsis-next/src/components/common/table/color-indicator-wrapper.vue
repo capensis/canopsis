@@ -42,7 +42,9 @@ export default {
     },
 
     state() {
-      return this.alarm?.v?.state?.val ?? 0;
+      return this.alarm?.v?.state?.val
+        ?? this.entity?.state
+        ?? 0;
     },
 
     impactState() {
