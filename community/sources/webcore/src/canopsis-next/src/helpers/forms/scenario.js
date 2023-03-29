@@ -34,7 +34,7 @@ import { enabledToForm } from './shared/common';
  */
 export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) => ({
   name: scenario.name || '',
-  priority: scenario.priority || 1,
+  priority: scenario.priority,
   enabled: enabledToForm(scenario.enabled),
   delay: scenario.delay
     ? durationToForm(scenario.delay)

@@ -8,12 +8,6 @@ import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
  */
 
 /**
- * @typedef {Object} Interval
- * @property {number} from
- * @property {number} to
- */
-
-/**
  * Convert timestamps/Date to moment
  *
  * @param {LocalDate} date

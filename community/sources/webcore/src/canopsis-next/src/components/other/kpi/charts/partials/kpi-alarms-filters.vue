@@ -4,7 +4,7 @@
       c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minFromTimestamp")
       c-sampling-field.mr-4.kpi-alarms-toolbar__sampling(:value="query.sampling", @input="updateSampling")
       c-filter-field.mr-4.kpi-alarms-toolbar__filters(v-field="query.filter")
-      c-alarm-metric-parameters-field.kpi-alarms-toolbar__parameters(v-field="query.parameters")
+      c-alarm-metric-parameters-field.kpi-alarms-toolbar__parameters(v-field="query.parameters", hide-details)
 </template>
 
 <script>

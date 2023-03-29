@@ -41,5 +41,6 @@ export default {
   },
   popups: {
     massDeleteWarning: 'La suppression en masse ne peut pas être appliquée pour certains des éléments sélectionnés, ils ne seront donc pas supprimés.',
+    exportFailed: 'Échec de l\'exportation des entités au format CSV',
   },
 };

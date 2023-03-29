@@ -75,8 +75,9 @@ const (
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
 
-	TokenMongoCollection      = "token"
-	ShareTokenMongoCollection = "share_token"
+	TokenMongoCollection               = "token"
+	ShareTokenMongoCollection          = "share_token"
+	WebsocketConnectionMongoCollection = "websocket_connection"
 
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
@@ -102,13 +103,6 @@ const (
 	WebhookHistoryMongoCollection    = "webhook_history"
 
 	LinkRuleMongoCollection = "link_rule"
-
-	OcwsNocChoiceCollection    = "ocws_noc_snow_sys_choice_new"
-	OcwsNocContractCollection  = "ocws_noc_snow_service_contract_new"
-	OcwsNocLocationCollection  = "ocws_noc_snow_location_group_new"
-	OcwsNocGroupCollection     = "ocws_noc_snow_group_new"
-	OcwsNocUserCollection      = "ocws_noc_snow_user_new"
-	OcwsNocUserGroupCollection = "ocws_noc_snow_user_group_new"
 )
 
 const (

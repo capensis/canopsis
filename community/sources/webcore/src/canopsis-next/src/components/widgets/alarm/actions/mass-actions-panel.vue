@@ -98,6 +98,12 @@ export default {
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
+        {
+          type: ALARM_LIST_ACTIONS_TYPES.comment,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
+          title: this.$t('alarm.actions.titles.comment'),
+          method: this.showCreateCommentEventModal,
+        },
       ];
 
       if (this.hasAlarmsWithoutTickets || this.widget.parameters.isMultiDeclareTicketEnabled) {
@@ -293,6 +299,16 @@ export default {
       await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
 
       return this.afterSubmit();
+    },
+
+    showCreateCommentEventModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.items, data),
+        },
+      });
     },
 
     async openLink(link, type) {
