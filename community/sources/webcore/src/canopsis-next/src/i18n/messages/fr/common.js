@@ -268,6 +268,7 @@ export default {
   copyValue: 'Copier la valeur',
   copyProperty: 'Copier la propriété',
   copyPropertyPath: 'Copier le chemin de la propriété',
+  hidden: 'Caché',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
