@@ -142,7 +142,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   _id: eventFilter._id ?? '',
   type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter.description ?? '',
-  priority: eventFilter.priority ?? 0,
+  priority: eventFilter.priority,
   enabled: eventFilter.enabled ?? true,
   rrule: eventFilter.rrule ?? null,
   start: eventFilter.start,
