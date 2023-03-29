@@ -92,6 +92,24 @@ export default {
       ];
     },
 
+    nameOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginsWith,
+          PATTERN_OPERATORS.notBeginWith,
+          PATTERN_OPERATORS.endsWith,
+          PATTERN_OPERATORS.notEndWith,
+          PATTERN_OPERATORS.regexp,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+      };
+    },
+
     entitiesValueField() {
       return {
         is: 'c-entity-field',
@@ -217,6 +235,7 @@ export default {
         {
           text: this.$t('common.name'),
           value: ENTITY_PATTERN_FIELDS.name,
+          options: this.nameOptions,
         },
         {
           text: this.$t('common.type'),
