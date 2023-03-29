@@ -16,8 +16,6 @@ export const entitiesScenarioMixin = {
       createScenario: 'create',
       updateScenario: 'update',
       removeScenario: 'remove',
-      checkScenarioPriority: 'checkPriority',
-      fetchMinimalScenarioPriority: 'fetchMinimalPriority',
     }),
   },
 };
