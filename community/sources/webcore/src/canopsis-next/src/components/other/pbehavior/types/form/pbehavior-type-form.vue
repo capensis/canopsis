@@ -21,6 +21,7 @@
         c-priority-field(
           v-field="form.priority",
           :disabled="onlyColor",
+          :loading="pendingPriority",
           required
         )
     c-icon-field(
@@ -62,6 +63,10 @@ export default {
       default: () => ({}),
     },
     onlyColor: {
+      type: Boolean,
+      default: false,
+    },
+    pendingPriority: {
       type: Boolean,
       default: false,
     },
