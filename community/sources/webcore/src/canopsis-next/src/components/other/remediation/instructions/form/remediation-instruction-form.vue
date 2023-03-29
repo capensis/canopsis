@@ -32,7 +32,7 @@
           required
         )
       v-flex.ml-2(v-if="isAutoType", xs3)
-        c-priority-field(v-field="form.priority", :disabled="disabled", required)
+        c-priority-field(v-field="form.priority", :disabled="disabled")
     c-triggers-field(
       v-if="isAutoType",
       v-field="form.triggers",
