@@ -86,7 +86,6 @@ describe('bar-chart', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     currentUserPermissionsById,
     activeViewModule,
@@ -197,9 +196,8 @@ describe('bar-chart', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
