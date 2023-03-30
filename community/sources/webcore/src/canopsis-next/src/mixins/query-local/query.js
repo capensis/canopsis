@@ -49,7 +49,10 @@ export const localQueryMixin = {
 
   methods: {
     updateQueryField(field, value) {
-      this.$set(this.query, field, value);
+      this.query = {
+        ...this.query,
+        [field]: value,
+      };
     },
 
     customQueryCondition(query, oldQuery) {
