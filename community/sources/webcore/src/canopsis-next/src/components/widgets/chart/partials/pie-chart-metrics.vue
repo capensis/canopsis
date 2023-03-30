@@ -8,6 +8,8 @@
       :width="700",
       :height="400"
     )
+      template(#actions="{ chart }")
+        kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -18,11 +20,13 @@ import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
 
+import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+
 const PieChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/pie-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { PieChart },
+  components: { KpiChartExportActions, PieChart },
   props: {
     metrics: {
       type: Array,
@@ -39,6 +43,10 @@ export default {
     showMode: {
       type: String,
       default: KPI_PIE_CHART_SHOW_MODS.numbers,
+    },
+    downloading: {
+      type: Boolean,
+      default: false,
     },
     responsive: {
       type: Boolean,

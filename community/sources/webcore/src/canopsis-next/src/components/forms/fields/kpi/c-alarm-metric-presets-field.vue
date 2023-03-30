@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { ALARM_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
 import { metricPresetToForm } from '@/helpers/forms/metric';
@@ -46,7 +48,7 @@ export default {
     },
     parameters: {
       type: Array,
-      default: () => Object.values(ALARM_METRIC_PARAMETERS),
+      default: () => Object.values(omit(ALARM_METRIC_PARAMETERS, ['timeToAck', 'timeToResolve'])),
     },
     onlyGroup: {
       type: Boolean,

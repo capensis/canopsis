@@ -5,13 +5,12 @@ exports[`chart-widget-filters Renders \`chart-widget-filters\` with custom props
   class="layout chart-widget-filters wrap"
 >
   <c-quick-date-interval-field-stub
-    class="mr-4"
     interval="[object Object]"
     min="1633737600"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
   <c-sampling-field-stub
-    class="chart-widget-filters__sampling mr-4"
+    class="chart-widget-filters__sampling"
     value="month"
   />
   <div

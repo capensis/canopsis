@@ -5,8 +5,13 @@ import { ALARM_METRIC_PARAMETERS, KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 import PieChartMetrics from '@/components/widgets/chart/partials/pie-chart-metrics.vue';
 
+const stubs = {
+  'kpi-chart-export-actions': true,
+};
+
 describe('pie-chart-metrics', () => {
   const snapshotFactory = generateRenderer(PieChartMetrics, {
+    stubs,
     parentComponent: {
       provide: {
         $system: {},
