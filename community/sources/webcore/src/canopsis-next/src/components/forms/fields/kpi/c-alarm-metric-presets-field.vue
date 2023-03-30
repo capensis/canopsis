@@ -13,7 +13,9 @@
 </template>
 
 <script>
-import { AGGREGATE_FUNCTIONS } from '@/constants';
+import { omit } from 'lodash';
+
+import { ALARM_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
 import { metricPresetToForm } from '@/helpers/forms/metric';
 import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
@@ -46,7 +48,7 @@ export default {
     },
     parameters: {
       type: Array,
-      required: false,
+      default: () => Object.values(omit(ALARM_METRIC_PARAMETERS, ['timeToAck', 'timeToResolve'])),
     },
     onlyGroup: {
       type: Boolean,
