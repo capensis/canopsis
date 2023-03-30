@@ -27,6 +27,7 @@ export default {
   messagesHistory: 'FIFO messages processing history',
   messagesLastHour: 'FIFO messages processing for the last hour',
   messagesPerHour: 'messages/hour',
+  messagesPerMinute: 'messages/minute',
   unknown: 'This system state is unavailable',
   systemStatusChipError: 'The system is not operational',
   systemStatusServerError: 'System configuration is invalid, please contact the administrator',
