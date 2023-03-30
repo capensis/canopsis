@@ -55,6 +55,8 @@ export default {
       [ALARM_METRIC_PARAMETERS.averageResolve]: '{value} pour résoudre les alarmes',
       [ALARM_METRIC_PARAMETERS.timeToAck]: '{value} accuser les alarmes',
       [ALARM_METRIC_PARAMETERS.timeToResolve]: '{value} pour résoudre les alarmes',
+      [ALARM_METRIC_PARAMETERS.minAck]: '{value} - temps minimum pour acquitter les alarmes',
+      [ALARM_METRIC_PARAMETERS.maxAck]: '{value} - temps maximum pour acquitter les alarmes',
       [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: '{value} alarmes corrigées manuellement',
       [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: '{value} alarmes avec instructions manuelles',
       [ALARM_METRIC_PARAMETERS.notAckedAlarms]: '{value} alarmes non acquittées',
