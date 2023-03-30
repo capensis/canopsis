@@ -13,7 +13,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MAX_LIMIT } from '@/constants';
+import { MAX_LIMIT, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('remediationInstruction');
 
@@ -24,7 +24,7 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
   },
@@ -43,7 +43,19 @@ export default {
       return [
         {
           _id: '',
-          name: this.$t('remediationStatistic.fields.all'),
+          name: this.$t('remediationStatistic.allInstructions'),
+        },
+        {
+          _id: REMEDIATION_INSTRUCTION_TYPES.manual,
+          name: this.$t('remediationStatistic.manualInstructions'),
+        },
+        {
+          _id: REMEDIATION_INSTRUCTION_TYPES.auto,
+          name: this.$t('remediationStatistic.autoInstructions'),
+        },
+
+        {
+          divider: true,
         },
 
         ...this.instructions,
