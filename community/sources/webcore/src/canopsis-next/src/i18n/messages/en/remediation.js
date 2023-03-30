@@ -126,6 +126,7 @@ export default {
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
     remediationDuration: 'Remediation duration',
+    timeoutAfterExecution: 'Timeout after execution',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
