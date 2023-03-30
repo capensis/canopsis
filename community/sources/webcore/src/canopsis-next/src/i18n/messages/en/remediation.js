@@ -165,9 +165,9 @@ export default {
 
   statistic: {
     remediation: 'Remediation',
-    fields: {
-      all: 'All',
-    },
+    allInstructions: 'All instructions',
+    manualInstructions: 'Manual instructions',
+    autoInstructions: 'Automatic instructions',
     labels: {
       remediated: 'Remediated',
       notRemediated: 'Not remediated',
