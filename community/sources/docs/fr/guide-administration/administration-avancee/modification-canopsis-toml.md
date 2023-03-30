@@ -154,6 +154,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | TokenExpiration     | "24h"              | Durée de validité d'un token d'authentification |
 | TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
+| ExportBulkize       | 5000               | Nombre maximum d'alarmes d'un batch pour l'export. Ce paramètre doit être diminué si les alarmes que vous souhaitez exporter sont volumineuses |
 
 
 ### Section [Canopsis.logger]
