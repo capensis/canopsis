@@ -24,18 +24,23 @@
         v-if="hasMetrics",
         :metrics="aggregatedMetrics",
         :title="widget.parameters.chart_title",
-        :show-trend="widget.parameters.show_trend"
+        :show-trend="widget.parameters.show_trend",
+        :downloading="downloading",
+        @export:csv="exportMetricsAsCsv"
       )
 </template>
 
 <script>
-import { isRatioMetric } from '@/helpers/metrics';
+import { createNamespacedHelpers } from 'vuex';
+import { pick } from 'lodash';
+
 import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
@@ -46,6 +51,8 @@ import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget
 
 import ChartLoader from './partials/chart-loader.vue';
 import NumbersMetrics from './partials/numbers-metrics.vue';
+
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 
 export default {
   inject: ['$system'],
@@ -64,6 +71,10 @@ export default {
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
+    widgetChartExportMixinCreator({
+      createExport: 'createKpiAlarmAggregateExport',
+      fetchExport: 'fetchMetricExport',
+    }),
   ],
   props: {
     widget: {
@@ -81,15 +92,15 @@ export default {
     },
   },
   methods: {
+    ...mapMetricsActions({
+      createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
+      fetchMetricExport: 'fetchMetricExport',
+    }),
+
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-
-        parameters: this.widget.parameters.metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
-          metric,
-          aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
-        })),
-        sampling: this.query.sampling,
+        ...pick(this.query, ['parameters', 'sampling']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },

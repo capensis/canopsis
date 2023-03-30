@@ -21,6 +21,7 @@ import {
   convertStopDateIntervalToTimestamp,
 } from './date/date-intervals';
 import { isResolvedAlarm } from './entities';
+import { isRatioMetric } from './metrics';
 
 /**
  * WIDGET CONVERTERS
@@ -242,6 +243,44 @@ export function convertChartWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts pie chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertPieChartWidgetToQuery(widget) {
+  const { parameters: { metrics = [], aggregate_func: aggregateFunc } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    parameters: metrics.map(({ metric }) => ({
+      metric,
+      aggregate_func: aggregateFunc,
+    })),
+  };
+}
+
+/**
+ * This function converts numbers widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertNumbersWidgetToQuery(widget) {
+  const { parameters: { metrics = [] } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
+      metric,
+      aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
+    })),
+  };
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -375,8 +414,8 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
     [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
-    [WIDGET_TYPES.pieChart]: convertChartWidgetDefaultParametersToQuery,
-    [WIDGET_TYPES.numbers]: convertChartWidgetDefaultParametersToQuery,
+    [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
+    [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };
