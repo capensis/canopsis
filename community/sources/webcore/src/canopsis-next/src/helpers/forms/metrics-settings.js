@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} MetricsSettings
- * @property {boolean} enabled_manual_instructions
+ * @property {boolean} enabled_instructions
  * @property {boolean} enabled_not_acked_metrics
  */
 
@@ -15,6 +15,6 @@
  * @return {MetricsSettingsForm}
  */
 export const metricsSettingsToForm = (metricsSettings = {}) => ({
-  enabled_manual_instructions: metricsSettings.enabled_manual_instructions ?? false,
+  enabled_instructions: metricsSettings.enabled_instructions ?? false,
   enabled_not_acked_metrics: metricsSettings.enabled_not_acked_metrics ?? false,
 });
