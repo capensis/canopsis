@@ -31,6 +31,7 @@
             @input="updateSelectedFilter"
           )
           filters-list-btn(
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
             :widget-id="widget._id",
             :addable="hasAccessToAddFilter",
             :editable="hasAccessToEditFilter",
