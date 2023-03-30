@@ -124,10 +124,7 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot load security config: %w", err)
 	}
 
-	cookieOptions := CookieOptions{
-		FileAccessName: "token",
-		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-	}
+	cookieOptions := DefaultCookieOptions()
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
@@ -490,5 +487,12 @@ func updateConfig(
 				return
 			}
 		}
+	}
+}
+
+func DefaultCookieOptions() CookieOptions {
+	return CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
 	}
 }
