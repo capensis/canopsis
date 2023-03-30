@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ALARM_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
+import { AGGREGATE_FUNCTIONS } from '@/constants';
 
 import { metricPresetToForm } from '@/helpers/forms/metric';
 import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
@@ -46,7 +46,7 @@ export default {
     },
     parameters: {
       type: Array,
-      default: () => Object.values(ALARM_METRIC_PARAMETERS),
+      required: false,
     },
     onlyGroup: {
       type: Boolean,
