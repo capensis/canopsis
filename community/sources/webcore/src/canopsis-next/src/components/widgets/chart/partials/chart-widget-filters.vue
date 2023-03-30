@@ -25,6 +25,7 @@
         @input="$emit('update:filters', $event)"
       )
       filters-list-btn(
+        v-if="filterAddable || filterEditable",
         :widget-id="widgetId",
         :addable="filterAddable",
         :editable="filterEditable",
