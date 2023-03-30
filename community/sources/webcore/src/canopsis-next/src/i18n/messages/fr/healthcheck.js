@@ -27,6 +27,7 @@ export default {
   messagesHistory: 'Historique de traitement des messages FIFO',
   messagesLastHour: 'Traitement des messages FIFO pour la dernière heure',
   messagesPerHour: 'messages/heure',
+  messagesPerMinute: 'messages/minute',
   unknown: 'Cet état du système n\'est pas disponible',
   systemStatusChipError: 'Le système n\'est pas opérationnel',
   systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
