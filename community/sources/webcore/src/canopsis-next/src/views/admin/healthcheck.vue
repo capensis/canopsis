@@ -24,7 +24,7 @@
           )
           h2.my-4.headline.text-xs-center(v-else-if="hasServerError") {{ $t('healthcheck.systemStatusServerError') }}
         v-tab-item(lazy)
-          healthcheck-graphs(:max-queue-length="maxQueueLength", :max-messages-length="maxMessagesLength")
+          healthcheck-graphs(:max-messages-per-minute="maxMessagesLength")
         v-tab-item(lazy)
           healthcheck-parameters
         v-tab-item(lazy)
