@@ -10,6 +10,7 @@ template:
         category: <LoremIpsumWord()>,
         icon_name: build,
         url: <URL()>,
+        action: open
       }
     ],
     created: <NowUnix()>,
@@ -49,6 +50,7 @@ template:
         category: <LoremIpsumWord()>,
         icon_name: build,
         url: <URL()>,
+        action: open
       }
     ],
     created: <NowUnix()>,
@@ -93,6 +95,7 @@ link_rule:
         category: test-link-rule-to-get-1-link-1-category
         icon_name: test-link-rule-to-get-1-link-1-icon
         url: http://test-link-rule-to-get-1-link-1-url.com
+        action: open
     created: 1605263992
     updated: 1605263992
     author: root
@@ -113,7 +116,7 @@ link_rule:
     name: test-link-rule-to-get-2-name
     enabled: true
     links:
-    source_code: "function generate(alarms) { return [{\"label\": \"test-link-rule-to-get-2-link-1-label\",\"category\": \"test-link-rule-to-get-2-link-1-category\",\"icon_name\": \"test-link-rule-to-get-2-link-1-icon\",\"url\": \"http://test-link-rule-to-get-2-link-1-url.com\"}] }"
+    source_code: "function generate(alarms) { return [{\"label\": \"test-link-rule-to-get-2-link-1-label\",\"category\": \"test-link-rule-to-get-2-link-1-category\",\"icon_name\": \"test-link-rule-to-get-2-link-1-icon\",\"url\": \"http://test-link-rule-to-get-2-link-1-url.com\",\"action\": \"open\"}] }"
     created: 1605263992
     updated: 1605263992
     author: root
@@ -138,6 +141,7 @@ link_rule:
         category: test-link-rule-to-get-3-link-1-category
         icon_name: test-link-rule-to-get-3-link-1-icon
         url: http://test-link-rule-to-get-3-link-1-url.com
+        action: open
     created: 1605263992
     updated: 1605263992
     author: root
@@ -160,14 +164,17 @@ link_rule:
         category: test-category-to-alarm-link-get-1
         icon_name: test-link-rule-to-alarm-link-get-1-link-1-icon
         url: http://test-link-rule-to-alarm-link-get-1-link-1-url.com?{{ range .Alarms }}resources[]={{ .Entity.ID }}|{{ (index .ExternalData "component").status }}&{{ end }}
+        action: open
       - label: test-link-rule-to-alarm-link-get-1-link-2-label
         category: test-category-to-alarm-link-get-2
         icon_name: test-link-rule-to-alarm-link-get-1-link-2-icon
         url: http://test-link-rule-to-alarm-link-get-1-link-2-url.com?{{ range .Alarms }}resources[]={{ .Entity.ID }}&{{ end }}
+        action: open
       - label: test-link-rule-to-alarm-link-get-1-link-3-label
         category: test-category-to-alarm-link-get-1
         icon_name: test-link-rule-to-alarm-link-get-1-link-3-icon
         url: http://test-link-rule-to-alarm-link-get-1-link-3-url.com?{{ range .Alarms }}resources[]={{ .Entity.ID }}&{{ end }}
+        action: open
         single: true
     external_data:
       component:
@@ -198,10 +205,12 @@ link_rule:
         category: test-category-to-alarm-link-get-1
         icon_name: test-link-rule-to-alarm-link-get-2-link-1-icon
         url: http://test-link-rule-to-alarm-link-get-2-link-1-url.com?{{ range .Entities }}info[]={{ (index .Infos "test-info-to-alarm-link-get-1").Value }}&{{ end }}
+        action: open
       - label: test-link-rule-to-alarm-link-get-2-link-2-label
         category: test-category-to-alarm-link-get-3
         icon_name: test-link-rule-to-alarm-link-get-2-link-2-icon
         url: http://test-link-rule-to-alarm-link-get-2-link-2-url.com?{{ range .Entities }}info[]={{ (index .Infos "test-info-to-alarm-link-get-1").Value }}&{{ end }}
+        action: open
     entity_pattern:
       - - field: name
           cond:
@@ -226,13 +235,15 @@ link_rule:
             label: "test-link-rule-to-alarm-link-get-3-link-1-label",
             category: "test-category-to-alarm-link-get-1",
             icon_name: "test-link-rule-to-alarm-link-get-3-link-1-icon",
-            url: "http://test-link-rule-to-alarm-link-get-3-link-1-url.com?" + queryStr
+            url: "http://test-link-rule-to-alarm-link-get-3-link-1-url.com?" + queryStr,
+            action: "open"
           },
           {
             label: "test-link-rule-to-alarm-link-get-3-link-2-label",
             category: "test-category-to-alarm-link-get-4",
             icon_name: "test-link-rule-to-alarm-link-get-3-link-2-icon",
-            url: "http://test-link-rule-to-alarm-link-get-3-link-2-url.com?" + queryStr
+            url: "http://test-link-rule-to-alarm-link-get-3-link-2-url.com?" + queryStr,
+            action: "open"
           }
         ];
       }
@@ -259,13 +270,15 @@ link_rule:
             label: "test-link-rule-to-alarm-link-get-4-link-1-label",
             category: "test-category-to-alarm-link-get-1",
             icon_name: "test-link-rule-to-alarm-link-get-4-link-1-icon",
-            url: "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?" + queryStr
+            url: "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?" + queryStr,
+            action: "open"
           },
           {
             label: "test-link-rule-to-alarm-link-get-4-link-2-label",
             category: "test-category-to-alarm-link-get-5",
             icon_name: "test-link-rule-to-alarm-link-get-4-link-2-icon",
-            url: "http://test-link-rule-to-alarm-link-get-4-link-2-url.com?" + queryStr
+            url: "http://test-link-rule-to-alarm-link-get-4-link-2-url.com?" + queryStr,
+            action: "open"
           }
         ];
       }
