@@ -19,8 +19,6 @@ func getEvent() types.Event {
 		LongOutput:    "",
 		State:         types.AlarmStateMajor,
 		Output:        "",
-		PerfData:      nil,
-		PerfDataArray: nil,
 		ID:            nil,
 		Status:        nil,
 		Alarm:         nil,
@@ -42,8 +40,6 @@ func GetBadEvent() types.Event {
 		Component:     "nil !",
 		Resource:      "",
 		EventType:     "wrong_event_type",
-		PerfData:      nil,
-		PerfDataArray: nil,
 		ID:            nil,
 		Status:        &status,
 		SourceType:    "wrong_source_type",
@@ -115,15 +111,6 @@ func TestEventIsBad(t *testing.T) {
 	Convey("Given an event without resource", t, func() {
 		e := getEvent()
 		e.Resource = ""
-
-		Convey("The event is not valid", func() {
-			So(e.IsValid(), ShouldNotBeNil)
-		})
-	})
-
-	Convey("Given a malformed perf event", t, func() {
-		e := getEvent()
-		e.EventType = types.EventTypePerf
 
 		Convey("The event is not valid", func() {
 			So(e.IsValid(), ShouldNotBeNil)

@@ -14,12 +14,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type messageProcessor struct {
@@ -28,11 +31,13 @@ type messageProcessor struct {
 	FeatureContextCreation   bool
 
 	AlarmConfigProvider config.AlarmConfigProvider
+	MetricsSender       metrics.Sender
 	TechMetricsSender   techmetrics.Sender
 	EventFilterService  eventfilter.Service
 	EnrichmentCenter    libcontext.EnrichmentCenter
 	AmqpPublisher       libamqp.Publisher
 	AlarmAdapter        alarm.Adapter
+	EntityCollection    mongo.DbCollection
 	Encoder             encoding.Encoder
 	Decoder             encoding.Decoder
 	Logger              zerolog.Logger
@@ -197,6 +202,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, err
 	}
 
+	p.handlePerfData(ctx, event)
+
 	body, err := p.Encoder.Encode(event)
 	if err != nil {
 		p.logError(err, "cannot encode event", d.Body)
@@ -285,4 +292,30 @@ func (p *messageProcessor) publishToEngineFIFO(ctx context.Context, event types.
 			DeliveryMode: amqp.Persistent,
 		},
 	))
+}
+
+func (p *messageProcessor) handlePerfData(ctx context.Context, event types.Event) {
+	if event.EventType != types.EventTypeCheck || event.Entity == nil {
+		return
+	}
+
+	perfData := event.GetPerfData()
+	now := time.Now()
+	names := make([]string, len(perfData))
+	for i, v := range perfData {
+		p.MetricsSender.SendPerfData(now, event.Entity.ID, v.Name, v.Value, v.Unit)
+		names[i] = v.Name
+	}
+
+	if len(names) > 0 {
+		go func() {
+			_, err := p.EntityCollection.UpdateOne(ctx, bson.M{"_id": event.Entity.ID}, bson.M{
+				"$addToSet": bson.M{"perf_data": bson.M{"$each": names}},
+				"$set":      bson.M{"perf_data_updated": types.CpsTime{Time: now}},
+			})
+			if err != nil {
+				p.Logger.Err(err).Msg("cannot update entity perf data")
+			}
+		}()
+	}
 }

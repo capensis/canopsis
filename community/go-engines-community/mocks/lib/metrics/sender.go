@@ -324,6 +324,18 @@ func (mr *MockSenderMockRecorder) SendPbhLeaveAndEnter(arg0, arg1, arg2, arg3 in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPbhLeaveAndEnter", reflect.TypeOf((*MockSender)(nil).SendPbhLeaveAndEnter), arg0, arg1, arg2, arg3)
 }
 
+// SendPerfData mocks base method.
+func (m *MockSender) SendPerfData(arg0 time.Time, arg1, arg2 string, arg3 float64, arg4 string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendPerfData", arg0, arg1, arg2, arg3, arg4)
+}
+
+// SendPerfData indicates an expected call of SendPerfData.
+func (mr *MockSenderMockRecorder) SendPerfData(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendPerfData", reflect.TypeOf((*MockSender)(nil).SendPerfData), arg0, arg1, arg2, arg3, arg4)
+}
+
 // SendRemoveNotAckedMetric mocks base method.
 func (m *MockSender) SendRemoveNotAckedMetric(arg0 types.Alarm, arg1 time.Time) {
 	m.ctrl.T.Helper()
