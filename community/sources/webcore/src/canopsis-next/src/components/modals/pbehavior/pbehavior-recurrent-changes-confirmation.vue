@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(:close="cancel")
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.pbehaviorRecurrentChangesConfirmation.title') }}
-      template(slot="text")
+      template(#text="")
         v-radio-group(
           v-model="type",
           hide-details,
@@ -19,7 +19,7 @@
             :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.all')",
             color="primary"
           )
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="cancel") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
 </template>

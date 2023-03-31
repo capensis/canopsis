@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -20,7 +21,7 @@ type EditRequest struct {
 	Name     string `json:"name" binding:"required,max=255"`
 	Author   string `json:"author" binding:"required,max=255"`
 	Enabled  *bool  `json:"enabled" binding:"required"`
-	Priority *int   `json:"priority" binding:"gt=0"`
+	Priority int64  `json:"priority" binding:"min=0"`
 
 	// Possible trigger values.
 	//   * `create` - Alarm creation
@@ -33,7 +34,6 @@ type EditRequest struct {
 	//   * `cancel` - Alarm has been cancelled
 	//   * `uncancel` - Alarm has been uncancelled
 	//   * `comment` - Alarm has been commented
-	//   * `declareticket` - Ticket has been declared by the UI action
 	//   * `declareticketwebhook` - Ticket has been declared by the webhook
 	//   * `assocticket` - Ticket has been associated with an alarm
 	//   * `snooze` - Alarm has been snoozed
@@ -48,7 +48,7 @@ type EditRequest struct {
 	//   * `instructionjobcomplete` - Manual or auto instruction's job is completed
 	//   * `instructioncomplete` - Manual instruction is completed
 	//   * `autoinstructioncomplete` - Auto instruction is completed
-	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticket declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete"`
+	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete"`
 	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
 	Delay                *types.DurationWithUnit `json:"delay"`
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
@@ -73,19 +73,6 @@ type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 }
 
-type GetMinimalPriorityResponse struct {
-	Priority int `json:"priority"`
-}
-
-type CheckPriorityRequest struct {
-	Priority int `json:"priority" binding:"required,gt=0"`
-}
-
-type CheckPriorityResponse struct {
-	Valid               bool `json:"valid"`
-	RecommendedPriority int  `json:"recommended_priority,omitempty"`
-}
-
 type ActionRequest struct {
 	Type                     string                       `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior snooze webhook"`
 	Parameters               action.Parameters            `json:"parameters,omitempty"`
@@ -107,7 +94,7 @@ type Scenario struct {
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
 	Triggers             []string                `bson:"triggers" json:"triggers"`
 	Actions              []Action                `bson:"actions" json:"actions"`
-	Priority             int                     `bson:"priority" json:"priority"`
+	Priority             int64                   `bson:"priority" json:"priority"`
 	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`
 	Created              types.CpsTime           `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
@@ -135,7 +122,11 @@ type Parameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty" bson:"state"`
 	// AssocTicket
-	Ticket string `json:"ticket,omitempty" bson:"ticket"`
+	Ticket     string            `json:"ticket,omitempty" bson:"ticket"`
+	TicketURL  string            `json:"ticket_url,omitempty" bson:"ticket_url"`
+	TicketData map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
+	// AssocTicket and Webhook
+	TicketSystemName string `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
 	// Pbehavior
@@ -147,10 +138,9 @@ type Parameters struct {
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 	// Webhook
-	Request       *types.WebhookRequest       `json:"request,omitempty" bson:"request"`
-	DeclareTicket *types.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
-	RetryCount    int64                       `json:"retry_count,omitempty" bson:"retry_count"`
-	RetryDelay    *types.DurationWithUnit     `json:"retry_delay,omitempty" bson:"retry_delay"`
+	Request       *request.Parameters           `json:"request,omitempty" bson:"request"`
+	SkipForChild  *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
+	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
 }
 
 type AggregationResult struct {

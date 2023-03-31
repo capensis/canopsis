@@ -348,9 +348,7 @@ func (c *typeComputer) getExdates(
 
 	for _, id := range pbehavior.Exceptions {
 		if exception, ok := models.exceptionsByID[id]; ok {
-			for i := range exception.Exdates {
-				res = append(res, exception.Exdates[i])
-			}
+			res = append(res, exception.Exdates...)
 		} else {
 			return nil, fmt.Errorf("unknown exception %v", id)
 		}

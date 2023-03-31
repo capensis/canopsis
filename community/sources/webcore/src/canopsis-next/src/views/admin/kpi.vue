@@ -15,7 +15,11 @@
           v-tab(
             v-if="hasReadAnyKpiRatingSettingsAccess",
             :href="`#${$constants.KPI_TABS.ratingSettings}`"
-          ) {{ $t('common.ratingSettings') }}
+          ) {{ $t('kpi.tabs.ratingSettings') }}
+          v-tab(
+            v-if="hasReadAnyKpiCollectionSettingsAccess",
+            :href="`#${$constants.KPI_TABS.collectionSettings}`"
+          ) {{ $t('kpi.tabs.collectionSettings') }}
 
         v-tabs-items(v-model="activeTab")
           v-card-text
@@ -26,6 +30,10 @@
               kpi-filters
             v-tab-item(:value="$constants.KPI_TABS.ratingSettings", lazy)
               kpi-rating-settings
+            v-tab-item(:value="$constants.KPI_TABS.collectionSettings", lazy)
+              v-layout(row)
+                v-flex(xs12, offset-md1, md10, offset-lg2, lg8)
+                  kpi-collection-settings
 
     v-slide-x-reverse-transition
       c-fab-btn(
@@ -48,20 +56,23 @@ import { entitiesFilterMixin } from '@/mixins/entities/filter';
 import { entitiesRatingSettingsMixin } from '@/mixins/entities/rating-settings';
 import { permissionsTechnicalKpiFiltersMixin } from '@/mixins/permissions/technical/kpi-filters';
 import { permissionsTechnicalKpiRatingSettingsMixin } from '@/mixins/permissions/technical/kpi-rating-settings';
+import { permissionsTechnicalKpiCollectionSettingsMixin } from '@/mixins/permissions/technical/kpi-collection-settings';
 
 import KpiCharts from '@/components/other/kpi/charts/kpi-charts.vue';
 import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
 import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
+import KpiCollectionSettings from '@/components/other/kpi/collection-settings/kpi-collection-settings.vue';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
 
 export default {
-  components: { KpiRatingSettings, KpiCharts, KpiFilters },
+  components: { KpiRatingSettings, KpiCharts, KpiFilters, KpiCollectionSettings },
   mixins: [
     entitiesFilterMixin,
     entitiesRatingSettingsMixin,
     permissionsTechnicalKpiFiltersMixin,
     permissionsTechnicalKpiRatingSettingsMixin,
+    permissionsTechnicalKpiCollectionSettingsMixin,
   ],
   data() {
     return {

@@ -1,7 +1,7 @@
 import Faker from 'faker';
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { createNumberInputStub, createSelectInputStub } from '@unit/stubs/input';
+import { createNumberInputStub } from '@unit/stubs/input';
 import { TIME_UNITS } from '@/constants';
 
 import CDurationField from '@/components/forms/fields/duration/c-duration-field.vue';
@@ -10,33 +10,41 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-number-field': createNumberInputStub('c-number-field'),
-  'v-select': createSelectInputStub('v-select'),
+  'v-select': {
+    props: ['value'],
+    template: `
+      <input
+        :value="value"
+        class="v-select"
+        @input="$listeners.input($event.target.value)"
+      />
+    `,
+  },
 };
 
 const snapshotStubs = {
   'c-number-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CDurationField, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CDurationField, {
-  localVue,
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-  ...options,
-});
-
 const selectNumberField = wrapper => wrapper.find('input.c-number-field');
+const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('c-duration-field', () => {
+  const factory = generateShallowRenderer(CDurationField, {
+    localVue,
+    stubs,
+  });
+
+  const snapshotFactory = generateRenderer(CDurationField, {
+    localVue,
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   it('Value changed after trigger text field', () => {
     const duration = {
       value: Faker.datatype.number(),
@@ -53,13 +61,10 @@ describe('c-duration-field', () => {
 
     valueElement.setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.value).toBe(newValue);
-    expect(eventData.unit).toBe(duration.unit);
+    expect(wrapper).toEmit('input', {
+      unit: duration.unit,
+      value: newValue,
+    });
   });
 
   it('Unit changed after trigger select field', () => {
@@ -74,17 +79,36 @@ describe('c-duration-field', () => {
       },
     });
 
-    const valueElement = wrapper.find('select.v-select');
+    const valueElement = selectSelectField(wrapper);
 
-    valueElement.setValue(TIME_UNITS.month);
+    valueElement.vm.$emit('change', TIME_UNITS.month);
 
-    const inputEvents = wrapper.emitted('input');
+    expect(wrapper).toEmit('input', {
+      unit: TIME_UNITS.month,
+      value: duration.value,
+    });
+  });
 
-    expect(inputEvents).toHaveLength(1);
+  it('Value cleared after trigger select field without value', () => {
+    const duration = {
+      value: Faker.datatype.number(),
+      unit: TIME_UNITS.week,
+    };
+    const wrapper = factory({
+      propsData: {
+        duration,
+        long: true,
+      },
+    });
 
-    const [eventData] = inputEvents[0];
-    expect(eventData.unit).toBe(TIME_UNITS.month);
-    expect(eventData.value).toBe(duration.value);
+    const valueElement = selectSelectField(wrapper);
+
+    valueElement.vm.$emit('change');
+
+    expect(wrapper).toEmit('input', {
+      unit: undefined,
+      value: undefined,
+    });
   });
 
   it('Renders `c-duration-field` with default props', () => {

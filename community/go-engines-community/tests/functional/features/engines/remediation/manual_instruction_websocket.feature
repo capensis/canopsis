@@ -94,6 +94,8 @@ Feature: get an execution status
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
+    When I connect to websocket
+    When I authenticate in websocket
     When I subscribe to websocket room "execution/{{ .executionID }}"
     When I save response operationID={{ (index (index .lastResponse.steps 0).operations 0).operation_id }}
     When I do POST /api/v4/cat/job-executions:
@@ -176,6 +178,8 @@ Feature: get an execution status
       ]
     }
     """
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
 
   @concurrent
   Scenario: given simplified manual instruction should get jobs statuses from websocket room
@@ -264,6 +268,8 @@ Feature: get an execution status
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
+    When I connect to websocket
+    When I authenticate in websocket
     When I subscribe to websocket room "execution/{{ .executionID }}"
     Then I wait message from websocket room "execution/{{ .executionID }}" which contains:
     """json

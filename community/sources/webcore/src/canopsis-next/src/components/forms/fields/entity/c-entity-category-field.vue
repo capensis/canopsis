@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select(
+  v-select.mt-0(
     v-validate="rules",
     v-field="category",
     :label="$t('common.category')",
@@ -8,13 +8,14 @@
     :items="entityCategories",
     :error-messages="errors.collect(name)",
     :name="name",
+    :hide-details="hideDetails",
     :clearable="!required",
     item-text="name",
     item-value="_id",
     return-object,
     @keydown.enter.prevent="createCategory"
   )
-    template(v-if="addable", slot="append-item")
+    template(v-if="addable", #append-item="")
       v-text-field.pb-3.pt-1.px-3(
         ref="createField",
         v-model.trim="newCategory",
@@ -57,6 +58,10 @@ export default {
       default: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },

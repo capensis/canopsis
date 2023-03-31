@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { entityInfoToForm } from '@/helpers/forms/entity-info';
 
@@ -35,6 +35,7 @@ export default {
   name: MODALS.createEntityInfo,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { EntityInfoForm, ModalWrapper },
   mixins: [

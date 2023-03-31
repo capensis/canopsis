@@ -5,7 +5,7 @@
       :disabled="isDisabledIdField",
       :help-text="$t('metaAlarmRule.idHelp')"
     )
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     c-description-field(
       v-field="form.output_template",
       :label="$t('metaAlarmRule.outputTemplate')",

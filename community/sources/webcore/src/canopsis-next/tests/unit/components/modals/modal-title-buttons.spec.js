@@ -1,30 +1,19 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
+
 import ModalTitleButtons from '@/components/modals/modal-title-buttons.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
   'modal-title-buttons': true,
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
-
-const factory = (options = {}) => shallowMount(ModalTitleButtons, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ModalTitleButtons, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectButton = wrapper => wrapper.find('v-btn-stub');
 
@@ -42,6 +31,9 @@ describe('modal-title-buttons', () => {
   const store = createMockedStoreModules([
     modalsModule,
   ]);
+
+  const factory = generateShallowRenderer(ModalTitleButtons, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ModalTitleButtons, { localVue, stubs });
 
   test('Modals hide handler called after close button', () => {
     const modal = {
@@ -96,7 +88,7 @@ describe('modal-title-buttons', () => {
     expect(close).toBeCalled();
   });
 
-  test('Modals minimize handler called after trigger minimize button', () => {
+  test('Modals minimize handler called after trigger minimize button', async () => {
     const modal = {
       id: Faker.datatype.string(),
     };
@@ -115,9 +107,9 @@ describe('modal-title-buttons', () => {
       },
     });
 
-    const minimizeButton = selectButton(wrapper);
+    await flushPromises();
 
-    minimizeButton.vm.$emit('click');
+    selectButton(wrapper).vm.$emit('click');
 
     expect($modals.minimize).toBeCalledWith({ id: modal.id });
   });
@@ -155,7 +147,7 @@ describe('modal-title-buttons', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `modal-title-buttons` with custom props', () => {
+  test('Renders `modal-title-buttons` with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -163,6 +155,8 @@ describe('modal-title-buttons', () => {
         close: true,
       },
     });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

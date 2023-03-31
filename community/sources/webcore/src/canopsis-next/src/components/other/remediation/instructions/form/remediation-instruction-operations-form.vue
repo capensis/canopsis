@@ -2,7 +2,7 @@
   v-layout.mt-2(column)
     v-layout(row)
       v-flex(v-if="!operations.length", xs11)
-        v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyOperations') }}
+        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyOperations') }}
     draggable(
       v-field="operations",
       :options="draggableOptions",
@@ -25,8 +25,8 @@
         :disabled="disabled",
         outline,
         @click="addOperation"
-      ) {{ $t('remediationInstructions.addOperation') }}
-      span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}
+      ) {{ $t('remediation.instruction.addOperation') }}
+      span.error--text(v-show="hasOperationsErrors") {{ $t('remediation.instruction.errors.operationRequired') }}
 </template>
 
 <script>

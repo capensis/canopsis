@@ -1,4 +1,4 @@
-- time: '2021-11-23'
+- time: '2021-11-23 00:00:30'
   entity_id: 3
   user_id: test-user-to-alarm-metrics-get
   value: 600

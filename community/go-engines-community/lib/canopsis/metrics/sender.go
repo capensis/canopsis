@@ -15,7 +15,6 @@ type Sender interface {
 	SendCancelAck(alarm types.Alarm, timestamp time.Time)
 	SendTicket(alarm types.Alarm, userID string, timestamp time.Time)
 	SendResolve(alarm types.Alarm, entity types.Entity, timestamp time.Time)
-	SendAutoInstructionStart(alarm types.Alarm, timestamp time.Time)
 	SendCreate(alarm types.Alarm, timestamp time.Time)
 	SendCreateAndPbhEnter(alarm types.Alarm, timestamp time.Time)
 	SendCorrelation(timestamp time.Time, child types.Alarm)
@@ -24,12 +23,25 @@ type Sender interface {
 	SendPbhLeave(entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
 	SendPbhLeaveAndEnter(alarm *types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
 	SendUpdateState(alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
+
+	SendAutoInstructionExecutionStart(alarm types.Alarm, timestamp time.Time)
+	SendAutoInstructionExecutionForInstruction(instructionID string, timestamp time.Time)
+	SendAutoInstructionAssignForInstructions(instructionIDs []string, timestamp time.Time)
+
 	SendInstructionAssignForAlarm(entityID string, timestamp time.Time)
 	SendInstructionAssignForAlarms(entityIDs []string, timestamp time.Time)
 	SendInstructionExecutionForAlarm(entityID string, timestamp time.Time)
 	SendInstructionAssignForInstruction(instructionID string, timestamp time.Time, value int64)
-	SendInstructionAssignForInstructions(instructionIDs []string, timestamp time.Time, value int64)
+	SendInstructionAssignForInstructions(instructionIDs []string, timestamp time.Time)
 	SendInstructionExecutionForInstruction(instructionID string, timestamp time.Time)
+
+	SendNotAckedInHourInc(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInFourHoursInc(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInDayInc(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInHourDec(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInFourHoursDec(alarm types.Alarm, timestamp time.Time)
+	SendNotAckedInDayDec(alarm types.Alarm, timestamp time.Time)
+	SendRemoveNotAckedMetric(alarm types.Alarm, timestamp time.Time)
 }
 
 type nullSender struct{}
@@ -54,7 +66,14 @@ func (s *nullSender) SendTicket(_ types.Alarm, _ string, _ time.Time) {
 func (s *nullSender) SendResolve(_ types.Alarm, _ types.Entity, _ time.Time) {
 }
 
-func (s *nullSender) SendAutoInstructionStart(_ types.Alarm, _ time.Time) {
+func (s *nullSender) SendAutoInstructionExecutionStart(_ types.Alarm, _ time.Time) {
+}
+
+func (s *nullSender) SendAutoInstructionExecutionForInstruction(_ string, _ time.Time) {
+}
+
+func (s *nullSender) SendAutoInstructionAssignForInstructions(_ []string, _ time.Time) {
+
 }
 
 func (s *nullSender) SendCreate(_ types.Alarm, _ time.Time) {
@@ -101,10 +120,38 @@ func (s *nullSender) SendInstructionAssignForInstruction(_ string, _ time.Time, 
 
 }
 
-func (s *nullSender) SendInstructionAssignForInstructions(_ []string, _ time.Time, _ int64) {
+func (s *nullSender) SendInstructionAssignForInstructions(_ []string, _ time.Time) {
 
 }
 
 func (s *nullSender) SendInstructionExecutionForInstruction(_ string, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInHourInc(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInFourHoursInc(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInDayInc(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInHourDec(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInFourHoursDec(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendNotAckedInDayDec(_ types.Alarm, _ time.Time) {
+
+}
+
+func (s *nullSender) SendRemoveNotAckedMetric(_ types.Alarm, _ time.Time) {
 
 }

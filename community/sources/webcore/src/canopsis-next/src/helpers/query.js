@@ -4,19 +4,24 @@ import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
   WIDGET_TYPES,
   QUICK_RANGES,
-  ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
   DATETIME_FORMATS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
-import { defaultColumnsToColumns } from './entities';
+import featuresService from '@/services/features';
+
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from './date/date-intervals';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from './date/date-intervals';
+import { isResolvedAlarm } from './entities';
+import { isRatioMetric } from './metrics';
 
 /**
  * WIDGET CONVERTERS
@@ -80,7 +85,7 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    widgetColumns,
+    widgetColumns = [],
     itemsPerPage,
     sort,
     mainFilter,
@@ -92,6 +97,7 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
+    with_declare_tickets: true,
     with_links: true,
     multiSortBy: [],
     lockedFilter: mainFilter,
@@ -105,12 +111,15 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  if (widgetColumns) {
-    query.active_columns = widgetColumns.map(v => (ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP[v.value] || v.value));
+  if (widgetColumns.length) {
+    query.active_columns = widgetColumns.map(v => v.value);
   }
 
   if (sort && sort.column && sort.order) {
-    query.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+    query.multiSortBy.push({
+      sortBy: sort.column,
+      descending: sort.order === SORT_ORDERS.desc,
+    });
   }
 
   return query;
@@ -199,6 +208,79 @@ export function convertCounterWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts chart widgets default parameters to query Object
+ *
+ * @param {Widget} widget
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export function convertChartWidgetDefaultParametersToQuery(widget) {
+  const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
+
+  return {
+    sampling: defaultSampling,
+    interval: {
+      from: QUICK_RANGES[defaultTimeRange].start,
+      to: QUICK_RANGES[defaultTimeRange].stop,
+    },
+  };
+}
+
+/**
+ * This function converts bar chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertChartWidgetToQuery(widget) {
+  const { parameters: { comparison = false, metrics = [] } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    with_history: comparison,
+    parameters: metrics.map(({ metric }) => metric),
+  };
+}
+
+/**
+ * This function converts pie chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertPieChartWidgetToQuery(widget) {
+  const { parameters: { metrics = [], aggregate_func: aggregateFunc } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    parameters: metrics.map(({ metric }) => ({
+      metric,
+      aggregate_func: aggregateFunc,
+    })),
+  };
+}
+
+/**
+ * This function converts numbers widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertNumbersWidgetToQuery(widget) {
+  const { parameters: { metrics = [] } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
+      metric,
+      aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
+    })),
+  };
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -250,6 +332,28 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
 export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({ category });
 
 /**
+ * This function converts userPreference with widget type 'Map' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval, mainFilter } }) => {
+  const query = {
+    filter: mainFilter,
+  };
+
+  if (sampling) {
+    query.sampling = sampling;
+  }
+
+  if (interval) {
+    query.interval = interval;
+  }
+
+  return query;
+};
+
+/**
  * This function converts userPreference with widgetXtype 'Context' to query Object
  *
  * @param {Object} userPreference
@@ -277,18 +381,22 @@ export function convertContextUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
-  switch (widgetType) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.context:
-      return convertContextUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.map:
-      return convertMapUserPreferenceToQuery(userPreference);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+    [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
+
+    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widgetType];
+
+  return converter ? converter(userPreference) : {};
 }
 
 /**
@@ -298,20 +406,23 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.type) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmWidgetToQuery(widget);
-    case WIDGET_TYPES.context:
-      return convertContextWidgetToQuery(widget);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
-    case WIDGET_TYPES.counter:
-      return convertCounterWidgetToQuery(widget);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
+    [WIDGET_TYPES.context]: convertContextWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
+    [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
+    [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
+
+    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widget.type];
+
+  return converter ? converter(widget) : {};
 }
 
 /**
@@ -348,7 +459,7 @@ export function prepareQuery(widget, userPreference) {
  * @param {string | string[]} filter
  * @returns {string[]}
  */
-const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
+export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
 
 /**
  * Convert locked filter and main filter to query filters
@@ -373,12 +484,14 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
   const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS);
+    : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
     _id: alarm._id,
     with_instructions: true,
-    opened: widget.parameters.opened,
+    with_declare_tickets: true,
+    with_links: true,
+    opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     steps: {
       reversed: true,
       page: 1,

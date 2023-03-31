@@ -36,7 +36,7 @@ export const alarmStatusRuleToForm = (rule = {}, flapping = false) => {
     duration: rule.duration
       ? durationToForm(rule.duration)
       : { value: 1, unit: TIME_UNITS.minute },
-    priority: rule.priority ?? 1,
+    priority: rule.priority,
     description: rule.description ?? '',
     patterns: filterPatternsToForm(
       rule,

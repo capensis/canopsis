@@ -62,7 +62,9 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 			w.DataStorageConfigProvider.Get().MaxUpdates)
 		if err != nil {
 			w.Logger.Err(err).Msg("cannot delete message rates")
-		} else if deleted > 0 {
+			return
+		}
+		if deleted > 0 {
 			w.Logger.Info().Int64("count", deleted).Msg("message rates were deleted")
 		}
 

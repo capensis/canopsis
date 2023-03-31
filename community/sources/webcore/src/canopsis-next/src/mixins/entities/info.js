@@ -9,6 +9,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('info');
 export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
+      appInfoPending: 'pending',
       appInfo: 'appInfo',
       version: 'version',
       logo: 'logo',
