@@ -8,6 +8,10 @@
       :error-messages="errors.collect('description')",
       name="description"
     )
+    c-enabled-field(
+      v-field="form.hidden",
+      :label="$t('pbehavior.reasons.hidden')"
+    )
 </template>
 
 <script>
