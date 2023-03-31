@@ -6,6 +6,7 @@ import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
  * @property {string} description
  * @property {string} icon_name
  * @property {string} name
+ * @property {boolean} hidden
  * @property {number} priority
  * @property {string} type
  * @property {string} color
@@ -18,7 +19,7 @@ import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 /**
  * Convert pbehavior type data to type form
  *
- * @param {PbehaviorType} type
+ * @param {PbehaviorType} [type = {}]
  * @return {PbehaviorTypeForm}
  */
 export const pbehaviorTypeToForm = (type = {}) => ({
@@ -29,4 +30,5 @@ export const pbehaviorTypeToForm = (type = {}) => ({
   priority: type.priority ?? 5,
   icon_name: type.icon_name ?? '',
   color: type.color ?? '',
+  hidden: type.hidden ?? false,
 });
