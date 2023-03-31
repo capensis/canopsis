@@ -1,10 +1,15 @@
 <template lang="pug">
   widget-settings-item(:title="label")
-    c-columns-field(
+    c-columns-with-template-field(
       v-field="columns",
+      :type="type",
+      :template="template",
+      :templates="templates",
+      :templates-pending="templatesPending",
       :with-template="withTemplate",
       :with-html="withHtml",
-      :with-color-indicator="withColorIndicator"
+      :with-color-indicator="withColorIndicator",
+      @update:template="updateTemplate"
     )
 </template>
 
@@ -22,9 +27,25 @@ export default {
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+    },
     columns: {
-      type: [Array, Object],
+      type: Array,
       default: () => [],
+    },
+    template: {
+      type: [String, Symbol],
+      required: false,
+    },
+    templates: {
+      type: Array,
+      default: () => [],
+    },
+    templatesPending: {
+      type: Boolean,
+      default: false,
     },
     withTemplate: {
       type: Boolean,
@@ -37,6 +58,11 @@ export default {
     withColorIndicator: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    updateTemplate(...args) {
+      this.$emit('update:template', ...args);
     },
   },
 };

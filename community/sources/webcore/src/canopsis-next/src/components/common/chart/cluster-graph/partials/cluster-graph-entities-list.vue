@@ -12,6 +12,7 @@
           required,
           return-object,
           clearable,
+          autocomplete,
           @input="updateEntity($event, index)"
         )
         v-expand-transition

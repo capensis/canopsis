@@ -13,6 +13,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -42,7 +43,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	routingKey := data[1]
 
 	var replyEvent []byte
-	var event types.RPCPBehaviorResultEvent
+	var event rpc.PbehaviorResultEvent
 	err := p.Decoder.Decode(msg.Body, &event)
 	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "RPC PBehavior Client: invalid event", msg.Body)
@@ -136,7 +137,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 		}
 	}
 
-	replyEvent, err = p.getRpcEvent(types.RPCAxeResultEvent{
+	replyEvent, err = p.getRpcEvent(rpc.AxeResultEvent{
 		Alarm:           event.Alarm,
 		AlarmChangeType: alarmChangeType,
 		Error:           nil,
@@ -182,11 +183,11 @@ func (p *rpcPBehaviorClientMessageProcessor) logError(err error, errMsg string, 
 }
 
 func (p *rpcPBehaviorClientMessageProcessor) getErrRpcEvent(err error) []byte {
-	msg, _ := p.getRpcEvent(types.RPCAxeResultEvent{Error: &types.RPCError{Error: err}})
+	msg, _ := p.getRpcEvent(rpc.AxeResultEvent{Error: &rpc.Error{Error: err}})
 	return msg
 }
 
-func (p *rpcPBehaviorClientMessageProcessor) getRpcEvent(event types.RPCAxeResultEvent) ([]byte, error) {
+func (p *rpcPBehaviorClientMessageProcessor) getRpcEvent(event rpc.AxeResultEvent) ([]byte, error) {
 	msg, err := p.Encoder.Encode(event)
 	if err != nil {
 		p.Logger.Err(err).Msg("cannot encode event")

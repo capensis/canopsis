@@ -170,13 +170,13 @@ export const createRemoveAckEventByEntity = ({ entity, output }) => prepareEvent
  * Create associate ticket event by entity data
  *
  * @param {Entity} entity
- * @param {string} ticket
+ * @param {AssociateTicketEvent} payload
  * @return {Event}
  */
-export const createAssociateTicketEventByEntity = ({ entity, ticket }) => prepareEventByEntity(
+export const createAssociateTicketEventByEntity = ({ entity, ...payload }) => prepareEventByEntity(
   entity,
   EVENT_ENTITY_TYPES.assocTicket,
-  { ticket },
+  payload,
 );
 
 /**

@@ -29,18 +29,19 @@
           div.drag-handler
             v-layout.controls
               v-tooltip(bottom)
+                template(#activator="{ on }")
+                  v-btn.ma-0.mr-1(
+                    v-on="on",
+                    :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
+                    icon,
+                    small,
+                    @click="toggleAutoHeight(index)"
+                  )
+                    v-icon(
+                      :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
+                      small
+                    ) lock
                 span {{ $t('view.autoHeightButton') }}
-                v-btn.ma-0.mr-1(
-                  slot="activator",
-                  :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
-                  icon,
-                  small,
-                  @click="toggleAutoHeight(index)"
-                )
-                  v-icon(
-                    :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
-                    small
-                  ) lock
               widget-wrapper-menu(
                 :widget="layoutItem.widget",
                 :tab="tab"

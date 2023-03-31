@@ -12,7 +12,7 @@
       v-layout(align-center)
         c-enabled-field(
           v-model="showFailed",
-          :label="$t('remediationInstructionStats.showFailedExecutions')",
+          :label="$t('remediation.instructionStat.showFailedExecutions')",
           hide-details
         )
     template(#executed_on="{ item }")
@@ -26,8 +26,10 @@
       span {{ item.duration | duration }}
     template(#resolved="{ item }")
       span {{ item.alarm | get('v.resolved') | date }}
+    template(#timeout_after_execution="{ item }")
+      span {{ item.timeout_after_execution | duration }}
     template(#timeline="{ item }")
-      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediationInstructionStats.instructionChanged') }}
+      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediation.instructionStat.instructionChanged') }}
       alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
 </template>
 
@@ -66,7 +68,7 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('remediationInstructionStats.executedAt'),
+          text: this.$t('remediation.instructionStat.executedAt'),
           value: 'executed_on',
           sortable: false,
         },
@@ -81,13 +83,18 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.remediationDuration'),
+          text: this.$t('remediation.instructionStat.remediationDuration'),
           value: 'duration',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmResolvedDate'),
+          text: this.$t('remediation.instructionStat.alarmResolvedDate'),
           value: 'resolved',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.timeoutAfterExecution'),
+          value: 'timeout_after_execution',
           sortable: false,
         },
         {

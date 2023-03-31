@@ -11,9 +11,9 @@
     hide-details,
     dense
   )
-    template(slot="selection", slot-scope="{ parent, item, index }")
+    template(#selection="{ parent, item, index }")
       v-icon.c-input-type-field__icon(small) {{ getInputTypeIcon(item.value) }}
-    template(slot="item", slot-scope="{ item }")
+    template(#item="{ item }")
       v-list-tile-avatar.c-input-type-field__avatar
         v-icon.c-input-type-field__icon(small) {{ getInputTypeIcon(item.value) }}
       v-list-tile-content
@@ -68,7 +68,7 @@ export default {
 
     preparedTypes() {
       return this.types.map(
-        type => (type.text ? type : ({ ...type, text: this.$t(`mixedField.types.${type.value}`) })),
+        type => (type.text ? type : ({ ...type, text: this.$t(`common.mixedField.types.${type.value}`) })),
       );
     },
   },

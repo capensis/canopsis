@@ -1,6 +1,5 @@
 import { omit, pick, isObject, groupBy, map } from 'lodash';
 
-import i18n from '@/i18n';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -12,19 +11,7 @@ import uid from './uid';
 import uuid from './uuid';
 import { convertDateToString } from './date/date';
 import { formToWidget, widgetToForm } from './forms/widgets/common';
-
-/**
- * Convert default columns from constants to columns with prepared by i18n label
- *
- * @param {{ labelKey: string, value: string }[]} [columns = []]
- * @returns {{ label: string, value: string }[]}
- */
-export function defaultColumnsToColumns(columns = []) {
-  return columns.map(({ labelKey, value }) => ({
-    label: i18n.tc(labelKey),
-    value,
-  }));
-}
+import { prepareAlarmListWidget, prepareContextWidget } from './widgets';
 
 /**
  * Checks if alarm is resolved
@@ -108,6 +95,42 @@ export const filterById = (items, item, idKey = '_id') => items
   .filter(({ [idKey]: itemId }) => item[idKey] !== itemId);
 
 /**
+ * Filter entities by value
+ *
+ * @param {string[] | number[]} items
+ * @param {string | number} removingValue
+ */
+export const filterValue = (items, removingValue) => items.filter(item => item !== removingValue);
+
+/**
+ * Revert grouped values by key
+ *
+ * @example
+ *  revertGroupBy({
+ *    'key1': ['value1', 'value2'],
+ *    'key2': ['value1', 'value2', 'value3'],
+ *    'key3': ['value3'],
+ *  }) -> {
+ *    'value1': ['key1', 'key2'],
+ *    'value2': ['key1', 'key2'],
+ *    'value3': ['key2', 'key3'],
+ *  }
+ * @param {Object.<string, string[]>} obj
+ * @returns {Object.<string, string[]>}
+ */
+export const revertGroupBy = obj => Object.entries(obj).reduce((acc, [id, values]) => {
+  values.forEach((value) => {
+    if (acc[value]) {
+      acc[value].push(id);
+    } else {
+      acc[value] = [id];
+    }
+  });
+
+  return acc;
+}, {});
+
+/**
  * Generate alarm list widget form with default parameters.
  *
  * @return {WidgetForm}
@@ -126,6 +149,13 @@ export const generateDefaultAlarmListWidget = () => ({
 });
 
 /**
+ * Generate prepared default alarm list
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultAlarmListWidget = () => prepareAlarmListWidget(generateDefaultAlarmListWidget());
+
+/**
  * Generate context widget with default parameters.
  *
  * @return {Widget}
@@ -135,6 +165,13 @@ export const generateDefaultContextWidget = () => ({
 
   _id: uuid(),
 });
+
+/**
+ * Generate prepared default context
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
 
 /**
  * Generate service weather widget with default parameters.

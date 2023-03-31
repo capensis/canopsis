@@ -1,0 +1,17 @@
+export default {
+  oid: 'oid',
+  module: 'Select a mib module',
+  output: 'output',
+  resource: 'resource',
+  component: 'component',
+  connectorName: 'connector_name',
+  toCustom: 'To custom',
+  defineVar: 'Define matching snmp var',
+  writeTemplate: 'Write template',
+  state: 'severity',
+  moduleMibObjects: 'Snmp vars match field',
+  regex: 'Regex',
+  formatter: 'Format (capture group with \\x)',
+  uploadMib: 'Upload MIB',
+  addSnmpRule: 'Add SNMP rule',
+};

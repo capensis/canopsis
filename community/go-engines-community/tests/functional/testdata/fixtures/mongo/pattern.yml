@@ -1202,3 +1202,178 @@ pattern:
             value:
               from: 1605263992
               to: 1605264992
+
+  pattern_to_declare_ticket_rule_pattern_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-declare-ticket-rule-pattern-1
+    is_corporate: true
+    title: test-pattern-to-declare-ticket-rule-pattern-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-declare-ticket-rule-pattern-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+
+  pattern_to_declare_ticket_rule_pattern_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-declare-ticket-rule-pattern-2
+    is_corporate: true
+    title: test-pattern-to-declare-ticket-rule-pattern-2-title
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.activation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.activation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+
+  pattern_to_declare_ticket_rule_pattern_3:
+    <<: *pattern_pbehavior
+    _id: test-pattern-to-declare-ticket-rule-pattern-3
+    is_corporate: true
+    title: test-pattern-to-declare-ticket-rule-pattern-3-title
+    pbehavior_pattern:
+      - - field: pbehavior_info.canonical_type
+          cond:
+            type: eq
+            value: maintenance
+
+  pattern_to_link_rule_pattern_1:
+    <<: *pattern_entity
+    _id: test-pattern-to-link-rule-pattern-1
+    is_corporate: true
+    title: test-pattern-to-link-rule-pattern-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-pattern-to-link-rule-pattern-1-pattern
+        - field: last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+
+  pattern_to_link_rule_pattern_2:
+    <<: *pattern_alarm
+    _id: test-pattern-to-link-rule-pattern-2
+    is_corporate: true
+    title: test-pattern-to-link-rule-pattern-2-title
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+        - field: v.last_event_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.last_update_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.resolved
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.activation_date
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+        - field: v.ack.t
+          cond:
+            type: relative_time
+            value:
+              value: 1
+              unit: m
+      - - field: v.creation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.activation_date
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992
+        - field: v.ack.t
+          cond:
+            type: absolute_time
+            value:
+              from: 1605263992
+              to: 1605264992

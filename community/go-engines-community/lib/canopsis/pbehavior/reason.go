@@ -14,4 +14,7 @@ type Reason struct {
 	Name        string        `bson:"name" json:"name" binding:"required"`
 	Description string        `bson:"description" json:"description" binding:"required"`
 	Created     types.CpsTime `bson:"created,omitempty" json:"created" swaggertype:"integer"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
 }

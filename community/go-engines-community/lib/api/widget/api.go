@@ -3,7 +3,6 @@ package widget
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -24,16 +23,17 @@ type API interface {
 }
 
 type api struct {
-	store        Store
-	enforcer     security.Enforcer
-	transformer  common.PatternFieldsTransformer
+	store       Store
+	enforcer    security.Enforcer
+	transformer *RequestTransformer
+
 	actionLogger logger.ActionLogger
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
-	transformer common.PatternFieldsTransformer,
+	transformer *RequestTransformer,
 	actionLogger logger.ActionLogger,
 ) API {
 	return &api{
@@ -48,7 +48,7 @@ func NewApi(
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	widget, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	widget, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccessByTab(c.Request.Context(), widget.Tab, userId, model.PermissionRead)
+	ok, err := a.checkAccessByTab(c, widget.Tab, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -81,7 +81,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccessByTab(c.Request.Context(), request.Tab, userId, model.PermissionUpdate)
+	ok, err := a.checkAccessByTab(c, request.Tab, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -91,7 +91,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err = a.transformEditRequest(c.Request.Context(), &request)
+	err = a.transformer.Transform(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -101,7 +101,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	widget, err := a.store.Insert(c.Request.Context(), request)
+	widget, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -132,7 +132,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccess(c.Request.Context(), []string{request.ID}, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, []string{request.ID}, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -142,7 +142,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ok, err = a.checkAccessByTab(c.Request.Context(), request.Tab, userId, model.PermissionUpdate)
+	ok, err = a.checkAccessByTab(c, request.Tab, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -152,7 +152,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.transformEditRequest(c.Request.Context(), &request)
+	err = a.transformer.Transform(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -162,7 +162,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	widget, err := a.store.Update(c.Request.Context(), request)
+	widget, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -188,7 +188,7 @@ func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	ok, err := a.checkAccess(c.Request.Context(), []string{id}, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, []string{id}, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -198,7 +198,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err = a.store.Delete(c.Request.Context(), id)
+	ok, err = a.store.Delete(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -233,7 +233,7 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	widget, err := a.store.GetOneBy(c.Request.Context(), id)
+	widget, err := a.store.GetOneBy(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -242,7 +242,7 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccessByTab(c.Request.Context(), widget.Tab, userId, model.PermissionRead)
+	ok, err := a.checkAccessByTab(c, widget.Tab, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
@@ -252,7 +252,7 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	ok, err = a.checkAccessByTab(c.Request.Context(), request.Tab, userId, model.PermissionUpdate)
+	ok, err = a.checkAccessByTab(c, request.Tab, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -262,7 +262,7 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	newWidget, err := a.store.Copy(c.Request.Context(), *widget, request)
+	newWidget, err := a.store.Copy(c, *widget, request)
 	if err != nil {
 		panic(err)
 	}
@@ -299,7 +299,7 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 	for i, item := range request.Items {
 		ids[i] = item.ID
 	}
-	ok, err := a.checkAccess(c.Request.Context(), ids, userId, model.PermissionUpdate)
+	ok, err := a.checkAccess(c, ids, userId, model.PermissionUpdate)
 	if err != nil {
 		panic(err)
 	}
@@ -309,7 +309,7 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 		return
 	}
 
-	ok, err = a.store.UpdateGridPositions(c.Request.Context(), request.Items)
+	ok, err = a.store.UpdateGridPositions(c, request.Items)
 	if err != nil {
 		valErr := ValidationErr{}
 		if errors.As(err, &valErr) {
@@ -350,33 +350,4 @@ func (a *api) checkAccessByTab(ctx context.Context, tabId string, userId, perm s
 	}
 
 	return a.enforcer.Enforce(userId, viewId, perm)
-}
-
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	for i := range request.Filters {
-		request.Filters[i].AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.Filters[i].AlarmPatternFieldsRequest)
-		if err != nil {
-			if err == common.ErrNotExistCorporateAlarmPattern {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_alarm_pattern", i), err)
-			}
-			return err
-		}
-		request.Filters[i].EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.Filters[i].EntityPatternFieldsRequest)
-		if err != nil {
-			if err == common.ErrNotExistCorporateEntityPattern {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_entity_pattern", i), err)
-			}
-			return err
-		}
-		request.Filters[i].PbehaviorPatternFieldsRequest, err = a.transformer.TransformPbehaviorPatternFieldsRequest(ctx, request.Filters[i].PbehaviorPatternFieldsRequest)
-		if err != nil {
-			if err == common.ErrNotExistCorporatePbehaviorPattern {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_pbehavior_pattern", i), err)
-			}
-			return err
-		}
-	}
-
-	return nil
 }

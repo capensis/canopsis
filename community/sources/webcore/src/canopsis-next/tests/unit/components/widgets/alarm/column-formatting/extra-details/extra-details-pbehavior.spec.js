@@ -1,16 +1,9 @@
 import { omit } from 'lodash';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsPbehavior from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-pbehavior.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsPbehavior, {
-  localVue,
-
-  ...options,
-});
 
 describe('extra-details-pbehavior', () => {
   const prevDateStartTimestamp = 1386382400000;
@@ -47,78 +40,94 @@ describe('extra-details-pbehavior', () => {
     icon_name: 'icon-name',
   };
 
-  it('Renders `extra-details-pbehavior` with full pbehavior', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ExtraDetailsPbehavior);
+
+  it('Renders `extra-details-pbehavior` with full pbehavior', async () => {
+    snapshotFactory({
       propsData: {
         pbehavior,
         pbehaviorInfo,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without reason', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-pbehavior` without reason', async () => {
+    snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['reason']),
         pbehaviorInfo,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without tstop', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-pbehavior` without tstop', async () => {
+    snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['tstop']),
         pbehaviorInfo,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without rrule', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-pbehavior` without rrule', async () => {
+    snapshotFactory({
       propsData: {
         pbehavior: omit(pbehavior, ['rrule']),
         pbehaviorInfo,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` without comments', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-pbehavior` without comment', async () => {
+    snapshotFactory({
       propsData: {
-        pbehavior: omit(pbehavior, ['comments']),
+        pbehavior: omit(pbehavior, ['last_comment']),
         pbehaviorInfo,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-pbehavior` with pbehavior started in previous month', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-pbehavior` without comment author', async () => {
+    snapshotFactory({
+      propsData: {
+        pbehavior: {
+          ...pbehavior,
+          last_comment: {
+            author: null,
+            ...pbehavior.last_comment,
+          },
+        },
+        pbehaviorInfo,
+      },
+    });
+
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
+  });
+
+  it('Renders `extra-details-pbehavior` with pbehavior started in previous month', async () => {
+    snapshotFactory({
       propsData: {
         pbehavior: {
           ...pbehavior,
@@ -128,9 +137,8 @@ describe('extra-details-pbehavior', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

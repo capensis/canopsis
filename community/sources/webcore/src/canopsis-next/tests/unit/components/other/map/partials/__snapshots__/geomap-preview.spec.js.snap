@@ -40,16 +40,11 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
         color="secondary"
         icon="help"
         size="32"
-        top="top"
-      >
-        <div
-          class="pre-wrap"
-        >
-          Useful shortcuts:
+        text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-        </div>
-      </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+        top="top"
+      />
     </geomap-control-stub>
     <geomap-cluster-group-stub
       clusterstyle="[object Object]"
@@ -214,16 +209,11 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
         color="secondary"
         icon="help"
         size="32"
-        top="top"
-      >
-        <div
-          class="pre-wrap"
-        >
-          Useful shortcuts:
+        text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-        </div>
-      </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+        top="top"
+      />
     </geomap-control-stub>
     <geomap-cluster-group-stub
       clusterstyle="[object Object]"
@@ -396,16 +386,11 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and pbeh
         color="secondary"
         icon="help"
         size="32"
-        top="top"
-      >
-        <div
-          class="pre-wrap"
-        >
-          Useful shortcuts:
+        text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-        </div>
-      </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+        top="top"
+      />
     </geomap-control-stub>
     <geomap-cluster-group-stub
       clusterstyle="[object Object]"
@@ -580,16 +565,11 @@ exports[`geomap-preview Renders \`geomap-preview\` with custom props 1`] = `
         color="secondary"
         icon="help"
         size="32"
-        top="top"
-      >
-        <div
-          class="pre-wrap"
-        >
-          Useful shortcuts:
+        text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-        </div>
-      </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+        top="top"
+      />
     </geomap-control-stub>
     <geomap-cluster-group-stub
       layertype="overlay"
@@ -675,16 +655,11 @@ exports[`geomap-preview Renders \`geomap-preview\` with required props 1`] = `
         color="secondary"
         icon="help"
         size="32"
-        top="top"
-      >
-        <div
-          class="pre-wrap"
-        >
-          Useful shortcuts:
+        text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
-Left mouse click + drag - pan the area
-        </div>
-      </c-help-icon-stub>
+Left mouse click + drag - pan the area"
+        top="top"
+      />
     </geomap-control-stub>
     <geomap-cluster-group-stub
       layertype="overlay"

@@ -25,13 +25,14 @@
       v-flex(xs7)
         c-duration-field(
           v-field="form.timeout_after_execution",
-          :label="$t('remediationInstructions.timeoutAfterExecution')",
+          :label="$t('remediation.instruction.timeoutAfterExecution')",
+          :units-label="$t('common.unit')",
           :disabled="disabled",
           name="timeout_after_execution",
           required
         )
       v-flex.ml-2(v-if="isAutoType", xs3)
-        c-priority-field(v-field="form.priority", :disabled="disabled", required)
+        c-priority-field(v-field="form.priority", :disabled="disabled")
     c-triggers-field(
       v-if="isAutoType",
       v-field="form.triggers",

@@ -1,8 +1,8 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(slot="title")
+    template(#title="")
       span {{ $t('modals.dynamicInfoTemplatesList.title') }}
-    template(slot="text")
+    template(#text="")
       div
         v-layout(justify-end)
           v-btn.primary(fab, small, flat, @click="showAddTemplateModal")
@@ -14,7 +14,7 @@
           item-key="_id",
           expand
         )
-          template(slot="items", slot-scope="props")
+          template(#items="props")
             tr(@click="props.expanded = !props.expanded")
               td {{ props.item.title }}
               td
@@ -32,14 +32,15 @@
                     type="delete",
                     @click="showDeleteTemplateModal(props.item._id)"
                   )
-          template(slot="expand", slot-scope="props")
+          template(#expand="{ item }")
             v-container.secondary.lighten-2
               v-card
                 v-card-text
-                  v-data-iterator(:items="props.item.names")
-                    v-flex(slot="item", slot-scope="nameProps")
-                      v-card
-                        v-card-title {{ nameProps.item }}
+                  v-data-iterator(:items="item.names")
+                    template(#item="nameProps")
+                      v-flex
+                        v-card
+                          v-card-title {{ nameProps.item }}
 </template>
 
 <script>

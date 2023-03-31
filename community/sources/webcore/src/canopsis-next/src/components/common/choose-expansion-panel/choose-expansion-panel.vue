@@ -2,7 +2,8 @@
   div.choose-expansion-panel
     v-expansion-panel.my-1
       v-expansion-panel-content.grey.darken-2.white--text(:class="{ error: errors.length }", lazy)
-        div.white--text(slot="header") {{ label }}
+        template(#header="")
+          div.white--text {{ label }}
         v-card.pt-1
           v-alert.pa-2.mx-2(type="error", :value="!!errors.length") {{ errors.join(' ') }}
           chips-list(

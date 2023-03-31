@@ -142,8 +142,17 @@ export default {
         && this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors);
     },
 
+    allActions() {
+      return getAvailableActionsByEntity(this.entity);
+    },
+
     availableActions() {
-      return getAvailableActionsByEntity(this.entity).filter(this.actionsAccessFilterHandler);
+      return this.allActions
+        .filter(this.actionsAccessFilterHandler)
+        .map(action => ({
+          ...action,
+          loading: this.pendingByActionType[action.type],
+        }));
     },
   },
   watch: {

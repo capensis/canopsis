@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     c-duration-field(
       v-field="form.delay",
       :label="$t('common.delay')",
@@ -11,7 +11,7 @@
     c-enabled-field(v-field="form.enabled")
     c-triggers-field(:value="form.triggers", @input="updateField('triggers', $event)")
     c-disable-during-periods-field(v-field="form.disable_during_periods")
-    c-priority-field(v-model="form.priority", :min="1", required)
+    c-priority-field(v-model="form.priority")
     scenario-actions-form.mt-2(v-field="form.actions", name="actions")
 </template>
 
