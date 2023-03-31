@@ -2,7 +2,7 @@
   v-layout(column)
     v-textarea(v-field="value.output", :label="$t('scenario.output')")
       template(#append="")
-        c-help-icon(:text="$t('scenario.outputHelp')", icon="help", color="grey darken-1", left)
+        c-help-icon(:text="$t('scenario.outputHelp')", icon="help", left)
 </template>
 
 <script>

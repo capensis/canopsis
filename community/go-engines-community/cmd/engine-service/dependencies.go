@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
@@ -40,6 +41,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
@@ -51,6 +53,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 	if !options.AutoRecomputeAll {
 		serviceLockClient = redis.NewLockClient(redisSession)
 	}
+	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	entityServicesService := entityservice.NewService(
 		amqpChannel,
 		canopsis.CheExchangeName,
@@ -63,7 +66,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		entityservice.NewStorage(entityservice.NewAdapter(mongoClient), redisSession, json.NewEncoder(), json.NewDecoder(), logger),
 		serviceLockClient,
 		redisSession,
-		timezoneConfigProvider,
+		templateExecutor,
 		logger,
 	)
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
@@ -238,6 +241,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		logger,
 		techMetricsConfigProvider,
 		timezoneConfigProvider,
+		templateConfigProvider,
 	))
 
 	return engineService

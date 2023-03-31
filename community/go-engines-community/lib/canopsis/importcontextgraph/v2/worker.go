@@ -3,17 +3,21 @@ package v2
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -48,12 +52,15 @@ type worker struct {
 
 	publisher         importcontextgraph.EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
+
+	logger zerolog.Logger
 }
 
 func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher importcontextgraph.EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
+	logger zerolog.Logger,
 ) importcontextgraph.Worker {
 	return &worker{
 		entityCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
@@ -63,6 +70,8 @@ func NewWorker(
 
 		publisher:         publisher,
 		metricMetaUpdater: metricMetaUpdater,
+
+		logger: logger,
 	}
 }
 
@@ -233,7 +242,6 @@ func (w *worker) parseEntities(
 	componentsToDelete := make(map[string]bool)
 	componentsToDisable := make(map[string]bool)
 
-	createLinks := make(map[string][]string)
 	deletedResources := make(map[string]bool)
 	disabledResources := make(map[string]bool)
 
@@ -244,7 +252,7 @@ func (w *worker) parseEntities(
 		var ci importcontextgraph.EntityConfiguration
 		err := decoder.Decode(&ci)
 		if err != nil {
-			return res, fmt.Errorf("failed to decode cis item: %v", err)
+			return res, fmt.Errorf("failed to decode cis item: %w", err)
 		}
 
 		err = w.validate(ci)
@@ -252,10 +260,43 @@ func (w *worker) parseEntities(
 			return res, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
 		}
 
+		if ci.Type == types.EntityTypeService && !ci.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+			w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
+			continue
+		}
+
+		if ci.CategoryName != "" {
+			var category entitycategory.Category
+
+			err = w.categoryCollection.FindOne(ctx, bson.M{"name": ci.CategoryName}).Decode(&category)
+			if err != nil {
+				if !errors.Is(err, mongo.ErrNoDocuments) {
+					return res, fmt.Errorf("failed to find a category with name = %s: %w", category.Name, err)
+				}
+
+				category = entitycategory.Category{
+					ID:      utils.NewID(),
+					Name:    ci.CategoryName,
+					Created: &now,
+					Updated: &now,
+				}
+
+				_, err = w.categoryCollection.InsertOne(ctx, category)
+				if err != nil {
+					return res, fmt.Errorf("failed to create a category with name = %s: %w", category.Name, err)
+				}
+			}
+
+			ci.CategoryID = category.ID
+		}
+
 		w.fillDefaultFields(&ci, source, now)
 
 		eventType := ""
-		var oldEntity importcontextgraph.EntityConfiguration
+		var oldEntity struct {
+			importcontextgraph.EntityConfiguration `bson:",inline"`
+			Resources                              []string `bson:"resources"`
+		}
 
 		findCriteria := bson.M{"soft_deleted": bson.M{"$exists": false}}
 		if ci.Type == types.EntityTypeService {
@@ -264,16 +305,39 @@ func (w *worker) parseEntities(
 			findCriteria["_id"] = ci.ID
 		}
 
-		err = w.entityCollection.FindOne(ctx, findCriteria).Decode(&oldEntity)
-		if err != nil && err != mongo.ErrNoDocuments {
+		cursor, err := w.entityCollection.Aggregate(ctx, []bson.M{
+			{"$match": findCriteria},
+			{"$graphLookup": bson.M{
+				"from":                    libmongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "component",
+				"as":                      "resources",
+				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		})
+		if err != nil {
+			return res, err
+		}
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&oldEntity)
+			if err != nil {
+				_ = cursor.Close(ctx)
+				return res, err
+			}
+		}
+		err = cursor.Close(ctx)
+		if err != nil {
 			return res, err
 		}
 
 		switch ci.Action {
 		case importcontextgraph.ActionSet:
-			if ci.Type == types.EntityTypeResource {
-				createLinks[ci.Component] = append(createLinks[ci.Component], ci.ID)
-			} else if ci.Type == types.EntityTypeComponent {
+			if ci.Type == types.EntityTypeComponent {
 				componentInfos[ci.ID] = ci.Infos
 				componentsExist[ci.ID] = true
 			}
@@ -288,7 +352,7 @@ func (w *worker) parseEntities(
 
 				updatedIds = append(updatedIds, ci.ID)
 			} else {
-				writeModels = append(writeModels, w.updateEntity(&ci, oldEntity, true))
+				writeModels = append(writeModels, w.updateEntity(&ci, oldEntity.EntityConfiguration, true))
 				if ci.Type == types.EntityTypeResource {
 					componentsExist[ci.Component] = true
 				}
@@ -324,7 +388,7 @@ func (w *worker) parseEntities(
 			} else if ci.Type == types.EntityTypeComponent {
 				componentsToDelete[ci.ID] = true
 
-				for _, resourceID := range oldEntity.Depends {
+				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
 						deletedResources[resourceID] = true
 
@@ -378,7 +442,7 @@ func (w *worker) parseEntities(
 				componentsToDisable[ci.ID] = true
 				componentInfos[ci.ID] = ci.Infos
 
-				for _, resourceID := range oldEntity.Depends {
+				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
 						deletedResources[resourceID] = true
 						writeModels = append(writeModels, w.changeState(resourceID, false, source, now))
@@ -403,7 +467,7 @@ func (w *worker) parseEntities(
 		if withEvents && eventType != "" {
 			switch ci.Type {
 			case types.EntityTypeService:
-				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity, eventType, now))
+				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
 			default:
 				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
 				if err != nil {
@@ -455,11 +519,6 @@ func (w *worker) parseEntities(
 			}
 		}
 
-		resourceIDs, ok := createLinks[componentName]
-		if ok && len(resourceIDs) > 0 {
-			writeModels = append(writeModels, w.createLink(resourceIDs, componentName)...)
-		}
-
 		if len(componentInfos[componentName]) > 0 {
 			writeModels = append(writeModels, w.updateComponentInfos(componentName, componentInfos[componentName]))
 		}
@@ -491,8 +550,8 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 
 		err = w.publisher.SendEvent(ctx, types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
-			Connector:     types.ConnectorEngineService,
-			ConnectorName: types.ConnectorEngineService,
+			Connector:     defaultConnector,
+			ConnectorName: defaultConnectorName,
 			Component:     service.ID,
 			Timestamp:     types.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
@@ -586,7 +645,7 @@ func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
 func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now types.CpsTime) {
 	switch ci.Type {
 	case types.EntityTypeService:
-		ci.ID = utils.NewID()
+		ci.ID = ci.Name
 	case types.EntityTypeResource:
 		ci.ID = ci.Name + "/" + ci.Component
 	case types.EntityTypeComponent:
@@ -601,23 +660,8 @@ func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, s
 	ci.Imported = now
 }
 
-func (w *worker) createLink(from []string, to string) []mongo.WriteModel {
-	updateTo := bson.M{"$addToSet": bson.M{"depends": bson.M{"$each": from}}}
-	updateFrom := bson.M{"$addToSet": bson.M{"impact": to}}
-
-	return []mongo.WriteModel{
-		mongo.NewUpdateManyModel().
-			SetFilter(bson.M{"_id": to}).
-			SetUpdate(updateTo),
-		mongo.NewUpdateManyModel().
-			SetFilter(bson.M{"_id": bson.M{"$in": from}}).
-			SetUpdate(updateFrom),
-	}
-}
-
 func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.WriteModel {
-	ci.Depends = []string{}
-	ci.Impact = []string{}
+	ci.Services = []string{}
 	ci.EnableHistory = make([]int64, 0)
 
 	if ci.Type == types.EntityTypeComponent {
@@ -639,8 +683,6 @@ func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.W
 }
 
 func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEntity importcontextgraph.EntityConfiguration, mergeInfos bool) mongo.WriteModel {
-	ci.Depends = oldEntity.Depends
-	ci.Impact = oldEntity.Impact
 	ci.EnableHistory = oldEntity.EnableHistory
 
 	if ci.Type == types.EntityTypeComponent {
@@ -649,6 +691,10 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]types.Info)
+	}
+
+	if oldEntity.Infos == nil {
+		oldEntity.Infos = make(map[string]types.Info)
 	}
 
 	if mergeInfos {
@@ -698,8 +744,8 @@ func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, e
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
+		Connector:     defaultConnector,
+		ConnectorName: defaultConnectorName,
 		Component:     ci.ID,
 		SourceType:    types.SourceTypeService,
 		Initiator:     types.InitiatorSystem,

@@ -17,6 +17,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -56,7 +57,7 @@ type baseService struct {
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	now := types.NewCpsTime()
-	eventGenerator := libevent.NewGenerator(s.entityAdapter)
+	eventGenerator := libevent.NewGenerator("engine", "axe")
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
@@ -239,7 +240,6 @@ func (s *baseService) applyAlarmRule(
 	event.SourceType = event.DetectSourceType()
 
 	event.Output = rule.Operation.Parameters.Output
-	event.Ticket = rule.Operation.Parameters.Ticket
 	if rule.Operation.Parameters.State != nil {
 		event.State = *rule.Operation.Parameters.State
 	}
@@ -253,13 +253,22 @@ func (s *baseService) applyAlarmRule(
 		event.EventType = types.EventTypeCancel
 	case types.ActionTypeAssocTicket:
 		event.EventType = types.EventTypeAssocTicket
+		event.TicketInfo = types.TicketInfo{
+			Ticket:           rule.Operation.Parameters.Ticket,
+			TicketRuleID:     rule.ID,
+			TicketRuleName:   types.TicketRuleNameIdleRulePrefix + rule.Name,
+			TicketURL:        rule.Operation.Parameters.TicketURL,
+			TicketSystemName: rule.Operation.Parameters.TicketSystemName,
+			TicketData:       rule.Operation.Parameters.TicketData,
+			TicketComment:    rule.Comment,
+		}
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
-		rpcEvent := types.RPCPBehaviorEvent{
+		rpcEvent := rpc.PbehaviorEvent{
 			Alarm:  &alarm,
 			Entity: &entity,
-			Params: types.RPCPBehaviorParameters{
+			Params: rpc.PbehaviorParameters{
 				Name:           rule.Operation.Parameters.Name,
 				Reason:         rule.Operation.Parameters.Reason,
 				Type:           rule.Operation.Parameters.Type,
@@ -316,7 +325,7 @@ func (s *baseService) applyEntityRule(
 	event := types.Event{}
 	if alarm == nil {
 		var err error
-		event, err = eventGenerator.Generate(ctx, entity)
+		event, err = eventGenerator.Generate(entity)
 		if err != nil {
 			return nil, err
 		}

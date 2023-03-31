@@ -8,7 +8,10 @@
       @mouseenter="handleMouseEnter(variable, $event)"
     )
       v-list-tile-content
-        v-list-tile-title {{ variable.text }}
+        v-list-tile-title
+          v-layout(row, justify-space-between)
+            | {{ variable.text }}
+            span.ml-4.grey--text.lighten-1(v-if="showValue") {{ variable.value }}
 
       v-list-tile-action(v-if="variable.variables")
         v-icon arrow_right
@@ -44,6 +47,10 @@ export default {
     zIndex: {
       type: Number,
       required: false,
+    },
+    showValue: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

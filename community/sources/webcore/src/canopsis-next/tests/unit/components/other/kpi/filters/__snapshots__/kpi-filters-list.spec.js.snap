@@ -2,7 +2,7 @@
 
 exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -660,7 +660,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
 
 exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -780,7 +780,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
 
 exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -1340,7 +1340,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
 
 exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_entity_patterns 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"

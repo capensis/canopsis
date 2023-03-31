@@ -330,7 +330,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       class="v-input__append-outer"
     >
       <c-help-icon-stub
-        color="grey darken-1"
         icon="help"
         left="left"
         text="Instructions of selected type are excluded from the list"
@@ -788,7 +787,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       class="v-input__append-outer"
     >
       <c-help-icon-stub
-        color="grey darken-1"
         icon="help"
         left="left"
         text="Instructions of selected type are excluded from the list"

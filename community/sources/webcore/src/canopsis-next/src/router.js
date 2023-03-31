@@ -42,6 +42,8 @@ const ExploitationScenarios = () => import(/* webpackChunkName: "Scenario" */ '@
 const ExploitationIdleRules = () => import(/* webpackChunkName: "IdleRule" */ '@/views/exploitation/idle-rules.vue');
 const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/flapping-rules.vue');
 const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
+const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
+const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
 const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
@@ -347,6 +349,28 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USERS_PERMISSIONS.technical.exploitation.resolveRules,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationDeclareTicketRules,
+    name: ROUTES_NAMES.exploitationDeclareTicketRules,
+    component: ExploitationDeclareTicketRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.declareTicketRule,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationLinkRules,
+    name: ROUTES_NAMES.exploitationLinkRules,
+    component: ExploitationLinkRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.linkRule,
       },
     },
   },

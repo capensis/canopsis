@@ -1,0 +1,144 @@
+link_rule:
+  link_rule_{1..100}:
+    _id: <UUID()>
+    name: <{rule-<RangeIndex()>}>
+    type: alarm
+    enabled: true
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: <{test-resource-<RangeIndex()>/test-component}>
+    created: <NowUnix()>
+    updated: <NowUnix()>
+    source_code: |
+      function generate(alarms) {
+        let queryStr = "";
+        for (const alarm of alarms) {
+          queryStr += "resources[]=" + alarm.Value.Resource + "&";
+        }
+      
+        return [
+          {
+            label: "test-link-1-label",
+            category: "test-category-1",
+            icon_name: "test-link-1-icon",
+            url: "http://test-link-1-url.com?" + queryStr
+          },
+          {
+            label: "test-link-2-label",
+            category: "test-category-2",
+            icon_name: "test-link-2-icon",
+            url: "http://test-link-2-url.com?" + queryStr
+          },
+          {
+            label: "test-link-3-label",
+            category: "test-category-3",
+            icon_name: "test-link-3-icon",
+            url: "http://test-link-3-url.com?" + queryStr
+          },
+          {
+            label: "test-link-4-label",
+            category: "test-category-4",
+            icon_name: "test-link-4-icon",
+            url: "http://test-link-4-url.com?" + queryStr
+          },
+          {
+            label: "test-link-5-label",
+            category: "test-category-5",
+            icon_name: "test-link-5-icon",
+            url: "http://test-link-5-url.com?" + queryStr
+          }
+        ];
+      }
+
+periodical_alarm:
+  alarm_{1..100}:
+    _id: <{test-alarm-<RangeIndex()>}>
+    d: <{test-resource-<RangeIndex()>/test-component}>
+    t: <NowUnix()>
+    v:
+      connector: test-connector
+      connector_name: test-connector-name
+      component: test-component
+      resource: <{test-resource-<RangeIndex()>}>
+      display_name: <UniqueName()>
+      creation_date: <NowUnix()>
+      last_event_date: <NowUnix()>
+      last_update_date: <NowUnix()>
+      initial_output: <LoremIpsumWord()>
+      output: <LoremIpsumWord()>
+      state:
+        _t: stateinc
+        a: test-connector.test-connector-name
+        m: <LoremIpsumWord()>
+        t: <NowUnix()>
+        initiator: external
+        val: 3
+      status:
+        _t: statusinc
+        a: test-connector.test-connector-name
+        m: <LoremIpsumWord()>
+        t: <NowUnix()>
+        initiator: external
+        val: 1
+      steps:
+        - _t: stateinc
+          a: test-connector.test-connector-name
+          m: <LoremIpsumWord()>
+          t: <NowUnix()>
+          initiator: external
+          val: 3
+        - _t: statusinc
+          a: test-connector.test-connector-name
+          m: <LoremIpsumWord()>
+          t: <NowUnix()>
+          initiator: external
+          val: 1
+
+default_entities:
+  resource_{1..100}:
+    _id: <{test-resource-<RangeIndex()>/test-component}>
+    name: <{test-resource-<RangeIndex()>}>
+    type: resource
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    component: test-component
+    impact:
+      - test-component
+    depends:
+      - test-connector/test-connector-name
+
+  connector:
+    _id: test-connector/test-connector-name
+    name: test-connector-name
+    type: connector
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    impact: @resource_*
+    depends:
+      - test-component
+
+  component:
+    _id: test-component
+    name: <Current()._id>
+    component: <Current()._id>
+    type: component
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    impact:
+      - test-connector/test-connector-name
+    depends: @resource_*

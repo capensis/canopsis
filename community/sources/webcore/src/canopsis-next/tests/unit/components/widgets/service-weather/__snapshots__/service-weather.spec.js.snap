@@ -89,19 +89,17 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
           >
             Something went wrong...
           </div>
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+          <c-help-icon-stub
+            icon="help"
+            top="top"
           >
-            help
-          </i>
-          <span
-            class="v-tooltip v-tooltip--top"
-          >
-            <transition-stub
-              name="slide-y-reverse-transition"
-            />
-          </span>
+            <div>
+              Name: Service name error
+            </div>
+            <div>
+              Description: Service description error
+            </div>
+          </c-help-icon-stub>
         </div>
       </div>
     </div>
@@ -109,19 +107,7 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
 </div>
 `;
 
-exports[`service-weather Renders \`service-weather\` with errors 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div>
-    Name: Service name error
-  </div>
-  <div>
-    Description: Service description error
-  </div>
-</div>
-`;
+exports[`service-weather Renders \`service-weather\` with errors 2`] = `undefined`;
 
 exports[`service-weather Renders \`service-weather\` with full access 1`] = `
 <div

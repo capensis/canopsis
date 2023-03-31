@@ -4,7 +4,7 @@ import Faker from 'faker';
 import { mount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import { DEFAULT_LOCALE } from '@/config';
+import { DEFAULT_LOCALE, THEMES_NAMES } from '@/config';
 import { GROUPS_NAVIGATION_TYPES, TOURS } from '@/constants';
 
 import AlarmsExpandPanelTour from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-tour.vue';
@@ -34,6 +34,7 @@ const currentUser = {
   ui_groups_navigation_type: GROUPS_NAVIGATION_TYPES.sideBar,
   ui_language: DEFAULT_LOCALE,
   ui_tours: tours,
+  ui_theme: THEMES_NAMES.canopsis,
 };
 
 const fetchCurrentUser = jest.fn();

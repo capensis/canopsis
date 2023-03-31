@@ -6,14 +6,18 @@ import { durationToSeconds } from '@/helpers/date/duration';
 
 const types = {
   FETCH_APP_INFO: 'FETCH_APP_INFO',
+  FETCH_APP_INFO_COMPLETED: 'FETCH_APP_INFO_COMPLETED',
+  FETCH_APP_INFO_FAILED: 'FETCH_APP_INFO_FAILED',
 };
 
 export default {
   namespaced: true,
   state: {
     appInfo: {},
+    pending: false,
   },
   getters: {
+    pending: state => state.pending,
     appInfo: state => state.appInfo,
     version: state => state.appInfo.version,
     logo: state => state.appInfo.logo,
@@ -37,22 +41,37 @@ export default {
     isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
   },
   mutations: {
-    [types.FETCH_APP_INFO](state, { appInfo }) {
+    [types.FETCH_APP_INFO](state) {
+      state.pending = true;
+    },
+    [types.FETCH_APP_INFO_COMPLETED](state, { appInfo }) {
       state.appInfo = appInfo;
+      state.pending = false;
+    },
+    [types.FETCH_APP_INFO_FAILED](state) {
+      state.pending = false;
     },
   },
   actions: {
     async fetchAppInfo({ commit, dispatch }) {
-      const appInfo = await request.get(API_ROUTES.infos.app);
+      try {
+        commit(types.FETCH_APP_INFO);
 
-      commit(types.FETCH_APP_INFO, { appInfo });
+        const appInfo = await request.get(API_ROUTES.infos.app);
 
-      if (appInfo.language) {
-        dispatch('i18n/setGlobalLocale', appInfo.language, { root: true });
-      }
+        commit(types.FETCH_APP_INFO_COMPLETED, { appInfo });
 
-      if (appInfo.popup_timeout) {
-        dispatch('setPopupTimeouts', { popupTimeout: appInfo.popup_timeout });
+        if (appInfo.language) {
+          dispatch('i18n/setGlobalLocale', appInfo.language, { root: true });
+        }
+
+        if (appInfo.popup_timeout) {
+          dispatch('setPopupTimeouts', { popupTimeout: appInfo.popup_timeout });
+        }
+      } catch (err) {
+        commit(types.FETCH_APP_INFO_FAILED);
+
+        throw err;
       }
     },
 

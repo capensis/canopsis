@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { VALIDATION_DELAY } from '@/constants';
+
 import { healthcheckParametersToForm } from '@/helpers/forms/healthcheck';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -24,6 +26,7 @@ import HealthcheckForm from '@/components/other/healthcheck/form/healthcheck-for
 export default {
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { HealthcheckForm },
   mixins: [

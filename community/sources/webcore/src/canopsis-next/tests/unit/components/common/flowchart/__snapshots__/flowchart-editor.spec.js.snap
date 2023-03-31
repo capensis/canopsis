@@ -31,7 +31,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -66,7 +66,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -115,7 +115,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -178,7 +178,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -207,7 +207,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 100px; font-size: 12px;"
+            style="width: 100px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -237,7 +237,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -264,7 +264,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -291,7 +291,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -331,7 +331,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -358,7 +358,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -385,7 +385,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -423,7 +423,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -504,7 +504,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -539,7 +539,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -588,7 +588,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -651,7 +651,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -680,7 +680,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 100px; font-size: 12px;"
+            style="width: 100px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -710,7 +710,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -737,7 +737,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -764,7 +764,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -804,7 +804,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -831,7 +831,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -858,7 +858,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="width: 130px; font-size: 12px;"
+            style="width: 130px; color: black; font-size: 12px;"
           />
         </div>
       </div>
@@ -896,7 +896,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
           <div
             class="text-shape-editor__field"
             contenteditable="false"
-            style="text-align: center; font-size: 12px;"
+            style="text-align: center; color: black; font-size: 12px;"
           />
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -821,7 +821,7 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
 
 exports[`maps-list Renders \`maps-list\` with default props 1`] = `
 <div
-  class="c-advanced-data-table white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"

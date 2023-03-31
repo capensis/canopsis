@@ -9,7 +9,6 @@ exports[`alarm-column-value Renders \`alarm-column-value\` with custom props 1`]
   <alarm-column-cell-stub
     alarm="[object Object]"
     column="[object Object]"
-    columnsfilters="[object Object],[object Object]"
     selectedtag="tag"
     widget="[object Object]"
   />
@@ -17,24 +16,16 @@ exports[`alarm-column-value Renders \`alarm-column-value\` with custom props 1`]
 `;
 
 exports[`alarm-column-value Renders \`alarm-column-value\` with custom template 1`] = `
-<v-runtime-template-stub
+<c-runtime-template-stub
   template=<div>entity-name === entity-name in the alarm-name</div>
-  templateprops="[object Object]"
 />
 `;
 
 exports[`alarm-column-value Renders \`alarm-column-value\` with required props 1`] = `
-<color-indicator-wrapper-stub
+<alarm-column-cell-stub
   alarm="[object Object]"
-  entity="[object Object]"
-  type="state"
->
-  <alarm-column-cell-stub
-    alarm="[object Object]"
-    column="[object Object]"
-    columnsfilters=""
-    selectedtag=""
-    widget="[object Object]"
-  />
-</color-indicator-wrapper-stub>
+  column="[object Object]"
+  selectedtag=""
+  widget="[object Object]"
+/>
 `;

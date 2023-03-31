@@ -21,7 +21,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
   style="min-height: 40px;"
 >
   <div
-    class="v-card__title widget-title white pa-2"
+    class="v-card__title widget-title pa-2"
   >
     <div
       class="layout justify-space-between align-center"
@@ -60,7 +60,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
   style="min-height: 40px;"
 >
   <div
-    class="v-card__title widget-title white pa-2"
+    class="v-card__title widget-title pa-2"
   >
     <div
       class="layout justify-space-between align-center"
@@ -119,6 +119,40 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and core
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
+      message="Stats widgets are not available with 'community' edition"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <bar-chart-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <bar-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
       value="true"
@@ -230,6 +264,40 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edit
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <line-chart-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <line-chart-widget-stub
+      message="Stats widgets are not available with 'community' edition"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -257,6 +325,74 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core editio
     <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
       tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <numbers-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <numbers-widget-stub
+      message="Stats widgets are not available with 'community' edition"
+      tabid="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <pie-chart-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <pie-chart-widget-stub
+      message="Stats widgets are not available with 'community' edition"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -371,7 +507,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
   style="min-height: 40px;"
 >
   <div
-    class="v-card__title widget-title white pa-2"
+    class="v-card__title widget-title pa-2"
   >
     <div
       class="layout justify-space-between align-center"

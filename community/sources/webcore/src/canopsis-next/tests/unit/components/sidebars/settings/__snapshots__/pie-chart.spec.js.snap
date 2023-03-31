@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pie-chart Renders \`pie-chart\` widget settings with custom props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    value="Map widget"
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <field-preset-stub
+    name="preset"
+    parameters="[object Object]"
+    type="PieChart"
+  />
+  <widget-settings-group-stub
+    title="Metrics display"
+  >
+    <field-alarm-metric-presets-stub
+      min="2"
+      parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
+      value="[object Object]"
+      withcolor="true"
+    />
+    <field-pie-show-mode-stub
+      name="show_mode"
+      value="numbers"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-chart-title-stub
+      name="parameters.chart_title"
+      value="Chart title"
+    />
+    <field-quick-date-interval-type-stub
+      value="last30Days"
+    />
+    <field-sampling-stub
+      value="day"
+    />
+    <field-alarm-metric-aggregate-function-stub
+      value="avg"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters="[object Object]"
+      hideselector="true"
+      withentity="true"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;
+
+exports[`pie-chart Renders \`pie-chart\` widget settings with default props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <field-title-stub
+    value=""
+  />
+  <field-periodic-refresh-stub
+    value="[object Object]"
+  />
+  <field-preset-stub
+    name="preset"
+    parameters="[object Object]"
+    type="PieChart"
+  />
+  <widget-settings-group-stub
+    title="Metrics display"
+  >
+    <field-alarm-metric-presets-stub
+      min="2"
+      parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
+      value=""
+      withcolor="true"
+    />
+    <field-pie-show-mode-stub
+      name="show_mode"
+      value="numbers"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-chart-title-stub
+      name="parameters.chart_title"
+      value=""
+    />
+    <field-quick-date-interval-type-stub
+      value="last30Days"
+    />
+    <field-sampling-stub
+      value="day"
+    />
+    <field-alarm-metric-aggregate-function-stub
+      value="avg"
+    />
+    <field-filters-stub
+      addable="true"
+      editable="true"
+      filters=""
+      hideselector="true"
+      withentity="true"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;

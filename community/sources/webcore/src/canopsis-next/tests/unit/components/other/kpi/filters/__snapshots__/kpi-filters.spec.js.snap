@@ -5,7 +5,7 @@ exports[`kpi-filters Renders \`kpi-filters\` with default props 1`] = `
   class="layout column"
 >
   <span
-    class="pl-4 subheading grey--text text--darken-2"
+    class="pl-4"
   >
     Here the filter patterns for additional slices of data for counters and ratings can be added.
   </span>
@@ -22,7 +22,7 @@ exports[`kpi-filters Renders \`kpi-filters\` with full permissions 1`] = `
   class="layout column"
 >
   <span
-    class="pl-4 subheading grey--text text--darken-2"
+    class="pl-4"
   >
     Here the filter patterns for additional slices of data for counters and ratings can be added.
   </span>

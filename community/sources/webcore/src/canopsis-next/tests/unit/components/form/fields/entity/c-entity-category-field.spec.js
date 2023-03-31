@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
@@ -41,6 +41,8 @@ const stubs = {
         }
       },
 
+      blur() {},
+
       keyupHandler(event) {
         if (this.$listeners.keyup) {
           this.$listeners.keyup(event);
@@ -48,6 +50,10 @@ const stubs = {
       },
     },
   },
+  'c-help-icon': true,
+};
+const snapshotStubs = {
+  'c-help-icon': true,
 };
 
 const entityCategories = [
@@ -130,56 +136,41 @@ const entityCategories = [
   },
 ];
 
-const factory = (options = {}) => shallowMount(CEntityCategoryField, {
-  localVue,
-  stubs,
-  store: createMockedStoreModules([{ name: 'entityCategory' }]),
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CEntityCategoryField, {
-  localVue,
-  store: createMockedStoreModules([{
-    name: 'entityCategory',
-    getters: {
-      pending: false,
-      items: entityCategories,
-    },
-    actions: {
-      fetchList: jest.fn(),
-      create: jest.fn(),
-    },
-  }]),
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 describe('c-entity-category-field', () => {
   const name = 'category';
-  const CEntityCategoryFieldCopy = {
-    ...CEntityCategoryField,
 
-    methods: {
-      ...CEntityCategoryField.methods,
+  const factory = generateShallowRenderer(CEntityCategoryField, {
+    localVue,
+    stubs,
+    store: createMockedStoreModules([{ name: 'entityCategory' }]),
 
-      clearCategory() {
-        this.newCategory = '';
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
       },
     },
-  };
+  });
+  const snapshotFactory = generateRenderer(CEntityCategoryField, {
+    localVue,
+    stubs: snapshotStubs,
+    store: createMockedStoreModules([{
+      name: 'entityCategory',
+      getters: {
+        pending: false,
+        items: entityCategories,
+      },
+      actions: {
+        fetchList: jest.fn(),
+        create: jest.fn(),
+      },
+    }]),
+
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   it('Check fetch list call', () => {
     const fetchListMock = jest.fn();
@@ -246,15 +237,7 @@ describe('c-entity-category-field', () => {
     const [category] = entityCategories;
     const fetchListMock = jest.fn();
     const createMock = jest.fn(() => category);
-    const wrapper = shallowMount(CEntityCategoryFieldCopy, {
-      localVue,
-      stubs,
-
-      parentComponent: {
-        $_veeValidate: {
-          validator: 'new',
-        },
-      },
+    const wrapper = factory({
       propsData: {
         addable: true,
       },
@@ -290,22 +273,14 @@ describe('c-entity-category-field', () => {
     expect(fetchListMock).toBeCalledTimes(2);
     expect(inputEvents).toHaveLength(1);
     expect(eventData).toBe(category);
-    expect(textField.element.value).toBe('');
+    expect(textField.vm.value).toBe('');
   });
 
   it('Check clearing by blur', async () => {
     const categoryName = 'test';
     const fetchListMock = jest.fn();
     const createMock = jest.fn();
-    const wrapper = shallowMount(CEntityCategoryFieldCopy, {
-      localVue,
-      stubs,
-
-      parentComponent: {
-        $_veeValidate: {
-          validator: 'new',
-        },
-      },
+    const wrapper = factory({
       propsData: {
         addable: true,
       },
@@ -338,7 +313,7 @@ describe('c-entity-category-field', () => {
 
     expect(fetchListMock).toBeCalledTimes(1);
     expect(inputEvents).toBe(undefined);
-    expect(textField.element.value).toBe('');
+    expect(textField.vm.value).toBe('');
   });
 
   it('Renders `c-entity-category-field` with default props correctly', () => {

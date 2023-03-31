@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
@@ -23,15 +22,6 @@ type api struct {
 	actionLogger logger.ActionLogger
 	transformer  common.PatternFieldsTransformer
 	logger       zerolog.Logger
-
-	//todo: priority intervals with new requirements are looks weird now, should think about cleaner solution
-	priorityIntervals action.PriorityIntervals
-}
-
-type API interface {
-	GetMinimalPriority(c *gin.Context)
-	CheckPriority(c *gin.Context)
-	common.BulkCrudAPI
 }
 
 func NewApi(
@@ -39,14 +29,12 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
-	intervals action.PriorityIntervals,
-) API {
+) common.BulkCrudAPI {
 	return &api{
-		store:             store,
-		actionLogger:      actionLogger,
-		logger:            logger,
-		priorityIntervals: intervals,
-		transformer:       transformer,
+		store:        store,
+		actionLogger: actionLogger,
+		logger:       logger,
+		transformer:  transformer,
 	}
 }
 
@@ -61,7 +49,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	scenarios, err := a.store.Find(c.Request.Context(), query)
+	scenarios, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +66,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Scenario
 func (a *api) Get(c *gin.Context) {
-	scenario, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	scenario, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -97,17 +85,12 @@ func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	var err error
 
-	priority := a.priorityIntervals.GetMinimal()
-	request.Priority = &priority
-
 	if err = c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err = a.transformEditRequest(ctx, &request.EditRequest)
+	err = a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -117,7 +100,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	scenario, err := a.store.Insert(ctx, request)
+	scenario, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -125,7 +108,6 @@ func (a *api) Create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
-	a.priorityIntervals.Take(scenario.Priority)
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
@@ -147,7 +129,7 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+	oldScenario, err := a.store.GetOneBy(c, request.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -156,17 +138,12 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	priority := a.priorityIntervals.GetMinimal()
-	request.Priority = &priority
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err = a.transformEditRequest(ctx, &request.EditRequest)
+	err = a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -176,7 +153,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	newScenario, err := a.store.Update(ctx, request)
+	newScenario, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -184,9 +161,6 @@ func (a *api) Update(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
-
-	a.priorityIntervals.Restore(oldScenario.Priority)
-	a.priorityIntervals.Take(newScenario.Priority)
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionUpdate,
@@ -203,7 +177,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	scenario, err := a.store.GetOneBy(c.Request.Context(), id)
+	scenario, err := a.store.GetOneBy(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -212,7 +186,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c.Request.Context(), id)
+	ok, err := a.store.Delete(c, id)
 
 	if err != nil {
 		panic(err)
@@ -222,8 +196,6 @@ func (a *api) Delete(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
-
-	a.priorityIntervals.Restore(scenario.Priority)
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionDelete,
@@ -235,40 +207,6 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
-}
-
-// GetMinimalPriority
-// @Success 200 {object} GetMinimalPriorityResponse
-func (a *api) GetMinimalPriority(c *gin.Context) {
-	c.JSON(http.StatusOK, GetMinimalPriorityResponse{
-		Priority: a.priorityIntervals.GetMinimal(),
-	})
-}
-
-// CheckPriority
-// @Param body body CheckPriorityRequest true "body"
-// @Success 200 {object} CheckPriorityResponse
-func (a *api) CheckPriority(c *gin.Context) {
-	request := CheckPriorityRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
-
-	valid, err := a.store.IsPriorityValid(c.Request.Context(), request.Priority)
-	if err != nil {
-		panic(err)
-	}
-
-	recommendedPriority := 0
-	if !valid {
-		recommendedPriority = a.priorityIntervals.GetMinimal()
-	}
-
-	c.JSON(http.StatusOK, CheckPriorityResponse{
-		Valid:               valid,
-		RecommendedPriority: recommendedPriority,
-	})
 }
 
 // BulkCreate
@@ -295,7 +233,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -312,18 +249,13 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		if request.Priority == nil {
-			priority := a.priorityIntervals.GetMinimal()
-			request.Priority = &priority
-		}
-
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
 			continue
 		}
 
-		err = a.transformEditRequest(ctx, &request.EditRequest)
+		err = a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
@@ -336,14 +268,13 @@ func (a *api) BulkCreate(c *gin.Context) {
 			continue
 		}
 
-		scenario, err := a.store.Insert(ctx, request)
+		scenario, err := a.store.Insert(c, request)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot create scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
-		a.priorityIntervals.Take(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -383,7 +314,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -400,18 +330,13 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		if request.Priority == nil {
-			priority := a.priorityIntervals.GetMinimal()
-			request.Priority = &priority
-		}
-
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
 			continue
 		}
 
-		oldScenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		oldScenario, err := a.store.GetOneBy(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot update scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -423,7 +348,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		err = a.transformEditRequest(ctx, &request.EditRequest)
+		err = a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
@@ -436,7 +361,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		scenario, err := a.store.Update(ctx, UpdateRequest(request))
+		scenario, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil {
 			a.logger.Err(err).Msg("cannot update scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -448,8 +373,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			continue
 		}
 
-		a.priorityIntervals.Restore(oldScenario.Priority)
-		a.priorityIntervals.Take(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, scenario.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -489,7 +412,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -512,7 +434,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		scenario, err := a.store.GetOneBy(c.Request.Context(), request.ID)
+		scenario, err := a.store.GetOneBy(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot delete scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -524,7 +446,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		ok, err := a.store.Delete(ctx, request.ID)
+		ok, err := a.store.Delete(c, request.ID)
 		if err != nil {
 			a.logger.Err(err).Msg("cannot delete scenario")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
@@ -536,7 +458,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 			continue
 		}
 
-		a.priorityIntervals.Restore(scenario.Priority)
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
@@ -559,7 +480,7 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 		actionRequest.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
 		if err != nil {
 			if err == common.ErrNotExistCorporateAlarmPattern {
-				return common.NewValidationError(fmt.Sprintf("actions.%d.corporate_alarm_pattern", idx), err)
+				return common.NewValidationError(fmt.Sprintf("actions.%d.corporate_alarm_pattern", idx), err.Error())
 			}
 			return err
 		}
@@ -567,7 +488,7 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 		actionRequest.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
 		if err != nil {
 			if err == common.ErrNotExistCorporateEntityPattern {
-				return common.NewValidationError(fmt.Sprintf("actions.%d.corporate_entity_pattern", idx), err)
+				return common.NewValidationError(fmt.Sprintf("actions.%d.corporate_entity_pattern", idx), err.Error())
 			}
 			return err
 		}

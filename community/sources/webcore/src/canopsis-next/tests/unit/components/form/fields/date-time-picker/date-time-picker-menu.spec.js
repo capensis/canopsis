@@ -1,7 +1,8 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import DateTimePickerMenu from '@/components/forms/fields/date-time-picker/date-time-picker-menu.vue';
 
@@ -9,21 +10,8 @@ const localVue = createVueInstance();
 
 const stubs = {
   'date-time-picker': true,
+  'v-menu': createActivatorElementStub('v-menu'),
 };
-
-const factory = (options = {}) => shallowMount(DateTimePickerMenu, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(DateTimePickerMenu, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectMenuButton = wrapper => wrapper.find('.v-btn, v-btn-stub');
 const selectDateTimePicker = wrapper => wrapper.find('date-time-picker-stub');
@@ -31,6 +19,18 @@ const selectDateTimePicker = wrapper => wrapper.find('date-time-picker-stub');
 describe('date-time-picker-menu', () => {
   const nowTimestamp = 1386435600000;
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(DateTimePickerMenu, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
+
+  const snapshotFactory = generateRenderer(DateTimePickerMenu, {
+    localVue,
+    stubs,
+    attachTo: document.body,
+  });
 
   test('Value changed after trigger input on the date time picker', async () => {
     const date = new Date(1387435600000);
@@ -86,16 +86,17 @@ describe('date-time-picker-menu', () => {
     expect(wrapper.vm.opened).toBeFalsy();
   });
 
-  test('Renders `date-time-picker-menu` with default props', () => {
+  test('Renders `date-time-picker-menu` with default props', async () => {
     const dateObject = new Date(nowTimestamp);
     const dateSpy = jest.spyOn(global, 'Date')
       .mockReturnValue(dateObject);
     Date.now = jest.fn().mockReturnValue(nowTimestamp);
 
-    const wrapper = snapshotFactory();
+    snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(wrapper).toMatchMenuSnapshot();
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
 
     dateSpy.mockClear();
   });
@@ -109,11 +110,12 @@ describe('date-time-picker-menu', () => {
       },
     });
 
+    await flushPromises();
+
     const menuButton = selectMenuButton(wrapper);
 
     await menuButton.trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(wrapper).toMatchMenuSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

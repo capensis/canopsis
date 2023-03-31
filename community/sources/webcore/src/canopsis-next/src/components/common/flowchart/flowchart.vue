@@ -80,6 +80,7 @@ $sidebarWidth: 320px;
 .flowchart {
   position: relative;
   display: flex;
+  background: white;
 
   &__sidebar {
     width: $sidebarWidth !important;

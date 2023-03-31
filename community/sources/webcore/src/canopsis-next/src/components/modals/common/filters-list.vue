@@ -7,8 +7,8 @@
       filters-list-component(
         :filters="filters",
         :pending="pending",
-        :addable="config.hasAccessToAddFilter",
-        :editable="config.hasAccessToEditFilter",
+        :addable="config.addable",
+        :editable="config.editable",
         @input="updateFiltersPositions",
         @add="showCreateFilterModal",
         @edit="showEditFilterModal",

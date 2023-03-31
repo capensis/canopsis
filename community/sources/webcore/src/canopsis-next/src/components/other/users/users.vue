@@ -22,6 +22,7 @@ import { localQueryMixin } from '@/mixins/query-local/query';
 import UsersList from '@/components/other/users/users-list.vue';
 
 export default {
+  inject: ['$system'],
   components: {
     UsersList,
   },
@@ -69,11 +70,17 @@ export default {
 
             const requests = [this.fetchList()];
 
-            if (user._id === this.currentUser._id) {
+            const isCurrentUser = user._id === this.currentUser._id;
+
+            if (isCurrentUser) {
               requests.push(this.fetchCurrentUser());
             }
 
             await Promise.all(requests);
+
+            if (isCurrentUser) {
+              this.$system.setTheme(this.currentUser.ui_theme);
+            }
           },
         },
       });

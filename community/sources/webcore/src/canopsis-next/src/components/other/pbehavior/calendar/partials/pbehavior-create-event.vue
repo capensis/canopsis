@@ -2,9 +2,9 @@
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
     pbehavior-form(v-model="form", :no-pattern="!!entityPattern")
     v-layout(row, justify-end)
-      v-btn(
+      v-btn.error(
         v-show="pbehavior",
-        color="error",
+        :outline="$system.dark",
         @click="remove"
       ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(

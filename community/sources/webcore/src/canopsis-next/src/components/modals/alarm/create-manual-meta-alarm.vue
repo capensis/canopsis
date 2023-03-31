@@ -27,15 +27,13 @@
 </template>
 
 <script>
-import { isObject } from 'lodash';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
-
-import { isWarningAlarmState } from '@/helpers/entities';
+import { isWarningAlarmState, mapIds } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
+import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -45,12 +43,13 @@ import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-al
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
- * Modal to manage alarms in meta alarm
+ * Modal to manage alarms in manual meta alarm
  */
 export default {
   name: MODALS.createManualMetaAlarm,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     AlarmGeneralTable,
@@ -60,7 +59,7 @@ export default {
   mixins: [
     modalInnerMixin,
     modalInnerItemsMixin,
-    eventActionsAlarmMixin,
+    entitiesManualMetaAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -68,7 +67,7 @@ export default {
     return {
       form: {
         metaAlarm: null,
-        output: '',
+        comment: '',
       },
     };
   },
@@ -77,10 +76,8 @@ export default {
       return this.items.filter(isWarningAlarmState);
     },
 
-    eventType() {
-      return isObject(this.form.metaAlarm)
-        ? EVENT_ENTITY_TYPES.manualMetaAlarmUpdate
-        : EVENT_ENTITY_TYPES.manualMetaAlarmGroup;
+    metaAlarmId() {
+      return this.form.metaAlarm?._id;
     },
   },
   methods: {
@@ -88,15 +85,22 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const data = { output: this.form.output };
+        const data = {
+          comment: this.form.comment,
+          alarms: mapIds(this.alarms),
+        };
 
-        if (this.eventType === EVENT_ENTITY_TYPES.manualMetaAlarmUpdate) {
-          data.ma_parents = [this.form.metaAlarm?._id];
+        if (this.metaAlarmId) {
+          await this.addAlarmsIntoManualMetaAlarm({ id: this.metaAlarmId, data });
         } else {
-          data.display_name = this.form.metaAlarm;
+          data.name = this.form.metaAlarm;
+
+          await this.createManualMetaAlarm({ data });
         }
 
-        await this.createEvent(this.eventType, this.alarms, data);
+        if (this.config.afterSubmit) {
+          await this.config.afterSubmit();
+        }
 
         this.$modals.hide();
       }

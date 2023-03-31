@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { ALARM_ENTITY_FIELDS } from '@/constants';
+import { ALARM_FIELDS } from '@/constants';
 
 import AlarmHeaderPriority from './alarm-header-priority.vue';
 import AlarmHeaderTag from './alarm-header-tag.vue';
@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     component() {
-      if (this.header.value === ALARM_ENTITY_FIELDS.tags) {
+      if (this.header.value === ALARM_FIELDS.tags) {
         return {
           is: 'alarm-header-tag',
           text: this.header.text,
@@ -43,7 +43,7 @@ export default {
       }
 
       const PROPERTIES_COMPONENTS_MAP = {
-        [ALARM_ENTITY_FIELDS.priority]: 'alarm-header-priority',
+        [ALARM_FIELDS.impactState]: 'alarm-header-priority',
       };
 
       const component = PROPERTIES_COMPONENTS_MAP[this.header.value];

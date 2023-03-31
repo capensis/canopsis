@@ -7,9 +7,9 @@ import {
 } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-import { defaultColumnsToColumns } from '@/helpers/entities';
 
-import { formWidgetColumnsToColumns, widgetColumnsToForm } from './alarm';
+import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 
 /**
  * @typedef {Object} MapWidgetParameters
@@ -19,12 +19,18 @@ import { formWidgetColumnsToColumns, widgetColumnsToForm } from './alarm';
  * @property {string} entity_info_template
  * @property {boolean} entities_under_pbehavior_enabled
  * @property {string | null} mainFilter
- * @property {WidgetColumn[]} alarms_columns
- * @property {WidgetColumn[]} entities_columns
+ * @property {string} alarmsColumnsTemplate
+ * @property {string} entitiesColumnsTemplate
+ * @property {WidgetColumn[]} alarmsColumns
+ * @property {WidgetColumn[]} entitiesColumns
  */
 
 /**
  * @typedef {MapWidgetParameters} MapWidgetParametersForm
+ * @property {string | Symbol} alarmsColumnsTemplate
+ * @property {string | Symbol} entitiesColumnsTemplate
+ * @property {WidgetColumnForm[]} alarmsColumns
+ * @property {WidgetColumnForm[]} entitiesColumns
  */
 
 /**
@@ -40,12 +46,12 @@ export const mapWidgetParametersToForm = (parameters = {}) => ({
   entities_under_pbehavior_enabled: parameters.entities_under_pbehavior_enabled ?? true,
   mainFilter: parameters.mainFilter ?? null,
   entity_info_template: parameters.entity_info_template ?? DEFAULT_MAP_ENTITY_TEMPLATE,
-  alarms_columns: parameters.alarms_columns
-    ? widgetColumnsToForm(parameters.alarms_columns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
-  entities_columns: parameters.entities_columns
-    ? widgetColumnsToForm(parameters.entities_columns)
-    : defaultColumnsToColumns(DEFAULT_CONTEXT_WIDGET_COLUMNS),
+  alarmsColumnsTemplate: widgetTemplateValueToForm(parameters.alarmsColumnsTemplate),
+  entitiesColumnsTemplate: widgetTemplateValueToForm(parameters.entitiesColumnsTemplate),
+  alarmsColumns:
+    widgetColumnsToForm(parameters.alarmsColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  entitiesColumns:
+    widgetColumnsToForm(parameters.entitiesColumns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
 });
 
 /**
@@ -57,6 +63,8 @@ export const mapWidgetParametersToForm = (parameters = {}) => ({
 export const formToMapWidgetParameters = form => ({
   ...form,
 
-  alarms_columns: formWidgetColumnsToColumns(form.alarms_columns),
-  entities_columns: formWidgetColumnsToColumns(form.entities_columns),
+  alarmsColumnsTemplate: formToWidgetTemplateValue(form.alarmsColumnsTemplate),
+  entitiesColumnsTemplate: formToWidgetTemplateValue(form.entitiesColumnsTemplate),
+  alarmsColumns: formToWidgetColumns(form.alarmsColumns),
+  entitiesColumns: formToWidgetColumns(form.entitiesColumns),
 });

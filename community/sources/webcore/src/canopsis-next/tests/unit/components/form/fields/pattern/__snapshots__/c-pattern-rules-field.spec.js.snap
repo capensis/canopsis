@@ -20,7 +20,6 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
       />
     </div>
     <c-action-btn-stub
-      color="black"
       disabled="true"
       tooltip="Remove rule"
       type="delete"
@@ -41,7 +40,6 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
       />
     </div>
     <c-action-btn-stub
-      color="black"
       disabled="true"
       tooltip="Remove rule"
       type="delete"
@@ -62,7 +60,6 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
       />
     </div>
     <c-action-btn-stub
-      color="black"
       disabled="true"
       tooltip="Remove rule"
       type="delete"
@@ -83,7 +80,6 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
       />
     </div>
     <c-action-btn-stub
-      color="black"
       disabled="true"
       tooltip="Remove rule"
       type="delete"

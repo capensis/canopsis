@@ -106,6 +106,7 @@ describe('c-quick-date-interval-field', () => {
       QUICK_RANGES.last6Hour,
       QUICK_RANGES.last12Hour,
       QUICK_RANGES.last24Hour,
+      QUICK_RANGES.todaySoFar,
       QUICK_RANGES.custom,
     ]);
   });

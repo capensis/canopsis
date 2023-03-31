@@ -13,7 +13,6 @@
         :tooltip="$t('pattern.removeRule')",
         :disabled="readonly || disabled",
         type="delete",
-        color="black",
         @click="removeItemFromArray(index)"
       )
     v-layout(v-if="!readonly", row, align-center)

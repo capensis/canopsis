@@ -18,7 +18,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -28,6 +28,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
@@ -38,6 +41,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -47,6 +53,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object]"
       label="Track alarm source columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
     />
     <hr
@@ -60,6 +69,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-density-stub
       name="dense"
+      value="0"
     />
     <hr
       class="v-divider theme--light"
@@ -109,7 +119,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-text-editor-stub
+    <field-text-editor-with-template-stub
+      addable="true"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
       title="\\"More Infos\\" Popup"
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -167,10 +181,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-enabled-limit-stub
-      label="Number of category items"
-      title="Display links as a list?"
-      value="[object Object]"
+    <field-number-stub
+      title="Inline links count"
+      value="3"
     />
     <hr
       class="v-divider theme--light"
@@ -178,6 +191,8 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      templates=""
+      type="alarm"
     />
     <hr
       class="v-divider theme--light"
@@ -220,6 +235,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-columns-stub
       columns="[object Object]"
       label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
@@ -230,6 +248,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-columns-stub
       columns="[object Object]"
       label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -239,6 +260,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-columns-stub
       columns="[object Object]"
       label="Track alarm source columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
     />
     <hr
@@ -252,6 +276,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     />
     <field-density-stub
       name="dense"
+      value="0"
     />
     <hr
       class="v-divider theme--light"
@@ -283,7 +308,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-text-editor-stub
+    <field-text-editor-with-template-stub
+      addable="true"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
       title="\\"More Infos\\" Popup"
       value="More info template"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -345,10 +374,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-enabled-limit-stub
-      label="Number of category items"
-      title="Display links as a list?"
-      value="[object Object]"
+    <field-number-stub
+      title="Inline links count"
+      value="3"
     />
     <hr
       class="v-divider theme--light"
@@ -356,6 +384,8 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      templates=""
+      type="alarm"
     />
     <hr
       class="v-divider theme--light"
@@ -389,7 +419,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     title="Advanced settings"
   >
     <field-default-sort-column-stub
-      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       columnslabel="Column name"
       value="[object Object]"
     />
@@ -399,6 +429,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
@@ -409,6 +442,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
       withcolorindicator="true"
       withhtml="true"
     />
@@ -418,6 +454,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-columns-stub
       columns="[object Object],[object Object]"
       label="Track alarm source columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
       withcolorindicator="true"
     />
     <hr
@@ -431,6 +470,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-density-stub
       name="dense"
+      value="0"
     />
     <hr
       class="v-divider theme--light"
@@ -462,7 +502,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-text-editor-stub
+    <field-text-editor-with-template-stub
+      addable="true"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
       title="\\"More Infos\\" Popup"
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -520,10 +564,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-enabled-limit-stub
-      label="Number of category items"
-      title="Display links as a list?"
-      value="[object Object]"
+    <field-number-stub
+      title="Inline links count"
+      value="3"
     />
     <hr
       class="v-divider theme--light"
@@ -531,6 +574,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      templates=""
+      type="alarm"
     />
     <hr
       class="v-divider theme--light"

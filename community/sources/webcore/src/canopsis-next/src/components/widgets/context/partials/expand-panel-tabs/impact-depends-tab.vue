@@ -1,10 +1,10 @@
 <template lang="pug">
-  v-card.secondary.lighten-2(flat)
+  div
     v-progress-linear.ma-0(:active="pending", height="2", indeterminate)
-    v-card-text.white--text
+    div.pa-3
       v-layout
         v-flex(xs6)
-          h3.headline.text-xs-center.my-1 {{ $t('context.impacts') }}
+          h3.headline.text-xs-center.my-1.white--text {{ $t('context.impacts') }}
           v-container
             v-card
               v-card-text
@@ -16,9 +16,9 @@
                   template(#no-data="")
                     v-flex
                       v-card
-                        v-card-title {{ $t('tables.noData') }}
+                        v-card-title {{ $t('common.noData') }}
         v-flex(xs6)
-          h3.headline.text-xs-center.my-1 {{ $t('context.dependencies') }}
+          h3.headline.text-xs-center.my-1.white--text {{ $t('context.dependencies') }}
           v-container
             v-card
               v-card-text
@@ -30,7 +30,7 @@
                   template(#no-data="")
                     v-flex
                       v-card
-                        v-card-title {{ $t('tables.noData') }}
+                        v-card-title {{ $t('common.noData') }}
 </template>
 
 <script>

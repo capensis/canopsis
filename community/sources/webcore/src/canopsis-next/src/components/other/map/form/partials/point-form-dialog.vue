@@ -20,9 +20,11 @@
           flat,
           @click="close"
         ) {{ $t('common.cancel') }}
-        v-btn.error(
+        v-btn(
           v-if="editing",
           :disabled="submitting",
+          :outline="$system.dark",
+          color="error",
           depressed,
           flat,
           @click.stop="$emit('remove')"
@@ -46,6 +48,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { PointForm },
   mixins: [
     submittableMixinCreator(),

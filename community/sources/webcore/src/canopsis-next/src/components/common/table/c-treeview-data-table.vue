@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.white.treeview-data-table
+  v-sheet.treeview-data-table
     v-layout(row)
       div.treeview-data-table--tree.mr-4
         v-treeview(
@@ -12,7 +12,7 @@
           :dark="dark",
           :light="light"
         )
-          template(slot="label", slot-scope="{ item }")
+          template(#label="{ item }")
             slot(name="expand", :item="item")
               v-avatar.white--text(color="primary", size="32") {{ item | get(`${itemChildren}.length`, 0) }}
             slot(name="expand-append", :item="item")
@@ -28,7 +28,7 @@
           :light="light",
           hide-actions
         )
-          template(slot="items", slot-scope="props")
+          template(#items="props")
             slot(v-bind="props", name="items")
               tr(:key="props.item[itemKey]")
                 td(v-for="header in headers", :key="header.value")

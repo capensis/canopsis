@@ -21,10 +21,7 @@ exports[`text-editor Renders \`text-editor\` with all parameters 1`] = `
       class="text"
     >
       <text-editor-field-stub
-        buttons="source,|,bold,italic,strikethrough,underline,|,ul,ol,|,font,fontsize,brush,paragraph,|,image,table,link,|,align,undo,redo,|"
-        config="[object Object]"
-        errormessages=""
-        extrabuttons=""
+        error-messages=""
         label="Text editor label"
         name="text"
         value="Text"
@@ -80,11 +77,7 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
       class="text"
     >
       <text-editor-field-stub
-        buttons="source,|,bold,italic,strikethrough,underline,|,ul,ol,|,font,fontsize,brush,paragraph,|,image,table,link,|,align,undo,redo,|"
-        config="[object Object]"
-        errormessages=""
-        extrabuttons=""
-        label=""
+        error-messages=""
         name="text"
         value=""
       />

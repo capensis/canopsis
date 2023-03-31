@@ -704,13 +704,7 @@ Feature: Get entities
       "category": "test-category-to-entityservice-entity-get-2",
       "enabled": true,
       "impact_level": 1,
-      "sli_avail_state": 0,
-      "impact": [
-        "test-component-entity-get-2"
-      ],
-      "depends": [
-        "test-connector-entity-get-2/test-connector-name-entity-get-2"
-      ]
+      "sli_avail_state": 0
     }
     """
     Then the response code should be 200

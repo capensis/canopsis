@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 
@@ -32,13 +33,7 @@ const stubs = {
       </div>
     `,
   },
-  'v-tooltip': {
-    template: `
-      <div class='v-tooltip'>
-        <slot />
-      </div>
-    `,
-  },
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const factory = (options = {}) => shallowMount(CAdvancedSearchField, {

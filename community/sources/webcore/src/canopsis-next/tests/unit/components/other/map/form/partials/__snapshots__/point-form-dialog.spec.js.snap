@@ -58,7 +58,7 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         </div>
       </button>
       <button
-        class="error v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--flat theme--light error--text"
         type="button"
       >
         <div

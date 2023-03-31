@@ -1,20 +1,14 @@
 <template lang="pug">
-  div.modal-title-buttons(
-    :class="{ 'close': close, 'minimize': minimize }"
-  )
+  div.modal-title-buttons(:class="{ 'close': close, 'minimize': minimize }")
     div.modal-title-button__wrapper(v-if="minimize")
-      v-tooltip(
-        v-if="!$modal.minimized",
-        :disabled="!hasMinimizedModal",
-        left
-      )
-        v-btn.v-btn--minimize.my-0(
-          slot="activator",
-          :disabled="hasMinimizedModal",
-          icon,
-          @click="$modals.minimize({ id: $modal.id })"
-        )
-          v-icon(color="white", large) minimize
+      v-tooltip(v-if="!$modal.minimized", left)
+        template(#activator="{ on }")
+          v-btn.v-btn--minimize.my-0(
+            v-on="on",
+            icon,
+            @click="$modals.minimize({ id: $modal.id })"
+          )
+            v-icon(color="white", large) minimize
         span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
       v-btn.my-0(
         v-else,
@@ -34,9 +28,6 @@
 
 <script>
 import { isFunction } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapGetters } = createNamespacedHelpers('modals');
 
 export default {
   inject: {
@@ -62,8 +53,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['hasMinimizedModal']),
-
     closeHandler() {
       if (isFunction(this.close)) {
         return this.close;
