@@ -3,7 +3,6 @@ package entityservice
 import (
 	"context"
 	"strings"
-	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -39,9 +38,6 @@ type ChangeEntityMessage struct {
 	EntityType string
 	// IsPatternChanged defines should service's context graph and state be recomputed.
 	IsServicePatternChanged bool
-	// ServiceAlarm is required on entity service delete because alarm is removed from
-	// storage but alarm state is required by engine-service.
-	ServiceAlarm *types.Alarm
 	// Resources are used only when component entity is toggled to toggle dependent resources
 	Resources []string
 }
@@ -107,10 +103,9 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 		Connector:     types.ConnectorEngineService,
 		ConnectorName: types.ConnectorEngineService,
 		Component:     msg.ID,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     types.NewCpsTime(),
 		Author:        canopsis.DefaultEventAuthor,
 		SourceType:    types.SourceTypeService,
-		Alarm:         msg.ServiceAlarm,
 	}
 
 	err := p.publishEvent(ctx, event)
@@ -134,7 +129,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	if len(alarms) == 0 {
 		switch msg.EntityType {
 		case types.EntityTypeComponent:
-			connector, err := p.entityAdapter.FindConnectorForComponent(ctx, msg.ID)
+			connector, err := p.entityAdapter.FindConnector(ctx, msg.ID)
 			if err != nil || connector == nil {
 				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to component: no alarms and no connector")
 				return
@@ -145,12 +140,12 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 				Component:     msg.ID,
 			}
 		case types.EntityTypeResource:
-			connector, err := p.entityAdapter.FindConnectorForResource(ctx, msg.ID)
+			connector, err := p.entityAdapter.FindConnector(ctx, msg.ID)
 			if err != nil || connector == nil {
 				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no connector")
 				return
 			}
-			component, err := p.entityAdapter.FindComponentForResource(ctx, msg.ID)
+			component, err := p.entityAdapter.FindComponent(ctx, msg.ID)
 			if err != nil || component == nil {
 				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no component")
 				return

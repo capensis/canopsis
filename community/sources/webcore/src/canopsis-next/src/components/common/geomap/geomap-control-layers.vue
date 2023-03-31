@@ -1,6 +1,6 @@
 <template lang="pug">
   div(@contextmenu.stop="", @click.stop="", @dblclick.stop="", @mousemove.stop="")
-    v-expansion-panel.geomap-layers-control(color="grey")
+    v-expansion-panel.geomap-layers-control(color="grey", light)
       v-expansion-panel-content
         template(#header="")
           span.v-label.theme--light {{ $t('geomap.layers') }}

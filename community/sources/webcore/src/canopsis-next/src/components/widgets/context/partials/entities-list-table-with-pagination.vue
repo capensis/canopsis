@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    c-empty-data-table-columns(v-if="!hasColumns")
+    c-empty-data-table-columns(v-if="!columns.length")
     c-advanced-data-table(
       v-else,
       :items="entities",
@@ -15,7 +15,7 @@
     )
       template(#toolbar="")
         slot(name="toolbar")
-        v-flex(v-if="hasColumns", xs12)
+        v-flex(v-if="columns.length", xs12)
           v-layout(row, wrap, align-center)
             c-pagination(
               :page="query.page",
@@ -61,7 +61,6 @@ import { isEqual, pick } from 'lodash';
 import { SORT_ORDERS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
-import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
@@ -85,7 +84,6 @@ export default {
   },
   mixins: [
     authMixin,
-    widgetColumnsContextMixin,
     entitiesAlarmColumnsFiltersMixin,
   ],
   props: {
@@ -104,6 +102,10 @@ export default {
     query: {
       type: Object,
       required: true,
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
     pending: {
       type: Boolean,
@@ -129,15 +131,13 @@ export default {
     },
 
     headers() {
-      if (this.hasColumns) {
-        return [
+      return this.columns.length
+        ? [
           ...this.columns,
 
           { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ];
-      }
-
-      return [];
+        ]
+        : [];
     },
 
     pagination: {

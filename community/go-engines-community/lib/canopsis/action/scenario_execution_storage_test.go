@@ -50,11 +50,10 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 		LastUpdate: timestamp - 70,
 		Entity:     types.Entity{Created: zeroTime},
 	}
-	firstExecutionID, err := storage.Create(ctx, firstExecution)
+	_, err = storage.Create(ctx, firstExecution)
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}
-	firstExecution.ID = firstExecutionID
 	firstExecution.Tries = 1
 	secondExecution := action.ScenarioExecution{
 		AlarmID:    "5",
@@ -62,8 +61,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 		LastUpdate: timestamp - 90,
 		Entity:     types.Entity{Created: zeroTime},
 	}
-	secondExecutionID, err := storage.Create(ctx, secondExecution)
-	secondExecution.ID = secondExecutionID
+	_, err = storage.Create(ctx, secondExecution)
 	secondExecution.Tries = 1
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
@@ -99,19 +97,20 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries
 
 	timestamp := time.Now().Unix()
 	storage := createTestStorage()
-	executionID, err := storage.Create(ctx, action.ScenarioExecution{
+	execution := action.ScenarioExecution{
 		AlarmID:    "6",
 		ScenarioID: "6",
 		LastUpdate: timestamp - 90,
 		Tries:      action.MaxRetries,
-	})
+	}
+	_, err := storage.Create(ctx, execution)
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}
 
 	_, _ = storage.GetAbandoned(ctx)
 
-	exec, err := storage.Get(ctx, executionID)
+	exec, err := storage.Get(ctx, execution.GetCacheKey())
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}

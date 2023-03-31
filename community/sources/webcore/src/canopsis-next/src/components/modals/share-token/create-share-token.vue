@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToShareToken, shareTokenToForm } from '@/helpers/forms/share-token';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createShareToken,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { ShareTokenForm, ModalWrapper },
   mixins: [

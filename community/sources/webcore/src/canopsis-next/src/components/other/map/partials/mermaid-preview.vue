@@ -67,6 +67,9 @@ export default {
 
 <style lang="scss">
 .mermaid-preview {
+  background: white;
+  border-radius: 5px;
+
   &__preview {
     width: 800px;
   }

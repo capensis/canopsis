@@ -4,7 +4,7 @@
       filter-selector(
         v-if="!hideSelector",
         v-field="value",
-        :label="$t('filterSelector.defaultFilter')",
+        :label="$t('filter.selector.defaultFilter')",
         :filters="filters",
         hide-multiply
       )

@@ -13,15 +13,29 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
 )
 
-type Executor struct {
+const EnvVar = "Env"
+
+type Executor interface {
+	Execute(tplStr string, data any) (string, error)
+	Parse(tplStr string) (*template.Template, error)
+	ExecuteByTpl(tpl *template.Template, data any) (string, error)
+}
+
+type executor struct {
+	templateConfigProvider config.TemplateConfigProvider
 	timezoneConfigProvider config.TimezoneConfigProvider
 	bufPool                sync.Pool
 }
 
-func NewExecutor(timezoneConfigProvider config.TimezoneConfigProvider) *Executor {
-	return &Executor{
+func NewExecutor(
+	templateConfigProvider config.TemplateConfigProvider,
+	timezoneConfigProvider config.TimezoneConfigProvider,
+) Executor {
+	return &executor{
+		templateConfigProvider: templateConfigProvider,
 		timezoneConfigProvider: timezoneConfigProvider,
 		bufPool: sync.Pool{
 			New: func() any {
@@ -31,18 +45,31 @@ func NewExecutor(timezoneConfigProvider config.TimezoneConfigProvider) *Executor
 	}
 }
 
-func (e *Executor) Execute(tplStr string, data interface{}) (string, error) {
-	location := e.timezoneConfigProvider.Get().Location
-	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+func (e *executor) Execute(tplStr string, data any) (string, error) {
+	tpl, err := e.Parse(tplStr)
 	if err != nil {
 		return "", err
 	}
 
+	return e.ExecuteByTpl(tpl, data)
+}
+
+func (e *executor) Parse(tplStr string) (*template.Template, error) {
+	location := e.timezoneConfigProvider.Get().Location
+	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+	if err != nil {
+		return nil, err
+	}
+
 	tpl.Option("missingkey=error")
+	return tpl, err
+}
+
+func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
 	buf := e.bufPool.Get().(*bytes.Buffer)
 	defer e.bufPool.Put(buf)
 	buf.Reset()
-	err = tpl.Execute(buf, data)
+	err := tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
 	if err != nil {
 		return "", err
 	}
@@ -226,4 +253,18 @@ func castTime(v interface{}) (time.Time, bool) {
 	default:
 		return time.Time{}, false
 	}
+}
+
+func addEnvVarsToData(data any, envVars map[string]any) any {
+	if len(envVars) == 0 {
+		return data
+	}
+
+	mapData, ok := libreflect.ToMap(data)
+	if !ok {
+		return data
+	}
+
+	mapData[EnvVar] = envVars
+	return mapData
 }

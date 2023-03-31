@@ -5,9 +5,8 @@ package resolverule
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Adapter interface is used to implement a storage adapter.
@@ -27,10 +26,7 @@ func NewAdapter(client mongo.DbClient) Adapter {
 }
 
 func (a *mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
-	cursor, err := a.collection.Find(ctx, bson.M{}, options.Find().SetSort(bson.D{
-		{Key: "priority", Value: 1},
-		{Key: "_id", Value: 1},
-	}))
+	cursor, err := a.collection.Aggregate(ctx, priority.GetSortPipeline())
 	if err != nil {
 		return nil, err
 	}

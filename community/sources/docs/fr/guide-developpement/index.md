@@ -19,6 +19,10 @@ Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/
 
     Une erreur courante, par exemple avec l'outil `curl` (est sa bibliothèque), est que certains clients HTTP n'activent pas la prise en charge des redirections HTTP par défaut, ce qui est incorrect. Veillez donc à toujours utiliser les options de type `curl -L` en ligne de commande (ou l'option `CURLOPT_FOLLOWLOCATION` dans sa bibliothèque) afin de vous interfacer correctement avec l'ensemble des API REST.
 
+!!! note "Note"
+    Il est possible d'activer la documentation swagger de la version installée en ajoutant l'option `-docs` aux options de démarrage du binaire `canopsis-api`. 
+    Une url `/swagger/index.html` sera ainsi accessible et disponible derrière le port d'écoute de l'api ( par défaut TCP/8082 )
+
 ### Anciennes API
 
 Les anciennes API v1 ou v2 ne sont plus utilisées par les dernières versions de Canopsis, et n'ont donc plus lieu d'être utilisées ou documentées.

@@ -12,6 +12,7 @@ export const ENTITIES_TYPES = {
   view: 'view',
   viewTab: 'viewTab',
   widget: 'widget',
+  widgetTemplate: 'widgetTemplate',
   stat: 'stat',
   user: 'user',
   role: 'role',
@@ -43,4 +44,6 @@ export const ENTITIES_TYPES = {
   map: 'map',
   alarmTag: 'alarmTag',
   shareToken: 'shareToken',
+  declareTicketRule: 'declareTicketRule',
+  linkRule: 'linkRule',
 };

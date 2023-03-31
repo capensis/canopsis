@@ -421,7 +421,7 @@ export const createPbehaviorReasonModule = () => {
 export const createUserPreferenceModule = () => {
   const fetchUserPreference = jest.fn();
   const getUserPreferenceByWidgetId = jest.fn()
-    .mockReturnValue({ content: {} });
+    .mockReturnValue(() => ({ content: {} }));
   const updateUserPreference = jest.fn();
 
   const userPreferenceModule = {
@@ -431,7 +431,7 @@ export const createUserPreferenceModule = () => {
       update: updateUserPreference,
     },
     getters: {
-      getItemByWidgetId: () => getUserPreferenceByWidgetId,
+      getItemByWidgetId: getUserPreferenceByWidgetId,
     },
   };
 
@@ -446,7 +446,6 @@ export const createUserPreferenceModule = () => {
 export const createWidgetModule = () => {
   const createWidget = jest.fn();
   const updateWidget = jest.fn();
-  const copyWidget = jest.fn();
   const createWidgetFilter = jest.fn();
   const updateWidgetFilter = jest.fn();
   const removeWidgetFilter = jest.fn();
@@ -454,7 +453,6 @@ export const createWidgetModule = () => {
   afterEach(() => {
     createWidget.mockClear();
     updateWidget.mockClear();
-    copyWidget.mockClear();
     createWidgetFilter.mockClear();
     updateWidgetFilter.mockClear();
     removeWidgetFilter.mockClear();
@@ -465,7 +463,6 @@ export const createWidgetModule = () => {
     actions: {
       create: createWidget,
       update: updateWidget,
-      copy: copyWidget,
       createWidgetFilter,
       updateWidgetFilter,
       removeWidgetFilter,
@@ -476,7 +473,6 @@ export const createWidgetModule = () => {
     widgetModule,
     createWidget,
     updateWidget,
-    copyWidget,
     createWidgetFilter,
     updateWidgetFilter,
     removeWidgetFilter,
@@ -571,6 +567,12 @@ export const createActiveViewModule = () => {
     },
   };
 
+  afterEach(() => {
+    fetchActiveView.mockClear();
+    registerEditingOffHandler.mockClear();
+    unregisterEditingOffHandler.mockClear();
+  });
+
   return {
     registerEditingOffHandler,
     unregisterEditingOffHandler,
@@ -640,12 +642,235 @@ export const createPbehaviorTimespanModule = () => {
     },
   };
 
-  afterEach(() => {
-    fetchTimespansListWithoutStore.mockClear();
-  });
-
   return {
     fetchTimespansListWithoutStore,
     pbehaviorTimespanModule,
+  };
+};
+
+export const createAlarmModule = () => {
+  const fetchAlarmItem = jest.fn();
+  const fetchOpenAlarmsListWithoutStore = jest.fn();
+  const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    fetchAlarmItem.mockClear();
+    fetchAlarmItemWithoutStore.mockClear();
+    fetchOpenAlarmsListWithoutStore.mockClear();
+  });
+
+  const alarmModule = {
+    name: 'alarm',
+    actions: {
+      fetchItem: fetchAlarmItem,
+      fetchItemWithoutStore: fetchAlarmItemWithoutStore,
+      fetchOpenAlarmsListWithoutStore,
+    },
+  };
+
+  return {
+    fetchAlarmItem,
+    fetchAlarmItemWithoutStore,
+    fetchOpenAlarmsListWithoutStore,
+    alarmModule,
+  };
+};
+
+export const createEventModule = () => {
+  const createEvent = jest.fn();
+
+  afterEach(() => {
+    createEvent.mockClear();
+  });
+
+  const eventModule = {
+    name: 'event',
+    actions: {
+      create: createEvent,
+    },
+  };
+
+  return {
+    eventModule,
+    createEvent,
+  };
+};
+
+export const createWidgetTemplateModule = () => {
+  const fetchWidgetTemplatesListWithoutStore = jest.fn()
+    .mockReturnValue({
+      meta: { total_count: 0 },
+      data: [],
+    }); // TODO: finish it in the future
+
+  const createWidgetTemplate = jest.fn();
+  const updateWidgetTemplate = jest.fn();
+  const removeWidgetTemplate = jest.fn();
+
+  const widgetTemplateModule = {
+    name: 'widgetTemplate',
+    actions: {
+      fetchListWithoutStore: fetchWidgetTemplatesListWithoutStore,
+      create: createWidgetTemplate,
+      update: updateWidgetTemplate,
+      remove: removeWidgetTemplate,
+    },
+  };
+
+  return {
+    fetchWidgetTemplatesListWithoutStore,
+    createWidgetTemplate,
+    updateWidgetTemplate,
+    removeWidgetTemplate,
+    widgetTemplateModule,
+  };
+};
+
+export const createInfosModule = () => {
+  const fetchItems = jest.fn();
+
+  const infosModule = {
+    name: 'infos',
+    getters: {
+      alarmInfos: () => [], // TODO: finish it in the future
+      alarmInfosRules: () => [],
+      entityInfos: () => [],
+      pending: () => [],
+    },
+    actions: {
+      fetch: fetchItems,
+    },
+  };
+
+  return {
+    fetchItems,
+    infosModule,
+  };
+};
+
+export const createManualMetaAlarmModule = () => {
+  const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
+  const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchManualMetaAlarmsListWithoutStore.mockClear();
+    createManualMetaAlarm.mockClear();
+    addAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsIntoManualMetaAlarm.mockClear();
+  });
+
+  const manualMetaAlarmModule = {
+    name: 'manualMetaAlarm',
+    actions: {
+      fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
+      create: createManualMetaAlarm,
+      addAlarms: addAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+    },
+  };
+
+  return {
+    fetchManualMetaAlarmsListWithoutStore,
+    createManualMetaAlarm,
+    addAlarmsIntoManualMetaAlarm,
+    removeAlarmsIntoManualMetaAlarm,
+    manualMetaAlarmModule,
+  };
+};
+
+export const createDeclareTicketModule = () => {
+  const bulkCreateDeclareTicketExecution = jest.fn().mockResolvedValue([]);
+  const fetchAssignedDeclareTicketsWithoutStore = jest.fn().mockResolvedValue({
+    by_rules: {},
+    by_alarms: {},
+  });
+
+  afterEach(() => {
+    bulkCreateDeclareTicketExecution.mockClear();
+    fetchAssignedDeclareTicketsWithoutStore.mockClear();
+  });
+
+  const declareTicketRuleModule = {
+    name: 'declareTicketRule',
+    actions: {
+      bulkCreateDeclareTicketExecution,
+      fetchAssignedTicketsWithoutStore: fetchAssignedDeclareTicketsWithoutStore,
+    },
+  };
+
+  return {
+    declareTicketRuleModule,
+    bulkCreateDeclareTicketExecution,
+    fetchAssignedDeclareTicketsWithoutStore,
+  };
+};
+
+export const createVectorMetricsModule = () => {
+  const getVectorMetricsListByWidgetId = jest.fn().mockReturnValue(() => false);
+  const getVectorMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
+  const getVectorMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
+  const fetchVectorMetricsList = jest.fn();
+
+  afterEach(() => {
+    getVectorMetricsListByWidgetId.mockClear();
+    getVectorMetricsPendingByWidgetId.mockClear();
+    getVectorMetricsMetaByWidgetId.mockClear();
+    fetchVectorMetricsList.mockClear();
+  });
+
+  const vectorMetricsModule = {
+    name: 'vectorMetrics',
+    getters: {
+      getListByWidgetId: getVectorMetricsListByWidgetId,
+      getPendingByWidgetId: getVectorMetricsPendingByWidgetId,
+      getMetaByWidgetId: getVectorMetricsMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchVectorMetricsList,
+    },
+  };
+
+  return {
+    vectorMetricsModule,
+    getVectorMetricsListByWidgetId,
+    getVectorMetricsPendingByWidgetId,
+    getVectorMetricsMetaByWidgetId,
+    fetchVectorMetricsList,
+  };
+};
+
+export const createAggregatedMetricsModule = () => {
+  const getAggregatedMetricsListByWidgetId = jest.fn().mockReturnValue(() => false);
+  const getAggregatedMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
+  const getAggregatedMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
+  const fetchAggregatedMetricsList = jest.fn();
+
+  afterEach(() => {
+    getAggregatedMetricsListByWidgetId.mockClear();
+    getAggregatedMetricsPendingByWidgetId.mockClear();
+    getAggregatedMetricsMetaByWidgetId.mockClear();
+    fetchAggregatedMetricsList.mockClear();
+  });
+
+  const aggregatedMetricsModule = {
+    name: 'aggregatedMetrics',
+    getters: {
+      getListByWidgetId: getAggregatedMetricsListByWidgetId,
+      getPendingByWidgetId: getAggregatedMetricsPendingByWidgetId,
+      getMetaByWidgetId: getAggregatedMetricsMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchAggregatedMetricsList,
+    },
+  };
+
+  return {
+    aggregatedMetricsModule,
+    getAggregatedMetricsListByWidgetId,
+    getAggregatedMetricsPendingByWidgetId,
+    getAggregatedMetricsMetaByWidgetId,
+    fetchAggregatedMetricsList,
   };
 };

@@ -32,7 +32,6 @@ exports[`c-id-field Renders \`c-id-field\` with custom props 1`] = `
         class="v-input__append-inner"
       >
         <c-help-icon-stub
-          color="grey darken-1"
           icon="help"
           left="left"
           text="helpText"

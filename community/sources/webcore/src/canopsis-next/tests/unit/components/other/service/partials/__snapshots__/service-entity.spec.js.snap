@@ -5,7 +5,7 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
   class="weather-service-entity-expansion-panel"
 >
   <ul
-    class="v-expansion-panel theme--dark"
+    class="v-expansion-panel theme--light"
   >
     <li
       class="v-expansion-panel__container"
@@ -27,7 +27,7 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--dark"
+              class="v-icon material-icons theme--light"
             >
               keyboard_arrow_down
             </i>
@@ -43,7 +43,7 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
           style="display: none;"
         >
           <div
-            class="v-card v-sheet theme--dark white black--text"
+            class="v-card v-sheet theme--light"
           >
             <div
               class="v-card__text"
@@ -140,7 +140,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
   class="weather-service-entity-expansion-panel"
 >
   <ul
-    class="v-expansion-panel theme--dark"
+    class="v-expansion-panel theme--light"
   >
     <li
       class="v-expansion-panel__container"
@@ -164,7 +164,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--dark"
+              class="v-icon material-icons theme--light"
             >
               keyboard_arrow_down
             </i>
@@ -180,7 +180,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
           style="display: none;"
         >
           <div
-            class="v-card v-sheet theme--dark white black--text"
+            class="v-card v-sheet theme--light"
           >
             <div
               class="v-card__text"
@@ -204,7 +204,7 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
   class="weather-service-entity-expansion-panel"
 >
   <ul
-    class="v-expansion-panel theme--dark"
+    class="v-expansion-panel theme--light"
   >
     <li
       class="v-expansion-panel__container"
@@ -226,7 +226,7 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--dark"
+              class="v-icon material-icons theme--light"
             >
               keyboard_arrow_down
             </i>
@@ -242,7 +242,7 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
           style="display: none;"
         >
           <div
-            class="v-card v-sheet theme--dark white black--text"
+            class="v-card v-sheet theme--light"
           >
             <div
               class="v-card__text"
@@ -339,7 +339,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
   class="weather-service-entity-expansion-panel"
 >
   <ul
-    class="v-expansion-panel theme--dark"
+    class="v-expansion-panel theme--light"
   >
     <li
       class="v-expansion-panel__container"
@@ -361,7 +361,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--dark"
+              class="v-icon material-icons theme--light"
             >
               keyboard_arrow_down
             </i>
@@ -377,7 +377,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
           style="display: none;"
         >
           <div
-            class="v-card v-sheet theme--dark white black--text"
+            class="v-card v-sheet theme--light"
           >
             <div
               class="v-card__text"
@@ -499,7 +499,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
   class="weather-service-entity-expansion-panel"
 >
   <ul
-    class="v-expansion-panel theme--dark"
+    class="v-expansion-panel theme--light"
   >
     <li
       class="v-expansion-panel__container"
@@ -521,7 +521,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--dark"
+              class="v-icon material-icons theme--light"
             >
               keyboard_arrow_down
             </i>
@@ -537,7 +537,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
           style="display: none;"
         >
           <div
-            class="v-card v-sheet theme--dark white black--text"
+            class="v-card v-sheet theme--light"
           >
             <div
               class="v-card__text"

@@ -1,6 +1,6 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
 
-import { ALARM_ENTITY_FIELDS } from '@/constants';
+import { ALARM_FIELDS } from '@/constants';
 import AlarmHeaderCell from '@/components/widgets/alarm/headers-formatting/alarm-header-cell.vue';
 
 const localVue = createVueInstance();
@@ -21,7 +21,7 @@ describe('alarm-header-cell', () => {
     const wrapper = snapshotFactory({
       propsData: {
         header: {
-          value: ALARM_ENTITY_FIELDS.priority,
+          value: ALARM_FIELDS.impactState,
           text: 'Priority',
         },
       },

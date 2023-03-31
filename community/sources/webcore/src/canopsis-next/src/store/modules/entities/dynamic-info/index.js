@@ -13,6 +13,10 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
+    fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.dynamicInfo, { params });
+    },
+
     fetchInfosKeysWithoutStore(context, { params }) {
       return request.get(API_ROUTES.dynamicInfosDictionaryKeys, { params });
     },

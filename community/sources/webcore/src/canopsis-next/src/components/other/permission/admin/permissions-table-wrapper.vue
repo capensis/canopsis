@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.pa-3.permissions-table-wrapper
+  div.permissions-table-wrapper
     permissions-groups-table(
       v-if="isGroup",
       :groups="permissions",
@@ -65,7 +65,6 @@ export default {
 
   .permissions-table-wrapper ::v-deep {
     .v-table__overflow {
-      background: black;
       overflow: visible;
 
       td, th {
@@ -80,12 +79,13 @@ export default {
         transition: none;
         position: sticky;
         top: 48px;
-        background: white;
         z-index: 1;
-      }
 
-      .v-datatable__expand-content .v-table {
-        background: #f3f3f3;
+        background: white;
+
+        .theme--dark & {
+          background: #424242;
+        }
       }
     }
 

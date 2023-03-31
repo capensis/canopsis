@@ -1,5 +1,5 @@
 <template lang="pug">
-  bar-chart(:datasets="datasets", :options="chartOptions")
+  bar-chart(:datasets="datasets", :options="chartOptions", :dark="$system.dark")
 </template>
 
 <script>
@@ -17,6 +17,7 @@ import { getDateLabelBySampling } from '@/helpers/metrics';
 import BarChart from '@/components/common/chart/bar-chart.vue';
 
 export default {
+  inject: ['$system'],
   components: { BarChart },
   props: {
     metrics: {
@@ -89,13 +90,13 @@ export default {
       return [{
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticAssignedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediationStatistic.labels.notRemediated'),
+        label: this.$t('remediation.statistic.labels.notRemediated'),
         order: 2,
         data: assigned,
       }, {
         backgroundColor: colorToRgba(COLORS.metrics.remediationStatisticExecutedRemediations),
         barPercentage: REMEDIATION_STATISTICS_BAR_PERCENTAGE,
-        label: this.$t('remediationStatistic.labels.remediated'),
+        label: this.$t('remediation.statistic.labels.remediated'),
         order: 1,
         data: executed,
       }];
@@ -137,9 +138,6 @@ export default {
           mode: 'index',
         },
         plugins: {
-          background: {
-            color: 'white',
-          },
           legend: {
             position: 'top',
             align: 'end',
@@ -181,10 +179,10 @@ export default {
       const { raw } = tooltip;
 
       if (this.isPercentDataType) {
-        return this.$t('remediationStatistic.tooltips.remediated', { value: `${raw.y}%` });
+        return this.$t('remediation.statistic.tooltips.remediated', { value: `${raw.y}%` });
       }
 
-      return this.$t(`remediationStatistic.tooltips.${raw.assigned ? 'assigned' : 'remediated'}`, { value: raw.y });
+      return this.$t(`remediation.statistic.tooltips.${raw.assigned ? 'assigned' : 'remediated'}`, { value: raw.y });
     },
   },
 };

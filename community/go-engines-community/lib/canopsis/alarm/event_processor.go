@@ -168,11 +168,13 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}
 
 	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
-
+	changeType := types.AlarmChangeTypeNone
 	operation := s.createOperationFromEvent(event)
-	changeType, err := s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
-	if err != nil {
-		return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+	if operation.Type != "" {
+		changeType, err = s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
+		if err != nil {
+			return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+		}
 	}
 
 	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
@@ -207,8 +209,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	}()
 
 	go func() {
-		if err = s.processAckResources(context.Background(), *event); err != nil {
-			s.logger.Err(err).Msg("cannot ack resources")
+		if err = s.processResources(context.Background(), *event); err != nil {
+			s.logger.Err(err).Msg("cannot update resources")
 		}
 	}()
 
@@ -263,7 +265,12 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 
 	if pbehaviorInfo.IsDefaultActive() {
 		changeType = types.AlarmChangeTypeCreate
+		alarm.NotAckedSince = &alarm.Time
 	} else {
+		if pbehaviorInfo.IsActive() {
+			alarm.NotAckedSince = &alarm.Time
+		}
+
 		output := fmt.Sprintf(
 			"Pbehavior %s. Type: %s. Reason: %s.",
 			pbehaviorInfo.Name,
@@ -480,14 +487,15 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 }
 
 func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Operation {
+	t := event.EventType
 	parameters := types.OperationParameters{
-		Ticket:      event.Ticket,
-		Data:        event.TicketData,
+		TicketInfo:  event.TicketInfo,
 		Output:      event.Output,
 		Author:      event.Author,
 		Execution:   event.Execution,
 		Instruction: event.Instruction,
 	}
+
 	switch event.EventType {
 	case types.EventTypeSnooze:
 		parameters.Duration = &types.DurationWithUnit{
@@ -498,17 +506,27 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 		parameters.State = &event.State
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
 		parameters.PbehaviorInfo = &event.PbehaviorInfo
+	case types.EventTypeRecomputeEntityService:
+		if event.Entity.SoftDeleted == nil {
+			return types.Operation{}
+		}
+
+		t = types.EventTypeResolveDeleted
 	}
 
 	return types.Operation{
-		Type:       event.EventType,
+		Type:       t,
 		Parameters: parameters,
 	}
 }
 
-func (s *eventProcessor) processAckResources(ctx context.Context, event types.Event) error {
+func (s *eventProcessor) processResources(ctx context.Context, event types.Event) error {
 	if event.AckResources {
 		return s.metaAlarmEventProcessor.ProcessAckResources(ctx, event)
+	}
+
+	if event.TicketResources {
+		return s.metaAlarmEventProcessor.ProcessTicketResources(ctx, event)
 	}
 
 	return nil

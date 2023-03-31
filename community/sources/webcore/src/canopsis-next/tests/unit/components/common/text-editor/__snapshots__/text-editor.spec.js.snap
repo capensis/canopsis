@@ -1,12 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
-<div>
-  <span
-    class="theme--light v-label text-editor__label mb-2"
+<div
+  class="text-editor"
+>
+  <label
+    aria-hidden="true"
+    class="v-label theme--light"
+    style="left: 0px; position: relative;"
   >
     Text editor label
-  </span>
+  </label>
   <div
     class="text-editor error--text"
   >
@@ -306,15 +310,17 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
       <div
         class="v-messages theme--light error--text"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         >
           <div
             class="v-messages__message"
           >
             Error
           </div>
-        </div>
+        </transition-group-stub>
       </div>
     </div>
   </div>
@@ -322,13 +328,16 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
 `;
 
 exports[`text-editor Renders \`text-editor\` with default props 1`] = `
-<div>
-  <span
-    class="theme--light v-label text-editor__label mb-2"
-    style="display: none;"
+<div
+  class="text-editor"
+>
+  <label
+    aria-hidden="true"
+    class="v-label theme--light"
+    style="left: 0px; position: relative;"
   >
     
-  </span>
+  </label>
   <div
     class="text-editor"
   >
@@ -911,8 +920,10 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
       <div
         class="v-messages theme--light error--text"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -921,13 +932,16 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
 `;
 
 exports[`text-editor Renders \`text-editor\` with files 1`] = `
-<div>
-  <span
-    class="theme--light v-label text-editor__label mb-2"
-    style="display: none;"
+<div
+  class="text-editor"
+>
+  <label
+    aria-hidden="true"
+    class="v-label theme--light"
+    style="left: 0px; position: relative;"
   >
     
-  </span>
+  </label>
   <div
     class="text-editor"
   >
@@ -1510,8 +1524,10 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
       <div
         class="v-messages theme--light error--text"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -1520,13 +1536,16 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
 `;
 
 exports[`text-editor Renders \`text-editor\` with variables 1`] = `
-<div>
-  <span
-    class="theme--light v-label text-editor__label mb-2"
-    style="display: none;"
+<div
+  class="text-editor"
+>
+  <label
+    aria-hidden="true"
+    class="v-label theme--light"
+    style="left: 0px; position: relative;"
   >
     
-  </span>
+  </label>
   <div
     class="text-editor"
   >
@@ -2126,8 +2145,10 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
       <div
         class="v-messages theme--light error--text"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>

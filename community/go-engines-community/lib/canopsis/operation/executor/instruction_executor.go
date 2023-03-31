@@ -94,12 +94,11 @@ func (e *instructionExecutor) Exec(
 		return "", err
 	}
 
+	instrID := params.Instruction
 	switch alarmChangeType {
 	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
-		instrID := params.Instruction
-
 		assigned := false
-		for _, assignedInstr := range alarm.KPIAssignedInstructions {
+		for _, assignedInstr := range alarm.KpiAssignedInstructions {
 			if assignedInstr == instrID {
 				assigned = true
 				break
@@ -111,7 +110,7 @@ func (e *instructionExecutor) Exec(
 		}
 
 		executed := false
-		for _, executedInstr := range alarm.KPIExecutedInstructions {
+		for _, executedInstr := range alarm.KpiExecutedInstructions {
 			if executedInstr == instrID {
 				executed = true
 				break
@@ -124,13 +123,16 @@ func (e *instructionExecutor) Exec(
 
 		alarm.PartialUpdateAddExecutedInstruction(instrID)
 
-		if len(alarm.KPIExecutedInstructions) == 0 {
+		if len(alarm.KpiExecutedInstructions) == 0 {
 			e.metricsSender.SendInstructionExecutionForAlarm(alarm.EntityID, time.Time)
 		}
 
 		e.metricsSender.SendInstructionExecutionForInstruction(instrID, time.Time)
 	case types.AlarmStepAutoInstructionStart:
-		e.metricsSender.SendAutoInstructionStart(*alarm, time.Time)
+		e.metricsSender.SendAutoInstructionExecutionStart(*alarm, time.Time)
+	case types.AlarmStepAutoInstructionComplete, types.AlarmStepAutoInstructionFail:
+		alarm.PartialUpdateAddExecutedAutoInstruction(instrID)
+		e.metricsSender.SendAutoInstructionExecutionForInstruction(instrID, time.Time)
 	}
 
 	return alarmChangeType, nil

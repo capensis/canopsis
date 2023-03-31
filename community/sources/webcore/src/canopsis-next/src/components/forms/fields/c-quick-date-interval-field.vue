@@ -9,9 +9,8 @@
     )
     div.c-quick-interval__range
       c-quick-date-interval-type-field(
-        :class="{ 'ml-4': !reverse, 'mr-4': reverse }",
         :value="range",
-        :ranges="quickRanges",
+        :ranges="availableQuickRanges",
         :disabled="disabled",
         hide-details,
         return-object,
@@ -65,10 +64,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    quickRanges: {
+      type: Array,
+      default: () => Object.values(QUICK_RANGES),
+    },
   },
   computed: {
-    quickRanges() {
-      return Object.values(QUICK_RANGES).filter(this.isAllowedQuickRange);
+    availableQuickRanges() {
+      return this.quickRanges.filter(this.isAllowedQuickRange);
     },
 
     intervalFromAsTimestamp() {
@@ -164,7 +167,7 @@ export default {
       }
 
       const startTimestamp = convertStartDateIntervalToTimestamp(start);
-      const stopTimestamp = convertStopDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(stop);
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
@@ -188,6 +191,8 @@ export default {
 <style scoped lang="scss">
 .c-quick-interval {
   display: inline-flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
 
   &__range {
     display: flex;

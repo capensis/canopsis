@@ -112,7 +112,9 @@ func (s *MongoStore) DeleteExpired(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	s.logger.Debug().Int64("deleted", deleted).Msg("deleted expired tokens")
+	if deleted > 0 {
+		s.logger.Debug().Int64("deleted", deleted).Msg("deleted expired tokens")
+	}
 
 	deleted, err = s.collection.DeleteMany(ctx, bson.M{
 		"expired_by_inactivity": bson.M{
@@ -124,6 +126,8 @@ func (s *MongoStore) DeleteExpired(ctx context.Context) error {
 		return err
 	}
 
-	s.logger.Debug().Int64("deleted", deleted).Msg("deleted inactive tokens")
+	if deleted > 0 {
+		s.logger.Debug().Int64("deleted", deleted).Msg("deleted inactive tokens")
+	}
 	return nil
 }

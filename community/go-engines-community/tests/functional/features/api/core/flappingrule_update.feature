@@ -1030,8 +1030,7 @@ Feature: Update an flapping rule
         "name": "Name is missing.",
         "freq_limit": "FreqLimit is missing.",
         "duration.value": "Value is missing.",
-        "duration.unit": "Unit is missing.",
-        "priority": "Priority is missing."
+        "duration.unit": "Unit is missing."
       }
     }
     """

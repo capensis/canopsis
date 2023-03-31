@@ -2,6 +2,7 @@ import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { LINE_TYPES } from '@/constants';
 import uid from '@/helpers/uid';
 import {
@@ -47,14 +48,7 @@ const stubs = {
     },
   },
   'image-shape-icon': true,
-  'v-tooltip': {
-    template: `
-      <div class='v-tooltip'>
-        <slot name="activator" />
-        <slot />
-      </div>
-    `,
-  },
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const snapshotStubs = {

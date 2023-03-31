@@ -4,7 +4,7 @@
       color="secondary",
       small,
       @click="showViewSelectModal"
-    ) {{ $t('users.selectDefaultView') }}
+    ) {{ $t('user.selectDefaultView') }}
     div {{ defaultViewTitle }}
     v-btn(
       v-if="value",

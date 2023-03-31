@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :headers="headers",
     :items="pbehaviorTypes",
     :loading="pending",
@@ -29,7 +29,7 @@
         )
         c-action-btn(
           :disabled="!item.deletable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('pbehaviorTypes.usingType')",
+          :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.types.usingType')",
           type="delete",
           @click="$emit('remove', item._id)"
         )

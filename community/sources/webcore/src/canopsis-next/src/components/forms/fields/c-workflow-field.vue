@@ -3,9 +3,9 @@
     v-field="value",
     :label="label",
     :disabled="disabled",
+    color="primary",
     hide-details,
-    mandatory,
-    color="primary"
+    mandatory
   )
     v-radio(
       :label="stopLabel",

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-stepper(v-model="stepper", non-linear)
+  v-stepper.dynamic-info-form(v-model="stepper", non-linear)
     v-stepper-header
       v-stepper-step.py-0(
         :complete="stepper > steps.GENERAL",
@@ -91,3 +91,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.dynamic-info-form {
+  background-color: transparent !important;
+}
+</style>

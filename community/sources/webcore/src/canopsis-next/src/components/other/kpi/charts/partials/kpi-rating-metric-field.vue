@@ -2,7 +2,7 @@
   c-select-field(
     v-field="value",
     :items="availableMetrics",
-    :label="$t('kpiMetrics.parameter')",
+    :label="$t('kpi.metrics.parameter')",
     name="metric",
     hide-details
   )
@@ -30,11 +30,11 @@ export default {
     availableMetrics() {
       return getAvailableMetricsByCriteria(this.criteria?.label)
         .map((value) => {
-          const alarmKey = `alarmList.metrics.${value}`;
+          const alarmKey = `alarm.metrics.${value}`;
 
           return {
             value,
-            text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`users.metrics.${value}`),
+            text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`user.metrics.${value}`),
           };
         });
     },

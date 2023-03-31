@@ -7,6 +7,7 @@ Feature: update alarm on idle rule
     When I do POST /api/v4/idle-rules:
     """json
     {
+      "_id": "test-idlerule-axe-idlerule-first",
       "name": "test-idlerule-axe-idlerule-first-name",
       "type": "alarm",
       "alarm_condition": "last_event",
@@ -27,11 +28,16 @@ Feature: update alarm on idle rule
           }
         ]
       ],
+      "comment": "test-idlerule-axe-idlerule-first-comment",
       "operation": {
         "type": "assocticket",
         "parameters": {
           "ticket": "test-idlerule-axe-idlerule-first-ticket",
-          "output": "test-idlerule-axe-idlerule-first-output"
+          "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+          "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+          "ticket_data": {
+            "ticket_param_1": "ticket_value_1"
+          }
         }
       }
     }
@@ -164,10 +170,35 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-first-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-first-ticket"
+              "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-idlerule-axe-idlerule-first-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+              "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+              "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
             }
           }
         }
@@ -212,7 +243,16 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-first-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-first-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
               }
             ],
             "meta": {
@@ -268,10 +308,49 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-first-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+              },
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-first-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-first-ticket"
+              "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-idlerule-axe-idlerule-first-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+              "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+              "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
             }
           }
         }
@@ -316,13 +395,31 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-first-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-first-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
               },
               {
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-first-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-first-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
               }
             ],
             "meta": {
@@ -343,6 +440,7 @@ Feature: update alarm on idle rule
     When I do POST /api/v4/idle-rules:
     """json
     {
+      "_id": "test-idlerule-axe-idlerule-2",
       "name": "test-idlerule-axe-idlerule-2-name",
       "type": "alarm",
       "alarm_condition": "last_update",
@@ -366,8 +464,7 @@ Feature: update alarm on idle rule
       "operation": {
         "type": "assocticket",
         "parameters": {
-          "ticket": "test-idlerule-axe-idlerule-2-ticket",
-          "output": "test-idlerule-axe-idlerule-2-output"
+          "ticket": "test-idlerule-axe-idlerule-2-ticket"
         }
       }
     }
@@ -504,10 +601,23 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-2-ticket"
+              "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+              "ticket": "test-idlerule-axe-idlerule-2-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
             }
           }
         }
@@ -556,7 +666,10 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-2-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
               }
             ],
             "meta": {
@@ -602,10 +715,23 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-2-ticket"
+              "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+              "ticket": "test-idlerule-axe-idlerule-2-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
             }
           }
         }
@@ -654,7 +780,10 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-2-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
               }
             ],
             "meta": {
@@ -710,10 +839,31 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
+              },
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-2-ticket"
+              "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+              "ticket": "test-idlerule-axe-idlerule-2-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
             }
           }
         }
@@ -762,7 +912,10 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-2-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
               },
               {
                 "_t": "stateinc",
@@ -772,7 +925,10 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-2-ticket"
+                "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
+                "ticket": "test-idlerule-axe-idlerule-2-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-2",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-2-name"
               }
             ],
             "meta": {
@@ -1565,6 +1721,7 @@ Feature: update alarm on idle rule
     When I do POST /api/v4/idle-rules:
     """json
     {
+      "_id": "test-idlerule-axe-idlerule-6-2",
       "name": "test-idlerule-axe-idlerule-6-2-name",
       "type": "alarm",
       "alarm_condition": "last_event",
@@ -1588,8 +1745,7 @@ Feature: update alarm on idle rule
       "operation": {
         "type": "assocticket",
         "parameters": {
-          "ticket": "test-idlerule-axe-idlerule-6-2-ticket",
-          "output": "test-idlerule-axe-idlerule-6-2-output"
+          "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
         }
       }
     }
@@ -1638,10 +1794,17 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-6-2-ticket"
+              "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
             }
           }
         }
@@ -1686,7 +1849,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-6-2-ticket"
+                "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ],
             "meta": {
@@ -1730,7 +1893,8 @@ Feature: update alarm on idle rule
                 "_t": "statusinc"
               },
               {
-                "_t": "assocticket"
+                "_t": "assocticket",
+                "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ],
             "meta": {
@@ -1797,10 +1961,12 @@ Feature: update alarm on idle rule
                 "_t": "statusinc"
               },
               {
-                "_t": "assocticket"
+                "_t": "assocticket",
+                "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
               },
               {
-                "_t": "assocticket"
+                "_t": "assocticket",
+                "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ],
             "meta": {
@@ -2379,6 +2545,7 @@ Feature: update alarm on idle rule
     When I do POST /api/v4/idle-rules:
     """json
     {
+      "_id": "test-idlerule-axe-idlerule-9-1",
       "name": "test-idlerule-axe-idlerule-9-1-name",
       "type": "alarm",
       "alarm_condition": "last_event",
@@ -2402,8 +2569,8 @@ Feature: update alarm on idle rule
       "operation": {
         "type": "assocticket",
         "parameters": {
-          "ticket": "test-idlerule-axe-idlerule-9-1-ticket",
-          "output": "test-idlerule-axe-idlerule-9-1-output"
+          "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
+          }
         }
       }
     }
@@ -2479,10 +2646,17 @@ Feature: update alarm on idle rule
             "status": {
               "val": 1
             },
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "test-idlerule-axe-idlerule-9-1-ticket"
+              "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
             }
           }
         }
@@ -2527,7 +2701,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "test-idlerule-axe-idlerule-9-1-ticket"
+                "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ],
             "meta": {
@@ -2571,7 +2745,8 @@ Feature: update alarm on idle rule
                 "_t": "statusinc"
               },
               {
-                "_t": "assocticket"
+                "_t": "assocticket",
+                "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ],
             "meta": {
@@ -2638,10 +2813,12 @@ Feature: update alarm on idle rule
                 "_t": "statusinc"
               },
               {
-                "_t": "assocticket"
+                "_t": "assocticket",
+                "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
               },
               {
-                "_t": "assocticket"
+                "_t": "assocticket",
+                "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ],
             "meta": {

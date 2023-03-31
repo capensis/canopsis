@@ -3,12 +3,13 @@ package entityservice
 import (
 	"context"
 	"errors"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 const (
@@ -148,7 +149,7 @@ func (s *redisStorage) Reload(ctx context.Context, id string) (*ServiceData, boo
 
 		var str []byte
 
-		if service != nil {
+		if service != nil && service.SoftDeleted == nil {
 			if service.Enabled {
 				data = &ServiceData{
 					ID:                service.ID,

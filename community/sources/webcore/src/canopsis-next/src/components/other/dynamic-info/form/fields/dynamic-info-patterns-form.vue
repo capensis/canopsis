@@ -50,7 +50,7 @@ export default {
           options: this.intervalOptions,
         },
         {
-          value: ALARM_PATTERN_FIELDS.resolvedAt,
+          value: ALARM_PATTERN_FIELDS.resolved,
           options: { disabled: true },
         },
         {

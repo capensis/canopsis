@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.white(v-show="totalItems", align-center)
+  v-layout(v-show="totalItems", align-center)
     v-flex(xs10)
       c-pagination(
         :page="page",

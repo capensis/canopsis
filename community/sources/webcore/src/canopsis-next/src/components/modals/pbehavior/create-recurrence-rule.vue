@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
 import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
@@ -39,6 +39,7 @@ export default {
   name: MODALS.createRecurrenceRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
   components: {

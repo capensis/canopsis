@@ -2,7 +2,7 @@
 
 exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehaviors 1`] = `
 <div
-  class="layout white column"
+  class="layout column"
 >
   <div
     class="layout row justify-end"
@@ -628,7 +628,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
 
 exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbehaviors 1`] = `
 <div
-  class="layout white column"
+  class="layout column"
 >
   <div
     class="layout row justify-end"
