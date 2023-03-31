@@ -2907,6 +2907,9 @@ definitions:
         type: integer
       description:
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         type: string
     required:
@@ -3119,6 +3122,8 @@ definitions:
         type: boolean
       description:
         type: string
+      hidden:
+        type: boolean
       name:
         type: string
     type: object
@@ -3127,6 +3132,9 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3180,6 +3188,8 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
@@ -3221,6 +3231,9 @@ definitions:
         type: boolean
       description:
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       icon_name:
         type: string
       name:
@@ -3237,6 +3250,8 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
