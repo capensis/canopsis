@@ -19,9 +19,10 @@ Canopsis Community RPM Package
 
 %prep
 %setup -q
-echo "install golang"
-wget https://go.dev/dl/go1.18.6.linux-amd64.tar.gz
-tar -C ~ -xzf go1.18.6.linux-amd64.tar.gz
+GOLANG_VERSION=$(grep "GOLANG_VERSION" community/.env |awk '{print $3}')
+echo "install golang $GOLANG_VERSION."
+wget https://go.dev/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
+tar -C ~ -xzf go$GOLANG_VERSION.linux-amd64.tar.gz
 
 %build
 export PATH=$PATH:~/go/bin
