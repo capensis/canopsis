@@ -3,12 +3,12 @@
     c-page-header
     div.position-relative
       v-fade-transition
-        v-layout.white.progress(v-show="pending", column)
+        v-layout.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
       v-tabs(v-if="hasReadAnyRoleAccess", fixed-tabs, slider-color="primary")
         template(v-for="(permissions, groupKey) in groupedPermissions")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
-          v-tab-item.white(:key="`tab-item-${groupKey}`")
+          v-tab-item(:key="`tab-item-${groupKey}`")
             permissions-table-wrapper(
               :permissions="permissions",
               :roles="preparedRoles",

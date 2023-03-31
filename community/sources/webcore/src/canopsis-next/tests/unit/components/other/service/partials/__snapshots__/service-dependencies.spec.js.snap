@@ -2,7 +2,9 @@
 
 exports[`service-dependencies Renders \`service-dependencies\` with custom props 1`] = `
 <div
-  class="white treeview-data-table service-dependencies"
+  class="treeview-data-table service-dependencies v-sheet theme--light"
+  dark="true"
+  light="true"
 >
   <div
     class="layout row"
@@ -11,7 +13,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
       class="treeview-data-table--tree mr-4"
     >
       <div
-        class="v-treeview theme--dark"
+        class="v-treeview theme--light"
       >
         <div
           class="v-treeview-node"
@@ -21,7 +23,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
           >
             <i
               aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--dark"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
             >
               arrow_drop_down
             </i>
@@ -52,12 +54,12 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                 >
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--dark"
+                    class="v-icon material-icons theme--light"
                   >
                     arrow_right_alt
                   </i>
                   <span
-                    class="v-chip ma-0 theme--dark white--text"
+                    class="v-chip ma-0 theme--light white--text"
                     tabindex="0"
                   >
                     <span
@@ -85,7 +87,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
           class="v-table__overflow"
         >
           <table
-            class="v-datatable v-table theme--dark"
+            class="v-datatable v-table theme--light"
           >
             <thead>
               <tr>
@@ -97,22 +99,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Custom name label: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Custom name label
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Custom type label: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Custom type label
                 </th>
               </tr>
               <tr
@@ -132,22 +134,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Root alarm entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -161,7 +157,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
 
 exports[`service-dependencies Renders \`service-dependencies\` with excluded root 1`] = `
 <div
-  class="white treeview-data-table service-dependencies"
+  class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -326,22 +322,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Name
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Type
                 </th>
               </tr>
               <tr
@@ -361,22 +357,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Data alarm 1 entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    service
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -386,22 +376,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Data alarm 2 entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    service
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -411,22 +395,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Data alarm 3 entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    connector
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -436,22 +414,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Data alarm 4 entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    service
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -465,7 +437,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
 
 exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = `
 <div
-  class="white treeview-data-table service-dependencies"
+  class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -603,22 +575,22 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   scope="col"
                 />
                 <th
-                  aria-label="common.name: Not sorted."
+                  aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.name
+                  Name
                 </th>
                 <th
-                  aria-label="common.type: Not sorted."
+                  aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
                   role="columnheader"
                   scope="col"
                 >
-                  common.type
+                  Type
                 </th>
               </tr>
               <tr
@@ -638,22 +610,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Data alarm 1 entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    service
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
               <tr>
@@ -663,22 +629,16 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    Data alarm 2 entity
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
                 <td>
-                  <color-indicator-wrapper-stub
-                    alarm="[object Object]"
-                    entity="[object Object]"
-                    type=""
-                  >
-                    service
-                  </color-indicator-wrapper-stub>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -692,7 +652,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
 
 exports[`service-dependencies Renders \`service-dependencies\` with required props 1`] = `
 <div
-  class="white treeview-data-table service-dependencies"
+  class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
     class="layout row"

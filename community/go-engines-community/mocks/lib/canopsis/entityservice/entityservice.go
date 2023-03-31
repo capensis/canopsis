@@ -11,6 +11,7 @@ import (
 	entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
+	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	mongo0 "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -37,19 +38,33 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
 }
 
-// AddDepends mocks base method.
-func (m *MockAdapter) AddDepends(arg0 context.Context, arg1 string, arg2 []string) (bool, error) {
+// AddToService mocks base method.
+func (m *MockAdapter) AddToService(arg0 context.Context, arg1 string, arg2 []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddDepends", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
+	ret := m.ctrl.Call(m, "AddToService", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddToService indicates an expected call of AddToService.
+func (mr *MockAdapterMockRecorder) AddToService(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddToService", reflect.TypeOf((*MockAdapter)(nil).AddToService), arg0, arg1, arg2)
+}
+
+// AddToServiceByQuery mocks base method.
+func (m *MockAdapter) AddToServiceByQuery(arg0 context.Context, arg1 string, arg2 primitive.M) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddToServiceByQuery", arg0, arg1, arg2)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddDepends indicates an expected call of AddDepends.
-func (mr *MockAdapterMockRecorder) AddDepends(arg0, arg1, arg2 interface{}) *gomock.Call {
+// AddToServiceByQuery indicates an expected call of AddToServiceByQuery.
+func (mr *MockAdapterMockRecorder) AddToServiceByQuery(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDepends", reflect.TypeOf((*MockAdapter)(nil).AddDepends), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddToServiceByQuery", reflect.TypeOf((*MockAdapter)(nil).AddToServiceByQuery), arg0, arg1, arg2)
 }
 
 // GetAll mocks base method.
@@ -127,34 +142,33 @@ func (mr *MockAdapterMockRecorder) GetServiceDependencies(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServiceDependencies", reflect.TypeOf((*MockAdapter)(nil).GetServiceDependencies), arg0, arg1)
 }
 
-// RemoveDependByQuery mocks base method.
-func (m *MockAdapter) RemoveDependByQuery(arg0 context.Context, arg1 interface{}, arg2 string) ([]string, error) {
+// RemoveFromService mocks base method.
+func (m *MockAdapter) RemoveFromService(arg0 context.Context, arg1 string, arg2 []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveDependByQuery", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]string)
+	ret := m.ctrl.Call(m, "RemoveFromService", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveFromService indicates an expected call of RemoveFromService.
+func (mr *MockAdapterMockRecorder) RemoveFromService(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveFromService", reflect.TypeOf((*MockAdapter)(nil).RemoveFromService), arg0, arg1, arg2)
+}
+
+// RemoveFromServiceByQuery mocks base method.
+func (m *MockAdapter) RemoveFromServiceByQuery(arg0 context.Context, arg1 string, arg2 primitive.M) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveFromServiceByQuery", arg0, arg1, arg2)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// RemoveDependByQuery indicates an expected call of RemoveDependByQuery.
-func (mr *MockAdapterMockRecorder) RemoveDependByQuery(arg0, arg1, arg2 interface{}) *gomock.Call {
+// RemoveFromServiceByQuery indicates an expected call of RemoveFromServiceByQuery.
+func (mr *MockAdapterMockRecorder) RemoveFromServiceByQuery(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveDependByQuery", reflect.TypeOf((*MockAdapter)(nil).RemoveDependByQuery), arg0, arg1, arg2)
-}
-
-// RemoveDepends mocks base method.
-func (m *MockAdapter) RemoveDepends(arg0 context.Context, arg1 string, arg2 []string) (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RemoveDepends", arg0, arg1, arg2)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RemoveDepends indicates an expected call of RemoveDepends.
-func (mr *MockAdapterMockRecorder) RemoveDepends(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveDepends", reflect.TypeOf((*MockAdapter)(nil).RemoveDepends), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveFromServiceByQuery", reflect.TypeOf((*MockAdapter)(nil).RemoveFromServiceByQuery), arg0, arg1, arg2)
 }
 
 // UpdateBulk mocks base method.

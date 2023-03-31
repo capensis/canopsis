@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -61,7 +62,7 @@ type ExportResponse struct {
 	//   * `0` - Running
 	//   * `1` - Succeeded
 	//   * `2` - Failed
-	Status int `json:"status"`
+	Status int64 `json:"status"`
 }
 
 type Entity struct {
@@ -74,8 +75,10 @@ type Entity struct {
 	ImpactLevel    int64          `bson:"impact_level" json:"impact_level"`
 	Category       *Category      `bson:"category" json:"category"`
 	IdleSince      *types.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
-	PbehaviorInfo  *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastEventDate  *types.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
+
+	PbehaviorInfo     *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastPbehaviorDate *types.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty" swaggertype:"integer"`
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
@@ -99,7 +102,7 @@ type Entity struct {
 	AlarmLastUpdateDate *types.CpsTime    `bson:"alarm_last_update_date" json:"alarm_last_update_date,omitempty" swaggertype:"integer"`
 
 	// Links
-	Links map[string]interface{} `bson:"-" json:"links,omitempty"`
+	Links link.LinksByCategory `bson:"-" json:"links,omitempty"`
 
 	// DependsCount contains only service's dependencies
 	DependsCount *int `bson:"depends_count" json:"depends_count,omitempty"`
@@ -111,7 +114,10 @@ type Entity struct {
 	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	savedpattern.EntityPatternFields `bson:",inline"`
 
-	Depends []string `bson:"depends,omitempty" json:"-"`
+	Resources []string `bson:"resources,omitempty" json:"-"`
+
+	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
+	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 }
 
 func (e *Entity) fillConnectorType() {
@@ -176,10 +182,10 @@ type BulkToggleRequestItem struct {
 }
 
 type SimplifiedEntity struct {
-	ID      string   `bson:"_id"`
-	Type    string   `bson:"type"`
-	Enabled bool     `bson:"enabled"`
-	Depends []string `bson:"depends"`
+	ID        string   `bson:"_id"`
+	Type      string   `bson:"type"`
+	Enabled   bool     `bson:"enabled"`
+	Resources []string `bson:"resources"`
 }
 
 type ContextGraphRequest struct {

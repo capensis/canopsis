@@ -4,8 +4,8 @@ import flushPromises from 'flush-promises';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-
 import { CRUD_ACTIONS, MODALS, PATTERN_TABS, PATTERN_TYPES, USERS_PERMISSIONS } from '@/constants';
+
 import Patterns from '@/views/profile/patterns.vue';
 
 const localVue = createVueInstance();
@@ -13,6 +13,7 @@ const localVue = createVueInstance();
 const stubs = {
   'c-page-header': true,
   'c-fab-expand-btn': true,
+  'c-action-fab-btn': true,
   'corporate-patterns': true,
   patterns: true,
 };
@@ -33,7 +34,7 @@ const snapshotFactory = (options = {}) => mount(Patterns, {
 
 const selectFabExpandButton = wrapper => wrapper.find('c-fab-expand-btn-stub');
 const selectPatterns = wrapper => wrapper.find('patterns-stub');
-const selectCreateButtons = wrapper => wrapper.findAll('c-fab-expand-btn-stub v-btn-stub');
+const selectCreateButtons = wrapper => wrapper.findAll('c-fab-expand-btn-stub c-action-fab-btn-stub');
 const selectCreateAlarmPatternButton = wrapper => selectCreateButtons(wrapper).at(2);
 const selectCreateEntityPatternButton = wrapper => selectCreateButtons(wrapper).at(1);
 const selectCreatePbehaviorPatternButton = wrapper => selectCreateButtons(wrapper).at(0);
@@ -195,6 +196,8 @@ describe('patterns', () => {
   it('Create alarm pattern modal showed after trigger edit on patterns', async () => {
     const wrapper = factory({ store, mocks: { $modals } });
 
+    await flushPromises();
+
     const createAlarmPatternButton = selectCreateAlarmPatternButton(wrapper);
 
     createAlarmPatternButton.vm.$emit('click', new Event('click'));
@@ -233,6 +236,8 @@ describe('patterns', () => {
   it('Create entity pattern modal showed after trigger edit on patterns', async () => {
     const wrapper = factory({ store, mocks: { $modals } });
 
+    await flushPromises();
+
     const createEntityPatternButton = selectCreateEntityPatternButton(wrapper);
 
     createEntityPatternButton.vm.$emit('click', new Event('click'));
@@ -270,6 +275,8 @@ describe('patterns', () => {
 
   it('Create pbehavior pattern modal showed after trigger edit on patterns', async () => {
     const wrapper = factory({ store, mocks: { $modals } });
+
+    await flushPromises();
 
     const createPbehaviorPatternButton = selectCreatePbehaviorPatternButton(wrapper);
 

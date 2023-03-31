@@ -21,6 +21,7 @@
         c-priority-field(
           v-field="form.priority",
           :disabled="onlyColor",
+          :loading="pendingPriority",
           required
         )
     c-icon-field(
@@ -35,7 +36,7 @@
           v-list-tile-content
             v-list-tile-title(v-html="$t('modals.createPbehaviorType.errors.iconName')")
     v-flex.mt-2(xs12)
-      v-alert(:value="onlyColor", color="info") {{ $t('pbehaviorTypes.defaultType') }}
+      v-alert(:value="onlyColor", color="info") {{ $t('pbehavior.types.defaultType') }}
     c-color-picker-field.mt-2(
       v-field="form.color",
       required,
@@ -62,6 +63,10 @@ export default {
       default: () => ({}),
     },
     onlyColor: {
+      type: Boolean,
+      default: false,
+    },
+    pendingPriority: {
       type: Boolean,
       default: false,
     },

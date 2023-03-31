@@ -5,14 +5,15 @@
     :pending="contextEntitiesPending",
     :meta="contextEntitiesMeta",
     :query.sync="query",
+    :columns="widget.parameters.widgetColumns",
     selectable
   )
     template(#toolbar="")
       v-flex
         c-advanced-search-field(
           :query.sync="query",
-          :columns="columns",
-          :tooltip="$t('search.contextAdvancedSearch')"
+          :columns="widget.parameters.widgetColumns",
+          :tooltip="$t('context.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
@@ -28,6 +29,7 @@
             @input="updateSelectedFilter"
           )
           filters-list-btn(
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
             :widget-id="widget._id",
             :addable="hasAccessToAddFilter",
             :editable="hasAccessToEditFilter",
@@ -37,7 +39,7 @@
             with-pbehavior
           )
       v-flex
-        v-checkbox(
+        v-checkbox.pt-2(
           :input-value="query.no_events",
           :label="$t('context.noEventsFilter')",
           color="primary",
@@ -50,7 +52,6 @@
           :loading="downloading",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
-          color="black",
           @click="exportContextList"
         )
 </template>
@@ -64,7 +65,6 @@ import { USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
 import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
@@ -87,7 +87,6 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsContextMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
     permissionsWidgetsContextFilters,
@@ -109,17 +108,6 @@ export default {
     };
   },
   computed: {
-    headers() {
-      if (this.hasColumns) {
-        return [
-          ...this.columns,
-          { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ];
-      }
-
-      return [];
-    },
-
     hasAccessToCreateEntity() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
     },
@@ -158,7 +146,7 @@ export default {
     },
 
     fetchList() {
-      if (this.hasColumns) {
+      if (this.widget.parameters.widgetColumns.length) {
         const params = this.getQuery();
 
         params.with_flags = true;
@@ -181,7 +169,7 @@ export default {
       const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
-        fields: columns.map(({ label, value }) => ({ label, name: value })),
+        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
         search: query.search,
         category: query.category,
         filters: query.filters,
@@ -204,7 +192,7 @@ export default {
 
         this.downloadFile(`${API_HOST}${API_ROUTES.contextExport}/${fileData._id}/download`);
       } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('context.popups.exportFailed') });
       } finally {
         this.downloading = false;
       }

@@ -1,17 +1,18 @@
 <template lang="pug">
-  v-container
+  div
     c-page-header
-    roles-list(
-      :roles="roles",
-      :pending="rolesPending",
-      :pagination.sync="pagination",
-      :total-items="rolesMeta.total_count",
-      :removable="hasDeleteAnyRoleAccess",
-      :updatable="hasUpdateAnyRoleAccess",
-      @edit="showEditRoleModal",
-      @remove="showRemoveRoleModal",
-      @remove-selected="showRemoveSelectedRolesModal"
-    )
+    v-card.ma-4.mt-0
+      roles-list(
+        :roles="roles",
+        :pending="rolesPending",
+        :pagination.sync="pagination",
+        :total-items="rolesMeta.total_count",
+        :removable="hasDeleteAnyRoleAccess",
+        :updatable="hasUpdateAnyRoleAccess",
+        @edit="showEditRoleModal",
+        @remove="showRemoveRoleModal",
+        @remove-selected="showRemoveSelectedRolesModal"
+      )
     c-fab-btn(
       :has-access="hasCreateAnyRoleAccess",
       @refresh="fetchList",

@@ -98,78 +98,27 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
   <c-fab-expand-btn-stub
     has-access="true"
   >
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark grey darken-1"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              pause
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark blue"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              perm_identity
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark error"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              notification_important
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
+    <c-action-fab-btn-stub
+      color="grey darken-1"
+      icon="pause"
+      small="small"
+      tooltip="Create shared pbehavior filter"
+      top="top"
+    />
+    <c-action-fab-btn-stub
+      color="blue"
+      icon="perm_identity"
+      small="small"
+      tooltip="Create shared entity filter"
+      top="top"
+    />
+    <c-action-fab-btn-stub
+      color="error"
+      icon="notification_important"
+      small="small"
+      tooltip="Create shared alarm filter"
+      top="top"
+    />
   </c-fab-expand-btn-stub>
 </div>
 `;
@@ -269,78 +218,27 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
   <c-fab-expand-btn-stub
     has-access="true"
   >
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark grey darken-1"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              pause
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark blue"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              perm_identity
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark error"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              notification_important
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
+    <c-action-fab-btn-stub
+      color="grey darken-1"
+      icon="pause"
+      small="small"
+      tooltip="Create pbehavior filter"
+      top="top"
+    />
+    <c-action-fab-btn-stub
+      color="blue"
+      icon="perm_identity"
+      small="small"
+      tooltip="Create entity filter"
+      top="top"
+    />
+    <c-action-fab-btn-stub
+      color="error"
+      icon="notification_important"
+      small="small"
+      tooltip="Create alarm filter"
+      top="top"
+    />
   </c-fab-expand-btn-stub>
 </div>
 `;
@@ -366,78 +264,27 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
   <c-fab-expand-btn-stub
     has-access="true"
   >
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark grey darken-1"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              pause
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark blue"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              perm_identity
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
-    <span
-      class="v-tooltip v-tooltip--top"
-    >
-      <transition-stub
-        name="slide-y-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn v-btn--floating v-btn--small theme--dark error"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--dark"
-            >
-              notification_important
-            </i>
-          </div>
-        </button>
-      </span>
-    </span>
+    <c-action-fab-btn-stub
+      color="grey darken-1"
+      icon="pause"
+      small="small"
+      tooltip="Create pbehavior filter"
+      top="top"
+    />
+    <c-action-fab-btn-stub
+      color="blue"
+      icon="perm_identity"
+      small="small"
+      tooltip="Create entity filter"
+      top="top"
+    />
+    <c-action-fab-btn-stub
+      color="error"
+      icon="notification_important"
+      small="small"
+      tooltip="Create alarm filter"
+      top="top"
+    />
   </c-fab-expand-btn-stub>
 </div>
 `;

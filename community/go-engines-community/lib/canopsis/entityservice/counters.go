@@ -179,7 +179,7 @@ func GetServiceIDsFromEvent(event types.Event, serviceIDs []string) ([]string, [
 
 	var unchangedServices []string
 	if event.Entity != nil {
-		for _, impact := range event.Entity.Impacts {
+		for _, impact := range event.Entity.Services {
 			if !services[impact] || changedServices[impact] {
 				continue
 			}

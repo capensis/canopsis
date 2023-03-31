@@ -1,7 +1,7 @@
 <template lang="pug">
   div
-    c-collapse-panel.mb-2(:title="$t('eventFilter.externalData')")
-      event-filter-enrichment-external-data-form(v-field="form.external_data")
+    c-collapse-panel.mb-2(:title="$t('externalData.title')")
+      external-data-form(v-field="form.external_data")
     c-collapse-panel.mb-2(:title="$t('eventFilter.editActions')")
       event-filter-enrichment-actions-form(v-field="form.config.actions")
     v-layout(row)
@@ -23,14 +23,15 @@ import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
+import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
+
 import EventFilterEnrichmentActionsForm from './event-filter-enrichment-actions-form.vue';
-import EventFilterEnrichmentExternalDataForm from './event-filter-enrichment-external-data-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    ExternalDataForm,
     EventFilterEnrichmentActionsForm,
-    EventFilterEnrichmentExternalDataForm,
   },
   mixins: [formMixin],
   model: {

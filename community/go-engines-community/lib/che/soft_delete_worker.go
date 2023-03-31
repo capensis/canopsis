@@ -113,17 +113,26 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 				continue
 			}
 
-			newModels = []libmongo.WriteModel{
-				libmongo.NewUpdateManyModel().
-					SetFilter(bson.M{"impact": ent.ID}).
-					SetUpdate(bson.M{"$pull": bson.M{"impact": ent.ID}}),
-				libmongo.NewUpdateManyModel().
-					SetFilter(bson.M{"depends": ent.ID}).
-					SetUpdate(bson.M{"$pull": bson.M{"depends": ent.ID}}),
+			switch ent.Type {
+			case types.EntityTypeConnector:
+				newModels = []libmongo.WriteModel{
+					libmongo.NewUpdateManyModel().
+						SetFilter(bson.M{"connector": ent.ID}).
+						SetUpdate(bson.M{"$unset": bson.M{"connector": ""}}),
+				}
+			case types.EntityTypeService:
+				newModels = []libmongo.WriteModel{
+					libmongo.NewUpdateManyModel().
+						SetFilter(bson.M{"services": ent.ID}).
+						SetUpdate(bson.M{"$pull": bson.M{"services": ent.ID}}),
+				}
+			}
+
+			newModels = append(newModels,
 				libmongo.
 					NewDeleteOneModel().
 					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}),
-			}
+			)
 		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(ResolveDeletedEventWaitTime).Before(now.Time)) {
 			sendEvent = true
 

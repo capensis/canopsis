@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
 
@@ -107,7 +108,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					}
 					_, err := e.executionStorage.Inc(ctx, task.Alarm.ID, 1, true)
 					if err != nil {
-						e.logger.Err(err).Msg("cannot run scenario")
+						e.logger.Err(err).Str("scenario", task.DelayedScenarioID).Str("alarm", task.Alarm.ID).Msg("cannot run scenario")
 						e.outputChannel <- ScenarioResult{
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
@@ -116,14 +117,14 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
 					return
 				}
 
-				if task.AbandonedExecutionID != "" {
-					execution, err := e.executionStorage.Get(ctx, task.AbandonedExecutionID)
+				if task.AbandonedExecutionCacheKey != "" {
+					execution, err := e.executionStorage.Get(ctx, task.AbandonedExecutionCacheKey)
 					if err != nil {
-						e.logger.Err(err).Msg("cannot find abandoned scenario")
+						e.logger.Err(err).Str("execution", task.AbandonedExecutionCacheKey).Msg("cannot find abandoned scenario")
 						e.outputChannel <- ScenarioResult{
 							Alarm:        task.Alarm,
 							FifoAckEvent: task.FifoAckEvent,
@@ -141,19 +142,26 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						}
 					}
 
+					action := execution.ActionExecutions[step].Action
+					skipForChild := false
+					if action.Parameters.SkipForChild != nil {
+						skipForChild = *action.Parameters.SkipForChild
+					}
 					e.taskChannel <- Task{
-						Source:         "input listener",
-						Action:         execution.ActionExecutions[step].Action,
-						Alarm:          task.Alarm,
-						Entity:         task.Entity,
-						Step:           step,
-						ExecutionID:    execution.ID,
-						ScenarioID:     execution.ScenarioID,
-						AckResources:   execution.AckResources,
-						Header:         execution.Header,
-						Response:       execution.Response,
-						ResponseMap:    execution.ResponseMap,
-						AdditionalData: task.AdditionalData,
+						Source:            "input listener",
+						Action:            action,
+						Alarm:             task.Alarm,
+						Entity:            task.Entity,
+						Step:              step,
+						ExecutionID:       execution.ID,
+						ExecutionCacheKey: execution.GetCacheKey(),
+						ScenarioID:        execution.ScenarioID,
+						ScenarioName:      execution.ScenarioName,
+						SkipForChild:      skipForChild,
+						Header:            execution.Header,
+						Response:          execution.Response,
+						ResponseMap:       execution.ResponseMap,
+						AdditionalData:    task.AdditionalData,
 					}
 
 					return
@@ -161,7 +169,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 
 				ok, err := e.processTriggers(ctx, task)
 				if err != nil {
-					e.logger.Err(err).Msg("cannot run scenarios")
+					e.logger.Err(err).Str("alarm", task.Alarm.ID).Msg("cannot run scenarios")
 					e.outputChannel <- ScenarioResult{
 						Alarm:        task.Alarm,
 						FifoAckEvent: task.FifoAckEvent,
@@ -188,9 +196,9 @@ func (e *redisBasedManager) finishExecution(
 	executionErr error,
 ) {
 	if execution.Tries > 0 {
-		err := e.executionStorage.Del(ctx, execution.ID)
+		err := e.executionStorage.Del(ctx, execution.GetCacheKey())
 		if err != nil {
-			e.logger.Err(err).Msg("cannot delete execution")
+			e.logger.Err(err).Str("execution", execution.GetCacheKey()).Msg("cannot delete execution")
 			return
 		}
 
@@ -199,13 +207,13 @@ func (e *redisBasedManager) finishExecution(
 
 	count, err := e.executionStorage.Inc(ctx, alarm.ID, -1, false)
 	if err != nil {
-		e.logger.Err(err).Msg("cannot decrease counter")
+		e.logger.Err(err).Str("execution", execution.GetCacheKey()).Msg("cannot decrease counter")
 		return
 	}
 
-	err = e.executionStorage.Del(ctx, execution.ID)
+	err = e.executionStorage.Del(ctx, execution.GetCacheKey())
 	if err != nil {
-		e.logger.Err(err).Msg("cannot delete execution")
+		e.logger.Err(err).Str("execution", execution.GetCacheKey()).Msg("cannot delete execution")
 		return
 	}
 
@@ -255,7 +263,7 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 					return
 				}
 
-				executionId := execIdAndStep[0]
+				executionCacheKey := execIdAndStep[0]
 				step, err := strconv.Atoi(execIdAndStep[1])
 				if err != nil {
 					taskRes.Status = TaskRpcError
@@ -275,9 +283,9 @@ func (e *redisBasedManager) listenRPCResultChannel(ctx context.Context, wg *sync
 				taskRes.Alarm = *r.Alarm
 				taskRes.Step = step
 				taskRes.AlarmChangeType = result.AlarmChangeType
-				taskRes.ExecutionID = executionId
-				taskRes.Header = result.Header
-				taskRes.Response = result.Response
+				taskRes.ExecutionCacheKey = executionCacheKey
+				taskRes.Header = result.WebhookHeader
+				taskRes.Response = result.WebhookResponse
 
 				if r.Error != nil {
 					taskRes.Status = TaskRpcError
@@ -312,22 +320,26 @@ func (e *redisBasedManager) listenTaskResultChannel(ctx context.Context, wg *syn
 }
 
 func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskResult) {
-	if taskRes.ExecutionID == "" {
+	if taskRes.ExecutionCacheKey == "" {
 		e.logger.Error().Err(taskRes.Err).Msg("cannot get execution")
 		return
 	}
 
-	scenarioExecution, err := e.executionStorage.Get(ctx, taskRes.ExecutionID)
+	scenarioExecution, err := e.executionStorage.Get(ctx, taskRes.ExecutionCacheKey)
 	if err != nil || scenarioExecution == nil {
-		e.logger.Error().Err(err).Str("execution_id", taskRes.ExecutionID).Msg("cannot get execution")
+		e.logger.Error().Err(err).Str("execution", taskRes.ExecutionCacheKey).Msg("cannot get execution")
 		return
 	}
 
 	if taskRes.Status == TaskCancelled {
 		e.logger.Warn().Msgf("worker task was cancelled, error = %s", taskRes.Err.Error())
 
-		if taskRes.ExecutionID != "" {
-			e.logger.Debug().Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Worker returned error, drop scenario")
+		if taskRes.ExecutionCacheKey != "" {
+			e.logger.Debug().Str("source", taskRes.Source).
+				Str("alarm", taskRes.Alarm.ID).
+				Str("execution", taskRes.ExecutionCacheKey).
+				Int("step", taskRes.Step).
+				Msg("Worker returned error, drop scenario")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 		}
 
@@ -335,14 +347,22 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	}
 
 	if taskRes.Err != nil {
-		e.logger.Err(taskRes.Err).Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Execution failed, drop scenario")
+		e.logger.Err(taskRes.Err).
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).
+			Int("step", taskRes.Step).Msg("Execution failed, drop scenario")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 
 		return
 	}
 
 	if taskRes.Status == TaskNotMatched && scenarioExecution.ActionExecutions[taskRes.Step].Action.DropScenarioIfNotMatched {
-		e.logger.Debug().Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Action is not matched, drop scenario")
+		e.logger.Debug().
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).Int("step", taskRes.Step).
+			Msg("Action is not matched, drop scenario")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
 		return
 	}
@@ -376,7 +396,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 	err = e.executionStorage.Update(ctx, *scenarioExecution)
 	if err != nil {
-		e.logger.Err(err).Msg("cannot save execution")
+		e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot save execution")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
 		return
 	}
@@ -385,7 +405,7 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		taskRes.AlarmChangeType != types.AlarmChangeTypeNone {
 		err := e.processEmittedTrigger(ctx, taskRes, *scenarioExecution)
 		if err != nil {
-			e.logger.Err(err).Msg("cannot process emitted trigger")
+			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot process emitted trigger")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
 			return
 		}
@@ -395,19 +415,26 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	if len(scenarioExecution.ActionExecutions) > nextStep {
 		additionalData := scenarioExecution.AdditionalData
 		additionalData.AlarmChangeType = taskRes.AlarmChangeType
+		action := scenarioExecution.ActionExecutions[nextStep].Action
+		skipForChild := false
+		if action.Parameters.SkipForChild != nil {
+			skipForChild = *action.Parameters.SkipForChild
+		}
 		nextTask := Task{
-			Source:         "process task func",
-			Action:         scenarioExecution.ActionExecutions[nextStep].Action,
-			Alarm:          taskRes.Alarm,
-			Entity:         scenarioExecution.Entity,
-			Step:           nextStep,
-			ExecutionID:    taskRes.ExecutionID,
-			ScenarioID:     scenarioExecution.ScenarioID,
-			AckResources:   scenarioExecution.AckResources,
-			Header:         scenarioExecution.Header,
-			Response:       scenarioExecution.Response,
-			ResponseMap:    scenarioExecution.ResponseMap,
-			AdditionalData: additionalData,
+			Source:            "process task func",
+			Action:            action,
+			Alarm:             taskRes.Alarm,
+			Entity:            scenarioExecution.Entity,
+			Step:              nextStep,
+			ExecutionID:       scenarioExecution.ID,
+			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
+			ScenarioID:        scenarioExecution.ScenarioID,
+			ScenarioName:      scenarioExecution.ScenarioName,
+			SkipForChild:      skipForChild,
+			Header:            scenarioExecution.Header,
+			Response:          scenarioExecution.Response,
+			ResponseMap:       scenarioExecution.ResponseMap,
+			AdditionalData:    additionalData,
 		}
 
 		select {
@@ -417,7 +444,12 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			e.taskChannel <- nextTask
 		}
 	} else {
-		e.logger.Debug().Str("source", taskRes.Source).Str("alarm_id", taskRes.Alarm.ID).Str("execution_id", taskRes.ExecutionID).Int("step", taskRes.Step).Msg("Scenario is finished")
+		e.logger.Debug().
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).
+			Int("step", taskRes.Step).
+			Msg("Scenario is finished")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
 	}
 }
@@ -428,22 +460,31 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 		return false, err
 	}
 
-	scenarios, err := e.scenarioStorage.GetTriggeredScenarios(task.Triggers, task.Alarm)
+	scenariosByTrigger, err := e.scenarioStorage.GetTriggeredScenarios(task.Triggers, task.Alarm)
 	if err != nil {
 		return false, err
 	}
 
-	if len(scenarios) == 0 {
+	scenariosCount := 0
+	for _, scenarios := range scenariosByTrigger {
+		scenariosCount += len(scenarios)
+	}
+
+	if scenariosCount == 0 {
 		return false, nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, task.Alarm.ID, int64(len(scenarios)), true)
+	_, err = e.executionStorage.Inc(ctx, task.Alarm.ID, int64(scenariosCount), true)
 	if err != nil {
 		return false, err
 	}
 
-	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+	additionalData := task.AdditionalData
+	for trigger, scenarios := range scenariosByTrigger {
+		additionalData.Trigger = trigger
+		for _, scenario := range scenarios {
+			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent)
+		}
 	}
 
 	return true, nil
@@ -465,23 +506,31 @@ func (e *redisBasedManager) processEmittedTrigger(
 		return err
 	}
 
-	scenarios, err := e.scenarioStorage.GetTriggeredScenarios(triggers, prevTaskRes.Alarm)
+	scenariosByTrigger, err := e.scenarioStorage.GetTriggeredScenarios(triggers, prevTaskRes.Alarm)
 	if err != nil {
 		return err
 	}
 
-	if len(scenarios) == 0 {
+	scenariosCount := 0
+	for _, scenarios := range scenariosByTrigger {
+		scenariosCount += len(scenarios)
+	}
+
+	if scenariosCount == 0 {
 		return nil
 	}
 
-	_, err = e.executionStorage.Inc(ctx, prevTaskRes.Alarm.ID, int64(len(scenarios)), false)
+	_, err = e.executionStorage.Inc(ctx, prevTaskRes.Alarm.ID, int64(scenariosCount), false)
 	if err != nil {
 		return err
 	}
 
-	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, prevScenarioExecution.AckResources,
-			additionalData, prevScenarioExecution.FifoAckEvent)
+	for trigger, scenarios := range scenariosByTrigger {
+		additionalData.Trigger = trigger
+		for _, scenario := range scenarios {
+			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
+				prevScenarioExecution.FifoAckEvent)
+		}
 	}
 
 	return nil
@@ -492,7 +541,6 @@ func (e *redisBasedManager) startExecution(
 	scenario Scenario,
 	alarm types.Alarm,
 	entity types.Entity,
-	ackResources bool,
 	data AdditionalData,
 	fifoAckEvent types.Event,
 ) {
@@ -508,35 +556,43 @@ func (e *redisBasedManager) startExecution(
 		)
 	}
 
-	executionID, err := e.executionStorage.Create(ctx, ScenarioExecution{
+	execution := ScenarioExecution{
+		ID:               utils.NewID(),
 		ScenarioID:       scenario.ID,
+		ScenarioName:     scenario.Name,
 		AlarmID:          alarm.ID,
 		Entity:           entity,
 		ActionExecutions: executions,
 		LastUpdate:       time.Now().Unix(),
-		AckResources:     ackResources,
 		AdditionalData:   data,
 		FifoAckEvent:     fifoAckEvent,
-	})
+	}
+	ok, err := e.executionStorage.Create(ctx, execution)
 	if err != nil {
-		e.logger.Err(err).Msg("cannot save execution")
+		e.logger.Err(err).Str("scenario", scenario.ID).Str("alarm", alarm.ID).Msg("cannot save execution")
 		return
 	}
-	if executionID == "" {
-		e.logger.Err(err).Msg("scenario is already executing")
+	if !ok {
+		e.logger.Error().Str("scenario", scenario.ID).Str("alarm", alarm.ID).Msg("scenario is already executing")
 		return
 	}
 
+	action := scenario.Actions[0]
+	skipForChild := false
+	if action.Parameters.SkipForChild != nil {
+		skipForChild = *action.Parameters.SkipForChild
+	}
 	e.taskChannel <- Task{
-		Source:         "input listener",
-		Action:         scenario.Actions[0],
-		Alarm:          alarm,
-		Entity:         entity,
-		Step:           0,
-		ExecutionID:    executionID,
-		ScenarioID:     scenario.ID,
-		AckResources:   ackResources,
-		AdditionalData: data,
+		Source:            "input listener",
+		Action:            action,
+		Alarm:             alarm,
+		Entity:            entity,
+		Step:              0,
+		ExecutionID:       execution.ID,
+		ExecutionCacheKey: execution.GetCacheKey(),
+		ScenarioID:        scenario.ID,
+		ScenarioName:      scenario.Name,
+		SkipForChild:      skipForChild,
+		AdditionalData:    data,
 	}
-
 }

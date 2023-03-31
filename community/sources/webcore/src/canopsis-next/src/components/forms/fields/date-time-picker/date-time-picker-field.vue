@@ -11,16 +11,17 @@
     lazy-with-unmount,
     lazy
   )
-    div(slot="activator")
-      v-text-field(
-        :label="label",
-        :error-messages="errors.collect(name)",
-        :value="dateTextValue",
-        :append-icon="clearable ? 'close' : ''",
-        :disabled="disabled",
-        readonly,
-        @click:append="clear"
-      )
+    template(#activator="{ on }")
+      div(v-on="on")
+        v-text-field(
+          :label="label",
+          :error-messages="errors.collect(name)",
+          :value="dateTextValue",
+          :append-icon="clearable ? 'close' : ''",
+          :disabled="disabled",
+          readonly,
+          @click:append="clear"
+        )
     date-time-picker(
       :value="value",
       :label="label",

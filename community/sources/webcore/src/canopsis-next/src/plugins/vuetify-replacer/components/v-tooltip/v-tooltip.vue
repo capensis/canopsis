@@ -1,11 +1,14 @@
 <script>
 import VTooltip from 'vuetify/es5/components/VTooltip';
-import { getSlotType } from 'vuetify/es5/util/helpers';
 
 export default {
   extends: VTooltip,
   props: {
     ignoreContentLeave: {
+      type: Boolean,
+      default: false,
+    },
+    customActivator: {
       type: Boolean,
       default: false,
     },
@@ -39,15 +42,18 @@ export default {
         mouseleave: this.mouseLeaveHandler,
       };
 
-      if (getSlotType(this, 'activator') === 'scoped') {
-        const activator = this.$scopedSlots.activator({ on: listeners });
-        this.activatorNode = activator;
-        return activator;
+      if (!this.customActivator) {
+        return VTooltip.methods.genActivator.call(this);
       }
+
+      if (!this.$scopedSlots.activator && !this.$slots.activator) {
+        return null;
+      }
+
       return this.$createElement('span', {
         on: listeners,
         ref: 'activator',
-      }, this.$slots.activator);
+      }, this.$slots.activator ?? this.$scopedSlots.activator());
     },
   },
 

@@ -4,8 +4,6 @@
     :headers="headers",
     :loading="hasActivePending",
     :load-children="loadChildren",
-    :dark="dark",
-    :light="light",
     item-key="key"
   )
     template(#expand="{ item }")
@@ -43,11 +41,11 @@
       tr
         td(v-for="(header, index) in headers", :key="header.value")
           c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
-          color-indicator-wrapper(
+          service-dependencies-entity-cell(
             v-else-if="item.entity",
-            :entity="item.entity",
-            :type="header.colorIndicator"
-          ) {{ item | get(header.value) }}
+            :item="item",
+            :column="header"
+           )
 </template>
 
 <script>
@@ -55,9 +53,13 @@ import { get, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { MODALS, ENTITY_TYPES, DEFAULT_SERVICE_DEPENDENCIES_COLUMNS, COLOR_INDICATOR_TYPES } from '@/constants';
+import {
+  MODALS,
+  ENTITY_TYPES,
+  ENTITY_FIELDS,
+  COLOR_INDICATOR_TYPES,
+} from '@/constants';
 
-import { defaultColumnsToColumns } from '@/helpers/entities';
 import { getIconByEntityType } from '@/helpers/entities/entity';
 import { getEntityColor } from '@/helpers/color';
 import {
@@ -69,10 +71,10 @@ import {
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
-import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
+import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
 
 export default {
-  components: { ColorIndicatorWrapper },
+  components: { ServiceDependenciesEntityCell },
   mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
@@ -86,14 +88,6 @@ export default {
     columns: {
       type: Array,
       required: false,
-    },
-    dark: {
-      type: Boolean,
-      default: false,
-    },
-    light: {
-      type: Boolean,
-      default: false,
     },
     impact: {
       type: Boolean,
@@ -143,19 +137,13 @@ export default {
     },
 
     headers() {
-      const columns = this.columns || defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS);
-      const headers = columns.map(({ label, value, colorIndicator }) => ({
-        colorIndicator,
-
-        sortable: false,
-        text: label,
-        value: value.startsWith('entity.') ? value : `entity.${value}`,
-      }));
-
       return [
         { sortable: false, text: '', value: 'no-events-icon' },
 
-        ...headers,
+        ...this.columns.map(column => ({
+          ...column,
+          isState: column.value?.endsWith(ENTITY_FIELDS.state),
+        })),
       ];
     },
 

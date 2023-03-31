@@ -169,9 +169,51 @@ Feature: Import entities
         }
       },
       "type": "resource",
-      "impact_level": 1
+      "impact_level": 1,
+      "import_source": "test-import-source"
     }
     """
+    Then the response key "imported" should be greater than 0
+    When I do GET /api/v4/entities?search=test-resource-contextgraph-import-1-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1",
+          "name": "test-resource-contextgraph-import-1-1",
+          "connector": "test-connector-contextgraph-import-1/test-connector-name-contextgraph-import-1",
+          "component": "test-component-contextgraph-import-1",
+          "enabled": true,
+          "infos": {
+            "test_info": {
+              "description": "description 2",
+              "name": "test_info",
+              "value": "value 2"
+            }
+          },
+          "component_infos": {
+            "test_info": {
+              "description": "description 1",
+              "name": "test_info",
+              "value": "value 1"
+            }
+          },
+          "type": "resource",
+          "impact_level": 1,
+          "import_source": "test-import-source"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.imported" should be greater than 0
     When I do GET /api/v4/entities/context-graph?_id=test-resource-contextgraph-import-1-1/test-component-contextgraph-import-1
     Then the response code should be 200
     Then the response body should be:

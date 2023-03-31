@@ -48,7 +48,7 @@ export const widgetExpandPanelAlarmTimelineCard = {
 
     stepTitle() {
       const { _t: type, a: author, role } = this.step;
-      const typeMessageKey = `alarmList.timeLine.types.${type}`;
+      const typeMessageKey = `alarm.timeLine.types.${type}`;
 
       let formattedStepTitle = '';
 
@@ -60,7 +60,7 @@ export const widgetExpandPanelAlarmTimelineCard = {
         formattedStepTitle = type.replace(/(status)|(state)/g, '$& ').replace(/(inc)|(dec)/g, '$&reased');
       }
 
-      formattedStepTitle += ` ${this.$t('alarmList.timeLine.titlePaths.by')} `;
+      formattedStepTitle += ` ${this.$t('alarm.timeLine.titlePaths.by')} `;
 
       if (author === ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR) {
         formattedStepTitle += 'system';

@@ -3,7 +3,7 @@
     v-flex(xs8)
       c-number-field(
         v-field="duration.value",
-        :label="$t('remediationInstructions.timeToComplete')",
+        :label="$t('remediation.instruction.timeToComplete')",
         :name="durationFieldName",
         :disabled="disabled",
         :min="min",
@@ -14,6 +14,7 @@
       v-select.time-complete-unit(
         v-field="duration.unit",
         v-validate="'required'",
+        :label="$t('common.unit')",
         :items="availableUnits",
         :name="unitFieldName",
         :disabled="disabled",

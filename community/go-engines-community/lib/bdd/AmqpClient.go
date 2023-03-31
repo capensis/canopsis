@@ -11,6 +11,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/cucumber/godog"
@@ -68,10 +69,7 @@ func NewAmqpClient(
 	}
 }
 
-func (c *AmqpClient) BeforeScenario(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-	ctx = setScenarioName(ctx, sc.Name)
-	ctx = setScenarioUri(ctx, sc.Uri)
-
+func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	c.ackConsumersMx.Lock()
 	defer c.ackConsumersMx.Unlock()
 
@@ -155,6 +153,7 @@ func (c *AmqpClient) AfterScenario(ctx context.Context, _ *godog.Scenario, _ err
 
 // IWaitTheEndOfEventProcessing
 // Step example:
+//
 //	When I wait the end of event processing
 func (c *AmqpClient) IWaitTheEndOfEventProcessing(ctx context.Context) error {
 	return c.IWaitTheEndOfEventsProcessing(ctx, 1)
@@ -162,6 +161,7 @@ func (c *AmqpClient) IWaitTheEndOfEventProcessing(ctx context.Context) error {
 
 // IWaitTheEndOfEventsProcessing
 // Step example:
+//
 //	When I wait the end of 2 events processing
 func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expectedCount int) error {
 	msgs, err := c.getMainStreamAckConsumer(ctx)
@@ -172,8 +172,8 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expected
 	defer timer.Stop()
 	caughtCount := 0
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
@@ -205,12 +205,13 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expected
 // IWaitTheEndOfEventProcessingWhichContains
 //
 // Step example:
-//  When I wait the end of event processing which contains:
-//    """
-//    {
-//      "event_type": "check"
-//    }
-//    """
+//
+//	When I wait the end of event processing which contains:
+//	  """
+//	  {
+//	    "event_type": "check"
+//	  }
+//	  """
 func (c *AmqpClient) IWaitTheEndOfEventProcessingWhichContains(ctx context.Context, doc string) error {
 	b, err := c.templater.Execute(ctx, doc)
 	if err != nil {
@@ -229,17 +230,18 @@ func (c *AmqpClient) IWaitTheEndOfEventProcessingWhichContains(ctx context.Conte
 // IWaitTheEndOfEventsProcessingWhichContain
 //
 // Step example:
-//	When I wait the end of events processing which contain:
-//    """
-//    [
-//      {
-//        "event_type": "check"
-//      },
-//      {
-//        "event_type": "check"
-//      }
-//    ]
-//    """
+//
+//		When I wait the end of events processing which contain:
+//	   """
+//	   [
+//	     {
+//	       "event_type": "check"
+//	     },
+//	     {
+//	       "event_type": "check"
+//	     }
+//	   ]
+//	   """
 func (c *AmqpClient) IWaitTheEndOfEventsProcessingWhichContain(ctx context.Context, doc string) error {
 	b, err := c.templater.Execute(ctx, doc)
 	if err != nil {
@@ -258,17 +260,18 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessingWhichContain(ctx context.Conte
 // IWaitTheEndOfOneOfEventsProcessingWhichContain
 //
 // Step example:
-//	When I wait the end of one of events processing which contain:
-//    """
-//    [
-//      {
-//        "event_type": "check"
-//      },
-//      {
-//        "event_type": "activate"
-//      }
-//    ]
-//    """
+//
+//		When I wait the end of one of events processing which contain:
+//	   """
+//	   [
+//	     {
+//	       "event_type": "check"
+//	     },
+//	     {
+//	       "event_type": "activate"
+//	     }
+//	   ]
+//	   """
 func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.Context, doc string) error {
 	b, err := c.templater.Execute(ctx, doc)
 	if err != nil {
@@ -294,8 +297,8 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 		return err
 	}
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
@@ -390,8 +393,8 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 		return err
 	}
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
@@ -444,6 +447,7 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 
 // ICallRPCAxeRequest
 // Step example:
+//
 //	When I call RPC request to engine-axe with alarm resource/component:
 //	"""
 //	{
@@ -456,7 +460,7 @@ func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc str
 		return err
 	}
 
-	var event types.RPCAxeEvent
+	var event rpc.AxeEvent
 	err = c.decoder.Decode([]byte(doc), &event)
 	if err != nil {
 		return err
@@ -474,60 +478,7 @@ func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc str
 		return err
 	}
 
-	var resultEvent types.RPCAxeResultEvent
-	err = c.decoder.Decode(res, &resultEvent)
-	if err != nil {
-		return err
-	}
-
-	if resultEvent.Error != nil {
-		return resultEvent.Error.Error
-	}
-
-	return nil
-}
-
-// ICallRPCWebhookRequest
-// Step example:
-//	When I call RPC request to engine-webhook with alarm resource/component:
-//	"""
-//	{
-//	  "request": {
-//		  "method": "POST",
-//		  "url": "http://test-url.com"
-//		}
-//	}
-//	"""
-func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc string) error {
-	alarm, err := c.findAlarm(ctx, eid)
-	if err != nil {
-		return err
-	}
-
-	content, err := c.templater.Execute(ctx, doc)
-	if err != nil {
-		return err
-	}
-
-	var event types.RPCWebhookEvent
-	err = c.decoder.Decode(content.Bytes(), &event)
-	if err != nil {
-		return err
-	}
-
-	event.Alarm = &alarm.Alarm
-	event.Entity = &alarm.Entity
-	body, err := c.encoder.Encode(event)
-	if err != nil {
-		return err
-	}
-
-	res, err := c.executeRPC(ctx, canopsis.WebhookRPCQueueServerName, body)
-	if err != nil {
-		return err
-	}
-
-	var resultEvent types.RPCWebhookResultEvent
+	var resultEvent rpc.AxeResultEvent
 	err = c.decoder.Decode(res, &resultEvent)
 	if err != nil {
 		return err
@@ -668,8 +619,8 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 		return err
 	}
 
-	scName, _ := getScenarioName(ctx)
-	scUri, _ := getScenarioUri(ctx)
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {

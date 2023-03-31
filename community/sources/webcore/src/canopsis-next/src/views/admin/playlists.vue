@@ -1,15 +1,16 @@
 <template lang="pug">
   div
     c-page-header
-    playlists-list(
-      :playlists="playlists",
-      :pending="playlistsPending",
-      :pagination.sync="pagination",
-      :total-items="playlistsMeta.total_count",
-      @edit="showEditPlaylistModal",
-      @remove="showRemovePlaylistModal",
-      @duplicate="showDuplicatePlaylistModal"
-    )
+    v-card.ma-4.mt-0
+      playlists-list(
+        :playlists="playlists",
+        :pending="playlistsPending",
+        :pagination.sync="pagination",
+        :total-items="playlistsMeta.total_count",
+        @edit="showEditPlaylistModal",
+        @remove="showRemovePlaylistModal",
+        @duplicate="showDuplicatePlaylistModal"
+      )
     c-fab-btn(
       v-if="hasCreateAnyPlaylistAccess",
       @refresh="fetchList",

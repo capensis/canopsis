@@ -39,8 +39,8 @@ const selectOrderSelectField = wrapper => wrapper.findAll('select.v-select').at(
 
 describe('default-sort-column', () => {
   const columns = [
-    { value: 'first', label: 'First' },
-    { value: 'second', label: 'Second' },
+    { value: 'first', text: 'First' },
+    { value: 'second', text: 'Second' },
   ];
 
   it('Column changed after trigger select field with columns', () => {
@@ -111,7 +111,7 @@ describe('default-sort-column', () => {
           order: SORT_ORDERS.desc,
         },
         columns: [{
-          label: 'Created at',
+          text: 'Created at',
           value: 'createdAt',
         }],
         columnsLabel: 'Columns label',

@@ -3,9 +3,9 @@
 exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with custom props 1`] = `
 <div>
   <mermaid-point-marker-stub
-    color-indicator="impact_state"
+    colorindicator="impact_state"
     entity=""
-    pbehavior-enabled="true"
+    pbehaviorenabled="true"
     size="12"
     x="1"
     y="2"

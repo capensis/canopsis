@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  v-sheet
     div.v-picker__title.primary.text-xs-center(v-if="label")
       span.headline {{ label }}
     div.date-time-picker__body
@@ -118,10 +118,6 @@ export default {
 
     .v-menu__content {
       max-width: 100%;
-    }
-
-    .v-dropdown-footer, &.v-menu__content, .v-tabs__items {
-      background-color: #fff;
     }
 
     .v-date-picker-table {

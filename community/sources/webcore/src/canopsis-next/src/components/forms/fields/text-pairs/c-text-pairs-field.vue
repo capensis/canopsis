@@ -9,15 +9,17 @@
         v-field="items[index]",
         :key="item[itemKey]",
         :disabled="disabled",
-        :value-validation-rules="valueValidationRules",
-        :text-validation-rules="textValidationRules",
+        :value-required="valueRequired",
+        :text-required="textRequired",
         :text-label="textLabel",
         :value-label="valueLabel",
         :item-text="itemText",
         :item-value="itemValue",
-        :mixed="mixed",
+        :name="item[itemKey]",
         @remove="removeItemFromArray(index)"
       )
+        template(#append-value="")
+          slot(name="append-value", :item="item")
     v-flex(v-if="!disabled", xs12)
       v-layout
         v-btn.ml-0(color="primary", outline, @click="addItem") {{ addButtonLabel || $t('common.add') }}
@@ -68,13 +70,13 @@ export default {
       type: String,
       default: 'items',
     },
-    textValidationRules: {
-      type: String,
-      required: false,
+    textRequired: {
+      type: Boolean,
+      default: false,
     },
-    valueValidationRules: {
-      type: String,
-      required: false,
+    valueRequired: {
+      type: Boolean,
+      default: false,
     },
     addButtonLabel: {
       type: String,
@@ -84,18 +86,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    mixed: {
-      type: Boolean,
-      default: false,
-    },
-    itemCreator: {
-      type: Function,
-      default: textPairToForm,
-    },
   },
   methods: {
     addItem() {
-      this.addItemIntoArray(this.itemCreator());
+      this.addItemIntoArray(textPairToForm());
     },
   },
 };

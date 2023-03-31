@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(width="100%", permanent, touchless)
+  v-navigation-drawer.flowchart-sidebar(width="100%", permanent, light, touchless)
     v-expansion-panel(color="grey", expand)
       v-layout(column)
         slot(name="prepend")

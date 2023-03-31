@@ -2,7 +2,7 @@
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom props and open select 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
+  class="v-input mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -306,21 +306,11 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
             <div
               class="v-input__append-inner"
             >
-              <span
-                class="v-tooltip v-tooltip--left"
-              >
-                <transition-stub
-                  name="slide-x-reverse-transition"
-                />
-                <span>
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light"
-                  >
-                    help
-                  </i>
-                </span>
-              </span>
+              <c-help-icon-stub
+                icon="help"
+                left="left"
+                text="Press <kbd>enter</kbd> to save"
+              />
             </div>
           </div>
         </div>
@@ -332,7 +322,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and open select 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
+  class="v-input mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -615,7 +605,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and pending 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-loading theme--light"
+  class="v-input mt-0 v-text-field v-select v-input--is-loading theme--light"
   role="combobox"
 >
   <div
@@ -721,7 +711,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props correctly 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
+  class="v-input mt-0 v-text-field v-select theme--light"
   role="combobox"
 >
   <div
@@ -800,7 +790,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with validator error 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--has-state theme--light error--text"
+  class="v-input mt-0 v-text-field v-select v-input--has-state theme--light error--text"
   role="combobox"
 >
   <div

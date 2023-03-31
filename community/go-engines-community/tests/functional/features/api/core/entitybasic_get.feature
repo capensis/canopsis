@@ -15,12 +15,6 @@ Feature: Get entity basic
       },
       "component": "test-entitybasic-to-get-component",
       "connector": "test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name",
-      "changeable_depends": [
-        "test-entitybasic-to-get-connector/test-entitybasic-to-get-connector-name"
-      ],
-      "changeable_impact": [
-        "test-entitybasic-to-get-component"
-      ],
       "description": "test-entitybasic-to-get-resource-description",
       "enabled": true,
       "old_entity_patterns": null,

@@ -165,30 +165,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -214,30 +212,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -263,30 +259,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets 1`] = `
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -396,30 +390,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -445,30 +437,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -494,30 +484,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the l w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -627,30 +615,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -676,30 +662,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -725,30 +709,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the m w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -858,30 +840,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -907,30 +887,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -956,30 +934,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the t w
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -1089,30 +1065,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -1138,30 +1112,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"
@@ -1187,30 +1159,28 @@ exports[`grid-edit-widgets Renders \`grid-edit-widgets\` with widgets on the xl 
           <div
             class="layout controls"
           >
+            <button
+              class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light black--text"
+                  style="font-size: 16px;"
+                >
+                  lock
+                </i>
+              </div>
+            </button>
             <span
               class="v-tooltip v-tooltip--bottom"
             >
               <transition-stub
                 name="slide-y-transition"
               />
-              <span>
-                <button
-                  class="ma-0 mr-1 v-btn v-btn--icon v-btn--small theme--light grey lighten-1"
-                  type="button"
-                >
-                  <div
-                    class="v-btn__content"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light black--text"
-                      style="font-size: 16px;"
-                    >
-                      lock
-                    </i>
-                  </div>
-                </button>
-              </span>
             </span>
             <widget-wrapper-menu-stub
               tab="[object Object]"

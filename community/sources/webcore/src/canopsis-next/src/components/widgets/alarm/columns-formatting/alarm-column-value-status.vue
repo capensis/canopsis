@@ -1,7 +1,8 @@
 <template lang="pug">
-  c-no-events-icon.mr-1(v-if="isNoEventsStatus", :value="idleSince", color="red", top)
+  c-no-events-icon(v-if="isNoEventsStatus", :value="idleSince", :size="iconSize", color="error", top)
   v-tooltip(v-else, top)
-    v-icon(slot="activator", :color="statusColor") {{ status.icon }}
+    template(#activator="{ on }")
+      v-icon.d-block(v-on="on", :color="statusColor", :size="iconSize") {{ status.icon }}
     span {{ $t(`common.statusTypes.${statusValue}`) }}
 </template>
 
@@ -16,8 +17,16 @@ export default {
       type: Object,
       required: true,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    iconSize() {
+      return this.small ? 24 : undefined;
+    },
+
     statusValue() {
       return this.alarm.v.status.val;
     },

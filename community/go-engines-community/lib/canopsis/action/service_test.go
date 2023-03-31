@@ -3,7 +3,6 @@ package action_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"reflect"
 	"sync"
 	"testing"
@@ -234,7 +233,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 					processInOrder = append(processInOrder, process)
 				}
 
-				body := []byte(fmt.Sprintf("body %s", info.Alarm.ID))
+				body := []byte("body " + info.Alarm.ID)
 				encode := encoderMock.
 					EXPECT().
 					Encode(gomock.Any()).
@@ -328,8 +327,9 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 			testName: "given completely executed abandoned execution should be deleted",
 			abandonedExecutions: []action.ScenarioExecution{
 				{
-					ID:     "test-alarm$$test-scenario",
-					Entity: types.Entity{},
+					AlarmID:    "test-alarm",
+					ScenarioID: "test-scenario",
+					Entity:     types.Entity{},
 					ActionExecutions: []action.Execution{
 						{
 							Action:   action.Action{},
@@ -354,8 +354,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 			testName: "given execution with resolved/deleted alarm should be deleted",
 			abandonedExecutions: []action.ScenarioExecution{
 				{
-					ID:         "test-alarm-not-exist$$test-scenario",
-					AlarmID:    "test-scenario",
+					AlarmID:    "test-alarm-not-exist",
 					ScenarioID: "test-scenario",
 					Entity:     types.Entity{},
 					ActionExecutions: []action.Execution{
@@ -382,7 +381,6 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 			testName: "given execution should send exec task",
 			abandonedExecutions: []action.ScenarioExecution{
 				{
-					ID:         "test-alarm$$test-scenario",
 					AlarmID:    "test-alarm",
 					ScenarioID: "test-scenario",
 					Entity:     types.Entity{},
@@ -410,7 +408,6 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 			testName: "given execution should send exec task",
 			abandonedExecutions: []action.ScenarioExecution{
 				{
-					ID:         "test-alarm$$test-scenario",
 					AlarmID:    "test-alarm",
 					ScenarioID: "test-scenario",
 					Entity:     types.Entity{},
@@ -438,7 +435,6 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 			testName: "given execution should send exec task",
 			abandonedExecutions: []action.ScenarioExecution{
 				{
-					ID:         "test-alarm$$test-scenario",
 					AlarmID:    "test-alarm",
 					ScenarioID: "test-scenario",
 					Entity:     types.Entity{},
@@ -495,7 +491,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 				go func() {
 					defer wg.Done()
 					scenarioExec := <-scenarioExecChan
-					if scenarioExec.AbandonedExecutionID != dataset.executionKey {
+					if scenarioExec.AbandonedExecutionCacheKey != dataset.executionKey {
 						t.Errorf("Scenario exec task should be marked as 'abandoned' but got %+v", scenarioExec)
 					}
 				}()

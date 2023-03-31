@@ -24,6 +24,7 @@ type Request struct {
 	//   * `view_tab` - export viewtabs collection
 	//   * `widget` - export widgets collection
 	//   * `widget_filter` - export widget_filters collection
+	//   * `widget_template` - export widget_templates collection
 	//   * `view_group` - export viewgroups collection
 	//   * `instruction` - export instruction collection
 	//   * `job_config` - export job_config collection
@@ -33,5 +34,7 @@ type Request struct {
 	//   * `user_preferences` - export userpreferences collection
 	//   * `kpi_filter` - export kpi_filter collection
 	//   * `pattern` - export pattern collection
+	//   * `declare_ticket_rule` - export declare_ticket_rule collection
+	//   * `link_rule` - export link_rule collection
 	Exports []string `json:"export"`
 }

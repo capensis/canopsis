@@ -5,10 +5,13 @@ exports[`mermaid-map-form Renders \`mermaid-map-form\` with form 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    required="required"
     value="Mermaid"
   />
   <mermaid-editor-stub
-    value="[object Object]"
+    form="[object Object]"
+    minheight="500"
+    name="parameters"
   />
 </div>
 `;

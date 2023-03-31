@@ -28,7 +28,6 @@ const (
 	PbehaviorTypeMongoCollection      = "pbehavior_type"
 	PbehaviorReasonMongoCollection    = "pbehavior_reason"
 	PbehaviorExceptionMongoCollection = "pbehavior_exception"
-	ScenarioMongoCollection           = "action_scenario"
 	FileMongoCollection               = "files"
 	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
 	IdleRuleMongoCollection           = "idle_rule"
@@ -46,11 +45,12 @@ const (
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
 
-	ViewMongoCollection          = "views"
-	ViewTabMongoCollection       = "viewtabs"
-	WidgetMongoCollection        = "widgets"
-	WidgetFiltersMongoCollection = "widget_filters"
-	ViewGroupMongoCollection     = "viewgroups"
+	ViewMongoCollection           = "views"
+	ViewTabMongoCollection        = "viewtabs"
+	WidgetMongoCollection         = "widgets"
+	WidgetFiltersMongoCollection  = "widget_filters"
+	WidgetTemplateMongoCollection = "widget_templates"
+	ViewGroupMongoCollection      = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
@@ -75,8 +75,9 @@ const (
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
 
-	TokenMongoCollection      = "token"
-	ShareTokenMongoCollection = "share_token"
+	TokenMongoCollection               = "token"
+	ShareTokenMongoCollection          = "share_token"
+	WebsocketConnectionMongoCollection = "websocket_connection"
 
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
@@ -93,6 +94,12 @@ const (
 	MapMongoCollection = "map"
 
 	AlarmTagCollection = "alarm_tag"
+
+	ScenarioMongoCollection          = "action_scenario"
+	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
+	WebhookHistoryMongoCollection    = "webhook_history"
+
+	LinkRuleMongoCollection = "link_rule"
 )
 
 const (

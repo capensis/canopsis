@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isBoolean, isNull } from 'lodash';
 
 import {
   WIDGET_TYPES,
@@ -14,6 +14,7 @@ import {
 } from './alarm';
 import {
   contextWidgetParametersToForm,
+  formToContextWidgetParameters,
 } from './context';
 import {
   serviceWeatherWidgetParametersToForm,
@@ -35,6 +36,10 @@ import {
   textWidgetParametersToForm,
 } from './text';
 import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
+import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './pie-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
 
 /**
  * @typedef {
@@ -45,7 +50,11 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  *   'Text' |
  *   'Counter' |
  *   'Junit' |
- *   'Map'
+ *   'Map' |
+ *   'BarChart' |
+ *   'LineChart' |
+ *   'PieChart' |
+ *   'Numbers'
  * } WidgetType
  */
 
@@ -131,7 +140,11 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParameters |
  *   TextWidgetParameters |
- *   MapWidgetParameters
+ *   MapWidgetParameters |
+ *   BarChartWidgetParameters |
+ *   LineChartWidgetParameters |
+ *   PieChartWidgetParameters |
+ *   NumbersWidgetParameters
  * } WidgetParameters
  */
 
@@ -144,7 +157,11 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  *   CounterWidgetParameters |
  *   TestingWeatherWidgetParametersForm |
  *   TextWidgetParameters |
- *   MapWidgetParameters
+ *   MapWidgetParameters |
+ *   BarChartWidgetParametersForm |
+ *   LineChartWidgetParametersForm |
+ *   PieChartWidgetParametersForm |
+ *   NumbersWidgetParametersForm
  * } WidgetParametersForm
  */
 
@@ -175,7 +192,7 @@ import { formToMapWidgetParameters, mapWidgetParametersToForm } from './map';
  * @param {WidgetParameters} [parameters = {}]
  * @return {WidgetParametersForm}
  */
-export const widgetParametersToForm = ({ type, parameters } = {}) => {
+export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: alarmListWidgetParametersToForm,
     [WIDGET_TYPES.context]: contextWidgetParametersToForm,
@@ -185,17 +202,17 @@ export const widgetParametersToForm = ({ type, parameters } = {}) => {
     [WIDGET_TYPES.testingWeather]: testingWeatherWidgetParametersToForm,
     [WIDGET_TYPES.text]: textWidgetParametersToForm,
     [WIDGET_TYPES.map]: mapWidgetParametersToForm,
+    [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
+    [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
+    [WIDGET_TYPES.pieChart]: pieChartWidgetParametersToForm,
+    [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
 
   const preparer = widgetsMap[type];
 
-  if (preparer) {
-    return preparer(parameters);
-  }
-
-  return parameters ? cloneDeep(parameters) : {};
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
@@ -248,18 +265,23 @@ export const widgetToForm = (widget = { type: WIDGET_TYPES.alarmList }) => ({
 export const formToWidgetParameters = ({ type, parameters }) => {
   const widgetsMap = {
     [WIDGET_TYPES.alarmList]: formToAlarmListWidgetParameters,
+    [WIDGET_TYPES.context]: formToContextWidgetParameters,
     [WIDGET_TYPES.serviceWeather]: formToServiceWeatherWidgetParameters,
     [WIDGET_TYPES.statsCalendar]: formToStatsCalendarWidgetParameters,
     [WIDGET_TYPES.counter]: formToCounterWidgetParameters,
     [WIDGET_TYPES.testingWeather]: formToTestingWeatherWidgetParameters,
     [WIDGET_TYPES.map]: formToMapWidgetParameters,
+    [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
+    [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
+    [WIDGET_TYPES.pieChart]: formToPieChartWidgetParameters,
+    [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };
 
   const preparer = widgetsMap[type];
 
-  return preparer ? preparer(parameters) : parameters;
+  return preparer ? preparer(parameters) : cloneDeep(parameters);
 };
 
 /**
@@ -273,3 +295,17 @@ export const formToWidget = form => ({
 
   parameters: formToWidgetParameters(form),
 });
+
+/**
+ * Convert opened field widget
+ *
+ * @param  {boolean | null} [opened]
+ * @returns {boolean | null}
+ */
+export const openedToForm = (opened) => {
+  if (isBoolean(opened) || isNull(opened)) {
+    return opened;
+  }
+
+  return true;
+};

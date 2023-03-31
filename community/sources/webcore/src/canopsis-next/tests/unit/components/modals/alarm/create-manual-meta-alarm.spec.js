@@ -2,17 +2,13 @@ import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModules, createManualMetaAlarmModule } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
-import {
-  ENTITIES_STATES,
-  EVENT_ENTITY_TYPES,
-  MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
-} from '@/constants';
+import { ENTITIES_STATES } from '@/constants';
 
 import CreateManualMetaAlarm from '@/components/modals/alarm/create-manual-meta-alarm.vue';
 
@@ -79,7 +75,6 @@ describe('create-manual-meta-alarm', () => {
 
   mockDateNow(timestamp);
   const $modals = mockModals();
-  const $popups = mockPopups();
 
   const alarm = {
     _id: Faker.datatype.string(),
@@ -101,28 +96,15 @@ describe('create-manual-meta-alarm', () => {
     },
   };
   const items = [alarm];
-  const manualMetaAlarmEventData = {
-    ...MANUAL_META_ALARM_EVENT_DEFAULT_FIELDS,
-
-    event_type: EVENT_ENTITY_TYPES.manualMetaAlarmUpdate,
-    state: ENTITIES_STATES.minor,
-
-    output: '',
-  };
   const config = { items };
 
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-  const store = createMockedStoreModules([eventModule]);
+  const {
+    manualMetaAlarmModule,
+    createManualMetaAlarm,
+    addAlarmsIntoManualMetaAlarm,
+  } = createManualMetaAlarmModule();
 
-  afterEach(() => {
-    createEvent.mockClear();
-  });
+  const store = createMockedStoreModules([manualMetaAlarmModule]);
 
   test('Default parameters applied to form', () => {
     const wrapper = factory({
@@ -136,7 +118,7 @@ describe('create-manual-meta-alarm', () => {
 
     expect(manualMetaAlarmForm.vm.form).toEqual({
       metaAlarm: null,
-      output: '',
+      comment: '',
     });
   });
 
@@ -162,7 +144,7 @@ describe('create-manual-meta-alarm', () => {
     const manualMetaAlarmForm = selectManualMetaAlarmForm(wrapper);
 
     const newData = {
-      output: Faker.datatype.string(),
+      comment: Faker.datatype.string(),
       metaAlarm: Faker.datatype.string(),
     };
 
@@ -172,17 +154,15 @@ describe('create-manual-meta-alarm', () => {
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
+    expect(createManualMetaAlarm).toBeCalledTimes(1);
+    expect(createManualMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
-        data: [{
-          ...manualMetaAlarmEventData,
-          display_name: newData.metaAlarm,
-          output: newData.output,
-          ma_children: [alarm.entity._id],
-          event_type: EVENT_ENTITY_TYPES.manualMetaAlarmGroup,
-        }],
+        data: {
+          name: newData.metaAlarm,
+          alarms: [alarm._id],
+          comment: newData.comment,
+        },
       },
       undefined,
     );
@@ -220,124 +200,11 @@ describe('create-manual-meta-alarm', () => {
 
     await flushPromises();
 
-    expect(createEvent).not.toBeCalled();
+    expect(createManualMetaAlarm).not.toBeCalled();
+    expect(addAlarmsIntoManualMetaAlarm).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
 
     validator.detach('name');
-  });
-
-  test('Errors added after trigger submit button with action errors', async () => {
-    const formErrors = {
-      output: 'Output error',
-      metaAlarm: 'Meta alarm error',
-    };
-    createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
-    const wrapper = factory({
-      store,
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const submitButton = selectSubmitButton(wrapper);
-    const manualMetaAlarmForm = selectManualMetaAlarmForm(wrapper);
-
-    const newData = {
-      output: Faker.datatype.string(),
-      metaAlarm: {
-        _id: Faker.datatype.string(),
-      },
-    };
-
-    manualMetaAlarmForm.vm.$emit('input', newData);
-
-    submitButton.trigger('click');
-
-    await flushPromises();
-
-    const addedErrors = wrapper.getValidatorErrorsObject();
-
-    expect(formErrors).toEqual(addedErrors);
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...manualMetaAlarmEventData,
-          ma_parents: [newData.metaAlarm._id],
-          ma_children: [alarm.entity._id],
-          output: newData.output,
-          event_type: EVENT_ENTITY_TYPES.manualMetaAlarmUpdate,
-        }],
-      },
-      undefined,
-    );
-    expect($modals.hide).not.toBeCalledWith();
-  });
-
-  test('Error popup showed after trigger submit button with action errors', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-    const errors = {
-      unavailableField: 'Error',
-      anotherUnavailableField: 'Second error',
-    };
-    createEvent.mockRejectedValueOnce(errors);
-
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      store: createMockedStoreModules([
-        eventModule,
-      ]),
-      mocks: {
-        $modals,
-        $popups,
-      },
-    });
-
-    const submitButton = selectSubmitButton(wrapper);
-    const manualMetaAlarmForm = selectManualMetaAlarmForm(wrapper);
-
-    const newData = {
-      output: Faker.datatype.string(),
-      metaAlarm: Faker.datatype.string(),
-    };
-
-    manualMetaAlarmForm.vm.$emit('input', newData);
-
-    submitButton.trigger('click');
-
-    await flushPromises();
-
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
-      text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
-    });
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...manualMetaAlarmEventData,
-          display_name: newData.metaAlarm,
-          ma_children: [alarm.entity._id],
-          output: newData.output,
-          event_type: EVENT_ENTITY_TYPES.manualMetaAlarmGroup,
-        }],
-      },
-      undefined,
-    );
-    expect($modals.hide).not.toBeCalledWith();
-
-    consoleErrorSpy.mockClear();
   });
 
   test('Modal hidden after trigger cancel button', async () => {

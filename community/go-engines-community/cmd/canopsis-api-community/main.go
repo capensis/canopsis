@@ -68,6 +68,7 @@ func main() {
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
 		nil,
+		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
