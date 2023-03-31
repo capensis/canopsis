@@ -3,19 +3,22 @@ import flushPromises from 'flush-promises';
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
-import { BASIC_ENTITY_TYPES, SAMPLINGS } from '@/constants';
+import { BASIC_ENTITY_TYPES } from '@/constants';
 
+import { PAGINATION_LIMIT } from '@/config';
 import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
-import { PAGINATION_LIMIT } from '@/config';
+import CLazySearchField from '@/components/forms/fields/c-lazy-search-field';
 
 const localVue = createVueInstance();
 
 const stubs = {
+  'c-lazy-search-field': CLazySearchField,
   'c-select-field': createSelectInputStub('c-select-field'),
 };
 
 const snapshotStubs = {
+  'c-lazy-search-field': CLazySearchField,
   'c-select-field': CSelectField,
 };
 
@@ -42,16 +45,19 @@ const selectInput = wrapper => wrapper.find('input');
 describe('c-entity-field', () => {
   const items = [
     {
+      _id: 'id',
       value: 'value',
       text: 'Text',
       type: 'type1',
     },
     {
+      _id: 'id 2',
       value: 'value 2',
       text: 'Text 2',
       type: 'type2',
     },
     {
+      _id: 'id 3',
       value: 'value 3',
       text: 'Text 3',
       type: 'type3',
@@ -134,9 +140,6 @@ describe('c-entity-field', () => {
   it('Renders `c-entity-field` with default props', async () => {
     const wrapper = snapshotFactory({
       store,
-      propsData: {
-        value: SAMPLINGS.day,
-      },
     });
 
     const autocompleteElement = selectInput(wrapper);

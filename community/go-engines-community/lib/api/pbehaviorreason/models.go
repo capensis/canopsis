@@ -4,12 +4,16 @@ import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-commun
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name created"`
+	WithHidden bool   `form:"with_hidden"`
+	SortBy     string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name created"`
 }
 
 type Request struct {
 	Name        string `json:"name" binding:"required,max=255"`
 	Description string `json:"description" binding:"required,max=255"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden *bool `json:"hidden,omitempty"`
 }
 
 type CreateRequest struct {
@@ -27,6 +31,7 @@ type Reason struct {
 	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description" json:"description"`
 	Deletable   *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	Hidden      *bool  `bson:"hidden,omitempty" json:"hidden,omitempty"`
 }
 
 type AggregationResult struct {

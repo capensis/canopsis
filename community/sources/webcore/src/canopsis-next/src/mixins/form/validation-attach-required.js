@@ -13,6 +13,10 @@ export const validationAttachRequiredMixin = {
       }
     },
 
+    validateRequiredRule() {
+      this.$validator.validate(this.name);
+    },
+
     detachRequiredRule() {
       this.$validator.detach(this.name);
     },

@@ -20,20 +20,22 @@
         :items="timespans",
         :loading="pending"
       )
-        v-flex(slot="header")
-          v-fade-transition
-            v-progress-linear.progress.ma-0(
-              v-show="pending",
-              :height="3",
-              color="primary",
-              indeterminate
-            )
-        v-flex(slot="item", slot-scope="{ item }")
+        template(#header="")
+          v-flex
+            v-fade-transition
+              v-progress-linear.progress.ma-0(
+                v-show="pending",
+                :height="3",
+                color="primary",
+                indeterminate
+              )
+        template(#item="{ item }")
+          v-flex
+            v-card
+              v-card-title {{ item.from | date }} — {{ item.to | date }}
+        v-flex(#no-data="")
           v-card
-            v-card-title {{ item.from | date }} — {{ item.to | date }}
-        v-flex(slot="no-data")
-          v-card
-            v-card-title {{ $t('tables.noData') }}
+            v-card-title {{ $t('common.noData') }}
 </template>
 
 <script>

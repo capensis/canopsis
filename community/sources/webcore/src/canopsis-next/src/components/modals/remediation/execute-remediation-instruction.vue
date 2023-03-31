@@ -82,7 +82,7 @@ export default {
         ].includes(instructionExecution.status);
 
         const type = isFailedExecution ? 'failed' : 'success';
-        const text = this.$t(`remediationInstructionExecute.popups.${type}`, {
+        const text = this.$t(`remediation.instructionExecute.popups.${type}`, {
           instructionName: instructionExecution.name,
         });
 
@@ -226,7 +226,7 @@ export default {
       if (!this.$socket.isConnectionOpen) {
         this.$modals.hide();
         this.$popups.error({
-          text: this.$t('remediationInstructionExecute.popups.connectionError'),
+          text: this.$t('remediation.instructionExecute.popups.connectionError'),
           autoClose: false,
         });
       }
@@ -238,7 +238,7 @@ export default {
     socketCloseRoomHandler() {
       this.$modals.hide();
       this.$popups.error({
-        text: this.$t('remediationInstructionExecute.popups.wasAborted', {
+        text: this.$t('remediation.instructionExecute.popups.wasAborted', {
           instructionName: this.instructionExecution?.name,
         }),
         autoClose: false,
@@ -343,7 +343,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           hideTitle: true,
-          text: this.$t('remediationInstructionExecute.closeConfirmationText'),
+          text: this.$t('remediation.instructionExecute.closeConfirmationText'),
           action: async () => {
             await this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId });
             await this.confirmationHide();

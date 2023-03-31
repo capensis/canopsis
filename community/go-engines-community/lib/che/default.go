@@ -17,6 +17,7 @@ import (
 	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -36,6 +37,7 @@ func NewEngine(
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	templateConfigProvider *config.BaseTemplateConfigProvider,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -50,6 +52,7 @@ func NewEngine(
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
+	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
@@ -67,8 +70,8 @@ func NewEngine(
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, timezoneConfigProvider))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(timezoneConfigProvider, techMetricsSender)))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, templateExecutor))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(templateExecutor, techMetricsSender)))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
@@ -226,6 +229,7 @@ func NewEngine(
 		alarmConfigProvider,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
+		templateConfigProvider,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,

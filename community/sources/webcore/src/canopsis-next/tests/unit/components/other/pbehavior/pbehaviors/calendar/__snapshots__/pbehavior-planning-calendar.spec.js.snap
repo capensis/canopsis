@@ -34,7 +34,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
       class="flex text-sm-center"
     >
       <button
-        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        class="mx-2 ds-light-forecolor ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
         type="button"
       >
         <div
@@ -49,7 +49,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
         </div>
       </button>
       <span
-        class="v-tooltip mx-2 v-tooltip--bottom"
+        class="v-tooltip v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"
@@ -59,7 +59,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
         calendar="[object Object]"
       />
       <button
-        class="ds-light-forecolor ds-skinny-button ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
+        class="mx-2 ds-light-forecolor ds-calendar-app-action v-btn v-btn--icon v-btn--depressed theme--light"
         type="button"
       >
         <div
@@ -74,7 +74,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
         </div>
       </button>
       <span
-        class="v-tooltip mx-2 v-tooltip--bottom"
+        class="v-tooltip v-tooltip--bottom"
       >
         <transition-stub
           name="slide-y-transition"

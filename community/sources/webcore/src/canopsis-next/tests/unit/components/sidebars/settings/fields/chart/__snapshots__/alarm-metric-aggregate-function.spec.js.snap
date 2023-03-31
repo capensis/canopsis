@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-metric-aggregate-function Renders \`alarm-metric-aggregate-function\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Calculation method"
+>
+  <c-alarm-metric-aggregate-function-field-stub
+    value="sum"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`alarm-metric-aggregate-function Renders \`alarm-metric-aggregate-function\` with default props 1`] = `
+<widget-settings-item-stub
+  title="Calculation method"
+>
+  <c-alarm-metric-aggregate-function-field-stub
+    value="avg"
+  />
+</widget-settings-item-stub>
+`;

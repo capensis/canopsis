@@ -1,17 +1,12 @@
 import { omit } from 'lodash';
+import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsCanceled from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-canceled.vue';
 
 const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsCanceled, {
-  localVue,
-
-  ...options,
-});
 
 describe('extra-details-canceled', () => {
   const nowTimestamp = 1386435500000;
@@ -26,34 +21,37 @@ describe('extra-details-canceled', () => {
     m: 'cancelled-message',
   };
 
-  it('Renders `extra-details-canceled` with full canceled', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ExtraDetailsCanceled, {
+    localVue,
+    attachTo: document.body,
+  });
+
+  it('Renders `extra-details-canceled` with full canceled', async () => {
+    snapshotFactory({
       propsData: {
         canceled,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-canceled` without message', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-canceled` without message', async () => {
+    snapshotFactory({
       propsData: {
         canceled: omit(canceled, ['m']),
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-canceled` with date in previous month', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-canceled` with date in previous month', async () => {
+    snapshotFactory({
       propsData: {
         canceled: {
           ...canceled,
@@ -62,9 +60,8 @@ describe('extra-details-canceled', () => {
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

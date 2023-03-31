@@ -28,7 +28,7 @@ type ackExecutor struct {
 
 // Exec creates new ack step for alarm.
 func (e *ackExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
@@ -67,6 +67,7 @@ func (e *ackExecutor) Exec(
 			metricsUserID = userID
 		}
 		e.metricsSender.SendAck(*alarm, metricsUserID, time.Time)
+		e.metricsSender.SendRemoveNotAckedMetric(*alarm, time.Time)
 
 		return types.AlarmChangeTypeAck, nil
 	}

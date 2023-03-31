@@ -65,14 +65,19 @@ func (c *defaultConsumer) Consume(ctx context.Context) error {
 		return err
 	}
 
-	publishCh, err := c.connection.Channel()
-	if err != nil {
-		return err
+	var publishCh libamqp.Channel
+	if c.nextQueue != "" || c.fifoQueue != "" {
+		publishCh, err = c.connection.Channel()
+		if err != nil {
+			return err
+		}
 	}
 
 	defer func() {
 		_ = consumeCh.Close()
-		_ = publishCh.Close()
+		if publishCh != nil {
+			_ = publishCh.Close()
+		}
 	}()
 
 	for {

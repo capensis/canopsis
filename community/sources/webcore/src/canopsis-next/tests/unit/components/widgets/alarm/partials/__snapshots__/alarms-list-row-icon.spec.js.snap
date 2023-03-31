@@ -10,7 +10,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto ins
   <i
     aria-hidden="true"
     class="v-icon instruction-icon material-icons theme--light instruction-icon--completed"
-    style="font-size: 24px;"
+    style="font-size: 22px;"
   >
     assignment
   </i>
@@ -38,7 +38,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   <i
     aria-hidden="true"
     class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
-    style="font-size: 24px;"
+    style="font-size: 22px;"
   >
     assignment
   </i>
@@ -66,7 +66,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   <i
     aria-hidden="true"
     class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
-    style="font-size: 24px;"
+    style="font-size: 22px;"
   >
     assignment
   </i>
@@ -94,7 +94,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
   <i
     aria-hidden="true"
     class="v-icon instruction-icon material-icons theme--light"
-    style="font-size: 24px;"
+    style="font-size: 22px;"
   >
     $vuetify.icons.manual_instruction
   </i>
@@ -122,7 +122,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   <i
     aria-hidden="true"
     class="v-icon instruction-icon material-icons theme--light blinking instruction-icon--dotted"
-    style="font-size: 24px;"
+    style="font-size: 22px;"
   >
     $vuetify.icons.manual_instruction
   </i>
@@ -150,7 +150,7 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   <i
     aria-hidden="true"
     class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
-    style="font-size: 24px;"
+    style="font-size: 22px;"
   >
     $vuetify.icons.manual_instruction
   </i>

@@ -47,6 +47,7 @@
       :hide-actions="hideActions || advancedPagination || noPagination",
       :multi-sort="multiSort",
       :table-class="tableClass",
+      :disable-initial-sort="disableInitialSort",
       @update:pagination="updatePagination"
     )
       template(#items="props")
@@ -184,6 +185,10 @@ export default {
     tableClass: {
       type: String,
       required: false,
+    },
+    disableInitialSort: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

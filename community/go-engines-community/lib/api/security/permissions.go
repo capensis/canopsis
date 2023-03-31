@@ -13,9 +13,10 @@ const (
 	ObjEntityCategory = "api_entitycategory"
 	ObjContextGraph   = "api_contextgraph"
 
-	ObjView      = "api_view"
-	ObjViewGroup = "api_viewgroup"
-	ObjPlaylist  = "api_playlist"
+	ObjView           = "api_view"
+	ObjWidgetTemplate = "api_widgettemplate"
+	ObjViewGroup      = "api_viewgroup"
+	ObjPlaylist       = "api_playlist"
 
 	PermAlarmRead = "api_alarm_read"
 
@@ -33,8 +34,6 @@ const (
 	ObjBroadcastMessage = "api_broadcast_message"
 
 	ObjAssociativeTable = "api_associative_table"
-
-	PermAppInfoRead = "api_app_info_read"
 
 	PermUserInterfaceUpdate = "api_user_interface_update"
 	PermUserInterfaceDelete = "api_user_interface_delete"
@@ -59,4 +58,6 @@ const (
 	PermExportConfigurations = "api_export_configurations"
 
 	PermTechMetrics = "api_techmetrics"
+
+	ObjLinkRule = "api_link_rule"
 )

@@ -5,7 +5,7 @@
         span.c-extra-details__badge.pink(v-on="on")
           v-icon(color="white", small) {{ icon }}
       div.text-md-center
-        strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
+        strong {{ $t('alarm.actions.iconsTitles.snooze') }}
         div {{ $t('common.by') }} : {{ snooze.a }}
         div {{ $t('common.date') }} : {{ date }}
         div {{ $t('common.end') }} : {{ end }}

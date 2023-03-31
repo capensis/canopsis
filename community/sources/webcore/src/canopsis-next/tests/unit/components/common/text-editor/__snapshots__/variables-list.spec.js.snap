@@ -17,7 +17,12 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
         <div
           class="v-list__tile__title"
         >
-          Entity
+          <div
+            class="layout row justify-space-between"
+          >
+            Entity
+            <!---->
+          </div>
         </div>
       </div>
       <div

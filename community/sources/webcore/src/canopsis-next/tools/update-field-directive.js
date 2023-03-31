@@ -124,7 +124,7 @@ function updateFieldDirective(el, dir) {
     valueExpression = `_n(${valueExpression})`;
   }
 
-  const pathExpression = mutate ? `[${path}, ...(${basePreviousPathExpression} || [])]` : `[${path}]`;
+  const pathExpression = mutate ? `[${path}].concat(${basePreviousPathExpression} || [])` : `[${path}]`;
   const assignment = model
     ? `$updateFieldModel(${value}, ${basePreviousPathExpression}, ${valueExpression})`
     : `$updateField(${pathExpression}, ${valueExpression}, ${mutate})`;

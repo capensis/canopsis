@@ -2,7 +2,7 @@
   v-card(dark)
     v-card-title.primary.pa-2.white--text
       v-layout(justify-space-between, align-center)
-        h4 {{ $t('alarmList.infoPopup') }}
+        h4 {{ $t('alarm.infoPopup') }}
         v-btn.ma-0.ml-3(
           color="white",
           icon,

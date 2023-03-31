@@ -110,7 +110,7 @@ export function alarmTagsHelper() {
  *   {{/each}}
  * {{/request}}
  *
- * @param options
+ * @param {Object} options
  * @returns {Promise<string|*>}
  */
 export async function requestHelper(options) {

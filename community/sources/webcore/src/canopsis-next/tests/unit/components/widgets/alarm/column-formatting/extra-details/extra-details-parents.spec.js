@@ -1,15 +1,10 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
+
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsParents from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-parents.vue';
 
 const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(ExtraDetailsParents, {
-  localVue,
-  attachTo: document.body,
-
-  ...options,
-});
 
 describe('extra-details-parents', () => {
   const total = 3;
@@ -28,30 +23,33 @@ describe('extra-details-parents', () => {
     },
   ];
 
-  it('Renders `extra-details-parents` with full parents', () => {
-    const wrapper = snapshotFactory({
+  const snapshotFactory = generateRenderer(ExtraDetailsParents, {
+    localVue,
+    attachTo: document.body,
+  });
+
+  it('Renders `extra-details-parents` with full parents', async () => {
+    snapshotFactory({
       propsData: {
         total,
         rules,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-parents` without rules', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `extra-details-parents` without rules', async () => {
+    snapshotFactory({
       propsData: {
         total,
       },
     });
 
-    const tooltipContent = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

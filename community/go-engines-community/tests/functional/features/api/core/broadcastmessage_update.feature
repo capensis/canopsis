@@ -5,6 +5,7 @@ Feature: Update an broadcast message
   @standalone
   Scenario: given update request should update broadcast message
     When I am admin
+    When I connect to websocket
     When I subscribe to websocket room "broadcast-messages"
     When I save response start={{ nowAdd "-2h" }}
     When I save response end={{ nowAdd "24h" }}

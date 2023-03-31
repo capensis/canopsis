@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu.group-item(
+  v-menu.group-item.groups-top-bar-playlist(
     v-if="availablePlaylists.length",
     content-class="group-v-menu-content secondary",
     close-delay="0",
@@ -8,9 +8,10 @@
     bottom,
     dark
   )
-    div.v-btn.v-btn--flat.theme--dark.secondary.lighten-1(slot="activator")
-      span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
-      v-icon(dark) arrow_drop_down
+    template(#activator="{ on }")
+      v-btn.groups-top-bar-playlist__dropdown-btn(v-on="on", color="secondary lighten-1")
+        span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
+        v-icon.ml-0(right, dark) arrow_drop_down
     v-list
       v-list-tile(
         v-for="playlist in availablePlaylists",
@@ -37,8 +38,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  a {
-    color: inherit;
-    text-decoration: none;
+.groups-top-bar-playlist {
+  &__dropdown-btn {
+    text-transform: none;
   }
+}
 </style>

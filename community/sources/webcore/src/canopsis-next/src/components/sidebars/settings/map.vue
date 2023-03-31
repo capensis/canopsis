@@ -35,18 +35,27 @@
       v-divider
 
       field-columns(
-        v-model="form.parameters.alarms_columns",
+        v-model="form.parameters.alarmsColumns",
+        :template="form.parameters.alarmsColumnsTemplate",
+        :templates="alarmColumnsWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.alarmsColumns')",
+        :type="$constants.ENTITIES_TYPES.alarm",
         with-template,
         with-html,
-        with-color-indicator
+        @update:template="updateAlarmsColumnsTemplate"
       )
       v-divider
       field-columns(
-        v-model="form.parameters.entities_columns",
+        v-model="form.parameters.entitiesColumns",
+        :template="form.parameters.entitiesColumnsTemplate",
+        :templates="entityColumnsWidgetTemplates",
+        :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
+        :type="$constants.ENTITIES_TYPES.entity",
         with-html,
-        with-color-indicator
+        with-color-indicator,
+        @update:template="updateEntitiesColumnsTemplate"
       )
     v-divider
 </template>
@@ -56,6 +65,8 @@ import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entityVariablesMixin } from '@/mixins/widget/variables';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
 
 import FieldTitle from './fields/common/title.vue';
@@ -89,7 +100,23 @@ export default {
   mixins: [
     widgetSettingsMixin,
     entityVariablesMixin,
+    entitiesInfosMixin,
+    widgetTemplatesMixin,
     permissionsWidgetsMapFilters,
   ],
+  mounted() {
+    this.fetchInfos();
+  },
+  methods: {
+    updateAlarmsColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'alarmsColumnsTemplate', template);
+      this.$set(this.form.parameters, 'alarmsColumns', columns);
+    },
+
+    updateEntitiesColumnsTemplate(template, columns) {
+      this.$set(this.form.parameters, 'entitiesColumnsTemplate', template);
+      this.$set(this.form.parameters, 'entitiesColumns', columns);
+    },
+  },
 };
 </script>

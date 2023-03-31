@@ -8,14 +8,15 @@
     advanced-pagination,
     expand
   )
-    template(slot="status", slot-scope="props")
-      v-tooltip(:disabled="!props.item.message", bottom)
-        c-test-suite-chip(slot="activator", :value="props.item.status")
-        span {{ props.item.message }}
-    template(slot="time", slot-scope="props")
-      span {{ props.item.time | fixed }}{{ $constants.TIME_UNITS.second }}
-    template(slot="expand", slot-scope="props")
-      test-suite-details-expand-panel(:test-suite-detail="props.item")
+    template(#status="{ item }")
+      v-tooltip(:disabled="!item.message", bottom)
+        template(#activator="{ on }")
+          c-test-suite-chip(v-on="on", :value="item.status")
+        span {{ item.message }}
+    template(#time="{ item }")
+      span {{ item.time | fixed }}{{ $constants.TIME_UNITS.second }}
+    template(#expand="{ item }")
+      test-suite-details-expand-panel(:test-suite-detail="item")
 </template>
 
 <script>

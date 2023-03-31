@@ -3,6 +3,9 @@ package idlerule
 import (
 	"context"
 	"errors"
+	"strconv"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -12,8 +15,6 @@ import (
 	"github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"strconv"
-	"strings"
 )
 
 type Validator struct {
@@ -40,10 +41,6 @@ func (v *Validator) ValidateBulkUpdateRequestItem(ctx context.Context, sl valida
 }
 
 func (v *Validator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
-	if r.Priority != nil && *r.Priority < 0 {
-		sl.ReportError(r.Priority, "Priority", "Priority", "min", "0")
-	}
-
 	v.validateType(sl, r.Type)
 	v.validateAlarmRule(ctx, sl, id, r)
 	v.validateEntityRule(ctx, sl, id, r)

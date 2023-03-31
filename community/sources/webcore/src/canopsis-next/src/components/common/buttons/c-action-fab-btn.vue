@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-action-btn(v-bind="$attrs")
+  c-action-btn(v-bind="$attrs", custom-tooltip-activator)
     template(#button="")
       v-btn(:color="color", :small="small", fab, dark, @click.stop="$listeners.click")
         v-icon {{ icon }}

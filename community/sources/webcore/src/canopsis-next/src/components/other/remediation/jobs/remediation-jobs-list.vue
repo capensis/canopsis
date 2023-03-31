@@ -30,7 +30,7 @@
       )
       c-action-btn(
         v-if="removable",
-        :tooltip="disabled ? $t('remediationJobs.usingJob') : $t('common.delete')",
+        :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')",
         :disabled="disabled",
         type="delete",
         @click="$emit('remove', item)"
@@ -81,12 +81,12 @@ export default {
           value: 'author.name',
         },
         {
-          text: this.$t('remediationJobs.table.configuration'),
+          text: this.$t('remediation.job.configuration'),
           value: 'config.name',
           sortable: false,
         },
         {
-          text: this.$t('remediationJobs.table.jobId'),
+          text: this.$t('remediation.job.jobId'),
           value: 'job_id',
         },
         {
