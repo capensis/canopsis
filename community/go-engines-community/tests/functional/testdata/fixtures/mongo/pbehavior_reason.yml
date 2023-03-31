@@ -111,3 +111,14 @@ pbehavior_reason:
     created: 1592215337
     description: test-reason-to-pbh-edit-description
     name: test-reason-to-pbh-edit-name
+
+  reason_to_test_hidden_1:
+    <<: *reason
+    _id: test-reason-to-test-hidden-1
+    name: test-reason-to-test-hidden-1
+
+  reason_to_test_hidden_2:
+    <<: *reason
+    _id: test-reason-to-test-hidden-2
+    name: test-reason-to-test-hidden-2
+    hidden: true
