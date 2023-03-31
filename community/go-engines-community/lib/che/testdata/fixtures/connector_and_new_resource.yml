@@ -9,10 +9,6 @@ default_entities:
     created: <NowUnix()>
     connector: test-connector/test-connector-name
     component: test-component
-    impact:
-      - test-component
-    depends:
-      - test-connector/test-connector-name
 
   connector:
     _id: test-connector/test-connector-name
@@ -22,9 +18,6 @@ default_entities:
     impact_level: 1
     infos: { }
     created: <NowUnix()>
-    impact: @resource_*
-    depends:
-      - test-component
 
   component:
     _id: test-component
@@ -36,6 +29,3 @@ default_entities:
     infos: { }
     created: <NowUnix()>
     connector: test-connector/test-connector-name
-    impact:
-      - test-connector/test-connector-name
-    depends: @resource_*

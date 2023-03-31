@@ -1,10 +1,10 @@
 <template lang="pug">
   span
     slot
-    c-alarm-tag-chip(
+    c-alarm-action-chip(
       v-if="selectedTag",
       :color="getTagColor(selectedTag)",
-      close,
+      closable,
       @close="$emit('clear')"
     ) {{ selectedTag }}
 </template>

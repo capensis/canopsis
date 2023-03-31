@@ -2,13 +2,14 @@ import flushPromises from 'flush-promises';
 
 import { shallowMount, mount, createVueInstance } from '@unit/utils/vue';
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
-import { actionsPanelItem } from '@unit/stubs/actions-panel';
+import { createButtonStub } from '@unit/stubs/button';
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'actions-panel-item': actionsPanelItem,
+  'c-action-btn': createButtonStub('c-action-btn'),
+  'v-list-tile': createButtonStub('v-list-tile'),
 };
 
 const snapshotStubs = {
@@ -33,18 +34,18 @@ describe('actions-panel', () => {
       fakeAction(),
       fakeAction(),
     ];
+
     const wrapper = factory({
       propsData: {
         actions,
       },
       mocks: {
-        $windowSize: 'xl',
+        $mq: 'xl',
       },
     });
 
     await flushPromises();
-
-    const actionElements = wrapper.findAll('button.actions-panel-item');
+    const actionElements = wrapper.findAll('.c-action-btn');
 
     expect(actionElements).toHaveLength(actions.length);
 
@@ -57,63 +58,39 @@ describe('actions-panel', () => {
   });
 
   it('Method into dropdown called after trigger click on action item button. On the extra large size.', async () => {
-    const dropDownActions = [
+    const inlineCount = 1;
+    const actions = [
       fakeAction(),
       fakeAction(),
     ];
     const wrapper = factory({
       propsData: {
-        dropDownActions,
+        actions,
+        inlineCount,
       },
       mocks: {
-        $windowSize: 'xl',
+        $mq: 'xl',
       },
     });
 
     await flushPromises();
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub button.actions-panel-item');
+    const dropdownActionElements = wrapper.findAll('v-menu-stub .v-list-tile');
 
-    expect(dropdownActionElements).toHaveLength(dropDownActions.length);
+    expect(dropdownActionElements).toHaveLength(actions.length - inlineCount);
 
-    const secondActionElement = dropdownActionElements.at(1);
+    const firstDropdownActionElement = dropdownActionElements.at(0);
 
-    secondActionElement.trigger('click');
+    firstDropdownActionElement.trigger('click');
 
-    const [, secondAction] = dropDownActions;
+    const [, secondAction] = actions;
     expect(secondAction.method).toBeCalledTimes(1);
-  });
-
-  it('Method into list called after trigger click on action item button. On the large size.', async () => {
-    const action = fakeAction();
-    const dropdownAction = fakeAction();
-    const wrapper = factory({
-      propsData: {
-        actions: [action],
-        dropDownActions: [dropdownAction],
-      },
-      mocks: {
-        $windowSize: 'l',
-      },
-    });
-
-    await flushPromises();
-
-    const actionElements = wrapper.findAll('button.actions-panel-item');
-
-    expect(actionElements).toHaveLength(2);
-
-    const secondActionElement = actionElements.at(1);
-
-    secondActionElement.trigger('click');
-
-    expect(dropdownAction.method).toBeCalledTimes(1);
   });
 
   it('Renders `actions-panel` with default props correctly on the extra large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
-        $windowSize: 'xl',
+        $mq: 'xl',
       },
     });
 
@@ -128,7 +105,7 @@ describe('actions-panel', () => {
   it('Renders `actions-panel` with default props correctly on the large size', async () => {
     const wrapper = snapshotFactory({
       mocks: {
-        $windowSize: 'l',
+        $mq: 'l',
       },
     });
 
@@ -142,11 +119,11 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` with actions correctly on the extra large size', async () => {
     const wrapper = snapshotFactory({
-      mocks: {
-        $windowSize: 'xl',
-      },
       propsData: {
         actions: [editAction, deleteAction],
+      },
+      mocks: {
+        $mq: 'xl',
       },
     });
 
@@ -160,29 +137,11 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` with actions correctly on the large size', async () => {
     const wrapper = snapshotFactory({
-      mocks: {
-        $windowSize: 'l',
-      },
       propsData: {
         actions: [editAction, deleteAction],
       },
-    });
-
-    await flushPromises();
-
-    const dropdownContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(dropdownContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `actions-panel` with dropdown actions correctly on the extra large size', async () => {
-    const wrapper = snapshotFactory({
       mocks: {
-        $windowSize: 'xl',
-      },
-      propsData: {
-        dropDownActions: [editAction, deleteAction],
+        $mq: 'l',
       },
     });
 
@@ -196,11 +155,11 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` with dropdown actions correctly on the large size', async () => {
     const wrapper = snapshotFactory({
-      mocks: {
-        $windowSize: 'l',
-      },
       propsData: {
-        dropDownActions: [editAction, deleteAction],
+        actions: [editAction, deleteAction],
+      },
+      mocks: {
+        $mq: 'l',
       },
     });
 
@@ -214,11 +173,11 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` with dropdown actions correctly on the tablet size', async () => {
     const wrapper = snapshotFactory({
-      mocks: {
-        $windowSize: 't',
-      },
       propsData: {
-        dropDownActions: [editAction, deleteAction],
+        actions: [editAction, deleteAction],
+      },
+      mocks: {
+        $mq: 't',
       },
     });
 
@@ -232,11 +191,11 @@ describe('actions-panel', () => {
 
   it('Renders `actions-panel` with dropdown actions correctly on the mobile size', async () => {
     const wrapper = snapshotFactory({
-      mocks: {
-        $windowSize: 'm',
-      },
       propsData: {
-        dropDownActions: [editAction, deleteAction],
+        actions: [editAction, deleteAction],
+      },
+      mocks: {
+        $mq: 'm',
       },
     });
 

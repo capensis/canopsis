@@ -1,10 +1,24 @@
 <template lang="pug">
-  div(ref="codeEditor")
+  div.code-editor__wrapper
+    c-action-btn(
+      v-if="resettable",
+      :disabled="!wasChanged",
+      :tooltip="$t('common.reset')",
+      icon="$vuetify.icons.restart_alt",
+      color="white",
+      btn-color="grey darken-1",
+      left,
+      @click="reset"
+    )
+    div.code-editor(ref="codeEditor")
 </template>
 
 <script>
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import initEditor from 'monaco-mermaid';
+import iPlasticTheme from 'monaco-themes/themes/iPlastic.json';
+
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
 
 export default {
   props: {
@@ -24,6 +38,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    resettable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     editorOptions() {
@@ -33,10 +51,21 @@ export default {
         language: this.language,
       };
     },
+
+    wasChanged() {
+      return this.originalValue !== this.value;
+    },
   },
   watch: {
-    editorOptions(value) {
-      this.$editor?.updateOptions(value);
+    value(value) {
+      if (value !== this.$editor?.getValue()) {
+        this.$editor.setValue(value);
+        this.originalValue = value;
+      }
+    },
+
+    editorOptions(options) {
+      this.$editor?.updateOptions(options);
     },
 
     errorMarkers(errorMarkers) {
@@ -44,6 +73,9 @@ export default {
         this.$monaco.editor.setModelMarkers(this.$editor.getModel(), 'test', errorMarkers);
       }
     },
+  },
+  created() {
+    this.originalValue = this.value;
   },
   async mounted() {
     try {
@@ -59,6 +91,7 @@ export default {
     }
 
     initEditor(this.$monaco);
+    this.$monaco.editor.defineTheme('iPlastic', iPlasticTheme);
 
     this.$editor = this.$monaco.editor.create(this.$refs.codeEditor, {
       value: this.value,
@@ -102,6 +135,34 @@ export default {
     onBlur(...args) {
       this.$emit('blur', ...args);
     },
+
+    reset() {
+      this.$emit('input', this.originalValue);
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.code-editor {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  &__wrapper {
+    position: relative;
+
+    ::v-deep .c-action-btn__button {
+      position: absolute;
+      right: 18px;
+      top: 0;
+      opacity: .6;
+      z-index: 2;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+</style>

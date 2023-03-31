@@ -29,12 +29,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.test-suite-history {
-  & ::v-deep .v-expansion-panel {
-    border-radius: 5px;
-    overflow: hidden;
-  }
-}
-</style>

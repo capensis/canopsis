@@ -4,10 +4,11 @@ import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { geomapPointToForm } from '@/helpers/forms/map';
 import { MODALS } from '@/constants';
+
 import GeomapEditor from '@/components/other/map/form/partials/geomap-editor.vue';
 
 const localVue = createVueInstance();
@@ -20,12 +21,7 @@ const latLngToContainerPoint = jest.fn().mockReturnValue({ x: 0, y: 0 });
 const getBounds = jest.fn().mockReturnValue(new LatLngBounds([0, 0], [1, 1]));
 
 const stubs = {
-  'v-tooltip': {
-    template: `<div class="v-tooltip">
-      <slot name="activator" :on="{}" />
-      <slot />
-    </div>`,
-  },
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
   geomap: {
     template: '<div v-on="$listeners" class="geomap"><slot/></div>',
     computed: {

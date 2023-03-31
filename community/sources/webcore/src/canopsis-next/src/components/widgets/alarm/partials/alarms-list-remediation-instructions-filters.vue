@@ -13,14 +13,13 @@
     )
     v-tooltip(v-if="addable", bottom)
       template(#activator="{ on }")
-        v-btn(
+        v-btn.mx-1.my-0(
           v-on="on",
           icon,
-          small,
           @click="showCreateFilterModal"
         )
           v-icon(:color="buttonIconColor") assignment
-      span {{ $t('remediationInstructionsFilters.button') }}
+      span {{ $t('remediation.instructionsFilter.button') }}
 </template>
 
 <script>
@@ -56,7 +55,7 @@ export default {
       return this.filters.length || this.lockedFilters.filter(filter => !filter.disabled).length;
     },
     buttonIconColor() {
-      return this.hasAnyEnabledFilters ? 'primary' : 'black';
+      return this.hasAnyEnabledFilters ? 'primary' : '';
     },
   },
   methods: {

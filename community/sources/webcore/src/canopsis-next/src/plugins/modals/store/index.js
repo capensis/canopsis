@@ -21,7 +21,6 @@ export default {
   getters: {
     modals: state => state.allIds.map(id => state.byId[id]),
     hasMaximizedModal: state => state.allIds.some(id => !state.byId[id].minimized),
-    hasMinimizedModal: state => state.allIds.some(id => state.byId[id].minimized),
   },
   mutations: {
     [types.SHOW](state, {

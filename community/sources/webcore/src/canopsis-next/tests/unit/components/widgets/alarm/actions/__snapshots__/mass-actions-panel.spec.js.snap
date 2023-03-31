@@ -30,6 +30,16 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     Cancel alarm|delete|cancel
   </button>
   <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
     class="action-associateTicket"
   >
     Associate ticket|local_play|associateTicket
@@ -45,9 +55,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     Suggest group request for meta alarm|note_add|groupRequest
   </button>
   <button
-    class="action-manualMetaAlarmGroup"
+    class="action-createManualMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|manualMetaAlarmGroup
+    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
   </button>
 </div>
 `;
@@ -82,6 +92,16 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     Cancel alarm|delete|cancel
   </button>
   <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
     class="action-associateTicket"
   >
     Associate ticket|local_play|associateTicket
@@ -97,9 +117,9 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     Suggest group request for meta alarm|note_add|groupRequest
   </button>
   <button
-    class="action-manualMetaAlarmGroup"
+    class="action-createManualMetaAlarm"
   >
-    Manual meta alarm management|center_focus_strong|manualMetaAlarmGroup
+    Manual meta alarm management|center_focus_strong|createManualMetaAlarm
   </button>
 </div>
 `;

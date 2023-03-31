@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { VALIDATION_DELAY } from '@/constants';
+
 import { notificationsSettingsToForm } from '@/helpers/forms/notification';
 
 import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
@@ -24,6 +26,7 @@ import NotificationsSettingsForm from './form/notifications-settings-form.vue';
 export default {
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     NotificationsSettingsForm,

@@ -183,7 +183,6 @@ export default {
 
     updateCalendar(date) {
       const unit = {
-        [Units.YEAR]: TIME_UNITS.year,
         [Units.DAY]: TIME_UNITS.day,
         [Units.WEEK]: TIME_UNITS.week,
         [Units.MONTH]: TIME_UNITS.month,
@@ -191,7 +190,7 @@ export default {
 
       const diff = getDiffBetweenDates(date, this.startMoment, unit);
 
-      this.calendar.move(diff);
+      this.$emit('change', diff);
     },
   },
 };

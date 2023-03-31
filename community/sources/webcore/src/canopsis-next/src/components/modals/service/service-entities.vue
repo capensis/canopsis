@@ -3,20 +3,19 @@
     template(#title="")
       span {{ service.name }}
     template(#text="")
-      v-tabs(slider-color="primary", fixed-tabs, light)
+      v-tabs.position-relative(slider-color="primary", fixed-tabs)
         v-tab {{ $t('common.service') }}
         v-tab-item
-          div.position-relative
-            c-progress-overlay(:pending="pending")
-            service-template(
-              :service="service",
-              :service-entities="serviceEntitiesWithKey",
-              :widget-parameters="widgetParameters",
-              :pagination.sync="pagination",
-              :total-items="serviceEntitiesMeta.total_count",
-              @refresh="refresh",
-              @apply:action="applyAction"
-            )
+          c-progress-overlay(:pending="pending")
+          service-template(
+            :service="service",
+            :service-entities="serviceEntitiesWithKey",
+            :widget-parameters="widgetParameters",
+            :pagination.sync="pagination",
+            :total-items="serviceEntitiesMeta.total_count",
+            @refresh="refresh",
+            @apply:action="applyAction"
+          )
         v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.pbehavior', 2) }}
         v-tab-item(lazy)
           pbehaviors-simple-list(

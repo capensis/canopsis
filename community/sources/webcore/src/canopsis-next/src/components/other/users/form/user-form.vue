@@ -5,45 +5,47 @@
       v-field="form.name",
       :label="$t('common.username')",
       :disabled="onlyUserPrefs",
-      browser-autocomplete="new-password"
+      browser-autocomplete="new-password",
+      required
     )
     v-text-field(
       v-field="form.firstname",
-      :label="$t('users.firstName')",
+      :label="$t('user.firstName')",
       :disabled="onlyUserPrefs"
     )
     v-text-field(
       v-field="form.lastname",
-      :label="$t('users.lastName')",
+      :label="$t('user.lastName')",
       :disabled="onlyUserPrefs"
     )
     v-text-field(
       v-field="form.email",
       v-validate="'required|email'",
-      :label="$t('users.email')",
+      :label="$t('user.email')",
       :disabled="onlyUserPrefs",
       :error-messages="errors.collect('email')",
       name="email",
       browser-autocomplete="new-password"
     )
-    v-text-field(
+    c-password-field(
       v-field="form.password",
-      v-validate="passwordRules",
-      :label="$t('common.password')",
-      :error-messages="errors.collect('password')",
-      type="password",
-      name="password",
+      :required="isNew",
       browser-autocomplete="new-password"
     )
     c-role-field(v-field="form.role", :disabled="onlyUserPrefs", required)
     c-language-field(
       v-field="form.ui_language",
-      :label="$t('users.language')"
+      :label="$t('user.language')"
     )
     v-select.mt-0(
       v-field="form.ui_groups_navigation_type",
-      :label="$t('users.navigationType')",
+      :label="$t('user.navigationType')",
       :items="groupsNavigationItems"
+    )
+    v-select(
+      v-field="form.ui_theme",
+      :label="$tc('common.theme')",
+      :items="themes"
     )
     v-layout(v-if="!isNew", row, align-center)
       div {{ $t('common.authKey') }}: {{ user.authkey }}
@@ -64,6 +66,8 @@
 </template>
 
 <script>
+import { THEMES_NAMES } from '@/config';
+
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
@@ -96,16 +100,17 @@ export default {
     },
   },
   computed: {
-    passwordRules() {
-      return {
-        required: this.isNew,
-      };
-    },
-
     groupsNavigationItems() {
       return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
-        text: this.$t(`users.navigationTypes.${type}`),
+        text: this.$t(`user.navigationTypes.${type}`),
         value: type,
+      }));
+    },
+
+    themes() {
+      return Object.values(THEMES_NAMES).map(name => ({
+        text: this.$t(`common.themes.${name}`),
+        value: name,
       }));
     },
   },

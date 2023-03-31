@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-expansion-panel(color="grey")
+  v-expansion-panel(color="grey", light)
     v-expansion-panel-content
       template(#header="")
         span.white {{ $t('flowchart.properties') }}

@@ -6,7 +6,7 @@
     v-layout(v-if="isWorstOfShareMethod", column)
       v-layout(row)
         h4.subheading.font-weight-bold {{ $t('stateSetting.worstLabel') }}
-        c-help-icon.ml-2(:text="$t('stateSetting.worstHelpText')", max-width="220", right)
+        c-help-icon(:text="$t('stateSetting.worstHelpText')", icon-class="ml-2", max-width="220", right)
       state-setting-threshold-field.pl-4.pt-2(
         v-field="form.junit_thresholds.skipped",
         :label="$t('common.skipped')",

@@ -7,32 +7,31 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
   <div
     class="modal-title-button__wrapper"
   >
-    <span
-      class="v-tooltip v-tooltip--left"
+    <div
+      class="v-tooltip"
+      left="left"
     >
-      <transition-stub
-        name="slide-x-reverse-transition"
-      />
-      <span>
-        <button
-          class="v-btn--minimize my-0 v-btn v-btn--disabled v-btn--icon theme--light"
-          disabled="disabled"
-          type="button"
+      <button
+        class="v-btn--minimize my-0 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
         >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+            style="font-size: 36px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-              style="font-size: 36px;"
-            >
-              minimize
-            </i>
-          </div>
-        </button>
+            minimize
+          </i>
+        </div>
+      </button>
+       
+      <span>
+        You already have minimized modal window
       </span>
-    </span>
+    </div>
   </div>
   <div
     class="modal-title-button__wrapper"

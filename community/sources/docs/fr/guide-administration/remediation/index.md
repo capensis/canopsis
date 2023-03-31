@@ -495,5 +495,5 @@ présenté si l'option « HTML activé dans la chronologie ? » est cochée da
 paramètres avancés du [widget bac à alarmes][baa].
 
 [remed-index]: ../../guide-utilisation/remediation/index.md
-[mise-en-oeuvre]: ../../guide-utilisation/remediation/mise-en-oeuvre.md
+[mise-en-oeuvre]: ../../guide-utilisation/menu-administration/consignes.md
 [baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/#parametres-du-widget

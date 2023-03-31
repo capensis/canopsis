@@ -42,6 +42,7 @@ func (e *resolveStatExecutor) Exec(
 
 	if changeType != "" {
 		e.metricsSender.SendResolve(*alarm, *entity, timestamp.Time)
+		e.metricsSender.SendRemoveNotAckedMetric(*alarm, timestamp.Time)
 	}
 
 	return changeType, nil

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     v-text-field(
       v-field="form.description",
       v-validate="'required'",
@@ -9,11 +9,8 @@
       name="description"
     )
     pbehavior-exceptions-field(v-model="form.exdates")
-      v-alert(
-        slot="no-data",
-        :value="true",
-        type="info"
-      ) {{ $t('modals.createPbehaviorException.emptyExdates') }}
+      template(#no-data="")
+        v-alert(:value="true", type="info") {{ $t('modals.createPbehaviorException.emptyExdates') }}
 </template>
 
 <script>

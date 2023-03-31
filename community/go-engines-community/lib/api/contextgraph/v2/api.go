@@ -16,7 +16,6 @@ import (
 )
 
 type api struct {
-	jobQueue    contextgraph.JobQueue
 	reporter    contextgraph.StatusReporter
 	filePattern string
 	logger      zerolog.Logger
@@ -24,12 +23,10 @@ type api struct {
 
 func NewApi(
 	conf config.CanopsisConf,
-	jobQueue contextgraph.JobQueue,
 	reporter contextgraph.StatusReporter,
 	logger zerolog.Logger,
 ) contextgraph.API {
 	a := &api{
-		jobQueue:    jobQueue,
 		filePattern: conf.ImportCtx.FilePattern,
 		reporter:    reporter,
 		logger:      logger,
@@ -110,7 +107,6 @@ func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, r
 		return "", err
 	}
 
-	a.jobQueue.Push(job)
 	return job.ID, nil
 }
 

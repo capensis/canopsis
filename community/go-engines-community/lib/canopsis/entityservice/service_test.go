@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"testing"
 
-	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
@@ -99,8 +99,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	mockServiceLock.EXPECT().Release(gomock.Any())
 	mockServiceUpdateLock.EXPECT().Release(gomock.Any())
 
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	mockTimezoneConfigProvider.EXPECT().Get().AnyTimes()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -114,13 +113,13 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 		mockStorage,
 		mockLockClient,
 		mockRedisClient,
-		mockTimezoneConfigProvider,
+		tplExecutor,
 		zerolog.Nop(),
 	)
 
 	event := types.Event{
 		Component: alarm.EntityID,
-		Entity:    &types.Entity{ID: alarm.EntityID, Impacts: []string{serviceID}},
+		Entity:    &types.Entity{ID: alarm.EntityID, Services: []string{serviceID}},
 		Alarm:     &alarm,
 		AlarmChange: &types.AlarmChange{
 			Type:          types.AlarmChangeTypeStateIncrease,
@@ -217,8 +216,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	mockServiceLock.EXPECT().Release(gomock.Any())
 	mockServiceUpdateLock.EXPECT().Release(gomock.Any())
 
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	mockTimezoneConfigProvider.EXPECT().Get().AnyTimes()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -232,13 +230,13 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 		mockStorage,
 		mockLockClient,
 		mockRedisClient,
-		mockTimezoneConfigProvider,
+		tplExecutor,
 		zerolog.Nop(),
 	)
 
 	event := types.Event{
 		Component:   alarm.EntityID,
-		Entity:      &types.Entity{ID: alarm.EntityID, Impacts: []string{serviceID}},
+		Entity:      &types.Entity{ID: alarm.EntityID, Services: []string{serviceID}},
 		Alarm:       &alarm,
 		AlarmChange: &types.AlarmChange{},
 	}
@@ -303,8 +301,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	gomock.InOrder(firstCall, secondCall)
 	mockServiceLock.EXPECT().Release(gomock.Any())
 
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	mockTimezoneConfigProvider.EXPECT().Get().AnyTimes()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -318,12 +315,12 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 		mockStorage,
 		mockLockClient,
 		mockRedisClient,
-		mockTimezoneConfigProvider,
+		tplExecutor,
 		zerolog.Nop(),
 	)
 
 	event := types.Event{
-		Entity: &types.Entity{Impacts: []string{serviceID}},
+		Entity: &types.Entity{Services: []string{serviceID}},
 		Alarm:  &alarm,
 		AlarmChange: &types.AlarmChange{
 			Type:          types.AlarmChangeTypeStateIncrease,
@@ -442,8 +439,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		*alarms = []types.Alarm{alarm}
 	}).Return(nil)
 
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	mockTimezoneConfigProvider.EXPECT().Get().AnyTimes()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -457,7 +453,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		mockStorage,
 		mockLockClient,
 		mockRedisClient,
-		mockTimezoneConfigProvider,
+		tplExecutor,
 		zerolog.Nop(),
 	)
 

@@ -5,6 +5,7 @@ import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } 
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
+import { getImpactStateColor } from '@/helpers/color';
 
 const localVue = createVueInstance();
 
@@ -148,7 +149,7 @@ describe('flowchart-preview', () => {
         ...circleShape,
         properties: {
           ...circleShape.properties,
-          fill: COLORS.impactState[2],
+          fill: getImpactStateColor(2),
           stroke: colorDarken,
         },
         textProperties: {

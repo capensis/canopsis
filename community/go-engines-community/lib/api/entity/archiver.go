@@ -78,67 +78,50 @@ func (a *archiver) archiveEntitiesByType(ctx context.Context, eType string, arch
 }
 
 func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archiveDeps bool) (int64, error) {
-	archiveModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize/2) // per 1 archive model there are 2 context graph update models
+	archiveModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
 	contextGraphModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
-	ids := make([]string, 0, canopsis.DefaultBulkSize/2)
-
+	ids := make([]string, 0, canopsis.DefaultBulkSize)
 	archiveBulkBytesSize := 0
-	contextGraphBulkBytesSize := 0
-
 	var totalArchived int64
 
 	for cursor.Next(ctx) {
 		var entity types.Entity
-
 		err := cursor.Decode(&entity)
 		if err != nil {
 			return 0, err
 		}
 
-		if entity.Type == types.EntityTypeComponent && archiveDeps {
-			archived, err := a.archiveComponentDependencies(ctx, entity.Depends)
-			if err != nil {
-				return 0, err
+		var newContextGraphModel mongodriver.WriteModel
+		switch entity.Type {
+		case types.EntityTypeComponent:
+			if archiveDeps {
+				archived, err := a.archiveComponentDependencies(ctx, entity.ID)
+				if err != nil {
+					return 0, err
+				}
+
+				totalArchived += archived
 			}
-
-			totalArchived += archived
+		case types.EntityTypeConnector:
+			newContextGraphModel = mongodriver.NewUpdateManyModel().
+				SetFilter(bson.M{"connector": entity.ID}).
+				SetUpdate(bson.M{"$unset": bson.M{"connector": ""}})
 		}
-
-		newContextGraphModels := []mongodriver.WriteModel{
-			mongodriver.NewUpdateManyModel().
-				SetFilter(bson.M{"_id": bson.M{"$in": entity.Depends}}).
-				SetUpdate(bson.M{"$pull": bson.M{"impact": entity.ID}}),
-			mongodriver.NewUpdateManyModel().
-				SetFilter(bson.M{"_id": bson.M{"$in": entity.Impacts}}).
-				SetUpdate(bson.M{"$pull": bson.M{"depends": entity.ID}}),
-		}
-
-		b, err := bson.Marshal(struct {
-			Arr []mongodriver.WriteModel
-		}{Arr: newContextGraphModels})
-		if err != nil {
-			return 0, err
-		}
-
-		newContextGraphModelsLen := len(b)
 
 		newArchiveModel := mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": entity.ID}).
 			SetUpdate(bson.M{"$set": entity}).
 			SetUpsert(true)
 
-		b, err = bson.Marshal(newArchiveModel)
+		b, err := bson.Marshal(newArchiveModel)
 		if err != nil {
 			return 0, err
 		}
 
 		newArchiveModelLen := len(b)
-
-		contextGraphBulkBytesSize += newContextGraphModelsLen
 		archiveBulkBytesSize += newArchiveModelLen
 
-		if contextGraphBulkBytesSize > canopsis.DefaultBulkBytesSize ||
-			archiveBulkBytesSize > canopsis.DefaultBulkBytesSize {
+		if archiveBulkBytesSize > canopsis.DefaultBulkBytesSize {
 			archived, err := a.bulkArchive(ctx, archiveModels, contextGraphModels, ids)
 			if err != nil {
 				return 0, err
@@ -150,15 +133,16 @@ func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archi
 			archiveModels = archiveModels[:0]
 			ids = ids[:0]
 
-			contextGraphBulkBytesSize = newContextGraphModelsLen
 			archiveBulkBytesSize = newArchiveModelLen
 		}
 
 		archiveModels = append(archiveModels, newArchiveModel)
-		contextGraphModels = append(contextGraphModels, newContextGraphModels...)
+		if newContextGraphModel != nil {
+			contextGraphModels = append(contextGraphModels, newContextGraphModel)
+		}
 		ids = append(ids, entity.ID)
 
-		if len(contextGraphModels) == canopsis.DefaultBulkSize {
+		if len(archiveModels) == canopsis.DefaultBulkSize {
 			archived, err := a.bulkArchive(ctx, archiveModels, contextGraphModels, ids)
 			if err != nil {
 				return 0, err
@@ -170,7 +154,6 @@ func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archi
 			archiveModels = archiveModels[:0]
 			ids = ids[:0]
 
-			contextGraphBulkBytesSize = 0
 			archiveBulkBytesSize = 0
 		}
 	}
@@ -187,10 +170,10 @@ func (a *archiver) processCursor(ctx context.Context, cursor mongo.Cursor, archi
 	return totalArchived, nil
 }
 
-func (a *archiver) archiveComponentDependencies(ctx context.Context, depIds []string) (int64, error) {
+func (a *archiver) archiveComponentDependencies(ctx context.Context, id string) (int64, error) {
 	cursor, err := a.mainCollection.Find(
 		ctx,
-		bson.M{"_id": bson.M{"$in": depIds}},
+		bson.M{"component": id},
 	)
 	if err != nil {
 		return 0, err
@@ -206,25 +189,33 @@ func (a *archiver) archiveComponentDependencies(ctx context.Context, depIds []st
 }
 
 func (a *archiver) bulkArchive(ctx context.Context, models, contextGraphModels []mongodriver.WriteModel, ids []string) (int64, error) {
-	res, err := a.archivedCollection.BulkWrite(ctx, models)
-	if err != nil {
-		return 0, err
+	var count int64
+	if len(models) > 0 {
+		res, err := a.archivedCollection.BulkWrite(ctx, models)
+		if err != nil {
+			return 0, err
+		}
+		count = res.UpsertedCount + res.ModifiedCount
 	}
 
-	_, err = a.mainCollection.BulkWrite(ctx, contextGraphModels)
-	if err != nil {
-		return 0, err
+	if len(contextGraphModels) > 0 {
+		_, err := a.mainCollection.BulkWrite(ctx, contextGraphModels)
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	_, err = a.mainCollection.DeleteMany(
-		ctx,
-		bson.M{"_id": bson.M{"$in": ids}},
-	)
-	if err != nil {
-		return 0, err
+	if len(ids) > 0 {
+		_, err := a.mainCollection.DeleteMany(
+			ctx,
+			bson.M{"_id": bson.M{"$in": ids}},
+		)
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	return res.UpsertedCount + res.ModifiedCount, err
+	return count, nil
 }
 
 func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {

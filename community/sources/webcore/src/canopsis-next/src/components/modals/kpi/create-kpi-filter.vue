@@ -48,7 +48,7 @@ export default {
 
     return {
       form: {
-        name: filter.name,
+        name: filter.name ?? '',
         patterns: filterPatternsToForm(
           filter,
           [PATTERNS_FIELDS.entity],

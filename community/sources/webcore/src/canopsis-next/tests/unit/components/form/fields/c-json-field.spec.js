@@ -10,6 +10,11 @@ const localVue = createVueInstance();
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
   'v-btn': createButtonStub('v-btn'),
+  'c-help-icon': true,
+};
+
+const snapshotStubs = {
+  'c-help-icon': true,
 };
 
 const factory = (options = {}) => shallowMount(CJsonField, {
@@ -27,6 +32,7 @@ const factory = (options = {}) => shallowMount(CJsonField, {
 
 const snapshotFactory = (options = {}) => mount(CJsonField, {
   localVue,
+  stubs: snapshotStubs,
 
   parentComponent: {
     $_veeValidate: {

@@ -2,7 +2,7 @@
 
 exports[`v-checkbox-functional Renders \`v-checkbox-functional\` with custom props 1`] = `
 <div
-  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--is-disabled v-input--hide-details"
+  class="v-input v-input--selection-controls v-input--checkbox v-input--is-disabled v-input--hide-details theme--light"
 >
   <div
     class="v-input__control"
@@ -24,7 +24,7 @@ exports[`v-checkbox-functional Renders \`v-checkbox-functional\` with custom pro
           class="v-input--selection-controls__ripple primary--text"
         />
         <i
-          class="v-icon material-icons theme--light primary--text"
+          class="v-icon material-icons primary--text theme--light"
         >
           check_box
         </i>

@@ -15,9 +15,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.mermaid-expand-panel {
-  background: #F9F9F9;
-}
-</style>

@@ -3,6 +3,10 @@ package idlealarm
 import (
 	"bytes"
 	"context"
+	"reflect"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -17,9 +21,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *testing.T) {
@@ -238,12 +239,9 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		ID:            resource + "/" + component,
 		Type:          types.EntityTypeResource,
 		Component:     component,
+		Connector:     connector + "/" + connectorName,
 		Name:          resource,
 		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
-	}
-	connectorEntity := &types.Entity{
-		ID:   connector + "/" + connectorName,
-		Name: connectorName,
 	}
 	state := types.CpsNumber(types.AlarmStateCritical)
 	output := "Idle rule test-rule-name"
@@ -292,9 +290,6 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		EXPECT().
 		GetAllWithLastUpdateDateBefore(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(mockCursor, nil)
-	mockEntityAdapter.EXPECT().
-		FindConnectorForResource(gomock.Any(), gomock.Eq(entity.ID)).
-		Return(connectorEntity, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)
@@ -415,14 +410,14 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		Type:          types.EntityTypeComponent,
 		Name:          component1,
 		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
-		Impacts:       []string{connectorEntity.ID},
+		Connector:     connectorEntity.ID,
 	}
 	entity2 := types.Entity{
 		ID:            component2,
 		Type:          types.EntityTypeComponent,
 		Name:          component2,
 		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
-		Impacts:       []string{connectorEntity.ID},
+		Connector:     connectorEntity.ID,
 	}
 	rule := idlerule.Rule{
 		ID:     "test-rule",
@@ -488,9 +483,6 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		EXPECT().
 		GetAllWithLastUpdateDateBefore(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(mockCursor, nil)
-	mockEntityAdapter.EXPECT().
-		FindConnectorForComponent(gomock.Any(), gomock.Eq(entity1.ID)).
-		Return(connectorEntity, nil)
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, mockEncoder, logger)

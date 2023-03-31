@@ -6,7 +6,6 @@ const (
 	EntityTypeComponent = "component"
 	EntityTypeResource  = "resource"
 	EntityTypeService   = "service"
-	EntityTypeMetaAlarm = "metaalarm"
 )
 
 const EntityDefaultImpactLevel = 1
@@ -43,12 +42,11 @@ type Entity struct {
 	Created        CpsTime         `bson:"created" json:"created"`
 	LastEventDate  *CpsTime        `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
-	Impacts []string `bson:"impact" json:"impact"`
-	// impacted_services field is only for connectors, see entity service RecomputeIdleSince method
+	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
+	Component string   `bson:"component,omitempty" json:"component,omitempty"`
+	Services  []string `bson:"services," json:"services,omitempty"`
+	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
-	Depends          []string `bson:"depends" json:"depends"`
-	Connector        string   `bson:"connector,omitempty" json:"connector,omitempty"`
-	Component        string   `bson:"component,omitempty" json:"component,omitempty"`
 
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
@@ -58,7 +56,8 @@ type Entity struct {
 	ImportSource string   `bson:"import_source,omitempty" json:"import_source"`
 	Imported     *CpsTime `bson:"imported,omitempty" json:"imported"`
 
-	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	PbehaviorInfo     PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastPbehaviorDate *CpsTime      `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 	// Coordinates is used only in api, add json tag if it's required in an event.
@@ -89,24 +88,4 @@ func (e *Entity) EnsureInitialized() {
 // CacheID implements cache.Cache interface
 func (e Entity) CacheID() string {
 	return e.ID
-}
-
-func (e Entity) HasImpact(impact string) bool {
-	for _, v := range e.Impacts {
-		if v == impact {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (e Entity) HasDepend(depend string) bool {
-	for _, v := range e.Depends {
-		if v == depend {
-			return true
-		}
-	}
-
-	return false
 }

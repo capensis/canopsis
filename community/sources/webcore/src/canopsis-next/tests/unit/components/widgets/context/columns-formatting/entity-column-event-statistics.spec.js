@@ -1,3 +1,5 @@
+import flushPromises from 'flush-promises';
+
 import { mount, createVueInstance } from '@unit/utils/vue';
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
@@ -13,8 +15,8 @@ const snapshotFactory = (options = {}) => mount(EntityColumnEventStatistics, {
 });
 
 describe('entity-column-event-statistics', () => {
-  it('Renders `entity-column-event-statistics` with default entity', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `entity-column-event-statistics` with default entity', async () => {
+    snapshotFactory({
       propsData: {
         entity: {
           ok_events: 15,
@@ -23,14 +25,13 @@ describe('entity-column-event-statistics', () => {
       },
     });
 
-    const tooltip = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(tooltip.element).toMatchSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `entity-column-event-statistics` with pbehavior', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `entity-column-event-statistics` with pbehavior', async () => {
+    snapshotFactory({
       propsData: {
         entity: {
           ok_events: 30,
@@ -42,9 +43,8 @@ describe('entity-column-event-statistics', () => {
       },
     });
 
-    const tooltip = wrapper.findTooltip();
+    await flushPromises();
 
-    expect(tooltip.element).toMatchSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

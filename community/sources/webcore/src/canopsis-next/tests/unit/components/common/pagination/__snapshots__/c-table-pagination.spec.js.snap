@@ -2,7 +2,7 @@
 
 exports[`c-table-pagination Renders \`c-table-pagination\` with custom props 1`] = `
 <div
-  class="layout white align-center"
+  class="layout align-center"
 >
   <div
     class="flex xs10"

@@ -14,6 +14,11 @@ const stubs = {
 const factory = (options = {}) => shallowMount(Confirmation, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -21,6 +26,11 @@ const factory = (options = {}) => shallowMount(Confirmation, {
 const snapshotFactory = (options = {}) => mount(Confirmation, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
