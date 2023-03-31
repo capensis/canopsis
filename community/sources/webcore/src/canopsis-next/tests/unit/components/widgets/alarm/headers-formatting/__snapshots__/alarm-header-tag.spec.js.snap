@@ -3,8 +3,8 @@
 exports[`alarm-header-tag Renders \`alarm-header-tag\` with selected tag 1`] = `
 <span>
   <span
-    class="c-alarm-tag-chip"
-    close="close"
+    class="c-alarm-action-chip"
+    closable="closable"
     color="color1"
   />
 </span>
@@ -14,8 +14,8 @@ exports[`alarm-header-tag Renders \`alarm-header-tag\` with selected tag and def
 <span>
   Default text slot
   <span
-    class="c-alarm-tag-chip"
-    close="close"
+    class="c-alarm-action-chip"
+    closable="closable"
     color="color1"
   />
 </span>

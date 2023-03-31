@@ -1097,7 +1097,6 @@ Feature: Create a idle rule
         "duration.unit": "Unit is missing.",
         "enabled": "Enabled is missing.",
         "name": "Name is missing.",
-        "priority": "Priority is missing.",
         "type": "Type is missing."
       }
     }

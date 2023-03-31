@@ -29,7 +29,11 @@ const selectDeleteButton = wrapper => wrapper.findAll('button.v-btn').at(1);
 
 describe('button-field', () => {
   it('Create event emitted after click on the button', () => {
-    const wrapper = factory();
+    const wrapper = factory({
+      propsData: {
+        addable: true,
+      },
+    });
 
     const createButton = selectCreateButton(wrapper);
 
@@ -66,6 +70,7 @@ describe('button-field', () => {
     const wrapper = factory({
       propsData: {
         isEmpty: false,
+        removable: true,
       },
     });
 
@@ -91,6 +96,8 @@ describe('button-field', () => {
     const wrapper = snapshotFactory({
       title: {
         isEmpty: true,
+        addable: true,
+        removable: true,
       },
     });
 

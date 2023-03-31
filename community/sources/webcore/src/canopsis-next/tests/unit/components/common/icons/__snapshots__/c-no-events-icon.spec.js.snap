@@ -9,7 +9,7 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correct
   />
   <i
     aria-hidden="true"
-    class="v-icon material-icons theme--light secondary--text"
+    class="v-icon d-block material-icons theme--light secondary--text"
   >
     sync_problem
   </i>
@@ -40,7 +40,7 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 1`] 
   />
   <i
     aria-hidden="true"
-    class="v-icon material-icons theme--light error--text"
+    class="v-icon d-block material-icons theme--light error--text"
   >
     sync_problem
   </i>

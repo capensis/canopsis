@@ -3,7 +3,7 @@
     v-layout(row)
       c-pbehavior-type-field(
         v-field="form.active_on_pbh",
-        :label="$t('remediationPatterns.tabs.pbehaviorTypes.fields.activeOnTypes')",
+        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')",
         :is-item-disabled="isActiveItemDisabled",
         chips,
         multiple
@@ -11,7 +11,7 @@
     v-layout(row)
       c-pbehavior-type-field(
         v-field="form.disabled_on_pbh",
-        :label="$t('remediationPatterns.tabs.pbehaviorTypes.fields.disabledOnTypes')",
+        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')",
         :is-item-disabled="isDisabledItemDisabled",
         chips,
         multiple

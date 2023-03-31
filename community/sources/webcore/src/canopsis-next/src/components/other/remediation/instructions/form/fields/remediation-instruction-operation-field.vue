@@ -7,7 +7,7 @@
         :color="hasChildrenError ? 'error' : 'primary'"
       ) {{ operationNumber }}
     v-flex(xs11)
-      v-layout(row)
+      v-layout(row, justify-space-between)
         v-flex(xs11)
           v-layout(row)
             c-expand-btn.operation-expand(
@@ -52,9 +52,8 @@
                     :jobs="operation.jobs"
                   )
                   jobs-select(v-if="!disabled", v-field="operation.jobs")
-        v-flex.mt-1(xs1)
-          v-layout(justify-center)
-            c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
+        span
+          c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
 <script>

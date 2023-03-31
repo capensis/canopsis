@@ -180,7 +180,7 @@ export const isDatePatternRuleField = value => [
   ALARM_PATTERN_FIELDS.lastEventDate,
   ALARM_PATTERN_FIELDS.lastUpdateDate,
   ALARM_PATTERN_FIELDS.ackAt,
-  ALARM_PATTERN_FIELDS.resolvedAt,
+  ALARM_PATTERN_FIELDS.resolved,
   ALARM_PATTERN_FIELDS.activationDate,
   ENTITY_PATTERN_FIELDS.lastEventDate,
 ].includes(value);

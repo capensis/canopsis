@@ -3,18 +3,24 @@
 </template>
 
 <script>
-import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
+import { USERS_PERMISSIONS } from '@/constants';
 
-import ServiceEntityLinks from './service-entity-links.vue';
+import { compile } from '@/helpers/handlebars';
+
+import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
 
 export default {
   components: {
     VRuntimeTemplate,
-    ServiceEntityLinks,
   },
+  mixins: [
+    handlebarsLinksHelperCreator(
+      'entity.links',
+      USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks,
+    ),
+  ],
   props: {
     entity: {
       type: Object,
@@ -34,18 +40,6 @@ export default {
       },
       default: '',
     },
-  },
-  beforeCreate() {
-    registerHelper('links', ({ hash }) => {
-      const category = hash.category ? `'${hash.category}'` : null;
-
-      return new Handlebars.SafeString(`
-        <service-entity-links :links="entity.linklist" :category="${category}" />
-      `);
-    });
-  },
-  beforeDestroy() {
-    unregisterHelper('links');
   },
 };
 </script>

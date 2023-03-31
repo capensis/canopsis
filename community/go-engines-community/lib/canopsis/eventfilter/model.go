@@ -49,9 +49,7 @@ type ExternalDataParameters struct {
 	Sort       string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
 
 	// are used in api external data
-	RequestParameters *request.Parameters     `bson:"request,omitempty" json:"request,omitempty"`
-	RetryCount        int                     `bson:"retry_count,omitempty" json:"retry_count,omitempty"`
-	RetryDelay        *types.DurationWithUnit `bson:"retry_delay" json:"retry_delay,omitempty"`
+	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }
 
 type Rule struct {
@@ -59,7 +57,7 @@ type Rule struct {
 	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
 	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int                               `bson:"priority" json:"priority"`
+	Priority     int64                             `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
 	OldPatterns  oldpattern.EventPatternList       `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
 	Config       RuleConfig                        `bson:"config" json:"config"`

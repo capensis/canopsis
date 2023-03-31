@@ -26,11 +26,13 @@
             hide-details
           )
           v-layout.mt-4(row)
-            span.subheading {{ $t('remediationInstructionExecute.jobs.title') }}
+            span.subheading {{ $t('remediation.instructionExecute.jobs.title') }}
           v-layout(column)
             remediation-instruction-execute-assigned-jobs-table.mt-4(
               v-if="operation.jobs.length",
               :jobs="operation.jobs",
+              executable,
+              cancelable,
               @execute-job="executeJob",
               @cancel-job-execution="cancelJobExecution"
             )

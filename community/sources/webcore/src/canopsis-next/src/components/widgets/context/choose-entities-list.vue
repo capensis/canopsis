@@ -6,26 +6,26 @@
       :loading="pending",
       :pagination.sync="pagination",
       :total-items="entitiesTotalCount",
-      :no-data-text="$t('tables.noData')",
+      :no-data-text="$t('common.noData')",
       :is-disabled-item="isSelectedEntity",
       advanced-pagination,
       select-all
     )
-      template(slot="toolbar", slot-scope="props")
+      template(#toolbar="{ updateSearch, clearSearch }")
         v-layout(row)
-          c-search-field(@submit="props.updateSearch", @clear="props.clearSearch")
-      template(slot="name", slot-scope="props")
-        span.text-xs-left {{ props.item.name }}
-      template(slot="id", slot-scope="props")
-        span.text-xs-left {{ props.item._id }}
-      template(slot="actions", slot-scope="props")
-        v-btn(:disabled="props.disabled", icon, small, @click="$emit('select', [props.item])")
+          c-search-field(@submit="updateSearch", @clear="clearSearch")
+      template(#name="{ item }")
+        span.text-xs-left {{ item.name }}
+      template(#id="{ item }")
+        span.text-xs-left {{ item._id }}
+      template(#actions="{ item, disabled  }")
+        v-btn(:disabled="disabled", icon, small, @click="$emit('select', [item])")
           v-icon(color="primary") add
-      template(slot="mass-actions", slot-scope="props")
+      template(#mass-actions="props")
         v-btn(
           color="primary",
           @click="$emit('select', props.selected)"
-        ) {{ $t('contextGeneralTable.addSelection') }}
+        ) {{ $t('context.addSelection') }}
 </template>
 
 <script>

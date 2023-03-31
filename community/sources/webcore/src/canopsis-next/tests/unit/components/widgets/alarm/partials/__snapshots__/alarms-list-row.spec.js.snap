@@ -14,6 +14,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
         class="layout alarm-list-row__checkbox"
       >
         <v-checkbox-functional-stub
+          class="ma-0"
           hidedetails="true"
           inputvalue="true"
           label=""
@@ -31,7 +32,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters="[object Object],[object Object]"
       selectedtag="tag"
       widget="[object Object]"
     />
@@ -40,7 +40,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters="[object Object],[object Object]"
       selectedtag="tag"
       widget="[object Object]"
     />
@@ -64,7 +63,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters=""
       selectedtag=""
       widget="[object Object]"
     />
@@ -73,7 +71,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters=""
       selectedtag=""
       widget="[object Object]"
     />

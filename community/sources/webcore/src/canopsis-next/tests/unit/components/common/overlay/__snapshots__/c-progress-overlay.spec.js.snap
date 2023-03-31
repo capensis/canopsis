@@ -52,7 +52,7 @@ exports[`c-progress-overlay Renders \`c-progress-overlay\` with pending true cor
   name="fade-transition"
 >
   <div
-    class="layout progress white"
+    class="layout progress background"
     style="opacity: 0.5;"
   >
     <div

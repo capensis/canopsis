@@ -2,8 +2,8 @@
   v-layout.mt-2(column)
     v-layout(row)
       v-flex(v-if="!jobs.length", xs12)
-        v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyJobs') }}
-    h3.subheading.font-weight-bold {{ $t('remediationInstructions.listJobs') }}
+        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyJobs') }}
+    h3.subheading.font-weight-bold {{ $t('remediation.instruction.listJobs') }}
     c-draggable-list-field(
       v-field="jobs",
       :disabled="disabled",
@@ -27,8 +27,8 @@
         :disabled="disabled",
         outline,
         @click="addJob"
-      ) {{ $t('remediationInstructions.addJob') }}
-      span.error--text(v-show="hasJobsErrors") {{ $t('remediationInstructions.errors.jobRequired') }}
+      ) {{ $t('remediation.instruction.addJob') }}
+      span.error--text(v-show="hasJobsErrors") {{ $t('remediation.instruction.errors.jobRequired') }}
 </template>
 
 <script>

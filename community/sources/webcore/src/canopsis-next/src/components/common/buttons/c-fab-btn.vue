@@ -4,14 +4,15 @@
       c-refresh-btn(@click="$listeners.refresh")
       slot(name="additional")
       v-tooltip(v-if="hasAccess && $listeners.create", left)
-        v-btn(
-          :dark="dark",
-          slot="activator",
-          color="primary",
-          fab,
-          @click.stop="$listeners.create"
-        )
-          v-icon add
+        template(#activator="{ on }")
+          v-btn(
+            v-on="on",
+            :dark="dark",
+            color="primary",
+            fab,
+            @click.stop="$listeners.create"
+          )
+            v-icon add
         slot
 </template>
 

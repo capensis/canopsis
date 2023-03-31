@@ -85,7 +85,7 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetDependencies(c, c.MustGet(auth.ApiKey).(string), r)
+	aggregationResult, err := a.store.GetDependencies(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +115,7 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetImpacts(c, c.MustGet(auth.ApiKey).(string), r)
+	aggregationResult, err := a.store.GetImpacts(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -557,9 +557,9 @@ func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {
 	}
 }
 
-func (a *api) transformEditRequest(c context.Context, request *EditRequest) error {
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
 	var err error
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(c, request.EntityPatternFieldsRequest)
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
 	if err != nil {
 		return err
 	}

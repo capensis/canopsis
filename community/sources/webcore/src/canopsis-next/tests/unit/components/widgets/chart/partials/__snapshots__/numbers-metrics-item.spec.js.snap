@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with avg aggregated function 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      2 mins 36 secs
+    </div>
+    <!---->
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Average time to ack alarms
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with max aggregated function 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      1 min 26 secs
+    </div>
+    <!---->
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Max average time to ack alarms
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with metric 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      12
+    </div>
+    <!---->
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Number of not acked alarms
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with min aggregated function 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      35 secs
+    </div>
+    <!---->
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Min average time to ack alarms
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with sum aggregated function 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      23
+    </div>
+    <!---->
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Total total number of acks
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend down 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      26
+    </div>
+    <c-help-icon-stub
+      icon="arrow_downward"
+      icon-class="[object Object]"
+      size="84"
+      text="35 for the period
+07/11/2013 - 07/11/2013"
+      top="top"
+    />
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Average number of active alarms with tickets
+  </div>
+</div>
+`;
+
+exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend up 1`] = `
+<div
+  class="layout numbers-metrics-item column align-center"
+>
+  <div
+    class="layout row align-center"
+  >
+    <div
+      class="numbers-metrics-item__value"
+    >
+      26 secs
+    </div>
+    <c-help-icon-stub
+      icon="arrow_downward"
+      icon-class="[object Object]"
+      size="84"
+      text="25 for the period
+07/11/2013 - 07/11/2013"
+      top="top"
+    />
+  </div>
+  <div
+    class="numbers-metrics-item__title"
+  >
+    Max average time to ack alarms
+  </div>
+</div>
+`;

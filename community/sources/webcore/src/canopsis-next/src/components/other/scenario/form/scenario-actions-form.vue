@@ -1,21 +1,19 @@
 <template lang="pug">
   v-layout(column)
-    v-flex(v-show="!actions.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('scenario.emptyActions') }}
-    c-draggable-list-field(
+    c-alert(v-show="!actions.length", type="info") {{ $t('scenario.emptyActions') }}
+    c-card-iterator-field.mb-2(
       v-field="actions",
-      :group="draggableGroup",
-      handle=".action-drag-handler",
-      ghost-class="grey"
+      item-key="key",
+      :draggable-group="draggableGroup"
     )
-      scenario-action-field.mb-3.lighten-2(
-        v-for="(action, index) in actions",
-        v-field="actions[index]",
-        :name="`${name}.${action.key}`",
-        :key="action.key",
-        :action-number="index + 1",
-        @remove="removeItemFromArray(index)"
-      )
+      template(#item="{ item: action, index }")
+        scenario-action-field(
+          v-field="actions[index]",
+          :name="`${name}.${action.key}`",
+          :action-number="index + 1",
+          :has-previous-webhook="hasPreviousWebhook(index)",
+          @remove="removeItemFromArray(index)"
+        )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasActionsErrors ? 'error' : 'primary'",
@@ -26,7 +24,7 @@
 </template>
 
 <script>
-import { actionToForm } from '@/helpers/forms/action';
+import { actionToForm, isWebhookActionType } from '@/helpers/forms/action';
 
 import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -64,6 +62,16 @@ export default {
         name: 'scenarios-actions',
       };
     },
+
+    webhookIndexes() {
+      return this.actions.reduce((acc, action, index) => {
+        if (isWebhookActionType(action.type)) {
+          acc.push(index);
+        }
+
+        return acc;
+      }, []);
+    },
   },
   watch: {
     actions() {
@@ -92,6 +100,10 @@ export default {
 
     addAction() {
       this.addItemIntoArray(actionToForm());
+    },
+
+    hasPreviousWebhook(index) {
+      return this.webhookIndexes.indexOf(index) > 0;
     },
   },
 };

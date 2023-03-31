@@ -25,7 +25,8 @@ Feature: New import entities
           }
         },
         "action": "set",
-        "enabled": true
+        "enabled": true,
+        "category": "test-category-to-import-contextgraph-1-name"
       },
       {
         "name": "test-resource-contextgraph-new-import-1-1",
@@ -38,7 +39,8 @@ Feature: New import entities
         },
         "action": "set",
         "component": "test-component-contextgraph-new-import-1",
-        "enabled": true
+        "enabled": true,
+        "category": "test-category-to-import-contextgraph-2-name"
       },
       {
         "name": "test-resource-contextgraph-new-import-1-2",
@@ -51,7 +53,8 @@ Feature: New import entities
         },
         "action": "set",
         "component": "test-component-contextgraph-new-import-1",
-        "enabled": true
+        "enabled": true,
+        "category": "test-category-to-import-contextgraph-3-name"
       }
     ]
     """
@@ -79,9 +82,58 @@ Feature: New import entities
       },
       "enabled": true,
       "type": "component",
-      "impact_level": 1
+      "impact_level": 1,
+      "import_source": "test-new-import-set",
+      "category": {
+        "_id": "test-category-to-import-contextgraph-1",
+        "name": "test-category-to-import-contextgraph-1-name"
+      }
     }
     """
+    Then the response key "imported" should be greater than 0
+    When I do GET /api/v4/entities?search=test-resource-contextgraph-new-import-1-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1",
+          "name": "test-resource-contextgraph-new-import-1-1",
+          "component": "test-component-contextgraph-new-import-1",
+          "enabled": true,
+          "infos": {
+            "test_info": {
+              "description": "description 2",
+              "name": "test_info",
+              "value": "value 2"
+            }
+          },
+          "component_infos": {
+            "test_info": {
+              "description": "description 1",
+              "name": "test_info",
+              "value": "value 1"
+            }
+          },
+          "type": "resource",
+          "impact_level": 1,
+          "import_source": "test-new-import-set",
+          "category": {
+            "_id": "test-category-to-import-contextgraph-2",
+            "name": "test-category-to-import-contextgraph-2-name"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.imported" should be greater than 0    
     When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1
     Then the response code should be 200
     Then the response body should contain:
@@ -106,7 +158,11 @@ Feature: New import entities
         }
       },
       "type": "resource",
-      "impact_level": 1
+      "impact_level": 1,
+      "category": {
+        "_id": "test-category-to-import-contextgraph-2",
+        "name": "test-category-to-import-contextgraph-2-name"
+      }
     }
     """
     When I do GET /api/v4/entitybasics?_id=test-resource-contextgraph-new-import-1-2/test-component-contextgraph-new-import-1
@@ -133,7 +189,11 @@ Feature: New import entities
         }
       },
       "type": "resource",
-      "impact_level": 1
+      "impact_level": 1,
+      "category": {
+        "_id": "test-category-to-import-contextgraph-3",
+        "name": "test-category-to-import-contextgraph-3-name"
+      }
     }
     """
     When I do GET /api/v4/entities/context-graph?_id=test-resource-contextgraph-new-import-1-1/test-component-contextgraph-new-import-1
@@ -181,7 +241,8 @@ Feature: New import entities
         },
         "action": "set",
         "component": "test-component-contextgraph-new-import-1",
-        "enabled": true
+        "enabled": true,
+        "category": "test-category-to-import-contextgraph-not-exist"
       }
     ]
     """
@@ -216,7 +277,10 @@ Feature: New import entities
         }
       },
       "type": "resource",
-      "impact_level": 1
+      "impact_level": 1,
+      "category": {
+        "name": "test-category-to-import-contextgraph-not-exist"
+      }
     }
     """
     When I do GET /api/v4/entities/context-graph?_id=test-component-contextgraph-new-import-1

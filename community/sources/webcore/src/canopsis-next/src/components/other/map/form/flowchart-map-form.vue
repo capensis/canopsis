@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.geomap-map-form(column)
-    c-name-field(v-field="form.name")
+    c-name-field(v-field="form.name", required)
     flowchart-editor(v-field="form.parameters")
 </template>
 

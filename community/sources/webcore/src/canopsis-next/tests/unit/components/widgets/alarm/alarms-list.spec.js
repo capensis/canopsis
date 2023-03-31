@@ -18,7 +18,7 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 
-import { generateDefaultAlarmListWidgetForm } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
@@ -130,7 +130,7 @@ describe('alarms-list', () => {
     status: EXPORT_STATUSES.failed,
   };
   const widget = {
-    ...generateDefaultAlarmListWidgetForm(),
+    ...generatePreparedDefaultAlarmListWidget(),
 
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
@@ -320,6 +320,7 @@ describe('alarms-list', () => {
           multiSortBy: [],
           page: 1,
           with_instructions: true,
+          with_declare_tickets: true,
           with_links: true,
           opened: true,
         },
@@ -352,6 +353,7 @@ describe('alarms-list', () => {
           multiSortBy: [],
           page: 1,
           with_instructions: true,
+          with_declare_tickets: true,
           with_links: true,
           opened: true,
         },
@@ -931,8 +933,8 @@ describe('alarms-list', () => {
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: nowUnix,
-          fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
-            label,
+          fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
+            label: text,
             name: value,
           })),
           separator: widget.parameters.exportCsvSeparator,
@@ -1021,8 +1023,8 @@ describe('alarms-list', () => {
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: nowUnix,
-          fields: widget.parameters.widgetExportColumns.map(({ label, value }) => ({
-            label,
+          fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
+            label: text,
             name: value,
           })),
           separator: widget.parameters.exportCsvSeparator,
@@ -1086,8 +1088,8 @@ describe('alarms-list', () => {
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: nowUnix,
-          fields: widget.parameters.widgetColumns.map(({ label, value }) => ({
-            label,
+          fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
+            label: text,
             name: value,
           })),
           separator: widget.parameters.exportCsvSeparator,
@@ -1186,8 +1188,6 @@ describe('alarms-list', () => {
   });
 
   it('Error popup showed exported after trigger export button with failed create export', async () => {
-    const rejectValue = { error: 'Create error' };
-
     const wrapper = factory({
       mocks: {
         $popups,
@@ -1202,7 +1202,7 @@ describe('alarms-list', () => {
         {
           ...alarmModule,
           actions: {
-            createAlarmsListExport: jest.fn().mockRejectedValue(rejectValue),
+            createAlarmsListExport: jest.fn().mockRejectedValue(),
             fetchAlarmsListExport,
           },
         },
@@ -1228,14 +1228,12 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: rejectValue.error,
+      text: 'Failed to export alarms list in CSV format',
     });
   });
 
   it('Error popup showed exported after trigger export button with failed fetch export', async () => {
     jest.useFakeTimers('legacy');
-
-    const rejectValue = { error: 'Fetch error' };
 
     const wrapper = factory({
       mocks: {
@@ -1252,7 +1250,7 @@ describe('alarms-list', () => {
           ...alarmModule,
           actions: {
             createAlarmsListExport,
-            fetchAlarmsListExport: jest.fn().mockRejectedValue(rejectValue),
+            fetchAlarmsListExport: jest.fn().mockRejectedValue(),
           },
         },
         {
@@ -1281,7 +1279,7 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: rejectValue.error,
+      text: 'Failed to export alarms list in CSV format',
     });
 
     jest.useRealTimers();
@@ -1334,7 +1332,7 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: 'Something went wrong...',
+      text: 'Failed to export alarms list in CSV format',
     });
 
     jest.useRealTimers();

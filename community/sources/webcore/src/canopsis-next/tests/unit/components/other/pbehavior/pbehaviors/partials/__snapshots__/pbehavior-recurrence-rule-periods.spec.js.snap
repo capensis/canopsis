@@ -461,19 +461,7 @@ exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-p
           class="text-xs-center"
           style="width: 100%;"
         >
-          <div
-            class="flex"
-          >
-            <div
-              class="v-card v-sheet theme--light"
-            >
-              <div
-                class="v-card__title"
-              >
-                No data
-              </div>
-            </div>
-          </div>
+          No data available
         </div>
       </div>
       <div>

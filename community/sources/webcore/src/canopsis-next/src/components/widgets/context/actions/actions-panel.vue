@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
+  shared-actions-panel(:actions="actions")
 </template>
 
 <script>
@@ -32,9 +32,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      actionsMap: {
+  computed: {
+    actionsMap() {
+      return {
         editEntity: {
           type: CONTEXT_ACTIONS_TYPES.editEntity,
           icon: 'edit',
@@ -69,10 +69,9 @@ export default {
           title: this.$t('context.actions.titles.variablesHelp'),
           method: this.showVariablesHelpModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
+
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -80,7 +79,7 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      let actions = [
+      const actions = [
         filteredActionsMap.editEntity,
       ];
 
@@ -94,12 +93,7 @@ export default {
 
       actions.push(filteredActionsMap.pbehavior, filteredActionsMap.variablesHelp);
 
-      actions = compact(actions);
-
-      return {
-        inline: actions.slice(0, 3),
-        dropDown: actions.slice(3),
-      };
+      return compact(actions);
     },
   },
   methods: {

@@ -8,10 +8,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 )
 
 func TestEnrichmentApplyOnSuccess(t *testing.T) {
@@ -74,10 +75,9 @@ func TestApplyWithExternalData(t *testing.T) {
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", getter)
 
-	mockTimezoneConfigProvider := mock_config.NewMockTimezoneConfigProvider(ctrl)
-	mockTimezoneConfigProvider.EXPECT().Get().Return(config.TimezoneConfig{}).AnyTimes()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockTimezoneConfigProvider)
+	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, tplExecutor)
 
 	externalData := make(map[string]eventfilter.ExternalDataParameters)
 	externalData["test"] = eventfilter.ExternalDataParameters{

@@ -4,6 +4,7 @@ import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { MODALS } from '@/constants';
 
 import AlarmsListRemediationInstructionsFilters from '@/components/widgets/alarm/partials/alarms-list-remediation-instructions-filters.vue';
@@ -13,14 +14,7 @@ const localVue = createVueInstance();
 const stubs = {
   'remediation-instructions-filters-list': true,
   'v-btn': createButtonStub('v-btn'),
-  'v-tooltip': {
-    template: `
-      <div class="v-tooltip">
-        <slot name="activator" />
-        <slot />
-      </div>
-    `,
-  },
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const snapshotStubs = {

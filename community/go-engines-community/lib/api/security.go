@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/cas"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -25,6 +26,7 @@ import (
 )
 
 const JwtSecretEnv = "CPS_JWT_SECRET"
+const sessionStoreSessionMaxAge = 24 * time.Hour
 
 // Security is used to init auth methods by config.
 type Security interface {
@@ -50,6 +52,13 @@ type Security interface {
 type CookieOptions struct {
 	FileAccessName string
 	MaxAge         int
+}
+
+func DefaultCookieOptions() CookieOptions {
+	return CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
+	}
 }
 
 type security struct {

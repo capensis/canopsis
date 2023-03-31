@@ -1,7 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`live-reporting Renders \`live-reporting\` with custom props 1`] = `
-<settings-button-field-stub>
+<settings-button-field-stub
+  addable="true"
+  removable="true"
+>
   <div
     class="subheading"
   >
@@ -12,7 +15,9 @@ exports[`live-reporting Renders \`live-reporting\` with custom props 1`] = `
 
 exports[`live-reporting Renders \`live-reporting\` with default props 1`] = `
 <settings-button-field-stub
+  addable="true"
   isempty="true"
+  removable="true"
 >
   <div
     class="subheading"

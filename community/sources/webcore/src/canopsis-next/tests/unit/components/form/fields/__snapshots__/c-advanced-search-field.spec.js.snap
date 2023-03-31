@@ -10,23 +10,21 @@ exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1
     <transition-stub
       name="slide-y-transition"
     />
-    <span>
-      <button
-        class="v-btn v-btn--icon theme--light"
-        type="button"
+    <button
+      class="v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            help_outline
-          </i>
-        </div>
-      </button>
-    </span>
+          help_outline
+        </i>
+      </div>
+    </button>
   </span>
 </c-search-field-stub>
 `;

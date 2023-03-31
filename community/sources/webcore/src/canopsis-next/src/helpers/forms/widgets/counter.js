@@ -12,6 +12,7 @@ import {
   alarmListBaseParametersToForm,
   formToAlarmListBaseParameters,
 } from './alarm';
+import { openedToForm } from './common';
 
 /**
  * @typedef {Object} CounterWidgetLevels
@@ -35,13 +36,18 @@ import {
  */
 
 /**
+ * @typedef {Object} CounterWidgetParametersForm
+ * @property {AlarmListBaseParametersForm} alarmsList
+ */
+
+/**
  * Convert counter widget parameters to form
  *
  * @param {CounterWidgetParameters} [parameters = {}]
- * @return {CounterWidgetParameters}
+ * @return {CounterWidgetParametersForm}
  */
 export const counterWidgetParametersToForm = (parameters = {}) => ({
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
   columnMobile: parameters.columnMobile ?? 2,
   columnTablet: parameters.columnTablet ?? 3,
@@ -64,7 +70,7 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({
 /**
  * Convert form to counter widget parameters
  *
- * @param {CounterWidgetParameters} form
+ * @param {CounterWidgetParametersForm} form
  * @return {CounterWidgetParameters}
  */
 export const formToCounterWidgetParameters = form => ({

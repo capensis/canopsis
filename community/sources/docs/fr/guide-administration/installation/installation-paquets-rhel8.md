@@ -332,7 +332,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 === "Canopsis Pro (souscription commerciale)"
 
     !!! attention
-        L'édition Pro nécessite une souscription commerciale.
+        L'édition Pro nécessite une souscription commerciale ainsi qu'une authentification d'accès aux repos à renseigner dans `baseurl` du fichier `/etc/yum.repos.d/canopsis-pro.repo`.
 
     Ajout des dépôts de paquets Canopsis pour RHEL 8 :
     ```sh
@@ -344,7 +344,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     echo "[canopsis-pro]
     name = canopsis-pro
-    baseurl=https://nexus.canopsis.net/repository/canopsis-pro/el8/pro/
+    baseurl=https://user:password@nexus.canopsis.net/repository/canopsis-pro/el8/pro/
     gpgcheck=0
     enabled=1" > /etc/yum.repos.d/canopsis-pro.repo
     ```

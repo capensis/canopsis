@@ -51,7 +51,7 @@ func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("_id", errors.New("Cannot update a pbehavior with origin."))
+			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
 		}
 
 		res, err := s.dbCollection.UpdateOne(
@@ -101,7 +101,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 		if err == nil {
-			return common.NewValidationError("_id", errors.New("Cannot update a pbehavior with origin."))
+			return common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
 		}
 
 		res, err := s.dbCollection.UpdateOne(
