@@ -69,7 +69,7 @@ describe('mass-actions-panel', () => {
       tickets: [],
     },
   };
-  const fastAckAlarms = range(2).map(index => ({
+  const fastActionAlarms = range(2).map(index => ({
     _id: `alarm-id-${index}`,
     entity: {
       type: `entity-type-${index}`,
@@ -87,21 +87,37 @@ describe('mass-actions-panel', () => {
       },
     },
   }));
-  const fastAckEvents = fastAckAlarms.map(fastAckAlarm => ({
+  const fastAckEvents = fastActionAlarms.map(fastActionAlarm => ({
     timestamp: timestamp / 1000,
-    component: fastAckAlarm.v.component,
-    connector: fastAckAlarm.v.connector,
-    connector_name: fastAckAlarm.v.connector_name,
-    resource: fastAckAlarm.v.resource,
-    state: fastAckAlarm.v.state.val,
-    state_type: fastAckAlarm.v.status.val,
-    source_type: fastAckAlarm.entity.type,
+    component: fastActionAlarm.v.component,
+    connector: fastActionAlarm.v.connector,
+    connector_name: fastActionAlarm.v.connector_name,
+    resource: fastActionAlarm.v.resource,
+    state: fastActionAlarm.v.state.val,
+    state_type: fastActionAlarm.v.status.val,
+    source_type: fastActionAlarm.entity.type,
     crecord_type: 'ack',
     event_type: 'ack',
-    id: fastAckAlarm._id,
+    id: fastActionAlarm._id,
     initiator: EVENT_INITIATORS.user,
     origin: EVENT_DEFAULT_ORIGIN,
-    ref_rk: `${fastAckAlarm.v.resource}/${fastAckAlarm.v.component}`,
+    ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
+  }));
+  const fastCancelEvents = fastActionAlarms.map(fastActionAlarm => ({
+    timestamp: timestamp / 1000,
+    component: fastActionAlarm.v.component,
+    connector: fastActionAlarm.v.connector,
+    connector_name: fastActionAlarm.v.connector_name,
+    resource: fastActionAlarm.v.resource,
+    state: fastActionAlarm.v.state.val,
+    state_type: fastActionAlarm.v.status.val,
+    source_type: fastActionAlarm.entity.type,
+    crecord_type: 'cancel',
+    event_type: 'cancel',
+    id: fastActionAlarm._id,
+    initiator: EVENT_INITIATORS.user,
+    origin: EVENT_DEFAULT_ORIGIN,
+    ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
   }));
 
   const { authModule } = createAuthModule();
@@ -257,7 +273,7 @@ describe('mass-actions-panel', () => {
         eventModule,
       ]),
       propsData: {
-        items: fastAckAlarms,
+        items: fastActionAlarms,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -301,7 +317,7 @@ describe('mass-actions-panel', () => {
         eventModule,
       ]),
       propsData: {
-        items: fastAckAlarms,
+        items: fastActionAlarms,
         refreshAlarmsList,
         widget: widgetData,
       },
@@ -417,6 +433,97 @@ describe('mass-actions-panel', () => {
     const [{ config }] = $modals.show.mock.calls[0];
 
     config.afterSubmit();
+
+    const clearItemsEvent = wrapper.emitted('clear:items');
+
+    expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Fast cancel event sent after trigger fast cancel action', async () => {
+    const output = Faker.datatype.string();
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {
+        fastCancelOutput: {
+          enabled: true,
+          value: output,
+        },
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items: fastActionAlarms,
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const fastCancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel);
+
+    fastCancelAction.trigger('click');
+
+    await flushPromises();
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: fastCancelEvents.map(fastCancelEvent => ({
+          ...fastCancelEvent,
+          output,
+        })),
+      },
+      undefined,
+    );
+
+    const clearItemsEvent = wrapper.emitted('clear:items');
+
+    expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Fast cancel event sent after trigger fast cancel action without parameters', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items: fastActionAlarms,
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const fastCancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel);
+
+    fastCancelAction.trigger('click');
+
+    await flushPromises();
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: fastCancelEvents,
+      },
+      undefined,
+    );
 
     const clearItemsEvent = wrapper.emitted('clear:items');
 

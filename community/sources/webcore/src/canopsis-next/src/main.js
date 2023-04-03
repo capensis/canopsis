@@ -50,6 +50,7 @@ import CInformationBlockRow from '@/components/common/block/c-information-block-
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCopyWrapper from '@/components/common/runtime-template/c-copy-wrapper.vue';
 import CAlert from '@/components/common/alert/c-alert.vue';
 import CLinksList from '@/components/common/links/c-links-list.vue';
 
@@ -224,7 +225,8 @@ import MediationIcon from '@/components/icons/mediation.vue';
 import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
 import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
-import RestartAlt from '@/components/icons/restart_alt.vue';
+import RestartAltIcon from '@/components/icons/restart_alt.vue';
+import ListDeleteIcon from '@/components/icons/list_delete.vue';
 
 /**
  * Groups
@@ -293,7 +295,10 @@ Vue.use(Vuetify, {
       component: ManualInstruction,
     },
     restart_alt: {
-      component: RestartAlt,
+      component: RestartAltIcon,
+    },
+    list_delete: {
+      component: ListDeleteIcon,
     },
   },
 });
@@ -490,6 +495,7 @@ Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-patterns-field', CPatternsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-runtime-template', CRuntimeTemplate);
+Vue.component('c-copy-wrapper', CCopyWrapper);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-alarm-infos-attribute-field', CAlarmInfosAttributeField);

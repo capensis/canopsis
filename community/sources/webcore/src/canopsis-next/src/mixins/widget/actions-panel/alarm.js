@@ -38,18 +38,6 @@ export const widgetActionsPanelAlarmMixin = {
       fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
     }),
 
-    async createFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
-
-      return this.refreshAlarmsList();
-    },
-
     showActionModal(name) {
       return () => this.$modals.show({
         name,
@@ -254,6 +242,26 @@ export const widgetActionsPanelAlarmMixin = {
           }),
         },
       });
+    },
+
+    createFastAckActionByAlarms(alarms) {
+      let eventData = {};
+
+      if (this.widget.parameters.fastAckOutput?.enabled) {
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
+      }
+
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, alarms, eventData);
+    },
+
+    createFastCancelActionByAlarms(alarms) {
+      let eventData = {};
+
+      if (this.widget.parameters.fastCancelOutput?.enabled) {
+        eventData = { output: this.widget.parameters.fastCancelOutput.value };
+      }
+
+      return this.createEvent(EVENT_ENTITY_TYPES.cancel, alarms, eventData);
     },
 
     actionsAccessFilterHandler({ type }) {

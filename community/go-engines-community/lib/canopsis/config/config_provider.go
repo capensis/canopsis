@@ -108,10 +108,10 @@ type DataStorageConfig struct {
 }
 
 type MetricsConfig struct {
-	FlushInterval             time.Duration
-	SliInterval               time.Duration
-	EnabledManualInstructions bool
-	EnabledNotAckedMetrics    bool
+	FlushInterval          time.Duration
+	SliInterval            time.Duration
+	EnabledInstructions    bool
+	EnabledNotAckedMetrics bool
 }
 
 type ScheduledTime struct {
@@ -1187,10 +1187,10 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 
 	return &BaseMetricsSettingsConfigProvider{
 		conf: MetricsConfig{
-			EnabledNotAckedMetrics:    parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
-			EnabledManualInstructions: parseBool(cfg.Metrics.EnabledManualInstructions, "EnabledManualInstructions", sectionName, logger),
-			FlushInterval:             parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
-			SliInterval:               parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+			EnabledNotAckedMetrics: parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
+			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
+			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
 		},
 		logger: logger,
 	}
@@ -1207,9 +1207,9 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.EnabledNotAckedMetrics = b
 	}
 
-	b, ok = parseUpdatedBool(cfg.Metrics.EnabledManualInstructions, p.conf.EnabledManualInstructions, "EnabledManualInstructions", sectionName, p.logger)
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledInstructions, p.conf.EnabledInstructions, "EnabledInstructions", sectionName, p.logger)
 	if ok {
-		p.conf.EnabledManualInstructions = b
+		p.conf.EnabledInstructions = b
 	}
 
 	d, ok := parseUpdatedTimeDurationByStr(cfg.Metrics.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)

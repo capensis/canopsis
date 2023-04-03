@@ -10,6 +10,7 @@ export const LINK_RULE_DEFAULT_ALARM_SOURCE_CODE = `function generate(alarms) {
       category: "",
       icon_name: "",
       url: "",
+      action: 0,
       single: true
     }
   ];
@@ -21,7 +22,8 @@ export const LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE = `function generate(entities)
       label: "",
       category: "",
       icon_name: "",
-      url: ""
+      url: "",
+      action: 0
     }
   ];
 }`;
@@ -32,3 +34,8 @@ export const LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES = {
 };
 
 export const DEFAULT_LINKS_INLINE_COUNT = 3;
+
+export const LINK_RULE_ACTIONS = {
+  goto: 0,
+  copy: 1,
+};

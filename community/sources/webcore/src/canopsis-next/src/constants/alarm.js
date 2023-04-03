@@ -97,6 +97,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
   cancel: 'cancel',
+  fastCancel: 'fastCancel',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
@@ -206,6 +207,8 @@ export const ALARM_BASIC_METRIC_PARAMETERS = {
   averageResolve: 'average_resolve',
   timeToAck: 'time_to_ack',
   timeToResolve: 'time_to_resolve',
+  minAck: 'min_ack',
+  maxAck: 'max_ack',
 };
 
 export const ALARM_OPTIONAL_METRIC_PARAMETERS = {

@@ -27,7 +27,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-comment"
@@ -89,7 +94,12 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-comment"
