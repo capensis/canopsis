@@ -1,4 +1,4 @@
-package alarm
+package axe
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -24,7 +25,7 @@ const workers = 10
 
 func NewMetaAlarmEventProcessor(
 	dbClient mongo.DbClient,
-	adapter Adapter,
+	adapter alarm.Adapter,
 	ruleAdapter correlation.RulesAdapter,
 	alarmStatusService alarmstatus.Service,
 	alarmConfigProvider config.AlarmConfigProvider,
@@ -33,7 +34,7 @@ func NewMetaAlarmEventProcessor(
 	fifoExchange, fifoQueue string,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
-) MetaAlarmEventProcessor {
+) alarm.MetaAlarmEventProcessor {
 	return &metaAlarmEventProcessor{
 		dbClient:            dbClient,
 		adapter:             adapter,
@@ -51,7 +52,7 @@ func NewMetaAlarmEventProcessor(
 
 type metaAlarmEventProcessor struct {
 	dbClient    mongo.DbClient
-	adapter     Adapter
+	adapter     alarm.Adapter
 	ruleAdapter correlation.RulesAdapter
 
 	alarmStatusService  alarmstatus.Service
