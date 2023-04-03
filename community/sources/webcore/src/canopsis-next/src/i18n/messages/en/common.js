@@ -268,6 +268,7 @@ export default {
   copyValue: 'Copy value',
   copyProperty: 'Copy property',
   copyPropertyPath: 'Copy property path',
+  hidden: 'Hidden',
   variableTypes: {
     string: 'String',
     number: 'Number',

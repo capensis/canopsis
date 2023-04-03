@@ -52,6 +52,7 @@ export default {
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
+  fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
   isCorrelationEnabled: 'Corrélation activée ?',
   duration: 'Durée',

@@ -3,7 +3,7 @@
     v-subheader {{ $t('kpi.collectionSetting.optionalMetrics') }}
     v-list-tile
       v-list-tile-action
-        v-checkbox(v-field="value.enabled_manual_instructions", color="primary")
+        v-checkbox(v-field="value.enabled_instructions", color="primary")
           template(#label="")
             span.kpi-collection-settings-metrics-form__label.ml-4 {{ $t('kpi.collectionSetting.manualInstructions') }}
     v-list-tile

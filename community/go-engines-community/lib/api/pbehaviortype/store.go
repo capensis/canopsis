@@ -52,6 +52,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 	}
 
 	match := bson.M{}
+	if !r.WithHidden {
+		match["hidden"] = bson.M{"$in": bson.A{false, nil}}
+	}
 
 	if r.OnlyDefault {
 		match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
@@ -191,9 +194,17 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 			if pt.IconName == "" {
 				filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
 			}
-			result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{
-				"color": pt.Color,
-			}})
+
+			set := bson.M{"color": pt.Color}
+			unset := bson.M{}
+
+			if pt.Hidden == nil || !*pt.Hidden {
+				unset["hidden"] = ""
+			} else {
+				set["hidden"] = true
+			}
+
+			result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": set, "$unset": unset})
 			if err != nil {
 				return err
 			}

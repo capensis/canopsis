@@ -17,6 +17,7 @@ import {
   SAMPLINGS,
   REMEDIATION_STATISTICS_CHART_DATA_TYPE,
   DATETIME_FORMATS,
+  REMEDIATION_INSTRUCTION_TYPES,
 } from '@/constants';
 
 import {
@@ -105,12 +106,20 @@ export default {
     },
 
     getQuery() {
-      return {
+      const { instruction } = this.query;
+      const query = {
         ...this.interval,
 
-        instruction: this.query.instruction,
         sampling: this.query.sampling,
       };
+
+      if ([REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction)) {
+        query.instruction_type = instruction;
+      } else if (instruction) {
+        query.instruction = instruction;
+      }
+
+      return query;
     },
 
     fetchList() {

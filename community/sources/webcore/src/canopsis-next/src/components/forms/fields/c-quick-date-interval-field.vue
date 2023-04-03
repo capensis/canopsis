@@ -9,7 +9,6 @@
     )
     div.c-quick-interval__range
       c-quick-date-interval-type-field(
-        :class="{ 'ml-4': !reverse, 'mr-4': reverse }",
         :value="range",
         :ranges="availableQuickRanges",
         :disabled="disabled",
@@ -192,6 +191,8 @@ export default {
 <style scoped lang="scss">
 .c-quick-interval {
   display: inline-flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
 
   &__range {
     display: flex;
