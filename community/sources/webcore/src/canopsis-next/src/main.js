@@ -50,6 +50,7 @@ import CInformationBlockRow from '@/components/common/block/c-information-block-
 import CResponsiveList from '@/components/common/responsive-list/c-responsive-list.vue';
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCopyWrapper from '@/components/common/runtime-template/c-copy-wrapper.vue';
 import CAlert from '@/components/common/alert/c-alert.vue';
 import CLinksList from '@/components/common/links/c-links-list.vue';
 
@@ -494,6 +495,7 @@ Vue.component('c-pattern-field', CPatternField);
 Vue.component('c-patterns-field', CPatternsField);
 Vue.component('c-pattern-operator-information', CPatternOperatorInformation);
 Vue.component('c-runtime-template', CRuntimeTemplate);
+Vue.component('c-copy-wrapper', CCopyWrapper);
 Vue.component('c-pattern-operator-chip', CPatternOperatorChip);
 Vue.component('c-alarm-patterns-field', CAlarmPatternsField);
 Vue.component('c-alarm-infos-attribute-field', CAlarmInfosAttributeField);
