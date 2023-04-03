@@ -162,7 +162,19 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       <hr
         class="v-divider theme--light"
       />
-      <field-fast-ack-output-stub
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
         value="[object Object]"
       />
     </widget-settings-group-stub>
@@ -354,7 +366,19 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       <hr
         class="v-divider theme--light"
       />
-      <field-fast-ack-output-stub
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
         value="[object Object]"
       />
     </widget-settings-group-stub>
@@ -545,7 +569,19 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       <hr
         class="v-divider theme--light"
       />
-      <field-fast-ack-output-stub
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
         value="[object Object]"
       />
     </widget-settings-group-stub>

@@ -17,7 +17,12 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -103,7 +108,12 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -186,7 +196,12 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -266,7 +281,12 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -346,7 +366,12 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -431,7 +456,12 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -517,7 +547,12 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
@@ -658,7 +693,12 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
   <button
     class="action-cancel"
   >
-    Cancel alarm|delete|cancel
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
   </button>
   <button
     class="action-ackRemove"
