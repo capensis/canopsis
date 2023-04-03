@@ -16,13 +16,15 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-1-link-1-label",
           "category": "test-link-rule-to-create-1-link-1-category",
           "icon_name": "test-link-rule-to-create-1-link-1-icon",
-          "url": "http://test-link-rule-to-create-1-link-1-url.com"
+          "url": "http://test-link-rule-to-create-1-link-1-url.com",
+          "action": "open"
         },
         {
           "label": "test-link-rule-to-create-1-link-2-label",
           "category": "test-link-rule-to-create-1-link-2-category",
           "icon_name": "test-link-rule-to-create-1-link-2-icon",
-          "url": "http://test-link-rule-to-create-1-link-2-url.com"
+          "url": "http://test-link-rule-to-create-1-link-2-url.com",
+          "action": "open"
         }
       ],
       "external_data": {
@@ -79,13 +81,15 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-1-link-1-label",
           "category": "test-link-rule-to-create-1-link-1-category",
           "icon_name": "test-link-rule-to-create-1-link-1-icon",
-          "url": "http://test-link-rule-to-create-1-link-1-url.com"
+          "url": "http://test-link-rule-to-create-1-link-1-url.com",
+          "action": "open"
         },
         {
           "label": "test-link-rule-to-create-1-link-2-label",
           "category": "test-link-rule-to-create-1-link-2-category",
           "icon_name": "test-link-rule-to-create-1-link-2-icon",
-          "url": "http://test-link-rule-to-create-1-link-2-url.com"
+          "url": "http://test-link-rule-to-create-1-link-2-url.com",
+          "action": "open"
         }
       ],
       "external_data": {
@@ -143,13 +147,15 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-1-link-1-label",
           "category": "test-link-rule-to-create-1-link-1-category",
           "icon_name": "test-link-rule-to-create-1-link-1-icon",
-          "url": "http://test-link-rule-to-create-1-link-1-url.com"
+          "url": "http://test-link-rule-to-create-1-link-1-url.com",
+          "action": "open"
         },
         {
           "label": "test-link-rule-to-create-1-link-2-label",
           "category": "test-link-rule-to-create-1-link-2-category",
           "icon_name": "test-link-rule-to-create-1-link-2-icon",
-          "url": "http://test-link-rule-to-create-1-link-2-url.com"
+          "url": "http://test-link-rule-to-create-1-link-2-url.com",
+          "action": "open"
         }
       ],
       "external_data": {
@@ -200,7 +206,7 @@ Feature: Create an link rule
       "name": "test-link-rule-to-create-2-name",
       "type": "alarm",
       "enabled": true,
-      "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-create-2-link-1-label\",\"category\": \"test-link-rule-to-create-2-link-1-category\",\"icon_name\": \"test-link-rule-to-create-2-link-1-icon\",\"url\": \"http://test-link-rule-to-create-2-link-1-url.com\"}] }",
+      "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-create-2-link-1-label\",\"category\": \"test-link-rule-to-create-2-link-1-category\",\"icon_name\": \"test-link-rule-to-create-2-link-1-icon\",\"url\": \"http://test-link-rule-to-create-2-link-1-url.com\",\"action\": \"open\"}] }",
       "alarm_pattern": [
         [
           {
@@ -236,7 +242,7 @@ Feature: Create an link rule
       "name": "test-link-rule-to-create-2-name",
       "type": "alarm",
       "enabled": true,
-      "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-create-2-link-1-label\",\"category\": \"test-link-rule-to-create-2-link-1-category\",\"icon_name\": \"test-link-rule-to-create-2-link-1-icon\",\"url\": \"http://test-link-rule-to-create-2-link-1-url.com\"}] }",
+      "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-create-2-link-1-label\",\"category\": \"test-link-rule-to-create-2-link-1-category\",\"icon_name\": \"test-link-rule-to-create-2-link-1-icon\",\"url\": \"http://test-link-rule-to-create-2-link-1-url.com\",\"action\": \"open\"}] }",
       "alarm_pattern": [
         [
           {
@@ -273,7 +279,7 @@ Feature: Create an link rule
       "name": "test-link-rule-to-create-2-name",
       "type": "alarm",
       "enabled": true,
-      "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-create-2-link-1-label\",\"category\": \"test-link-rule-to-create-2-link-1-category\",\"icon_name\": \"test-link-rule-to-create-2-link-1-icon\",\"url\": \"http://test-link-rule-to-create-2-link-1-url.com\"}] }",
+      "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-create-2-link-1-label\",\"category\": \"test-link-rule-to-create-2-link-1-category\",\"icon_name\": \"test-link-rule-to-create-2-link-1-icon\",\"url\": \"http://test-link-rule-to-create-2-link-1-url.com\",\"action\": \"open\"}] }",
       "alarm_pattern": [
         [
           {
@@ -313,13 +319,15 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-3-link-1-label",
           "category": "test-link-rule-to-create-3-link-1-category",
           "icon_name": "test-link-rule-to-create-3-link-1-icon",
-          "url": "http://test-link-rule-to-create-3-link-1-url.com"
+          "url": "http://test-link-rule-to-create-3-link-1-url.com",
+          "action": "open"
         },
         {
           "label": "test-link-rule-to-create-3-link-2-label",
           "category": "test-link-rule-to-create-3-link-2-category",
           "icon_name": "test-link-rule-to-create-3-link-2-icon",
-          "url": "http://test-link-rule-to-create-3-link-2-url.com"
+          "url": "http://test-link-rule-to-create-3-link-2-url.com",
+          "action": "open"
         }
       ],
       "entity_pattern": [
@@ -351,13 +359,15 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-3-link-1-label",
           "category": "test-link-rule-to-create-3-link-1-category",
           "icon_name": "test-link-rule-to-create-3-link-1-icon",
-          "url": "http://test-link-rule-to-create-3-link-1-url.com"
+          "url": "http://test-link-rule-to-create-3-link-1-url.com",
+          "action": "open"
         },
         {
           "label": "test-link-rule-to-create-3-link-2-label",
           "category": "test-link-rule-to-create-3-link-2-category",
           "icon_name": "test-link-rule-to-create-3-link-2-icon",
-          "url": "http://test-link-rule-to-create-3-link-2-url.com"
+          "url": "http://test-link-rule-to-create-3-link-2-url.com",
+          "action": "open"
         }
       ],
       "entity_pattern": [
@@ -390,13 +400,15 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-3-link-1-label",
           "category": "test-link-rule-to-create-3-link-1-category",
           "icon_name": "test-link-rule-to-create-3-link-1-icon",
-          "url": "http://test-link-rule-to-create-3-link-1-url.com"
+          "url": "http://test-link-rule-to-create-3-link-1-url.com",
+          "action": "open"
         },
         {
           "label": "test-link-rule-to-create-3-link-2-label",
           "category": "test-link-rule-to-create-3-link-2-category",
           "icon_name": "test-link-rule-to-create-3-link-2-icon",
-          "url": "http://test-link-rule-to-create-3-link-2-url.com"
+          "url": "http://test-link-rule-to-create-3-link-2-url.com",
+          "action": "open"
         }
       ],
       "entity_pattern": [
@@ -427,7 +439,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-4-link-1-label",
           "category": "test-link-rule-to-create-4-link-1-category",
           "icon_name": "test-link-rule-to-create-4-link-1-icon",
-          "url": "http://test-link-rule-to-create-4-link-1-url.com"
+          "url": "http://test-link-rule-to-create-4-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -460,7 +473,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-4-link-1-label",
           "category": "test-link-rule-to-create-4-link-1-category",
           "icon_name": "test-link-rule-to-create-4-link-1-icon",
-          "url": "http://test-link-rule-to-create-4-link-1-url.com"
+          "url": "http://test-link-rule-to-create-4-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -504,7 +518,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-5-link-1-label",
           "category": "test-link-rule-to-create-5-link-1-category",
           "icon_name": "test-link-rule-to-create-5-link-1-icon",
-          "url": "http://test-link-rule-to-create-5-link-1-url.com"
+          "url": "http://test-link-rule-to-create-5-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
@@ -537,7 +552,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-5-link-1-label",
           "category": "test-link-rule-to-create-5-link-1-category",
           "icon_name": "test-link-rule-to-create-5-link-1-icon",
-          "url": "http://test-link-rule-to-create-5-link-1-url.com"
+          "url": "http://test-link-rule-to-create-5-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
@@ -581,7 +597,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-6-link-1-label",
           "category": "test-link-rule-to-create-6-link-1-category",
           "icon_name": "test-link-rule-to-create-6-link-1-icon",
-          "url": "http://test-link-rule-to-create-6-link-1-url.com"
+          "url": "http://test-link-rule-to-create-6-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
@@ -604,7 +621,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-6-link-1-label",
           "category": "test-link-rule-to-create-6-link-1-category",
           "icon_name": "test-link-rule-to-create-6-link-1-icon",
-          "url": "http://test-link-rule-to-create-6-link-1-url.com"
+          "url": "http://test-link-rule-to-create-6-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
@@ -650,7 +668,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_alarm_pattern": "test-pattern-not-exist"
@@ -680,7 +699,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_entity_pattern": "test-pattern-not-exist"
@@ -710,7 +730,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -756,7 +777,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -802,7 +824,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -848,7 +871,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -904,7 +928,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -950,7 +975,8 @@ Feature: Create an link rule
           "label": "test-link-rule-to-create-7-link-1-label",
           "category": "test-link-rule-to-create-7-link-1-category",
           "icon_name": "test-link-rule-to-create-7-link-1-icon",
-          "url": "http://test-link-rule-to-create-7-link-1-url.com"
+          "url": "http://test-link-rule-to-create-7-link-1-url.com",
+          "action": "open"
         }
       ],
       "entity_pattern": [
@@ -1004,6 +1030,48 @@ Feature: Create an link rule
         "enabled": "Enabled is missing.",
         "links": "Links or SourceCode is required.",
         "source_code": "SourceCode or Links is required."
+      }
+    }
+    """
+    When I do POST /api/v4/link-rules:
+    """json
+    {
+      "links": []
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "type": "Type is missing.",
+        "enabled": "Enabled is missing.",
+        "links": "Links or SourceCode is required.",
+        "source_code": "SourceCode or Links is required."
+      }
+    }
+    """
+    When I do POST /api/v4/link-rules:
+    """json
+    {
+      "links": [
+        {}
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "type": "Type is missing.",
+        "enabled": "Enabled is missing.",
+        "links.0.url": "Url is missing.",
+        "links.0.label": "Label is missing.",
+        "links.0.icon_name": "IconName is missing.",
+        "links.0.action": "Action is missing."
       }
     }
     """
