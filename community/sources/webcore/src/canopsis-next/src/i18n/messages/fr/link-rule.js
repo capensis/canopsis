@@ -13,4 +13,9 @@ export default {
     [LINK_RULE_TYPES.alarm]: 'Alarme',
     [LINK_RULE_TYPES.entity]: 'Entité',
   },
+  actionType: 'Type d\'action',
+  actionTypes: {
+    goto: 'Aller à l\'URL du lien',
+    copy: 'Copier l\'URL du lien',
+  },
 };

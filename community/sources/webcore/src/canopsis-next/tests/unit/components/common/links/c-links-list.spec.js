@@ -4,6 +4,10 @@ import CLinksList from '@/components/common/links/c-links-list.vue';
 
 const localVue = createVueInstance();
 
+const snapshotStubs = {
+  'c-copy-wrapper': true,
+};
+
 describe('c-links-list', () => {
   const links = {
     FirstCategory: [
@@ -20,6 +24,7 @@ describe('c-links-list', () => {
 
   const snapshotFactory = generateRenderer(CLinksList, {
     localVue,
+    stubs: snapshotStubs,
   });
 
   test('Renders `c-links-list` with default props', () => {
