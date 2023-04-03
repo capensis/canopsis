@@ -112,7 +112,7 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 ![Liste consignes](./img/consignes_creer_06.png)
 
-[templates-payload]: ../../../guide-administration/architecture-interne/templates-golang/#templates-pour-payload
+[templates-payload]: ../../templates-go/
 
 
 ### Assigner une consigne à des alarmes

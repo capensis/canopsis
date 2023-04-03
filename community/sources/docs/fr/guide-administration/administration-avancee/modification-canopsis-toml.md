@@ -169,7 +169,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
 | Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
 | NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
-| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../architecture-interne/templates-golang#formatteddate) |
+| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../../guide-utilisation/template-go/) |
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
 ### Section [Canopsis.metrics]
