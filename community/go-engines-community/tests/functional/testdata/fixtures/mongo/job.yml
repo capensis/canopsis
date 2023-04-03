@@ -269,3 +269,39 @@ job:
     _id: test-job-to-run-manual-simplified-instruction-5
     name: test-job-to-run-manual-simplified-instruction-5-name
     payload: '{"test-job-to-run-manual-simplified-instruction-5-key": "test-job-to-run-manual-simplified-instruction-5-val"}'
+
+  job_to_test_auto_instruction_activate_event_1:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-1
+    name: test-job-to-test-auto-instruction-activate-event-1-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-1-key": "test-job-to-test-auto-instruction-activate-event-1-val"}'
+
+  job_to_test_auto_instruction_activate_event_2:
+    <<: *job_dummy_long_failed
+    _id: test-job-to-test-auto-instruction-activate-event-2
+    name: test-job-to-test-auto-instruction-activate-event-2-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-2-key": "test-job-to-test-auto-instruction-activate-event-2-val"}'
+
+  job_to_test_auto_instruction_activate_event_3:
+    <<: *job_dummy_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-3
+    name: test-job-to-test-auto-instruction-activate-event-3-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-3-key": "test-job-to-test-auto-instruction-activate-event-3-val"}'
+
+  job_to_test_auto_instruction_activate_event_4:
+    <<: *job_dummy_long_failed
+    _id: test-job-to-test-auto-instruction-activate-event-4
+    name: test-job-to-test-auto-instruction-activate-event-4-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-4-key": "test-job-to-test-auto-instruction-activate-event-4-val"}'
+
+  job_to_test_auto_instruction_activate_event_5:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-5
+    name: test-job-to-test-auto-instruction-activate-event-5-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-5-key": "test-job-to-test-auto-instruction-activate-event-5-val"}'
+
+  job_to_test_auto_instruction_activate_event_6:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-6
+    name: test-job-to-test-auto-instruction-activate-event-6-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-6-key": "test-job-to-test-auto-instruction-activate-event-6-val"}'
