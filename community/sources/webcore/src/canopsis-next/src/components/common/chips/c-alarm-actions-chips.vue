@@ -76,6 +76,10 @@ export default {
       type: String,
       required: false,
     },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     sortedItems() {
@@ -110,11 +114,11 @@ export default {
   },
   methods: {
     selectItem(item) {
-      this.$emit('select', item[this.itemValue]);
+      this.$emit('select', this.returnObject ? item : item[this.itemValue]);
     },
 
     closeItem(item) {
-      this.$emit('close', item[this.itemValue]);
+      this.$emit('close', this.returnObject ? item : item[this.itemValue]);
     },
   },
 };
