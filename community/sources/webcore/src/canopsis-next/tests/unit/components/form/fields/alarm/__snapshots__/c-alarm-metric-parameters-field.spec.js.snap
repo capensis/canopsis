@@ -18,7 +18,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           class="v-select__selections"
         >
           <span>
-            26 parameters to display
+            28 parameters to display
           </span>
           <input
             aria-readonly="false"
@@ -1209,7 +1209,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of alarms with manual instructions
+              Minimum time to ack alarms
             </div>
           </div>
         </a>
@@ -1269,7 +1269,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of manually remediated alarms
+              Maximum time to ack alarms
             </div>
           </div>
         </a>
@@ -2726,7 +2726,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of alarms with manual instructions
+              Minimum time to ack alarms
             </div>
           </div>
         </a>
@@ -2785,7 +2785,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             <div
               class="v-list__tile__title"
             >
-              Number of manually remediated alarms
+              Maximum time to ack alarms
             </div>
           </div>
         </a>

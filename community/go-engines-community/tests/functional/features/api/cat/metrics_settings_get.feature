@@ -9,7 +9,7 @@ Feature: Get a metrics settings
     Then the response body should be:
     """json
     {
-      "enabled_manual_instructions": true,
+      "enabled_instructions": true,
       "enabled_not_acked_metrics": true
     }
     """
