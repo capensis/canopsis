@@ -229,6 +229,7 @@ describe('actions-panel', () => {
       parameters: {
         fastAckOutput: {
           enabled: true,
+          value: 'Output',
         },
       },
     };
@@ -271,7 +272,7 @@ describe('actions-panel', () => {
     expect(createEvent).toBeCalledWith(
       expect.any(Object),
       {
-        data: {
+        data: [{
           timestamp: timestamp / 1000,
           component: fastActionAlarm.v.component,
           connector: fastActionAlarm.v.connector,
@@ -285,8 +286,9 @@ describe('actions-panel', () => {
           id: fastActionAlarm._id,
           initiator: EVENT_INITIATORS.user,
           origin: EVENT_DEFAULT_ORIGIN,
+          output: widgetData.parameters.fastAckOutput.value,
           ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
-        },
+        }],
       },
       undefined,
     );
@@ -645,6 +647,7 @@ describe('actions-panel', () => {
       parameters: {
         fastCancelOutput: {
           enabled: true,
+          value: 'Output',
         },
       },
     };
@@ -688,7 +691,7 @@ describe('actions-panel', () => {
     expect(createEvent).toBeCalledWith(
       expect.any(Object),
       {
-        data: {
+        data: [{
           timestamp: timestamp / 1000,
           component: fastActionAlarm.v.component,
           connector: fastActionAlarm.v.connector,
@@ -702,8 +705,9 @@ describe('actions-panel', () => {
           id: fastActionAlarm._id,
           initiator: EVENT_INITIATORS.user,
           origin: EVENT_DEFAULT_ORIGIN,
+          output: widgetData.parameters.fastCancelOutput.value,
           ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
-        },
+        }],
       },
       undefined,
     );
