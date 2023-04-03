@@ -23,8 +23,8 @@
       v-field="form.patterns",
       :alarm-attributes="alarmPatternAttributes",
       :entity-attributes="entityPatternAttributes",
+      :with-alarm="isAlarmType",
       some-required,
-      with-alarm,
       with-entity
     )
     c-collapse-panel.my-3(:title="$t('externalData.title')")
@@ -94,8 +94,8 @@ export default {
 
     externalDataPayloadVariables() {
       return this.isAlarmType
-        ? this.alarmPayloadVariables
-        : this.entityPayloadVariables;
+        ? this.alarmPayloadSubVariables
+        : this.entityPayloadSubVariables;
     },
 
     alarmPatternAttributes() {

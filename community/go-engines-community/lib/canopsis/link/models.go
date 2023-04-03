@@ -10,6 +10,11 @@ const (
 	TypeEntity = "entity"
 )
 
+const (
+	ActionOpen = "open"
+	ActionCopy = "copy"
+)
+
 type Rule struct {
 	ID         string        `bson:"_id"`
 	Name       string        `bson:"name"`
@@ -32,6 +37,7 @@ type Parameters struct {
 	Category string `bson:"category" json:"category" binding:"max=255"`
 	IconName string `bson:"icon_name" json:"icon_name" binding:"required,max=255"`
 	Url      string `bson:"url" json:"url" binding:"required,max=1000"`
+	Action   string `bson:"action" json:"action" binding:"required,oneof=open copy"`
 	// Single to mark links unavailable to multiple selected alarms
 	Single bool `bson:"single,omitempty" json:"single,omitempty"`
 }
@@ -52,6 +58,7 @@ type Link struct {
 	IconName string `json:"icon_name"`
 	Url      string `json:"url"`
 	Single   bool   `json:"single,omitempty"`
+	Action   string `json:"action"`
 }
 
 type LinksByCategory map[string][]Link

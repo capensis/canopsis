@@ -52,6 +52,7 @@ export default {
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   fastAckOutput: 'Fast-ack output',
+  fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
   isCorrelationEnabled: 'Is correlation enabled?',
   duration: 'Duration',

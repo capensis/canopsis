@@ -51,7 +51,7 @@ configuration:
     metrics:
       flushinterval: 1s
       sliinterval: 1h
-      enabledmanualinstructions: true
+      enabledinstructions: true
       enablednotackedmetrics: true
     tech_metrics:
       enabled: false

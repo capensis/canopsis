@@ -94,9 +94,15 @@ export default {
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
+          icon: '$vuetify.icons.list_delete',
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
+        },
+        {
+          type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+          icon: 'delete',
+          title: this.$t('alarm.actions.titles.fastCancel'),
+          method: this.createFastCancelEvent,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.comment,
@@ -290,13 +296,13 @@ export default {
     },
 
     async createMassFastAckEvent() {
-      let eventData = {};
+      await this.createFastAckActionByAlarms(this.items);
 
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
+      return this.afterSubmit();
+    },
 
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+    async createFastCancelEvent() {
+      await this.createFastCancelActionByAlarms(this.items);
 
       return this.afterSubmit();
     },

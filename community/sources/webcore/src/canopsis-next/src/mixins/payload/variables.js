@@ -114,6 +114,10 @@ export const payloadVariablesMixin = {
     additionalDataVariables() {
       return [
         {
+          value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.ruleName,
+          text: this.$t('declareTicket.ruleName'),
+        },
+        {
           value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.author,
           text: this.$t('common.username'),
         },
@@ -136,10 +140,10 @@ export const payloadVariablesMixin = {
       ];
     },
 
-    entityPayloadVariables() {
+    entityPayloadSubVariables() {
       return [
         {
-          value: `${ENTITY_PAYLOADS_VARIABLES.entity}${ENTITY_PAYLOADS_VARIABLES.name}`,
+          value: ENTITY_PAYLOADS_VARIABLES.name,
           text: this.$t('common.name'),
         },
         {
@@ -178,6 +182,11 @@ export const payloadVariablesMixin = {
       if (this.hasPrevious) {
         variables.push(...this.payloadVariablesFromPreviousStep);
       }
+
+      variables.unshift({
+        value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.ruleName,
+        text: this.$t('declareTicket.ruleName'),
+      });
 
       return variables;
     },

@@ -39,7 +39,16 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult, error) {
+	match := bson.M{}
+	if !query.WithHidden {
+		match["hidden"] = bson.M{"$in": bson.A{false, nil}}
+	}
+
 	pipeline := make([]bson.M, 0)
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": match})
+	}
+
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -202,6 +211,7 @@ func transformModelToDoc(reason *Reason) *pbehavior.Reason {
 	return &pbehavior.Reason{
 		Name:        reason.Name,
 		Description: reason.Description,
+		Hidden:      reason.Hidden,
 	}
 }
 
