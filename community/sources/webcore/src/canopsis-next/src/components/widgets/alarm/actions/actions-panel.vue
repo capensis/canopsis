@@ -373,25 +373,13 @@ export default {
     },
 
     async createFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput?.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
+      await this.createFastAckActionByAlarms([this.item]);
 
       return this.refreshAlarmsList();
     },
 
     async createFastCancelEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastCancelOutput?.enabled) {
-        eventData = { output: this.widget.parameters.fastCancelOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.cancel, this.item, eventData);
+      await this.createFastCancelActionByAlarms([this.item]);
 
       return this.refreshAlarmsList();
     },

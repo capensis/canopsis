@@ -296,25 +296,13 @@ export default {
     },
 
     async createMassFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput?.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+      await this.createFastAckActionByAlarms(this.items);
 
       return this.afterSubmit();
     },
 
     async createFastCancelEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastCancelOutput?.enabled) {
-        eventData = { output: this.widget.parameters.fastCancelOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.cancel, this.items, eventData);
+      await this.createFastCancelActionByAlarms(this.items);
 
       return this.afterSubmit();
     },

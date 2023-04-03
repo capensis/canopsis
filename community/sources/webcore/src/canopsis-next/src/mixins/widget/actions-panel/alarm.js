@@ -244,6 +244,26 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
+    createFastAckActionByAlarms(alarms) {
+      let eventData = {};
+
+      if (this.widget.parameters.fastAckOutput?.enabled) {
+        eventData = { output: this.widget.parameters.fastAckOutput.value };
+      }
+
+      return this.createEvent(EVENT_ENTITY_TYPES.ack, alarms, eventData);
+    },
+
+    createFastCancelActionByAlarms(alarms) {
+      let eventData = {};
+
+      if (this.widget.parameters.fastCancelOutput?.enabled) {
+        eventData = { output: this.widget.parameters.fastCancelOutput.value };
+      }
+
+      return this.createEvent(EVENT_ENTITY_TYPES.cancel, alarms, eventData);
+    },
+
     actionsAccessFilterHandler({ type }) {
       const permission = BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[type];
 
