@@ -122,9 +122,15 @@ export default {
         },
         cancel: {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
+          icon: '$vuetify.icons.list_delete',
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
+        },
+        fastCancel: {
+          type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+          icon: 'delete',
+          title: this.$t('alarm.actions.titles.fastCancel'),
+          method: this.createFastCancelEvent,
         },
         changeState: {
           type: ALARM_LIST_ACTIONS_TYPES.changeState,
@@ -247,6 +253,7 @@ export default {
 
           actions.unshift(
             filteredActionsMap.cancel,
+            filteredActionsMap.fastCancel,
             filteredActionsMap.ackRemove,
             filteredActionsMap.changeState,
           );
@@ -363,6 +370,18 @@ export default {
           parentAlarm: this.parentAlarm,
         },
       });
+    },
+
+    async createFastAckEvent() {
+      await this.createFastAckActionByAlarms([this.item]);
+
+      return this.refreshAlarmsList();
+    },
+
+    async createFastCancelEvent() {
+      await this.createFastCancelActionByAlarms([this.item]);
+
+      return this.refreshAlarmsList();
     },
   },
 };
