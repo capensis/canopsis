@@ -30,6 +30,7 @@ import {
 } from '@/constants';
 
 import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/links';
+import { writeTextToClipboard } from '@/helpers/clipboard';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -79,7 +80,7 @@ export default {
     async select(link) {
       if (link.action === LINK_RULE_ACTIONS.copy) {
         try {
-          await navigator.clipboard.writeText(link.url);
+          await writeTextToClipboard(link.url);
 
           this.$popups.success({ text: this.$t('testSuite.popups.systemMessageCopied') });
         } catch (err) {
