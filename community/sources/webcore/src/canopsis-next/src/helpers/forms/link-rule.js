@@ -6,6 +6,7 @@ import {
   PATTERNS_FIELDS,
   LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
   LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE,
+  LINK_RULE_ACTIONS,
 } from '@/constants';
 
 import uid from '../uid';
@@ -26,6 +27,7 @@ import { enabledToForm } from './shared/common';
  * @property {boolean} [single]
  * @property {string} [rule_id]
  * @property {string} [category]
+ * @property {string} [action]
  */
 
 /**
@@ -67,6 +69,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
   url: link.url ?? '',
   single: link.single ?? false,
   category: link.category ?? '',
+  action: link.action ?? LINK_RULE_ACTIONS.goto,
 });
 
 /**

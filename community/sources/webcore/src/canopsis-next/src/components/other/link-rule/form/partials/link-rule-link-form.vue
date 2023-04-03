@@ -35,6 +35,20 @@
           :name="form.key",
           required
         )
+        v-radio-group(
+          v-field="form.action",
+          :label="$t('linkRule.actionType')"
+        )
+          v-radio(
+            :value="$constants.LINK_RULE_ACTIONS.goto",
+            :label="$t('linkRule.actionTypes.goto')",
+            color="primary"
+          )
+          v-radio(
+            :value="$constants.LINK_RULE_ACTIONS.copy",
+            :label="$t('linkRule.actionTypes.copy')",
+            color="primary"
+          )
 </template>
 
 <script>

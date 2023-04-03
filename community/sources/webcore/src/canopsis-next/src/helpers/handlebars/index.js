@@ -76,3 +76,4 @@ registerHelper('capitalize-all', helpers.capitalizeAllHelper);
 registerHelper('lowercase', helpers.lowercaseHelper);
 registerHelper('uppercase', helpers.uppercaseHelper);
 registerHelper('replace', helpers.replaceHelper);
+registerHelper('copy', helpers.copyHelper);
