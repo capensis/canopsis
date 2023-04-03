@@ -4,6 +4,7 @@
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
         v-if="totalItems && (densable || !hideActions || !hidePagination)",
+        ref="actions",
         row,
         align-center
       )
@@ -322,6 +323,7 @@ export default {
   },
 
   created() {
+    this.actionsTranslateY = 0;
     this.translateY = 0;
     this.previousTranslateY = 0;
   },
@@ -370,6 +372,10 @@ export default {
     startScrolling() {
       if (this.translateY !== this.previousTranslateY) {
         this.tableHeader.style.opacity = '0';
+
+        if (this.$refs.actions) {
+          this.$refs.actions.style.opacity = '0';
+        }
       }
 
       this.scrooling = true;
@@ -378,6 +384,10 @@ export default {
     finishScrolling() {
       if (!Number(this.tableHeader.style.opacity)) {
         this.tableHeader.style.opacity = '1.0';
+
+        if (this.$refs.actions) {
+          this.$refs.actions.style.opacity = '1.0';
+        }
       }
 
       this.scrooling = false;
@@ -391,16 +401,23 @@ export default {
 
     setHeaderPosition() {
       this.tableHeader.style.transform = `translateY(${this.translateY}px)`;
+
+      if (this.$refs.actions) {
+        this.$refs.actions.style.transform = `translateY(${this.actionsTranslateY}px)`;
+      }
     },
 
     calculateHeaderOffsetPosition() {
-      const { top } = this.tableHeader.getBoundingClientRect();
+      const { top: headerTop } = this.tableHeader.getBoundingClientRect();
       const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
+      const { top: actionsTop = 0, height: actionsHeight = 0 } = this.$refs.actions?.getBoundingClientRect() ?? {};
 
-      const offset = top - this.translateY - TOP_BAR_HEIGHT;
+      const offset = headerTop - this.translateY - TOP_BAR_HEIGHT - actionsHeight;
+      const actionsOffset = actionsTop - this.actionsTranslateY - TOP_BAR_HEIGHT;
 
-      this.previousTranslateY = this.translateY;
+      this.previousTranslateY = this.actionsTranslateY;
       this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
+      this.actionsTranslateY = Math.min(bodyHeight, Math.max(0, -actionsOffset));
     },
 
     addShadowToHeader() {
@@ -417,7 +434,7 @@ export default {
       this.calculateHeaderOffsetPosition();
       this.setHeaderPosition();
 
-      if (!this.translateY) {
+      if (!this.actionsTranslateY || !this.translateY) {
         this.removeShadowFromHeader();
         this.finishScrolling();
 
@@ -434,6 +451,7 @@ export default {
 
     resetHeaderPosition() {
       this.translateY = 0;
+      this.actionsTranslateY = 0;
       this.previousTranslateY = 0;
 
       this.setHeaderPosition();
@@ -463,6 +481,9 @@ export default {
     &__top-pagination {
       position: relative;
       min-height: 48px;
+      background: var(--v-background-base);
+      z-index: 2;
+      transition: opacity 0.16s;
 
       &--left {
         padding-right: 80px;
@@ -504,7 +525,7 @@ export default {
     thead {
       position: relative;
       transition: opacity 0.16s;
-      z-index: 2;
+      z-index: 1;
 
       &.head-shadow {
         tr:first-child {
