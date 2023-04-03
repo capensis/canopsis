@@ -556,6 +556,8 @@ func (e *redisBasedManager) startExecution(
 		)
 	}
 
+	data.RuleName = scenario.Name
+
 	execution := ScenarioExecution{
 		ID:               utils.NewID(),
 		ScenarioID:       scenario.ID,
