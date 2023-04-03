@@ -77,9 +77,9 @@ Feature: Get a pbehavior type
 
   Scenario: given get default request should return default types
     When I am admin
-    When I do GET /api/v4/pbehavior-types?default=true&with_flags=true
+    When I do GET /api/v4/pbehavior-types?default=true&with_flags=true&with_hidden=true
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "meta": {
@@ -139,7 +139,7 @@ Feature: Get a pbehavior type
 
   Scenario: given get by types request should return types
     When I am admin
-    When I do GET /api/v4/pbehavior-types?types[]=maintenance&types[]=pause&types[]=inactive&default=true
+    When I do GET /api/v4/pbehavior-types?types[]=maintenance&types[]=pause&types[]=inactive&default=true&with_hidden=true
     Then the response code should be 200
     Then the response body should contain:
     """json
