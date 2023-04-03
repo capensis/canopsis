@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
@@ -38,8 +38,6 @@ import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'widget-settings': true,
   'widget-settings-item': true,
@@ -57,7 +55,7 @@ const stubs = {
   'field-text-editor-with-template': createInputStub('field-text-editor-with-template'),
   'field-grid-range-size': createInputStub('field-grid-range-size'),
   'field-switcher': createInputStub('field-switcher'),
-  'field-fast-ack-output': createInputStub('field-fast-ack-output'),
+  'field-fast-action-output': createInputStub('field-fast-action-output'),
   'field-number': createInputStub('field-number'),
   'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
@@ -81,35 +79,11 @@ const snapshotStubs = {
   'field-text-editor-with-template': true,
   'field-grid-range-size': true,
   'field-switcher': true,
-  'field-fast-ack-output': true,
+  'field-fast-action-output': true,
   'field-number': true,
   'field-density': true,
   'export-csv-form': true,
 };
-
-const factory = (options = {}) => shallowMount(AlarmSettings, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmSettings, {
-  localVue,
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
@@ -129,13 +103,30 @@ const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-s
 const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
 const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(2);
 const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
-const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-output');
+const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
+const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
 const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
 
 describe('alarm', () => {
+  const parentComponent = {
+    provide: {
+      $clickOutside: new ClickOutside(),
+    },
+  };
+
+  const factory = generateShallowRenderer(AlarmSettings, {
+    stubs,
+    parentComponent,
+  });
+
+  const snapshotFactory = generateRenderer(AlarmSettings, {
+    stubs: snapshotStubs,
+    parentComponent,
+  });
+
   const nowTimestamp = 1386435600000;
 
   mockDateNow(nowTimestamp);
@@ -938,14 +929,14 @@ describe('alarm', () => {
       },
     });
 
-    const fieldAckNoteRequired = selectFieldFastAckOutput(wrapper);
+    const fieldFastAckOutput = selectFieldFastAckOutput(wrapper);
 
     const fastAckOutput = {
       enabled: true,
       output: Faker.datatype.string(),
     };
 
-    fieldAckNoteRequired.vm.$emit('input', fastAckOutput);
+    fieldFastAckOutput.vm.$emit('input', fastAckOutput);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -954,6 +945,37 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'fastAckOutput', fastAckOutput),
+      },
+    });
+  });
+
+  it('Fast cancel output changed after trigger fast cancel output field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldFastCancelOutput = selectFieldFastCancelOutput(wrapper);
+
+    const fastAckOutput = {
+      enabled: true,
+      output: Faker.datatype.string(),
+    };
+
+    fieldFastCancelOutput.vm.$emit('input', fastAckOutput);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'fastCancelOutput', fastAckOutput),
       },
     });
   });

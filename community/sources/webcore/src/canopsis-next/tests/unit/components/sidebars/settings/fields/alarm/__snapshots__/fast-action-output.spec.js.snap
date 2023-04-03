@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`fast-ack-output Renders \`fast-ack-output\` with custom props 1`] = `
+exports[`fast-action-output Renders \`fast-action-output\` with custom props 1`] = `
 <div
   class="v-list__group"
 >
@@ -13,7 +13,7 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with custom props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        Fast-ack output
+        Label
         <div
           class="font-italic caption ml-1"
         >
@@ -90,7 +90,7 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with custom props 1`] = `
 </div>
 `;
 
-exports[`fast-ack-output Renders \`fast-ack-output\` with default props 1`] = `
+exports[`fast-action-output Renders \`fast-action-output\` with default props 1`] = `
 <div
   class="v-list__group"
 >
@@ -103,7 +103,7 @@ exports[`fast-ack-output Renders \`fast-ack-output\` with default props 1`] = `
       <div
         class="v-list__tile theme--light"
       >
-        Fast-ack output
+        
         <div
           class="font-italic caption ml-1"
         >

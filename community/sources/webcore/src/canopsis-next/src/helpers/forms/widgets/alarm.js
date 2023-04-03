@@ -30,7 +30,7 @@ import { openedToForm } from './common';
  */
 
 /**
- * @typedef {Object} WidgetFastAckOutput
+ * @typedef {Object} WidgetFastActionOutput
  * @property {boolean} enabled
  * @property {string} value
  */
@@ -66,7 +66,8 @@ import { openedToForm } from './common';
 
 /**
  * @typedef {Object} AlarmListWidgetDefaultParameters
- * @property {WidgetFastAckOutput} fastAckOutput
+ * @property {WidgetFastActionOutput} fastAckOutput
+ * @property {WidgetFastActionOutput} fastCancelOutput
  * @property {number} inlineLinksCount
  * @property {number} itemsPerPage
  * @property {WidgetInfoPopup[]} infoPopups
@@ -199,6 +200,12 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
     : {
       enabled: false,
       value: 'auto ack',
+    },
+  fastCancelOutput: parameters.fastCancelOutput
+    ? { ...parameters.fastCancelOutput }
+    : {
+      enabled: false,
+      value: 'auto cancel',
     },
   widgetColumnsTemplate: widgetTemplateValueToForm(parameters.widgetColumnsTemplate),
   widgetGroupColumnsTemplate: widgetTemplateValueToForm(parameters.widgetGroupColumnsTemplate),
