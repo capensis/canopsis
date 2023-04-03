@@ -97,6 +97,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
   cancel: 'cancel',
+  fastCancel: 'fastCancel',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',

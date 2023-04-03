@@ -232,7 +232,7 @@ describe('actions-panel', () => {
         },
       },
     };
-    const fastAckAlarm = {
+    const fastActionAlarm = {
       ...alarm,
       entity: {
         type: 'entity-type',
@@ -258,7 +258,7 @@ describe('actions-panel', () => {
         eventModule,
       ]),
       propsData: {
-        item: fastAckAlarm,
+        item: fastActionAlarm,
         widget: widgetData,
         parentAlarm,
       },
@@ -273,19 +273,19 @@ describe('actions-panel', () => {
       {
         data: {
           timestamp: timestamp / 1000,
-          component: fastAckAlarm.v.component,
-          connector: fastAckAlarm.v.connector,
-          connector_name: fastAckAlarm.v.connector_name,
-          resource: fastAckAlarm.v.resource,
-          state: fastAckAlarm.v.state.val,
-          state_type: fastAckAlarm.v.status.val,
-          source_type: fastAckAlarm.entity.type,
+          component: fastActionAlarm.v.component,
+          connector: fastActionAlarm.v.connector,
+          connector_name: fastActionAlarm.v.connector_name,
+          resource: fastActionAlarm.v.resource,
+          state: fastActionAlarm.v.state.val,
+          state_type: fastActionAlarm.v.status.val,
+          source_type: fastActionAlarm.entity.type,
           crecord_type: 'ack',
           event_type: 'ack',
-          id: fastAckAlarm._id,
+          id: fastActionAlarm._id,
           initiator: EVENT_INITIATORS.user,
           origin: EVENT_DEFAULT_ORIGIN,
-          ref_rk: `${fastAckAlarm.v.resource}/${fastAckAlarm.v.component}`,
+          ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
         },
       },
       undefined,
@@ -637,6 +637,76 @@ describe('actions-panel', () => {
     config.afterSubmit();
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Fast cancel event sent after trigger fast cancel action', () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {
+        fastCancelOutput: {
+          enabled: true,
+        },
+      },
+    };
+    const fastActionAlarm = {
+      ...alarm,
+      entity: {
+        type: 'entity-type',
+      },
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        status: {
+          val: ENTITIES_STATUSES.ongoing,
+        },
+        state: {
+          val: 'state-val',
+        },
+        ack: {},
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        eventModule,
+      ]),
+      propsData: {
+        item: fastActionAlarm,
+        widget: widgetData,
+        parentAlarm,
+      },
+    });
+
+    const fastCancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel);
+
+    fastCancelAction.trigger('click');
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          timestamp: timestamp / 1000,
+          component: fastActionAlarm.v.component,
+          connector: fastActionAlarm.v.connector,
+          connector_name: fastActionAlarm.v.connector_name,
+          resource: fastActionAlarm.v.resource,
+          state: fastActionAlarm.v.state.val,
+          state_type: fastActionAlarm.v.status.val,
+          source_type: fastActionAlarm.entity.type,
+          crecord_type: 'cancel',
+          event_type: 'cancel',
+          id: fastActionAlarm._id,
+          initiator: EVENT_INITIATORS.user,
+          origin: EVENT_DEFAULT_ORIGIN,
+          ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
+        },
+      },
+      undefined,
+    );
   });
 
   it('Variables modal showed after trigger variables help action', () => {
