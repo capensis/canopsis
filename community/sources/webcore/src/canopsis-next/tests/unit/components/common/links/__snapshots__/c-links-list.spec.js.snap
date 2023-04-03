@@ -140,9 +140,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
         <c-copy-wrapper-stub
           value="FirstCategoryLink1"
         >
-          <div>
-            FirstCategoryLinkLabel1
-          </div>
+          FirstCategoryLinkLabel1
         </c-copy-wrapper-stub>
       </div>
     </div>
@@ -153,9 +151,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
         <c-copy-wrapper-stub
           value="FirstCategoryLink2"
         >
-          <div>
-            FirstCategoryLinkLabel2
-          </div>
+          FirstCategoryLinkLabel2
         </c-copy-wrapper-stub>
       </div>
     </div>
