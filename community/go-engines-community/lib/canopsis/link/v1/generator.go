@@ -225,8 +225,9 @@ func (g *generator) transformLinks(responseLinks []fetchLinksResponseLink) []lib
 	links := make([]liblink.Link, len(responseLinks))
 	for i, l := range responseLinks {
 		links[i] = liblink.Link{
-			Label: l.Label,
-			Url:   l.Link,
+			Label:  l.Label,
+			Url:    l.Link,
+			Action: liblink.ActionOpen,
 		}
 	}
 	return links
