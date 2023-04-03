@@ -38,18 +38,6 @@ export const widgetActionsPanelAlarmMixin = {
       fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
     }),
 
-    async createFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
-
-      return this.refreshAlarmsList();
-    },
-
     showActionModal(name) {
       return () => this.$modals.show({
         name,

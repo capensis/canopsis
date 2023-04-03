@@ -1,11 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createInputStub } from '@unit/stubs/input';
-import FastAckOutput from '@/components/sidebars/settings/fields/alarm/fast-ack-output.vue';
 
-const localVue = createVueInstance();
+import FastActionOutput from '@/components/sidebars/settings/fields/alarm/fast-action-output.vue';
 
 const stubs = {
   'c-enabled-field': true,
@@ -16,44 +15,23 @@ const snapshotStubs = {
   'c-enabled-field': true,
 };
 
-const factory = (options = {}) => shallowMount(FastAckOutput, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
+const parentComponent = {
+  provide: {
+    list: {
+      register: jest.fn(),
+      unregister: jest.fn(),
     },
+    listClick: jest.fn(),
   },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FastAckOutput, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
-  ...options,
-});
+};
 
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
-describe('fast-ack-output', () => {
+describe('fast-action-output', () => {
+  const factory = generateShallowRenderer(FastActionOutput, { stubs, parentComponent });
+  const snapshotFactory = generateRenderer(FastActionOutput, { stubs: snapshotStubs, parentComponent });
+
   it('Enabled changed after trigger the enabled field', () => {
     const value = {
       enabled: true,
@@ -108,19 +86,20 @@ describe('fast-ack-output', () => {
     });
   });
 
-  it('Renders `fast-ack-output` with default props', () => {
+  it('Renders `fast-action-output` with default props', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `fast-ack-output` with custom props', () => {
+  it('Renders `fast-action-output` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
           enabled: true,
           value: 'Value',
         },
+        label: 'Label',
       },
     });
 
