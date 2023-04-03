@@ -5,8 +5,7 @@
       v-divider(light)
       div(v-for="(link, index) in categoryLinks", :key="index")
         div.pa-2.text-xs-right
-          c-copy-wrapper(v-if="link.action === $constants.LINK_RULE_ACTIONS.copy", :value="link.url")
-            div {{ link.label }}
+          c-copy-wrapper(v-if="link.action === $constants.LINK_RULE_ACTIONS.copy", :value="link.url") {{ link.label }}
           a(v-else, :href="link.url", target="_blank") {{ link.label }}
 </template>
 
