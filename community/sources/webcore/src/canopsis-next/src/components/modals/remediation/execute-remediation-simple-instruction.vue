@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(:close="close", minimize)
+  modal-wrapper(:close="closeModal", minimize)
     template(#title="")
       span {{ config.assignedInstruction.name }}
     template(#text="")
@@ -16,7 +16,7 @@
       v-btn(
         depressed,
         flat,
-        @click="$modals.hide"
+        @click="closeModal"
       ) {{ $t('common.close') }}
 </template>
 
@@ -136,7 +136,7 @@ export default {
      */
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
-        this.$modals.hide();
+        this.closeModal();
         this.$popups.error({
           text: this.$t('remediationInstructionExecute.popups.connectionError'),
           autoClose: false,
@@ -148,7 +148,7 @@ export default {
      * Socket closeRoom event handler
      */
     socketCloseRoomHandler() {
-      this.$modals.hide();
+      this.closeModal();
       this.$popups.error({
         text: this.$t('remediationInstructionExecute.popups.wasAborted', {
           instructionName: this.instructionExecution?.name,
@@ -182,7 +182,7 @@ export default {
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
-        this.$modals.hide();
+        this.closeModal();
       }
     },
 
@@ -208,11 +208,11 @@ export default {
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
-        this.$modals.hide();
+        this.closeModal();
       }
     },
 
-    close() {
+    closeModal() {
       if (this.config.onClose) {
         this.config.onClose();
       }
