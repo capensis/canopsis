@@ -4,6 +4,7 @@
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
         v-if="totalItems && (densable || !hideActions || !hidePagination)",
+        ref="actions",
         row,
         align-center
       )
@@ -116,10 +117,10 @@ import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 /**
-   * Alarm-list-table component
-   *
-   * @module alarm
-   */
+ * Alarm-list-table component
+ *
+ * @module alarm
+ */
 export default {
   components: {
     MassActionsPanel,
@@ -322,6 +323,7 @@ export default {
   },
 
   created() {
+    this.actionsTranslateY = 0;
     this.translateY = 0;
     this.previousTranslateY = 0;
   },
@@ -370,6 +372,10 @@ export default {
     startScrolling() {
       if (this.translateY !== this.previousTranslateY) {
         this.tableHeader.style.opacity = '0';
+
+        if (this.$refs.actions) {
+          this.$refs.actions.style.opacity = '0';
+        }
       }
 
       this.scrooling = true;
@@ -378,6 +384,10 @@ export default {
     finishScrolling() {
       if (!Number(this.tableHeader.style.opacity)) {
         this.tableHeader.style.opacity = '1.0';
+
+        if (this.$refs.actions) {
+          this.$refs.actions.style.opacity = '1.0';
+        }
       }
 
       this.scrooling = false;
@@ -391,16 +401,23 @@ export default {
 
     setHeaderPosition() {
       this.tableHeader.style.transform = `translateY(${this.translateY}px)`;
+
+      if (this.$refs.actions) {
+        this.$refs.actions.style.transform = `translateY(${this.actionsTranslateY}px)`;
+      }
     },
 
     calculateHeaderOffsetPosition() {
-      const { top } = this.tableHeader.getBoundingClientRect();
+      const { top: headerTop } = this.tableHeader.getBoundingClientRect();
       const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
+      const { top: actionsTop = 0, height: actionsHeight = 0 } = this.$refs.actions?.getBoundingClientRect() ?? {};
 
-      const offset = top - this.translateY - TOP_BAR_HEIGHT;
+      const offset = headerTop - this.translateY - TOP_BAR_HEIGHT - actionsHeight;
+      const actionsOffset = actionsTop - this.actionsTranslateY - TOP_BAR_HEIGHT;
 
-      this.previousTranslateY = this.translateY;
+      this.previousTranslateY = this.actionsTranslateY;
       this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
+      this.actionsTranslateY = Math.min(bodyHeight, Math.max(0, -actionsOffset));
     },
 
     addShadowToHeader() {
@@ -417,7 +434,7 @@ export default {
       this.calculateHeaderOffsetPosition();
       this.setHeaderPosition();
 
-      if (!this.translateY) {
+      if (!this.actionsTranslateY || !this.translateY) {
         this.removeShadowFromHeader();
         this.finishScrolling();
 
@@ -434,6 +451,7 @@ export default {
 
     resetHeaderPosition() {
       this.translateY = 0;
+      this.actionsTranslateY = 0;
       this.previousTranslateY = 0;
 
       this.setHeaderPosition();
@@ -459,121 +477,141 @@ export default {
 </script>
 
 <style lang="scss">
-  .alarms-list-table {
-    &__top-pagination {
-      position: relative;
-      min-height: 48px;
+.alarms-list-table {
+  &__top-pagination {
+    position: relative;
+    min-height: 48px;
+    background: var(--v-background-base);
+    z-index: 2;
+    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition-property: opacity, background-color;
 
-      &--left {
-        padding-right: 80px;
-      }
+    .theme--dark & {
+      background: #424242;
+    }
 
-      &--center-absolute {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, 0);
+    &:after {
+      content: ' ';
+      width: 100%;
+      height: 2px;
+      background: inherit;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+    }
+
+    &--left {
+      padding-right: 80px;
+    }
+
+    &--center-absolute {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .alarm-list-row {
+    position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(200, 220, 200, .3);
+      transition: opacity linear .3s;
+    }
+  }
+
+  &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  tbody {
+    position: relative;
+  }
+
+  thead {
+    position: relative;
+    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition-property: opacity, background-color;
+    z-index: 1;
+
+    &.head-shadow {
+      tr:first-child {
+        border-bottom: none !important;
+        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
       }
     }
 
-    .alarm-list-row {
-      position: relative;
+    tr {
+      background: white;
+      transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
-      &:after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        pointer-events: none;
-        background: rgba(200, 220, 200, .3);
-        transition: opacity linear .3s;
-      }
-    }
-
-    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
-      pointer-events: auto;
-      opacity: 1;
-    }
-
-    tbody {
-      position: relative;
-    }
-
-    thead {
-      position: relative;
-      transition: opacity 0.16s;
-      z-index: 2;
-
-      &.head-shadow {
-        tr:first-child {
-          border-bottom: none !important;
-          box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
-        }
+      .theme--dark & {
+        background: #424242;
       }
 
-      tr {
-        background: white;
-        transition: background-color .3s cubic-bezier(.25,.8,.5,1);
-
-        .theme--dark & {
-          background: #424242;
-        }
-
-        th {
-          transition: none;
-        }
-      }
-    }
-
-    &.columns-lg .v-table {
-      &:not(.v-datatable--dense) {
-        td, th {
-          padding: 0 8px;
-        }
-      }
-
-      @media screen and (max-width: 1600px) {
-        td, th {
-          padding: 0 4px;
-        }
-      }
-
-      @media screen and (max-width: 1450px) {
-        td, th {
-          font-size: 0.85em;
-        }
-
-        .badge {
-          font-size: inherit;
-        }
-      }
-    }
-
-    &.columns-md .v-table {
-      @media screen and (max-width: 1700px) {
-        td, th {
-          padding: 0 12px;
-        }
-      }
-
-      @media screen and (max-width: 1250px) {
-        td, th {
-          padding: 0 8px;
-        }
-      }
-
-      @media screen and (max-width: 1150px) {
-        td, th {
-          font-size: 0.85em;
-          padding: 0 4px;
-        }
-
-        .badge {
-          font-size: inherit;
-        }
+      th {
+        transition: none;
       }
     }
   }
+
+  &.columns-lg .v-table {
+    &:not(.v-datatable--dense) {
+      td, th {
+        padding: 0 8px;
+      }
+    }
+
+    @media screen and (max-width: 1600px) {
+      td, th {
+        padding: 0 4px;
+      }
+    }
+
+    @media screen and (max-width: 1450px) {
+      td, th {
+        font-size: 0.85em;
+      }
+
+      .badge {
+        font-size: inherit;
+      }
+    }
+  }
+
+  &.columns-md .v-table {
+    @media screen and (max-width: 1700px) {
+      td, th {
+        padding: 0 12px;
+      }
+    }
+
+    @media screen and (max-width: 1250px) {
+      td, th {
+        padding: 0 8px;
+      }
+    }
+
+    @media screen and (max-width: 1150px) {
+      td, th {
+        font-size: 0.85em;
+        padding: 0 4px;
+      }
+
+      .badge {
+        font-size: inherit;
+      }
+    }
+  }
+}
 </style>
