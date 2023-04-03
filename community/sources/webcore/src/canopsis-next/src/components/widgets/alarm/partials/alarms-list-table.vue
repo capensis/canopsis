@@ -117,10 +117,10 @@ import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsListRow from './alarms-list-row.vue';
 
 /**
-   * Alarm-list-table component
-   *
-   * @module alarm
-   */
+ * Alarm-list-table component
+ *
+ * @module alarm
+ */
 export default {
   components: {
     MassActionsPanel,
@@ -477,124 +477,141 @@ export default {
 </script>
 
 <style lang="scss">
-  .alarms-list-table {
-    &__top-pagination {
-      position: relative;
-      min-height: 48px;
-      background: var(--v-background-base);
-      z-index: 2;
-      transition: opacity 0.16s;
+.alarms-list-table {
+  &__top-pagination {
+    position: relative;
+    min-height: 48px;
+    background: var(--v-background-base);
+    z-index: 2;
+    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition-property: opacity, background-color;
 
-      &--left {
-        padding-right: 80px;
-      }
+    .theme--dark & {
+      background: #424242;
+    }
 
-      &--center-absolute {
-        position: absolute;
-        left: 50%;
-        transform: translate(-50%, 0);
+    &:after {
+      content: ' ';
+      width: 100%;
+      height: 2px;
+      background: inherit;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+    }
+
+    &--left {
+      padding-right: 80px;
+    }
+
+    &--center-absolute {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .alarm-list-row {
+    position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(200, 220, 200, .3);
+      transition: opacity linear .3s;
+    }
+  }
+
+  &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  tbody {
+    position: relative;
+  }
+
+  thead {
+    position: relative;
+    transition: .3s cubic-bezier(.25, .8, .5,1);
+    transition-property: opacity, background-color;
+    z-index: 1;
+
+    &.head-shadow {
+      tr:first-child {
+        border-bottom: none !important;
+        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
       }
     }
 
-    .alarm-list-row {
-      position: relative;
+    tr {
+      background: white;
+      transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
-      &:after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        pointer-events: none;
-        background: rgba(200, 220, 200, .3);
-        transition: opacity linear .3s;
-      }
-    }
-
-    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
-      pointer-events: auto;
-      opacity: 1;
-    }
-
-    tbody {
-      position: relative;
-    }
-
-    thead {
-      position: relative;
-      transition: opacity 0.16s;
-      z-index: 1;
-
-      &.head-shadow {
-        tr:first-child {
-          border-bottom: none !important;
-          box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
-        }
+      .theme--dark & {
+        background: #424242;
       }
 
-      tr {
-        background: white;
-        transition: background-color .3s cubic-bezier(.25,.8,.5,1);
-
-        .theme--dark & {
-          background: #424242;
-        }
-
-        th {
-          transition: none;
-        }
-      }
-    }
-
-    &.columns-lg .v-table {
-      &:not(.v-datatable--dense) {
-        td, th {
-          padding: 0 8px;
-        }
-      }
-
-      @media screen and (max-width: 1600px) {
-        td, th {
-          padding: 0 4px;
-        }
-      }
-
-      @media screen and (max-width: 1450px) {
-        td, th {
-          font-size: 0.85em;
-        }
-
-        .badge {
-          font-size: inherit;
-        }
-      }
-    }
-
-    &.columns-md .v-table {
-      @media screen and (max-width: 1700px) {
-        td, th {
-          padding: 0 12px;
-        }
-      }
-
-      @media screen and (max-width: 1250px) {
-        td, th {
-          padding: 0 8px;
-        }
-      }
-
-      @media screen and (max-width: 1150px) {
-        td, th {
-          font-size: 0.85em;
-          padding: 0 4px;
-        }
-
-        .badge {
-          font-size: inherit;
-        }
+      th {
+        transition: none;
       }
     }
   }
+
+  &.columns-lg .v-table {
+    &:not(.v-datatable--dense) {
+      td, th {
+        padding: 0 8px;
+      }
+    }
+
+    @media screen and (max-width: 1600px) {
+      td, th {
+        padding: 0 4px;
+      }
+    }
+
+    @media screen and (max-width: 1450px) {
+      td, th {
+        font-size: 0.85em;
+      }
+
+      .badge {
+        font-size: inherit;
+      }
+    }
+  }
+
+  &.columns-md .v-table {
+    @media screen and (max-width: 1700px) {
+      td, th {
+        padding: 0 12px;
+      }
+    }
+
+    @media screen and (max-width: 1250px) {
+      td, th {
+        padding: 0 8px;
+      }
+    }
+
+    @media screen and (max-width: 1150px) {
+      td, th {
+        font-size: 0.85em;
+        padding: 0 4px;
+      }
+
+      .badge {
+        font-size: inherit;
+      }
+    }
+  }
+}
 </style>
