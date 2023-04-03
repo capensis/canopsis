@@ -63,6 +63,14 @@ Voici une liste des principales données et la manière de les récupérer. De f
     | Auteur de l'événement                             | `{{ .Event.Author }}`                       |
     | `abc` dans les extra informations de l'événement  | `{{ (index .Event.ExtraInfos.abc).Value }}` |
 
+=== "Environnement"
+
+    Vous pouvez déclarer des variables d'environnement dans le fichier [Canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml#section-canopsistemplatevars). Ces variables sont accessibles dans les templates Go de la manière suivante.
+
+    | Champ                    | Résultat            |
+    |:------------------------ |:------------------- |
+    | Variable `projet`        | `{{ .Env.projet }}` |
+ 
 
 Dans les fonctionnalités [Scénario](../menu-exploitation/scenarios/) et [Déclaration de tickets](../menu-exploitation/regles-declaration-tickets/), vous pouvez accéder à certaines variables supplémentaires.
 
@@ -237,7 +245,7 @@ Ici, nous avons utilisé le `or` et le `eq`, mais il est possible de tester les 
 
 ### Cas particulier des méta alarmes
 
-Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../moteurs/moteur-correlation.md), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
+Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../menu-exploitation/regles-metaalarme/), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
 Pour cela, un opérateur `range` permet d'itérer sur la variable `.Children` qui contient l'ensemble des alarmes conséquences de la méta alarme.
 
 La syntaxe à utiliser est la suivante :
