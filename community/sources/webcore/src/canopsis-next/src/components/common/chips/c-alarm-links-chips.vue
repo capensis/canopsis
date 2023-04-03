@@ -7,7 +7,8 @@
     item-text="text",
     item-value="url",
     item-class="c-alarm-links-chips__chip",
-    @select="openLink",
+    return-object,
+    @select="select",
     @activate="activate"
   )
     template(#item="{ item }")
@@ -25,6 +26,7 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
   DEFAULT_LINKS_INLINE_COUNT,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  LINK_RULE_ACTIONS,
 } from '@/constants';
 
 import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/links';
@@ -74,8 +76,22 @@ export default {
     },
   },
   methods: {
-    openLink(url) {
-      window.open(url, '_blank');
+    async select(link) {
+      if (link.action === LINK_RULE_ACTIONS.copy) {
+        try {
+          await navigator.clipboard.writeText(link.url);
+
+          this.$popups.success({ text: this.$t('testSuite.popups.systemMessageCopied') });
+        } catch (err) {
+          console.error(err);
+
+          this.$popups.error({ text: this.$t('errors.default') });
+        }
+
+        return;
+      }
+
+      window.open(link.url, '_blank');
     },
 
     activate() {
