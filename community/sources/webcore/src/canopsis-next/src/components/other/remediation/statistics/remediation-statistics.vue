@@ -7,11 +7,15 @@
       :data-type="pagination.type",
       :sampling="pagination.sampling",
       :min-date="minDate",
-      responsive
+      responsive,
+      @export:csv="exportRemediationStatisticsAsCsv",
+      @export:png="exportRemediationStatisticsAsPng"
     )
 </template>
 
 <script>
+import { REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
+
 import {
   QUICK_RANGES,
   SAMPLINGS,
@@ -21,13 +25,14 @@ import {
 } from '@/constants';
 
 import {
-  convertDateToStartOfDayTimestampByTimezone,
+  convertDateToStartOfDayTimestampByTimezone, convertDateToString,
 } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
 } from '@/helpers/date/date-intervals';
 import { isMetricsQueryChanged, convertMetricsToTimezone } from '@/helpers/metrics';
+import { saveFile } from '@/helpers/file/files';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
@@ -105,6 +110,50 @@ export default {
       return isMetricsQueryChanged(query, oldQuery, this.minDate);
     },
 
+    getInstructionString(instruction) {
+      if (!instruction) {
+        return this.$t('remediation.statistic.allInstructions');
+      }
+
+      return this.isInstructionType(instruction)
+        ? this.$t(`remediation.instruction.types.${instruction}`)
+        : instruction;
+    },
+
+    getFileName() {
+      const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.short);
+
+      const instruction = this.getInstructionString(this.query.instruction);
+
+      return [
+        REMEDIATION_STATISTICS_FILENAME_PREFIX,
+        fromTime,
+        toTime,
+        this.query.sampling,
+        this.query.type,
+        instruction,
+      ].join('-');
+    },
+
+    async exportRemediationStatisticsAsPng(blob) {
+      try {
+        await saveFile(blob, this.getFileName());
+      } catch (err) {
+        this.$popups.error({ text: err.message || this.$t('errors.default') });
+      }
+    },
+
+    exportRemediationStatisticsAsCsv() {
+      /**
+       * TODO: Should be added when backend part will be finished
+       */
+    },
+
+    isInstructionType(instruction) {
+      return [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction);
+    },
+
     getQuery() {
       const { instruction } = this.query;
       const query = {
@@ -113,7 +162,7 @@ export default {
         sampling: this.query.sampling,
       };
 
-      if ([REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.auto].includes(instruction)) {
+      if (this.isInstructionType(instruction)) {
         query.instruction_type = instruction;
       } else if (instruction) {
         query.instruction = instruction;
