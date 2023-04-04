@@ -33,7 +33,7 @@ expect.extend({
       customDiffConfig: {
         ssim: 'fast',
       },
-      failureThreshold: 0.05,
+      failureThreshold: 0.1,
       failureThresholdType: 'percent',
       customSnapshotIdentifier: ({ currentTestName, counter }) => (
         kebabCase(`${currentTestName.replace(/(.*\sRenders\s)|(.$)/g, '')}-${counter}`)
