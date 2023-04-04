@@ -38,7 +38,7 @@ func NewActivationService(
 }
 
 func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp types.MicroTime) (bool, error) {
-	if !alarm.IsActivated() && !alarm.IsSnoozed() && alarm.Value.PbehaviorInfo.IsActive() && !alarm.InactiveAutoInstructionInProgress {
+	if alarm.CanActivate() {
 		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp)
 
 		if err != nil {
