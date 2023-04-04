@@ -244,6 +244,7 @@ export const API_ROUTES = {
     exportRating: '/api/v4/cat/metrics-export/rating',
     exportSli: '/api/v4/cat/metrics-export/sli',
     exportAggregate: '/api/v4/cat/metrics-export/aggregate',
+    exportRemediation: '/api/v4/cat/metrics-export/remediation',
     exportMetric: '/api/v4/cat/metrics-export',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',

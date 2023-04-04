@@ -7,6 +7,7 @@
       :data-type="pagination.type",
       :sampling="pagination.sampling",
       :min-date="minDate",
+      :downloading="downloading",
       responsive,
       @export:csv="exportRemediationStatisticsAsCsv",
       @export:png="exportRemediationStatisticsAsPng"
@@ -14,7 +15,7 @@
 </template>
 
 <script>
-import { REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
+import { API_HOST, API_ROUTES, REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
 
 import {
   QUICK_RANGES,
@@ -25,7 +26,8 @@ import {
 } from '@/constants';
 
 import {
-  convertDateToStartOfDayTimestampByTimezone, convertDateToString,
+  convertDateToStartOfDayTimestampByTimezone,
+  convertDateToString,
 } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestampByTimezone,
@@ -36,6 +38,8 @@ import { saveFile } from '@/helpers/file/files';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
+import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
+import { exportMixinCreator } from '@/mixins/widget/export';
 
 import RemediationStatisticsFilters from './partials/remediation-statistics-filters.vue';
 
@@ -50,9 +54,15 @@ export default {
   mixins: [
     localQueryMixin,
     entitiesRemediationStatisticMixin,
+    entitiesMetricsMixin,
+    exportMixinCreator({
+      createExport: 'createRemediationExport',
+      fetchExport: 'fetchMetricExport',
+    }),
   ],
   data() {
     return {
+      downloading: false,
       query: {
         sampling: SAMPLINGS.day,
         type: REMEDIATION_STATISTICS_CHART_DATA_TYPE.percent,
@@ -144,10 +154,20 @@ export default {
       }
     },
 
-    exportRemediationStatisticsAsCsv() {
-      /**
-       * TODO: Should be added when backend part will be finished
-       */
+    async exportRemediationStatisticsAsCsv() {
+      this.downloading = true;
+
+      try {
+        const fileData = await this.generateFile({
+          data: this.getQuery(),
+        });
+
+        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
+      } finally {
+        this.downloading = false;
+      }
     },
 
     isInstructionType(instruction) {
