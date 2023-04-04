@@ -6,6 +6,7 @@
       :parameters="parameters",
       :disabled-parameters="disabledParameters",
       required,
+      with-external,
       @input="updateMetric"
     )
     v-layout(v-if="withColor", align-center, justify-space-between)

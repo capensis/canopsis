@@ -6,7 +6,7 @@ import { ALARM_METRIC_PARAMETERS } from '@/constants';
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'v-autocomplete': createSelectInputStub('v-select'),
 };
 
 describe('c-alarm-metric-parameters-field', () => {
