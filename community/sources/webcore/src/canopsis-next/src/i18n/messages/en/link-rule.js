@@ -15,7 +15,7 @@ export default {
   },
   actionType: 'Action type',
   actionTypes: {
-    goto: 'Go to the link URL',
+    open: 'Open the link URL',
     copy: 'Copy link URL',
   },
 };
