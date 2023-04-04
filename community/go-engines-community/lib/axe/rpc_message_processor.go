@@ -271,8 +271,7 @@ func (p *rpcMessageProcessor) sendTriggerEvent(
 	case types.AlarmChangeTypeAutoInstructionFail,
 		types.AlarmChangeTypeAutoInstructionComplete,
 		types.AlarmChangeTypeInstructionJobFail,
-		types.AlarmChangeTypeInstructionJobComplete,
-		types.AlarmChangeTypeAutoInstructionActivate:
+		types.AlarmChangeTypeInstructionJobComplete:
 	case types.AlarmChangeTypeDeclareTicketWebhook:
 		if !event.Parameters.EmitTrigger {
 			return
