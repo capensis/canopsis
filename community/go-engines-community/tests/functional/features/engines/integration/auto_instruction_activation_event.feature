@@ -4,7 +4,7 @@ Feature: send activation event on unsnooze
   @standalone
   Scenario: given event for new alarm and autoremediation should activate alarm after autoremediation is finished
     Given I am admin
-    When I set ActivateAlarmAfterAutoRemediation to true
+    When I set config parameter alarm.activatealarmafterautoremediation=true
     When I wait the next periodical process
 
     When I send an event:
@@ -547,5 +547,5 @@ Feature: send activation event on unsnooze
     ]
     """    
 
-    When I set ActivateAlarmAfterAutoRemediation to false
+    When I set config parameter alarm.activatealarmafterautoremediation=false
     When I wait the next periodical process

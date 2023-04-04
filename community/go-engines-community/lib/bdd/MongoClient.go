@@ -90,19 +90,21 @@ func (c *MongoClient) EntityShouldNotBeInTheDb(ctx context.Context, eid string) 
 	return fmt.Errorf("could find an entity for eid = %s", eid)
 }
 
-func (c *MongoClient) ISetActivateAlarmAfterAutoRemediation(ctx context.Context, boolString string) error {
+func (c *MongoClient) ISetConfigParameter(ctx context.Context, configParameter string, boolString string) error {
 	b, err := strconv.ParseBool(boolString)
 	if err != nil {
 		return err
 	}
 
-	_, err = c.client.Collection(libmongo.ConfigurationMongoCollection).UpdateOne(
+	res, err := c.client.Collection(libmongo.ConfigurationMongoCollection).UpdateOne(
 		ctx,
-		bson.M{"_id": config.ConfigKeyName},
-		bson.M{"$set": bson.M{
-			"alarm.activatealarmafterautoremediation": b,
-		}},
+		bson.M{"_id": config.ConfigKeyName, configParameter: bson.M{"$exists": true}},
+		bson.M{"$set": bson.M{configParameter: b}},
 	)
+
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("couldn't find a config parameter = %s", configParameter)
+	}
 
 	return err
 }
