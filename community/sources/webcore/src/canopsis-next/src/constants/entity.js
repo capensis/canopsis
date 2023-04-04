@@ -30,6 +30,8 @@ export const ENTITY_FIELDS = {
   links: 'links',
   alarmDisplayName: 'alarm_display_name',
   alarmCreationDate: 'alarm_creation_date',
+  importSource: 'import_source',
+  imported: 'imported',
 
   /**
    * OBJECTS
@@ -474,6 +476,8 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.links]: 'common.link',
   [ENTITY_FIELDS.alarmDisplayName]: 'entity.fields.alarmDisplayName',
   [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
+  [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
+  [ENTITY_FIELDS.imported]: 'entity.fields.imported',
 
   /**
    * OBJECTS
