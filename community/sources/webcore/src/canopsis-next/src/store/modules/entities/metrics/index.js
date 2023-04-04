@@ -36,5 +36,17 @@ export default {
     fetchMetricExport(context, { id }) {
       return request.get(`${API_ROUTES.metrics.exportMetric}/${id}`);
     },
+
+    fetchExternalMetricsListWithoutStore(context, { params }) {
+      /* TODO: Should be added when backend part will be finished  */
+      return new Promise((resolve) => {
+        setTimeout(() => resolve({
+          data: [{
+            _id: 'instance2/cpu_surveillance',
+            name: 'instance2/cpu_surveillance',
+          }],
+        }), 2000, params);
+      });
+    },
   },
 };

@@ -2,8 +2,7 @@
 
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with all values 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty theme--light"
 >
   <div
     class="v-input__control"
@@ -21,10 +20,9 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             28 parameters to display
           </span>
           <input
-            aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             name="parameters"
-            readonly="readonly"
+            role="combobox"
             type="text"
           />
         </div>
@@ -53,8 +51,10 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -64,7 +64,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with all values 2`] = `
 <div
-  class="v-menu__content theme--light "
+  class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -116,13 +116,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -176,13 +179,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -236,13 +242,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -296,13 +305,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -356,13 +368,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -416,13 +431,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -476,13 +494,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -536,13 +557,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -596,13 +620,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -656,13 +683,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -716,13 +746,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -776,13 +809,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -836,13 +872,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -896,13 +935,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -956,13 +998,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1016,13 +1061,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1076,13 +1124,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1136,13 +1187,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1196,13 +1250,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1256,13 +1313,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1281,8 +1341,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-text-field v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
 >
   <div
     class="v-input__control"
@@ -1300,10 +1359,9 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             Number of created alarms
           </span>
           <input
-            aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             name="customName"
-            readonly="readonly"
+            role="combobox"
             type="text"
           />
         </div>
@@ -1332,7 +1390,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light "
+  class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -1355,7 +1413,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             class="v-list__tile__action"
           >
             <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
             >
               <div
                 class="v-input__control"
@@ -1368,6 +1426,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                   >
                     <input
                       aria-checked="true"
+                      disabled="disabled"
                       role="checkbox"
                       type="checkbox"
                       value=""
@@ -1386,13 +1445,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1417,7 +1479,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             class="v-list__tile__action"
           >
             <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
             >
               <div
                 class="v-input__control"
@@ -1430,6 +1492,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                   >
                     <input
                       aria-checked="true"
+                      disabled="disabled"
                       role="checkbox"
                       type="checkbox"
                       value=""
@@ -1448,13 +1511,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1479,7 +1545,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             class="v-list__tile__action"
           >
             <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-disabled theme--light"
             >
               <div
                 class="v-input__control"
@@ -1492,6 +1558,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                   >
                     <input
                       aria-checked="false"
+                      disabled="disabled"
                       role="checkbox"
                       type="checkbox"
                       value=""
@@ -1510,13 +1577,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1535,8 +1605,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty theme--light"
 >
   <div
     class="v-input__control"
@@ -1554,10 +1623,9 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             Number of created alarms
           </span>
           <input
-            aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             name="parameters"
-            readonly="readonly"
+            role="combobox"
             type="text"
           />
         </div>
@@ -1586,8 +1654,10 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -1597,7 +1667,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light "
+  class="v-menu__content theme--light v-autocomplete__content"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -1648,13 +1718,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1679,7 +1752,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             class="v-list__tile__action"
           >
             <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
             >
               <div
                 class="v-input__control"
@@ -1692,6 +1765,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                   >
                     <input
                       aria-checked="true"
+                      disabled="disabled"
                       role="checkbox"
                       type="checkbox"
                       value=""
@@ -1710,13 +1784,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1769,13 +1846,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1828,13 +1908,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1887,13 +1970,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -1946,13 +2032,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2005,13 +2094,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2064,13 +2156,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2123,13 +2218,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2182,13 +2280,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2241,13 +2342,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2300,13 +2404,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2359,13 +2466,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2418,13 +2528,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2477,13 +2590,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2536,13 +2652,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2595,13 +2714,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2654,13 +2776,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2713,13 +2838,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
@@ -2772,13 +2900,16 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
+          <!---->
           <div
             class="v-list__tile__content"
           >
