@@ -414,3 +414,7 @@ func (a *Alarm) IsActivated() bool {
 func (a *Alarm) IsInActivePeriod() bool {
 	return a.Value.PbehaviorInfo.IsActive()
 }
+
+func (a *Alarm) CanActivate() bool {
+	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
+}
