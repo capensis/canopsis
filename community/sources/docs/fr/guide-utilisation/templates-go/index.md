@@ -215,6 +215,17 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
   - `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` -> `http://une-api.org/edit/50`
 
 
+## Fonctions incluess dans GO
+
+1. `range` - Permet d'itérer sur une variable
+
+    Si .Entity.Infos.info1.Value = ["a","b","c"] et .Entity.Infos.info2.Value = "d"
+
+    - {{ range (index .Entity.Infos "info1").Value }}{{ . }};{{ end }} -> a;b;c;
+    - {{ range (index .Entity.Infos "not-exist").Value }}{{ . }};{{ end }} -> empty string
+    - {{ range .Entity.Infos }}{{ .Name }}:{{ .Value }};{{ end }} -> info1:[a b c];info2:d;
+    - {{ range $index, $item := (index .Entity.Infos "info1").Value }}{{ $index }}:{{ $item }};{{ end }} -> 0:a;1:b;2:c;
+
 ## Génération de texte
 
 Une fois qu'on possède les variables nécessaires, la seconde étape est la génération du texte.
