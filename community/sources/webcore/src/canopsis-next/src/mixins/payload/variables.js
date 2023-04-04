@@ -88,7 +88,7 @@ export const payloadVariablesMixin = {
         variable => ({
           ...variable,
           value: variable.value === ALARM_PAYLOADS_VARIABLES.entityInfosValue
-            ? variable.value.replace('index ', `index ${ALARM_PAYLOADS_VARIABLES.alarm}`)
+            ? variable.value
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),
       );
