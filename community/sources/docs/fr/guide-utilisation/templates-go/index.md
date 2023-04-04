@@ -34,7 +34,7 @@ Voici une liste des principales données et la manière de les récupérer. De f
     | Auteur du dernier commenataire              | `{{ .Alarm.Value.LastComment.Author }}`                               |
     | Message du dernier commenataire             | `{{ .Alarm.Value.LastComment.Message }}`                              |
     | Informations enrichies depuis dynamic-infos | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }   |
-    | `abc` dans l'entité                         | `{{ (index .Entity.Infos.abc).Value }}`                               |
+    | `abc` dans l'entité                         | `{{ (index .Entity.Infos "abc").Value }}`                               |
 
 === "Entité"
 
@@ -44,8 +44,8 @@ Voici une liste des principales données et la manière de les récupérer. De f
     | Nom                                       | `{{ .Entity.Name }}`                             |
     | Composant                                 | `{{ .Alarm.Value.Component }}`                   |
     | Connector                                 | `{{ .Alarm.Value.Connector }}`                   |
-    | `abc` dans les informations du composant  | `{{ (index .Entity.ComponentInfos.abc).Value }}` |
-    | `abc` dans les informations de l'entité   | `{{ (index .Entity.Infos.abc).Value }}`          |
+    | `abc` dans les informations du composant  | `{{ (index .Entity.ComponentInfos "abc").Value }}` |
+    | `abc` dans les informations de l'entité   | `{{ (index .Entity.Infos "abc").Value }}`          |
  
 
 === "Evénement"
@@ -61,7 +61,7 @@ Voici une liste des principales données et la manière de les récupérer. De f
     | Type d'événement                                  | `{{ .Event.EventType }}`                    |
     | Message de l'événement                            | `{{ .Event.Output }}`                       |
     | Auteur de l'événement                             | `{{ .Event.Author }}`                       |
-    | `abc` dans les extra informations de l'événement  | `{{ (index .Event.ExtraInfos.abc).Value }}` |
+    | `abc` dans les extra informations de l'événement  | `{{ index .Event.ExtraInfos "abc" }}` |
 
 === "Environnement"
 
@@ -107,7 +107,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 
     - `{{ .Entity.Infos.info1.Value }}` -> `[a b c]`
     - `{{ .Entity.Infos.info2.Value }}` -> `d "e"`
-    - `{{ .Entity.Infos | json }}` -> `map[info1:{info1  [a b c]} info2:{info2  d "e"}]`
+    - `{{ .Entity.Infos }}` -> `map[info1:{info1  [a b c]} info2:{info2  d "e"}]`
 
 1. `json_unquote` - Enode une variable en JSON et supprime les guillemets.
 
