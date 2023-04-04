@@ -538,6 +538,8 @@ export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 
 export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
 
+export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
+
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 
 export const MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED = 100;
