@@ -40,8 +40,8 @@
           :label="$t('linkRule.actionType')"
         )
           v-radio(
-            :value="$constants.LINK_RULE_ACTIONS.goto",
-            :label="$t('linkRule.actionTypes.goto')",
+            :value="$constants.LINK_RULE_ACTIONS.open",
+            :label="$t('linkRule.actionTypes.open')",
             color="primary"
           )
           v-radio(
