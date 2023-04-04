@@ -1,21 +1,40 @@
 <template lang="pug">
-  v-select(
+  v-autocomplete(
     v-field="value",
     v-validate="rules",
     :items="availableParameters",
     :label="label",
     :name="name",
+    :loading="pending",
     :multiple="isMultiple",
     :hide-details="hideDetails"
   )
-    template(v-if="isMultiple", #selection="{ item, index }")
-      span(v-if="!index") {{ getSelectionLabel(item) }}
+    template(#selection="{ item, index }")
+      template(v-if="isMultiple")
+        span(v-if="!index") {{ getSelectionLabel(item) }}
+      template(v-else)
+        v-icon.mr-2(v-if="item.isExternal") language
+        span {{ item.text }}
+    template(#item="{ parent, item, tile }")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
+        v-list-tile-action(v-if="isMultiple")
+          v-checkbox(
+            :input-value="tile.props.value",
+            :color="parent.color",
+            :disabled="tile.props.disabled"
+          )
+        v-icon.mr-3(v-if="item.isExternal") language
+        v-list-tile-content
+          v-list-tile-title {{ item.text }}
 </template>
 
 <script>
 import { isArray, omit } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
+
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 
 export default {
   inject: ['$validator'],
@@ -56,6 +75,16 @@ export default {
       type: Array,
       default: () => [],
     },
+    withExternal: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      pending: false,
+      externalMetrics: [],
+    };
   },
   computed: {
     isMultiple() {
@@ -67,12 +96,22 @@ export default {
     },
 
     availableParameters() {
-      return this.parameters.map(value => ({
+      const parameters = this.parameters.map(value => ({
         value,
         disabled: (this.disabledParameters.includes(value) && !this.isActiveValue(value))
           || (this.isMinValueLength && this.isActiveValue(value)),
         text: this.$t(`alarm.metrics.${value}`),
       }));
+
+      if (this.withExternal) {
+        parameters.push(...this.externalMetrics.map(({ _id: value, name }) => ({
+          text: name,
+          value,
+          isExternal: true,
+        })));
+      }
+
+      return parameters;
     },
 
     rules() {
@@ -81,7 +120,21 @@ export default {
       };
     },
   },
+  watch: {
+    withExternal: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.fetchList();
+        }
+      },
+    },
+  },
   methods: {
+    ...mapMetricsActions({
+      fetchExternalMetricsListWithoutStore: 'fetchExternalMetricsListWithoutStore',
+    }),
+
     isActiveValue(value) {
       return this.isMultiple ? this.value.includes(value) : this.value === value;
     },
@@ -92,6 +145,22 @@ export default {
       }
 
       return this.$t('common.parametersToDisplay', { count: this.value.length });
+    },
+
+    async fetchList() {
+      this.pending = true;
+
+      try {
+        const { data: externalMetrics } = await this.fetchExternalMetricsListWithoutStore({
+          params: { paginate: false },
+        });
+
+        this.externalMetrics = externalMetrics;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
