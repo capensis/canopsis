@@ -135,6 +135,10 @@ func (e *taskExecutor) Run(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
+				if !e.configProvider.Get().Enabled {
+					continue
+				}
+
 				pgPool, err := e.getPgPool(ctx)
 				if err != nil {
 					e.logger.Err(err).Msg("cannot connect to postgres")
