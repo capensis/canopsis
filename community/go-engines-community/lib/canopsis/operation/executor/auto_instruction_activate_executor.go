@@ -2,7 +2,6 @@ package executor
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -19,7 +18,7 @@ func (e *autoInstructionActivateExecutor) Exec(
 	_ types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
-	_ types.CpsTime,
+	timestamp types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	if alarm.IsActivated() || !alarm.InactiveAutoInstructionInProgress {
@@ -27,7 +26,7 @@ func (e *autoInstructionActivateExecutor) Exec(
 	}
 
 	alarm.InactiveAutoInstructionInProgress = false
-	alarm.PartialUpdateUnsetAutoInstructionInProgress(types.CpsTime{Time: time.Now()})
+	alarm.PartialUpdateUnsetAutoInstructionInProgress(timestamp)
 
 	return types.AlarmChangeTypeAutoInstructionActivate, nil
 }

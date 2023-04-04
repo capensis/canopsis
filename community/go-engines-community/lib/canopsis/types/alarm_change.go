@@ -113,7 +113,8 @@ func GetTriggers(t AlarmChangeType) []string {
 		AlarmChangeTypeAutoWebhookStart,
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
-		AlarmChangeTypeAutoDeclareTicketWebhookFail:
+		AlarmChangeTypeAutoDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoInstructionActivate:
 		// not a trigger
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:
