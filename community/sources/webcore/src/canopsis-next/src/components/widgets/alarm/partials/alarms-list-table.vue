@@ -166,10 +166,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideChildren: {
-      type: Boolean,
-      default: false,
-    },
     expandable: {
       type: Boolean,
       default: false,
@@ -194,6 +190,10 @@ export default {
       type: String,
       default: '',
     },
+    hideChildren: {
+      type: Boolean,
+      default: false,
+    },
     hideActions: {
       type: Boolean,
       default: false,
@@ -215,6 +215,10 @@ export default {
   },
 
   computed: {
+    topBarHeight() {
+      return this.$route.meta?.hideNavigation ? 0 : TOP_BAR_HEIGHT;
+    },
+
     unresolvedSelected() {
       return this.selected.filter(item => !isResolvedAlarm(item));
     },
@@ -412,8 +416,8 @@ export default {
       const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
       const { top: actionsTop = 0, height: actionsHeight = 0 } = this.$refs.actions?.getBoundingClientRect() ?? {};
 
-      const offset = headerTop - this.translateY - TOP_BAR_HEIGHT - actionsHeight;
-      const actionsOffset = actionsTop - this.actionsTranslateY - TOP_BAR_HEIGHT;
+      const offset = headerTop - this.translateY - this.topBarHeight - actionsHeight;
+      const actionsOffset = actionsTop - this.actionsTranslateY - this.topBarHeight;
 
       this.previousTranslateY = this.actionsTranslateY;
       this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
