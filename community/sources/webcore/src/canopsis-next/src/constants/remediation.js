@@ -61,6 +61,7 @@ export const INSTRUCTION_EXECUTION_ICONS = {
 };
 
 export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS = [
+  TRIGGERS.create,
   TRIGGERS.stateinc,
   TRIGGERS.statedec,
   TRIGGERS.pbhenter,
