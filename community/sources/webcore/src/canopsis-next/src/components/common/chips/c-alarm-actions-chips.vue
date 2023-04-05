@@ -28,17 +28,18 @@
           v-icon(color="white", size="20") more_horiz
       v-card
         v-card-text
-          c-alarm-action-chip.mx-0(
-            v-for="item in dropDownItems",
-            :key="item[itemValue]",
-            :class="itemClass",
-            :color="item.color",
-            :closable="closable",
-            @click="selectItem(item)",
-            @close="closeItem(item)"
-          )
-            slot(name="item", :item="item")
-              span {{ item[itemText] }}
+          v-layout.c-alarm-actions-chips__more(:class="{ 'c-alarm-actions-chips--small': small }")
+            c-alarm-action-chip.mx-0(
+              v-for="item in dropDownItems",
+              :key="item[itemValue]",
+              :class="itemClass",
+              :color="item.color",
+              :closable="closable",
+              @click="selectItem(item)",
+              @close="closeItem(item)"
+            )
+              slot(name="item", :item="item")
+                span {{ item[itemText] }}
 </template>
 
 <script>
@@ -126,8 +127,10 @@ export default {
 
 <style lang="scss">
 .c-alarm-actions-chips {
-  column-gap: 8px;
-  row-gap: 4px;
+  &, &__more {
+    column-gap: 8px;
+    row-gap: 4px;
+  }
 
   &--small {
     column-gap: 4px;
