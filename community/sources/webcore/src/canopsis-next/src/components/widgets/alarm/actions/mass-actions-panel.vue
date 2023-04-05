@@ -10,6 +10,7 @@ import {
   MODALS,
   EVENT_ENTITY_TYPES,
   ALARM_LIST_ACTIONS_TYPES,
+  LINK_RULE_ACTIONS,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
 } from '@/constants';
 
@@ -23,6 +24,7 @@ import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/links
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
+import { clipboardMixin } from '@/mixins/clipboard';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
@@ -41,6 +43,7 @@ export default {
     widgetActionsPanelAlarmMixin,
     entitiesDeclareTicketRuleMixin,
     entitiesAlarmLinksMixin,
+    clipboardMixin,
   ],
   props: {
     items: {
@@ -189,7 +192,7 @@ export default {
           icon: link.icon_name,
           title: this.$t('alarm.followLink', { title: link.label }),
           loading: this.pendingByActionsTypes[type],
-          method: () => this.openLink(link, type),
+          method: () => this.linkAction(link, type),
         };
       });
     },
@@ -317,7 +320,7 @@ export default {
       });
     },
 
-    async openLink(link, type) {
+    async linkAction(link, type) {
       try {
         this.$set(this.pendingByActionsTypes, type, true);
 
@@ -326,9 +329,15 @@ export default {
           params: { ids: mapIds(this.items) },
         });
 
-        const summaryLink = find(links, pick(link, ['icon_name, label']));
+        const summaryLink = find(links, pick(link, ['icon_name', 'label']));
 
         if (!summaryLink) {
+          return;
+        }
+
+        if (link.action === LINK_RULE_ACTIONS.copy) {
+          this.writeTextToClipboard(summaryLink.url);
+
           return;
         }
 
