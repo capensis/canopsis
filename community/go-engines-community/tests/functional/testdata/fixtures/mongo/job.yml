@@ -305,3 +305,33 @@ job:
     _id: test-job-to-test-auto-instruction-activate-event-6
     name: test-job-to-test-auto-instruction-activate-event-6-name
     payload: '{"test-job-to-test-auto-instruction-activate-event-6-key": "test-job-to-test-auto-instruction-activate-event-6-val"}'
+
+  job_to_test_auto_instruction_activate_event_7_1:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-7-1
+    name: test-job-to-test-auto-instruction-activate-event-7-1-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-7-key": "test-job-to-test-auto-instruction-activate-event-7-val"}'
+    
+  job_to_test_auto_instruction_activate_event_7_2:
+    <<: *job_dummy_failed
+    _id: test-job-to-test-auto-instruction-activate-event-7-2
+    name: test-job-to-test-auto-instruction-activate-event-7-2-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-7-key": "test-job-to-test-auto-instruction-activate-event-7-val"}'
+      
+  job_to_test_auto_instruction_activate_event_7_3:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-7-3
+    name: test-job-to-test-auto-instruction-activate-event-7-3-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-7-key": "test-job-to-test-auto-instruction-activate-event-7-val"}'      
+
+  job_to_test_auto_instruction_activate_event_8:
+    <<: *job_dummy_failed
+    _id: test-job-to-test-auto-instruction-activate-event-8
+    name: test-job-to-test-auto-instruction-activate-event-8-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-8-key": "test-job-to-test-auto-instruction-activate-event-8-val"}'
+
+  job_to_test_auto_instruction_activate_event_9:
+    <<: *job_dummy_long_succeeded
+    _id: test-job-to-test-auto-instruction-activate-event-9
+    name: test-job-to-test-auto-instruction-activate-event-9-name
+    payload: '{"test-job-to-test-auto-instruction-activate-event-9-key": "test-job-to-test-auto-instruction-activate-event-9-val"}'
