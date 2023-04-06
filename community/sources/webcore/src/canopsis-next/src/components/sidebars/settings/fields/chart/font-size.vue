@@ -17,6 +17,8 @@
 <script>
 import { isNumber } from 'lodash';
 
+import { NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
+
 import { formBaseMixin } from '@/mixins/form';
 
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
@@ -44,7 +46,7 @@ export default {
         return isNumber(this.value);
       },
       set(value) {
-        this.updateModel(value ? 110 : undefined);
+        this.updateModel(value ? NUMBERS_CHART_DEFAULT_FONT_SIZE : undefined);
       },
     },
   },
