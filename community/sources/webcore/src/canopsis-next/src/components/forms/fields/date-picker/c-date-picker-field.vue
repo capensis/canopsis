@@ -105,7 +105,7 @@ export default {
       default: false,
     },
     contentClass: {
-      type: String,
+      type: [String, Object],
       required: false,
     },
   },

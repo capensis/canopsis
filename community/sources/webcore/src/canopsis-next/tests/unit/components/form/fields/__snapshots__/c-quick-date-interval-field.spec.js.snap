@@ -45,3 +45,35 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
   </div>
 </div>
 `;
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with short format 1`] = `
+<div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;">
+  <div class="v-card v-sheet theme--light" style="width: 400px;">
+    <div class="v-card__text">
+      <c-information-block-stub title="Interval">
+        <hr class="v-divider theme--light">
+        <div class="layout mt-2">
+          <c-date-interval-field-stub value="[object Object]" disabled="true" is-allowed-from-date="function () { [native code] }" is-allowed-to-date="function () { [native code] }" column="column"></c-date-interval-field-stub>
+          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
+        </div>
+      </c-information-block-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` with short format and custom interval 1`] = `
+<div class="v-menu__content theme--light " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;">
+  <div class="v-card v-sheet theme--light" style="width: 400px;">
+    <div class="v-card__text">
+      <c-information-block-stub title="Interval">
+        <hr class="v-divider theme--light">
+        <div class="layout mt-2">
+          <c-date-interval-field-stub value="[object Object]" disabled="true" is-allowed-from-date="function () { [native code] }" is-allowed-to-date="function () { [native code] }" column="column"></c-date-interval-field-stub>
+          <c-quick-date-interval-type-field-stub value="[object Object]" ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]" disabled="true" hide-details="hide-details" return-object="return-object" class="c-quick-interval__range ml-4"></c-quick-date-interval-type-field-stub>
+        </div>
+      </c-information-block-stub>
+    </div>
+  </div>
+</div>
+`;
