@@ -21,6 +21,7 @@
     template(#icon_name="{ item }")
       v-chip.pbehavior-type-icon(:color="item.color")
         v-icon(:color="getIconColor(item.color)", size="18") {{ item.icon_name }}
+    template(#priority="{ item }") {{ item.priority || '-' }}
     template(#hidden="{ item }")
       c-enabled(:value="item.hidden")
     template(#actions="{ item }")
