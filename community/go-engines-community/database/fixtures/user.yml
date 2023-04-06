@@ -1654,7 +1654,7 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_share_token":
-        checksum: 5
+        checksum: 15
         crecord_type: right
       "@permission_api_techmetrics":
         checksum: 1
