@@ -15,10 +15,12 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
     <numbers-metrics-item-stub
       metric="[object Object]"
       showtrend="true"
+      valuefontsize="110"
     />
     <numbers-metrics-item-stub
       metric="[object Object]"
       showtrend="true"
+      valuefontsize="110"
     />
   </div>
   <div

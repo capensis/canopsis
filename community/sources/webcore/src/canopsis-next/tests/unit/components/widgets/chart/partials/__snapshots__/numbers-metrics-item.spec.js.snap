@@ -3,6 +3,7 @@
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with avg aggregated function 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -25,6 +26,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with avg aggregat
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with max aggregated function 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -47,6 +49,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with max aggregat
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with metric 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -69,6 +72,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with metric 1`] =
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with min aggregated function 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -91,6 +95,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with min aggregat
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with sum aggregated function 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -113,6 +118,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with sum aggregat
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend down 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -125,7 +131,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend down 1
     <c-help-icon-stub
       icon="arrow_downward"
       icon-class="[object Object]"
-      size="84"
+      size="0.75em"
       text="35 for the period
 07/11/2013 - 07/11/2013"
       top="top"
@@ -142,6 +148,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend down 1
 exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend up 1`] = `
 <div
   class="layout numbers-metrics-item column align-center"
+  style="font-size: 110px;"
 >
   <div
     class="layout row align-center"
@@ -154,7 +161,7 @@ exports[`numbers-metrics-item Renders \`numbers-metrics-item\` with trend up 1`]
     <c-help-icon-stub
       icon="arrow_downward"
       icon-class="[object Object]"
-      size="84"
+      size="0.75em"
       text="25 for the period
 07/11/2013 - 07/11/2013"
       top="top"
