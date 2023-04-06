@@ -224,7 +224,7 @@ export default {
     preset: 'Préréglé',
     metricsDisplay: 'Affichage des métriques',
     showTrend: 'Afficher la tendance',
-    fontSize: 'Ajustement de la taille de la police',
+    fontSize: 'Taille de la police',
     auto: 'Auto',
     manual: 'Manuel',
     presets: {
