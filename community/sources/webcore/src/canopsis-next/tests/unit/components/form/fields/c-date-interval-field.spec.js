@@ -1,34 +1,21 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { QUICK_RANGES } from '@/constants';
 
 import CDateIntervalField from '@/components/forms/fields/date-picker/c-date-interval-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-date-picker-field': true,
 };
-
-const factory = (options = {}) => shallowMount(CDateIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CDateIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectDateIntervalFields = wrapper => wrapper.findAll('c-date-picker-field-stub');
 const selectFromDateIntervalField = wrapper => selectDateIntervalFields(wrapper).at(0);
 const selectToDateIntervalField = wrapper => selectDateIntervalFields(wrapper).at(1);
 
 describe('c-date-interval-field', () => {
+  const factory = generateShallowRenderer(CDateIntervalField, { stubs });
+  const snapshotFactory = generateRenderer(CDateIntervalField, { stubs });
+
   test('From value changed after trigger from date picker', () => {
     const wrapper = factory({
       propsData: {
@@ -146,6 +133,7 @@ describe('c-date-interval-field', () => {
         isAllowedFromDate: () => {},
         isAllowedToDate: () => {},
         disabled: true,
+        column: true,
       },
     });
 
