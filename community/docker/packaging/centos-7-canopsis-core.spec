@@ -49,9 +49,11 @@ fi
 
 %files
 /opt/canopsis/venv-ansible
+/opt/canopsis/pyvenv.cfg
 /usr/bin/canoctl
 
 %defattr(0644, canopsis, canopsis, 0755)
+%exclude /opt/canopsis/deploy-ansible/install-self.sh
 /opt/canopsis/deploy-ansible
 /opt/canopsis/include
 /opt/canopsis/lib
