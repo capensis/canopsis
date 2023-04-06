@@ -410,7 +410,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   lastCommentMessage: '.Value.LastComment.Message',
 
   entityName: '.Entity.Name',
-  entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
+  entityInfosValue: '(index .Entity.Infos "%infos_name%").Value',
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {

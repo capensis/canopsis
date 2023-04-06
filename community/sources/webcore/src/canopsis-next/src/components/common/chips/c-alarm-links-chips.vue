@@ -72,6 +72,7 @@ export default {
         text: link.label,
         icon: link.icon_name,
         url: link.url,
+        action: link.action,
         color: 'grey',
       }));
     },
@@ -82,11 +83,11 @@ export default {
         try {
           await writeTextToClipboard(link.url);
 
-          this.$popups.success({ text: this.$t('testSuite.popups.systemMessageCopied') });
+          this.$popups.success({ text: this.$t('popups.copySuccess') });
         } catch (err) {
           console.error(err);
 
-          this.$popups.error({ text: this.$t('errors.default') });
+          this.$popups.error({ text: this.$t('popups.copyError') });
         }
 
         return;

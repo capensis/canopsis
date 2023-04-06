@@ -61,10 +61,12 @@ export const INSTRUCTION_EXECUTION_ICONS = {
 };
 
 export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS = [
-  TRIGGERS.stateinc,
+  TRIGGERS.create,
   TRIGGERS.statedec,
+  TRIGGERS.stateinc,
+  TRIGGERS.changestate,
+  TRIGGERS.unsnooze,
+  TRIGGERS.activate,
   TRIGGERS.pbhenter,
   TRIGGERS.pbhleave,
-  TRIGGERS.activate,
-  TRIGGERS.unsnooze,
 ];
