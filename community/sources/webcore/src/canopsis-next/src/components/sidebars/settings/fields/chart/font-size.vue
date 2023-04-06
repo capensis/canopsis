@@ -11,11 +11,11 @@
         :label="$t('settings.chart.manual')",
         color="primary"
       )
-    c-number-field(v-if="enabled", v-field="value")
+    c-number-field(v-if="enabled", v-field="value", required)
 </template>
 
 <script>
-import { isNumber } from 'lodash';
+import { isUndefined } from 'lodash';
 
 import { NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
 
@@ -43,7 +43,7 @@ export default {
   computed: {
     enabled: {
       get() {
-        return isNumber(this.value);
+        return !isUndefined(this.value);
       },
       set(value) {
         this.updateModel(value ? NUMBERS_CHART_DEFAULT_FONT_SIZE : undefined);
