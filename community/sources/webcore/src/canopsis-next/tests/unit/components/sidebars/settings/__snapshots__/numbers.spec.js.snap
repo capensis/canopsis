@@ -27,6 +27,9 @@ exports[`numbers Renders \`numbers\` widget settings with custom props 1`] = `
   <widget-settings-group-stub
     title="Advanced settings"
   >
+    <field-font-size-stub
+      name="font_size"
+    />
     <field-chart-title-stub
       name="parameters.chart_title"
       value="Chart title"
@@ -79,6 +82,9 @@ exports[`numbers Renders \`numbers\` widget settings with default props 1`] = `
   <widget-settings-group-stub
     title="Advanced settings"
   >
+    <field-font-size-stub
+      name="font_size"
+    />
     <field-chart-title-stub
       name="parameters.chart_title"
       value=""
