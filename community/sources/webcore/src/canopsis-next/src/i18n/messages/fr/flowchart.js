@@ -9,7 +9,7 @@ export default {
   strokeType: 'Stroke type',
   fontColor: 'Couleur de la police',
   fontSize: 'Taille de police',
-  fontBackgroundColor: 'Ajustement de la taille de la police',
+  fontBackgroundColor: 'Couleur de fond de la police',
   lineType: 'Type de ligne',
   backgroundColor: 'Couleur de l\'arrière plan',
   shapes: {
