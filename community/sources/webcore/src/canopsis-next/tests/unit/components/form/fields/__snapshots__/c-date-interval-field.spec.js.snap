@@ -2,7 +2,7 @@
 
 exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom props 1`] = `
 <div
-  class="c-date-interval"
+  class="c-date-interval c-date-interval--column"
 >
   <c-date-picker-field-stub
     allowed-dates="() => {}"
@@ -13,7 +13,7 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom pro
   />
   <c-date-picker-field-stub
     allowed-dates="() => {}"
-    content-class="ml-4"
+    content-class="[object Object]"
     disabled="true"
     hide-details="hide-details"
     label="To"
@@ -32,7 +32,7 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with default pr
     value="now-12h"
   />
   <c-date-picker-field-stub
-    content-class="ml-4"
+    content-class="[object Object]"
     hide-details="hide-details"
     label="To"
     value="now"
