@@ -224,6 +224,9 @@ export default {
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
     showTrend: 'Show trend',
+    fontSize: 'Fond size adjustment',
+    auto: 'Auto',
+    manual: 'Manual',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',

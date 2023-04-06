@@ -224,6 +224,9 @@ export default {
     preset: 'Préréglé',
     metricsDisplay: 'Affichage des métriques',
     showTrend: 'Afficher la tendance',
+    fontSize: 'Ajustement de la taille de la police',
+    auto: 'Auto',
+    manual: 'Manuel',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements',
