@@ -107,8 +107,11 @@ export default {
             },
           },
           legend: {
-            position: 'right',
+            position({ chart }) {
+              return chart.width > 600 ? 'right' : 'top';
+            },
             maxWidth: 300,
+            maxHeight: 300,
             labels: {
               font: {
                 size: 11,

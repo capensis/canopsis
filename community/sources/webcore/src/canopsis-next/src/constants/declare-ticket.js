@@ -1,6 +1,6 @@
 export const DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES = {
   header: 'index .Header "%field_name%"',
-  response: 'index .Response %field_name%',
+  response: 'index .Response "%field_name%"',
   responseByStep: 'index .ResponseMap "%N%.%field_name%"',
 };
 

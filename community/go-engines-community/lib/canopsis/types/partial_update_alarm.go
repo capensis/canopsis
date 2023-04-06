@@ -473,6 +473,9 @@ func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTi
 	newStep.Execution = execution
 
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	if stepType == AlarmStepAutoInstructionStart && a.InactiveAutoInstructionInProgress {
+		a.startInactiveInterval(newStep.Timestamp)
+	}
 
 	return nil
 }
@@ -483,6 +486,11 @@ func (a *Alarm) PartialUpdateAddExecutedInstruction(instructionID string) {
 
 func (a *Alarm) PartialUpdateAddExecutedAutoInstruction(instructionID string) {
 	a.AddUpdate("$addToSet", bson.M{"kpi_executed_auto_instructions": instructionID})
+}
+
+func (a *Alarm) PartialUpdateUnsetAutoInstructionInProgress(timestamp CpsTime) {
+	a.AddUpdate("$unset", bson.M{"auto_instruction_in_progress": ""})
+	a.stopInactiveInterval(timestamp)
 }
 
 func (a *Alarm) PartialUpdateCropSteps() {
@@ -589,7 +597,7 @@ func (a *Alarm) stopInactiveInterval(timestamp CpsTime) {
 	a.Value.InactiveDuration += inactiveDuration
 	a.AddUpdate("$inc", bson.M{"v.inactive_duration": inactiveDuration})
 
-	if a.Value.PbehaviorInfo.IsActive() && a.Value.Snooze == nil {
+	if a.Value.PbehaviorInfo.IsActive() && a.Value.Snooze == nil && !a.InactiveAutoInstructionInProgress {
 		a.Value.InactiveStart = nil
 		a.AddUpdate("$unset", bson.M{"v.inactive_start": ""})
 	} else {

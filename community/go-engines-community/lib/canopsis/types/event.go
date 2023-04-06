@@ -114,6 +114,8 @@ const (
 	EventTypeNoEvents = "noevents"
 	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
 	EventTypeTrigger = "trigger"
+	// EventTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
+	EventTypeAutoInstructionActivate = "autoinstructionactivate"
 )
 
 const (
@@ -565,7 +567,8 @@ func isValidEventType(t string) bool {
 		EventTypeStateDecrease,
 		EventTypeStatusIncrease,
 		EventTypeStatusDecrease,
-		EventTypeTrigger:
+		EventTypeTrigger,
+		EventTypeAutoInstructionActivate:
 		return true
 	}
 

@@ -49,10 +49,14 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected t
     <div
       class="v-card__text"
     >
-      <span
-        class="c-alarm-action-chip mx-0"
-        color="color2"
-      />
+      <div
+        class="layout c-alarm-actions-chips__more"
+      >
+        <span
+          class="c-alarm-action-chip mx-0"
+          color="color2"
+        />
+      </div>
     </div>
   </div>
 </div>
@@ -123,14 +127,18 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
     <div
       class="v-card__text"
     >
-      <span
-        class="c-alarm-action-chip mx-0"
-        color="color2"
-      />
-      <span
-        class="c-alarm-action-chip mx-0"
-        color="color3"
-      />
+      <div
+        class="layout c-alarm-actions-chips__more"
+      >
+        <span
+          class="c-alarm-action-chip mx-0"
+          color="color2"
+        />
+        <span
+          class="c-alarm-action-chip mx-0"
+          color="color3"
+        />
+      </div>
     </div>
   </div>
 </div>
