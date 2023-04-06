@@ -56,6 +56,7 @@ ENV CPS_OLD_API 0
 
 COPY --from=build /${CPS_HOME} /${CPS_HOME}
 COPY --from=build /opt/python /opt/python
+COPY --from=build /usr/bin/python3 /usr/bin/python3
 
 WORKDIR ${CPS_HOME}
 
