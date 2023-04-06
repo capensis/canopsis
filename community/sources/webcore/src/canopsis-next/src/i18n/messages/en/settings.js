@@ -224,7 +224,7 @@ export default {
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
     showTrend: 'Show trend',
-    fontSize: 'Fond size adjustment',
+    fontSize: 'Font size adjustment',
     auto: 'Auto',
     manual: 'Manual',
     presets: {
