@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 
 	apiUrl, err := bdd.GetApiURL()
 	if err != nil {
-		logger.Fatal().Err(err).Msg("")
+		logger.Fatal().Err(err).Send()
 	}
 
 	var flags Flags
@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 	if flags.eventsLog != "" {
 		f, err := os.OpenFile(flags.eventsLog, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("")
+			logger.Fatal().Err(err).Send()
 		}
 		defer f.Close()
 		eventLogger = zerolog.New(&logWriter{writer: f}).
@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 	if flags.requestsLog != "" {
 		f, err := os.OpenFile(flags.requestsLog, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("")
+			logger.Fatal().Err(err).Send()
 		}
 		defer f.Close()
 		requestLogger = zerolog.New(&logWriter{writer: f}).
@@ -75,28 +75,28 @@ func TestMain(m *testing.M) {
 	err = bdd.RunDummyHttpServer(ctx, dummyApiUrl)
 	dummyApiUrl = "http://" + dummyApiUrl
 	if err != nil {
-		logger.Fatal().Err(err).Msg("")
+		logger.Fatal().Err(err).Send()
 	}
 
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
-		logger.Fatal().Err(err).Msg("")
+		logger.Fatal().Err(err).Send()
 	}
 	defer func() {
 		if err = dbClient.Disconnect(context.Background()); err != nil {
-			logger.Fatal().Err(err).Msg("")
+			logger.Fatal().Err(err).Send()
 		}
 	}()
 
 	amqpConnection, err := amqp.NewConnection(logger, 0, 0)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("")
+		logger.Fatal().Err(err).Send()
 	}
 	defer amqpConnection.Close()
 
 	redisClient, err := redis.NewSession(ctx, 0, logger, 0, 0)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("")
+		logger.Fatal().Err(err).Send()
 	}
 	defer redisClient.Close()
 
@@ -115,7 +115,7 @@ func TestMain(m *testing.M) {
 	if flags.onlyFixtures {
 		err := clearStores(ctx, flags, loader, redisClient, logger)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("")
+			logger.Fatal().Err(err).Send()
 		}
 
 		return
@@ -140,7 +140,7 @@ func TestMain(m *testing.M) {
 	if !flags.clearOnScenario {
 		err := clearStores(ctx, flags, loader, redisClient, logger)
 		if err != nil {
-			logger.Fatal().Err(err).Msg("")
+			logger.Fatal().Err(err).Send()
 		}
 
 		logger.Info().Msg("waiting the next periodical process")
@@ -160,7 +160,7 @@ func TestMain(m *testing.M) {
 
 	err = clearStores(ctx, flags, loader, redisClient, logger)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("")
+		logger.Fatal().Err(err).Send()
 	}
 
 	os.Exit(status)
