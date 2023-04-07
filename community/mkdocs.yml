@@ -74,6 +74,8 @@ plugins:
     - search:
         lang:
           - en
+    - render_swagger
+
 extra:
   social:
     - icon: fontawesome/brands/twitter
