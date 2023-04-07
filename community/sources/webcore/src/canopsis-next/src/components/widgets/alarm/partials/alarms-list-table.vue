@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { differenceBy } from 'lodash';
+import { differenceBy, throttle } from 'lodash';
 
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
@@ -221,7 +221,7 @@ export default {
   computed: {
     wrapperListeners() {
       return this.selectable
-        ? { mousemove: this.mousemoveHandler }
+        ? { mousemove: this.throttledMousemoveHandler }
         : {};
     },
 
@@ -336,6 +336,7 @@ export default {
     this.actionsTranslateY = 0;
     this.translateY = 0;
     this.previousTranslateY = 0;
+    this.throttledMousemoveHandler = throttle(this.mousemoveHandler, 50);
   },
 
   async mounted() {
@@ -366,7 +367,7 @@ export default {
   methods: {
     calculateRowsPositions() {
       this.rowsPositions = Object.entries(this.$refs).reduce((acc, [key, value]) => {
-        if (!key.startsWith('row')) {
+        if (!key.startsWith('row') || !value) {
           return acc;
         }
 
