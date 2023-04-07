@@ -666,6 +666,7 @@ func (g *generator) getLinksWithCategoryByTpl(
 				IconName: linkTpl.IconName,
 				Url:      url,
 				Single:   linkTpl.Single,
+				Action:   linkTpl.Action,
 			},
 		}
 	}
@@ -690,6 +691,7 @@ func (g *generator) getLinksByTpl(
 			IconName: linkTpl.IconName,
 			Url:      url,
 			Single:   linkTpl.Single,
+			Action:   linkTpl.Action,
 		}
 	}
 
@@ -723,6 +725,7 @@ func (g *generator) getLinksWithCategoryByCode(
 		label, _ := item["label"].(string)
 		iconName, _ := item["icon_name"].(string)
 		url, _ := item["url"].(string)
+		action, _ := item["action"].(string)
 		if url == "" {
 			return nil, fmt.Errorf("url is missing")
 		}
@@ -737,6 +740,7 @@ func (g *generator) getLinksWithCategoryByCode(
 				Label:    label,
 				IconName: iconName,
 				Url:      url,
+				Action:   action,
 			},
 		}
 		if single, ok := item["single"].(bool); ok {
@@ -772,6 +776,7 @@ func (g *generator) getLinksByCode(
 		label, _ := item["label"].(string)
 		iconName, _ := item["icon_name"].(string)
 		url, _ := item["url"].(string)
+		action, _ := item["action"].(string)
 		if url == "" {
 			return nil, fmt.Errorf("url is missing")
 		}
@@ -783,6 +788,7 @@ func (g *generator) getLinksByCode(
 			Label:    label,
 			IconName: iconName,
 			Url:      url,
+			Action:   action,
 		}
 		if single, ok := item["single"].(bool); ok {
 			res[i].Single = single

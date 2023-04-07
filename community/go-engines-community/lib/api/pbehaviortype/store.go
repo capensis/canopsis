@@ -194,9 +194,17 @@ func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
 			if pt.IconName == "" {
 				filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
 			}
-			result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": bson.M{
-				"color": pt.Color,
-			}})
+
+			set := bson.M{"color": pt.Color}
+			unset := bson.M{}
+
+			if pt.Hidden == nil || !*pt.Hidden {
+				unset["hidden"] = ""
+			} else {
+				set["hidden"] = true
+			}
+
+			result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": set, "$unset": unset})
 			if err != nil {
 				return err
 			}

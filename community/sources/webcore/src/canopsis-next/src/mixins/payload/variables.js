@@ -88,7 +88,7 @@ export const payloadVariablesMixin = {
         variable => ({
           ...variable,
           value: variable.value === ALARM_PAYLOADS_VARIABLES.entityInfosValue
-            ? variable.value.replace('index ', `index ${ALARM_PAYLOADS_VARIABLES.alarm}`)
+            ? variable.value
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),
       );
@@ -113,6 +113,10 @@ export const payloadVariablesMixin = {
 
     additionalDataVariables() {
       return [
+        {
+          value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.ruleName,
+          text: this.$t('declareTicket.ruleName'),
+        },
         {
           value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.author,
           text: this.$t('common.username'),
@@ -178,6 +182,11 @@ export const payloadVariablesMixin = {
       if (this.hasPrevious) {
         variables.push(...this.payloadVariablesFromPreviousStep);
       }
+
+      variables.unshift({
+        value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.ruleName,
+        text: this.$t('declareTicket.ruleName'),
+      });
 
       return variables;
     },

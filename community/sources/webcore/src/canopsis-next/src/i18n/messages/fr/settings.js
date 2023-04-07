@@ -52,6 +52,7 @@ export default {
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
+  fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
   isCorrelationEnabled: 'Corrélation activée ?',
   duration: 'Durée',
@@ -223,6 +224,9 @@ export default {
     preset: 'Préréglé',
     metricsDisplay: 'Affichage des métriques',
     showTrend: 'Afficher la tendance',
+    fontSize: 'Taille de la police',
+    auto: 'Auto',
+    manual: 'Manuel',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements',
