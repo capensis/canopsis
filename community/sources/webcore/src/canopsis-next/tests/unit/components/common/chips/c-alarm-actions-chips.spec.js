@@ -1,4 +1,4 @@
-import { mount, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import CAlarmActionsChips from '@/components/common/chips/c-alarm-actions-chips.vue';
 
@@ -8,21 +8,13 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(CAlarmActionsChips, {
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CAlarmActionsChips, {
-  stubs,
-
-  ...options,
-});
-
 const selectChip = wrapper => wrapper.find('.c-alarm-action-chip');
 
 describe('c-alarm-actions-chips', () => {
+  const factory = generateShallowRenderer(CAlarmActionsChips, { stubs });
+
+  const snapshotFactory = generateRenderer(CAlarmActionsChips, { stubs });
+
   const items = [
     { text: 'item1', color: 'color1' },
     { text: 'item2', color: 'color2' },
@@ -57,7 +49,21 @@ describe('c-alarm-actions-chips', () => {
     expect(wrapper).toEmit('select', items[0].color);
   });
 
-  test('Renders `c-alarm-tags-chips` without selected tag and dropdown', () => {
+  test('Should emit `select` event on `click` with returnObject', () => {
+    const wrapper = factory({
+      propsData: {
+        items,
+        returnObject: true,
+      },
+    });
+
+    const chip = selectChip(wrapper);
+    chip.trigger('click');
+
+    expect(wrapper).toEmit('select', items[0]);
+  });
+
+  test('Renders `c-alarm-actions-chips` without selected tag and dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items,
@@ -68,7 +74,7 @@ describe('c-alarm-actions-chips', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-alarm-tags-chips` without selected tag and with dropdown', () => {
+  test('Renders `c-alarm-actions-chips` without selected tag and with dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items,
@@ -82,7 +88,7 @@ describe('c-alarm-actions-chips', () => {
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
-  test('Renders `c-alarm-tags-chips` with selected tag and dropdown', () => {
+  test('Renders `c-alarm-actions-chips` with selected tag and dropdown', () => {
     const wrapper = snapshotFactory({
       propsData: {
         items,

@@ -72,11 +72,7 @@ export default {
   },
   methods: {
     updateText(text) {
-      if (text === this.form.text) {
-        return;
-      }
-
-      if (this.template !== CUSTOM_WIDGET_TEMPLATE) {
+      if (this.form.template !== CUSTOM_WIDGET_TEMPLATE) {
         this.updateModel({
           text,
           template: CUSTOM_WIDGET_TEMPLATE,

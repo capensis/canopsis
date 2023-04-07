@@ -428,3 +428,20 @@ export function replaceHelper(source, pattern, replacement, options = {}) {
 
   return String(source).replace(regex, replacement);
 }
+
+/**
+ * Copy value to clipboard helper
+ *
+ * Example: {{#copy 'some string'}}CLICK TO COPY{{/copy}}
+ *
+ * @param {string|number|null} [value = '']
+ * @param {Object} options
+ * @returns {*}
+ */
+export function copyHelper(value = '', options = {}) {
+  if (!isFunction(options.fn)) {
+    throw new Error('handlebars helper {{copy}} expects options.fn');
+  }
+
+  return new Handlebars.SafeString(`<c-copy-wrapper value="${value}" />${options.fn(this)}</c-copy-wrapper>`);
+}

@@ -43,6 +43,7 @@ export default {
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
       cancel: 'Cancel alarm',
+      fastCancel: 'Fast cancel',
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',

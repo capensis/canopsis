@@ -6,6 +6,7 @@ import {
   PATTERNS_FIELDS,
   LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
   LINK_RULE_DEFAULT_ENTITY_SOURCE_CODE,
+  LINK_RULE_ACTIONS,
 } from '@/constants';
 
 import uid from '../uid';
@@ -19,6 +20,10 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
+ * @typedef {'open' | 'copy'} LinkRuleAction
+ */
+
+/**
  * @typedef {Object} LinkRuleLink
  * @property {string} icon_name
  * @property {string} label
@@ -26,6 +31,7 @@ import { enabledToForm } from './shared/common';
  * @property {boolean} [single]
  * @property {string} [rule_id]
  * @property {string} [category]
+ * @property {LinkRuleAction} [action]
  */
 
 /**
@@ -67,6 +73,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
   url: link.url ?? '',
   single: link.single ?? false,
   category: link.category ?? '',
+  action: link.action ?? LINK_RULE_ACTIONS.open,
 });
 
 /**

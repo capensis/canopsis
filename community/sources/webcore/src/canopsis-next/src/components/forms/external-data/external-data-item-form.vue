@@ -19,7 +19,7 @@
               )
           v-select.ml-2(
             v-field="form.type",
-            :items="types",
+            :items="availableTypes",
             :label="$t('common.type')",
             :disabled="disabled"
           )
