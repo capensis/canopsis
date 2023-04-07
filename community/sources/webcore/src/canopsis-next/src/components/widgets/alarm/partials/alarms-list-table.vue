@@ -1,5 +1,8 @@
 <template lang="pug">
-  v-flex.white(v-resize="changeHeaderPositionOnResize")
+  v-flex.white(
+    v-on="wrapperListeners",
+    v-resize="changeHeaderPositionOnResize"
+  )
     c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
@@ -59,6 +62,7 @@
           alarms-list-row(
             v-model="props.selected",
             v-on="rowListeners",
+            :ref="`row${props.item._id}`",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
@@ -222,6 +226,12 @@ export default {
   },
 
   computed: {
+    wrapperListeners() {
+      return this.selectable
+        ? { mousemove: this.mousemoveHandler }
+        : {};
+    },
+
     unresolvedSelected() {
       return this.selected.filter(item => !isResolvedAlarm(item));
     },
@@ -334,6 +344,8 @@ export default {
     if (this.selectable) {
       window.addEventListener('keydown', this.enableSelecting);
       window.addEventListener('keyup', this.disableSelecting);
+      window.addEventListener('mousedown', this.mousedownHandler);
+      window.addEventListener('mouseup', this.mouseupHandler);
     }
 
     if (featuresService.has('components.alarmListTable.mounted')) {
@@ -344,10 +356,19 @@ export default {
     this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
     this.columnsFiltersPending = false;
   },
+
+  updated() {
+    if (this.selecting) {
+      this.calculateRowsPositions();
+    }
+  },
+
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
     window.removeEventListener('keydown', this.enableSelecting);
     window.removeEventListener('keyup', this.disableSelecting);
+    window.removeEventListener('mousedown', this.mousedownHandler);
+    window.removeEventListener('mouseup', this.mouseupHandler);
 
     if (featuresService.has('components.alarmListTable.beforeDestroy')) {
       featuresService.call('components.alarmListTable.beforeDestroy', this, {});
@@ -356,6 +377,83 @@ export default {
 
   methods: {
     ...featuresService.get('components.alarmListTable.methods', {}),
+
+    calculateRowsPositions() {
+      this.rowsPositions = Object.entries(this.$refs).reduce((acc, [key, value]) => {
+        if (!key.startsWith('row')) {
+          return acc;
+        }
+
+        const position = value.$el.getBoundingClientRect();
+
+        acc.push({
+          position: {
+            x1: position.x,
+            x2: position.x + position.width,
+            y1: position.y,
+            y2: position.y + position.height,
+          },
+          row: value.$options.propsData.row,
+        });
+
+        return acc;
+      }, []);
+    },
+
+    getIntersectRowsByPosition(newX, newY, prevX, prevY) {
+      return this.rowsPositions.reduce((acc, { position, row }) => {
+        if (
+          (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
+          || (newX < position.x1 && prevX < position.x1)
+          || (newX > position.x2 && prevX > position.x2)
+          || (newY < position.y1 && prevY < position.y1)
+          || (newY > position.y2 && prevY > position.y2)
+        ) {
+          return acc;
+        }
+
+        acc.push(row);
+
+        return acc;
+      }, []);
+    },
+
+    mousedownHandler(event) {
+      this.prevEvent = event;
+    },
+
+    mouseupHandler() {
+      delete this.prevEvent;
+    },
+
+    mousemoveHandler(event) {
+      if (!event.ctrlKey || !event.buttons || !this.prevEvent) {
+        return;
+      }
+
+      const rows = this.getIntersectRowsByPosition(
+        event.clientX,
+        event.clientY,
+        this.prevEvent.clientX,
+        this.prevEvent.clientY,
+      );
+
+      this.prevEvent = event;
+
+      rows.forEach(row => this.toggleSelected(row.item));
+    },
+
+    toggleSelected(alarm) {
+      const index = this.selected.findIndex(({ _id: id }) => id === alarm._id);
+
+      if (index === -1) {
+        this.selected.push(alarm);
+
+        return;
+      }
+
+      this.selected.splice(index, 1);
+    },
 
     clearSelected() {
       this.selected = [];
@@ -459,6 +557,10 @@ export default {
       if (this.stickyHeader) {
         this.changeHeaderPosition();
       }
+
+      if (this.selecting) {
+        this.calculateRowsPositions();
+      }
     },
 
     checkIsTourEnabledForAlarmByIndex(index) {
@@ -506,9 +608,15 @@ export default {
       }
     }
 
-    &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
-      pointer-events: auto;
-      opacity: 1;
+    &__selecting {
+      & > .v-table__overflow > table > tbody > .alarm-list-row:after {
+        pointer-events: auto;
+        opacity: 1;
+      }
+
+      * {
+        user-select: none;
+      }
     }
 
     tbody {
