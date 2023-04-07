@@ -1,10 +1,11 @@
 <template lang="pug">
   v-layout.chart-widget-filters(wrap)
-    c-quick-date-interval-field(
+    c-quick-date-interval-field.chart-widget-filters__interval(
       v-if="showInterval",
       :interval="interval",
       :min="minIntervalDate",
       :quick-ranges="quickRanges",
+      short,
       @input="$emit('update:interval', $event)"
     )
     c-sampling-field.chart-widget-filters__sampling(
@@ -113,11 +114,11 @@ export default {
   column-gap: 24px;
 
   &__sampling {
-    max-width: 200px;
+    max-width: 100px;
   }
 
-  &__filter-selector {
-    max-width: 300px;
+  &__filter-selector, &__interval {
+    max-width: 200px;
   }
 }
 </style>

@@ -176,7 +176,19 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 
 	triggers := event.AlarmChange.GetTriggers()
 	if len(triggers) == 0 {
-		s.sendEventToFifoAck(ctx, *event)
+		var activated bool
+		var err error
+		if event.AlarmChange.Type != types.AlarmChangeTypeNone {
+			activated, err = s.activationService.Process(ctx, alarm, event.ReceivedTimestamp)
+			if err != nil {
+				return err
+			}
+		}
+
+		if !activated {
+			s.sendEventToFifoAck(ctx, *event)
+		}
+
 		return nil
 	}
 

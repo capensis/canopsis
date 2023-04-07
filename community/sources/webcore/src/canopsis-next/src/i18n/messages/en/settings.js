@@ -52,6 +52,7 @@ export default {
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   fastAckOutput: 'Fast-ack output',
+  fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
   isCorrelationEnabled: 'Is correlation enabled?',
   duration: 'Duration',
@@ -223,6 +224,9 @@ export default {
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
     showTrend: 'Show trend',
+    fontSize: 'Font size adjustment',
+    auto: 'Auto',
+    manual: 'Manual',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',

@@ -105,7 +105,7 @@
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
       )
       v-divider
-      widget-settings-group(title="Ack")
+      widget-settings-group(:title="$t('common.ack')")
         field-switcher(
           v-model="form.parameters.isAckNoteRequired",
           :title="$t('settings.isAckNoteRequired')"
@@ -116,7 +116,16 @@
           :title="$t('settings.isMultiAckEnabled')"
         )
         v-divider
-        field-fast-ack-output(v-model="form.parameters.fastAckOutput")
+        field-fast-action-output(
+          v-model="form.parameters.fastAckOutput",
+          :label="$t('settings.fastAckOutput')"
+        )
+      v-divider
+      widget-settings-group(:title="$t('common.cancel')")
+        field-fast-action-output(
+          v-model="form.parameters.fastCancelOutput",
+          :label="$t('settings.fastCancelOutput')"
+        )
       v-divider
       field-switcher(
         v-model="form.parameters.isSnoozeNoteRequired",
@@ -171,7 +180,7 @@ import FieldDefaultElementsPerPage from './fields/common/default-elements-per-pa
 import FieldFilters from './fields/common/filters.vue';
 import FieldTextEditorWithTemplate from './fields/common/text-editor-with-template.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
-import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
+import FieldFastActionOutput from './fields/alarm/fast-action-output.vue';
 import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './fields/common/remediation-instructions-filters.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
@@ -200,7 +209,7 @@ export default {
     FieldFilters,
     FieldTextEditorWithTemplate,
     FieldSwitcher,
-    FieldFastAckOutput,
+    FieldFastActionOutput,
     FieldGridRangeSize,
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
