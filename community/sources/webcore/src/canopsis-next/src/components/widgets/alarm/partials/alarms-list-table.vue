@@ -388,7 +388,7 @@ export default {
     },
 
     getIntersectRowsByPosition(newX, newY, prevX, prevY) {
-      return this.rowsPositions.reduce((acc, { position, row }) => {
+      return this.rowsPositions?.reduce((acc, { position, row }) => {
         if (
           (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
           || (newX < position.x1 && prevX < position.x1)
@@ -402,7 +402,7 @@ export default {
         acc.push(row);
 
         return acc;
-      }, []);
+      }, []) ?? [];
     },
 
     mousedownHandler(event) {
