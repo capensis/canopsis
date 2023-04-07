@@ -83,12 +83,13 @@ export default {
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  mounted() {
-    this.fetchAppInfoWithErrorHandling();
+  async mounted() {
     this.socketConnectWithErrorHandling();
     this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
-    this.fetchTemplateVars();
+
+    await this.fetchTemplateVars();
+    this.fetchAppInfoWithErrorHandling();
   },
   methods: {
     ...mapActions({
