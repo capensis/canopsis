@@ -2357,6 +2357,8 @@ definitions:
     type: object
   link.Link:
     properties:
+      action:
+        type: string
       icon_name:
         type: string
       label:
@@ -2376,6 +2378,11 @@ definitions:
     type: object
   link.Parameters:
     properties:
+      action:
+        enum:
+        - open
+        - copy
+        type: string
       category:
         maxLength: 255
         type: string
@@ -2392,6 +2399,7 @@ definitions:
         maxLength: 1000
         type: string
     required:
+    - action
     - icon_name
     - label
     - url

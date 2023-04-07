@@ -7,6 +7,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
   <div>
     <div
       class="layout alarms-list-table__top-pagination px-4 position-relative row align-center"
+      style="transform: translateY(0px); opacity: 1;"
     >
       <div
         class="flex alarms-list-table__top-pagination--left xs6"
