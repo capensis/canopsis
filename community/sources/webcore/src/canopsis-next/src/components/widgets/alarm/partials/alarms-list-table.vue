@@ -347,6 +347,7 @@ export default {
       window.addEventListener('keydown', this.enableSelecting);
       window.addEventListener('keyup', this.disableSelecting);
       window.addEventListener('mousedown', this.mousedownHandler);
+      window.addEventListener('mouseup', this.mouseupHandler);
     }
   },
   updated() {
@@ -359,6 +360,7 @@ export default {
     window.removeEventListener('keydown', this.enableSelecting);
     window.removeEventListener('keyup', this.disableSelecting);
     window.removeEventListener('mousedown', this.mousedownHandler);
+    window.removeEventListener('mouseup', this.mouseupHandler);
   },
 
   methods: {
@@ -404,6 +406,10 @@ export default {
 
     mousedownHandler(event) {
       this.prevEvent = event;
+    },
+
+    mouseupHandler() {
+      delete this.prevEvent;
     },
 
     mousemoveHandler(event) {
