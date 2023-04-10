@@ -29,6 +29,8 @@ type SectionAlarm struct {
 	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
+	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
+	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
 }
 
 // SectionGlobal ...

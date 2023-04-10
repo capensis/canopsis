@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout(justify-end)
-    v-btn.ma-0.mr-4(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
+  v-layout.kpi-chart-export-actions(justify-end, wrap)
+    v-btn.ma-0(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
       v-icon(small, left) file_download
       span {{ $t('common.exportAsCsv') }}
     v-btn.ma-0(color="primary", small, @click="exportChartAsPng")
@@ -29,3 +29,10 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.kpi-chart-export-actions {
+  column-gap: 24px;
+  row-gap: 12px;
+}
+</style>

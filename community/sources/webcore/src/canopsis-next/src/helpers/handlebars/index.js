@@ -11,10 +11,10 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * Compile template
  *
  * @param {string} template
- * @param {Object} context
+ * @param {Object} [context = {}]
  * @returns {Promise}
  */
-export async function compile(template, context) {
+export async function compile(template, context = {}) {
   const handleBarFunction = Handlebars.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
