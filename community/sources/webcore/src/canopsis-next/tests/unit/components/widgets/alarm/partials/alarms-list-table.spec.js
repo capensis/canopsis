@@ -2,8 +2,8 @@ import { range } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { generateShallowRenderer, generateRenderer, createVueInstance } from '@unit/utils/vue';
+import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 import { ALARM_DENSE_TYPES } from '@/constants';
@@ -11,6 +11,8 @@ import { ALARM_DENSE_TYPES } from '@/constants';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
+
+const localVue = createVueInstance();
 
 const stubs = {
   'mass-actions-panel': true,
@@ -98,6 +100,7 @@ describe('alarms-list-table', () => {
 
   const store = createMockedStoreModules([
     associativeTableModule,
+    createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
   ]);
 
   const defaultWidget = generatePreparedDefaultAlarmListWidget();
@@ -108,12 +111,30 @@ describe('alarms-list-table', () => {
   }];
 
   const factory = generateShallowRenderer(AlarmsListTable, {
+    localVue,
     stubs,
     attachTo: document.body,
+    mocks: {
+      _route: {
+        meta: {
+          hideHeader: false,
+        },
+        name: '',
+      },
+    },
   });
   const snapshotFactory = generateRenderer(AlarmsListTable, {
+    localVue,
     stubs,
     attachTo: document.body,
+    mocks: {
+      _route: {
+        meta: {
+          hideHeader: false,
+        },
+        name: '',
+      },
+    },
   });
 
   afterEach(() => {
