@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type contextKey int
@@ -22,6 +23,7 @@ const (
 	contextKeyVars
 	contextConsumer
 	contextWebsocketConn
+	contextTimezone
 )
 
 func GetScenarioName(ctx context.Context) (string, bool) {
@@ -164,4 +166,21 @@ func setWebsocketConn(ctx context.Context, v int) context.Context {
 func getWebsocketConn(ctx context.Context) (int, bool) {
 	v, ok := ctx.Value(contextWebsocketConn).(int)
 	return v, ok
+}
+
+func SetTimezone(ctx context.Context, location *time.Location) context.Context {
+	return context.WithValue(ctx, contextTimezone, location.String())
+}
+
+func GetTimezone(ctx context.Context) (*time.Location, bool) {
+	v, ok := ctx.Value(contextTimezone).(string)
+	if !ok {
+		return nil, false
+	}
+	loc, err := time.LoadLocation(v)
+	if err != nil {
+		return nil, false
+	}
+
+	return loc, true
 }
