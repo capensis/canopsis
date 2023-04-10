@@ -108,6 +108,7 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
@@ -129,6 +130,7 @@ export default {
     AlarmsListRow,
   },
   mixins: [
+    entitiesInfoMixin,
     widgetColumnsAlarmMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
@@ -216,7 +218,7 @@ export default {
 
   computed: {
     topBarHeight() {
-      return this.$route.meta?.hideNavigation ? 0 : TOP_BAR_HEIGHT;
+      return this.shownHeader ? TOP_BAR_HEIGHT : 0;
     },
 
     unresolvedSelected() {

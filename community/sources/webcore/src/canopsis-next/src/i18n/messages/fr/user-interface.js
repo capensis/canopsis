@@ -8,6 +8,7 @@ export default {
   infoPopupTimeout: 'Délai d\'affichage pour les popups d\'informations',
   errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
   allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
+  showHeaderOnKioskMode: 'Afficher l\'en-tête en mode kiosque',
   maxMatchedItems: 'Seuil d\'éléments avant avertissement',
   checkCountRequestTimeout: 'Délai d\'expiration de la requête',
   tooltips: {
