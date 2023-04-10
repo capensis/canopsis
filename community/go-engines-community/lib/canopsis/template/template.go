@@ -231,25 +231,21 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return rv.MapIndex(reflect.ValueOf(key)).IsValid()
 		},
-		"tag_has_key": func(tags []string, key string) bool {
+		"tag_has_key": func(tags []string, searchKey string) bool {
 			for _, tag := range tags {
-				split := strings.Split(tag, ":")
-				if key == split[0] {
+				key, _, _ := strings.Cut(tag, ":")
+				if searchKey == key {
 					return true
 				}
 			}
 
 			return false
 		},
-		"get_tag": func(tags []string, key string) string {
+		"get_tag": func(tags []string, searchKey string) string {
 			for _, tag := range tags {
-				split := strings.Split(tag, ": ")
-				if key == split[0] {
-					if len(split) > 1 {
-						return split[1]
-					}
-
-					return ""
+				key, val, _ := strings.Cut(tag, ": ")
+				if searchKey == key {
+					return val
 				}
 			}
 
