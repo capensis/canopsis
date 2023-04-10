@@ -21,6 +21,7 @@
       span.pre-line.header-text {{ header.text }}
     template(#delay="{ item }")
       span {{ item.delay | duration }}
+    template(#priority="{ item }") {{ item.priority || '-' }}
     template(#enabled="{ item }")
       c-help-icon(
         v-if="hasDeprecatedTrigger(item)",
