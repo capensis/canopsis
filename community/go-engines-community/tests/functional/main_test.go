@@ -293,6 +293,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
+		scenarioCtx.Step(`^I set config parameter (.+)=(true|false)$`, mongoClient.ISetConfigParameter)
 	}
 }
 
