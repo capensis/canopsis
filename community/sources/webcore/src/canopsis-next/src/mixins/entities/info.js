@@ -41,9 +41,9 @@ export const entitiesInfoMixin = {
     },
 
     shownHeader() {
-      return this.$route.name === ROUTES_NAMES.viewKiosk
+      return this.$route?.name === ROUTES_NAMES.viewKiosk
         ? this.showHeaderOnKioskMode
-        : !this.$route.meta.hideHeader;
+        : !this.$route?.meta?.hideHeader;
     },
   },
   methods: {
