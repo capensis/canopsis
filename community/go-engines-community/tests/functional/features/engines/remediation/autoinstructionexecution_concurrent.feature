@@ -6,31 +6,31 @@ Feature: run an auto instruction
     When I send an event:
     """json
     {
-      "connector": "test-connector-to-run-auto-instruction-13",
-      "connector_name": "test-connector-name-to-run-auto-instruction-13",
+      "connector": "test-connector-to-run-auto-instruction-concurrent-1",
+      "connector_name": "test-connector-name-to-run-auto-instruction-concurrent-1",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-to-run-auto-instruction-13",
-      "resource": "test-resource-to-run-auto-instruction-13-1",
+      "component": "test-component-to-run-auto-instruction-concurrent-1",
+      "resource": "test-resource-to-run-auto-instruction-concurrent-1-1",
       "state": 1,
-      "output": "test-output-to-run-auto-instruction-13-1"
+      "output": "test-output-to-run-auto-instruction-concurrent-1-1"
     }
     """
     When I send an event:
     """json
     {
-      "connector": "test-connector-to-run-auto-instruction-13",
-      "connector_name": "test-connector-name-to-run-auto-instruction-13",
+      "connector": "test-connector-to-run-auto-instruction-concurrent-1",
+      "connector_name": "test-connector-name-to-run-auto-instruction-concurrent-1",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-to-run-auto-instruction-13",
-      "resource": "test-resource-to-run-auto-instruction-13-2",
+      "component": "test-component-to-run-auto-instruction-concurrent-1",
+      "resource": "test-resource-to-run-auto-instruction-concurrent-1-2",
       "state": 1,
-      "output": "test-output-to-run-auto-instruction-13-2"
+      "output": "test-output-to-run-auto-instruction-concurrent-1-2"
     }
     """
     When I wait the end of 6 events processing
-    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-13&with_instructions=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-to-run-auto-instruction-concurrent-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
       "data": [
