@@ -25,7 +25,7 @@ publish_docker_archive:
   script:
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
-           --upload-file "${DOCKER_ARCHIVE_PATH}" \
+           --upload-file "${CANOPSIS_EDITION}/${DOCKER_ARCHIVE_PATH}" \
            "${DOCKER_ARCHIVE_PACKAGE}"
   rules:
     - if: $CI_COMMIT_TAG
