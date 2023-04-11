@@ -222,7 +222,7 @@ export const getAggregateFunctionsByMetric = (metric) => {
     default:
       return [
         AGGREGATE_FUNCTIONS.regularSum,
-        AGGREGATE_FUNCTIONS.cumulativeSum,
+        AGGREGATE_FUNCTIONS.last,
         AGGREGATE_FUNCTIONS.avg,
         AGGREGATE_FUNCTIONS.min,
         AGGREGATE_FUNCTIONS.max,
