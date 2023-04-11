@@ -874,3 +874,25 @@ export const createAggregatedMetricsModule = () => {
     fetchAggregatedMetricsList,
   };
 };
+
+export const createMetricsModule = () => {
+  const fetchExternalMetricsListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+
+  afterEach(() => {
+    fetchExternalMetricsListWithoutStore.mockClear();
+  });
+
+  const metricsModule = {
+    name: 'metrics',
+    actions: {
+      fetchExternalMetricsListWithoutStore,
+    },
+  };
+
+  return {
+    metricsModule,
+    fetchExternalMetricsListWithoutStore,
+  };
+};

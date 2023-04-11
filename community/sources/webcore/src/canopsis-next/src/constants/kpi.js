@@ -59,10 +59,10 @@ export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;
 export const AGGREGATE_FUNCTIONS = {
   sum: 'sum',
   regularSum: 'regular_sum',
-  cumulativeSum: 'cumulative_sum',
   avg: 'avg',
   min: 'min',
   max: 'max',
+  last: 'last',
 };
 
 export const Y_AXES_IDS = {
