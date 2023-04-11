@@ -264,12 +264,12 @@ job:
     name: test-job-to-run-manual-simplified-instruction-5-name
     payload: '{"test-job-to-run-manual-simplified-instruction-5-key": "test-job-to-run-manual-simplified-instruction-5-val"}'
 
-  test-job-to-run-auto-instruction-13:
+  test-job-to-run-auto-instruction-concurrent-1:
     <<: *job
-    _id: test-job-to-run-auto-instruction-13
-    config: test-job-config-to-run-auto-instruction-13
+    _id: test-job-to-run-auto-instruction-concurrent-1
+    config: test-job-config-to-run-auto-instruction-concurrent-1
     external_id: test-job-params-concurrent
-    name: test-job-to-run-auto-instruction-13-name
+    name: test-job-to-run-auto-instruction-concurrent-1-name
     query:
       connector_name: "{{ .Alarm.Value.ConnectorName }}"
       display_name: "{{ .Alarm.Value.DisplayName }}"
