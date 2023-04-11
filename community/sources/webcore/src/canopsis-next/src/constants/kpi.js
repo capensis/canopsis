@@ -73,3 +73,5 @@ export const X_AXES_IDS = {
   default: 'x',
   history: 'xHistory',
 };
+
+export const MAX_METRICS_DISPLAY_COUNT = 40;
