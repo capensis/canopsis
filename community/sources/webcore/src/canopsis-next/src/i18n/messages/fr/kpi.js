@@ -16,7 +16,7 @@ export default {
 
   aggregateFunctions: {
     [AGGREGATE_FUNCTIONS.regularSum]: 'Somme régulière',
-    [AGGREGATE_FUNCTIONS.cumulativeSum]: 'Somme cumulée',
+    [AGGREGATE_FUNCTIONS.last]: 'Dernier',
     [AGGREGATE_FUNCTIONS.sum]: 'Somme',
     [AGGREGATE_FUNCTIONS.avg]: 'Moyenne',
     [AGGREGATE_FUNCTIONS.min]: 'Min',

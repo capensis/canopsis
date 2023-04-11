@@ -1,15 +1,21 @@
 <template lang="pug">
-  v-autocomplete(
-    v-field="value",
+  component(
     v-validate="rules",
+    :is="addable ? 'v-combobox' : 'v-autocomplete'",
+    :value="value",
+    :search-input.sync="searchInput",
     :items="availableParameters",
     :label="label",
     :name="name",
-    :loading="pending",
+    :loading="externalMetricsPending",
     :multiple="isMultiple",
-    :hide-details="hideDetails"
+    :hide-details="hideDetails",
+    :filter="filterComputedMetric",
+    :return-object="false",
+    :hide-no-data="addable",
+    @change="updateParameters"
   )
-    template(#selection="{ item, index }")
+    template(v-if="!addable", #selection="{ item, index }")
       template(v-if="isMultiple")
         span(v-if="!index") {{ getSelectionLabel(item) }}
       template(v-else)
@@ -30,14 +36,15 @@
 
 <script>
 import { isArray, omit } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
-const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
+import { formBaseMixin } from '@/mixins/form';
+import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 
 export default {
   inject: ['$validator'],
+  mixins: [formBaseMixin, entitiesMetricsMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -79,11 +86,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      pending: false,
-      externalMetrics: [],
+      searchInput: null,
     };
   },
   computed: {
@@ -92,7 +102,7 @@ export default {
     },
 
     isMinValueLength() {
-      return this.value.length === this.min;
+      return this.value?.length === this.min;
     },
 
     availableParameters() {
@@ -124,16 +134,24 @@ export default {
     withExternal: {
       immediate: true,
       handler(value) {
-        if (value) {
+        if (value && !this.externalMetricsPending && !this.externalMetrics.length) {
           this.fetchList();
         }
       },
     },
   },
   methods: {
-    ...mapMetricsActions({
-      fetchExternalMetricsListWithoutStore: 'fetchExternalMetricsListWithoutStore',
-    }),
+    filterComputedMetric({ text }) {
+      try {
+        return text.includes(this.searchInput) || new RegExp(`${this.searchInput}`).test(text);
+      } catch (err) {
+        return false;
+      }
+    },
+
+    updateParameters(value) {
+      this.updateModel(value ?? '');
+    },
 
     isActiveValue(value) {
       return this.isMultiple ? this.value.includes(value) : this.value === value;
@@ -147,20 +165,10 @@ export default {
       return this.$t('common.parametersToDisplay', { count: this.value.length });
     },
 
-    async fetchList() {
-      this.pending = true;
-
-      try {
-        const { data: externalMetrics } = await this.fetchExternalMetricsListWithoutStore({
-          params: { paginate: false },
-        });
-
-        this.externalMetrics = externalMetrics;
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.pending = false;
-      }
+    fetchList() {
+      this.fetchExternalMetricsList({
+        params: { paginate: false },
+      });
     },
   },
 };

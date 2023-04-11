@@ -10,6 +10,11 @@
       )
     template(#append="")
       c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
+    template(#actions="")
+      v-btn.ml-2.mx-0(
+        color="primary",
+        @click.prevent="add(true)"
+      ) {{ $t('common.autoAdd') }}
 </template>
 
 <script>
@@ -111,9 +116,10 @@ export default {
     this.detachRules();
   },
   methods: {
-    add() {
+    add(auto = false) {
       this.addItemIntoArray(metricPresetToForm({
         aggregate_func: this.withAggregateFunction ? AGGREGATE_FUNCTIONS.avg : '',
+        auto,
       }));
     },
 

@@ -8,6 +8,7 @@ import uid from '@/helpers/uid';
  * @typedef {Object} MetricPreset
  * @property {string} metric
  * @property {string} [color]
+ * @property {boolean} [auto]
  * @property {MetricAggregateFunctions} [aggregate_func]
  */
 
@@ -34,6 +35,7 @@ export const metricPresetToForm = (preset = {}) => ({
   metric: preset.metric ?? '',
   color: preset.color ?? '',
   aggregate_func: preset.aggregate_func ?? '',
+  auto: preset.auto ?? false,
   key: uid(),
 });
 

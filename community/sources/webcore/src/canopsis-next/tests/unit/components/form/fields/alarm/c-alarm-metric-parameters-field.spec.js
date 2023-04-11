@@ -1,15 +1,28 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
 
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+import { createMetricsModule, createMockedStoreModules } from '@unit/utils/store';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
 
 const stubs = {
-  'v-autocomplete': createSelectInputStub('v-select'),
+  'v-autocomplete': createSelectInputStub('v-autocomplete'),
 };
 
+const selectAutocompleteNode = wrapper => wrapper.vm.$children[0];
+
 describe('c-alarm-metric-parameters-field', () => {
+  const { metricsModule, fetchExternalMetricsListWithoutStore } = createMetricsModule();
+  const externalMetrics = [{
+    _id: 'external/first',
+    name: 'External first',
+  }, {
+    _id: 'external/second',
+    name: 'External second',
+  }];
+
   const factory = generateShallowRenderer(CAlarmMetricParametersField, { stubs });
   const snapshotFactory = generateRenderer(CAlarmMetricParametersField);
 
@@ -19,34 +32,41 @@ describe('c-alarm-metric-parameters-field', () => {
         value: [],
       },
     });
-    const newValue = [ALARM_METRIC_PARAMETERS.ratioInstructions];
-    const selectElement = wrapper.find('select.v-select');
 
-    selectElement.vm.$emit('input', newValue);
+    selectAutocompleteNode(wrapper).$emit('change', ALARM_METRIC_PARAMETERS.maxAck);
 
-    const inputEvents = wrapper.emitted('input');
+    expect(wrapper).toEmit('input', ALARM_METRIC_PARAMETERS.maxAck);
+  });
 
-    expect(inputEvents).toHaveLength(1);
+  it('External metrics fetched after mount', async () => {
+    fetchExternalMetricsListWithoutStore.mockResolvedValueOnce({
+      data: externalMetrics,
+    });
+    factory({
+      propsData: {
+        value: [],
+        withExternal: true,
+      },
+      store: createMockedStoreModules([metricsModule]),
+    });
 
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    await flushPromises();
+
+    expect(fetchExternalMetricsListWithoutStore).toHaveBeenCalled();
   });
 
   it('Renders `c-alarm-metric-parameters-field` with default props', () => {
-    const wrapper = snapshotFactory({
+    snapshotFactory({
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms],
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
   it('Renders `c-alarm-metric-parameters-field` with custom props', () => {
-    const wrapper = snapshotFactory({
+    snapshotFactory({
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
         min: 2,
@@ -63,22 +83,24 @@ describe('c-alarm-metric-parameters-field', () => {
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `c-alarm-metric-parameters-field` with all values', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `c-alarm-metric-parameters-field` with external metrics', async () => {
+    fetchExternalMetricsListWithoutStore.mockResolvedValueOnce({
+      data: externalMetrics,
+    });
+    snapshotFactory({
       propsData: {
-        value: Object.values(ALARM_METRIC_PARAMETERS),
+        value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
+        parameters: [],
+        withExternal: true,
       },
+      store: createMockedStoreModules([metricsModule]),
     });
 
-    const menuContent = wrapper.findMenu();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });
