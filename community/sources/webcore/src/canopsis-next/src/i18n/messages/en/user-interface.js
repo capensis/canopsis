@@ -8,6 +8,7 @@ export default {
   infoPopupTimeout: 'Info popup timeout',
   errorPopupTimeout: 'Error popup timeout',
   allowChangeSeverityToInfo: 'Allow change severity to info',
+  showHeaderOnKioskMode: 'Show header on kiosk mode',
   maxMatchedItems: 'Max matched items',
   checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
   tooltips: {
