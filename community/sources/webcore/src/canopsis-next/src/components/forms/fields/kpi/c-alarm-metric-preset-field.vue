@@ -5,6 +5,7 @@
       :label="$t('kpi.selectMetric')",
       :parameters="parameters",
       :disabled-parameters="disabledParameters",
+      :addable="preset.auto",
       required,
       with-external,
       @input="updateMetric"
