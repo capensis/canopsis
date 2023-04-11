@@ -22,6 +22,7 @@
       chart-loader(v-if="aggregatedMetricsPending", :has-metrics="hasMetrics")
       pie-chart-metrics(
         v-if="hasMetrics",
+        :chart-id="widget._id",
         :metrics="aggregatedMetrics",
         :colors-by-metrics="colorsByMetrics",
         :title="widget.parameters.chart_title",
