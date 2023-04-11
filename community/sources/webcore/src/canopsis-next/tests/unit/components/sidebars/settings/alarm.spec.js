@@ -109,6 +109,9 @@ const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-sw
 const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
+const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
+const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(8);
+const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(9);
 
 describe('alarm', () => {
   const parentComponent = {
@@ -180,7 +183,7 @@ describe('alarm', () => {
     fetchUserPreference.mockReset();
   });
 
-  it('Create widget with default parameters', async () => {
+  test('Create widget with default parameters', async () => {
     const localWidget = getEmptyWidgetByType(WIDGET_TYPES.alarmList);
 
     localWidget.tab = Faker.datatype.string();
@@ -215,7 +218,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Duplicate widget without changes', async () => {
+  test('Duplicate widget without changes', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -243,7 +246,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Title changed after trigger field title', async () => {
+  test('Title changed after trigger field title', async () => {
     const newTitle = Faker.datatype.string();
 
     const wrapper = factory({
@@ -271,7 +274,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Periodic refresh changed after trigger field periodic refresh', async () => {
+  test('Periodic refresh changed after trigger field periodic refresh', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -303,7 +306,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Default sort column changed after trigger field default sort column', async () => {
+  test('Default sort column changed after trigger field default sort column', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -334,7 +337,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Widget columns changed after trigger field columns', async () => {
+  test('Widget columns changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -366,7 +369,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Widget columns with `alarm.` prefix changed after trigger field columns', async () => {
+  test('Widget columns with `alarm.` prefix changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -401,7 +404,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Widget group columns changed after trigger field columns', async () => {
+  test('Widget group columns changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -434,7 +437,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Service dependencies columns changed after trigger field columns', async () => {
+  test('Service dependencies columns changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -468,7 +471,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Default elements per page changed after trigger field default elements per page', async () => {
+  test('Default elements per page changed after trigger field default elements per page', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -496,7 +499,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Opened changed after trigger opened and resolved field', async () => {
+  test('Opened changed after trigger opened and resolved field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -522,7 +525,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Filters changed after trigger update:filters on filters field', async () => {
+  test('Filters changed after trigger update:filters on filters field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,
@@ -570,7 +573,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Filter changed after trigger input on filters field', async () => {
+  test('Filter changed after trigger input on filters field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,
@@ -618,7 +621,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Instruction filters changed after trigger remediation instructions field', async () => {
+  test('Instruction filters changed after trigger remediation instructions field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,
@@ -679,7 +682,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Live reporting changed after trigger live reporting field', async () => {
+  test('Live reporting changed after trigger live reporting field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -710,7 +713,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Info popup changed after trigger info popup field', async () => {
+  test('Info popup changed after trigger info popup field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -741,7 +744,7 @@ describe('alarm', () => {
     });
   });
 
-  it('More info template changed after trigger text field', async () => {
+  test('More info template changed after trigger text field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -778,7 +781,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Grid range changed after trigger grid range field', async () => {
+  test('Grid range changed after trigger grid range field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -806,7 +809,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Clear filter disabled changed after trigger switcher field', async () => {
+  test('Clear filter disabled changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -834,7 +837,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Html enabled on timeline changed after trigger switcher field', async () => {
+  test('Html enabled on timeline changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -862,7 +865,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Ack note required changed after trigger switcher field', async () => {
+  test('Ack note required changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -890,7 +893,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Multi ack enabled changed after trigger switcher field', async () => {
+  test('Multi ack enabled changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -918,7 +921,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Fast ack output changed after trigger fast ack output field', async () => {
+  test('Fast ack output changed after trigger fast ack output field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -949,7 +952,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Fast cancel output changed after trigger fast cancel output field', async () => {
+  test('Fast cancel output changed after trigger fast cancel output field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -980,7 +983,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Snooze note required changed after trigger switcher field', async () => {
+  test('Snooze note required changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1008,7 +1011,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Inline links count changed after trigger', async () => {
+  test('Inline links count changed after trigger', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1035,7 +1038,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Export parameters changed after trigger export csv form', async () => {
+  test('Export parameters changed after trigger export csv form', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1076,7 +1079,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Sticky header changed after trigger switcher field', async () => {
+  test('Sticky header changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1107,7 +1110,7 @@ describe('alarm', () => {
   /**
    * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
    */
-  it('Invalid periodic refresh converted to valid object', async () => {
+  test('Invalid periodic refresh converted to valid object', async () => {
     const periodicRefresh = {
       value: 1,
       unit: {},
@@ -1149,7 +1152,45 @@ describe('alarm', () => {
     });
   });
 
-  it('Renders `alarm` widget settings with default props', async () => {
+  test('Kiosk fields changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldKioskHideActions = selectFieldKioskHideActions(wrapper);
+    const fieldKioskHideMassSelection = selectFieldKioskHideMassSelection(wrapper);
+    const fieldKioskHideToolbar = selectFieldKioskHideToolbar(wrapper);
+
+    const hideActions = Faker.datatype.boolean();
+    const hideMassSelection = Faker.datatype.boolean();
+    const hideToolbar = Faker.datatype.boolean();
+
+    fieldKioskHideActions.vm.$emit('input', hideActions);
+    fieldKioskHideMassSelection.vm.$emit('input', hideMassSelection);
+    fieldKioskHideToolbar.vm.$emit('input', hideToolbar);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'kiosk', {
+          hideActions,
+          hideMassSelection,
+          hideToolbar,
+        }),
+      },
+    });
+  });
+
+  test('Renders `alarm` widget settings with default props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -1162,7 +1203,7 @@ describe('alarm', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm` widget settings with all rights', async () => {
+  test('Renders `alarm` widget settings with all rights', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         activeViewModule,
@@ -1205,7 +1246,7 @@ describe('alarm', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm` widget settings with custom props', async () => {
+  test('Renders `alarm` widget settings with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
