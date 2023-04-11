@@ -224,6 +224,9 @@ export default {
     preset: 'Preset',
     metricsDisplay: 'Metrics display',
     showTrend: 'Show trend',
+    fontSize: 'Font size adjustment',
+    auto: 'Auto',
+    manual: 'Manual',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Number of active alarms',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Ack statistics',
@@ -246,5 +249,11 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Manual instruction execution',
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
     },
+  },
+  kioskMode: 'Kiosk mode',
+  kiosk: {
+    hideActions: 'Hide actions',
+    hideMassSelection: 'Hide mass selection',
+    hideToolbar: 'Hide toolbar',
   },
 };
