@@ -209,7 +209,24 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
     - `{{ .Event.ExtraInfos.anotherinfo }}` -> Erreur de compilation du template.
 
 
-## Fonctions incluess dans GO
+1. `tag_has_key` - Vérifie si un tag est présent dans une liste de tags.  
+
+    Si `.Alarm.Tags = ["Tag1: Value1", "Tag2"]`
+
+    - `{{ tag_has_key .Alarm.Tags "Tag1" }}` -> `true`
+    - `{{ tag_has_key .Alarm.Tags "Tag2" }}` -> `true`
+    - `{{ tag_has_key .Alarm.Tags "Tag3" }}` -> `false`
+
+
+2. `get_tag` - Renvoie la valeur d'un tag. Si le tag n'existe pas ou n'a pas de valeur, une chaine vide est renvoyée.
+
+    Si `.Alarm.Tags = ["Tag1: Value1", "Tag2"]`
+
+    - `{{ get_tag .Alarm.Tags "Tag1" }}` -> `Value1`
+    - `{{ get_tag .Alarm.Tags "Tag2" }}` -> `""`
+    - `{{ get_tag .Alarm.Tags "Tag3" }}` -> `""`
+
+## Fonctions incluses dans GO
 
 1. `range` - Permet d'itérer sur une variable
 
