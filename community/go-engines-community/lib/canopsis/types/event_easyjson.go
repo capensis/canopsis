@@ -1591,6 +1591,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
+		case "auto_instruction_in_progress":
+			out.InactiveAutoInstructionInProgress = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -1696,6 +1698,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.InactiveAutoInstructionInProgress {
+		const prefix string = ",\"auto_instruction_in_progress\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.InactiveAutoInstructionInProgress))
 	}
 	out.RawByte('}')
 }
