@@ -208,12 +208,6 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
     - `{{ .Event.ExtraInfos.info }}` -> `a`
     - `{{ .Event.ExtraInfos.anotherinfo }}` -> Erreur de compilation du template.
 
-1. `urlquery` - Transforme le contenu de la variable en une chaîne de caractères compatible avec le format des URL. 
-
-    si `.Alarm.Value.ticket.Ticket = 50`
-
-  - `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` -> `http://une-api.org/edit/50`
-
 
 ## Fonctions incluess dans GO
 
@@ -225,6 +219,13 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
     - {{ range (index .Entity.Infos "not-exist").Value }}{{ . }};{{ end }} -> empty string
     - {{ range .Entity.Infos }}{{ .Name }}:{{ .Value }};{{ end }} -> info1:[a b c];info2:d;
     - {{ range $index, $item := (index .Entity.Infos "info1").Value }}{{ $index }}:{{ $item }};{{ end }} -> 0:a;1:b;2:c;
+
+1. `urlquery` - Transforme le contenu de la variable en une chaîne de caractères compatible avec le format des URL. 
+
+    si `.Alarm.Value.ticket.Ticket = 50`
+
+  - `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` -> `http://une-api.org/edit/50`
+
 
 ## Génération de texte
 
