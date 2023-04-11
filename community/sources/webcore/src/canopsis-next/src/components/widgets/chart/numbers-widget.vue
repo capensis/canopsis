@@ -25,6 +25,7 @@
         :metrics="aggregatedMetrics",
         :title="widget.parameters.chart_title",
         :show-trend="widget.parameters.show_trend",
+        :font-size="valueFontSize",
         :downloading="downloading",
         @export:csv="exportMetricsAsCsv"
       )
@@ -33,6 +34,13 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
+
+import {
+  NUMBERS_CHART_MAX_AUTO_FONT_SIZE,
+  NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT,
+  NUMBERS_CHART_DEFAULT_FONT_SIZE,
+  NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
+} from '@/constants';
 
 import { convertFilterToQuery } from '@/helpers/query';
 
@@ -86,16 +94,56 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      containerWidth: null,
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
+
+    valueFontSize() {
+      if (this.widget.parameters.font_size) {
+        return this.widget.parameters.font_size;
+      }
+
+      if (this.containerWidth) {
+        const size = Math.round(this.containerWidth / NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT);
+
+        return Math.max(Math.min(size, NUMBERS_CHART_MAX_AUTO_FONT_SIZE), NUMBERS_CHART_MIN_AUTO_FONT_SIZE);
+      }
+
+      return NUMBERS_CHART_DEFAULT_FONT_SIZE;
+    },
+  },
+  created() {
+    this.resizeObserver = new ResizeObserver(this.setElementWidth);
+  },
+  mounted() {
+    this.resizeObserver.observe(this.$el);
+    this.setElementWidth();
+  },
+  beforeDestroy() {
+    this.resizeObserver.unobserve(this.$el);
+    this.resizeObserver.disconnect();
   },
   methods: {
     ...mapMetricsActions({
       createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
       fetchMetricExport: 'fetchMetricExport',
     }),
+
+    setElementWidth() {
+      if (this.fontSize) {
+        return;
+      }
+
+      const { width } = this.$el.getBoundingClientRect();
+
+      this.containerWidth = width;
+    },
 
     getQuery() {
       return {
