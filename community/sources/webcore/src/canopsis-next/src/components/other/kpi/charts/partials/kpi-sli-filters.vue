@@ -1,10 +1,9 @@
 <template lang="pug">
-  div.kpi-sli-toolbar
-    v-layout.ml-4.my-4(wrap)
-      c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
-      c-sampling-field.mr-4.kpi-sli-toolbar__sampling(v-field="query.sampling")
-      kpi-sli-show-mode-field.mr-4.kpi-sli-toolbar__show-mode(v-field="query.type")
-      c-filter-field.kpi-sli-toolbar__filters(v-field="query.filter")
+  v-layout.kpi-sli-toolbar.ml-4.my-4(wrap)
+    c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
+    c-sampling-field.mr-4.kpi-sli-toolbar__sampling(v-field="query.sampling")
+    kpi-sli-show-mode-field.mr-4.kpi-sli-toolbar__show-mode(v-field="query.type")
+    c-filter-field.kpi-sli-toolbar__filters(v-field="query.filter")
 </template>
 
 <script>
@@ -29,7 +28,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .kpi-sli-toolbar {
   &__sampling {
     max-width: 200px;

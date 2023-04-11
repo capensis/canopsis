@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout.chart-metrics-widget(column, align-center)
     h4.chart-metrics-widget__title {{ title }}
-    pie-chart.chart-metrics-widget__chart(
+    pie-chart.pie-chart-metrics__chart.chart-metrics-widget__chart(
       :datasets="datasets",
       :labels="labels",
       :options="chartOptions",
@@ -165,3 +165,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.pie-chart-metrics {
+  &__chart #pie-chart {
+    height: 400px !important;
+  }
+}
+</style>

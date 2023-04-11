@@ -10,6 +10,7 @@
         with-aggregate-function
       )
     widget-settings-group(:title="$t('settings.advancedSettings')")
+      field-font-size(v-model="form.parameters.font_size")
       field-chart-title(v-model="form.parameters.chart_title")
       field-quick-date-interval-type(v-model="form.parameters.default_time_range")
       field-sampling(v-model="form.parameters.default_sampling")
@@ -40,6 +41,7 @@ import FieldQuickDateIntervalType from './fields/common/quick-date-interval-type
 import FieldSampling from './fields/common/sampling.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
+import FieldFontSize from './fields/chart/font-size.vue';
 
 export default {
   name: SIDE_BARS.numbersSettings,
@@ -56,6 +58,7 @@ export default {
     FieldSampling,
     FieldFilters,
     FieldSwitcher,
+    FieldFontSize,
   },
   mixins: [widgetSettingsMixin],
   computed: {

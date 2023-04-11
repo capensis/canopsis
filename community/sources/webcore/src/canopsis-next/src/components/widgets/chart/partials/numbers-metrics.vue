@@ -6,7 +6,8 @@
         v-for="metric in metrics",
         :key="metric.title",
         :metric="metric",
-        :show-trend="showTrend"
+        :show-trend="showTrend",
+        :value-font-size="fontSize"
       )
     v-layout.numbers-metrics__actions.mt-4(row, justify-end)
       v-btn.ma-0(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
@@ -35,6 +36,10 @@ export default {
     downloading: {
       type: Boolean,
       default: false,
+    },
+    fontSize: {
+      type: Number,
+      required: false,
     },
   },
 };
