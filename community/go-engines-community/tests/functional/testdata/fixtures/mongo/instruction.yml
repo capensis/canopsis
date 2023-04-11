@@ -1129,22 +1129,22 @@ instruction:
       unit: s
       value: 1
 
-  instruction_to_run_auto_instruction_13:
+  instruction_to_run_auto_instruction_concurrent_1:
     <<: *instruction_auto
-    _id: test-instruction-to-run-auto-instruction-13
+    _id: test-instruction-to-run-auto-instruction-concurrent-1
     enabled: true
     entity_pattern:
       - - field: name
           cond:
             type: regexp
-            value: test-resource-to-run-auto-instruction-13-\d
+            value: test-resource-to-run-auto-instruction-concurrent-1-\d
     alarm_pattern:
-    name: test-instruction-to-run-auto-instruction-13-name
+    name: test-instruction-to-run-auto-instruction-concurrent-1-name
     timeout_after_execution:
       unit: s
       value: 1
     jobs:
-      - job: test-job-to-run-auto-instruction-13
+      - job: test-job-to-run-auto-instruction-concurrent-1
         stop_on_fail: true
 
   instruction_without_patterns:

@@ -105,6 +105,6 @@ job_config:
     <<: *condig_dummy_rundeck
     _id: test-job-config-metrics-axe
 
-  job-config-to-run-auto-instruction-13:
+  job-config-to-run-auto-instruction-concurrent-1:
     <<: *condig_dummy_jenkins
-    _id: test-job-config-to-run-auto-instruction-13
+    _id: test-job-config-to-run-auto-instruction-concurrent-1
