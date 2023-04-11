@@ -212,6 +212,28 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-switcher-stub
       title="Sticky header"
     />
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"
@@ -418,6 +440,28 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       title="Sticky header"
       value="true"
     />
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"
@@ -619,6 +663,28 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-switcher-stub
       title="Sticky header"
     />
+    <hr
+      class="v-divider theme--light"
+    />
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <hr
+        class="v-divider theme--light"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"
