@@ -95,153 +95,50 @@ Pour les utiliser, il faut appeler la fonction après la variable comme ceci : `
 
 On peut aussi enchaîner différentes fonctions à la suite si on veut transformer plusieurs fois les variables `{{ .LaVariable | fonction1 | fonction2 paramA paramB | fonction3 paramC }}`.
 
-1. `json` - Encode une variable en JSON.
+| Fonction | Description | Exemples | 
+| -------- | ----------- | -------- |
+| `json`   | Encode une variable en JSON | Si `.Entity.Infos.info1.Value = ["a","b","c"]` et `.Entity.Infos.info2.Value = "d \"e\""`<br><ul><li>`{{ .Entity.Infos.info1.Value | json }}` -> `["a","b","c"]`</li><li>`{{ .Entity.Infos.info2.Value | json }}` -> `"d \"e\""`</li><li>`{{ .Entity.Infos | json }}` -> `{"info1":{"name":"info1","description":"","value":["a","b","c"]},"info2":{"name":"info2","description":"","value":"d \"e\""}}`</li></ul><br>    En complément :<br><ul><li>`{{ .Entity.Infos.info1.Value }}` -> `[a b c]`</li><li>`{{ .Entity.Infos.info2.Value }}` -> `d "e"`<</li><li>`{{ .Entity.Infos }}` -> `map[info1:{info1  [a b c]} info2:{info2  d "e"}]`</li></ul> |
+| `json_unquote` | Encode une variable en JSON et supprime les guillemets | Si `.Entity.Infos.info1.Value = ["a","b","c"]` et `.Entity.Infos.info2.Value = "d \"e\""`<br><ul><li>`{{ .Entity.Infos.info1.Value | json_unquote }}` -> `["a","b","c"]`</li><li>`{{ .Entity.Infos.info2.Value | json_unquote }}` -> `d \"e\"`</li><li>`{{ .Entity.Infos | json_unquote }}` -> `{"info1":{"name":"info1","description":"","value":["a","b","c"]},"info2":{"name":"info2","description":"","value":"d \"e\""}}`</li></ul> |
+| `split` | Split une chaîne grâce à un séparateur | Si `.Alarm.Value.Output = "a/b c"`<br><ul><li>`{{ .Alarm.Value.Output | split "/" 0 }}` -> `a`</li><li>`{{ .Alarm.Value.Output | split "/" 1 }}` -> `b c`</li><li>`{{ .Alarm.Value.Output | split " " 1 }}` -> `c`</li></ul> |
+| `trim` | Supprime les espaces en début et fin de chaîne | Si `.Alarm.Value.Output = "  a b c      "`<br><ul><li>`{{ .Alarm.Value.Output | trim }}` -> `a b c`</li></ul> |
+| `replace` | Remplace les correspondances d'une expression régulière dans une chaîne par une chaîne | Si `.Alarm.Value.Output = "abc b 10"`<br><ul><li>`{{ .Alarm.Value.Output | replace "b" "d" }}` -> `adc d 10`</li><li>`{{ .Alarm.Value.Output | replace "\\d+" "20" }}` -> `abc b 20`</li><li>`{{ .Alarm.Value.Output | replace "(\\d+)" "$1 out of 100" }}` -> `abc b 10 out 100`</li></ul> |
+| `uppercase` | Transforme toutes les lettres en majuscule | Si `.Alarm.Value.Output = "a b c ô é"`<br><ul><li>`{{ .Alarm.Value.Output | uppercase }}` -> `A B C Ô É`</li></ul> |
+| `lowercase` | Transforme toutes les lettres en minuscule | Si `.Alarm.Value.Output = "A B C Ô É"`<br><ul><li>`{{ .Alarm.Value.Output | lowercase }}` -> `a b c ô é`</li></ul> |
+| `formattedDate` | Formatte la date en UTC (déprécié, utilisez `localtime` à la place) | Si `.Alarm.Timestamp = 1635404700`<br><ul><li>`{{ .Alarm.Timestamp | formattedDate "Mon, 02 Jan 2006 15:04:05 MST" }}` -> `Thu, 28 Oct 2021 07:05:00 UTC`</li></ul> |
+| `localtime` | Formatte la date dans la timezone locale ou dans une timezone définie | Si `.Alarm.Timestamp = 1635404700`<br><ul><li>`{{ .Alarm.Timestamp | localtime "Mon, 02 Jan 2006 15:04:05 MST" }}` -> `Thu, 28 Oct 2021 09:05:00 CEST`</li><li>`{{ .Alarm.Timestamp | localtime "Mon, 02 Jan 2006 15:04:05 MST" "Australia/Queensland" }}` -> `Thu, 28 Oct 2021 17:05:00 AEST`</li></ul><br>Cette fonction prend en paramètre une chaîne qui est le format attendu de la date. La chaîne doit correspondre à la syntaxe des dates en Go. Cette syntaxe se base sur une date de référence, le `01/02 03:04:05PM '06 -0700` qui correspond au lundi 2 janvier 2006 à 22:04:05 UTC. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle. |
+| `regex_map_key` | Extrait un item d'une map via une expression régulière | Si `.Event.ExtraInfos = {"info":"a","anotherinfo":"b"}`<br><ul><li>`{{ regex_map_key .Event.ExtraInfos "info" }}` -> `a` ou `b` car l'ordre dans une map est indéterminé</li><li>`{{ regex_map_key .Event.ExtraInfos "^info" }}` -> `a`</li></ul> |
+| `map_has_key` | Vérifie la présence d'un item par sa clé dans une map | Si `.Event.ExtraInfos = {"info":"a"}`<br><ul><li>`{{ if map_has_key .Event.ExtraInfos "info" }}{{ .Event.ExtraInfos.info }}{{ else }}default{{ end }}` -> `a`</li><li>`{{ if map_has_key .Event.ExtraInfos "anotherinfo" }}{{ .Event.ExtraInfos.anotherinfo }}{{ else }}default{{ end }}` -> `default`</li></ul><br>En complément :<br><ul><li>`{{ index .Event.ExtraInfos "info" }}` -> `a`</li><li>`{{ index .Event.ExtraInfos "anotherinfo" }}` -> `<no value>`</li><li>`{{ .Event.ExtraInfos.info }}` -> `a`</li><li> `{{ .Event.ExtraInfos.anotherinfo }}` -> Erreur de compilation du template.</li></ul> |
+| `tag_has_key` | Vérifie si un tag est présent dans une liste de tags | Si `.Alarm.Tags = ["Tag1: Value1", "Tag2"]`<br><ul><li>`{{ tag_has_key .Alarm.Tags "Tag1" }}` -> `true`</li><li>`{{ tag_has_key .Alarm.Tags "Tag2" }}` -> `true`</li><li>`{{ tag_has_key .Alarm.Tags "Tag3" }}` -> `false`</li></ul> |
+| `get_tag` | Renvoie la valeur d'un tag. Si le tag n'existe pas ou n'a pas de valeur, une chaine vide est renvoyée | Si `.Alarm.Tags = ["Tag1: Value1", "Tag2"]`<br><ul><li>`{{ get_tag .Alarm.Tags "Tag1" }}` -> `Value1`</li><li>`{{ get_tag .Alarm.Tags "Tag2" }}` -> `""`</li><li>`{{ get_tag .Alarm.Tags "Tag3" }}` -> `""`</li></ul> |
 
-    Si `.Entity.Infos.info1.Value = ["a","b","c"]` et `.Entity.Infos.info2.Value = "d \"e\""`
 
-    `{{ .Entity.Infos.info1.Value | json }}` -> `["a","b","c"]`
-    `{{ .Entity.Infos.info2.Value | json }}` -> `"d \"e\""`
-    `{{ .Entity.Infos | json }}` -> `{"info1":{"name":"info1","description":"","value":["a","b","c"]},"info2":{"name":"info2","description":"","value":"d \"e\""}}`
+??? Note "Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date` dans les systèmes UNIX."
 
-    En complément :
-
-    - `{{ .Entity.Infos.info1.Value }}` -> `[a b c]`
-    - `{{ .Entity.Infos.info2.Value }}` -> `d "e"`
-    - `{{ .Entity.Infos }}` -> `map[info1:{info1  [a b c]} info2:{info2  d "e"}]`
-
-1. `json_unquote` - Enode une variable en JSON et supprime les guillemets.
-
-    Si `.Entity.Infos.info1.Value = ["a","b","c"]` et `.Entity.Infos.info2.Value = "d \"e\""`
-
-    - `{{ .Entity.Infos.info1.Value | json_unquote }}` -> `["a","b","c"]`
-    - `{{ .Entity.Infos.info2.Value | json_unquote }}` -> `d \"e\"`
-    - `{{ .Entity.Infos | json_unquote }}` -> `{"info1":{"name":"info1","description":"","value":["a","b","c"]},"info2":{"name":"info2","description":"","value":"d \"e\""}}`
-
-1. `split` - Split une chaîne grâce à un séparateur.
-
-    Si `.Alarm.Value.Output = "a/b c"`
-
-    - `{{ .Alarm.Value.Output | split "/" 0 }}` -> `a`
-    - `{{ .Alarm.Value.Output | split "/" 1 }}` -> `b c`
-    - `{{ .Alarm.Value.Output | split " " 1 }}` -> `c`
-
-1. `trim` - Supprime les espaces en début et fin de chaîne.
-
-    Si `.Alarm.Value.Output = "  a b c      "`
-
-    - `{{ .Alarm.Value.Output | trim }}` -> `a b c`
-
-1. `replace` - Remplace les correspondances d'une expression régulière dans une chaîne par une chaîne.
-
-    Si `.Alarm.Value.Output = "abc b 10"`
-
-    - `{{ .Alarm.Value.Output | replace "b" "d" }}` -> `adc d 10`
-    - `{{ .Alarm.Value.Output | replace "\\d+" "20" }}` -> `abc b 20`
-    - `{{ .Alarm.Value.Output | replace "(\\d+)" "$1 out of 100" }}` -> `abc b 10 out 100`
-
-1. `uppercase` - Transforme toutes les lettres en majuscule.
-
-    Si `.Alarm.Value.Output = "a b c ô é"`
-
-    - `{{ .Alarm.Value.Output | uppercase }}` -> `A B C Ô É`
-
-1. `lowercase` - Tranforme toutes les lettres en minuscule.
-
-    Si `.Alarm.Value.Output = "A B C Ô É"`
-
-    - `{{ .Alarm.Value.Output | lowercase }}` -> `a b c ô é`
-
-1. `formattedDate` - Formatte la date en UTC (déprécié, utilisez `localtime` à la place).
-
-    Si `.Alarm.Timestamp = 1635404700`
-
-    - `{{ .Alarm.Timestamp | formattedDate "Mon, 02 Jan 2006 15:04:05 MST" }}` -> `Thu, 28 Oct 2021 07:05:00 UTC`
-
-1. `localtime` - Formatte la date dans la timezone locale ou dans une timezone définie.
-   
-    Si `.Alarm.Timestamp = 1635404700`
-
-    - `{{ .Alarm.Timestamp | localtime "Mon, 02 Jan 2006 15:04:05 MST" }}` -> `Thu, 28 Oct 2021 09:05:00 CEST`
-    - `{{ .Alarm.Timestamp | localtime "Mon, 02 Jan 2006 15:04:05 MST" "Australia/Queensland" }}` -> `Thu, 28 Oct 2021 17:05:00 AEST`
-
-    Cette fonction prend en paramètre une chaîne qui est le format attendu de la date. La chaîne doit correspondre à la syntaxe des dates en Go. Cette syntaxe se base sur une date de référence, le `01/02 03:04:05PM '06 -0700` qui correspond au lundi 2 janvier 2006 à 22:04:05 UTC. Quand la chaîne n'arrive pas à être analysée par le langage, elle est renvoyée telle quelle.
-
-    ??? Note "Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date` dans les systèmes UNIX."
-
-        | Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition                        | Exemples            |
-        |:---------------------------- |:--------------- |:--------------------------------- |:------------------- |
-        | `Mon`                        | `%a`            | Abréviation du jour de la semaine | Mon..Sun            |
-        | `Monday`                     | `%A`            | Nom du jour de la semaine         | Monday..Sunday      |
-        | `Jan`                        | `%b`            | Abréviation du nom du mois        | Jan..Dec            |
-        | `January`                    | `%B`            | Nom du mois                       | January..December   |
-        | `02`                         | `%d`            | Jour du mois                      | 01..31              |
-        | `15`                         | `%k`            | Heure (sur 24 heures)             | 0..23               |
-        | `01`                         | `%m`            | Mois                              | 01..12              |
-        | `04`                         | `%M`            | Minute                            | 01..59              |
-        | `05`                         | `%S`            | Seconde                           | 01..61              |
-        | `2006`                       | `%Y`            | Année                             | 1970, 1984, 2019… |
-        | `MST`                        | `%Z`            | Fuseau horaire                    | CEST, EDT, JST…   |
+    | Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition                        | Exemples            |
+    |:---------------------------- |:--------------- |:--------------------------------- |:------------------- |
+    | `Mon`                        | `%a`            | Abréviation du jour de la semaine | Mon..Sun            |
+    | `Monday`                     | `%A`            | Nom du jour de la semaine         | Monday..Sunday      |
+    | `Jan`                        | `%b`            | Abréviation du nom du mois        | Jan..Dec            |
+    | `January`                    | `%B`            | Nom du mois                       | January..December   |
+    | `02`                         | `%d`            | Jour du mois                      | 01..31              |
+    | `15`                         | `%k`            | Heure (sur 24 heures)             | 0..23               |
+    | `01`                         | `%m`            | Mois                              | 01..12              |
+    | `04`                         | `%M`            | Minute                            | 01..59              |
+    | `05`                         | `%S`            | Seconde                           | 01..61              |
+    | `2006`                       | `%Y`            | Année                             | 1970, 1984, 2019… |
+    | `MST`                        | `%Z`            | Fuseau horaire                    | CEST, EDT, JST…   |
     
     Ainsi, pour transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `localyime \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
     
     La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `localtime \"2006-01-02T15:04:05Z07:00\"`. De même, `localtime \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
 
-
-1. `regex_map_key` - Extrait un item d'une map via une expression régulière.
-
-    Si `.Event.ExtraInfos = {"info":"a","anotherinfo":"b"}`
-
-    - `{{ regex_map_key .Event.ExtraInfos "info" }}` -> `a` ou `b` car l'ordre dans une map est indéterminé.
-    - `{{ regex_map_key .Event.ExtraInfos "^info" }}` -> `a`
-
-1. `map_has_key` - Vérifie la présence d'un item par sa clé dans une map.
-
-    Si `.Event.ExtraInfos = {"info":"a"}`
-
-    - `{{ if map_has_key .Event.ExtraInfos "info" }}{{ .Event.ExtraInfos.info }}{{ else }}default{{ end }}` -> `a`
-    - `{{ if map_has_key .Event.ExtraInfos "anotherinfo" }}{{ .Event.ExtraInfos.anotherinfo }}{{ else }}default{{ end }}` -> `default`
-
-    En complément :
-
-    - `{{ index .Event.ExtraInfos "info" }}` -> `a`
-    - `{{ index .Event.ExtraInfos "anotherinfo" }}` -> `<no value>`
-    - `{{ .Event.ExtraInfos.info }}` -> `a`
-    - `{{ .Event.ExtraInfos.anotherinfo }}` -> Erreur de compilation du template.
-
-
-1. `tag_has_key` - Vérifie si un tag est présent dans une liste de tags.  
-
-    Si `.Alarm.Tags = ["Tag1: Value1", "Tag2"]`
-
-    - `{{ tag_has_key .Alarm.Tags "Tag1" }}` -> `true`
-    - `{{ tag_has_key .Alarm.Tags "Tag2" }}` -> `true`
-    - `{{ tag_has_key .Alarm.Tags "Tag3" }}` -> `false`
-
-
-2. `get_tag` - Renvoie la valeur d'un tag. Si le tag n'existe pas ou n'a pas de valeur, une chaine vide est renvoyée.
-
-    Si `.Alarm.Tags = ["Tag1: Value1", "Tag2"]`
-
-    - `{{ get_tag .Alarm.Tags "Tag1" }}` -> `Value1`
-    - `{{ get_tag .Alarm.Tags "Tag2" }}` -> `""`
-    - `{{ get_tag .Alarm.Tags "Tag3" }}` -> `""`
-
 ## Fonctions incluses dans GO
 
-1. `range` - Permet d'itérer sur une variable
 
-    Si .Entity.Infos.info1.Value = ["a","b","c"] et .Entity.Infos.info2.Value = "d"
-
-    - {{ range (index .Entity.Infos "info1").Value }}{{ . }};{{ end }} -> a;b;c;
-    - {{ range (index .Entity.Infos "not-exist").Value }}{{ . }};{{ end }} -> empty string
-    - {{ range .Entity.Infos }}{{ .Name }}:{{ .Value }};{{ end }} -> info1:[a b c];info2:d;
-    - {{ range $index, $item := (index .Entity.Infos "info1").Value }}{{ $index }}:{{ $item }};{{ end }} -> 0:a;1:b;2:c;
-
-1. `urlquery` - Transforme le contenu de la variable en une chaîne de caractères compatible avec le format des URL. 
-
-    si `.Alarm.Value.ticket.Ticket = 50`
-
-  - `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` -> `http://une-api.org/edit/50`
+| Fonction | Description | Exemples | 
+| -------- | ----------- | -------- |
+| `range` | Permet d'itérer sur une variable | Si .Entity.Infos.info1.Value = ["a","b","c"] et .Entity.Infos.info2.Value = "d"<br><ul><li>{{ range (index .Entity.Infos "info1").Value }}{{ . }};{{ end }} -> a;b;c;</li><li>{{ range (index .Entity.Infos "not-exist").Value }}{{ . }};{{ end }} -> empty string</li><li>{{ range .Entity.Infos }}{{ .Name }}:{{ .Value }};{{ end }} -> info1:[a b c];info2:d;</li><li>{{ range $index, $item := (index .Entity.Infos "info1").Value }}{{ $index }}:{{ $item }};{{ end }} -> 0:a;1:b;2:c;</li></ul> |
+| `urlquery` | Transforme le contenu de la variable en une chaîne de caractères compatible avec le format des URL | Si `.Alarm.Value.ticket.Ticket = 50`<br><ul><li>`http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` -> `http://une-api.org/edit/50`</li></ul> |
 
 
 ## Génération de texte
