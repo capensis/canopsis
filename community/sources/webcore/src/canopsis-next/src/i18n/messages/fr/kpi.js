@@ -9,6 +9,8 @@ export default {
   customColor: 'Couleur personnalisée',
   calculationMethod: 'Méthode de calcul',
   periodTrend: '{count} pour la période\n{from} - {to}',
+  largeCountOfMetrics: 'La liste des métriques à afficher est trop longue et tronquée.',
+  onlyDisplayed: 'Seules {count} métriques sont affichées.',
   tabs: {
     collectionSettings: 'Paramètres d\'évaluation',
     ratingSettings: 'Paramètres d\'évaluation',
