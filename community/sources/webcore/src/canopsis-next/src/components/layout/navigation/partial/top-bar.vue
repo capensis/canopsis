@@ -6,7 +6,7 @@
     app
   )
     v-toolbar-side-icon.ml-2.white--text(
-      v-if="isShownGroupsSideBar",
+      v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation",
       @click="$emit('toggleSideBar')"
     )
     v-layout(v-else, fill-height, align-center)
@@ -18,7 +18,7 @@
     healthcheck-chips-list(v-if="isProVersion && hasAccessToHealthcheckStatus")
     v-spacer(v-else)
     portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
-    v-toolbar-items
+    v-toolbar-items(v-if="!$route.meta.simpleNavigation")
       top-bar-exploitation-menu
       top-bar-administration-menu
       top-bar-notifications-menu
