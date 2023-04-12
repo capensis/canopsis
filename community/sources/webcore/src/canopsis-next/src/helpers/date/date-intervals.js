@@ -156,13 +156,11 @@ export const convertStartDateIntervalToTimestamp = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit,
-  now,
 ) => convertDateIntervalToTimestamp(
   date,
   DATETIME_INTERVAL_TYPES.start,
   format,
   unit,
-  now,
 );
 
 /**
