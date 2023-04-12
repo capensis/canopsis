@@ -38,6 +38,7 @@ import { keyBy, pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
+import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -108,7 +109,7 @@ export default {
     },
 
     preparedVectorMetrics() {
-      return this.vectorMetrics.map(metric => ({
+      return convertMetricsToTimezone(this.vectorMetrics, this.$system.timezone).map(metric => ({
         ...metric,
 
         color: this.widgetMetricsMap[metric.title].color,
