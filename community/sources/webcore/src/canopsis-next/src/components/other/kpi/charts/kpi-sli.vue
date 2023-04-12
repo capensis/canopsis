@@ -25,10 +25,7 @@ import {
 } from '@/constants';
 
 import { saveFile } from '@/helpers/file/files';
-import {
-  convertStartDateIntervalToTimestampByTimezone,
-  convertStopDateIntervalToTimestampByTimezone,
-} from '@/helpers/date/date-intervals';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import {
   convertDateToStartOfDayTimestampByTimezone,
   convertDateToString,
@@ -81,20 +78,10 @@ export default {
   },
   computed: {
     interval() {
-      return {
-        from: convertStartDateIntervalToTimestampByTimezone(
-          this.query.interval.from,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-        to: convertStopDateIntervalToTimestampByTimezone(
-          this.query.interval.to,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-      };
+      return convertMetricIntervalToTimestamp({
+        interval: this.query.interval,
+        timezone: this.$system.timezone,
+      });
     },
   },
   watch: {
