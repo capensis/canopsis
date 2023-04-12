@@ -120,7 +120,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait 3s
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -269,7 +281,19 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I wait 3s
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -441,7 +465,19 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
