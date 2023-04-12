@@ -1,6 +1,6 @@
 # Templates (Go)
 
-Dans bon nombre de fonctionnalités Canopsis, vous avez la possibilité d'utiliser des `Templates Go`. Les templates permettent de générer du texte en fonction des variables associées aux événements, aux alarmes, ou encore aux entités.
+Dans bon nombre de fonctionnalités de Canopsis, vous avez la possibilité d'utiliser des `Templates Go`. Ces templates permettent de générer du texte en fonction des variables associées aux événements, aux alarmes, ou encore aux entités.
 
 Ces templates Go s'appuient sur le [package officiel GOLang](https://pkg.go.dev/text/template).
 
@@ -35,7 +35,7 @@ Voici une liste des principales variables mises à disposition. De façon géné
     | Message de l'acquittement                   | `{{ .Alarm.Value.ACK.Message }}`    |
     | Auteur du dernier commenataire              | `{{ .Alarm.Value.LastComment.Author }}`                               |
     | Message du dernier commenataire             | `{{ .Alarm.Value.LastComment.Message }}`                              |
-    | Informations enrichies depuis dynamic-infos | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }`   |
+    | Informations enrichies depuis dynamic-infos | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }}`   |
     | `abc` dans l'entité                         | `{{ (index .Entity.Infos "abc").Value }}`                               |
 
 === "Entité"
@@ -157,7 +157,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
     | `2006`                       | `%Y`            | Année                             | 1970, 1984, 2019… |
     | `MST`                        | `%Z`            | Fuseau horaire                    | CEST, EDT, JST…   |
     
-    Ainsi, pour transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `localyime \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
+    Ainsi, pour transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `localtime \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
     
     La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `localtime \"2006-01-02T15:04:05Z07:00\"`. De même, `localtime \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
 
