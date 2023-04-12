@@ -4,10 +4,12 @@ import { DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES, TIME_UNITS, SA
 
 import {
   convertDateToMomentByTimezone,
+  convertDateToStartOfDayMoment,
   convertDateToStartOfUnitString,
+  convertDateToTimestampByTimezone,
   getLocaleTimezone,
   subtractUnitFromDate,
-} from '@/helpers/date/date';
+} from './date';
 
 /**
  * @typedef {Object} Interval
@@ -154,11 +156,13 @@ export const convertStartDateIntervalToTimestamp = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit,
+  now,
 ) => convertDateIntervalToTimestamp(
   date,
   DATETIME_INTERVAL_TYPES.start,
   format,
   unit,
+  now,
 );
 
 /**
@@ -324,26 +328,31 @@ export const getQuickRangeByDiffBetweenStartAndStop = (
  *
  * @param {IntervalForm} [interval = {}]
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @param {string} [unit = SAMPLING.day]
  * @param {string} [timezone = getLocaleTimezone()]
  * @returns {Interval}
  */
-export const convertIntervalToTimestamp = (
+export const convertMetricIntervalToTimestamp = ({
   interval = {},
   format = DATETIME_FORMATS.datePicker,
-  unit = SAMPLINGS.day,
   timezone = getLocaleTimezone(),
-) => ({
-  from: convertStartDateIntervalToTimestampByTimezone(
+}) => {
+  const fromMoment = convertDateIntervalToMoment(
     interval.from,
+    DATETIME_INTERVAL_TYPES.start,
     format,
-    unit,
-    timezone,
-  ),
-  to: convertStopDateIntervalToTimestampByTimezone(
+    TIME_UNITS.day,
+  );
+  const toMoment = convertDateIntervalToMoment(
     interval.to,
+    DATETIME_INTERVAL_TYPES.stop,
     format,
-    unit,
-    timezone,
-  ),
-});
+    TIME_UNITS.day,
+  );
+  const fromStartedOfDay = convertDateToStartOfDayMoment(fromMoment);
+  const toStartedOfDay = convertDateToStartOfDayMoment(toMoment);
+
+  return {
+    from: convertDateToTimestampByTimezone(fromStartedOfDay, timezone),
+    to: convertDateToTimestampByTimezone(toStartedOfDay, timezone),
+  };
+};

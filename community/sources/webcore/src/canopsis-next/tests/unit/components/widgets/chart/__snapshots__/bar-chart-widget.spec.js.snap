@@ -6,7 +6,11 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with custom props 1`] = `
 >
   <chart-widget-filters-stub
     class="mx-3"
-    filterdisabled="true"
+    filteraddable="true"
+    filtereditable="true"
+    showfilter="true"
+    showinterval="true"
+    showsampling="true"
     widgetfilters=""
     widgetid="bar-chart-widget-id"
   />
@@ -55,7 +59,11 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with required props 1`] =
 >
   <chart-widget-filters-stub
     class="mx-3"
-    filterdisabled="true"
+    filteraddable="true"
+    filtereditable="true"
+    showfilter="true"
+    showinterval="true"
+    showsampling="true"
     widgetfilters=""
     widgetid="bar-chart-widget-id"
   />

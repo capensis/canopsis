@@ -230,7 +230,6 @@ export const QUICK_RANGES = {
 };
 
 export const METRICS_QUICK_RANGES = {
-  [QUICK_RANGES.last24Hour.value]: QUICK_RANGES.last24Hour,
   [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
   [QUICK_RANGES.last7Days.value]: QUICK_RANGES.last7Days,
   [QUICK_RANGES.last30Days.value]: QUICK_RANGES.last30Days,

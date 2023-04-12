@@ -115,7 +115,7 @@ describe('kpi-rating', () => {
           ...expectedDefaultParams,
 
           from: 1383778800,
-          to: 1386457199,
+          to: 1386370800,
         },
       },
       undefined,
@@ -176,12 +176,12 @@ describe('kpi-rating', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
-      from: 1386262800,
+      from: 1386198000,
       criteria: 1,
       filter: Faker.datatype.string(),
       metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       limit: 10,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchRatingMetrics = jest.fn(() => ({
       data: [],
@@ -228,11 +228,11 @@ describe('kpi-rating', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
-      from: 1386262800,
+      from: 1386198000,
       criteria: 1,
       metric: USER_METRIC_PARAMETERS.totalUserActivity,
       limit: 10,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchRatingMetrics = jest.fn(() => ({
       data: [],

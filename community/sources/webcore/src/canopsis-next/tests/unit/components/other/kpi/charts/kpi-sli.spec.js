@@ -44,17 +44,16 @@ const snapshotFactory = (options = {}) => mount(KpiSli, {
 
 describe('kpi-sli', () => {
   const nowTimestamp = 1386435600000;
-  const nowUnix = nowTimestamp / 1000;
 
   mockDateNow(nowTimestamp);
 
   it('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385766000,
       in_percents: true,
       sampling: SAMPLINGS.day,
-      to: nowUnix,
+      to: 1386370800,
       filter: null,
     };
     const fetchSliMetrics = jest.fn(() => ({
@@ -83,10 +82,10 @@ describe('kpi-sli', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385766000,
       in_percents: true,
       sampling: SAMPLINGS.day,
-      to: nowUnix,
+      to: 1386370800,
       filter: null,
     };
     const fetchSliMetrics = jest.fn(() => ({
