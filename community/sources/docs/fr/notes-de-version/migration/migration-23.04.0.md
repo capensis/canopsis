@@ -1,9 +1,4 @@
 
-Les stats de remediation sont désormais dans timescaledb
-https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4593
-Voir le protocole de migration
-
-
 # Guide de migration vers Canopsis 23.04.0
 
 Ce guide donne des instructions vous permettant de mettre à jour Canopsis 22.10 vers [la version 23.04.0](../23.04.0.md).
@@ -29,12 +24,22 @@ La restructuration apportée dans les bases de données pour cette version de Ca
 !!! warning "Vérification"
 
     Avant de démarrer la procédure de mise à jour, vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **4.4**  
-    ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec mongodb bash
-    mongo -u root -p root
-    > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
-    > exit
-    ```
+
+    === "Docker Compose"
+        ```sh
+        CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec mongodb bash
+        mongo -u root -p root
+        > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+        > exit
+        ```
+
+    === "Paquets RH8"
+
+        ```sh
+        mongo -u root -p root
+        > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+        > exit
+        ```
     
     Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "4.4" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
@@ -51,8 +56,9 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 === "Paquets RH8"
 
-    A venir
-
+    ```sh
+    systemctl stop canopsis
+    ```
 
 ### Mise à jour Canopsis
 
@@ -113,7 +119,20 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 
 === "Paquets RH8"
 
-    A venir
+    Démarrez le conteneur `mongodb` :
+
+    ```sh
+    Ajouter la mise à jour paquet de mongodb
+    systemctl start mongod
+    ```
+
+    Ensuite, complétez la mise à jour vers MongoDB 5.0 :
+
+    ```sh
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "5.0" } )
+    exit
+    ```
 
 ### Mise à jour de TimescaleDB
 
@@ -146,8 +165,29 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
 
 === "Paquets RH8"
 
-    A venir
+    Documenter le mise à jour du paquet timescaledb
 
+    Relancez le service `timescaledb` :
+
+    ```sh
+    systemctl start timescaledb
+    ```
+
+    Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
+
+    ```sh
+    su - postgres -c "psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis"
+    canopsis=# ALTER EXTENSION timescaledb UPDATE;
+    ```
+
+    Ensuite, vérifiez que l'extension en elle-même est à présent bien à jour
+
+    ```sh
+    \dx
+    ...
+    timescaledb | 2.9.3   | public     | Enables scalable inserts and complex queries for time-series data
+    ...
+    `
 
 ### Mise à jour de RabbitMQ
 
@@ -155,7 +195,6 @@ Dans cette version de Canopsis, le bus rabbitMQ passe de la version 3.7.28 à 3.
 Un passage par la version 3.10.20 est cependant nécessaire.
 
 === "Docker Compose"
-
     
     Passage en version 3.10.20 puis lancement du conteneur `rabbitmq` :
 
@@ -180,8 +219,27 @@ Un passage par la version 3.10.20 est cependant nécessaire.
     ```
 
 === "Paquets RH8"
+    
+    Passage en version 3.10.20 puis lancement du service `rabbitmq` :
 
-    A venir
+    ```sh
+    Documenter la mise à jour rabbitmq vers 3.10
+    systemctl start rabbitmq
+    ```
+
+    Il faut à présent activer la fonctionnalité `FEATURE_FLAGS` de rabbitmq :
+
+    ```sh
+    rabbitmqctl enable_feature_flag all
+    exit
+    ```
+
+    Passage en version 3.11.11 puis lancement du conteneur `rabbitmq` :
+
+    ```sh
+    Documenter la mise à jour rabbitmq vers 3.11
+    systemctl start rabbitmq
+    ``` 
 
 ### Remise à 0 du cache Redis
 
@@ -196,7 +254,10 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
 === "Paquets RH8"
 
-    A venir
+    ```sh
+    systemctl start redis
+    /usr/local/bin/redis-cli flushall
+    ```
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
@@ -240,7 +301,48 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
 === "Paquets RH8"
 
-    A venir
+    !!! Attention
+    
+    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
+    L'outil est en effet pré paramétré pour fonctionner naturellement.
+
+    ```sh
+    systemctl start canopsis-reconfigure
+    ```
+
+    !!! information "Information"
+
+        Cette opération peut prendre plusieurs minutes pour s'exécuter.
+
+    Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
+
+    ```sh
+    journalctl -fu canopsis-reconfigure
+    ```
+
+#### Migration des statistiques de remédiation
+
+Historiquement, les statistiques de remédiation étaient stockées dans la base mongoDB.  
+A présent, c'est TimescaleDB qui porte ces statistiques.
+
+Une migration des données est donc nécessaire.
+
+=== "Docker Compose"
+
+    Exécution de la commande `migrate-instruction-metrics`
+
+    ```sh
+    A CORRIGER avec un patch
+    docker run -e EXTERNAL_API_USERNAME='[testuser]' -e EXTERNAL_API_PASSWORD='[testpassword]' -e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb/canopsis' -e CPS_AMQP_URL='amqp://cpsrabbit:canopsis@rabbitmq/canopsis' -e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' --network=canopsis-pro_default -it --rm docker.canopsis.net/docker/pro/migrate-instruction-metrics:23.04-preview3
+    ```
+
+=== "Paquets RH8"
+
+    Exécution de la commande `migrate-instruction-metrics`
+
+    ```sh
+    /opt/canopsis/bin/migrate-instruction-metrics
+    ```
 
 #### Démarrage final de Canopsis
 
@@ -279,7 +381,15 @@ Enfin, il vous reste à démarrer tous les composants applicatifs de Canopsis
 
 === "Paquets RH8"
 
-    A venir
+    ```sh
+    systemctl restart canopsis
+    ```
+
+    Vous pouvez ensuite vérifier que l'ensemble des services soient correctement exécutés.
+
+    ```sh
+    systemctl status canopsis
+    ```
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
