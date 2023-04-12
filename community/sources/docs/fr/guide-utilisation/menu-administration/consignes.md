@@ -114,6 +114,58 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 [templates-payload]: ../../../guide-administration/architecture-interne/templates-golang/#templates-pour-payload
 
+### Déclenchement d'une consigne et activation d'une alarme
+
+L'option [ActivateAlarmAfterAutoRemediation](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
+
+??? note "Schémas de fonctionnement"
+
+    === "Option ActivateAlarmAfterAutoRemediation désactivée"
+
+        ```mermaid
+        flowchart TD
+            A[Création d'une alarme] --> B[snooze]
+            A --> C[Début de comportement périodique]
+            D --> G[unsnooze]
+            D --> H[Fin de comportement périodique]
+            A --> I[Remédiation automatique au moment de la création]
+            B --> D[Ne pas activer l'alarme]
+            C --> D
+            G --> F{L'alarme est-elle snoozée ??\nOU\nen comportement périodique?\n}
+            F -->|Oui| D
+            F -->|Non| E[Activer l'alarme]
+            H --> F
+            I --> E
+        ```
+
+    === "Option ActivateAlarmAfterAutoRemediation activée"
+
+        ```mermaid
+        flowchart TD
+            A[Création d'une alarme] --> B[snooze]
+            A --> C[Début de comportement périodique]
+            D --> G[unsnooze]
+            D --> H[Fin de comportement périodique]
+            D --> J[Remédiation automatique au moment\nde la création terminée]
+            A --> I[Remédiation automatique au moment de la créatio]
+            B --> D[Ne pas activer l'alarme]
+            C --> D
+            G --> F{L'alarme est-elle snoozée ?\nOU\nen comportement périodique ?\nOU\nRemediation automatique au moment\nde la création en cours}
+            F -->|Oui| D
+            F -->|Non| E[Activer l'alarme]
+            H --> F
+            I --> D
+            J --> F
+        ```
+
+Par ailleurs, les remédiations automatiques peuvent à présent être déclenchées sur
+
+* Création d'une alarme
+* Activation d'une alarme
+* Augmentation/Diminution de la sévérité d'une alarme
+* Changement et verrouillage de sévérité
+* Entrée ou sortie de comportement périodique
+
 
 ### Assigner une consigne à des alarmes
 

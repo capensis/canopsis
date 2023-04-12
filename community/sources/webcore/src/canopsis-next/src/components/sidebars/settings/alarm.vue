@@ -154,6 +154,22 @@
         v-model="form.parameters.sticky_header",
         :title="$t('settings.stickyHeader')"
       )
+      v-divider
+      widget-settings-group(:title="$t('settings.kioskMode')")
+        field-switcher(
+          v-model="form.parameters.kiosk.hideActions",
+          :title="$t('settings.kiosk.hideActions')"
+        )
+        v-divider
+        field-switcher(
+          v-model="form.parameters.kiosk.hideMassSelection",
+          :title="$t('settings.kiosk.hideMassSelection')"
+        )
+        v-divider
+        field-switcher(
+          v-model="form.parameters.kiosk.hideToolbar",
+          :title="$t('settings.kiosk.hideToolbar')"
+        )
     v-divider
 </template>
 
