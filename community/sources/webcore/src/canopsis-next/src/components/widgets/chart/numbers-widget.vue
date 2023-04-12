@@ -46,7 +46,7 @@ import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -72,7 +72,7 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     entitiesAggregatedMetricsMixin,
