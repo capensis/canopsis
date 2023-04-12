@@ -77,6 +77,10 @@ func NewCpsTime(timestamp ...int64) CpsTime {
 // MarshalJSON converts from CpsTime to timestamp as bytes
 func (t CpsTime) MarshalJSON() ([]byte, error) {
 	ts := t.Time.Unix()
+	if ts <= 0 {
+		return []byte("null"), nil
+	}
+
 	stamp := fmt.Sprint(ts)
 
 	return []byte(stamp), nil
