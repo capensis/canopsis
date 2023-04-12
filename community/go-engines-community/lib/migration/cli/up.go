@@ -15,6 +15,7 @@ func NewUpCmd(
 	path, to string,
 	client mongo.DbClient,
 	scriptExecutor mongo.ScriptExecutor,
+	insertOnly bool,
 	logger zerolog.Logger,
 ) Cmd {
 	return &upCmd{
@@ -23,6 +24,7 @@ func NewUpCmd(
 		collection:     client.Collection(collectionName),
 		scriptExecutor: scriptExecutor,
 		logger:         logger,
+		insertOnly:     insertOnly,
 	}
 }
 
@@ -31,6 +33,9 @@ type upCmd struct {
 	collection     mongo.DbCollection
 	scriptExecutor mongo.ScriptExecutor
 	logger         zerolog.Logger
+
+	// insertOnly if set to true, then the Exec function will insert migration versions without executing them
+	insertOnly bool
 }
 
 func (c *upCmd) Exec(ctx context.Context) error {
@@ -70,18 +75,20 @@ func (c *upCmd) Exec(ctx context.Context) error {
 			continue
 		}
 
-		file := filepath.Join(c.path, id+fileNameSuffixUp)
-		err = c.scriptExecutor.Exec(file)
-		if err != nil {
-			return err
+		if !c.insertOnly {
+			file := filepath.Join(c.path, id+fileNameSuffixUp)
+			err = c.scriptExecutor.Exec(file)
+			if err != nil {
+				return err
+			}
+
+			c.logger.Info().Str("file", filepath.Base(file)).Msg("up migration script executed")
 		}
 
 		_, err = c.collection.InsertOne(ctx, bson.M{"_id": id})
 		if err != nil {
 			return fmt.Errorf("cannot update migration history: %w", err)
 		}
-
-		c.logger.Info().Str("file", filepath.Base(file)).Msg("up migration script executed")
 	}
 
 	return nil
