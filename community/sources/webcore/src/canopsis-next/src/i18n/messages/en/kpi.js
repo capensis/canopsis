@@ -9,6 +9,8 @@ export default {
   customColor: 'Custom color',
   calculationMethod: 'Calculation method',
   periodTrend: '{count} for the period\n{from} - {to}',
+  largeCountOfMetrics: 'The list of metrics to display is too large and truncated.',
+  onlyDisplayed: 'Only {count} metrics are displayed.',
   tabs: {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',

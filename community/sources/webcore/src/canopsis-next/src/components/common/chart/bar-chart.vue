@@ -8,7 +8,10 @@ import { Bar } from '@/externals/vue-chart/components';
 
 export default {
   extends: Bar,
-  mixins: [chartBackgroundMixin, chartZoomMixin],
+  mixins: [
+    chartBackgroundMixin,
+    chartZoomMixin,
+  ],
   props: {
     ...Bar.props,
 
