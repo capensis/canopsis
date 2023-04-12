@@ -18,3 +18,13 @@
   value: 70
   name: "cpu"
   unit: ""
+- time: '2022-07-01 01:10:00'
+  entity_id: 18
+  value: 70
+  name: "test-perf-data-to-get-1"
+  unit: ""
+- time: '2022-07-01 01:10:00'
+  entity_id: 18
+  value: 70
+  name: "test-perf-data-to-get-2"
+  unit: ""
