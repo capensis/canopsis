@@ -5,14 +5,23 @@
       :tab="tab"
     )
       template(#default="{ widget }")
-        widget-wrapper(:widget="widget", :tab="tab")
+        widget-wrapper(
+          :widget="widget",
+          :tab="tab",
+          :kiosk="kiosk"
+        )
     grid-edit-widgets(
       v-if="editing",
       :tab="tab",
       @update:widgets-grid="updateWidgetsGrid"
     )
       template(#default="{ widget }")
-        widget-wrapper(:widget="widget", :tab="tab", editing)
+        widget-wrapper(
+          :widget="widget",
+          :tab="tab",
+          :kiosk="kiosk",
+          editing
+        )
 </template>
 
 <script>
@@ -39,6 +48,10 @@ export default {
     tab: {
       type: Object,
       required: true,
+    },
+    kiosk: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
