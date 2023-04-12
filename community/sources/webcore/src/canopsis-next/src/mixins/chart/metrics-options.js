@@ -1,10 +1,53 @@
-import { X_AXES_IDS, Y_AXES_IDS, DATETIME_FORMATS } from '@/constants';
+import {
+  X_AXES_IDS,
+  Y_AXES_IDS,
+  DATETIME_FORMATS,
+  MAX_METRICS_DISPLAY_COUNT,
+} from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
-import { getDateLabelBySampling, getMaxTimeDurationForMetrics, isRatioMetric, isTimeMetric } from '@/helpers/metrics';
+import {
+  getDateLabelBySampling,
+  getMaxTimeDurationForMetrics,
+  hasHistoryData,
+  isRatioMetric,
+  isTimeMetric,
+} from '@/helpers/metrics';
 
 export const chartMetricsOptionsMixin = {
   computed: {
+    hasHistoryData() {
+      return hasHistoryData(this.metrics);
+    },
+
+    maxMetricsCount() {
+      return this.hasHistoryData
+        ? MAX_METRICS_DISPLAY_COUNT / 2
+        : MAX_METRICS_DISPLAY_COUNT;
+    },
+
+    preparedMetrics() {
+      return this.metrics?.slice(0, this.maxMetricsCount) ?? [];
+    },
+
+    realMetricsCount() {
+      return this.hasHistoryData
+        ? this.metrics?.length * 2
+        : this.metrics?.length;
+    },
+
+    tooltipBodyFontSize() {
+      if (this.realMetricsCount > 32) {
+        return 9;
+      }
+
+      if (this.realMetricsCount > 24) {
+        return 10;
+      }
+
+      return 11;
+    },
+
     maxTimeDuration() {
       return getMaxTimeDurationForMetrics(this.metrics);
     },
@@ -14,6 +57,39 @@ export const chartMetricsOptionsMixin = {
         size: 11,
         family: 'Arial, sans-serif',
       };
+    },
+
+    legend() {
+      const legend = {
+        position({ chart }) {
+          return chart.width > 600 ? 'right' : 'top';
+        },
+        maxWidth: 700,
+        labels: {
+          font: this.labelsFont,
+          boxWidth: 15,
+          boxHeight: 15,
+        },
+      };
+
+      if (this.realMetricsCount > MAX_METRICS_DISPLAY_COUNT) {
+        legend.title = {
+          text: [
+            this.$t('kpi.largeCountOfMetrics'),
+            this.$t('kpi.onlyDisplayed', { count: MAX_METRICS_DISPLAY_COUNT }),
+          ],
+          padding: 10,
+          display: true,
+          color: 'gray',
+          font: {
+            ...this.labelsFont,
+
+            style: 'italic',
+          },
+        };
+      }
+
+      return legend;
     },
 
     xAxes() {
