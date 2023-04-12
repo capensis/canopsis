@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"text/template"
 	"time"
@@ -108,6 +109,9 @@ func getTplFuncs() template.FuncMap {
 			}
 
 			return sum, nil
+		},
+		"query_escape": func(s string) string {
+			return url.QueryEscape(s)
 		},
 	}
 }
