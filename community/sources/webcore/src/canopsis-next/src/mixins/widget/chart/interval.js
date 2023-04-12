@@ -1,6 +1,4 @@
-import { DATETIME_FORMATS } from '@/constants';
-
-import { convertIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 export const widgetIntervalFilterMixin = {
   inject: ['$system'],
@@ -12,7 +10,11 @@ export const widgetIntervalFilterMixin = {
         return {};
       }
 
-      return convertIntervalToTimestamp(interval, DATETIME_FORMATS.datePicker, sampling, this.$system.timezone);
+      return convertMetricIntervalToTimestamp({
+        interval,
+        sampling,
+        timezone: this.$system.timezone,
+      });
     },
 
     updateInterval(interval) {

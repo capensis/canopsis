@@ -105,6 +105,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    skipHours: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     shortValue() {
