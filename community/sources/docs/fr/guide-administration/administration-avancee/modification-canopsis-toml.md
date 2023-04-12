@@ -112,17 +112,18 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ### Section [Canopsis.alarm]
 
-| Attribut                        | Exemple de valeur     | Description                          |
-| :------------------------------ | :---------------------| :----------------------------------- |
-| StealthyInterval                |                       | Encore utilisé ?          |
-| EnableLastEventDate             | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
-| CancelAutosolveDelay            | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
-| DisplayNameScheme               | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
-| OutputLength                    | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
-| LongOutputLength                | 1024                  | Nombre maximum de caractères du champ `long_output` avant troncage | 
-| DisableActionSnoozeDelayOnPbh   | true,false            | Si `vrai` alors le délai du snooze n'est pas ajouté à un comportement périodique |
-| TimeToKeepResolvedAlarms        | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
-| AllowDoubleAck                  | true,false            | Permet d'acquitter plusieurs fois une alarme |
+| Attribut                          | Exemple de valeur     | Description                          |
+| :-------------------------------- | :---------------------| :----------------------------------- |
+| StealthyInterval                  |                       | Encore utilisé ?          |
+| EnableLastEventDate               | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
+| CancelAutosolveDelay              | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
+| DisplayNameScheme                 | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
+| OutputLength                      | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
+| LongOutputLength                  | 1024                  | Nombre maximum de caractères du champ `long_output` avant troncage | 
+| DisableActionSnoozeDelayOnPbh     | true,false            | Si `vrai` alors le délai du snooze n'est pas ajouté à un comportement périodique |
+| TimeToKeepResolvedAlarms          | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
+| AllowDoubleAck                    | true,false            | Permet d'acquitter plusieurs fois une alarme |
+| ActivateAlarmAfterAutoRemediation | true,false            | Permet de décaler l'activation d'une alarme après l'exécution de la remédiation automatique |
 
 
 ### Section [Canopsis.timezone]
