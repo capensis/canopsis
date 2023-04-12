@@ -35,7 +35,7 @@ Voici une liste des principales variables mises à disposition. De façon géné
     | Message de l'acquittement                   | `{{ .Alarm.Value.ACK.Message }}`    |
     | Auteur du dernier commenataire              | `{{ .Alarm.Value.LastComment.Author }}`                               |
     | Message du dernier commenataire             | `{{ .Alarm.Value.LastComment.Message }}`                              |
-    | Informations enrichies depuis dynamic-infos | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }   |
+    | Informations enrichies depuis dynamic-infos | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }`   |
     | `abc` dans l'entité                         | `{{ (index .Entity.Infos "abc").Value }}`                               |
 
 === "Entité"
