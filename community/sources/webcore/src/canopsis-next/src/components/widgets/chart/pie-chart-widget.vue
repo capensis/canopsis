@@ -100,7 +100,7 @@ export default {
 
     preparedAggregatedMetrics() {
       return this.aggregatedMetrics.map((metric) => {
-        const parameters = this.widgetMetricsMap[metric.title];
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
         return {
           ...metric,
