@@ -5,9 +5,11 @@ import { DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES, TIME_UNITS, SA
 import {
   convertDateToMomentByTimezone,
   convertDateToStartOfDayMoment,
+  convertDateToStartOfUnitMoment,
   convertDateToStartOfUnitString,
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
+  getNowTimestamp,
   subtractUnitFromDate,
 } from './date';
 
@@ -31,17 +33,22 @@ import {
  * @returns {Moment}
  */
 export const convertStringToDateInterval = (string, type) => {
-  const matches = string.match(/^now(([+--])(\d+)([hdwmMy]{1}))?(\/([hdwmMy]{1}))?$/);
+  const matches = string.match(
+    /^(?<initial>now|today)((?<operator>[+--])(?<deltaValue>\d+)(?<deltaUnit>[hdwmMy]{1}))?(\/(?<roundUnit>[hdwmMy]{1}))?$/,
+  );
 
-  if (matches) {
-    const result = moment().utc();
-    const operator = matches[2];
-    const deltaValue = matches[3];
-    const deltaUnit = matches[4];
-    const roundUnit = matches[6];
+  if (matches && matches.groups) {
+    const { initial, operator, deltaValue, deltaUnit, roundUnit } = matches.groups;
+
+    const isToday = initial === 'today';
+    const isStart = type === DATETIME_INTERVAL_TYPES.start;
+
+    const result = isToday
+      ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day).utc()
+      : moment().utc();
 
     if (roundUnit) {
-      if (type === DATETIME_INTERVAL_TYPES.start) {
+      if (isStart) {
         result.startOf(roundUnit);
       } else {
         result.endOf(roundUnit);
@@ -54,6 +61,10 @@ export const convertStringToDateInterval = (string, type) => {
       } else {
         result.subtract(deltaValue, deltaUnit);
       }
+    }
+
+    if (isToday && isStart) {
+      result.add(1, TIME_UNITS.day);
     }
 
     return result;
@@ -334,20 +345,11 @@ export const convertMetricIntervalToTimestamp = ({
   format = DATETIME_FORMATS.datePicker,
   timezone = getLocaleTimezone(),
 }) => {
-  const fromMoment = convertDateIntervalToMoment(
-    interval.from,
-    DATETIME_INTERVAL_TYPES.start,
-    format,
-    TIME_UNITS.day,
-  );
-  const toMoment = convertDateIntervalToMoment(
-    interval.to,
-    DATETIME_INTERVAL_TYPES.stop,
-    format,
-    TIME_UNITS.day,
-  );
-  const fromStartedOfDay = convertDateToStartOfDayMoment(fromMoment);
-  const toStartedOfDay = convertDateToStartOfDayMoment(toMoment);
+  const from = convertStartDateIntervalToTimestamp(interval.from, format, TIME_UNITS.day);
+  const to = convertStopDateIntervalToTimestamp(interval.to, format, TIME_UNITS.day);
+
+  const fromStartedOfDay = convertDateToStartOfDayMoment(from);
+  const toStartedOfDay = convertDateToStartOfDayMoment(to);
 
   return {
     from: convertDateToTimestampByTimezone(fromStartedOfDay, timezone),
