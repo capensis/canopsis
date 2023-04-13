@@ -2,13 +2,19 @@
   v-layout.c-alarm-metric-preset-field(column)
     c-alarm-metric-parameters-field(
       :value="preset.metric",
-      :label="$t('kpi.selectMetric')",
+      :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')",
       :parameters="parameters",
       :disabled-parameters="disabledParameters",
       :addable="preset.auto",
       required,
       with-external,
       @input="updateMetric"
+    )
+    c-name-field(
+      v-if="!preset.auto && preset.metric && isExternalMetric",
+      v-field="preset.label",
+      :label="$t('kpi.displayedLabel')",
+      required
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
       v-switch(
@@ -71,11 +77,19 @@ export default {
     },
   },
   computed: {
+    isExternalMetric() {
+      return !this.isInternalMetric(this.preset.metric);
+    },
+
     aggregateFunctions() {
       return getAggregateFunctionsByMetric(this.preset.metric);
     },
   },
   methods: {
+    isInternalMetric() {
+      return this.parameters.includes(this.preset.metric);
+    },
+
     enableColor(value) {
       this.updateField('color', value ? getMetricColor(this.preset.metric) : '');
     },
@@ -86,6 +100,7 @@ export default {
           ...this.preset,
           metric,
           aggregate_func: getDefaultAggregateFunctionByMetric(metric),
+          label: this.isInternalMetric(metric) ? '' : this.preset.label,
         });
       } else {
         this.updateField('metric', metric);
