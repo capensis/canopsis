@@ -65,11 +65,10 @@ receivers:
 ```
 !!! Note 
 
-    l'extrait ci-dessus est un exemple, à intégrer au sein de votre propre
-    configuration alertmanager. Pour que le connecteur prometheus reçoive
-    des messages, le *receiver* nommé doit être utilisé dans votre définition du
-    routage des notifications. Voir pour cela la page sur la
-    [configuration de l'alertmanager][alertmanager-config] dans la documentation
+    L'extrait ci-dessus est un exemple, à intégrer au sein de votre propre configuration alertmanager. 
+
+    Pour que le connecteur prometheus reçoive des messages, le *receiver* nommé doit être utilisé dans votre définition du
+    routage des notifications. Voir pour cela la page sur la [configuration de l'alertmanager][alertmanager-config] dans la documentation
     officielle de Prometheus.
 
 ### Configuration connecteur
@@ -138,8 +137,11 @@ long_output_length: 1024
 Le connecteur permet de réaliser différents mapping entre les informations provenant de Prometheus et celles envoyées dans l'`event` généré vers Canopsis
 
 !!! Warning
+    
     Les valeurs de `event_type` et `source_type` ne peuvent pas être modifiés car le connecteur ne peut envoyer que des événements de type `check` et ayant comme `source_type` la valeur `resource`.
-    Les valeurs des champs `connector` et `connector_name` seront toujours à spécifiuer de façon statique
+    
+    Les valeurs des champs `connector` et `connector_name` seront toujours à spécifier de façon statique
+    
     ```yaml
     # connector specifies a type of the connector.
     connector: prometheus
@@ -252,7 +254,7 @@ Le résultat obtenu et envoyé à Canopsis sera :
 
 `"prom_type_ack": "auto"`
 
-L'installation et la configuration du connecteur sont documentées
+L'installation et la configuration complète du connecteur sont documentées
 [à la racine du dépôt][upstream].
 
 [upstream]: https://git.canopsis.net/canopsis-connectors/connector-prometheus
