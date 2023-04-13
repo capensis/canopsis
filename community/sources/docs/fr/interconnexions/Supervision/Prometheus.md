@@ -17,7 +17,7 @@ Dans ce contexte, le connecteur **prometheus** est un programme qui :
 
 - *Écoute* les requêtes HTTP POST envoyées par l'Alertmanager de Prometheus
 
-    Port d'écoute par défaut : 8080/tcp (configurable)
+    Port d'écoute par défaut : `8080/tcp` (configurable)
 
 - *Lit et transforme* les données reçues pour en faire des évènements Canopsis
 
@@ -130,7 +130,7 @@ Sur la base des informations fournies par l'alertmanager, voicii un exemple de d
 
 ```yaml
 output_length: 255
-long_output_length : 1024
+long_output_length: 1024
 ```
 
 #### Directives liées aux mapping des champs
@@ -139,34 +139,42 @@ Le connecteur permet de réaliser différents mapping entre les informations pro
 
 !!! Warning
     Les valeurs de `event_type` et `source_type` ne peuvent pas être modifiés car le connecteur ne peut envoyer que des événements de type `check` et ayant comme `source_type` la valeur `resource`.
+    Les valeurs des champs `connector` et `connector_name` seront toujours à spécifiuer de façon statique
+    ```yaml
+    # connector specifies a type of the connector.
+    connector: prometheus
+    # connector_name specifies a unique name of the connector.
+    connector_name: node_exporter1
+    ```
+
 
 ##### type : copy
 
 Le type `copy` est utilisé pour récupérer la valeur statique renvoyée par prometheus.
 
 ```yaml
-component :
-  type : copy
-  value : labels.instance
+component:
+  type: copy
+  value: labels.instance
 ```
 
 Le résultat obtenu et envoyé à Canopsis sera :
 
-`"component" : "node_exporter:9100"`
+`"component": "node_exporter:9100"`
 
 ##### type : set
 
 Le type `set` permet de définir une chaîne de valeur constante.
 
 ```yaml
-type_ack :
-      type : set
-      value : auto
+component:
+  type: set
+  value: My Component
 ```
 
 Le résultat obtenu et envoyé à Canopsis sera :
 
-`"type_ack" : "auto"`
+`"component": "My Component"`
 
 ##### type : template
 
@@ -193,28 +201,28 @@ L'utilisation du template go est fournie par les fonctions suivantes :
 * Méthode `uppercase`
 
 ```yaml
-type_ack :
-      type : template
-      field : labels.severity
-      valeur : Statut : {{ uppercase .Field }}
+output:
+  type: template
+  field: labels.severity
+  value: Statut : {{ uppercase .Field }}
 ```
 
 Le résultat obtenu et envoyé à Canopsis sera :
 
-`"type_ack" : "Statut : CRITICAL"`
+`"output": "Statut : CRITICAL"`
 
 * Capture group via une `regexp`
 
 ```yaml
-titre :
-  type : template
-  field : annotations.title
-  regexp : Instance (?P<Substr>.* ?)($|,)
-  value : "Prometheus {{ .RegexMatch.Substr }}"
+output:
+  type: template
+  field: annotations.title
+  regexp: Instance (?P<Substr>.* ?)($|,)
+  value: "Prometheus {{ .RegexMatch.Substr }}"
 ```
 Le résultat obtenu et envoyé à Canopsis sera :
 
-`"prom_titre" : "Prometheus node_exporter:9100 down"`
+`"output": "Prometheus node_exporter:9100 down"`
 
 ##### Utilisation d'un Préfixe
 
@@ -234,15 +242,15 @@ Vous pouvez utiliser un préfixe pour les informations supplémentaires contenus
 ###### Exemple de préfixe
 
 ```yaml
-extra_infos :
-   type_ack :
-     type : set
-     valeur : auto
-extra_infos_prefix : prom_
+extra_infos:
+   type_ack:
+     type: set
+     valeur: auto
+extra_infos_prefix: prom_
 ```
 Le résultat obtenu et envoyé à Canopsis sera :
 
-`"prom_type_ack" : "auto"`
+`"prom_type_ack": "auto"`
 
 L'installation et la configuration du connecteur sont documentées
 [à la racine du dépôt][upstream].
