@@ -1,13 +1,13 @@
 <template lang="pug">
-  v-layout.numbers-metrics-item(column, align-center)
+  v-layout.numbers-metrics-item(:style="itemStyle", column, align-center)
     v-layout(row, align-center)
       div.numbers-metrics-item__value {{ value }}
       c-help-icon(
         v-if="showTrend && trendEnabled",
         :text="trendTooltipText",
-        :icon-class="{ 'numbers-metrics-item__trend--up': trendUp }",
+        :icon-class="{ 'numbers-metrics-item__trend': true, 'numbers-metrics-item__trend--up': trendUp }",
         icon="arrow_downward",
-        size="84",
+        size="0.75em",
         top
       )
     div.numbers-metrics-item__title {{ title }}
@@ -16,7 +16,7 @@
 <script>
 import { isUndefined, lowerFirst } from 'lodash';
 
-import { AGGREGATE_FUNCTIONS, DATETIME_FORMATS } from '@/constants';
+import { AGGREGATE_FUNCTIONS, DATETIME_FORMATS, NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
 
 import { isTimeMetric } from '@/helpers/metrics';
 import { convertDurationToString } from '@/helpers/date/duration';
@@ -33,8 +33,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    valueFontSize: {
+      type: Number,
+      default: NUMBERS_CHART_DEFAULT_FONT_SIZE,
+    },
   },
   computed: {
+    itemStyle() {
+      return {
+        fontSize: `${this.valueFontSize}px`,
+      };
+    },
+
     value() {
       if (isTimeMetric(this.metric.title)) {
         return convertDurationToString(this.metric.value);
@@ -86,13 +96,12 @@ export default {
 <style lang="scss">
 .numbers-metrics-item {
   &__value {
-    font-size: 110px;
     text-align: center;
   }
 
   &__trend {
     transform: rotate(0deg);
-    transition: linear .3s;
+    transition: transform linear .3s;
 
     &--up {
       transform: rotate(180deg);
@@ -100,7 +109,7 @@ export default {
   }
 
   &__title {
-    font-size: 18px;
+    font-size: 0.2em;
   }
 }
 </style>
