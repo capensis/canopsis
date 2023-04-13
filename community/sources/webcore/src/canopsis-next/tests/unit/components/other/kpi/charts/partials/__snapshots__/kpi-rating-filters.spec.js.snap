@@ -9,7 +9,7 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
   >
     <c-quick-date-interval-field-stub
       class="mr-4"
-      quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       value="[object Object]"
     />
     <c-filter-field-stub
@@ -39,7 +39,7 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with total user activ
   >
     <c-quick-date-interval-field-stub
       class="mr-4"
-      quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       value="[object Object]"
     />
     <c-filter-field-stub

@@ -176,7 +176,7 @@ describe('kpi-rating', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
-      from: 1386198000,
+      from: 1386284400,
       criteria: 1,
       filter: Faker.datatype.string(),
       metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
@@ -228,7 +228,7 @@ describe('kpi-rating', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
-      from: 1386198000,
+      from: 1386284400,
       criteria: 1,
       metric: USER_METRIC_PARAMETERS.totalUserActivity,
       limit: 10,

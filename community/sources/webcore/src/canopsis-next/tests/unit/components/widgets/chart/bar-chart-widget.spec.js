@@ -141,7 +141,7 @@ describe('bar-chart-widget', () => {
           widget_filters: [filter],
           sampling,
           parameters,
-          from: 1383778800,
+          from: 1383865200,
           to: 1386370800,
         },
       },
