@@ -25,6 +25,7 @@ type UserInterfaceConf struct {
 	AllowChangeSeverityToInfo bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
 	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
 	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
+	ShowHeaderOnKioskMode     bool          `json:"show_header_on_kiosk_mode" bson:"show_header_on_kiosk_mode"`
 }
 
 type GlobalConf struct {
