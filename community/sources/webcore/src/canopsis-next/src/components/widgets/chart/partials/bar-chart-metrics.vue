@@ -2,6 +2,7 @@
   v-layout.chart-metrics-widget(column, align-center)
     h4.chart-metrics-widget__title {{ title }}
     bar-chart.chart-metrics-widget__chart(
+      :chart-id="chartId",
       :options="chartOptions",
       :datasets="datasets",
       :width="width",
@@ -9,14 +10,18 @@
       :dark="$system.dark"
     )
       template(#actions="{ chart }")
-        kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
+        kpi-chart-export-actions.mt-4(
+          v-on="$listeners",
+          :downloading="downloading",
+          :chart="chart"
+        )
 </template>
 
 <script>
 import { X_AXES_IDS, SAMPLINGS } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
-import { getDateLabelBySampling, hasHistoryData } from '@/helpers/metrics';
+import { getDateLabelBySampling } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
@@ -29,6 +34,10 @@ export default {
   components: { KpiChartExportActions, BarChart },
   mixins: [chartMetricsOptionsMixin],
   props: {
+    chartId: {
+      type: String,
+      required: false,
+    },
     metrics: {
       type: Array,
       default: () => [],
@@ -42,7 +51,7 @@ export default {
       type: Number,
     },
     height: {
-      default: 440,
+      default: 560,
       type: Number,
     },
     sampling: {
@@ -67,10 +76,6 @@ export default {
     },
   },
   computed: {
-    hasHistoryData() {
-      return hasHistoryData(this.metrics);
-    },
-
     xAxes() {
       const xAxes = {
         [X_AXES_IDS.default]: {
@@ -116,15 +121,7 @@ export default {
           ...this.yAxes,
         },
         plugins: {
-          legend: {
-            position: 'right',
-            maxWidth: 600,
-            labels: {
-              font: this.labelsFont,
-              boxWidth: 15,
-              boxHeight: 15,
-            },
-          },
+          legend: this.legend,
           tooltip: {
             callbacks: {
               title: this.getChartTooltipTitle,

@@ -2,6 +2,7 @@
   v-layout.chart-metrics-widget(column, align-center)
     h4.chart-metrics-widget__title {{ title }}
     line-chart.chart-metrics-widget__chart(
+      :chart-id="chartId",
       :options="chartOptions",
       :datasets="datasets",
       :width="width",
@@ -16,7 +17,6 @@
 import { X_AXES_IDS, SAMPLINGS } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
-import { hasHistoryData } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
@@ -29,6 +29,10 @@ export default {
   components: { KpiChartExportActions, LineChart },
   mixins: [chartMetricsOptionsMixin],
   props: {
+    chartId: {
+      type: String,
+      required: false,
+    },
     metrics: {
       type: Array,
       default: () => [],
@@ -42,7 +46,7 @@ export default {
       type: Number,
     },
     height: {
-      default: 440,
+      default: 560,
       type: Number,
     },
     sampling: {
@@ -63,10 +67,6 @@ export default {
     },
   },
   computed: {
-    hasHistoryData() {
-      return hasHistoryData(this.metrics);
-    },
-
     xAxes() {
       const xAxes = {
         [X_AXES_IDS.default]: {
@@ -106,16 +106,11 @@ export default {
           ...this.yAxes,
         },
         plugins: {
-          legend: {
-            position: 'right',
-            maxWidth: 600,
-            labels: {
-              font: this.labelsFont,
-              boxWidth: 15,
-              boxHeight: 15,
-            },
-          },
+          legend: this.legend,
           tooltip: {
+            bodyFont: {
+              size: this.tooltipBodyFontSize,
+            },
             callbacks: {
               title: this.getChartTooltipTitle,
             },
@@ -125,7 +120,7 @@ export default {
     },
 
     datasets() {
-      return this.metrics.reduce((acc, { title: metric, data, color }) => {
+      return this.preparedMetrics.reduce((acc, { title: metric, data, color }) => {
         const metricColor = color ?? getMetricColor(metric);
         const defaultDataset = {
           metric,
