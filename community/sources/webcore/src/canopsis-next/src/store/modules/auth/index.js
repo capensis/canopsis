@@ -8,8 +8,6 @@ import {
 } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 
-import router from '@/router';
-
 import request from '@/services/request';
 import localStorageService from '@/services/local-storage';
 
@@ -109,15 +107,15 @@ export default {
       }
     },
 
-    async logout({ commit }, { redirectTo } = {}) {
+    async logout({ commit }, { redirect } = {}) {
       try {
         await request.post(API_ROUTES.logout);
 
         commit(types.LOGOUT);
         localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 
-        if (redirectTo) {
-          await router.replaceAsync(redirectTo);
+        if (redirect) {
+          await redirect();
         }
 
         /**

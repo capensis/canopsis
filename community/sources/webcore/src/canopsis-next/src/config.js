@@ -244,6 +244,7 @@ export const API_ROUTES = {
     exportRating: '/api/v4/cat/metrics-export/rating',
     exportSli: '/api/v4/cat/metrics-export/sli',
     exportAggregate: '/api/v4/cat/metrics-export/aggregate',
+    exportRemediation: '/api/v4/cat/metrics-export/remediation',
     exportMetric: '/api/v4/cat/metrics-export',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
@@ -538,6 +539,8 @@ export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
 export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 
 export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
+
+export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
 
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 

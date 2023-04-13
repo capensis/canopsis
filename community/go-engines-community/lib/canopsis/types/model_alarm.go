@@ -122,6 +122,9 @@ type Alarm struct {
 	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
 	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
 	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
+
+	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
+	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -410,4 +413,8 @@ func (a *Alarm) IsActivated() bool {
 
 func (a *Alarm) IsInActivePeriod() bool {
 	return a.Value.PbehaviorInfo.IsActive()
+}
+
+func (a *Alarm) CanActivate() bool {
+	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
 }
