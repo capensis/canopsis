@@ -6,14 +6,16 @@
       :parameters="parameters",
       :disabled-parameters="disabledParameters",
       :addable="preset.auto",
+      :name="`${name}.metric`",
+      :with-external="withExternal",
       required,
-      with-external,
       @input="updateMetric"
     )
     c-name-field(
       v-if="!preset.auto && preset.metric && isExternalMetric",
       v-field="preset.label",
       :label="$t('kpi.displayedLabel')",
+      :name="`${name}.label`",
       required
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
@@ -28,7 +30,7 @@
         v-field="preset.color"
       )
     c-alarm-metric-aggregate-function-field(
-      v-if="withAggregateFunction",
+      v-if="withAggregateFunction || isExternalMetric",
       v-field="preset.aggregate_func",
       :aggregate-functions="aggregateFunctions",
       :label="$t('kpi.calculationMethod')"
@@ -67,6 +69,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withExternal: {
+      type: Boolean,
+      default: false,
+    },
     parameters: {
       type: Array,
       required: false,
@@ -86,25 +92,29 @@ export default {
     },
   },
   methods: {
-    isInternalMetric() {
-      return this.parameters.includes(this.preset.metric);
+    isInternalMetric(metric) {
+      return this.parameters.includes(metric);
     },
 
     enableColor(value) {
       this.updateField('color', value ? getMetricColor(this.preset.metric) : '');
     },
 
-    updateMetric(metric) {
-      if (this.withAggregateFunction) {
-        this.updateModel({
-          ...this.preset,
-          metric,
-          aggregate_func: getDefaultAggregateFunctionByMetric(metric),
-          label: this.isInternalMetric(metric) ? '' : this.preset.label,
-        });
-      } else {
-        this.updateField('metric', metric);
+    getNewAggregatedFunction(metric) {
+      if (this.isInternalMetric(metric)) {
+        return this.withAggregateFunction ? getDefaultAggregateFunctionByMetric(metric) : undefined;
       }
+
+      return getDefaultAggregateFunctionByMetric(metric);
+    },
+
+    updateMetric(metric) {
+      this.updateModel({
+        ...this.preset,
+        metric,
+        aggregate_func: this.getNewAggregatedFunction(metric),
+        label: this.isInternalMetric(metric) ? '' : this.preset.label,
+      });
     },
   },
 };

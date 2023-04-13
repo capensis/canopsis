@@ -10,9 +10,10 @@
     :loading="externalMetricsPending",
     :multiple="isMultiple",
     :hide-details="hideDetails",
-    :filter="filterComputedMetric",
     :return-object="false",
     :hide-no-data="addable",
+    :error-messages="errors.collect(name)",
+    no-filter,
     @change="updateParameters"
   )
     template(v-if="!addable", #selection="{ item, index }")
@@ -121,7 +122,7 @@ export default {
         })));
       }
 
-      return parameters;
+      return this.addable && this.searchInput ? parameters.filter(this.filterMetricByRegexp) : parameters;
     },
 
     rules() {
@@ -141,9 +142,9 @@ export default {
     },
   },
   methods: {
-    filterComputedMetric({ text }) {
+    filterMetricByRegexp({ value }) {
       try {
-        return text.includes(this.searchInput) || new RegExp(`${this.searchInput}`).test(text);
+        return new RegExp(this.searchInput).test(value);
       } catch (err) {
         return false;
       }

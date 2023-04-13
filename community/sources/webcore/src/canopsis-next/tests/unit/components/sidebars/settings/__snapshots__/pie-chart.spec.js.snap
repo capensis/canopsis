@@ -23,6 +23,7 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with custom props 1`] =
       parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
       value="[object Object]"
       withcolor="true"
+      withexternal="true"
     />
     <field-pie-show-mode-stub
       name="show_mode"
@@ -79,6 +80,7 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with default props 1`] 
       parameters="created_alarms,active_alarms,non_displayed_alarms,instruction_alarms,manual_instruction_assigned_alarms,manual_instruction_executed_alarms,pbehavior_alarms,correlation_alarms,ack_alarms,cancel_ack_alarms,ack_active_alarms,ticket_active_alarms,without_ticket_active_alarms,not_acked_alarms,not_acked_in_hour_alarms,not_acked_in_four_hours_alarms,not_acked_in_day_alarms"
       value=""
       withcolor="true"
+      withexternal="true"
     />
     <field-pie-show-mode-stub
       name="show_mode"
