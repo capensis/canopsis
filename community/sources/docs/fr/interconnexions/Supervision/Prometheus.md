@@ -87,7 +87,7 @@ Un exemple complet de fichier `config.yml` est fourni avec le code du
 connecteur.
 
 Pour ajouter des informations dans la configuration de votre connecteur depuis Prometheus, consultez alertmanager (ici : `<alertmanager_IP>:9093/api/v1/alerts` ) pour savoir ce que vous pouvez ajouter.
-Sur la base de ces informations, voici les informations fournies par Prometheus pour créer un exemple de configuration :
+Sur la base de ces informations, voici les données fournies par Prometheus pour créer un exemple de configuration :
 
 ```yaml
 {
@@ -153,6 +153,7 @@ type_ack :
       type : set
       value : auto
 ```
+
 Le résultat obtenu et envoyé à Canopsis sera :
 
 `"type_ack" : "auto"`
@@ -171,7 +172,7 @@ L'utilisation du template go est fournie par les fonctions suivantes :
 
 - `split` : permet de récupérer une sous-chaîne spécifique d'une chaîne qui est séparée en plusieurs parties par une chaîne spécifique.
 
-- `regex_map_keys` : permet de récupérer la valeur associée à la première clé d'une carte qui correspond à une expression régulière spécifiée.
+- `regex_map_keys` : permet de récupérer la valeur associée à la première clé d'un dictionnaire qui correspond à une expression régulière spécifiée.
 
 - `map_as_keys` : utilisé pour vérifier si une carte contient une clé spécifiée et retourner un booléen en conséquence.
 
@@ -201,7 +202,6 @@ titre :
   regexp : Instance (?P<Substr>.* ?)($|,)
   value : "Prometheus {{ .RegexMatch.Substr }}"
 ```
-
 Le résultat obtenu et envoyé à Canopsis sera :
 
 `"prom_titre" : "Prometheus node_exporter:9100 down"`
@@ -218,7 +218,6 @@ canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z INF app/cmd/main.go:1
 ##### Exemple de préfixe
 
 Pour éviter les collisions avec les champs internes à Cnaopsis, il est possible d'utiliser l'option de `prefix` sur les données de type `extra_infos` :
-
 ```yaml
 extra_infos :
    type_ack :
@@ -226,7 +225,6 @@ extra_infos :
      valeur : auto
 extra_infos_prefix : prom_
 ```
-
 Le résultat obtenu et envoyé à Canopsis sera :
 
 `"prom_type_ack" : "auto"`
