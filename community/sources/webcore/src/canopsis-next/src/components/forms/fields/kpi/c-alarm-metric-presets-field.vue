@@ -6,7 +6,9 @@
         :with-color="withColor",
         :with-aggregate-function="withAggregateFunction",
         :parameters="parameters",
-        :disabled-parameters="disabledParameters"
+        :disabled-parameters="disabledParameters",
+        :with-external="withExternal",
+        :name="`${name}[${item.key}]`"
       )
     template(#append="")
       c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
@@ -48,6 +50,10 @@ export default {
       default: false,
     },
     withAggregateFunction: {
+      type: Boolean,
+      default: false,
+    },
+    withExternal: {
       type: Boolean,
       default: false,
     },
