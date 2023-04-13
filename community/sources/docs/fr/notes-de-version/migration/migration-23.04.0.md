@@ -405,8 +405,9 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
     !!! Attention
     
-    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
-    L'outil est en effet pré paramétré pour fonctionner naturellement.
+        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
+        L'outil est en effet pré paramétré pour fonctionner naturellement.
+        
 
     Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
 
