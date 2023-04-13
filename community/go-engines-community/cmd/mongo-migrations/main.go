@@ -64,7 +64,7 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 		if err != nil {
 			return err
 		}
-		cmd = cli.NewUpCmd(flags.path, flags.to, client, mongo.NewScriptExecutor(), false, logger)
+		cmd = cli.NewUpCmd(flags.path, flags.to, client, mongo.NewScriptExecutor(), logger)
 	case "down":
 		flags := downFlags{}
 		err := flags.Parse(args)
