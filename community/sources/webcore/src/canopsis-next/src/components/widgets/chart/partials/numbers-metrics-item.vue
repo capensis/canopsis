@@ -58,7 +58,8 @@ export default {
         return this.metric.label;
       }
 
-      const title = this.$t(`alarm.metrics.${this.metric.title}`);
+      const messageKey = `alarm.metrics.${this.metric.title}`;
+      const title = this.$te(messageKey) ? this.$t(messageKey) : this.metric.title;
 
       if (!this.metric.aggregate_func) {
         return title;

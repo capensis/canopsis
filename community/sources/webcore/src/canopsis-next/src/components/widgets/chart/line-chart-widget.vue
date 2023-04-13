@@ -110,7 +110,7 @@ export default {
 
     preparedVectorMetrics() {
       return this.vectorMetrics.map((metric) => {
-        const parameters = this.widgetMetricsMap[metric.title];
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
         return {
           ...metric,
