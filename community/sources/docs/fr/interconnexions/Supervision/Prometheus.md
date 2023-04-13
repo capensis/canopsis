@@ -86,8 +86,8 @@ du connecteur.
 Un exemple complet de fichier `config.yml` est fourni avec le code du
 connecteur.
 
-Pour ajouter des informations dans la configuration de votre connecteur depuis Prometheus, consultez alertmanager (ici : <alertmanager_IP>:9093/api/v1/alerts ) pour savoir ce que vous pouvez ajouter.
-Sur la base de ces informations, voici notre base pour créer un exemple de configuration :
+Pour ajouter des informations dans la configuration de votre connecteur depuis Prometheus, consultez alertmanager (ici : `<alertmanager_IP>:9093/api/v1/alerts` ) pour savoir ce que vous pouvez ajouter.
+Sur la base de ces informations, voici les informations fournies par Prometheus pour créer un exemple de configuration :
 
 ```yaml
 {
@@ -141,6 +141,8 @@ component :
   value : labels.instance
 ```
 
+Le résultat obtenu et envoyé à Canopsis sera :
+
 `"component" : "node_exporter:9100"`
 
 #### type : set
@@ -151,6 +153,8 @@ type_ack :
       type : set
       value : auto
 ```
+Le résultat obtenu et envoyé à Canopsis sera :
+
 `"type_ack" : "auto"`
 
 #### type : template
@@ -175,13 +179,20 @@ L'utilisation du template go est fournie par les fonctions suivantes :
 
 ##### Exemple de template
 
-```
+* Méthode `uppercase`
+
+```yaml
 type_ack :
       type : template
       field : labels.severity
       valeur : Statut : {{ uppercase .Field }}
 ```
-`labels_severity" : "Status : CRITICAL"``
+
+Le résultat obtenu et envoyé à Canopsis sera :
+
+`"type_ack" : "Statut : CRITICAL"`
+
+* Capture group via une `regexp`
 
 ```yaml
 titre :
@@ -190,18 +201,23 @@ titre :
   regexp : Instance (?P<Substr>.* ?)($|,)
   value : "Prometheus {{ .RegexMatch.Substr }}"
 ```
-`"prom_title" : "Prometheus node_exporter:9100 down"`
+
+Le résultat obtenu et envoyé à Canopsis sera :
+
+`"prom_titre" : "Prometheus node_exporter:9100 down"`
 
 #### Préfixe
 - Vous pouvez utiliser un préfixe pour les informations supplémentaires avec la variable : `extra_infos_prefix:` qui a pour but de changer le nom des champs, mais si vous décidez de ne pas l'utiliser, un avertissement apparaît dans les logs lors du lancement du conteneur.
 
 ##### Logs sans préfixe
-```
+```go
 canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z WRN app/cmd/main.go:125 > extra_infos_prefix is empty
 canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z INF app/cmd/main.go:188 > connector started
 ```
 
 ##### Exemple de préfixe
+
+Pour éviter les collisions avec les champs internes à Cnaopsis, il est possible d'utiliser l'option de `prefix` sur les données de type `extra_infos` :
 
 ```yaml
 extra_infos :
@@ -210,6 +226,8 @@ extra_infos :
      valeur : auto
 extra_infos_prefix : prom_
 ```
+
+Le résultat obtenu et envoyé à Canopsis sera :
 
 `"prom_type_ack" : "auto"`
 
