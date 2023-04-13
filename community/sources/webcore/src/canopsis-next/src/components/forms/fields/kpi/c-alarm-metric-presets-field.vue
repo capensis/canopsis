@@ -133,7 +133,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: { min_value: this.min },
-        getter: () => this.metrics.length,
+        getter: () => (this.metrics.some(({ auto }) => auto) ? this.min : this.metrics.length),
         vm: this,
       });
     },
