@@ -3,6 +3,7 @@
 exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] = `
 <div
   class="layout chart-metrics-widget column align-center"
+  colorsbymetrics="[object Object]"
 >
   <h4
     class="chart-metrics-widget__title"

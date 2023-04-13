@@ -132,13 +132,13 @@ export default {
     },
 
     datasets() {
-      return this.metrics.reduce((acc, { title: metric, data, color }) => {
+      return this.metrics.reduce((acc, { title: metric, label, data, color }) => {
         const metricColor = color ?? getMetricColor(metric);
         const defaultDataset = {
           metric,
           backgroundColor: metricColor,
           yAxisID: this.getMetricYAxisId(metric),
-          label: this.$t(`alarm.metrics.${metric}`),
+          label: label ?? this.$t(`alarm.metrics.${metric}`),
           data: data.map(({ timestamp, value }) => ({
             x: timestamp * 1000,
             y: value,
@@ -156,7 +156,7 @@ export default {
             metric,
             backgroundColor: colorToRgba(metricColor, 0.5),
             yAxisID: this.getMetricYAxisId(metric),
-            label: `${this.$t(`alarm.metrics.${metric}`)} (${this.$t('common.previous')})`,
+            label: `${label ?? this.$t(`alarm.metrics.${metric}`)} (${this.$t('common.previous')})`,
             data: data.map(({ timestamp, history_timestamp: historyTimestamp, history_value: historyValue }) => ({
               x: timestamp * 1000,
               y: historyValue,
