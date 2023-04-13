@@ -249,6 +249,7 @@ export const API_ROUTES = {
     rating: '/api/v4/cat/metrics/rating',
     remediation: '/api/v4/cat/metrics/remediation',
     aggregate: '/api/v4/cat/metrics/aggregate',
+    perfDataMetrics: '/api/v4/cat/perf-data-metrics',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
