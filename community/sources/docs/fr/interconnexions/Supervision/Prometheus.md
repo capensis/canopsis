@@ -35,6 +35,10 @@ Le connecteur et sa documentation (installation, configuration, utilisation)
 sont disponibles dans le dépôt
 [canopsis-connectors/connector-prometheus][upstream].
 
+Un jeton est requis pour la connexion entre le connecteur et prometheus alertmanager.
+
+Les variables sont `PROMETHEUS_BEARER_TOKEN` et `bearer_token`, elles ont besoin d'une chaîne identique sur ces 2 variables pour initier l'identification.
+
 ### Installation
 
 Deux méthodes d'installation ou d'exécution sont proposées :
@@ -42,6 +46,29 @@ Deux méthodes d'installation ou d'exécution sont proposées :
 - Installation en tant que service sur un système de production
 - Exécution en tant que conteneur *Docker* avec l'image fournie :
   [canopsis/canopsis-connector-prometheus][docker-image]
+
+### Configuration Prometheus
+
+Côté Prometheus, dans la configuration du daemon Alertmanager, il faut définir
+un *receiver* avec une configuration *webhook* en indiquant l'URL du connecteur.
+
+Exemple (pour une installation du connecteur sur le même serveur que
+l'Alertmanager) :
+
+```yaml
+receivers:
+- name: 'prometheus'
+  webhook_configs:
+  - url: 'http://127.0.0.1:8080/webhook'
+    http_config:
+      bearer_token: token_example
+```
+Note : l'extrait ci-dessus est un exemple, à intégrer au sein de votre propre
+configuration alertmanager. Pour que le connecteur prometheus reçoive
+des messages, le *receiver* nommé doit être utilisé dans votre définition du
+routage des notifications. Voir pour cela la page sur la
+[configuration de l'alertmanager][alertmanager-config] dans la documentation
+officielle de Prometheus.
 
 ### Configuration connecteur
 
@@ -59,32 +86,135 @@ du connecteur.
 Un exemple complet de fichier `config.yml` est fourni avec le code du
 connecteur.
 
-L'installation et la configuration du connecteur sont documentées
-[à la racine du dépôt][upstream].
-
-### Configuration Prometheus
-
-Côté Prometheus, dans la configuration du daemon Alertmanager, il faut définir
-un *receiver* avec une configuration *webhook* en indiquant l'URL du connecteur.
-
-Exemple (pour une installation du connecteur sur le même serveur que
-l'Alertmanager) :
+Pour ajouter des informations dans la configuration de votre connecteur depuis Prometheus, consultez alertmanager (ici : <alertmanager_IP>:9093/api/v1/alerts ) pour savoir ce que vous pouvez ajouter.
+Sur la base de ces informations, voici notre base pour créer un exemple de configuration :
 
 ```yaml
-receivers:
-- name: 'prometheus'
-  webhook_configs:
-  - url: 'http://127.0.0.1:8080/webhook'
-    http_config:
-      bearer_token: 
+{
+  "status": "success",
+  "data": [
+    {
+      "labels": {
+        "alertname": "InstanceDown",
+        "instance": "node_exporter:9100",
+        "job": "node1",
+        "severity": "critical"
+      },
+      "annotations": {
+        "description": "node_exporter:9100 of job node1 has been down for more than 1 minute.",
+        "title": "Instance node_exporter:9100 down"
+      },
+      "startsAt": "2023-04-11T16:29:54.61318652Z",
+      "endsAt": "2023-04-12T07:44:59.61318652Z",
+      "generatorURL": "http://7e9d35e4e800:9090/graph?g0.expr=up+%3D%3D+0&g0.tab=1",
+      "status": {
+        "state": "active",
+        "silencedBy": [],
+        "inhibitedBy": []
+      },
+      "receivers": [
+        "connector-prometheus"
+      ],
+      "fingerprint": "ee8077593a410082"
+    }
+  ]
+}
+```
+#### Avertissement
+
+- Les paramètres `event_type` et `source_type` ne peuvent pas être modifiés car le connecteur ne peut envoyer que des événements de contrôle pour les ressources.
+
+#### Output
+- output_length et long_output_length prennent comme valeur le nombre maximum de caractères à partir duquel la sortie de l'événement sera tronquée.
+
+```yaml
+longueur_de_sortie : 255
+long_output_length : 1024
 ```
 
-Note : l'extrait ci-dessus est un exemple, à intégrer au sein de votre propre
-configuration alertmanager. Pour que le connecteur prometheus reçoive
-des messages, le *receiver* nommé doit être utilisé dans votre définition du
-routage des notifications. Voir pour cela la page sur la
-[configuration de l'alertmanager][alertmanager-config] dans la documentation
-officielle de Prometheus.
+#### type : copy
+Le type `copy` est utilisé pour récupérer la valeur statique renvoyée par prometheus.
+
+```yaml
+component :
+  type : copy
+  value : labels.instance
+```
+
+`"component" : "node_exporter:9100"`
+
+#### type : set
+Le type `set` permet de définir une chaîne de valeur constante.
+
+```yaml
+type_ack :
+      type : set
+      value : auto
+```
+`"type_ack" : "auto"`
+
+#### type : template
+
+L'utilisation du template go est fournie par les fonctions suivantes :
+
+- `lowercase` : permet de mettre en minuscules les lettres dans une sortie attendue.
+
+- `uppercase` : permet de mettre en majuscules les lettres dans une sortie attendue.
+
+- `replace` : permet de remplacer un champ correspondant à une regex par un autre
+
+- `trim` : supprime les espaces blancs initiaux et finaux d'une chaîne de caractères.
+
+- `split` : permet de récupérer une sous-chaîne spécifique d'une chaîne qui est séparée en plusieurs parties par une chaîne spécifique.
+
+- `regex_map_keys` : permet de récupérer la valeur associée à la première clé d'une carte qui correspond à une expression régulière spécifiée.
+
+- `map_as_keys` : utilisé pour vérifier si une carte contient une clé spécifiée et retourner un booléen en conséquence.
+
+- `json` : utilisé pour convertir n'importe quelle valeur en chaîne JSON et la retourner.
+
+##### Exemple de template
+
+```
+type_ack :
+      type : template
+      field : labels.severity
+      valeur : Statut : {{ uppercase .Field }}
+```
+`labels_severity" : "Status : CRITICAL"``
+
+```yaml
+titre :
+  type : template
+  field : annotations.title
+  regexp : Instance (?P<Substr>.* ?)($|,)
+  value : "Prometheus {{ .RegexMatch.Substr }}"
+```
+`"prom_title" : "Prometheus node_exporter:9100 down"`
+
+#### Préfixe
+- Vous pouvez utiliser un préfixe pour les informations supplémentaires avec la variable : `extra_infos_prefix:` qui a pour but de changer le nom des champs, mais si vous décidez de ne pas l'utiliser, un avertissement apparaît dans les logs lors du lancement du conteneur.
+
+##### Logs sans préfixe
+```
+canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z WRN app/cmd/main.go:125 > extra_infos_prefix is empty
+canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z INF app/cmd/main.go:188 > connector started
+```
+
+##### Exemple de préfixe
+
+```yaml
+extra_infos :
+   type_ack :
+     type : set
+     valeur : auto
+extra_infos_prefix : prom_
+```
+
+`"prom_type_ack" : "auto"`
+
+L'installation et la configuration du connecteur sont documentées
+[à la racine du dépôt][upstream].
 
 [upstream]: https://git.canopsis.net/canopsis-connectors/connector-prometheus
 [alertmanager-config]: https://prometheus.io/docs/alerting/latest/configuration/
