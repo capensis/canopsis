@@ -6,6 +6,8 @@ export default {
   metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
   noData: 'No data available',
   selectMetric: 'Select metric to display',
+  addMetricMask: 'Add metrics by mask, e.g. cpu*',
+  displayedLabel: 'Displayed label',
   customColor: 'Custom color',
   calculationMethod: 'Calculation method',
   periodTrend: '{count} for the period\n{from} - {to}',

@@ -40,7 +40,7 @@ export default {
     },
 
     fetchAlarmsMetricsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.metrics.alarm, { params });
+      return request.post(API_ROUTES.metrics.alarm, params);
     },
 
     createKpiAlarmExport(context, { data }) {
