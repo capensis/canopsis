@@ -73,6 +73,8 @@ var columnsByType = map[string][]string{
 		"status",
 		"idle_since",
 		"enabled",
+		"imported",
+		"import_source",
 	},
 }
 
