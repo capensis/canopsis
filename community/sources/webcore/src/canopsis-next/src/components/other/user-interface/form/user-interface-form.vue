@@ -57,6 +57,11 @@
         :label="$t('userInterface.allowChangeSeverityToInfo')",
         color="primary"
       )
+      v-switch(
+        v-field="form.show_header_on_kiosk_mode",
+        :label="$t('userInterface.showHeaderOnKioskMode')",
+        color="primary"
+      )
     v-layout(row)
       v-flex
         text-editor-field(

@@ -231,6 +231,26 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return rv.MapIndex(reflect.ValueOf(key)).IsValid()
 		},
+		"tag_has_key": func(tags []string, searchKey string) bool {
+			for _, tag := range tags {
+				key, _, _ := strings.Cut(tag, ":")
+				if searchKey == key {
+					return true
+				}
+			}
+
+			return false
+		},
+		"get_tag": func(tags []string, searchKey string) string {
+			for _, tag := range tags {
+				key, val, _ := strings.Cut(tag, ": ")
+				if searchKey == key {
+					return val
+				}
+			}
+
+			return ""
+		},
 	}
 }
 
