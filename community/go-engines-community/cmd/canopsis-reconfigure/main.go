@@ -188,7 +188,7 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 	}
 
 	if f.mongoFixtureMigrations {
-		cmd := cli.NewUpCmd(f.mongoMigrationDirectory, f.mongoFixtureMigrationsVersion, dbClient, mongo.NewScriptExecutor(), true, logger)
+		cmd := cli.NewSkipCmd(f.mongoMigrationDirectory, f.mongoFixtureMigrationsVersion, dbClient, logger)
 		err = cmd.Exec(ctx)
 		if err != nil {
 			return err
@@ -245,7 +245,7 @@ func migrateMongo(ctx context.Context, f flags, dbClient mongo.DbClient, logger 
 	}
 
 	logger.Info().Msg("start mongo migrations")
-	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, mongo.NewScriptExecutor(), false, logger)
+	cmd := cli.NewUpCmd(f.mongoMigrationDirectory, "", dbClient, mongo.NewScriptExecutor(), logger)
 	err := cmd.Exec(ctx)
 	if err != nil {
 		return err
