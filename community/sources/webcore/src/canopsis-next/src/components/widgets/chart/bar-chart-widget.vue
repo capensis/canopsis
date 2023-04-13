@@ -23,6 +23,7 @@
       chart-loader(v-if="vectorMetricsPending", :has-metrics="hasMetrics")
       bar-chart-metrics(
         v-if="hasMetrics",
+        :chart-id="widget._id",
         :metrics="preparedVectorMetrics",
         :title="widget.parameters.chart_title",
         :sampling="query.sampling",
