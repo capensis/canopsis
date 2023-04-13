@@ -254,6 +254,36 @@ Le résultat obtenu et envoyé à Canopsis sera :
 
 `"prom_type_ack": "auto"`
 
+### Résultat
+Voici le résultat obtenu lors de la génération d'un événement vers Canopsis à partir de la [configuration YAML située dans le dépôt du connecteur](https://git.canopsis.net/canopsis-connectors/connector-prometheus/-/blob/master/config/config.yml).
+
+```json
+{
+  "event_type": "check",
+  "state": 2,
+  "output": "node_exporter:9100 of job node1 has been down for more than 1 minute.",
+  "long_output": "node_exporter:9100 of job node1 has been down for more than 1 minute.",
+  "connector": "prometheus",
+  "connector_name": "node_exporter1",
+  "component": "node_exporter:9100",
+  "resource": "InstanceDown",
+  "author": "prometheus.node_exporter1",
+  "source_type": "resource",
+  "prom_labels_severity": "critical",
+  "prom_title": "Prometheus node_exporter:9100 down",
+  "prom_event_type": "check",
+  "prom_source_type": "resource",
+  "prom_type_ack": "auto",
+  "prom_fingerprint": "ee8077593a410082",
+  "prom_tags": {
+    "alertname": "InstanceDown",
+    "instance": "node_exporter:9100",
+    "job": "node1",
+    "severity": "critical"
+  }
+}
+```
+
 L'installation et la configuration complète du connecteur sont documentées
 [à la racine du dépôt][upstream].
 
