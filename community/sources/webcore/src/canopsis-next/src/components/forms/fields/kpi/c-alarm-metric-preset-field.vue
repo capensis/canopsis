@@ -3,7 +3,7 @@
     c-alarm-metric-parameters-field(
       :value="preset.metric",
       :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')",
-      :parameters="parameters",
+      :parameters="preset.auto ? [] : parameters",
       :disabled-parameters="disabledParameters",
       :addable="preset.auto",
       :name="`${name}.metric`",
