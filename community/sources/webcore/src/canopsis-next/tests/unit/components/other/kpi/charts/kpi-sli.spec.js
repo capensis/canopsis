@@ -50,7 +50,7 @@ describe('kpi-sli', () => {
   it('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385766000,
+      from: 1385852400,
       in_percents: true,
       sampling: SAMPLINGS.day,
       to: 1386370800,
@@ -82,7 +82,7 @@ describe('kpi-sli', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 7d  */
-      from: 1385766000,
+      from: 1385852400,
       in_percents: true,
       sampling: SAMPLINGS.day,
       to: 1386370800,

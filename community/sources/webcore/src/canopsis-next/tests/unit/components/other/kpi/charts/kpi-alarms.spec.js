@@ -50,7 +50,7 @@ describe('kpi-alarms', () => {
   test('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385766000,
+      from: 1385852400,
       parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
@@ -82,7 +82,7 @@ describe('kpi-alarms', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 2d  */
-      from: 1385766000,
+      from: 1385852400,
       parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
