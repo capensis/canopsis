@@ -45,7 +45,7 @@ Deux méthodes d'installation ou d'exécution sont proposées :
 
 - Installation en tant que service sur un système de production
 - Exécution en tant que conteneur *Docker* avec l'image fournie :
-  [canopsis/canopsis-connector-prometheus][docker-image]
+  [canopsis/canopsis-connector-prometheus][docker-image] et l'exemple de configuration [docker compose](https://git.canopsis.net/canopsis-connectors/connector-prometheus#deployment-docker-compose)
 
 ### Configuration Prometheus
 
@@ -63,17 +63,19 @@ receivers:
     http_config:
       bearer_token: token_example
 ```
-Note : l'extrait ci-dessus est un exemple, à intégrer au sein de votre propre
-configuration alertmanager. Pour que le connecteur prometheus reçoive
-des messages, le *receiver* nommé doit être utilisé dans votre définition du
-routage des notifications. Voir pour cela la page sur la
-[configuration de l'alertmanager][alertmanager-config] dans la documentation
-officielle de Prometheus.
+!!! Note 
+
+    l'extrait ci-dessus est un exemple, à intégrer au sein de votre propre
+    configuration alertmanager. Pour que le connecteur prometheus reçoive
+    des messages, le *receiver* nommé doit être utilisé dans votre définition du
+    routage des notifications. Voir pour cela la page sur la
+    [configuration de l'alertmanager][alertmanager-config] dans la documentation
+    officielle de Prometheus.
 
 ### Configuration connecteur
 
 Quelle que soit la méthode d'installation choisie, la configuration du
-connecteur passe par le renseignement du fichier `config.yml`, qui sert à :
+connecteur passe par le renseignement d'un fichier `config.yml` à passer en paramètre au démarrage du connecteur et qui sert à :
 
 - Indiquer l'URL AMQP où le connecteur doit envoyer les évènements
 - Définir le token de securité du webhook
@@ -83,11 +85,11 @@ connecteur passe par le renseignement du fichier `config.yml`, qui sert à :
 Il est également possible de changer le port d'écoute avec l'argument `--port`
 du connecteur.
 
-Un exemple complet de fichier `config.yml` est fourni avec le code du
+Un exemple complet de fichier [config.yml](https://git.canopsis.net/canopsis-connectors/connector-prometheus/-/blob/master/config/config.yml) est fourni avec le code du
 connecteur.
 
-Pour ajouter des informations dans la configuration de votre connecteur depuis Prometheus, consultez alertmanager (ici : `<alertmanager_IP>:9093/api/v1/alerts` ) pour savoir ce que vous pouvez ajouter.
-Sur la base de ces informations, voici les données fournies par Prometheus pour créer un exemple de configuration :
+Pour ajouter des informations dans la configuration de votre connecteur depuis Prometheus, consultez alertmanager (ici : `<alertmanager_IP>:9093/api/v1/alerts` ) afin d'identifier les informations sur lesquelles vous pouvez réaliser des mappings.
+Sur la base des informations fournies par l'alertmanager, voicii un exemple de données renvoyées par Prometheus pour illustrer notre exemple de configuration :
 
 ```yaml
 {
@@ -120,19 +122,26 @@ Sur la base de ces informations, voici les données fournies par Prometheus pour
   ]
 }
 ```
-#### Avertissement
 
-- Les paramètres `event_type` et `source_type` ne peuvent pas être modifiés car le connecteur ne peut envoyer que des événements de contrôle pour les ressources.
 
-#### Output
-- output_length et long_output_length prennent comme valeur le nombre maximum de caractères à partir duquel la sortie de l'événement sera tronquée.
+#### Directives liées aux `Output`
+
+`output_length` et `long_output_length` prennent comme valeur le nombre maximum de caractères à partir duquel l'`output` et le `long_output` de l'événement seront tronqués.
 
 ```yaml
-longueur_de_sortie : 255
+output_length: 255
 long_output_length : 1024
 ```
 
-#### type : copy
+#### Directives liées aux mapping des champs
+
+Le connecteur permet de réaliser différents mapping entre les informations provenant de Prometheus et celles envoyées dans l'`event` généré vers Canopsis
+
+!!! Warning
+    Les valeurs de `event_type` et `source_type` ne peuvent pas être modifiés car le connecteur ne peut envoyer que des événements de type `check` et ayant comme `source_type` la valeur `resource`.
+
+##### type : copy
+
 Le type `copy` est utilisé pour récupérer la valeur statique renvoyée par prometheus.
 
 ```yaml
@@ -145,7 +154,8 @@ Le résultat obtenu et envoyé à Canopsis sera :
 
 `"component" : "node_exporter:9100"`
 
-#### type : set
+##### type : set
+
 Le type `set` permet de définir une chaîne de valeur constante.
 
 ```yaml
@@ -158,7 +168,7 @@ Le résultat obtenu et envoyé à Canopsis sera :
 
 `"type_ack" : "auto"`
 
-#### type : template
+##### type : template
 
 L'utilisation du template go est fournie par les fonctions suivantes :
 
@@ -178,7 +188,7 @@ L'utilisation du template go est fournie par les fonctions suivantes :
 
 - `json` : utilisé pour convertir n'importe quelle valeur en chaîne JSON et la retourner.
 
-##### Exemple de template
+###### Exemple de template
 
 * Méthode `uppercase`
 
@@ -206,18 +216,23 @@ Le résultat obtenu et envoyé à Canopsis sera :
 
 `"prom_titre" : "Prometheus node_exporter:9100 down"`
 
-#### Préfixe
-- Vous pouvez utiliser un préfixe pour les informations supplémentaires avec la variable : `extra_infos_prefix:` qui a pour but de changer le nom des champs, mais si vous décidez de ne pas l'utiliser, un avertissement apparaît dans les logs lors du lancement du conteneur.
-
-##### Logs sans préfixe
-```go
-canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z WRN app/cmd/main.go:125 > extra_infos_prefix is empty
-canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z INF app/cmd/main.go:188 > connector started
-```
-
-##### Exemple de préfixe
+##### Utilisation d'un Préfixe
 
 Pour éviter les collisions avec les champs internes à Cnaopsis, il est possible d'utiliser l'option de `prefix` sur les données de type `extra_infos` :
+
+Vous pouvez utiliser un préfixe pour les informations supplémentaires contenusi dans la variable : `extra_infos_prefix:` qui a pour but de changer le nom des champs, mais si vous décidez de ne pas l'utiliser, un avertissement apparaît dans les logs lors du lancement du conteneur.
+
+!!! Note
+
+    Logs sans préfixe
+
+    ```go
+    canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z WRN app/cmd/main.go:125 > extra_infos_prefix is empty
+    canopsis-pro-connector_prometheus-1 | 2023-04-11T15:52:14Z INF app/cmd/main.go:188 > connector started
+    ```
+
+###### Exemple de préfixe
+
 ```yaml
 extra_infos :
    type_ack :
