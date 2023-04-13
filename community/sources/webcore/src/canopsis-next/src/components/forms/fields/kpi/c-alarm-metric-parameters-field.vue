@@ -114,8 +114,8 @@ export default {
       }));
 
       if (this.withExternal) {
-        parameters.push(...this.externalMetrics.map(({ _id: value, name }) => ({
-          text: name,
+        parameters.push(...this.externalMetrics.map(value => ({
+          text: value,
           value,
           isExternal: true,
         })));

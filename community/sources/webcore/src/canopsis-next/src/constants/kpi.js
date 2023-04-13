@@ -58,7 +58,6 @@ export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;
 
 export const AGGREGATE_FUNCTIONS = {
   sum: 'sum',
-  regularSum: 'regular_sum',
   avg: 'avg',
   min: 'min',
   max: 'max',

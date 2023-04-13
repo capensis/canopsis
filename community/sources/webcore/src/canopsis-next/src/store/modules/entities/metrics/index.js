@@ -67,14 +67,7 @@ export default {
       commit(types.FETCH_EXTERNAL_METRICS_LIST);
 
       try {
-        const { data } = await new Promise((resolve) => {
-          setTimeout(() => resolve({
-            data: [{
-              _id: 'instance2/cpu_surveillance',
-              name: 'instance2/cpu_surveillance',
-            }],
-          }), 2000, params);
-        });
+        const { data } = await request.get(API_ROUTES.metrics.perfDataMetrics, { params });
 
         commit(types.FETCH_EXTERNAL_METRICS_LIST_COMPLETED, data);
       } catch (err) {
