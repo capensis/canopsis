@@ -17,6 +17,7 @@ export const entitiesMetricsMixin = {
       fetchAggregateMetrics: 'fetchAggregateMetrics',
       createKpiAlarmExport: 'createKpiAlarmExport',
       createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
+      createRemediationExport: 'createRemediationExport',
       createKpiRatingExport: 'createKpiRatingExport',
       createKpiSliExport: 'createKpiSliExport',
       fetchMetricExport: 'fetchMetricExport',

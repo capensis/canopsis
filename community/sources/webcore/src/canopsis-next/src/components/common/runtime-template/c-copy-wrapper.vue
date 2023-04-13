@@ -25,11 +25,11 @@ export default {
   },
   methods: {
     showSuccessPopup() {
-      this.$popups.success({ text: this.$t('testSuite.popups.systemMessageCopied') });
+      this.$popups.success({ text: this.$t('popups.copySuccess') });
     },
 
     showErrorPopup() {
-      this.$popups.error({ text: this.$t('errors.default') });
+      this.$popups.error({ text: this.$t('popups.copyError') });
     },
   },
 };

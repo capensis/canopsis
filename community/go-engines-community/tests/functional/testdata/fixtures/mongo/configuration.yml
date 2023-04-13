@@ -18,6 +18,7 @@ configuration:
   configuration_global:
     _id: global_config
     alarm:
+      activatealarmafterautoremediation: false
       allowdoubleack: true
       cancelautosolvedelay: 1h
       disableactionsnoozedelayonpbh: true
