@@ -21,29 +21,30 @@ Voici une liste des principales variables mises à disposition. De façon géné
 
 === "Alarme"
 
-    | Champs principaux                           | Valeur                              |
-    |:--------------------------------------------|:----------------------------------- |
-    | Display Name                                | `{{ .Alarm.Value.DisplayName }}`    |
-    | Composant                                   | `{{ .Alarm.Value.Component }}`      |
-    | Ressource                                   | `{{ .Alarm.Value.Resource }}`       |
-    | Type de connecteur                          | `{{ .Alarm.Value.Connector }}`      |
-    | Nom du Connecteur                           | `{{ .Alarm.Value.ConnectorName }}`  |
-    | Message initial de l'alarme                 | `{{ .Alarm.Value.InitialOutput }}`  |
-    | Message de l'alarme                         | `{{ .Alarm.Value.Output }}`         |
-    | Message initial Long de l'alarme            | `{{ .Alarm.Value.InitialLongOutput }}`  |
-    | Message long de l'alarme                    | `{{ .Alarm.Value.LongOutput }}`     |
-    | Message                                     | `{{ .Alarm.Value.State.Message }}`  |
-    | Criticité                                   | `{{ .Alarm.Value.State.Value }}`    |
-    | Statut                                      | `{{ .Alarm.Value.Status.Value }}`   |
-    | Auteur du ticket                            | `{{ .Alarm.Value.Ticket.Author }}`  |
-    | ID du ticket                                | `{{ .Alarm.Value.Ticket.Ticket }}`  |
-    | Message du ticket                           | `{{ .Alarm.Value.Ticket.Message }}` |
-    | Auteur de l'acquittement                    | `{{ .Alarm.Value.ACK.Author }}`     |
-    | Message de l'acquittement                   | `{{ .Alarm.Value.ACK.Message }}`    |
-    | Auteur du dernier commentaire               | `{{ .Alarm.Value.LastComment.Author }}`                               |
-    | Message du dernier commentaire              | `{{ .Alarm.Value.LastComment.Message }}`                              |
-    | Informations enrichies depuis dynamic-infos | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }}`   |
-    | `abc` dans l'entité                         | `{{ (index .Entity.Infos "abc").Value }}`                               |
+    | Champs principaux                                  | Valeur                                                                |
+    |:---------------------------------------------------|:--------------------------------------------------------------------- |
+    | Display Name                                       | `{{ .Alarm.Value.DisplayName }}`                                      |
+    | Composant                                          | `{{ .Alarm.Value.Component }}`                                        |
+    | Ressource                                          | `{{ .Alarm.Value.Resource }}`                                         |
+    | Type de connecteur                                 | `{{ .Alarm.Value.Connector }}`                                        |
+    | Nom du Connecteur                                  | `{{ .Alarm.Value.ConnectorName }}`                                    |
+    | Message initial de l'alarme                        | `{{ .Alarm.Value.InitialOutput }}`                                    |
+    | Message de l'alarme                                | `{{ .Alarm.Value.Output }}`                                           |
+    | Message initial Long de l'alarme                   | `{{ .Alarm.Value.InitialLongOutput }}`                                |
+    | Message long de l'alarme                           | `{{ .Alarm.Value.LongOutput }}`                                       |
+    | Message associé au dernier changement de criticité | `{{ .Alarm.Value.State.Message }}`                                    |
+    | Criticité                                          | `{{ .Alarm.Value.State.Value }}`                                      |
+    | Statut                                             | `{{ .Alarm.Value.Status.Value }}`                                     |
+    | Auteur du ticket                                   | `{{ .Alarm.Value.Ticket.Author }}`                                    |
+    | ID du ticket                                       | `{{ .Alarm.Value.Ticket.Ticket }}`                                    |
+    | Message du ticket                                  | `{{ .Alarm.Value.Ticket.Message }}`                                   |
+    | Auteur de l'acquittement                           | `{{ .Alarm.Value.ACK.Author }}`                                       |
+    | Message de l'acquittement                          | `{{ .Alarm.Value.ACK.Message }}`                                      |
+    | Auteur du dernier commentaire                      | `{{ .Alarm.Value.LastComment.Author }}`                               |
+    | Message du dernier commentaire                     | `{{ .Alarm.Value.LastComment.Message }}`                              |
+    | Informations enrichies depuis dynamic-infos        | `{{ (index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%") }}` |
+    | `abc` dans l'entité                                | `{{ (index .Entity.Infos "abc").Value }}`                             |
+
 
     | Champs de dates                             | Valeur                              |
     |:--------------------------------------------|:----------------------------------- |
@@ -59,6 +60,7 @@ Voici une liste des principales variables mises à disposition. De façon géné
     | Inactivité                                    | `{{ .Alarm.Value.InactiveDuration }}`          |
     | Inactivité liée aux comportements périodiques | `{{ .Alarm.Value.PbehaviorInactiveDuration }}` |
     | Mise en veille (Mise à jour en fin de snooze) | `{{ .Alarm.Value.SnoozeDuration }}`            |
+
  
     | Champs de compteurs                                                        | Valeur                                             |
     |:-------------------------------------------------------------------------- |:-------------------------------------------------- |
