@@ -398,7 +398,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Mise à jour de Canopsis 
 
     ```sh
-    dnf install canopsis-pro-23.04.0
+    dnf install canopsis-pro-23.04.0 canopsis-webui-23.04.0
     ```
 
     Reconfiguration de Canopsis 
