@@ -58,6 +58,10 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     ```sh
     systemctl stop canopsis
+    systemctl stop mongod
+    systemctl stop postgresql-13
+    systemctl stop rabbitmq-server
+    systemctl stop redis
     ```
 
 ### Mise à jour Canopsis
@@ -119,10 +123,25 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 
 === "Paquets RH8"
 
-    Démarrez le conteneur `mongodb` :
+    !!! note
+        Si vous avez mis en place des exclusions dans le fichier `/etc/yum.conf`, veillez à la désactiver le temps de cette procédure.
+
+    Mise à jour des paquets `mongodb` :
 
     ```sh
-    Ajouter la mise à jour paquet de mongodb
+    echo '[mongodb-org-5.0]
+    name=MongoDB Repository
+    baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/5.0/x86_64/
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc' | tee /etc/yum.repos.d/mongodb-org-5.0.repo
+    dnf makecache
+    dnf install mongodb-org-5.0.16 mongodb-org-database-5.0.16 mongodb-org-server-5.0.16 mongodb-org-mongos-5.0.16 mongodb-org-tools-5.0.16 mongodb-org-shell-5.0.16
+    ```
+
+    Redémarrage de `mongodb` :
+
+    ```sh
     systemctl start mongod
     ```
 
@@ -160,12 +179,17 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     ...
     timescaledb | 2.9.3   | public     | Enables scalable inserts and complex queries for time-series data
     ...
+    exit
     ```
    
 
 === "Paquets RH8"
 
-    Documenter le mise à jour du paquet timescaledb
+    Mise à jour des paquets `timescaledb` :
+
+    ```sh
+    dnf install timescaledb-2-postgresql-13-2.9.3 timescaledb-2-loader-postgresql-13-2.9.3
+    ```
 
     Relancez le service `timescaledb` :
 
@@ -176,9 +200,20 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
 
     ```sh
-    su - postgres -c "psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis"
+    sudo -u postgres psql postgresql://cpspostgres:canopsis@localhost:5432/canopsis
     canopsis=# ALTER EXTENSION timescaledb UPDATE;
     ```
+
+    !!! warning "Avertissement"
+        Si l'opération `ALTER EXTENSION` échoue avec le message  
+        `ERROR:  must be owner of extension timescaledb`  
+        veuillez suivre les opérations suivantes :  
+        ```sh
+        su - postgres
+        psql -X
+        \c canopsis
+        canopsis=# ALTER EXTENSION timescaledb UPDATE;
+        ```
 
     Ensuite, vérifiez que l'extension en elle-même est à présent bien à jour
 
@@ -187,15 +222,17 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     ...
     timescaledb | 2.9.3   | public     | Enables scalable inserts and complex queries for time-series data
     ...
-    `
+    exit
+    ```
 
 ### Mise à jour de RabbitMQ
 
-Dans cette version de Canopsis, le bus rabbitMQ passe de la version 3.7.28 à 3.11.11.  
-Un passage par la version 3.10.20 est cependant nécessaire.
+Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.  
 
 === "Docker Compose"
     
+    Un passage par la version 3.10.20 est nécessaire lorsque votre installation part de la version 3.7.28.
+
     Passage en version 3.10.20 puis lancement du conteneur `rabbitmq` :
 
     ```sh
@@ -219,27 +256,20 @@ Un passage par la version 3.10.20 est cependant nécessaire.
     ```
 
 === "Paquets RH8"
-    
-    Passage en version 3.10.20 puis lancement du service `rabbitmq` :
+
+    Il faut commencer par activer la fonctionnalité `FEATURE_FLAGS` de rabbitmq :
 
     ```sh
-    Documenter la mise à jour rabbitmq vers 3.10
-    systemctl start rabbitmq
-    ```
-
-    Il faut à présent activer la fonctionnalité `FEATURE_FLAGS` de rabbitmq :
-
-    ```sh
+    systemctl start rabbitmq-server
     rabbitmqctl enable_feature_flag all
-    exit
     ```
-
-    Passage en version 3.11.11 puis lancement du conteneur `rabbitmq` :
+   
+    Passage en version 3.11.11 puis lancement du service `rabbitmq-server` :
 
     ```sh
-    Documenter la mise à jour rabbitmq vers 3.11
-    systemctl start rabbitmq
-    ``` 
+    dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.11.11
+    systemctl restart rabbitmq-server
+    ```
 
 ### Remise à 0 du cache Redis
 
@@ -256,7 +286,7 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
     ```sh
     systemctl start redis
-    /usr/local/bin/redis-cli flushall
+    /bin/redis-cli flushall
     ```
 
 ### Lancement du provisioning `canopsis-reconfigure`
@@ -301,24 +331,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
 === "Paquets RH8"
 
-    !!! Attention
-    
-    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
-    L'outil est en effet pré paramétré pour fonctionner naturellement.
-
-    ```sh
-    systemctl start canopsis-reconfigure
-    ```
-
-    !!! information "Information"
-
-        Cette opération peut prendre plusieurs minutes pour s'exécuter.
-
-    Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
-
-    ```sh
-    journalctl -fu canopsis-reconfigure
-    ```
+    La commande `canopsis-reconfigure` doit être exécutée après mise à jour de Canopsis dans le cadre d'installation par paquets RPM.
 
 #### Migration des statistiques de remédiation
 
@@ -341,12 +354,13 @@ Une migration des données est donc nécessaire.
     Exécution de la commande `migrate-instruction-metrics`
 
     ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/migrate-instruction-metrics
     ```
 
-#### Démarrage final de Canopsis
+#### Mise à jour et démarrage final de Canopsis
 
-Enfin, il vous reste à démarrer tous les composants applicatifs de Canopsis
+Enfin, il vous reste à mettre à jour et à démarrer tous les composants applicatifs de Canopsis
 
 === "Docker Compose"
 
@@ -380,6 +394,34 @@ Enfin, il vous reste à démarrer tous les composants applicatifs de Canopsis
     ```
 
 === "Paquets RH8"
+
+    Mise à jour de Canopsis 
+
+    ```sh
+    dnf install canopsis-pro-23.04.0
+    ```
+
+    Reconfiguration de Canopsis 
+
+    !!! Attention
+    
+    Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
+    L'outil est en effet pré paramétré pour fonctionner naturellement.
+
+    Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
+
+    ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition pro
+    ```
+
+    !!! information "Information"
+
+        Cette opération peut prendre plusieurs minutes pour s'exécuter.
+
+    Vous pouvez ensuite vérifier que le mécanisme de reconfigure s'est correctement déroulé en lisant les logs sur la sortie standard de la commande.
+
+    Redémarrage de Canopsis
 
     ```sh
     systemctl restart canopsis
