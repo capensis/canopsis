@@ -238,7 +238,7 @@ export function convertChartWidgetToQuery(widget) {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
     with_history: comparison,
-    parameters: metrics.map(({ metric }) => metric),
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({ metric, aggregate_func: aggregateFunc })),
   };
 }
 
@@ -249,14 +249,14 @@ export function convertChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertPieChartWidgetToQuery(widget) {
-  const { parameters: { metrics = [], aggregate_func: aggregateFunc } } = widget;
+  const { parameters: { metrics = [], aggregate_func: widgetAggregateFunc } } = widget;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
-    parameters: metrics.map(({ metric }) => ({
+    parameters: metrics.map(({ metric, aggregate_func: metricAggregateFunc }) => ({
       metric,
-      aggregate_func: aggregateFunc,
+      aggregate_func: metricAggregateFunc || widgetAggregateFunc,
     })),
   };
 }

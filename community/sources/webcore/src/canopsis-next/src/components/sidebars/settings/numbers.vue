@@ -7,6 +7,7 @@
       field-alarm-metric-presets(
         v-model="form.parameters.metrics",
         :parameters="availableParameters",
+        with-external,
         with-aggregate-function
       )
     widget-settings-group(:title="$t('settings.advancedSettings')")

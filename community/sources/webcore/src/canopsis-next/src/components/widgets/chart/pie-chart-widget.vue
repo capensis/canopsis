@@ -23,8 +23,7 @@
       pie-chart-metrics(
         v-if="hasMetrics",
         :chart-id="widget._id",
-        :metrics="aggregatedMetrics",
-        :colors-by-metrics="colorsByMetrics",
+        :metrics="preparedAggregatedMetrics",
         :title="widget.parameters.chart_title",
         :show-mode="widget.parameters.show_mode",
         :downloading="downloading",
@@ -35,7 +34,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { pick } from 'lodash';
+import { keyBy, pick } from 'lodash';
 
 import { convertFilterToQuery } from '@/helpers/query';
 
@@ -89,20 +88,31 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      widgetMetricsMap: {},
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
 
-    colorsByMetrics() {
-      return this.widget.parameters.metrics.reduce((acc, { color, metric }) => {
-        if (color) {
-          acc[metric] = color;
-        }
+    preparedAggregatedMetrics() {
+      return this.aggregatedMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title];
 
-        return acc;
-      }, {});
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
+  },
+  created() {
+    this.setWidgetMetricsMap();
   },
   methods: {
     ...mapMetricsActions({
@@ -118,8 +128,14 @@ export default {
       };
     },
 
+    setWidgetMetricsMap() {
+      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
+    },
+
     fetchList() {
       this.fetchAggregatedMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
+
+      this.setWidgetMetricsMap();
     },
   },
 };

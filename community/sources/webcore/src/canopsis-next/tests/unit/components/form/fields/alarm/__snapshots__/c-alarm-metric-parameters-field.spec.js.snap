@@ -498,7 +498,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             </div>
           </div><i aria-hidden="true" class="v-icon mr-3 material-icons theme--light">language</i>
           <div class="v-list__tile__content">
-            <div class="v-list__tile__title">External first</div>
+            <div class="v-list__tile__title">external/first</div>
           </div>
         </a></div>
       <div role="listitem"><a class="v-list__tile v-list__tile--link theme--light">
@@ -517,7 +517,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
             </div>
           </div><i aria-hidden="true" class="v-icon mr-3 material-icons theme--light">language</i>
           <div class="v-list__tile__content">
-            <div class="v-list__tile__title">External second</div>
+            <div class="v-list__tile__title">external/second</div>
           </div>
         </a></div>
     </div>

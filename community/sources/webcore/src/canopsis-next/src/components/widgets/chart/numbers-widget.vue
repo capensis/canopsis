@@ -22,7 +22,7 @@
       chart-loader(v-if="aggregatedMetricsPending", :has-metrics="hasMetrics")
       numbers-metrics(
         v-if="hasMetrics",
-        :metrics="aggregatedMetrics",
+        :metrics="preparedAggregatedMetrics",
         :title="widget.parameters.chart_title",
         :show-trend="widget.parameters.show_trend",
         :font-size="valueFontSize",
@@ -33,7 +33,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { pick } from 'lodash';
+import { keyBy, pick } from 'lodash';
 
 import {
   NUMBERS_CHART_MAX_AUTO_FONT_SIZE,
@@ -97,9 +97,22 @@ export default {
   data() {
     return {
       containerWidth: null,
+      widgetMetricsMap: {},
     };
   },
   computed: {
+    preparedAggregatedMetrics() {
+      return this.aggregatedMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title];
+
+        return {
+          ...metric,
+
+          label: parameters.label,
+        };
+      });
+    },
+
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
@@ -119,6 +132,8 @@ export default {
     },
   },
   created() {
+    this.setWidgetMetricsMap();
+
     this.resizeObserver = new ResizeObserver(this.setElementWidth);
   },
   mounted() {
@@ -153,12 +168,18 @@ export default {
       };
     },
 
+    setWidgetMetricsMap() {
+      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
+    },
+
     fetchList() {
       this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
         trend: this.widget.parameters.show_trend,
         params: this.getQuery(),
       });
+
+      this.setWidgetMetricsMap();
     },
   },
 };
