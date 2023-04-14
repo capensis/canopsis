@@ -42,7 +42,6 @@ const (
 
 	EventTypeChangestate = "changestate"
 	EventTypeKeepstate   = "keepstate"
-	EventTypePerf        = "perf"
 	EventTypeSnooze      = "snooze"
 	EventTypeUnsnooze    = "unsnooze"
 	EventTypeUncancel    = "uncancel"
@@ -125,13 +124,6 @@ const (
 
 const MaxEventTimestampVariation = 24 * time.Hour
 
-// PerfData represents a perf data array
-type PerfData struct {
-	Metric string  `bson:"metric" json:"metric"`
-	Unit   string  `bson:"unit" json:"unit"`
-	Value  float64 `bson:"value" json:"value"`
-}
-
 // Event represents a canopsis event.
 //
 //easyjson:json
@@ -142,8 +134,7 @@ type Event struct {
 	EventType     string     `bson:"event_type" json:"event_type"`
 	Component     string     `bson:"component" json:"component"`
 	Resource      string     `bson:"resource" json:"resource"`
-	PerfData      *string    `bson:"perf_data" json:"perf_data"`
-	PerfDataArray []PerfData `bson:"perf_data_array" json:"perf_data_array"`
+	PerfData      string     `bson:"perf_data" json:"perf_data"`
 	Status        *CpsNumber `bson:"status" json:"status"`
 	SourceType    string     `bson:"source_type" json:"source_type"`
 	LongOutput    string     `bson:"long_output" json:"long_output"`
@@ -284,7 +275,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 // IsContextable tells you if the given event can lead to context enrichment.
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
-	case EventTypeCheck, EventTypePerf, EventTypeMetaAlarm,
+	case EventTypeCheck, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
@@ -337,13 +328,6 @@ func (e Event) IsValid() error {
 
 	if !isValidEventType(e.EventType) {
 		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
-	}
-
-	switch e.EventType {
-	case EventTypePerf:
-		if e.PerfData == nil || e.PerfDataArray == nil {
-			return errt.NewUnknownError(errors.New("perfdata without data"))
-		}
 	}
 
 	return nil
@@ -562,7 +546,6 @@ func isValidEventType(t string) bool {
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
 		EventTypeKeepstate,
-		EventTypePerf,
 		EventTypeStateIncrease,
 		EventTypeStateDecrease,
 		EventTypeStatusIncrease,
