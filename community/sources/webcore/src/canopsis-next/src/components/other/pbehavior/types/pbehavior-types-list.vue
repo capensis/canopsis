@@ -21,6 +21,9 @@
     template(#icon_name="{ item }")
       v-chip.pbehavior-type-icon(:color="item.color")
         v-icon(:color="getIconColor(item.color)", size="18") {{ item.icon_name }}
+    template(#priority="{ item }") {{ item.priority || '-' }}
+    template(#hidden="{ item }")
+      c-enabled(:value="item.hidden")
     template(#actions="{ item }")
       v-layout
         c-action-btn(
@@ -83,6 +86,10 @@ export default {
         {
           text: this.$t('common.priority'),
           value: 'priority',
+        },
+        {
+          text: this.$t('common.hidden'),
+          value: 'hidden',
         },
         {
           text: this.$t('common.actionsLabel'),

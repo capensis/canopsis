@@ -6,7 +6,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated number type of metric by hour request should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -65,7 +65,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated cumulative type of metric by hour request should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -115,7 +115,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated subtraction type of metric by hour request should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -165,7 +165,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated ratio metric by hour request should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -195,7 +195,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated duration metric by hour request should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -253,7 +253,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated request with widget filters should return aggregated results
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -314,7 +314,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated created_alarms without sampling should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -332,7 +332,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "sampling": "sampling is required"
+        "sampling": "Sampling is missing."
       }
     }
     """
@@ -341,10 +341,11 @@ Feature: Get alarm metrics
   Scenario: given get aggregated created_alarms with unsupported metric should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
+      "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
@@ -359,7 +360,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "parameters.0": "metric \"total_user_activity\" is not supported"
+        "parameters.0.metric": "metric is not supported."
       }
     }
     """
@@ -368,10 +369,11 @@ Feature: Get alarm metrics
   Scenario: given get aggregated created_alarms with not found kpi filter should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
+      "sampling": "hour",
       "filter": "test-kpi-filter-not-found",
       "parameters": [
         {
@@ -386,7 +388,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "filter": "Filter \"test-kpi-filter-not-found\" not found."
+        "filter": "Filter doesn't exist."
       }
     }
     """
@@ -395,10 +397,11 @@ Feature: Get alarm metrics
   Scenario: given get aggregated created_alarms with not found widget filter should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
+      "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-not-found"
       ],
@@ -415,7 +418,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "widget_filters": "filter \"test-widget-filter-not-found\" not found"
+        "widget_filters.0": "WidgetFilter doesn't exist."
       }
     }
     """
@@ -424,11 +427,12 @@ Feature: Get alarm metrics
   Scenario: given get aggregated created_alarms with both filters should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
+      "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-to-alarm-metrics-get-1"
       ],
@@ -454,7 +458,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated number metric without aggregate function should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -472,7 +476,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "aggregate_func": "aggregate function is required"
+        "parameters.0.aggregate_func": "AggregateFunc is missing."
       }
     }
     """
@@ -481,7 +485,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated cumulative number metric with sum aggregate function should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -500,7 +504,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "aggregate_func": "sum function is not allowed"
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [avg, max, min]."
       }
     }
     """
@@ -509,7 +513,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated subtraction type of metric with sum function should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -528,7 +532,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "aggregate_func": "sum function is not allowed"
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [avg, max, min]."
       }
     }
     """
@@ -537,7 +541,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated metric with invalid function should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -565,7 +569,7 @@ Feature: Get alarm metrics
   Scenario: given get aggregated ratio metric with aggregate function should return error
     When I am admin
     When I do POST /api/v4/cat/metrics/aggregate:
-    """
+    """json
     {
       "from": {{ parseTime "23-11-2021 00:00" }},
       "to": {{ parseTime "23-11-2021 00:00" }},
@@ -584,7 +588,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "aggregate_func": "aggregate function is not allowed"
+        "parameters.0.aggregate_func": "AggregateFunc is not empty."
       }
     }
     """
