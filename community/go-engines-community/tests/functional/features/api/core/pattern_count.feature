@@ -2,6 +2,7 @@ Feature: Count matches
   I need to be able to count matches by patterns
   Only admin should be able to count matches by patterns
 
+  @standalone
   Scenario: given count request should return counts
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
@@ -11,7 +12,7 @@ Feature: Count matches
     }
     """
     Then the response code should be 200
-    Then I wait 2s
+    When I wait the next periodical process
     When I am noperms
     When I do POST /api/v4/patterns-count:
     """json
@@ -69,6 +70,7 @@ Feature: Count matches
     }
     """
 
+  @standalone
   Scenario: given count request should return counts with over limit
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
@@ -78,7 +80,7 @@ Feature: Count matches
     }
     """
     Then the response code should be 200
-    Then I wait 2s
+    When I wait the next periodical process
     When I am noperms
     When I do POST /api/v4/patterns-count:
     """json
