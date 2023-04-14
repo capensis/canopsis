@@ -3,6 +3,7 @@ package types
 import (
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -10,8 +11,7 @@ const (
 	singleQuoteRune  = '\''
 	dotRune          = '.'
 	spaceRune        = ' '
-	zeroRune         = '0'
-	nineRune         = '9'
+	percentRune      = '%'
 	undefinedValRune = 'U'
 	invalidIndex     = -1
 )
@@ -126,13 +126,8 @@ func parsePerfDataValue(s string) (float64, string, bool, int) {
 		paramsStr = s[:lastIndex]
 	}
 
-	params := strings.Split(paramsStr, ";")
-	if len(params) == 0 {
-		return 0, "", false, invalidIndex
-	}
-
-	valWithUnit := params[0]
-	if len(valWithUnit) == 0 {
+	valWithUnit, _, _ := strings.Cut(paramsStr, ";")
+	if valWithUnit == "" {
 		return 0, "", false, invalidIndex
 	}
 
@@ -141,7 +136,7 @@ func parsePerfDataValue(s string) (float64, string, bool, int) {
 	}
 
 	notDigitFilter := func(r rune) bool {
-		return r < zeroRune || r > nineRune
+		return !unicode.IsDigit(r)
 	}
 	i := strings.IndexFunc(valWithUnit, notDigitFilter)
 	valStr := ""
@@ -163,6 +158,14 @@ func parsePerfDataValue(s string) (float64, string, bool, int) {
 	} else {
 		valStr = valWithUnit[:i]
 		unit = valWithUnit[i:]
+	}
+
+	if unit != "" && unit != string(percentRune) {
+		for _, r := range unit {
+			if !unicode.IsLetter(r) {
+				return 0, "", false, invalidIndex
+			}
+		}
 	}
 
 	val, err := strconv.ParseFloat(valStr, 64)
