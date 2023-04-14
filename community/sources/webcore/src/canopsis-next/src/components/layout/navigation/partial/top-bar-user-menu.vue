@@ -57,7 +57,9 @@ export default {
     },
 
     async logoutHandler() {
-      await this.logout({ redirectTo: { name: ROUTES_NAMES.login } });
+      await this.logout({
+        redirect: () => this.$router.replaceAsync({ name: ROUTES_NAMES.login }),
+      });
 
       this.$system.setTheme();
     },
