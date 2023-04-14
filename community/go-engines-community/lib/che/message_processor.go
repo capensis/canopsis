@@ -314,7 +314,7 @@ func (p *messageProcessor) handlePerfData(ctx context.Context, event types.Event
 				"$set":      bson.M{"perf_data_updated": types.CpsTime{Time: now}},
 			})
 			if err != nil {
-				p.Logger.Err(err).Msg("cannot update entity perf data")
+				p.Logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot update entity perf data")
 			}
 		}()
 	}
