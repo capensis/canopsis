@@ -154,10 +154,10 @@ export default {
     },
 
     fetchList() {
-      this.fetchAggregatedMetricsList({
+      return this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
         trend: this.widget.parameters.show_trend,
-        params: this.getQuery(),
+        data: this.getQuery(),
       });
     },
   },

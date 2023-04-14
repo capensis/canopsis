@@ -23,8 +23,7 @@
       pie-chart-metrics(
         v-if="hasMetrics",
         :chart-id="widget._id",
-        :metrics="aggregatedMetrics",
-        :colors-by-metrics="colorsByMetrics",
+        :metrics="preparedMetrics",
         :title="widget.parameters.chart_title",
         :show-mode="widget.parameters.show_mode",
         :downloading="downloading",
@@ -45,6 +44,7 @@ import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
@@ -70,6 +70,7 @@ export default {
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
+    widgetChartMetricsMap,
     entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
@@ -94,14 +95,17 @@ export default {
       return !!this.aggregatedMetrics.length;
     },
 
-    colorsByMetrics() {
-      return this.widget.parameters.metrics.reduce((acc, { color, metric }) => {
-        if (color) {
-          acc[metric] = color;
-        }
+    preparedMetrics() {
+      return this.aggregatedMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        return acc;
-      }, {});
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
   },
   methods: {
@@ -118,8 +122,13 @@ export default {
       };
     },
 
-    fetchList() {
-      this.fetchAggregatedMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
+    async fetchList() {
+      await this.fetchAggregatedMetricsList({
+        widgetId: this.widget._id,
+        data: this.getQuery(),
+      });
+
+      this.setWidgetMetricsMap();
     },
   },
 };
