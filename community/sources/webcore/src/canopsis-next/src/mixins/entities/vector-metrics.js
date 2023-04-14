@@ -25,7 +25,6 @@ export const entitiesVectorMetricsMixin = {
   methods: {
     ...mapActions({
       fetchVectorMetricsList: 'fetchList',
-      fetchVectorMetricsListWithoutStore: 'fetchListWithoutStore',
     }),
   },
 };

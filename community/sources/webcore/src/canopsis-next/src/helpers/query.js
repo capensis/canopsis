@@ -238,7 +238,7 @@ export function convertChartWidgetToQuery(widget) {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
     with_history: comparison,
-    parameters: metrics.map(({ metric }) => metric),
+    parameters: metrics.map(({ metric }) => ({ metric })),
   };
 }
 
