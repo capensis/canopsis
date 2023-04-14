@@ -56,6 +56,15 @@ Cmd *canopsis-reconfigure* automatically migrates new migrations from [database/
 
 Use [cmd/mongo-migrations](../mongo-migrations) to manage migrations. 
 
+It has the following commands:
+
+- `create` - Create a blank migration.
+- `up` - Execute migrations to a specified version or the latest available version.
+- `down` - Roll migrations up to a specified version or all tracked versions.
+- `status` - View the status of migrations.
+- `skip` - Manually add a specified version or all untracked versions to the version table.
+- `help` - Get help information about command and their flags.
+
 ## Fixtures
 
 Fixtures are used to create predefined data for new production environment and to create fake data for functional testing.
