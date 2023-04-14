@@ -976,14 +976,6 @@ func (a *ApiClient) IDoRequestWithBody(ctx context.Context, method, uri string, 
 		return ctx, err
 	}
 
-	if headers, ok := getHeaders(ctx); ok {
-		if _, ok := headers[headerContentType]; !ok {
-			req.Header.Set(headerContentType, binding.MIMEJSON)
-		}
-	} else {
-		req.Header.Set(headerContentType, binding.MIMEJSON)
-	}
-
 	return a.doRequest(ctx, req)
 }
 
@@ -1370,6 +1362,16 @@ func (a *ApiClient) createRequest(ctx context.Context, method, uri, body string)
 		return nil, fmt.Errorf("cannot create request: %w", err)
 	}
 
+	if body != "" {
+		if headers, ok := getHeaders(ctx); ok {
+			if _, ok := headers[headerContentType]; !ok {
+				req.Header.Set(headerContentType, binding.MIMEJSON)
+			}
+		} else {
+			req.Header.Set(headerContentType, binding.MIMEJSON)
+		}
+	}
+
 	return req, nil
 }
 
@@ -1392,6 +1394,16 @@ func (a *ApiClient) createRequestWithSavedRequest(ctx context.Context, method, u
 	req, err := http.NewRequest(method, uri, r)
 	if err != nil {
 		return nil, ctx, fmt.Errorf("cannot create request: %w", err)
+	}
+
+	if body != "" {
+		if headers, ok := getHeaders(ctx); ok {
+			if _, ok := headers[headerContentType]; !ok {
+				req.Header.Set(headerContentType, binding.MIMEJSON)
+			}
+		} else {
+			req.Header.Set(headerContentType, binding.MIMEJSON)
+		}
 	}
 
 	return req, ctx, nil
