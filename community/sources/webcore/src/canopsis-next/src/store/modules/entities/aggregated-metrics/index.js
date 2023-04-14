@@ -45,25 +45,25 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit }, { widgetId, trend, params } = {}) {
+    async fetchList({ commit }, { widgetId, trend, data } = {}) {
       commit(types.FETCH_LIST, { widgetId });
 
       const previousInterval = {
-        from: params.from - (params.to - params.from),
-        to: params.from,
+        from: data.from - (data.to - data.from),
+        to: data.from,
       };
 
-      const { data: metrics } = await request.post(API_ROUTES.metrics.aggregate, params);
+      const { data: metrics } = await request.post(API_ROUTES.metrics.aggregate, data);
 
       let previousMetrics = [];
 
       if (trend) {
-        const { data } = await request.post(API_ROUTES.metrics.aggregate, {
-          ...params,
+        const { data: responseData } = await request.post(API_ROUTES.metrics.aggregate, {
+          ...data,
           ...previousInterval,
         });
 
-        previousMetrics = data;
+        previousMetrics = responseData;
       }
 
       commit(types.FETCH_LIST_COMPLETED, {
