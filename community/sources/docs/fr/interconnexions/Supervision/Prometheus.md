@@ -140,13 +140,11 @@ Le connecteur permet de réaliser différents mapping entre les informations pro
     
     Les valeurs de `event_type` et `source_type` ne peuvent pas être modifiés car le connecteur ne peut envoyer que des événements de type `check` et ayant comme `source_type` la valeur `resource`.
     
-    Les valeurs des champs `connector` et `connector_name` seront toujours à spécifier de façon statique
+    La valeur du champs `connector` sera toujours à spécifier de façon statique
     
     ```yaml
     # connector specifies a type of the connector.
     connector: prometheus
-    # connector_name specifies a unique name of the connector.
-    connector_name: node_exporter1
     ```
 
 
