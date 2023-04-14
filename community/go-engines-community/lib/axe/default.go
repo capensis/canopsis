@@ -63,6 +63,7 @@ func NewEngine(
 	dbClient mongo.DbClient,
 	cfg config.CanopsisConf,
 	metricsSender metrics.Sender,
+	autoInstructionMatcher AutoInstructionMatcher,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -168,7 +169,7 @@ func NewEngine(
 		logger,
 	)
 
-	metaAlarmEventProcessor := alarm.NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
@@ -178,7 +179,12 @@ func NewEngine(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
 
-			return alarmStatusService.Load(ctx)
+			err := alarmStatusService.Load(ctx)
+			if err != nil {
+				return err
+			}
+
+			return autoInstructionMatcher.Load(ctx)
 		},
 		func(ctx context.Context) {
 			err := amqpConnection.Close()
@@ -226,9 +232,8 @@ func NewEngine(
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-
-			TechMetricsSender: techMetricsSender,
-			EventProcessor: alarm.NewEventProcessor(
+			TechMetricsSender:        techMetricsSender,
+			EventProcessor: NewEventProcessor(
 				dbClient,
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
@@ -240,6 +245,7 @@ func NewEngine(
 				metaAlarmEventProcessor,
 				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
+				autoInstructionMatcher,
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -277,9 +283,10 @@ func NewEngine(
 	engineAxe.AddConsumer(pbhRpcClient)
 	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
-		PeriodicalInterval: options.PeriodicalWaitTime,
-		AlarmStatusService: alarmStatusService,
-		Logger:             logger,
+		PeriodicalInterval:     options.PeriodicalWaitTime,
+		AlarmStatusService:     alarmStatusService,
+		AutoInstructionMatcher: autoInstructionMatcher,
+		Logger:                 logger,
 	})
 	engineAxe.AddPeriodicalWorker("tags", &tagPeriodicalWorker{
 		PeriodicalInterval: options.TagsPeriodicalWaitTime,
@@ -384,6 +391,7 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor(metricsSender))
 	container.Set(types.EventTypeInstructionJobFailed, executor.NewInstructionExecutor(metricsSender))
+	container.Set(types.EventTypeAutoInstructionActivate, executor.NewAutoInstructionActivateExecutor())
 	container.Set(types.EventTypeJunitTestSuiteUpdated, executor.NewJunitExecutor())
 	container.Set(types.EventTypeJunitTestCaseUpdated, executor.NewJunitExecutor())
 

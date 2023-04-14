@@ -185,7 +185,7 @@ func (s *store) GetCategories(ctx context.Context, categoryType string, limit in
 }
 
 func transformRequestToModel(r EditRequest) link.Rule {
-	return link.Rule{
+	rule := link.Rule{
 		Name:         r.Name,
 		Type:         r.Type,
 		Enabled:      *r.Enabled,
@@ -196,9 +196,13 @@ func transformRequestToModel(r EditRequest) link.Rule {
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
 			common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
 		),
-		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+	}
+	if r.Type == link.TypeAlarm {
+		rule.AlarmPatternFields = r.AlarmPatternFieldsRequest.ToModelWithoutFields(
 			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
 			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-		),
+		)
 	}
+
+	return rule
 }

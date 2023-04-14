@@ -1,28 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import Vue from 'vue';
+
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 
 import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-const factory = (options = {}) => shallowMount(KpiChartExportActions, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiChartExportActions, {
-  localVue,
-
-  ...options,
-});
-
 describe('kpi-chart-export-actions', () => {
+  const factory = generateShallowRenderer(KpiChartExportActions, { stubs });
+  const snapshotFactory = generateRenderer(KpiChartExportActions);
+
   it('Export csv event emitted', () => {
     const wrapper = factory({
       propsData: {
@@ -56,7 +46,7 @@ describe('kpi-chart-export-actions', () => {
       .mockImplementation(callback => originalToBlob.call(canvas, (...args) => {
         callback(...args);
 
-        localVue.nextTick(() => {
+        Vue.nextTick(() => {
           const exportCsvEvents = wrapper.emitted('export:png');
 
           expect(exportCsvEvents).toHaveLength(1);

@@ -65,6 +65,9 @@ const (
 
 	// AlarmChangeTypeEntityToggled is used to update entity service's counters on disable/enable entity actions.
 	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
+
+	// AlarmChangeTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
+	AlarmChangeTypeAutoInstructionActivate AlarmChangeType = "autoinstructionactivate"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
@@ -110,7 +113,8 @@ func GetTriggers(t AlarmChangeType) []string {
 		AlarmChangeTypeAutoWebhookStart,
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
-		AlarmChangeTypeAutoDeclareTicketWebhookFail:
+		AlarmChangeTypeAutoDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoInstructionActivate:
 		// not a trigger
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:
