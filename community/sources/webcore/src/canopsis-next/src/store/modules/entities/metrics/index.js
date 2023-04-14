@@ -13,8 +13,8 @@ export default {
       return request.get(API_ROUTES.metrics.rating, { params });
     },
 
-    fetchAlarmsMetricsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.metrics.alarm, { params });
+    fetchAlarmsMetricsWithoutStore(context, { data } = {}) {
+      return request.post(API_ROUTES.metrics.alarm, data);
     },
 
     createKpiAlarmExport(context, { data }) {

@@ -24,7 +24,7 @@
       line-chart-metrics(
         v-if="hasMetrics",
         :chart-id="widget._id",
-        :metrics="preparedVectorMetrics",
+        :metrics="preparedMetrics",
         :title="widget.parameters.chart_title",
         :sampling="query.sampling",
         :downloading="downloading",
@@ -35,7 +35,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { keyBy, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
@@ -46,6 +46,7 @@ import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsLineChartInterval } from '@/mixins/permissions/widgets/chart/line/interval';
 import { permissionsWidgetsLineChartSampling } from '@/mixins/permissions/widgets/chart/line/sampling';
@@ -71,6 +72,7 @@ export default {
     widgetIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
+    widgetChartMetricsMap,
     entitiesVectorMetricsMixin,
     permissionsWidgetsLineChartInterval,
     permissionsWidgetsLineChartSampling,
@@ -90,11 +92,6 @@ export default {
       default: '',
     },
   },
-  data() {
-    return {
-      widgetMetricsMap: {},
-    };
-  },
   computed: {
     hasMetrics() {
       return !!this.vectorMetrics.length;
@@ -108,12 +105,16 @@ export default {
         : null;
     },
 
-    preparedVectorMetrics() {
-      return this.vectorMetrics.map(metric => ({
-        ...metric,
+    preparedMetrics() {
+      return this.vectorMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        color: this.widgetMetricsMap[metric.title].color,
-      }));
+        return {
+          ...metric,
+
+          color: parameters.color,
+        };
+      });
     },
   },
   watch: {
@@ -131,9 +132,6 @@ export default {
       }
     },
   },
-  created() {
-    this.setWidgetMetricsMap();
-  },
   methods: {
     ...mapMetricsActions({
       createKpiAlarmExport: 'createKpiAlarmExport',
@@ -148,12 +146,11 @@ export default {
       };
     },
 
-    setWidgetMetricsMap() {
-      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
-    },
-
     async fetchList() {
-      await this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
+      await this.fetchVectorMetricsList({
+        widgetId: this.widget._id,
+        data: this.getQuery(),
+      });
 
       this.setWidgetMetricsMap();
     },

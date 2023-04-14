@@ -56,6 +56,10 @@ export const CreateMetaAlarmRule = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './meta-alarm-rule/create-meta-alarm-rule.vue'),
   loading: LoaderOverlay,
 });
+export const CreateAlarmChart = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/create-alarm-chart.vue'),
+  loading: LoaderOverlay,
+});
 
 export const PbehaviorList = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-list.vue'),

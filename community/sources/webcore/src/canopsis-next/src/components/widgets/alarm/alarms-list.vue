@@ -8,6 +8,7 @@
       justify-space-between,
       align-end
     )
+      v-btn(@click="$modals.show({ name: 'create-alarm-chart' })") MODAL
       v-flex
         c-advanced-search-field(
           :query.sync="query",
