@@ -3,6 +3,7 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS perf_data
 (
     time      TIMESTAMP    NOT NULL,
+--     TODO BIGINT
     entity_id INT          NOT NULL,
     name      VARCHAR(255) NOT NULL,
     value     NUMERIC      NOT NULL,

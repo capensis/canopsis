@@ -145,6 +145,15 @@ func TestEvent_GetPerfData(t *testing.T) {
 				},
 			},
 		},
+		{
+			Input: "cpu=20.2.2%",
+		},
+		{
+			Input: "cpu=20%%",
+		},
+		{
+			Input: "cpu=20&",
+		},
 	}
 
 	event := types.Event{}
