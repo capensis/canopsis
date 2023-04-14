@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     template(#activator="")
-      v-list-tile {{ $t('settings.fastAckOutput') }}
+      v-list-tile {{ label }}
         div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       c-enabled-field(v-field="value.enabled")
@@ -23,6 +23,10 @@ export default {
     value: {
       type: Object,
       default: () => ({}),
+    },
+    label: {
+      type: String,
+      default: '',
     },
   },
 };

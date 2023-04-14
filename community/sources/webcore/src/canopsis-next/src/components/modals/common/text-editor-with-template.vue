@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { CUSTOM_WIDGET_TEMPLATE, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -48,7 +48,7 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { text = '', template = '' } = this.modal.config;
+    const { text = '', template = CUSTOM_WIDGET_TEMPLATE } = this.modal.config;
 
     return {
       form: {
