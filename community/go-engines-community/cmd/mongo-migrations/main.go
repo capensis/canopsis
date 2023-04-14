@@ -92,7 +92,7 @@ func execCmd(ctx context.Context, logger zerolog.Logger) error {
 			return err
 		}
 		cmd = cli.NewSkipCmd(flags.path, flags.version, client, logger)
-	case helpFlag, "":
+	case "help", "":
 		args := []string{helpFlag}
 		_ = (&createFlags{}).Parse(args)
 		_ = (&upFlags{}).Parse(args)
