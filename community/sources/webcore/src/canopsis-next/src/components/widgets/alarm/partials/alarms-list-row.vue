@@ -172,8 +172,7 @@ export default {
       }
 
       if (this.selecting) {
-        listeners.mouseenter = flow([this.mouseSelecting, listeners.mouseenter].filter(Boolean));
-        listeners.mousedown = flow([this.mouseSelecting, listeners.mousedown].filter(Boolean));
+        listeners.mousedown = flow([this.mouseSelecting, listeners.mouseenter].filter(Boolean));
       }
 
       return listeners;
@@ -193,7 +192,6 @@ export default {
     mouseSelecting(event) {
       if (event.ctrlKey && event.buttons) {
         event.preventDefault();
-        event.stopPropagation();
 
         this.updateModel(!this.selected);
       }

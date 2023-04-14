@@ -127,6 +127,64 @@ func TestFunctions(t *testing.T) {
 				ExpectedRes: "Thu, 28 Oct 2021 17:05:00 AEST",
 			},
 		},
+		"tag_has_key": {
+			{
+				Tpl: `{{tag_has_key .Alarm.Tags "Tag1" }}`,
+				TplData: map[string]any{
+					"Alarm": types.Alarm{
+						Tags: []string{"Tag1: Value1", "Tag2"},
+					},
+				},
+				ExpectedRes: "true",
+			},
+			{
+				Tpl: `{{tag_has_key .Alarm.Tags "Tag2" }}`,
+				TplData: map[string]any{
+					"Alarm": types.Alarm{
+						Tags: []string{"Tag1: Value1", "Tag2"},
+					},
+				},
+				ExpectedRes: "true",
+			},
+			{
+				Tpl: `{{tag_has_key .Alarm.Tags "Tag3" }}`,
+				TplData: map[string]any{
+					"Alarm": types.Alarm{
+						Tags: []string{"Tag1: Value1", "Tag2"},
+					},
+				},
+				ExpectedRes: "false",
+			},
+		},
+		"get_tag": {
+			{
+				Tpl: `{{get_tag .Alarm.Tags "Tag1" }}`,
+				TplData: map[string]any{
+					"Alarm": types.Alarm{
+						Tags: []string{"Tag1: Value1", "Tag2"},
+					},
+				},
+				ExpectedRes: "Value1",
+			},
+			{
+				Tpl: `{{get_tag .Alarm.Tags "Tag2" }}`,
+				TplData: map[string]any{
+					"Alarm": types.Alarm{
+						Tags: []string{"Tag1: Value1", "Tag2"},
+					},
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{get_tag .Alarm.Tags "Tag3" }}`,
+				TplData: map[string]any{
+					"Alarm": types.Alarm{
+						Tags: []string{"Tag1: Value1", "Tag2"},
+					},
+				},
+				ExpectedRes: "",
+			},
+		},
 	}
 
 	for name, v := range dataSets {

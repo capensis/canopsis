@@ -116,12 +116,12 @@ Feature: Metrics should be added on alarm changes
       "source_type": "resource"
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId1 }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId1 }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -129,12 +129,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId2 }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId2 }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -154,12 +154,12 @@ Feature: Metrics should be added on alarm changes
       "source_type": "resource"
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId3 }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId3 }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -167,14 +167,14 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId1 }}
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId1 }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -182,14 +182,14 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId2 }}
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId2 }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -302,12 +302,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId1 }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId1 }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -315,12 +315,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction={{ .instructionId2 }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction={{ .instructionId2 }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 0,
           "ratio": 0
