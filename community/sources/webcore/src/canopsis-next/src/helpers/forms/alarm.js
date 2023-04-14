@@ -10,6 +10,7 @@
  * @property {string} label
  * @property {string} url
  * @property {string} [rule_id]
+ * @property {LinkRuleAction} [action]
  */
 
 /**

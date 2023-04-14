@@ -97,6 +97,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
   cancel: 'cancel',
+  fastCancel: 'fastCancel',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
@@ -409,7 +410,7 @@ export const ALARM_PAYLOADS_VARIABLES = {
   lastCommentMessage: '.Value.LastComment.Message',
 
   entityName: '.Entity.Name',
-  entityInfosValue: '(index .Entity.Infos.%infos_name%).Value',
+  entityInfosValue: '(index .Entity.Infos "%infos_name%").Value',
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {

@@ -11,10 +11,10 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * Compile template
  *
  * @param {string} template
- * @param {Object} context
+ * @param {Object} [context = {}]
  * @returns {Promise}
  */
-export async function compile(template, context) {
+export async function compile(template, context = {}) {
   const handleBarFunction = Handlebars.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
@@ -76,3 +76,4 @@ registerHelper('capitalize-all', helpers.capitalizeAllHelper);
 registerHelper('lowercase', helpers.lowercaseHelper);
 registerHelper('uppercase', helpers.uppercaseHelper);
 registerHelper('replace', helpers.replaceHelper);
+registerHelper('copy', helpers.copyHelper);

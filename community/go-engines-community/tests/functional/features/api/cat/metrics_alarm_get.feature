@@ -1665,7 +1665,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "widget_filters": "filter \"test-widget-filter-not-exist\" not found"
+        "widget_filters.0": "WidgetFilter doesn't exist."
       }
     }
     """
@@ -1679,7 +1679,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "widget_filters": "filter \"test-widget-filter-to-alarm-metrics-get-3\" cannot be applied"
+        "widget_filters.0": "WidgetFilter is not applicable."
       }
     }
     """

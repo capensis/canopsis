@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` with selected tag and dropdown 1`] = `
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected tag and dropdown 1`] = `
 <div
   class="layout c-alarm-actions-chips row wrap align-center"
 >
@@ -38,7 +38,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` with selected tag 
 </div>
 `;
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` with selected tag and dropdown 2`] = `
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected tag and dropdown 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
@@ -49,16 +49,20 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` with selected tag 
     <div
       class="v-card__text"
     >
-      <span
-        class="c-alarm-action-chip mx-0"
-        color="color2"
-      />
+      <div
+        class="layout c-alarm-actions-chips__more"
+      >
+        <span
+          class="c-alarm-action-chip mx-0"
+          color="color2"
+        />
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected tag and dropdown 1`] = `
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and dropdown 1`] = `
 <div
   class="layout c-alarm-actions-chips row wrap align-center"
 >
@@ -78,7 +82,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected t
 </div>
 `;
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected tag and with dropdown 1`] = `
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and with dropdown 1`] = `
 <div
   class="layout c-alarm-actions-chips row wrap align-center"
 >
@@ -112,7 +116,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected t
 </div>
 `;
 
-exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected tag and with dropdown 2`] = `
+exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and with dropdown 2`] = `
 <div
   class="v-menu__content theme--light "
   style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
@@ -123,14 +127,18 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-tags-chips\` without selected t
     <div
       class="v-card__text"
     >
-      <span
-        class="c-alarm-action-chip mx-0"
-        color="color2"
-      />
-      <span
-        class="c-alarm-action-chip mx-0"
-        color="color3"
-      />
+      <div
+        class="layout c-alarm-actions-chips__more"
+      >
+        <span
+          class="c-alarm-action-chip mx-0"
+          color="color2"
+        />
+        <span
+          class="c-alarm-action-chip mx-0"
+          color="color3"
+        />
+      </div>
     </div>
   </div>
 </div>
