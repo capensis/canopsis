@@ -187,6 +187,14 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 		return err
 	}
 
+	if f.mongoFixtureMigrations {
+		cmd := cli.NewSkipCmd(f.mongoMigrationDirectory, f.mongoFixtureMigrationsVersion, dbClient, logger)
+		err = cmd.Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	logger.Info().Msg("finish mongo fixtures")
 	return nil
 }
