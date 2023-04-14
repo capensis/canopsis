@@ -360,7 +360,7 @@ Feature: Get alarm metrics
     """
     {
       "errors": {
-        "parameters.0.metric": "metric is not supported."
+        "parameters.0.metric": "Metric is not supported."
       }
     }
     """
@@ -560,7 +560,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum avg min max] or empty."
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum last avg min max] or empty."
       }
     }
     """
