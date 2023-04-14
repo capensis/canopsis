@@ -158,7 +158,19 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -268,7 +280,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -334,7 +358,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -413,7 +449,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -551,7 +599,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -639,7 +699,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -785,7 +857,19 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_executed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -801,7 +885,19 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ratio_remediated_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ratio_remediated_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -852,7 +948,19 @@ Feature: Metrics should be added on alarm changes
       "source_type": "resource"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_executed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -868,7 +976,19 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ratio_remediated_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ratio_remediated_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -943,7 +1063,19 @@ Feature: Metrics should be added on alarm changes
       "source_type": "resource"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_executed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -959,7 +1091,19 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ratio_remediated_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ratio_remediated_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1097,7 +1241,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_executed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1113,7 +1269,19 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ratio_remediated_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ratio_remediated_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1212,7 +1380,19 @@ Feature: Metrics should be added on alarm changes
       "source_type": "resource"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_executed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1228,7 +1408,19 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ratio_remediated_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ratio_remediated_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1316,7 +1508,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_executed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_executed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1332,7 +1536,19 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ratio_remediated_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ratio_remediated_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1498,7 +1714,19 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1576,7 +1804,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1660,7 +1900,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1730,7 +1982,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1768,7 +2032,19 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 200
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1852,7 +2128,19 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1918,7 +2206,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2018,7 +2318,19 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 200
     When I am admin
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2172,7 +2484,19 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait 3s
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=manual_instruction_assigned_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "manual_instruction_assigned_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDate }},
+      "to": {{ nowDate }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
