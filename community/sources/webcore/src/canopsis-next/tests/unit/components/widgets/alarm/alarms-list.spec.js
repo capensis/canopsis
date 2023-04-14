@@ -101,8 +101,7 @@ describe('alarms-list', () => {
   const $modals = mockModals();
 
   const nowTimestamp = 1386435600000;
-  const nowUnix = 1386435600;
-  const nowSubtractOneYearUnix = 1354899600;
+  const nowSubtractOneYearUnix = 1354921200;
 
   mockDateNow(nowTimestamp);
 
@@ -932,7 +931,7 @@ describe('alarms-list', () => {
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: nowUnix,
+          tstop: 1386370800,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1022,7 +1021,7 @@ describe('alarms-list', () => {
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: nowUnix,
+          tstop: 1386370800,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1087,7 +1086,7 @@ describe('alarms-list', () => {
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: nowUnix,
+          tstop: 1386370800,
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,
