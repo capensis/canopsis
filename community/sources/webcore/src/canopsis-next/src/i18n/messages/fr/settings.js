@@ -250,4 +250,10 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
     },
   },
+  kioskMode: 'Mode kiosque',
+  kiosk: {
+    hideActions: 'Masquer les actions',
+    hideMassSelection: 'Masquer la sélection en masse',
+    hideToolbar: 'Masquer la barre de tâches',
+  },
 };

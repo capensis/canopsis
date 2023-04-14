@@ -1,5 +1,5 @@
 <template lang="pug">
-  view-tab-widgets(v-if="activeTab", :tab="activeTab")
+  view-tab-widgets(v-if="activeTab", :tab="activeTab", kiosk)
 </template>
 
 <script>
