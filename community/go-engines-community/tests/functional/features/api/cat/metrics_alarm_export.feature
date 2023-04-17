@@ -12,8 +12,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "20-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "20-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -29,11 +29,11 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     metric,timestamp,value
-    created_alarms,{{ parseTime "20-11-2021 00:00" }},0
-    created_alarms,{{ parseTime "21-11-2021 00:00" }},1
-    created_alarms,{{ parseTime "22-11-2021 00:00" }},3
-    created_alarms,{{ parseTime "23-11-2021 00:00" }},3
-    created_alarms,{{ parseTime "24-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "20-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "21-11-2021 00:00" }},1
+    created_alarms,{{ parseTimeTz "22-11-2021 00:00" }},3
+    created_alarms,{{ parseTimeTz "23-11-2021 00:00" }},3
+    created_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
 
     """
 
@@ -47,8 +47,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "06-09-2020 00:00" }},
-      "to": {{ parseTime "08-09-2020 00:00" }}
+      "from": {{ parseTimeTz "06-09-2020 00:00" }},
+      "to": {{ parseTimeTz "08-09-2020 00:00" }}
     }
     """
     Then the response code should be 200
@@ -64,9 +64,9 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     metric,timestamp,value
-    created_alarms,{{ parseTime "06-09-2020 00:00" }},0
-    created_alarms,{{ parseTime "07-09-2020 00:00" }},0
-    created_alarms,{{ parseTime "08-09-2020 00:00" }},0
+    created_alarms,{{ parseTimeTz "06-09-2020 00:00" }},0
+    created_alarms,{{ parseTimeTz "07-09-2020 00:00" }},0
+    created_alarms,{{ parseTimeTz "08-09-2020 00:00" }},0
 
     """
 
@@ -80,8 +80,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get-by-entity-infos",
       "sampling": "day",
-      "from": {{ parseTime "20-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "20-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -97,11 +97,11 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     metric,timestamp,value
-    created_alarms,{{ parseTime "20-11-2021 00:00" }},0
-    created_alarms,{{ parseTime "21-11-2021 00:00" }},0
-    created_alarms,{{ parseTime "22-11-2021 00:00" }},3
-    created_alarms,{{ parseTime "23-11-2021 00:00" }},2
-    created_alarms,{{ parseTime "24-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "20-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "21-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "22-11-2021 00:00" }},3
+    created_alarms,{{ parseTimeTz "23-11-2021 00:00" }},2
+    created_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
 
     """
 
@@ -128,8 +128,8 @@ Feature: Export alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "day",
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
@@ -148,8 +148,8 @@ Feature: Export alarm metrics
         {"metric": "not-exist"}
       ],
       "sampling": "day",
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
@@ -188,8 +188,8 @@ Feature: Export alarm metrics
       "parameters": [
         {"metric": "created_alarms"}
       ],
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
@@ -237,8 +237,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "22-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "22-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -254,56 +254,56 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     metric,timestamp,value
-    created_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    created_alarms,{{ parseTime "23-11-2021 00:00" }},3
-    created_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    active_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    active_alarms,{{ parseTime "23-11-2021 00:00" }},3
-    active_alarms,{{ parseTime "24-11-2021 00:00" }},3
-    non_displayed_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    non_displayed_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    non_displayed_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    instruction_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    instruction_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    instruction_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    pbehavior_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    pbehavior_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    pbehavior_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    correlation_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    correlation_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    correlation_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    ack_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    ack_alarms,{{ parseTime "23-11-2021 00:00" }},2
-    ack_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    cancel_ack_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    cancel_ack_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    cancel_ack_alarms,{{ parseTime "24-11-2021 00:00" }},0
-    ack_active_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    ack_active_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    ack_active_alarms,{{ parseTime "24-11-2021 00:00" }},1
-    ticket_active_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    ticket_active_alarms,{{ parseTime "23-11-2021 00:00" }},1
-    ticket_active_alarms,{{ parseTime "24-11-2021 00:00" }},1
-    without_ticket_active_alarms,{{ parseTime "22-11-2021 00:00" }},0
-    without_ticket_active_alarms,{{ parseTime "23-11-2021 00:00" }},2
-    without_ticket_active_alarms,{{ parseTime "24-11-2021 00:00" }},2
-    ratio_correlation,{{ parseTime "22-11-2021 00:00" }},0
-    ratio_correlation,{{ parseTime "23-11-2021 00:00" }},33.33
-    ratio_correlation,{{ parseTime "24-11-2021 00:00" }},33.33
-    ratio_instructions,{{ parseTime "22-11-2021 00:00" }},0
-    ratio_instructions,{{ parseTime "23-11-2021 00:00" }},33.33
-    ratio_instructions,{{ parseTime "24-11-2021 00:00" }},33.33
-    ratio_tickets,{{ parseTime "22-11-2021 00:00" }},0
-    ratio_tickets,{{ parseTime "23-11-2021 00:00" }},33.33
-    ratio_tickets,{{ parseTime "24-11-2021 00:00" }},33.33
-    ratio_non_displayed,{{ parseTime "22-11-2021 00:00" }},0
-    ratio_non_displayed,{{ parseTime "23-11-2021 00:00" }},33.33
-    ratio_non_displayed,{{ parseTime "24-11-2021 00:00" }},33.33
-    average_ack,{{ parseTime "22-11-2021 00:00" }},0
-    average_ack,{{ parseTime "23-11-2021 00:00" }},500
-    average_ack,{{ parseTime "24-11-2021 00:00" }},0
-    average_resolve,{{ parseTime "22-11-2021 00:00" }},0
-    average_resolve,{{ parseTime "23-11-2021 00:00" }},1000
-    average_resolve,{{ parseTime "24-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    created_alarms,{{ parseTimeTz "23-11-2021 00:00" }},3
+    created_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    active_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    active_alarms,{{ parseTimeTz "23-11-2021 00:00" }},3
+    active_alarms,{{ parseTimeTz "24-11-2021 00:00" }},3
+    non_displayed_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    non_displayed_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    non_displayed_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    instruction_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    instruction_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    instruction_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    pbehavior_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    pbehavior_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    pbehavior_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    correlation_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    correlation_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    correlation_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    ack_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ack_alarms,{{ parseTimeTz "23-11-2021 00:00" }},2
+    ack_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    cancel_ack_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    cancel_ack_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    cancel_ack_alarms,{{ parseTimeTz "24-11-2021 00:00" }},0
+    ack_active_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ack_active_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    ack_active_alarms,{{ parseTimeTz "24-11-2021 00:00" }},1
+    ticket_active_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ticket_active_alarms,{{ parseTimeTz "23-11-2021 00:00" }},1
+    ticket_active_alarms,{{ parseTimeTz "24-11-2021 00:00" }},1
+    without_ticket_active_alarms,{{ parseTimeTz "22-11-2021 00:00" }},0
+    without_ticket_active_alarms,{{ parseTimeTz "23-11-2021 00:00" }},2
+    without_ticket_active_alarms,{{ parseTimeTz "24-11-2021 00:00" }},2
+    ratio_correlation,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ratio_correlation,{{ parseTimeTz "23-11-2021 00:00" }},33.33
+    ratio_correlation,{{ parseTimeTz "24-11-2021 00:00" }},33.33
+    ratio_instructions,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ratio_instructions,{{ parseTimeTz "23-11-2021 00:00" }},33.33
+    ratio_instructions,{{ parseTimeTz "24-11-2021 00:00" }},33.33
+    ratio_tickets,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ratio_tickets,{{ parseTimeTz "23-11-2021 00:00" }},33.33
+    ratio_tickets,{{ parseTimeTz "24-11-2021 00:00" }},33.33
+    ratio_non_displayed,{{ parseTimeTz "22-11-2021 00:00" }},0
+    ratio_non_displayed,{{ parseTimeTz "23-11-2021 00:00" }},33.33
+    ratio_non_displayed,{{ parseTimeTz "24-11-2021 00:00" }},33.33
+    average_ack,{{ parseTimeTz "22-11-2021 00:00" }},0
+    average_ack,{{ parseTimeTz "23-11-2021 00:00" }},500
+    average_ack,{{ parseTimeTz "24-11-2021 00:00" }},0
+    average_resolve,{{ parseTimeTz "22-11-2021 00:00" }},0
+    average_resolve,{{ parseTimeTz "23-11-2021 00:00" }},1000
+    average_resolve,{{ parseTimeTz "24-11-2021 00:00" }},0
 
     """
