@@ -40,6 +40,7 @@ import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-met
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
 
 const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
+const { mapActions: mapAggregatedMetricsActions } = createNamespacedHelpers('aggregatedMetrics');
 
 export default {
   inject: ['$system'],
@@ -87,11 +88,16 @@ export default {
     },
 
     preparedMetrics() {
-      return this.metrics.map(metric => ({
-        ...metric,
+      return this.metrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        color: this.widgetMetricsMap[metric.title]?.color,
-      }));
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
 
     component() {
@@ -159,7 +165,9 @@ export default {
       createKpiAlarmExport: 'createKpiAlarmExport',
       fetchMetricExport: 'fetchMetricExport',
       fetchAlarmsMetricsWithoutStore: 'fetchAlarmsMetricsWithoutStore',
-      fetchAggregatedMetricsWithoutStore: 'fetchAggregatedMetricsWithoutStore',
+    }),
+    ...mapAggregatedMetricsActions({
+      fetchAggregatedMetricsWithoutStore: 'fetchListWithoutStore',
     }),
 
     getQuery() {
