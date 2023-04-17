@@ -8,8 +8,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -44,7 +44,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "created_alarms",
-          "value": 2,
+          "value": 1,
           "aggregate_func": "max"
         },
         {
@@ -54,7 +54,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "created_alarms",
-          "value": 1.5,
+          "value": 1,
           "aggregate_func": "avg"
         }
       ]
@@ -67,8 +67,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -99,7 +99,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "active_alarms",
-          "value": 4,
+          "value": 5,
           "aggregate_func": "min"
         },
         {
@@ -117,8 +117,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "parameters": [
@@ -144,7 +144,7 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "without_ticket_active_alarms",
-          "value": 1.87,
+          "value": 1.79,
           "aggregate_func": "avg"
         },
         {
@@ -167,8 +167,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
       "parameters": [
@@ -197,8 +197,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "parameters": [
         {
@@ -255,8 +255,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-to-alarm-metrics-get-1"
@@ -288,12 +288,12 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "created_alarms",
-          "value": 7,
+          "value": 3,
           "aggregate_func": "sum"
         },
         {
           "title": "created_alarms",
-          "value": 4,
+          "value": 1,
           "aggregate_func": "max"
         },
         {
@@ -303,7 +303,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "created_alarms",
-          "value": 2.33,
+          "value": 1,
           "aggregate_func": "avg"
         }
       ]
@@ -316,8 +316,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
@@ -343,8 +343,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -371,8 +371,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-not-found",
       "parameters": [
@@ -399,8 +399,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-not-found"
@@ -429,8 +429,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
       "widget_filters": [
@@ -460,8 +460,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -487,8 +487,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -515,8 +515,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -543,8 +543,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -571,8 +571,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
