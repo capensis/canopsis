@@ -46,7 +46,7 @@ export default {
   props: {
     widgetId: {
       type: String,
-      required: true,
+      required: false,
     },
     interval: {
       type: Object,
