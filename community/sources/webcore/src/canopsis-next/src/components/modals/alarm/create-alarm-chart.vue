@@ -34,9 +34,6 @@ import NumbersWidgetForm from '@/components/sidebars/settings/forms/widgets/numb
 
 import ModalWrapper from '../modal-wrapper.vue';
 
-/**
- * Modal to create an ack event
- */
 export default {
   name: MODALS.createAlarmChart,
   $_veeValidate: {
