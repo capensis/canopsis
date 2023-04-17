@@ -13,7 +13,12 @@
       template
         slot(name="item", :item="item", :index="index")
     slot(name="append")
-    v-btn.mx-0(color="primary", @click.prevent="$emit('add')") {{ $t('common.add') }}
+    v-layout(row, wrap)
+      v-btn.mx-0(
+        color="primary",
+        @click.prevent="$emit('add')"
+      ) {{ $t('common.add') }}
+      slot(name="actions")
 </template>
 
 <script>

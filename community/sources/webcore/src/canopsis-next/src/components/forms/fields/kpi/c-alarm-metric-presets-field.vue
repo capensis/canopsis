@@ -6,10 +6,17 @@
         :with-color="withColor",
         :with-aggregate-function="withAggregateFunction",
         :parameters="parameters",
-        :disabled-parameters="disabledParameters"
+        :disabled-parameters="disabledParameters",
+        :with-external="withExternal",
+        :name="`${name}[${item.key}]`"
       )
     template(#append="")
       c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
+    template(#actions="")
+      v-btn.ml-2.mx-0(
+        color="primary",
+        @click.prevent="add(true)"
+      ) {{ $t('common.autoAdd') }}
 </template>
 
 <script>
@@ -43,6 +50,10 @@ export default {
       default: false,
     },
     withAggregateFunction: {
+      type: Boolean,
+      default: false,
+    },
+    withExternal: {
       type: Boolean,
       default: false,
     },
@@ -111,9 +122,10 @@ export default {
     this.detachRules();
   },
   methods: {
-    add() {
+    add(auto = false) {
       this.addItemIntoArray(metricPresetToForm({
         aggregate_func: this.withAggregateFunction ? AGGREGATE_FUNCTIONS.avg : '',
+        auto,
       }));
     },
 
@@ -121,7 +133,7 @@ export default {
       this.$validator.attach({
         name: this.name,
         rules: { min_value: this.min },
-        getter: () => this.metrics.length,
+        getter: () => (this.metrics.some(({ auto }) => auto) ? this.min : this.metrics.length),
         vm: this,
       });
     },
