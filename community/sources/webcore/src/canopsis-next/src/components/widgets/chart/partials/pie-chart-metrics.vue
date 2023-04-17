@@ -40,10 +40,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    colorsByMetrics: {
-      type: Object,
-      default: () => ({}),
-    },
     title: {
       type: String,
       required: false,
@@ -77,7 +73,7 @@ export default {
     datasets() {
       const { data, backgroundColor } = this.preparedMetrics.reduce((acc, metric) => {
         acc.data.push(metric.value);
-        acc.backgroundColor.push(this.colorsByMetrics[metric.title] ?? getMetricColor(metric.title));
+        acc.backgroundColor.push(metric.color ?? getMetricColor(metric.title));
 
         return acc;
       }, {
@@ -94,7 +90,7 @@ export default {
     },
 
     labels() {
-      return this.preparedMetrics.map(metric => this.$t(`alarm.metrics.${metric.title}`));
+      return this.preparedMetrics.map(metric => metric.label ?? this.getMetricLabel(metric.title));
     },
 
     chartOptions() {
@@ -136,6 +132,12 @@ export default {
     },
   },
   methods: {
+    getMetricLabel(metric) {
+      const metricMessageKey = `alarm.metrics.${metric}`;
+
+      return this.$te(metricMessageKey) ? this.$t(metricMessageKey) : metric;
+    },
+
     formatDataLabel(value) {
       if (!value) {
         return null;

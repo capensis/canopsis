@@ -874,3 +874,32 @@ export const createAggregatedMetricsModule = () => {
     fetchAggregatedMetricsList,
   };
 };
+
+export const createMetricsModule = () => {
+  const fetchExternalMetricsList = jest.fn();
+  const externalMetrics = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    fetchExternalMetricsList.mockClear();
+    externalMetrics.mockClear();
+    pending.mockClear();
+  });
+
+  const metricsModule = {
+    name: 'metrics',
+    getters: {
+      externalMetrics,
+      pending,
+    },
+    actions: {
+      fetchExternalMetricsList,
+    },
+  };
+
+  return {
+    metricsModule,
+    externalMetrics,
+    fetchExternalMetricsList,
+  };
+};
