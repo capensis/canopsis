@@ -23,9 +23,10 @@ func NewTemplater(defaultVars map[string]interface{}) *Templater {
 }
 
 func (t *Templater) Execute(ctx context.Context, text string) (*bytes.Buffer, error) {
+	loc, _ := GetTimezone(ctx)
 	tpl, err := template.New("tpl").
 		Option("missingkey=error").
-		Funcs(getTplFuncs()).
+		Funcs(getTplFuncs(loc)).
 		Parse(text)
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse template: %w", err)
@@ -51,10 +52,13 @@ func (t *Templater) Execute(ctx context.Context, text string) (*bytes.Buffer, er
 	return buf, nil
 }
 
-func getTplFuncs() template.FuncMap {
+func getTplFuncs(location *time.Location) template.FuncMap {
 	return template.FuncMap{
 		"now": func() int64 {
 			return time.Now().Unix()
+		},
+		"nowTz": func() int64 {
+			return time.Now().In(location).Unix()
 		},
 		"nowAdd": func(s string) (int64, error) {
 			d, err := libtypes.ParseDurationWithUnit(s)
@@ -69,6 +73,11 @@ func getTplFuncs() template.FuncMap {
 
 			return time.Date(y, m, d, 0, 0, 0, 0, time.UTC).Unix()
 		},
+		"nowDateTz": func() int64 {
+			y, m, d := time.Now().In(location).Date()
+
+			return time.Date(y, m, d, 0, 0, 0, 0, location).Unix()
+		},
 		"nowDateAdd": func(s string) (int64, error) {
 			d, err := libtypes.ParseDurationWithUnit(s)
 			if err != nil {
@@ -82,6 +91,14 @@ func getTplFuncs() template.FuncMap {
 		},
 		"parseTime": func(s string) (int64, error) {
 			t, err := time.ParseInLocation("02-01-2006 15:04", s, time.UTC)
+			if err != nil {
+				return 0, err
+			}
+
+			return t.Unix(), nil
+		},
+		"parseTimeTz": func(s string) (int64, error) {
+			t, err := time.ParseInLocation("02-01-2006 15:04", s, location)
 			if err != nil {
 				return 0, err
 			}

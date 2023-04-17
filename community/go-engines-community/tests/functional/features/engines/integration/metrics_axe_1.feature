@@ -43,8 +43,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -55,7 +55,7 @@ Feature: Metrics should be added on alarm changes
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -291,8 +291,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -303,7 +303,7 @@ Feature: Metrics should be added on alarm changes
           "title": "instruction_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -312,7 +312,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -411,8 +411,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -423,7 +423,7 @@ Feature: Metrics should be added on alarm changes
           "title": "pbehavior_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -432,7 +432,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -525,8 +525,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -537,7 +537,7 @@ Feature: Metrics should be added on alarm changes
           "title": "correlation_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -546,7 +546,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -645,8 +645,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -657,7 +657,7 @@ Feature: Metrics should be added on alarm changes
           "title": "correlation_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -666,7 +666,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -730,8 +730,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -742,7 +742,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -751,7 +751,7 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }}
+              "timestamp": {{ nowDateTz }}
             }
           ]
         }
@@ -791,8 +791,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -803,7 +803,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -812,7 +812,7 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }}
+              "timestamp": {{ nowDateTz }}
             }
           ]
         }
@@ -886,8 +886,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -898,7 +898,7 @@ Feature: Metrics should be added on alarm changes
           "title": "cancel_ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -907,7 +907,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -935,8 +935,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -947,7 +947,7 @@ Feature: Metrics should be added on alarm changes
           "title": "cancel_ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -956,7 +956,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1046,8 +1046,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1058,7 +1058,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ticket_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1067,7 +1067,7 @@ Feature: Metrics should be added on alarm changes
           "title": "without_ticket_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1141,8 +1141,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and response key "data.0.data.0.value" is greater or equal than 1
@@ -1154,7 +1154,7 @@ Feature: Metrics should be added on alarm changes
           "title": "average_resolve",
           "data": [
             {
-              "timestamp": {{ nowDate }}
+              "timestamp": {{ nowDateTz }}
             }
           ]
         }

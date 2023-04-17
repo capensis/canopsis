@@ -13,8 +13,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -26,106 +26,106 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
-              "value": 2
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
               "value": 0
             }
           ]
         }
       ],
       "meta": {
-        "min_date": 1625097600
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
       }
     }
     """
@@ -141,8 +141,8 @@ Feature: Get alarm metrics
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
       "with_history": true,
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -154,154 +154,154 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 00:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
-              "value": 2,
-              "history_timestamp": {{ parseTime "22-11-2021 01:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 02:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 03:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 04:00" }},
-              "history_value": 1
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 05:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 06:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 07:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 08:00" }},
-              "history_value": 1
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 09:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1,
-              "history_timestamp": {{ parseTime "22-11-2021 10:00" }},
+              "history_timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "history_value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
               "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 11:00" }},
+              "history_timestamp": {{ parseTimeTz "22-11-2021 01:00" }},
               "history_value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
+              "value": 1,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 02:00" }},
               "history_value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 13:00" }},
+              "history_timestamp": {{ parseTimeTz "22-11-2021 03:00" }},
               "history_value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 14:00" }},
+              "history_timestamp": {{ parseTimeTz "22-11-2021 04:00" }},
               "history_value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 15:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 16:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 17:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 18:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 19:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 20:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 21:00" }},
-              "history_value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
-              "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 22:00" }},
+              "history_timestamp": {{ parseTimeTz "22-11-2021 05:00" }},
               "history_value": 1
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 0,
-              "history_timestamp": {{ parseTime "22-11-2021 23:00" }},
+              "history_timestamp": {{ parseTimeTz "22-11-2021 06:00" }},
               "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 07:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 08:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 09:00" }},
+              "history_value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 10:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
+              "value": 1,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 11:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 12:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 13:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 14:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 15:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 16:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 17:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 18:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 19:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 20:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 21:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 22:00" }},
+              "history_value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
+              "value": 0,
+              "history_timestamp": {{ parseTimeTz "22-11-2021 23:00" }},
+              "history_value": 1
             }
           ]
         }
       ],
       "meta": {
-        "min_date": 1625097600
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
       }
     }
     """
@@ -317,8 +317,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "20-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "20-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -330,23 +330,23 @@ Feature: Get alarm metrics
         "title": "created_alarms",
         "data": [
           {
-            "timestamp": {{ parseTime "20-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "20-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ parseTime "21-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "21-11-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ parseTime "22-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
             "value": 3
           },
           {
-            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
             "value": 3
           },
           {
-            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -366,8 +366,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "week",
-      "from": {{ parseTime "06-09-2021 00:00" }},
-      "to": {{ parseTime "10-10-2021 00:00" }}
+      "from": {{ parseTimeTz "06-09-2021 00:00" }},
+      "to": {{ parseTimeTz "10-10-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -379,23 +379,23 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "06-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "06-09-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "13-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "13-09-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "20-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "20-09-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "27-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "27-09-2021 00:00" }},
               "value": 2
             },
             {
-              "timestamp": {{ parseTime "04-10-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "04-10-2021 00:00" }},
               "value": 0
             }
           ]
@@ -415,8 +415,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "month",
-      "from": {{ parseTime "01-06-2021 00:00" }},
-      "to": {{ parseTime "31-10-2021 00:00" }}
+      "from": {{ parseTimeTz "01-06-2021 00:00" }},
+      "to": {{ parseTimeTz "31-10-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -428,23 +428,23 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "01-06-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-06-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "01-08-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-08-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-09-2021 00:00" }},
               "value": 3
             },
             {
-              "timestamp": {{ parseTime "01-10-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-10-2021 00:00" }},
               "value": 0
             }
           ]
@@ -464,8 +464,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "06-09-2020 00:00" }},
-      "to": {{ parseTime "08-09-2020 00:00" }}
+      "from": {{ parseTimeTz "06-09-2020 00:00" }},
+      "to": {{ parseTimeTz "08-09-2020 00:00" }}
     }
     """
     Then the response code should be 200
@@ -477,15 +477,15 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "06-09-2020 00:00" }},
+              "timestamp": {{ parseTimeTz "06-09-2020 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "07-09-2020 00:00" }},
+              "timestamp": {{ parseTimeTz "07-09-2020 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "08-09-2020 00:00" }},
+              "timestamp": {{ parseTimeTz "08-09-2020 00:00" }},
               "value": 0
             }
           ]
@@ -505,8 +505,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get-by-entity-infos",
       "sampling": "day",
-      "from": {{ parseTime "20-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "20-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -518,23 +518,23 @@ Feature: Get alarm metrics
         "title": "created_alarms",
         "data": [
           {
-            "timestamp": {{ parseTime "20-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "20-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ parseTime "21-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "21-11-2021 00:00" }},
             "value": 0
           },
           {
-            "timestamp": {{ parseTime "22-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
             "value": 3
           },
           {
-            "timestamp": {{ parseTime "23-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ parseTime "24-11-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
             "value": 0
           }
         ]
@@ -554,8 +554,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -567,99 +567,99 @@ Feature: Get alarm metrics
           "title": "active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 4
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
-              "value": 6
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
+              "value": 6
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
+              "value": 5
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
+              "value": 5
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
-              "value": 6
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
               "value": 6
             }
           ]
@@ -679,8 +679,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "20-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "20-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -692,23 +692,23 @@ Feature: Get alarm metrics
           "title": "active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "20-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "20-11-2021 00:00" }},
               "value": 4
             },
             {
-              "timestamp": {{ parseTime "21-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "21-11-2021 00:00" }},
               "value": 5
             },
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
-              "value": 4
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
+              "value": 5
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 6
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 6
             }
           ]
@@ -728,8 +728,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "week",
-      "from": {{ parseTime "06-09-2021 00:00" }},
-      "to": {{ parseTime "10-10-2021 00:00" }}
+      "from": {{ parseTimeTz "06-09-2021 00:00" }},
+      "to": {{ parseTimeTz "10-10-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -741,23 +741,23 @@ Feature: Get alarm metrics
         "title": "active_alarms",
         "data": [
           {
-            "timestamp": {{ parseTime "06-09-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "06-09-2021 00:00" }},
             "value": 1
           },
           {
-            "timestamp": {{ parseTime "13-09-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "13-09-2021 00:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ parseTime "20-09-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "20-09-2021 00:00" }},
             "value": 2
           },
           {
-            "timestamp": {{ parseTime "27-09-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "27-09-2021 00:00" }},
             "value": 4
           },
           {
-            "timestamp": {{ parseTime "04-10-2021 00:00" }},
+            "timestamp": {{ parseTimeTz "04-10-2021 00:00" }},
             "value": 4
           }
         ]
@@ -777,8 +777,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "month",
-      "from": {{ parseTime "01-06-2021 00:00" }},
-      "to": {{ parseTime "31-10-2021 00:00" }}
+      "from": {{ parseTimeTz "01-06-2021 00:00" }},
+      "to": {{ parseTimeTz "31-10-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -790,23 +790,23 @@ Feature: Get alarm metrics
           "title": "active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "01-06-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-06-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "01-08-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-08-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "01-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-09-2021 00:00" }},
               "value": 4
             },
             {
-              "timestamp": {{ parseTime "01-10-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-10-2021 00:00" }},
               "value": 4
             }
           ]
@@ -826,8 +826,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -839,99 +839,99 @@ Feature: Get alarm metrics
           "title": "ratio_tickets",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 25
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
+              "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
+              "value": 20
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
               "value": 33.33
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
-              "value": 16.66
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
               "value": 16.66
             }
           ]
@@ -951,8 +951,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "20-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "20-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -964,23 +964,23 @@ Feature: Get alarm metrics
           "title": "ratio_tickets",
           "data": [
             {
-              "timestamp": {{ parseTime "20-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "20-11-2021 00:00" }},
               "value": 25
             },
             {
-              "timestamp": {{ parseTime "21-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "21-11-2021 00:00" }},
               "value": 40
             },
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
-              "value": 25
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
+              "value": 20
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 16.66
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 16.66
             }
           ]
@@ -1000,8 +1000,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "week",
-      "from": {{ parseTime "06-09-2021 00:00" }},
-      "to": {{ parseTime "10-10-2021 00:00" }}
+      "from": {{ parseTimeTz "06-09-2021 00:00" }},
+      "to": {{ parseTimeTz "10-10-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -1013,23 +1013,23 @@ Feature: Get alarm metrics
           "title": "ratio_tickets",
           "data": [
             {
-              "timestamp": {{ parseTime "06-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "06-09-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "13-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "13-09-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "20-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "20-09-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "27-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "27-09-2021 00:00" }},
               "value": 25
             },
             {
-              "timestamp": {{ parseTime "04-10-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "04-10-2021 00:00" }},
               "value": 25
             }
           ]
@@ -1049,8 +1049,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "month",
-      "from": {{ parseTime "01-06-2021 00:00" }},
-      "to": {{ parseTime "31-10-2021 00:00" }}
+      "from": {{ parseTimeTz "01-06-2021 00:00" }},
+      "to": {{ parseTimeTz "31-10-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -1062,23 +1062,23 @@ Feature: Get alarm metrics
           "title": "ratio_tickets",
           "data": [
             {
-              "timestamp": {{ parseTime "01-06-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-06-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-08-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-08-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-09-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-09-2021 00:00" }},
               "value": 25
             },
             {
-              "timestamp": {{ parseTime "01-10-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "01-10-2021 00:00" }},
               "value": 25
             }
           ]
@@ -1111,8 +1111,8 @@ Feature: Get alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "day",
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
@@ -1131,8 +1131,8 @@ Feature: Get alarm metrics
         {"metric": "not-exist"}
       ],
       "sampling": "day",
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
@@ -1223,8 +1223,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "22-11-2021 00:00" }},
-      "to": {{ parseTime "24-11-2021 00:00" }}
+      "from": {{ parseTimeTz "22-11-2021 00:00" }},
+      "to": {{ parseTimeTz "24-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -1236,15 +1236,15 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 3
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1253,15 +1253,15 @@ Feature: Get alarm metrics
           "title": "active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 3
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 3
             }
           ]
@@ -1270,15 +1270,15 @@ Feature: Get alarm metrics
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1287,15 +1287,15 @@ Feature: Get alarm metrics
           "title": "instruction_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1304,15 +1304,15 @@ Feature: Get alarm metrics
           "title": "pbehavior_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1321,15 +1321,15 @@ Feature: Get alarm metrics
           "title": "correlation_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1338,15 +1338,15 @@ Feature: Get alarm metrics
           "title": "ack_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 2
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1355,15 +1355,15 @@ Feature: Get alarm metrics
           "title": "cancel_ack_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1372,15 +1372,15 @@ Feature: Get alarm metrics
           "title": "ack_active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 1
             }
           ]
@@ -1389,15 +1389,15 @@ Feature: Get alarm metrics
           "title": "ticket_active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 1
             }
           ]
@@ -1406,15 +1406,15 @@ Feature: Get alarm metrics
           "title": "without_ticket_active_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 2
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 2
             }
           ]
@@ -1423,15 +1423,15 @@ Feature: Get alarm metrics
           "title": "ratio_correlation",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 33.33
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 33.33
             }
           ]
@@ -1440,15 +1440,15 @@ Feature: Get alarm metrics
           "title": "ratio_instructions",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 33.33
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 33.33
             }
           ]
@@ -1457,15 +1457,15 @@ Feature: Get alarm metrics
           "title": "ratio_tickets",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 33.33
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 33.33
             }
           ]
@@ -1474,15 +1474,15 @@ Feature: Get alarm metrics
           "title": "ratio_non_displayed",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 33.33
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 33.33
             }
           ]
@@ -1491,15 +1491,15 @@ Feature: Get alarm metrics
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 500
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1508,15 +1508,15 @@ Feature: Get alarm metrics
           "title": "average_resolve",
           "data": [
             {
-              "timestamp": {{ parseTime "22-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "22-11-2021 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1000
             },
             {
-              "timestamp": {{ parseTime "24-11-2021 00:00" }},
+              "timestamp": {{ parseTimeTz "24-11-2021 00:00" }},
               "value": 0
             }
           ]
@@ -1536,8 +1536,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get-by-old-pattern",
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -1549,106 +1549,106 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
-              "value": 2
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
               "value": 0
             }
           ]
         }
       ],
       "meta": {
-        "min_date": 1625097600
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
       }
     }
     """
@@ -1664,8 +1664,8 @@ Feature: Get alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -1677,106 +1677,106 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
-              "value": 4
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
-              "value": 2
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
               "value": 0
             }
           ]
         }
       ],
       "meta": {
-        "min_date": 1625097600
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
       }
     }
     """
@@ -1795,8 +1795,8 @@ Feature: Get alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 200
@@ -1808,106 +1808,106 @@ Feature: Get alarm metrics
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ parseTime "23-11-2021 00:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 01:00" }},
-              "value": 2
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 02:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 03:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 04:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 05:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 06:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 07:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 08:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 09:00" }},
-              "value": 0
-            },
-            {
-              "timestamp": {{ parseTime "23-11-2021 10:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 00:00" }},
               "value": 1
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 11:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 01:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 12:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 02:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 03:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 13:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 14:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 15:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 16:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 17:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 18:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 19:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 20:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 11:00" }},
+              "value": 1
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 21:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 22:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "23-11-2021 23:00" }},
+              "timestamp": {{ parseTimeTz "23-11-2021 15:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 16:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 17:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 18:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 19:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 20:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 21:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 22:00" }},
+              "value": 0
+            },
+            {
+              "timestamp": {{ parseTimeTz "23-11-2021 23:00" }},
               "value": 0
             }
           ]
         }
       ],
       "meta": {
-        "min_date": 1625097600
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
       }
     }
     """
@@ -1924,8 +1924,8 @@ Feature: Get alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 400
@@ -1949,8 +1949,8 @@ Feature: Get alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 400
@@ -1974,8 +1974,8 @@ Feature: Get alarm metrics
         {"metric": "created_alarms"}
       ],
       "sampling": "hour",
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }}
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }}
     }
     """
     Then the response code should be 400
