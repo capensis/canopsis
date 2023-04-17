@@ -3,6 +3,7 @@
     c-alarm-metric-presets-field(
       v-field="value",
       :with-color="withColor",
+      :with-external="withExternal",
       :with-aggregate-function="withAggregateFunction",
       :parameters="parameters",
       :only-group="onlyGroup",
@@ -21,6 +22,10 @@ export default {
       required: true,
     },
     withColor: {
+      type: Boolean,
+      default: false,
+    },
+    withExternal: {
       type: Boolean,
       default: false,
     },

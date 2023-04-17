@@ -6,6 +6,8 @@ export default {
   metricsNotAvailable: 'TimescaleDB ne fonctionne pas. Les métriques ne sont pas disponibles.',
   noData: 'Pas de données disponibles',
   selectMetric: 'Sélectionnez la métrique à afficher',
+  addMetricMask: 'Ajoutez des métriques par masque, par ex. cpu*',
+  displayedLabel: 'Étiquette affichée',
   customColor: 'Couleur personnalisée',
   calculationMethod: 'Méthode de calcul',
   periodTrend: '{count} pour la période\n{from} - {to}',
@@ -17,6 +19,7 @@ export default {
   },
 
   aggregateFunctions: {
+    [AGGREGATE_FUNCTIONS.last]: 'Dernier',
     [AGGREGATE_FUNCTIONS.sum]: 'Somme',
     [AGGREGATE_FUNCTIONS.avg]: 'Moyenne',
     [AGGREGATE_FUNCTIONS.min]: 'Min',
