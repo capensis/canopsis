@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -334,6 +335,10 @@ func clearStores(
 	err = tsFixtures.Load()
 	if err != nil {
 		return fmt.Errorf("cannot load timescale fixtures: %w", err)
+	}
+	_, err = pgDb.Exec("REFRESH MATERIALIZED VIEW " + metrics.PerfDataName)
+	if err != nil {
+		return fmt.Errorf("cannot refresh timescale views: %w", err)
 	}
 
 	logger.Info().Msg("PostgresSQL fixtures are applied")
