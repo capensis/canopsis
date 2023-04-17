@@ -3,7 +3,7 @@
     field-title(v-field="form.title")
     field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters.periodic_refresh")
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
-      field-alarm-metric-presets(v-field="form.parameters.metrics", with-color)
+      field-alarm-metric-presets(v-field="form.parameters.metrics", with-color, with-external)
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-chart-title(v-field="form.parameters.chart_title")
       field-quick-date-interval-type(v-field="form.parameters.default_time_range")

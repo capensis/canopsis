@@ -8,6 +8,7 @@
         v-field="form.parameters.metrics",
         :parameters="availableParameters",
         :min="2",
+        with-external,
         with-color
       )
       field-pie-show-mode(v-field="form.parameters.show_mode")

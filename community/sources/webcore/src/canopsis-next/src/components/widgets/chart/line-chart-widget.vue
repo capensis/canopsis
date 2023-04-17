@@ -113,6 +113,7 @@ export default {
           ...metric,
 
           color: parameters.color,
+          label: parameters.label,
         };
       });
     },

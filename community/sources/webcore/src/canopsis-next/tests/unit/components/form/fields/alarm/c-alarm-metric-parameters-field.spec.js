@@ -1,52 +1,67 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
 
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+import { createMetricsModule, createMockedStoreModules } from '@unit/utils/store';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'v-autocomplete': createSelectInputStub('v-autocomplete'),
 };
 
+const selectAutocompleteNode = wrapper => wrapper.vm.$children[0];
+
 describe('c-alarm-metric-parameters-field', () => {
+  const { metricsModule, externalMetrics, fetchExternalMetricsList } = createMetricsModule();
+
+  const store = createMockedStoreModules([metricsModule]);
+
   const factory = generateShallowRenderer(CAlarmMetricParametersField, { stubs });
   const snapshotFactory = generateRenderer(CAlarmMetricParametersField);
 
   it('Value changed after trigger the input', () => {
     const wrapper = factory({
+      store,
       propsData: {
         value: [],
       },
     });
-    const newValue = [ALARM_METRIC_PARAMETERS.ratioInstructions];
-    const selectElement = wrapper.find('select.v-select');
 
-    selectElement.vm.$emit('input', newValue);
+    selectAutocompleteNode(wrapper).$emit('change', ALARM_METRIC_PARAMETERS.maxAck);
 
-    const inputEvents = wrapper.emitted('input');
+    expect(wrapper).toEmit('input', ALARM_METRIC_PARAMETERS.maxAck);
+  });
 
-    expect(inputEvents).toHaveLength(1);
+  it('External metrics fetched after mount', async () => {
+    factory({
+      propsData: {
+        value: [],
+        withExternal: true,
+      },
+      store,
+    });
 
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    await flushPromises();
+
+    expect(fetchExternalMetricsList).toHaveBeenCalled();
   });
 
   it('Renders `c-alarm-metric-parameters-field` with default props', () => {
-    const wrapper = snapshotFactory({
+    snapshotFactory({
+      store,
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms],
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
   it('Renders `c-alarm-metric-parameters-field` with custom props', () => {
-    const wrapper = snapshotFactory({
+    snapshotFactory({
+      store,
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
         min: 2,
@@ -63,22 +78,22 @@ describe('c-alarm-metric-parameters-field', () => {
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 
-  it('Renders `c-alarm-metric-parameters-field` with all values', () => {
-    const wrapper = snapshotFactory({
+  it('Renders `c-alarm-metric-parameters-field` with external metrics', async () => {
+    externalMetrics.mockReturnValueOnce(['external/first', 'external/second']);
+    snapshotFactory({
       propsData: {
-        value: Object.values(ALARM_METRIC_PARAMETERS),
+        value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
+        parameters: [],
+        withExternal: true,
       },
+      store: createMockedStoreModules([metricsModule]),
     });
 
-    const menuContent = wrapper.findMenu();
+    await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });
