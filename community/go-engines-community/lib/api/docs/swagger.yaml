@@ -502,6 +502,14 @@ paths:
             items:
               type: string
           example: t,asc
+        - name: perf_data[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -3194,6 +3202,14 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: perf_data[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK

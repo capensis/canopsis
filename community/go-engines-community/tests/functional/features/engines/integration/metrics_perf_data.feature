@@ -38,11 +38,11 @@ Feature: Perf data should be stored.
       "data": [
         {
           "title": "cpu_%",
+          "unit": "%",
           "data": [
             {
               "timestamp": {{ nowDateTz }},
-              "value": 20,
-              "unit": "%"
+              "value": 20
             }
           ]
         }
@@ -83,11 +83,11 @@ Feature: Perf data should be stored.
       "data": [
         {
           "title": "cpu_%",
+          "unit": "%",
           "data": [
             {
               "timestamp": {{ nowDateTz }},
-              "value": 80,
-              "unit": "%"
+              "value": 80
             }
           ]
         }
@@ -116,11 +116,11 @@ Feature: Perf data should be stored.
       "data": [
         {
           "title": "cpu_%",
+          "unit": "%",
           "data": [
             {
               "timestamp": {{ nowDateTz }},
-              "value": 60,
-              "unit": "%"
+              "value": 60
             }
           ]
         }
@@ -149,11 +149,11 @@ Feature: Perf data should be stored.
       "data": [
         {
           "title": "cpu_%",
+          "unit": "%",
           "data": [
             {
               "timestamp": {{ nowDateTz }},
-              "value": 40,
-              "unit": "%"
+              "value": 40
             }
           ]
         }
@@ -182,11 +182,11 @@ Feature: Perf data should be stored.
       "data": [
         {
           "title": "cpu_%",
+          "unit": "%",
           "data": [
             {
               "timestamp": {{ nowDateTz }},
-              "value": 60,
-              "unit": "%"
+              "value": 60
             }
           ]
         }
@@ -215,11 +215,11 @@ Feature: Perf data should be stored.
       "data": [
         {
           "title": "cpu_%",
+          "unit": "%",
           "data": [
             {
               "timestamp": {{ nowDateTz }},
-              "value": 20,
-              "unit": "%"
+              "value": 20
             }
           ]
         }
@@ -369,5 +369,39 @@ Feature: Perf data should be stored.
           "unit": "%"
         }
       ]
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-metrics-perf-data-1&perf_data[]={{ "cpu_%" | query_escape }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "filtered_perf_data": ["cpu_%"]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-metrics-perf-data-1&perf_data[]={{ "cpu_%" | query_escape }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "filtered_perf_data": ["cpu_%"]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
     }
     """

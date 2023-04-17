@@ -50,9 +50,10 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	FilterRequest
 	SortRequest
-	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
-	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
-	WithLinks          bool `form:"with_links" json:"with_links"`
+	WithInstructions   bool     `form:"with_instructions" json:"with_instructions"`
+	WithDeclareTickets bool     `form:"with_declare_tickets" json:"with_declare_tickets"`
+	WithLinks          bool     `form:"with_links" json:"with_links"`
+	PerfData           []string `form:"perf_data[]" json:"perf_data"`
 }
 
 type FilterRequest struct {
@@ -237,6 +238,8 @@ type Alarm struct {
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
 
 	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
+
+	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 }
 
 type MetaAlarmRule struct {

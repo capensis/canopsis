@@ -155,6 +155,10 @@ definitions:
         items:
           type: string
         type: array
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
       impact_state:
         type: integer
       infos:
@@ -987,6 +991,10 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
       idle_since:
         type: integer
       impact_level:
@@ -1176,6 +1184,10 @@ definitions:
           items:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
         type: array
       idle_since:
         type: integer
@@ -1392,6 +1404,10 @@ definitions:
           items:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
         type: array
       idle_since:
         type: integer
