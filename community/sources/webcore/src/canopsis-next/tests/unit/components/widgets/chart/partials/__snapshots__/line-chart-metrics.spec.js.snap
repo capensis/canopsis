@@ -22,6 +22,10 @@ exports[`line-chart-metrics Renders \`line-chart-metrics\` with custom props 1`]
         width="600"
       />
     </div>
+    <kpi-chart-export-actions-stub
+      chart="[object Object]"
+      class="mt-4"
+    />
   </div>
 </div>
 `;
@@ -61,6 +65,10 @@ exports[`line-chart-metrics Renders \`line-chart-metrics\` with empty data 1`] =
         width="600"
       />
     </div>
+    <kpi-chart-export-actions-stub
+      chart="[object Object]"
+      class="mt-4"
+    />
   </div>
 </div>
 `;
@@ -87,6 +95,10 @@ exports[`line-chart-metrics Renders \`line-chart-metrics\` with history data pro
         width="600"
       />
     </div>
+    <kpi-chart-export-actions-stub
+      chart="[object Object]"
+      class="mt-4"
+    />
   </div>
 </div>
 `;

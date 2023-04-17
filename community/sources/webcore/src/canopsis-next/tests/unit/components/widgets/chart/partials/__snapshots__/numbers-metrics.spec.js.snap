@@ -15,11 +15,36 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
     <numbers-metrics-item-stub
       metric="[object Object]"
       showtrend="true"
+      valuefontsize="110"
     />
     <numbers-metrics-item-stub
       metric="[object Object]"
       showtrend="true"
+      valuefontsize="110"
     />
+  </div>
+  <div
+    class="layout numbers-metrics__actions mt-4 row justify-end"
+  >
+    <button
+      class="ma-0 v-btn v-btn--small theme--light primary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon v-icon--left material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          file_download
+        </i>
+        <span>
+          Export as csv
+        </span>
+      </div>
+    </button>
   </div>
 </div>
 `;
@@ -36,5 +61,28 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
   <div
     class="layout numbers-metrics__list row wrap"
   />
+  <div
+    class="layout numbers-metrics__actions mt-4 row justify-end"
+  >
+    <button
+      class="ma-0 v-btn v-btn--small theme--light primary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon v-icon--left material-icons theme--light"
+          style="font-size: 16px;"
+        >
+          file_download
+        </i>
+        <span>
+          Export as csv
+        </span>
+      </div>
+    </button>
+  </div>
 </div>
 `;

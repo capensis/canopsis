@@ -10,6 +10,7 @@ import {
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   ALARM_LIST_ACTIONS_TYPES,
+  LINK_RULE_ACTIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
@@ -24,6 +25,7 @@ import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
+import { clipboardMixin } from '@/mixins/clipboard';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -40,6 +42,7 @@ export default {
   mixins: [
     entitiesAlarmMixin,
     widgetActionsPanelAlarmMixin,
+    clipboardMixin,
   ],
   props: {
     item: {
@@ -122,9 +125,15 @@ export default {
         },
         cancel: {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.delete),
+          icon: '$vuetify.icons.list_delete',
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
+        },
+        fastCancel: {
+          type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+          icon: 'delete',
+          title: this.$t('alarm.actions.titles.fastCancel'),
+          method: this.createFastCancelEvent,
         },
         changeState: {
           type: ALARM_LIST_ACTIONS_TYPES.changeState,
@@ -181,7 +190,9 @@ export default {
           type,
           icon: link.icon_name,
           title: this.$t('alarm.followLink', { title: link.label }),
-          method: () => window.open(link.url, '_blank'),
+          method: link.action === LINK_RULE_ACTIONS.copy
+            ? () => this.writeTextToClipboard(link.url)
+            : () => window.open(link.url, '_blank'),
         };
       });
     },
@@ -247,6 +258,7 @@ export default {
 
           actions.unshift(
             filteredActionsMap.cancel,
+            filteredActionsMap.fastCancel,
             filteredActionsMap.ackRemove,
             filteredActionsMap.changeState,
           );
@@ -363,6 +375,18 @@ export default {
           parentAlarm: this.parentAlarm,
         },
       });
+    },
+
+    async createFastAckEvent() {
+      await this.createFastAckActionByAlarms([this.item]);
+
+      return this.refreshAlarmsList();
+    },
+
+    async createFastCancelEvent() {
+      await this.createFastCancelActionByAlarms([this.item]);
+
+      return this.refreshAlarmsList();
     },
   },
 };

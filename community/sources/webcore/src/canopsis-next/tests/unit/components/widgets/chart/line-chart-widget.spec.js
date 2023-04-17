@@ -140,8 +140,8 @@ describe('line-chart-widget', () => {
         params: {
           widget_filters: [filter],
           sampling,
-          from: 1383843500,
-          to: 1386435500,
+          from: 1383865200,
+          to: 1386370800,
           parameters,
         },
       },

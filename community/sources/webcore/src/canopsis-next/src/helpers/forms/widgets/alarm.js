@@ -18,6 +18,7 @@ import {
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { kioskParametersToForm } from '../shared/kiosk';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 import { openedToForm } from './common';
 
@@ -30,7 +31,7 @@ import { openedToForm } from './common';
  */
 
 /**
- * @typedef {Object} WidgetFastAckOutput
+ * @typedef {Object} WidgetFastActionOutput
  * @property {boolean} enabled
  * @property {string} value
  */
@@ -66,7 +67,8 @@ import { openedToForm } from './common';
 
 /**
  * @typedef {Object} AlarmListWidgetDefaultParameters
- * @property {WidgetFastAckOutput} fastAckOutput
+ * @property {WidgetFastActionOutput} fastAckOutput
+ * @property {WidgetFastActionOutput} fastCancelOutput
  * @property {number} inlineLinksCount
  * @property {number} itemsPerPage
  * @property {WidgetInfoPopup[]} infoPopups
@@ -100,6 +102,7 @@ import { openedToForm } from './common';
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
  * @property {boolean} clearFilterDisabled
+ * @property {WidgetKioskParameters} kiosk
  */
 
 /**
@@ -200,6 +203,12 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
       enabled: false,
       value: 'auto ack',
     },
+  fastCancelOutput: parameters.fastCancelOutput
+    ? { ...parameters.fastCancelOutput }
+    : {
+      enabled: false,
+      value: 'auto cancel',
+    },
   widgetColumnsTemplate: widgetTemplateValueToForm(parameters.widgetColumnsTemplate),
   widgetGroupColumnsTemplate: widgetTemplateValueToForm(parameters.widgetGroupColumnsTemplate),
   serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(parameters.serviceDependenciesColumnsTemplate),
@@ -238,6 +247,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
     : [GRID_SIZES.min, GRID_SIZES.max],
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+  kiosk: kioskParametersToForm(parameters.kiosk),
 });
 
 /**

@@ -188,6 +188,14 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 		return err
 	}
 
+	if f.mongoFixtureMigrations {
+		cmd := cli.NewSkipCmd(f.mongoMigrationDirectory, f.mongoFixtureMigrationsVersion, dbClient, logger)
+		err = cmd.Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	logger.Info().Msg("finish mongo fixtures")
 	return nil
 }
@@ -220,7 +228,7 @@ func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.D
 		return fmt.Errorf("failed to fetch global config: %w", err)
 	}
 
-	conf.Canopsis.Metrics.EnabledManualInstructions = prevGlobalConf.Metrics.EnabledManualInstructions
+	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
 
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)

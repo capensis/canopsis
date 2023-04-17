@@ -43,13 +43,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
           label="Select a filter"
           lockedfilters=""
         />
-        <filters-list-btn-stub
-          private="true"
-          widgetid="880c5d0c-3f31-477c-8365-2f90389326cc"
-          withalarm="true"
-          withentity="true"
-          withpbehavior="true"
-        />
+        <!---->
       </div>
     </div>
     <div
@@ -251,13 +245,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
           label="Select a filter"
           lockedfilters=""
         />
-        <filters-list-btn-stub
-          private="true"
-          widgetid="880c5d0c-3f31-477c-8365-2f90389326cc"
-          withalarm="true"
-          withentity="true"
-          withpbehavior="true"
-        />
+        <!---->
       </div>
     </div>
     <div

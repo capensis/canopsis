@@ -81,6 +81,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    kiosk: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ...mapGetters(['edition']),
@@ -123,10 +127,18 @@ export default {
       const widgetComponentsMap = { ...COMPONENTS_BY_WIDGET_TYPES };
       let widgetSpecificsProp = {};
 
+      if (this.kiosk) {
+        widgetSpecificsProp = {
+          ...this.widget.parameters.kiosk,
+        };
+      }
+
       Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
         if (rule.edition !== this.edition) {
           widgetComponentsMap[key] = 'c-alert-overlay';
           widgetSpecificsProp = {
+            ...widgetSpecificsProp,
+
             message: this.$t('errors.statsWrongEditionError'),
             value: true,
           };

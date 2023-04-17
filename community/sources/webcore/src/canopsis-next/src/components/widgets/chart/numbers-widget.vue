@@ -24,18 +24,31 @@
         v-if="hasMetrics",
         :metrics="aggregatedMetrics",
         :title="widget.parameters.chart_title",
-        :show-trend="widget.parameters.show_trend"
+        :show-trend="widget.parameters.show_trend",
+        :font-size="valueFontSize",
+        :downloading="downloading",
+        @export:csv="exportMetricsAsCsv"
       )
 </template>
 
 <script>
-import { isRatioMetric } from '@/helpers/metrics';
+import { createNamespacedHelpers } from 'vuex';
+import { pick } from 'lodash';
+
+import {
+  NUMBERS_CHART_MAX_AUTO_FONT_SIZE,
+  NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT,
+  NUMBERS_CHART_DEFAULT_FONT_SIZE,
+  NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
+} from '@/constants';
+
 import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/chart/numbers/interval';
@@ -47,6 +60,8 @@ import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget
 import ChartLoader from './partials/chart-loader.vue';
 import NumbersMetrics from './partials/numbers-metrics.vue';
 
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
+
 export default {
   inject: ['$system'],
   components: {
@@ -57,13 +72,17 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     entitiesAggregatedMetricsMixin,
     permissionsWidgetsNumbersInterval,
     permissionsWidgetsNumbersSampling,
     permissionsWidgetsNumbersFilters,
+    widgetChartExportMixinCreator({
+      createExport: 'createKpiAlarmAggregateExport',
+      fetchExport: 'fetchMetricExport',
+    }),
   ],
   props: {
     widget: {
@@ -75,21 +94,61 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      containerWidth: null,
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
+
+    valueFontSize() {
+      if (this.widget.parameters.font_size) {
+        return this.widget.parameters.font_size;
+      }
+
+      if (this.containerWidth) {
+        const size = Math.round(this.containerWidth / NUMBERS_CHART_FONT_SIZE_WIDTH_COEFFICIENT);
+
+        return Math.max(Math.min(size, NUMBERS_CHART_MAX_AUTO_FONT_SIZE), NUMBERS_CHART_MIN_AUTO_FONT_SIZE);
+      }
+
+      return NUMBERS_CHART_DEFAULT_FONT_SIZE;
+    },
+  },
+  created() {
+    this.resizeObserver = new ResizeObserver(this.setElementWidth);
+  },
+  mounted() {
+    this.resizeObserver.observe(this.$el);
+    this.setElementWidth();
+  },
+  beforeDestroy() {
+    this.resizeObserver.unobserve(this.$el);
+    this.resizeObserver.disconnect();
   },
   methods: {
+    ...mapMetricsActions({
+      createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
+      fetchMetricExport: 'fetchMetricExport',
+    }),
+
+    setElementWidth() {
+      if (this.fontSize) {
+        return;
+      }
+
+      const { width } = this.$el.getBoundingClientRect();
+
+      this.containerWidth = width;
+    },
+
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-
-        parameters: this.widget.parameters.metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
-          metric,
-          aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
-        })),
-        sampling: this.query.sampling,
+        ...pick(this.query, ['parameters', 'sampling']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
