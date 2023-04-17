@@ -9,14 +9,14 @@
       :downloading="downloading",
       :min-date="minDate",
       responsive,
-      @export:csv="exportSliMetricsAsCsv",
-      @export:png="exportSliMetricsAsPng"
+      @export:csv="exportMetricsAsCsv",
+      @export:png="exportMetricsAsPng"
     )
     kpi-error-overlay(v-if="unavailable || fetchError")
 </template>
 
 <script>
-import { API_HOST, API_ROUTES, KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
+import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   SAMPLINGS,
@@ -24,20 +24,14 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
-import { saveFile } from '@/helpers/file/files';
-import {
-  convertStartDateIntervalToTimestampByTimezone,
-  convertStopDateIntervalToTimestampByTimezone,
-} from '@/helpers/date/date-intervals';
-import {
-  convertDateToStartOfDayTimestampByTimezone,
-  convertDateToString,
-} from '@/helpers/date/date';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { exportMixinCreator } from '@/mixins/widget/export';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
 import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
@@ -50,7 +44,8 @@ export default {
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    exportMixinCreator({
+    metricsIntervalFilterMixin,
+    metricsExportMixinCreator({
       createExport: 'createKpiSliExport',
       fetchExport: 'fetchMetricExport',
     }),
@@ -65,7 +60,6 @@ export default {
     return {
       sliMetrics: [],
       pending: false,
-      downloading: false,
       fetchError: false,
       minDate: null,
       query: {
@@ -81,20 +75,10 @@ export default {
   },
   computed: {
     interval() {
-      return {
-        from: convertStartDateIntervalToTimestampByTimezone(
-          this.query.interval.from,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-        to: convertStopDateIntervalToTimestampByTimezone(
-          this.query.interval.to,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-      };
+      return convertMetricIntervalToTimestamp({
+        interval: this.query.interval,
+        timezone: this.$system.timezone,
+      });
     },
   },
   watch: {
@@ -113,23 +97,17 @@ export default {
     },
 
     getFileName() {
-      const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.short);
-      const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.short);
+      const { from, to } = this.getIntervalQuery();
+
+      const fromTime = convertDateToString(from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(to, DATETIME_FORMATS.short);
 
       return [KPI_SLI_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },
 
-    async exportSliMetricsAsPng(blob) {
-      try {
-        await saveFile(blob, this.getFileName());
-      } catch (err) {
-        this.$popups.error({ text: err.message || this.$t('errors.default') });
-      }
-    },
-
     getQuery() {
       return {
-        ...this.interval,
+        ...this.getIntervalQuery(),
 
         in_percents: this.query.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
         sampling: this.query.sampling,
@@ -159,22 +137,6 @@ export default {
         this.fetchError = true;
       } finally {
         this.pending = false;
-      }
-    },
-
-    async exportSliMetricsAsCsv() {
-      this.downloading = true;
-
-      try {
-        const fileData = await this.generateFile({
-          data: this.getQuery(),
-        });
-
-        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
-      } catch (err) {
-        this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
-      } finally {
-        this.downloading = false;
       }
     },
   },

@@ -8,8 +8,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }},
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
@@ -80,8 +80,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }},
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
