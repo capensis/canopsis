@@ -1,1 +1,2 @@
+DROP MATERIALIZED VIEW IF EXISTS perf_data_name;
 DROP TABLE IF EXISTS perf_data;
