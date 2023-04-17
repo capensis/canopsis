@@ -428,4 +428,5 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   trackSource: 'trackSource',
   impactChain: 'impactChain',
   entityGantt: 'entityGantt',
+  charts: 'charts',
 };
