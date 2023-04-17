@@ -1,7 +1,11 @@
 <template lang="pug">
   div.kpi-rating-toolbar
     v-layout.ml-4.my-4(wrap)
-      c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
+      c-quick-date-interval-field.mr-4(
+        v-field="query.interval",
+        :min="minDate",
+        :quick-ranges="quickRanges"
+      )
       c-filter-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter", :disabled="isUserMetric")
       kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(
         :value="query.criteria",
@@ -16,7 +20,7 @@
 </template>
 
 <script>
-import { USER_METRIC_PARAMETERS } from '@/constants';
+import { METRICS_QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
 import { getAvailableMetricByCriteria } from '@/helpers/metrics';
 
@@ -43,6 +47,10 @@ export default {
     },
   },
   computed: {
+    quickRanges() {
+      return Object.values(METRICS_QUICK_RANGES);
+    },
+
     isUserMetric() {
       return this.query.metric === USER_METRIC_PARAMETERS.totalUserActivity;
     },
