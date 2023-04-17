@@ -2,8 +2,8 @@
   widget-settings(:submitting="submitting", divider, @submit="submit")
     line-chart-widget-form(
       v-model="form",
-      with-periodic-refresh,
-      with-filters
+      :with-filters="hasAccessToListFilters",
+      with-periodic-refresh
     )
 </template>
 
@@ -11,6 +11,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { permissionsWidgetsLineChartFilters } from '@/mixins/permissions/widgets/chart/line/filters';
 
 import WidgetSettings from './partials/widget-settings.vue';
 import LineChartWidgetForm from './forms/widgets/line-chart-widget-form.vue';
@@ -21,6 +22,9 @@ export default {
     WidgetSettings,
     LineChartWidgetForm,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    permissionsWidgetsLineChartFilters,
+  ],
 };
 </script>
