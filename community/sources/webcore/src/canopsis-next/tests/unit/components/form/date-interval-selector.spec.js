@@ -241,7 +241,7 @@ describe('date-interval-selector', () => {
     const startDate = tstartField.vm.dateObjectPreparer(QUICK_RANGES.previousWeek.start);
     const stopDate = tstopField.vm.dateObjectPreparer(QUICK_RANGES.previousWeek.stop);
 
-    expect(startDate.getTime()).toBe(1385251200000);
+    expect(startDate.getTime()).toBe(1385337600000);
     expect(stopDate.getTime()).toBe(1385855999999);
   });
 

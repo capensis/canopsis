@@ -9,9 +9,10 @@ import (
 )
 
 type reloadLocalCachePeriodicalWorker struct {
-	PeriodicalInterval time.Duration
-	AlarmStatusService alarmstatus.Service
-	Logger             zerolog.Logger
+	PeriodicalInterval     time.Duration
+	AlarmStatusService     alarmstatus.Service
+	AutoInstructionMatcher AutoInstructionMatcher
+	Logger                 zerolog.Logger
 }
 
 func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
@@ -19,7 +20,12 @@ func (w *reloadLocalCachePeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *reloadLocalCachePeriodicalWorker) Work(ctx context.Context) {
-	err := w.AlarmStatusService.Load(ctx)
+	err := w.AutoInstructionMatcher.Load(ctx)
+	if err != nil {
+		w.Logger.Err(err).Msg("cannot load auto instructions")
+	}
+
+	err = w.AlarmStatusService.Load(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot load alarm status rules")
 	}

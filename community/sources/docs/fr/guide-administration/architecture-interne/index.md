@@ -24,7 +24,7 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 
 ## Documentation des mécaniques spécifiques internes à Canopsis
 
-* [Templates Golang](templates-golang.md)
+* [Templates Golang](../../../guide-utilisation/templates-go/)
 * [Triggers](triggers.md)
 
 Plus de détails sur [l'enchaînement des moteurs](../moteurs/schema-enchainement-moteurs.md).

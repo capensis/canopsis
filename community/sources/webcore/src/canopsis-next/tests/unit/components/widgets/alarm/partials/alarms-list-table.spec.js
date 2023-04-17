@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 import { ALARM_DENSE_TYPES } from '@/constants';
@@ -98,6 +98,7 @@ describe('alarms-list-table', () => {
 
   const store = createMockedStoreModules([
     associativeTableModule,
+    createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
   ]);
 
   const defaultWidget = generatePreparedDefaultAlarmListWidget();
@@ -217,7 +218,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(4);
+    expect(removeEventListener).toHaveBeenCalledTimes(6);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -235,6 +236,16 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
+      'mousedown',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      5,
+      'mouseup',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      6,
       'resize',
       expect.any(Function),
       { passive: true },
@@ -317,7 +328,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(4);
+    expect(removeEventListener).toHaveBeenCalledTimes(6);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -335,6 +346,16 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
+      'mousedown',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      5,
+      'mouseup',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      6,
       'resize',
       expect.any(Function),
       { passive: true },

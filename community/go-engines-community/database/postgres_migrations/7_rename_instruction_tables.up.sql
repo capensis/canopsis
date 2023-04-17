@@ -1,0 +1,12 @@
+BEGIN;
+
+ALTER TABLE manual_instruction_assigned_instructions RENAME TO instruction_assigned_instructions;
+ALTER TABLE manual_instruction_executed_instructions RENAME TO instruction_executed_instructions;
+
+ALTER INDEX manual_instruction_assigned_instructions_instruction_id_time_idx RENAME TO instruction_assigned_instructions_instruction_id_time_idx;
+ALTER INDEX manual_instruction_executed_instructions_instruction_id_time_idx RENAME TO instruction_executed_instructions_instruction_id_time_idx;
+
+ALTER TABLE instruction_assigned_instructions ADD COLUMN instruction_type SMALLINT NOT NULL DEFAULT 0;
+ALTER TABLE instruction_executed_instructions ADD COLUMN instruction_type SMALLINT NOT NULL DEFAULT 0;
+
+COMMIT;

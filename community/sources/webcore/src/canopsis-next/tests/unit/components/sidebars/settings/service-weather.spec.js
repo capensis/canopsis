@@ -86,7 +86,6 @@ describe('service-weather', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     currentUserPermissionsById,
     activeViewModule,
@@ -161,7 +160,6 @@ describe('service-weather', () => {
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
   });
 
@@ -221,9 +219,8 @@ describe('service-weather', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });

@@ -6,8 +6,13 @@
         v-for="metric in metrics",
         :key="metric.title",
         :metric="metric",
-        :show-trend="showTrend"
+        :show-trend="showTrend",
+        :value-font-size="fontSize"
       )
+    v-layout.numbers-metrics__actions.mt-4(row, justify-end)
+      v-btn.ma-0(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
+        v-icon(small, left) file_download
+        span {{ $t('common.exportAsCsv') }}
 </template>
 
 <script>
@@ -28,6 +33,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    downloading: {
+      type: Boolean,
+      default: false,
+    },
+    fontSize: {
+      type: Number,
+      required: false,
+    },
   },
 };
 </script>
@@ -42,6 +55,10 @@ export default {
 
   &__list {
     gap: 50px;
+  }
+
+  &__actions {
+    width: 100%;
   }
 }
 </style>

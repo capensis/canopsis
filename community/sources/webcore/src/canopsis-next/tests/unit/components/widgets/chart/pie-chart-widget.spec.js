@@ -107,10 +107,15 @@ describe('pie-chart-widget', () => {
   test('Vectors metrics fetched with correct query', async () => {
     const filter = Faker.datatype.string();
     const sampling = randomArrayItem(Object.values(SAMPLINGS));
+    const parameters = [{
+      metric: ALARM_METRIC_PARAMETERS.createdAlarms,
+      aggregate_func: AGGREGATE_FUNCTIONS.avg,
+    }];
 
     getQueryById.mockReturnValueOnce(() => ({
       filter,
       sampling,
+      parameters,
       interval: {
         from: QUICK_RANGES.last30Days.start,
         to: QUICK_RANGES.last30Days.stop,
@@ -141,12 +146,9 @@ describe('pie-chart-widget', () => {
         params: {
           widget_filters: [filter],
           sampling,
-          from: 1383843500,
-          to: 1386435500,
-          parameters: [{
-            metric: ALARM_METRIC_PARAMETERS.createdAlarms,
-            aggregate_func: AGGREGATE_FUNCTIONS.avg,
-          }],
+          from: 1383865200,
+          to: 1386370800,
+          parameters,
         },
       },
       undefined,

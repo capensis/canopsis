@@ -786,6 +786,10 @@ func (w *worker) updateEntity(ci *importcontextgraph.ConfigurationItem, oldEntit
 		ci.Infos = make(map[string]interface{})
 	}
 
+	if oldEntity.Infos == nil {
+		oldEntity.Infos = make(map[string]interface{})
+	}
+
 	if mergeInfos {
 		for k, v := range ci.Infos {
 			oldEntity.Infos[k] = v

@@ -233,6 +233,14 @@ exclusive = false
 noWait = false
 # args =
 
+[[RabbitMQ.queues]]
+name = "Engine_pbehavior_recompute"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.global]
@@ -266,6 +274,8 @@ DisableActionSnoozeDelayOnPbh = false
 # TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 TimeToKeepResolvedAlarms = "720h"
 AllowDoubleAck = false
+# ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
+ActivateAlarmAfterAutoRemediation = false
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]

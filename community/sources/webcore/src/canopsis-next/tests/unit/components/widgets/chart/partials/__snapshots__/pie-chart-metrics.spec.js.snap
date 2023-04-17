@@ -10,7 +10,7 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] =
     Custom title
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="pie-chart-metrics__chart chart-metrics-widget__chart"
   >
     <div
       class=""
@@ -22,6 +22,10 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] =
         width="700"
       />
     </div>
+    <kpi-chart-export-actions-stub
+      chart="[object Object]"
+      class="mt-4"
+    />
   </div>
 </div>
 `;
@@ -49,7 +53,7 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
     
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="pie-chart-metrics__chart chart-metrics-widget__chart"
   >
     <div
       class=""
@@ -61,6 +65,10 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
         width="700"
       />
     </div>
+    <kpi-chart-export-actions-stub
+      chart="[object Object]"
+      class="mt-4"
+    />
   </div>
 </div>
 `;
@@ -75,7 +83,7 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels prop
     
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="pie-chart-metrics__chart chart-metrics-widget__chart"
   >
     <div
       class=""
@@ -87,6 +95,10 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels prop
         width="700"
       />
     </div>
+    <kpi-chart-export-actions-stub
+      chart="[object Object]"
+      class="mt-4"
+    />
   </div>
 </div>
 `;

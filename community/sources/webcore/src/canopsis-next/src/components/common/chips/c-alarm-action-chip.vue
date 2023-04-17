@@ -50,7 +50,7 @@ export default {
 
   &--small {
     height: 20px !important;
-    margin: 2px !important;
+    margin: 2px;
   }
 
   .v-datatable thead th.column.sortable & .v-icon {

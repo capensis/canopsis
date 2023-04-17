@@ -7,6 +7,7 @@ import (
 type ListRequest struct {
 	pagination.FilteredQuery
 	OnlyDefault bool     `form:"default"`
+	WithHidden  bool     `form:"with_hidden"`
 	SortBy      string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority"`
 	Types       []string `form:"types[]" json:"types"`
 }
@@ -15,8 +16,10 @@ type EditRequest struct {
 	Name        string `json:"name" binding:"required,max=255"`
 	Description string `json:"description" binding:"required,max=255"`
 	Type        string `json:"type" binding:"required,oneof=active inactive maintenance pause"`
-	Priority    *int   `json:"priority" binding:"required"`
+	Priority    int64  `json:"priority" binding:"required,min=1"`
 	Color       string `json:"color" binding:"required,iscolor"`
+
+	Hidden *bool `json:"hidden,omitempty"`
 }
 
 type CreateRequest struct {
@@ -36,11 +39,14 @@ type Type struct {
 	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description" json:"description"`
 	Type        string `bson:"type" json:"type"`
-	Priority    int    `bson:"priority" json:"priority"`
+	Priority    int64  `bson:"priority" json:"priority"`
 	IconName    string `bson:"icon_name" json:"icon_name"`
 	Color       string `bson:"color" json:"color"`
 	Default     *bool  `bson:"default,omitempty" json:"default,omitempty"`
 	Deletable   *bool  `bson:"deletable,omitempty" json:"deletable,omitempty"`
+
+	// Hidden is used in API to hide documents from the list response
+	Hidden *bool `bson:"hidden,omitempty" json:"hidden,omitempty"`
 }
 
 type AggregationResult struct {
@@ -54,4 +60,8 @@ func (r AggregationResult) GetTotal() int64 {
 
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
+}
+
+type PriorityResponse struct {
+	Priority int64 `json:"priority"`
 }
