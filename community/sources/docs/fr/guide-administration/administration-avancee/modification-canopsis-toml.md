@@ -112,17 +112,18 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ### Section [Canopsis.alarm]
 
-| Attribut                        | Exemple de valeur     | Description                          |
-| :------------------------------ | :---------------------| :----------------------------------- |
-| StealthyInterval                |                       | Encore utilisé ?          |
-| EnableLastEventDate             | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
-| CancelAutosolveDelay            | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
-| DisplayNameScheme               | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
-| OutputLength                    | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
-| LongOutputLength                | 1024                  | Nombre maximum de caractères du champ `long_output` avant troncage | 
-| DisableActionSnoozeDelayOnPbh   | true,false            | Si `vrai` alors le délai du snooze n'est pas ajouté à un comportement périodique |
-| TimeToKeepResolvedAlarms        | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
-| AllowDoubleAck                  | true,false            | Permet d'acquitter plusieurs fois une alarme |
+| Attribut                          | Exemple de valeur     | Description                          |
+| :-------------------------------- | :---------------------| :----------------------------------- |
+| StealthyInterval                  |                       | Encore utilisé ?          |
+| EnableLastEventDate               | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
+| CancelAutosolveDelay              | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
+| DisplayNameScheme                 | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
+| OutputLength                      | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
+| LongOutputLength                  | 1024                  | Nombre maximum de caractères du champ `long_output` avant troncage | 
+| DisableActionSnoozeDelayOnPbh     | true,false            | Si `vrai` alors le délai du snooze n'est pas ajouté à un comportement périodique |
+| TimeToKeepResolvedAlarms          | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
+| AllowDoubleAck                    | true,false            | Permet d'acquitter plusieurs fois une alarme |
+| ActivateAlarmAfterAutoRemediation | true,false            | Permet de décaler l'activation d'une alarme après l'exécution de la remédiation automatique |
 
 
 ### Section [Canopsis.timezone]
@@ -154,6 +155,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | TokenExpiration     | "24h"              | Durée de validité d'un token d'authentification |
 | TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
+| ExportBulkize       | 5000               | Nombre maximum d'alarmes d'un batch pour l'export. Ce paramètre doit être diminué si les alarmes que vous souhaitez exporter sont volumineuses |
 
 
 ### Section [Canopsis.logger]
@@ -168,7 +170,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
 | Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
 | NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
-| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../architecture-interne/templates-golang#formatteddate) |
+| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../../guide-utilisation/template-go/) |
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
 ### Section [Canopsis.metrics]
@@ -176,6 +178,13 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
 | SliInterval         | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
+
+### Section [Canopsis.template.vars]
+
+| Attribut     | Exemple de valeur  | Description                           |
+| :----------- | :------------------| :------------------------------------ |
+| var1 | "valeur1" | Ces variables peuvent être utilisées dans des [templates Go](../../../guide-utilisation/templates-go) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../../guide-utilisation/cas-d-usage/template_handlebars) sous la forme `{{ env.var1 }}` |
+ 
 
 ### Section [Remediation]
 

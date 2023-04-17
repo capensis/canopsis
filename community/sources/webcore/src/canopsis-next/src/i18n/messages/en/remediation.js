@@ -126,6 +126,7 @@ export default {
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
     remediationDuration: 'Remediation duration',
+    timeoutAfterExecution: 'Timeout after execution',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
@@ -165,9 +166,9 @@ export default {
 
   statistic: {
     remediation: 'Remediation',
-    fields: {
-      all: 'All',
-    },
+    allInstructions: 'All instructions',
+    manualInstructions: 'Manual instructions',
+    autoInstructions: 'Automatic instructions',
     labels: {
       remediated: 'Remediated',
       notRemediated: 'Not remediated',

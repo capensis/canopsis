@@ -125,7 +125,6 @@ export const API_ROUTES = {
   },
   widget: {
     list: '/api/v4/widgets',
-    copy: '/api/v4/widget-copy',
     gridPositions: '/api/v4/widget-grid-positions',
     filters: '/api/v4/widget-filters',
     filterPositions: '/api/v4/widget-filter-positions',
@@ -164,6 +163,7 @@ export const API_ROUTES = {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
     types: '/api/v4/pbehavior-types',
+    nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
     pbehaviors: '/api/v4/pbehaviors',
     bulkPbehaviors: '/api/v4/bulk/pbehaviors',
     pbehaviorComments: '/api/v4/pbehavior-comments',
@@ -183,8 +183,6 @@ export const API_ROUTES = {
   },
   scenario: {
     scenarios: '/api/v4/scenarios',
-    checkPriority: '/api/v4/scenarios/check-priority',
-    minimalPriority: '/api/v4/scenarios/minimal-priority',
   },
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
@@ -245,6 +243,8 @@ export const API_ROUTES = {
     exportAlarm: '/api/v4/cat/metrics-export/alarm',
     exportRating: '/api/v4/cat/metrics-export/rating',
     exportSli: '/api/v4/cat/metrics-export/sli',
+    exportAggregate: '/api/v4/cat/metrics-export/aggregate',
+    exportRemediation: '/api/v4/cat/metrics-export/remediation',
     exportMetric: '/api/v4/cat/metrics-export',
     sli: '/api/v4/cat/metrics/sli',
     rating: '/api/v4/cat/metrics/rating',
@@ -538,6 +538,8 @@ export const KPI_ALARM_METRICS_FILENAME_PREFIX = 'kpi_alarm_metrics';
 export const KPI_RATING_METRICS_FILENAME_PREFIX = 'kpi_rating_metrics';
 
 export const KPI_SLI_METRICS_FILENAME_PREFIX = 'kpi_sli_metrics';
+
+export const REMEDIATION_STATISTICS_FILENAME_PREFIX = 'remediation_statistics';
 
 export const APP_INFO_FETCHING_INTERVAL = 10000;
 

@@ -72,9 +72,10 @@ type AlarmConfig struct {
 	OutputLength          int
 	LongOutputLength      int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
-	DisableActionSnoozeDelayOnPbh bool
-	TimeToKeepResolvedAlarms      time.Duration
-	AllowDoubleAck                bool
+	DisableActionSnoozeDelayOnPbh     bool
+	TimeToKeepResolvedAlarms          time.Duration
+	AllowDoubleAck                    bool
+	ActivateAlarmAfterAutoRemediation bool
 }
 
 type TimezoneConfig struct {
@@ -108,10 +109,10 @@ type DataStorageConfig struct {
 }
 
 type MetricsConfig struct {
-	FlushInterval             time.Duration
-	SliInterval               time.Duration
-	EnabledManualInstructions bool
-	EnabledNotAckedMetrics    bool
+	FlushInterval          time.Duration
+	SliInterval            time.Duration
+	EnabledInstructions    bool
+	EnabledNotAckedMetrics bool
 }
 
 type ScheduledTime struct {
@@ -170,12 +171,13 @@ func (p *BaseTechMetricsConfigProvider) Get() TechMetricsConfig {
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {
 	sectionName := "alarm"
 	conf := AlarmConfig{
-		StealthyInterval:              parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
-		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
-		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
-		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
-		AllowDoubleAck:                parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
+		StealthyInterval:                  parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
+		EnableLastEventDate:               parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
+		CancelAutosolveDelay:              parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
+		DisableActionSnoozeDelayOnPbh:     parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
+		TimeToKeepResolvedAlarms:          parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
+		AllowDoubleAck:                    parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
+		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "activate_after_auto_remediation_on_create", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -264,6 +266,11 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	b, ok = parseUpdatedBool(cfg.Alarm.AllowDoubleAck, p.conf.AllowDoubleAck, "AllowDoubleAck", sectionName, p.logger)
 	if ok {
 		p.conf.AllowDoubleAck = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, p.conf.ActivateAlarmAfterAutoRemediation, "ActivateAlarmAfterAutoRemediation", sectionName, p.logger)
+	if ok {
+		p.conf.ActivateAlarmAfterAutoRemediation = b
 	}
 }
 
@@ -1187,10 +1194,10 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 
 	return &BaseMetricsSettingsConfigProvider{
 		conf: MetricsConfig{
-			EnabledNotAckedMetrics:    parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
-			EnabledManualInstructions: parseBool(cfg.Metrics.EnabledManualInstructions, "EnabledManualInstructions", sectionName, logger),
-			FlushInterval:             parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
-			SliInterval:               parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+			EnabledNotAckedMetrics: parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
+			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
+			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
 		},
 		logger: logger,
 	}
@@ -1207,9 +1214,9 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.EnabledNotAckedMetrics = b
 	}
 
-	b, ok = parseUpdatedBool(cfg.Metrics.EnabledManualInstructions, p.conf.EnabledManualInstructions, "EnabledManualInstructions", sectionName, p.logger)
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledInstructions, p.conf.EnabledInstructions, "EnabledInstructions", sectionName, p.logger)
 	if ok {
-		p.conf.EnabledManualInstructions = b
+		p.conf.EnabledInstructions = b
 	}
 
 	d, ok := parseUpdatedTimeDurationByStr(cfg.Metrics.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)

@@ -15,7 +15,8 @@ Feature: Update link rule
           "label": "test-link-rule-to-edit-patterns-link-1-label",
           "category": "test-link-rule-to-edit-patterns-link-1-category",
           "icon_name": "test-link-rule-to-edit-patterns-link-1-icon",
-          "url": "http://test-link-rule-to-edit-patterns-link-1-url.com"
+          "url": "http://test-link-rule-to-edit-patterns-link-1-url.com",
+          "action": "open"
         }
       ],
       "corporate_entity_pattern": "test-pattern-to-link-rule-pattern-1",

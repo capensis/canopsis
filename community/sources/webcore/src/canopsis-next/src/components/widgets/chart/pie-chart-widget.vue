@@ -25,17 +25,24 @@
         :metrics="aggregatedMetrics",
         :colors-by-metrics="colorsByMetrics",
         :title="widget.parameters.chart_title",
-        :show-mode="widget.parameters.show_mode"
+        :show-mode="widget.parameters.show_mode",
+        :downloading="downloading",
+        @export:png="exportMetricsAsPng",
+        @export:csv="exportMetricsAsCsv"
       )
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+import { pick } from 'lodash';
+
 import { convertFilterToQuery } from '@/helpers/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
@@ -47,6 +54,8 @@ import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget
 import ChartLoader from './partials/chart-loader.vue';
 import PieChartMetrics from './partials/pie-chart-metrics.vue';
 
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
+
 export default {
   inject: ['$system'],
   components: {
@@ -57,13 +66,17 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
     permissionsWidgetsPieChartFilters,
+    widgetChartExportMixinCreator({
+      createExport: 'createKpiAlarmAggregateExport',
+      fetchExport: 'fetchMetricExport',
+    }),
   ],
   props: {
     widget: {
@@ -91,15 +104,15 @@ export default {
     },
   },
   methods: {
+    ...mapMetricsActions({
+      createKpiAlarmAggregateExport: 'createKpiAlarmAggregateExport',
+      fetchMetricExport: 'fetchMetricExport',
+    }),
+
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-
-        parameters: this.widget.parameters.metrics.map(({ metric }) => ({
-          metric,
-          aggregate_func: this.widget.parameters.aggregate_func,
-        })),
-        sampling: this.query.sampling,
+        ...pick(this.query, ['parameters', 'sampling']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },

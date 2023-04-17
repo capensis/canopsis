@@ -45,5 +45,5 @@ export const EXTERNAL_DATA_DEFAULT_CONDITION_VALUES = [
 ];
 
 export const EXTERNAL_DATA_PAYLOADS_VARIABLES = {
-  externalData: '.ExternalData.%reference%.Value',
+  externalData: '.ExternalData.%reference%',
 };

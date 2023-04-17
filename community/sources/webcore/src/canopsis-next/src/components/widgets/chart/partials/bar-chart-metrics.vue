@@ -8,6 +8,8 @@
       :height="height",
       :dark="$system.dark"
     )
+      template(#actions="{ chart }")
+        kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -18,11 +20,13 @@ import { getDateLabelBySampling, hasHistoryData } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
+import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+
 const BarChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/bar-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { BarChart },
+  components: { KpiChartExportActions, BarChart },
   mixins: [chartMetricsOptionsMixin],
   props: {
     metrics: {
@@ -46,6 +50,10 @@ export default {
       default: SAMPLINGS.day,
     },
     stacked: {
+      type: Boolean,
+      default: false,
+    },
+    downloading: {
       type: Boolean,
       default: false,
     },

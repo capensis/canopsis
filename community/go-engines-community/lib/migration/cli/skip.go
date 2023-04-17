@@ -47,7 +47,6 @@ func (c *skipCmd) Exec(ctx context.Context) error {
 
 		if c.version != "" && id == c.version {
 			found = true
-			ids = []string{id}
 			break
 		}
 	}

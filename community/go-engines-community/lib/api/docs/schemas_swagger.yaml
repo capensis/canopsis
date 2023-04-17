@@ -567,6 +567,8 @@ definitions:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
         $ref: '#/definitions/appinfo.RemediationConf'
+      show_header_on_kiosk_mode:
+        type: boolean
       stack:
         type: string
       timezone:
@@ -633,6 +635,8 @@ definitions:
         type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
+      show_header_on_kiosk_mode:
+        type: boolean
     type: object
   associativetable.AssociativeTable:
     properties:
@@ -798,6 +802,8 @@ definitions:
         type: string
       info:
         type: string
+      last_ping:
+        type: string
       source:
         type: string
       stats:
@@ -911,6 +917,15 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  entity.CleanRequest:
+    properties:
+      archive:
+        type: boolean
+      archive_dependencies:
+        type: boolean
+    required:
+    - archive
     type: object
   entity.ContextGraphResponse:
     properties:
@@ -1481,8 +1496,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1513,6 +1526,7 @@ definitions:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
         type: integer
       rrule:
         type: string
@@ -1527,8 +1541,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - _id
     - description
@@ -1542,8 +1554,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1574,6 +1584,7 @@ definitions:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
         type: integer
       rrule:
         type: string
@@ -1588,8 +1599,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - description
     - type
@@ -1713,8 +1722,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1745,6 +1752,7 @@ definitions:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
         type: integer
       rrule:
         type: string
@@ -1759,8 +1767,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - description
     - type
@@ -1865,12 +1871,12 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
     - freq_limit
     - name
-    - priority
     type: object
   flappingrule.Response:
     properties:
@@ -1946,12 +1952,12 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
     - freq_limit
     - name
-    - priority
     type: object
   idlerule.BulkDeleteRequestItem:
     properties:
@@ -2001,6 +2007,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -2009,7 +2016,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.CreateRequest:
@@ -2053,6 +2059,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -2060,7 +2067,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.EditRequest:
@@ -2102,6 +2108,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -2109,7 +2116,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.Operation:
@@ -2355,6 +2361,8 @@ definitions:
     type: object
   link.Link:
     properties:
+      action:
+        type: string
       icon_name:
         type: string
       label:
@@ -2374,6 +2382,11 @@ definitions:
     type: object
   link.Parameters:
     properties:
+      action:
+        enum:
+        - open
+        - copy
+        type: string
       category:
         maxLength: 255
         type: string
@@ -2390,6 +2403,7 @@ definitions:
         maxLength: 1000
         type: string
     required:
+    - action
     - icon_name
     - label
     - url
@@ -2905,6 +2919,9 @@ definitions:
         type: integer
       description:
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         type: string
     required:
@@ -3117,6 +3134,8 @@ definitions:
         type: boolean
       description:
         type: string
+      hidden:
+        type: boolean
       name:
         type: string
     type: object
@@ -3125,6 +3144,9 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3178,6 +3200,8 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
@@ -3185,6 +3209,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 1
         type: integer
       type:
         enum:
@@ -3201,6 +3226,11 @@ definitions:
     - priority
     - type
     type: object
+  pbehaviortype.PriorityResponse:
+    properties:
+      priority:
+        type: integer
+    type: object
   pbehaviortype.Type:
     properties:
       _id:
@@ -3213,6 +3243,9 @@ definitions:
         type: boolean
       description:
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       icon_name:
         type: string
       name:
@@ -3229,6 +3262,8 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
@@ -3236,6 +3271,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 1
         type: integer
       type:
         enum:
@@ -3428,6 +3464,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
@@ -3504,6 +3541,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
@@ -3703,6 +3741,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3742,20 +3781,6 @@ definitions:
     - name
     - triggers
     type: object
-  scenario.CheckPriorityRequest:
-    properties:
-      priority:
-        type: integer
-    required:
-    - priority
-    type: object
-  scenario.CheckPriorityResponse:
-    properties:
-      recommended_priority:
-        type: integer
-      valid:
-        type: boolean
-    type: object
   scenario.CreateRequest:
     properties:
       _id:
@@ -3779,6 +3804,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3838,6 +3864,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3875,11 +3902,6 @@ definitions:
     - enabled
     - name
     - triggers
-    type: object
-  scenario.GetMinimalPriorityResponse:
-    properties:
-      priority:
-        type: integer
     type: object
   scenario.Parameters:
     properties:

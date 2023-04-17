@@ -8,6 +8,8 @@
       :height="height",
       :dark="$system.dark"
     )
+      template(#actions="{ chart }")
+        kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -18,11 +20,13 @@ import { hasHistoryData } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
+import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+
 const LineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/line-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { LineChart },
+  components: { KpiChartExportActions, LineChart },
   mixins: [chartMetricsOptionsMixin],
   props: {
     metrics: {
@@ -44,6 +48,10 @@ export default {
     sampling: {
       type: String,
       default: SAMPLINGS.day,
+    },
+    downloading: {
+      type: Boolean,
+      default: false,
     },
     responsive: {
       type: Boolean,

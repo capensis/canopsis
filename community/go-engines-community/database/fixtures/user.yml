@@ -257,6 +257,9 @@ widgets:
       widgetColumnsTemplate: "@tpl_entity_columns"
       widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_entity_columns
+      serviceDependenciesColumnsTemplate: "@tpl_entity_columns"
+      serviceDependenciesColumnsTemplateTitle: Default columns
+      serviceDependenciesColumns: *widget_entity_columns
       sort:
         order: ASC
       itemsPerPage: 10
@@ -563,6 +566,11 @@ default_rights:
     _id: listalarm_removeAlarm
     crecord_name: <Current()._id>
     description: "Rights on listalarm: remove alarm"
+  permission_listalarm_fastRemoveAlarm:
+    <<: *permission
+    _id: listalarm_fastRemoveAlarm
+    crecord_name: <Current()._id>
+    description: "Rights on listalarm: fast remove alarm"
   permission_listalarm_changeState:
     <<: *permission
     _id: listalarm_changeState
@@ -1085,11 +1093,6 @@ default_rights:
     _id: api_kpi_filter
     crecord_name: <Current()._id>
     description: KPI filters
-  permission_api_ocws_noc:
-    <<: *permission_crud
-    _id: api_ocws_noc
-    crecord_name: <Current()._id>
-    description: OCWS-NOC
   permission_api_snmprule:
     <<: *permission_crud
     _id: api_snmprule
@@ -1384,6 +1387,8 @@ default_rights:
         checksum: 1
       "@permission_listalarm_removeAlarm":
         checksum: 1
+      "@permission_listalarm_fastRemoveAlarm":
+        checksum: 1
       "@permission_listalarm_changeState":
         checksum: 1
       "@permission_listalarm_history":
@@ -1636,9 +1641,6 @@ default_rights:
       "@permission_api_kpi_filter":
         checksum: 15
         crecord_type: right
-      "@permission_api_ocws_noc":
-        checksum: 15
-        crecord_type: right
       "@permission_api_snmprule":
         checksum: 15
         crecord_type: right
@@ -1652,7 +1654,7 @@ default_rights:
         checksum: 15
         crecord_type: right
       "@permission_api_share_token":
-        checksum: 5
+        checksum: 15
         crecord_type: right
       "@permission_api_techmetrics":
         checksum: 1

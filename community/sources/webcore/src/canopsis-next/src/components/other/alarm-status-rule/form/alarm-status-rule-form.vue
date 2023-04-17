@@ -2,7 +2,7 @@
   v-layout(column)
     c-name-field(v-field="form.name", required)
     c-duration-field(v-field="form.duration", required)
-    c-priority-field(v-field="form.priority", required)
+    c-priority-field(v-field="form.priority")
     c-number-field(
       v-if="flapping",
       v-field="form.freq_limit",
@@ -11,7 +11,7 @@
       name="freq_limit"
     )
     c-description-field(v-field="form.description", required)
-    alarm-status-rule-patterns-form(v-field="form.patterns", :flapping="flapping")
+    alarm-status-rule-patterns-form.mt-2(v-field="form.patterns", :flapping="flapping")
 </template>
 
 <script>

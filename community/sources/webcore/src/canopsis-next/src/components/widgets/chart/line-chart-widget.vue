@@ -25,20 +25,26 @@
         v-if="hasMetrics",
         :metrics="preparedVectorMetrics",
         :title="widget.parameters.chart_title",
-        :sampling="query.sampling"
+        :sampling="query.sampling",
+        :downloading="downloading",
+        @export:png="exportMetricsAsPng",
+        @export:csv="exportMetricsAsCsv"
       )
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { keyBy, pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
+import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
+import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsLineChartInterval } from '@/mixins/permissions/widgets/chart/line/interval';
@@ -50,6 +56,8 @@ import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget
 import ChartLoader from './partials/chart-loader.vue';
 import LineChartMetrics from './partials/line-chart-metrics.vue';
 
+const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
+
 export default {
   inject: ['$system'],
   components: {
@@ -60,13 +68,17 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     entitiesVectorMetricsMixin,
     permissionsWidgetsLineChartInterval,
     permissionsWidgetsLineChartSampling,
     permissionsWidgetsLineChartFilters,
+    widgetChartExportMixinCreator({
+      createExport: 'createKpiAlarmExport',
+      fetchExport: 'fetchMetricExport',
+    }),
   ],
   props: {
     widget: {
@@ -77,6 +89,11 @@ export default {
       type: String,
       default: '',
     },
+  },
+  data() {
+    return {
+      widgetMetricsMap: {},
+    };
   },
   computed: {
     hasMetrics() {
@@ -91,12 +108,8 @@ export default {
         : null;
     },
 
-    widgetMetricsMap() {
-      return keyBy(this.widget.parameters?.metrics ?? [], 'metric');
-    },
-
     preparedVectorMetrics() {
-      return this.vectorMetrics.map(metric => ({
+      return convertMetricsToTimezone(this.vectorMetrics, this.$system.timezone).map(metric => ({
         ...metric,
 
         color: this.widgetMetricsMap[metric.title].color,
@@ -118,7 +131,15 @@ export default {
       }
     },
   },
+  created() {
+    this.setWidgetMetricsMap();
+  },
   methods: {
+    ...mapMetricsActions({
+      createKpiAlarmExport: 'createKpiAlarmExport',
+      fetchMetricExport: 'fetchMetricExport',
+    }),
+
     getQuery() {
       return {
         ...this.getIntervalQuery(),
@@ -127,8 +148,14 @@ export default {
       };
     },
 
+    setWidgetMetricsMap() {
+      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
+    },
+
     async fetchList() {
-      this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
+      await this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
+
+      this.setWidgetMetricsMap();
     },
   },
 };
