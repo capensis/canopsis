@@ -90,6 +90,11 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      widgetMetricsMap: {},
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
@@ -107,6 +112,9 @@ export default {
         };
       });
     },
+  },
+  created() {
+    this.setWidgetMetricsMap();
   },
   methods: {
     ...mapMetricsActions({

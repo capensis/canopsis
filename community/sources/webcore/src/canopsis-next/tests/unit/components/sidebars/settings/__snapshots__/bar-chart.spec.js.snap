@@ -22,6 +22,7 @@ exports[`bar-chart Renders \`bar-chart\` widget settings with custom props 1`] =
       onlygroup="true"
       value="[object Object]"
       withcolor="true"
+      withexternal="true"
     />
     <field-bar-graph-type-stub
       name="stacked"
@@ -77,6 +78,7 @@ exports[`bar-chart Renders \`bar-chart\` widget settings with default props 1`] 
       onlygroup="true"
       value=""
       withcolor="true"
+      withexternal="true"
     />
     <field-bar-graph-type-stub
       name="stacked"

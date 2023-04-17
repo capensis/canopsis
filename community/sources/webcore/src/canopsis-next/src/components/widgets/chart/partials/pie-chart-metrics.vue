@@ -90,7 +90,7 @@ export default {
     },
 
     labels() {
-      return this.preparedMetrics.map(metric => metric.label ?? this.$t(`alarm.metrics.${metric.title}`));
+      return this.preparedMetrics.map(metric => metric.label ?? this.getMetricLabel(metric.title));
     },
 
     chartOptions() {
@@ -132,6 +132,12 @@ export default {
     },
   },
   methods: {
+    getMetricLabel(metric) {
+      const metricMessageKey = `alarm.metrics.${metric}`;
+
+      return this.$te(metricMessageKey) ? this.$t(metricMessageKey) : metric;
+    },
+
     formatDataLabel(value) {
       if (!value) {
         return null;
