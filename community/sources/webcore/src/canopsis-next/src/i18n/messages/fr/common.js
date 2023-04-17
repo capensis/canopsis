@@ -269,6 +269,7 @@ export default {
   copyProperty: 'Copier la propriété',
   copyPropertyPath: 'Copier le chemin de la propriété',
   hidden: 'Caché',
+  autoAdd: 'Ajout automatique',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

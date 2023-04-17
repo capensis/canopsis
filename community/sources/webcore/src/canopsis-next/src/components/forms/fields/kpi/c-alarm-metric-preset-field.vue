@@ -2,11 +2,21 @@
   v-layout.c-alarm-metric-preset-field(column)
     c-alarm-metric-parameters-field(
       :value="preset.metric",
-      :label="$t('kpi.selectMetric')",
-      :parameters="parameters",
+      :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')",
+      :parameters="preset.auto ? [] : parameters",
       :disabled-parameters="disabledParameters",
+      :addable="preset.auto",
+      :name="`${name}.metric`",
+      :with-external="withExternal",
       required,
       @input="updateMetric"
+    )
+    c-name-field(
+      v-if="!preset.auto && preset.metric && isExternalMetric",
+      v-field="preset.label",
+      :label="$t('kpi.displayedLabel')",
+      :name="`${name}.label`",
+      required
     )
     v-layout(v-if="withColor", align-center, justify-space-between)
       v-switch(
@@ -20,7 +30,7 @@
         v-field="preset.color"
       )
     c-alarm-metric-aggregate-function-field(
-      v-if="withAggregateFunction",
+      v-if="withAggregateFunction || isExternalMetric",
       v-field="preset.aggregate_func",
       :aggregate-functions="aggregateFunctions",
       :label="$t('kpi.calculationMethod')"
@@ -59,6 +69,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withExternal: {
+      type: Boolean,
+      default: false,
+    },
     parameters: {
       type: Array,
       required: false,
@@ -69,25 +83,38 @@ export default {
     },
   },
   computed: {
+    isExternalMetric() {
+      return !this.isInternalMetric(this.preset.metric);
+    },
+
     aggregateFunctions() {
       return getAggregateFunctionsByMetric(this.preset.metric);
     },
   },
   methods: {
+    isInternalMetric(metric) {
+      return this.parameters.includes(metric);
+    },
+
     enableColor(value) {
       this.updateField('color', value ? getMetricColor(this.preset.metric) : '');
     },
 
-    updateMetric(metric) {
-      if (this.withAggregateFunction) {
-        this.updateModel({
-          ...this.preset,
-          metric,
-          aggregate_func: getDefaultAggregateFunctionByMetric(metric),
-        });
-      } else {
-        this.updateField('metric', metric);
+    getNewAggregatedFunction(metric) {
+      if (this.isInternalMetric(metric)) {
+        return this.withAggregateFunction ? getDefaultAggregateFunctionByMetric(metric) : undefined;
       }
+
+      return getDefaultAggregateFunctionByMetric(metric);
+    },
+
+    updateMetric(metric) {
+      this.updateModel({
+        ...this.preset,
+        metric,
+        aggregate_func: this.getNewAggregatedFunction(metric),
+        label: this.isInternalMetric(metric) ? '' : this.preset.label,
+      });
     },
   },
 };

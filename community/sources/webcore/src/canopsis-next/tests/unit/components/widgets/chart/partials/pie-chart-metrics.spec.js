@@ -30,12 +30,9 @@ describe('pie-chart-metrics', () => {
       propsData: {
         metrics: [
           { title: ALARM_METRIC_PARAMETERS.createdAlarms, value: 12 },
-          { title: ALARM_METRIC_PARAMETERS.ackAlarms, value: 12 },
+          { title: ALARM_METRIC_PARAMETERS.ackAlarms, value: 12, color: '#010101' },
           { title: ALARM_METRIC_PARAMETERS.ticketActiveAlarms, value: 33 },
         ],
-        colorsByMetrics: {
-          [ALARM_METRIC_PARAMETERS.ackAlarms]: '#010101',
-        },
         title: 'Custom title',
         showMode: KPI_PIE_CHART_SHOW_MODS.percent,
         responsive: false,

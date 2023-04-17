@@ -7,6 +7,7 @@
       field-alarm-metric-presets(
         v-field="form.parameters.metrics",
         :parameters="availableParameters",
+        with-external,
         with-aggregate-function
       )
     widget-settings-group(:title="$t('settings.advancedSettings')")
@@ -27,6 +28,8 @@
 </template>
 
 <script>
+import { ALARM_METRIC_PARAMETERS } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 import WidgetSettingsGroup from '../../partials/widget-settings-group.vue';
@@ -41,7 +44,6 @@ import FieldSampling from '../../fields/common/sampling.vue';
 import FieldFilters from '../../fields/common/filters.vue';
 import FieldSwitcher from '../../fields/common/switcher.vue';
 import FieldFontSize from '../../fields/chart/font-size.vue';
-import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   components: {

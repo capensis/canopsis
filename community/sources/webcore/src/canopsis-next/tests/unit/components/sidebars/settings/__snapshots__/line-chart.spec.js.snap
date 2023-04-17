@@ -16,6 +16,7 @@ exports[`line-chart Renders \`line-chart\` widget settings with custom props 1`]
     <field-alarm-metric-presets-stub
       value="[object Object]"
       withcolor="true"
+      withexternal="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -61,6 +62,7 @@ exports[`line-chart Renders \`line-chart\` widget settings with default props 1`
     <field-alarm-metric-presets-stub
       value=""
       withcolor="true"
+      withexternal="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
