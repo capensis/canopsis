@@ -7,8 +7,6 @@ volumes:
     driver: local
   timescaledata:
     driver: local
-  dumpdata:
-    driver: local
   junitsharedata:
     driver: local
   nginxcerts:

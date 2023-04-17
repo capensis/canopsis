@@ -1,12 +1,20 @@
 /**
+ * @typedef {Object} PbehaviorReason
+ * @property {string} name
+ * @property {string} description
+ * @property {boolean} hidden
+ */
+
+/**
  * Convert pbehavior type data to reason form
  *
- * @param {Object} type
- * @return {Object}
+ * @param {PbehaviorReason} [type = {}]
+ * @return {PbehaviorReason}
  */
 export function pbehaviorReasonToForm(type = {}) {
   return {
-    name: type.name || '',
-    description: type.description || '',
+    name: type.name ?? '',
+    description: type.description ?? '',
+    hidden: type.hidden ?? false,
   };
 }

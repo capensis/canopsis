@@ -1,6 +1,13 @@
 <template lang="pug">
   div
-    v-layout(:class="{ 'mb-4': !dense }", row, wrap, justify-space-between, align-end)
+    v-layout(
+      v-if="!hideToolbar",
+      :class="{ 'mb-4': !dense }",
+      row,
+      wrap,
+      justify-space-between,
+      align-end
+    )
       v-flex
         c-advanced-search-field(
           :query.sync="query",
@@ -31,6 +38,7 @@
             @input="updateSelectedFilter"
           )
           filters-list-btn(
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
             :widget-id="widget._id",
             :addable="hasAccessToAddFilter",
             :editable="hasAccessToEditFilter",
@@ -81,7 +89,8 @@
       :dense="dense",
       :refresh-alarms-list="fetchList",
       :selected-tag="query.tag",
-      selectable,
+      :selectable="!hideMassSelection",
+      :hide-actions="hideActions",
       expandable,
       densable,
       @select:tag="selectTag",
@@ -167,6 +176,18 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassSelection: {
+      type: Boolean,
+      default: false,
+    },
+    hideToolbar: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

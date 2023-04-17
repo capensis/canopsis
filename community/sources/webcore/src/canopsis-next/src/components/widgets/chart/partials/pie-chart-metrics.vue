@@ -1,13 +1,15 @@
 <template lang="pug">
   v-layout.chart-metrics-widget(column, align-center)
     h4.chart-metrics-widget__title {{ title }}
-    pie-chart.chart-metrics-widget__chart(
+    pie-chart.pie-chart-metrics__chart.chart-metrics-widget__chart(
       :datasets="datasets",
       :labels="labels",
       :options="chartOptions",
       :width="700",
       :height="400"
     )
+      template(#actions="{ chart }")
+        kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
 </template>
 
 <script>
@@ -18,11 +20,13 @@ import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
 
+import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
+
 const PieChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/pie-chart.vue');
 
 export default {
   inject: ['$system'],
-  components: { PieChart },
+  components: { KpiChartExportActions, PieChart },
   props: {
     metrics: {
       type: Array,
@@ -39,6 +43,10 @@ export default {
     showMode: {
       type: String,
       default: KPI_PIE_CHART_SHOW_MODS.numbers,
+    },
+    downloading: {
+      type: Boolean,
+      default: false,
     },
     responsive: {
       type: Boolean,
@@ -99,8 +107,11 @@ export default {
             },
           },
           legend: {
-            position: 'right',
+            position({ chart }) {
+              return chart.width > 600 ? 'right' : 'top';
+            },
             maxWidth: 300,
+            maxHeight: 300,
             labels: {
               font: {
                 size: 11,
@@ -154,3 +165,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.pie-chart-metrics {
+  &__chart #pie-chart {
+    height: 400px !important;
+  }
+}
+</style>

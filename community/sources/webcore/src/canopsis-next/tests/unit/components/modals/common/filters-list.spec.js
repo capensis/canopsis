@@ -43,8 +43,8 @@ describe('filters-list', () => {
     config: {
       widgetId,
       filters: [],
-      hasAccessToAddFilter: true,
-      hasAccessToEditFilter: true,
+      addable: true,
+      editable: true,
     },
   };
   const filters = [

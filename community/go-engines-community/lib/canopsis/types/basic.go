@@ -77,6 +77,10 @@ func NewCpsTime(timestamp ...int64) CpsTime {
 // MarshalJSON converts from CpsTime to timestamp as bytes
 func (t CpsTime) MarshalJSON() ([]byte, error) {
 	ts := t.Time.Unix()
+	if ts <= 0 {
+		return []byte("null"), nil
+	}
+
 	stamp := fmt.Sprint(ts)
 
 	return []byte(stamp), nil
@@ -84,6 +88,9 @@ func (t CpsTime) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON converts from string to CpsTime
 func (t *CpsTime) UnmarshalJSON(b []byte) error {
+	if string(b) == "null" {
+		return nil
+	}
 	if nl := bytes.TrimPrefix(b, []byte("{\"$numberLong\":\"")); len(nl) < len(b) {
 		// json value can be recorded as "tstop":{"$numberLong":"4733481300"}
 		nl = bytes.TrimSuffix(nl, []byte("\"}"))

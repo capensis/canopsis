@@ -58,7 +58,7 @@ type skipFlags struct {
 }
 
 func (f *skipFlags) Parse(arguments []string) error {
-	flags := flag.NewFlagSet("skip: Manually add a specified version or all untracked versions to the version table", flag.ContinueOnError)
+	flags := flag.NewFlagSet("skip: Manually add migrations until specified version or all untracked versions to the version table", flag.ContinueOnError)
 	flags.StringVar(&f.path, "path", migrationsPath, "Migration directory")
 	flags.StringVar(&f.version, "version", "", "Migration version")
 	return flags.Parse(arguments)

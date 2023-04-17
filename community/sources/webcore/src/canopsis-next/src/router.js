@@ -56,7 +56,7 @@ const routes = [
     name: ROUTES_NAMES.login,
     component: Login,
     meta: {
-      hideNavigation: true,
+      hideHeader: true,
       requiresLogin: false,
     },
   },
@@ -85,7 +85,7 @@ const routes = [
     name: ROUTES_NAMES.viewKiosk,
     component: ViewKiosk,
     meta: {
-      hideNavigation: true,
+      simpleNavigation: true,
       requiresLogin: true,
       requiresPermission: {
         id: route => route.params.id,
@@ -398,7 +398,7 @@ const routes = [
     name: ROUTES_NAMES.error,
     component: Error,
     meta: {
-      hideNavigation: true,
+      hideHeader: true,
     },
     props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },

@@ -21,6 +21,14 @@ export default {
       return request.post(API_ROUTES.metrics.exportAlarm, null, { params: data });
     },
 
+    createKpiAlarmAggregateExport(context, { data }) {
+      return request.post(API_ROUTES.metrics.exportAggregate, data);
+    },
+
+    createRemediationExport(context, { data }) {
+      return request.post(API_ROUTES.metrics.exportRemediation, data);
+    },
+
     createKpiRatingExport(context, { data }) {
       return request.post(API_ROUTES.metrics.exportRating, null, { params: data });
     },

@@ -1,35 +1,17 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
+
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { QUICK_RANGES } from '@/constants';
 
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-date-interval-field': true,
+  'c-information-block': true,
   'c-quick-date-interval-type-field': true,
 };
-
-const snapshotStubs = {
-  'c-date-interval-field': true,
-  'c-quick-date-interval-type-field': true,
-};
-
-const factory = (options = {}) => shallowMount(CQuickDateIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CQuickDateIntervalField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
 
 const selectDateIntervalField = wrapper => wrapper.find('c-date-interval-field-stub');
 const selectQuickDateIntervalTypeField = wrapper => wrapper.find('c-quick-date-interval-type-field-stub');
@@ -37,6 +19,9 @@ const selectQuickDateIntervalTypeField = wrapper => wrapper.find('c-quick-date-i
 describe('c-quick-date-interval-field', () => {
   const nowTimestamp = 1386435500000;
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(CQuickDateIntervalField, { stubs });
+  const snapshotFactory = generateRenderer(CQuickDateIntervalField, { stubs });
 
   it('Value changed after trigger date interval field', () => {
     const wrapper = factory();
@@ -61,16 +46,24 @@ describe('c-quick-date-interval-field', () => {
   it('Value changed after trigger quick date interval type field', () => {
     const wrapper = factory();
 
-    const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
+    selectQuickDateIntervalTypeField(wrapper).vm.$emit('input', QUICK_RANGES.last12Hour);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.last12Hour);
+    expect(wrapper).toEmit('input', {
+      from: QUICK_RANGES.last12Hour.start,
+      to: QUICK_RANGES.last12Hour.stop,
+    });
+  });
 
-    const inputEvents = wrapper.emitted('input');
+  it('Value changed after trigger quick date interval type field with short format', () => {
+    const wrapper = factory({
+      propsData: {
+        short: true,
+      },
+    });
 
-    expect(inputEvents).toHaveLength(1);
+    selectQuickDateIntervalTypeField(wrapper).vm.$emit('input', QUICK_RANGES.last12Hour);
 
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       from: QUICK_RANGES.last12Hour.start,
       to: QUICK_RANGES.last12Hour.stop,
     });
@@ -79,13 +72,9 @@ describe('c-quick-date-interval-field', () => {
   it('Value not changed after trigger date interval field with custom quick range', () => {
     const wrapper = factory();
 
-    const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
+    selectQuickDateIntervalTypeField(wrapper).vm.$emit('input', QUICK_RANGES.custom);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.custom);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toEmit('input');
   });
 
   it('Ranges filtered with accumulatedBefore and min', () => {
@@ -106,6 +95,7 @@ describe('c-quick-date-interval-field', () => {
       QUICK_RANGES.last6Hour,
       QUICK_RANGES.last12Hour,
       QUICK_RANGES.last24Hour,
+      QUICK_RANGES.today,
       QUICK_RANGES.todaySoFar,
       QUICK_RANGES.custom,
     ]);
@@ -265,5 +255,45 @@ describe('c-quick-date-interval-field', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-quick-date-interval-field` with short format', async () => {
+    snapshotFactory({
+      propsData: {
+        interval: {
+          from: QUICK_RANGES.last2Days.start,
+          to: QUICK_RANGES.last2Days.stop,
+        },
+        accumulatedBefore: 1385435500,
+        min: 1384435500,
+        disabled: true,
+        reverse: true,
+        short: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
+  });
+
+  it('Renders `c-quick-date-interval-field` with short format and custom interval', async () => {
+    snapshotFactory({
+      propsData: {
+        interval: {
+          from: 1385435500,
+          to: 1385435500,
+        },
+        accumulatedBefore: 1385435500,
+        min: 1384435500,
+        disabled: true,
+        reverse: true,
+        short: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
   });
 });

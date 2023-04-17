@@ -41,6 +41,7 @@ const stubs = {
   'field-sampling': true,
   'field-filters': true,
   'field-switcher': true,
+  'field-font-size': true,
   'v-btn': createButtonStub('v-btn'),
 };
 
@@ -57,6 +58,7 @@ const snapshotStubs = {
   'field-sampling': true,
   'field-filters': true,
   'field-switcher': true,
+  'field-font-size': true,
 };
 
 const generateDefaultNumbersWidget = () => ({
@@ -73,6 +75,7 @@ const selectFieldQuickDateIntervalType = wrapper => wrapper.find('field-quick-da
 const selectFieldSampling = wrapper => wrapper.find('field-sampling-stub');
 const selectFieldFilters = wrapper => wrapper.find('field-filters-stub');
 const selectFieldSwitcher = wrapper => wrapper.find('field-switcher-stub');
+const selectFieldFontSize = wrapper => wrapper.find('field-font-size-stub');
 
 describe('numbers', () => {
   const nowTimestamp = 1386435600000;
@@ -83,7 +86,6 @@ describe('numbers', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
     currentUserPermissionsById,
     activeViewModule,
@@ -194,9 +196,8 @@ describe('numbers', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
@@ -431,6 +432,29 @@ describe('numbers', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'show_trend', newShowTrend),
+      },
+    });
+  });
+
+  test('Font size changed after trigger field font size', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    const newFontSize = Faker.datatype.number();
+
+    selectFieldFontSize(wrapper).vm.$emit('input', newFontSize);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'font_size', newFontSize),
       },
     });
   });

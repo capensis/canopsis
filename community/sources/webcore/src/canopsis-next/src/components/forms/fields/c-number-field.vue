@@ -11,6 +11,7 @@
     :min="min",
     :max="max",
     :step="step",
+    :loading="loading",
     type="number",
     @paste="$emit('paste', $event)"
   )
@@ -59,6 +60,10 @@ export default {
       default: undefined,
     },
     hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },

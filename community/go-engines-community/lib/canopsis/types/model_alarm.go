@@ -112,13 +112,19 @@ type Alarm struct {
 	parentsRemove  []string
 
 	// is used only for manual instructions KPI metrics
-	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
-	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+	KpiAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
+	KpiExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+	// is used only for auto instructions KPI metrics
+	KpiAssignedAutoInstructions []string `bson:"kpi_assigned_auto_instructions,omitempty" json:"kpi_assigned_auto_instructions,omitempty"`
+	KpiExecutedAutoInstructions []string `bson:"kpi_executed_auto_instructions,omitempty" json:"kpi_executed_auto_instructions,omitempty"`
 
 	// is used only for not acked metrics
 	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
 	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
 	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
+
+	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
+	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -407,4 +413,8 @@ func (a *Alarm) IsActivated() bool {
 
 func (a *Alarm) IsInActivePeriod() bool {
 	return a.Value.PbehaviorInfo.IsActive()
+}
+
+func (a *Alarm) CanActivate() bool {
+	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
 }

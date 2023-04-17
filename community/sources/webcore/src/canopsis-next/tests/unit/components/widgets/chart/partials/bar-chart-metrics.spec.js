@@ -5,6 +5,10 @@ import { ALARM_METRIC_PARAMETERS, SAMPLINGS } from '@/constants';
 
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 
+const stubs = {
+  'kpi-chart-export-actions': true,
+};
+
 describe('bar-chart-metrics', () => {
   const metrics = [
     {
@@ -36,6 +40,7 @@ describe('bar-chart-metrics', () => {
   }));
 
   const snapshotFactory = generateRenderer(BarChartMetrics, {
+    stubs,
     parentComponent: {
       provide: {
         $system: {},

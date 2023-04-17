@@ -12,7 +12,7 @@
           required
         )
       v-flex(xs3)
-        c-priority-field(v-field="form.priority", required)
+        c-priority-field(v-field="form.priority")
     c-disable-during-periods-field(v-field="form.disable_during_periods")
     template(v-if="!isEntityType")
       c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
