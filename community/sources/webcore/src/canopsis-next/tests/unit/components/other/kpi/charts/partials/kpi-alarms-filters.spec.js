@@ -47,7 +47,7 @@ describe('kpi-alarms-filters', () => {
   /**
    * Year ago date
    */
-  const nowSubtractYearTimestamp = 1354899600;
+  const nowSubtractYearTimestamp = 1354834800;
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({
