@@ -31,7 +31,8 @@ const (
 	NotAckedInFourHoursAlarms = "not_acked_in_four_hours_alarms"
 	NotAckedInDayAlarms       = "not_acked_in_day_alarms"
 
-	PerfData = "perf_data"
+	PerfData     = "perf_data"
+	PerfDataName = "perf_data_name"
 )
 
 // criteria type
