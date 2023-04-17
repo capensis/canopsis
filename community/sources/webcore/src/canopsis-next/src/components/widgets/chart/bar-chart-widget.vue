@@ -110,11 +110,16 @@ export default {
     },
 
     preparedVectorMetrics() {
-      return this.vectorMetrics.map(metric => ({
-        ...metric,
+      return this.vectorMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        color: this.widgetMetricsMap[metric.title].color,
-      }));
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
   },
   watch: {

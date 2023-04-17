@@ -61,6 +61,7 @@ export const AGGREGATE_FUNCTIONS = {
   avg: 'avg',
   min: 'min',
   max: 'max',
+  last: 'last',
 };
 
 export const Y_AXES_IDS = {

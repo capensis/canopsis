@@ -4,7 +4,7 @@
     field-periodic-refresh(v-model="form.parameters.periodic_refresh")
     field-preset(v-model="form.parameters", :type="form.type")
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
-      field-alarm-metric-presets(v-model="form.parameters.metrics", with-color, only-group)
+      field-alarm-metric-presets(v-model="form.parameters.metrics", with-color, with-external, only-group)
       field-bar-graph-type(v-model="form.parameters.stacked")
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-chart-title(v-model="form.parameters.chart_title")
