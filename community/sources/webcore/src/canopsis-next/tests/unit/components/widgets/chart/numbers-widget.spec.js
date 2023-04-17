@@ -14,7 +14,13 @@ import {
 } from '@unit/utils/store';
 import { randomArrayItem } from '@unit/utils/array';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
+import {
+  AGGREGATE_FUNCTIONS,
+  ALARM_METRIC_PARAMETERS,
+  QUICK_RANGES,
+  SAMPLINGS,
+  WIDGET_TYPES,
+} from '@/constants';
 
 import NumbersWidget from '@/components/widgets/chart/numbers-widget.vue';
 
@@ -143,7 +149,7 @@ describe('numbers-widget', () => {
       expect.any(Object),
       {
         widgetId: widget._id,
-        params: {
+        data: {
           widget_filters: [filter],
           sampling,
           from: 1383843500,

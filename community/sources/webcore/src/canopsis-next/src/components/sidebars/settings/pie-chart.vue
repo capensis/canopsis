@@ -2,8 +2,8 @@
   widget-settings(:submitting="submitting", divider, @submit="submit")
     pie-chart-widget-form(
       v-model="form",
-      with-periodic-refresh,
-      with-filters
+      :with-filters="hasAccessToListFilters",
+      with-periodic-refresh
     )
 </template>
 
@@ -11,6 +11,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { permissionsWidgetsLineChartFilters } from '@/mixins/permissions/widgets/chart/line/filters';
 
 import WidgetSettings from './partials/widget-settings.vue';
 import PieChartWidgetForm from './forms/widgets/pie-chart-widget-form.vue';
@@ -21,6 +22,9 @@ export default {
     WidgetSettings,
     PieChartWidgetForm,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    permissionsWidgetsLineChartFilters,
+  ],
 };
 </script>

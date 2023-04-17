@@ -137,7 +137,7 @@ describe('line-chart-widget', () => {
       expect.any(Object),
       {
         widgetId: widget._id,
-        params: {
+        data: {
           widget_filters: [filter],
           sampling,
           from: 1383843500,

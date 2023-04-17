@@ -915,4 +915,30 @@ export default {
       title: 'Edit link generator',
     },
   },
+  createAlarmChart: {
+    barChart: {
+      create: {
+        title: 'Create bar chart',
+      },
+      edit: {
+        title: 'Edit bar chart',
+      },
+    },
+    lineChart: {
+      create: {
+        title: 'Create line chart',
+      },
+      edit: {
+        title: 'Edit line chart',
+      },
+    },
+    numbers: {
+      create: {
+        title: 'Create numbers chart',
+      },
+      edit: {
+        title: 'Edit numbers chart',
+      },
+    },
+  },
 };

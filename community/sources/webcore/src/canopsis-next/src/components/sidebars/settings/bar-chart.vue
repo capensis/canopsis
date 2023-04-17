@@ -2,8 +2,8 @@
   widget-settings(:submitting="submitting", divider, @submit="submit")
     bar-chart-widget-form(
       v-model="form",
-      with-periodic-refresh,
-      with-filters
+      :with-filters="hasAccessToListFilters",
+      with-periodic-refresh
     )
 </template>
 
@@ -11,6 +11,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
 import WidgetSettings from './partials/widget-settings.vue';
 import BarChartWidgetForm from './forms/widgets/bar-chart-widget-form.vue';
@@ -21,6 +22,9 @@ export default {
     WidgetSettings,
     BarChartWidgetForm,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    permissionsWidgetsBarChartFilters,
+  ],
 };
 </script>
