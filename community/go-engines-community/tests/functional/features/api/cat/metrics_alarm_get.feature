@@ -1151,8 +1151,8 @@ Feature: Get alarm metrics
         {"metric": "total_user_activity"}
       ],
       "sampling": "day",
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
@@ -1171,8 +1171,8 @@ Feature: Get alarm metrics
       "parameters": [
         {"metric": "created_alarms"}
       ],
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400

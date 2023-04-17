@@ -16,8 +16,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "03-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "03-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -33,9 +33,9 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     func,metric,timestamp,unit,value
-    sum,cpu_%,{{ parseTime "01-07-2022 00:00" }},%,140
-    sum,cpu_%,{{ parseTime "02-07-2022 00:00" }},%,0
-    sum,cpu_%,{{ parseTime "03-07-2022 00:00" }},%,0
+    sum,cpu_%,{{ parseTimeTz "01-07-2022 00:00" }},%,140
+    sum,cpu_%,{{ parseTimeTz "02-07-2022 00:00" }},%,0
+    sum,cpu_%,{{ parseTimeTz "03-07-2022 00:00" }},%,0
 
     """
 
@@ -53,8 +53,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -70,8 +70,8 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     func,metric,timestamp,unit,value
-    max,cpu,{{ parseTime "01-07-2022 00:00" }},,70
-    max,cpu_%,{{ parseTime "01-07-2022 00:00" }},%,80
+    max,cpu,{{ parseTimeTz "01-07-2022 00:00" }},,70
+    max,cpu_%,{{ parseTimeTz "01-07-2022 00:00" }},%,80
 
     """
 
@@ -93,8 +93,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -110,8 +110,8 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     func,metric,timestamp,unit,value
-    ,created_alarms,{{ parseTime "01-07-2022 00:00" }},,0
-    max,cpu_%,{{ parseTime "01-07-2022 00:00" }},%,80
+    ,created_alarms,{{ parseTimeTz "01-07-2022 00:00" }},,0
+    max,cpu_%,{{ parseTimeTz "01-07-2022 00:00" }},%,80
 
     """
     When I do POST /api/v4/cat/metrics-export/alarm:
@@ -129,8 +129,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -146,7 +146,7 @@ Feature: Export alarm metrics
     Then the response raw body should be:
     """csv
     metric,timestamp,value
-    created_alarms,{{ parseTime "01-07-2022 00:00" }},0
+    created_alarms,{{ parseTimeTz "01-07-2022 00:00" }},0
 
     """
 
@@ -164,8 +164,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -196,8 +196,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 400
@@ -223,8 +223,8 @@ Feature: Export alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 400
