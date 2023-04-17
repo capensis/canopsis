@@ -849,7 +849,17 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      metrics:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
       pbehavior:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      perf_data_metrics:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
