@@ -168,8 +168,8 @@ Feature: Export alarm metrics
         {"metric": "total_user_activity"}
       ],
       "sampling": "day",
-      "from": {{ now }},
-      "to": {{ now }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 400
