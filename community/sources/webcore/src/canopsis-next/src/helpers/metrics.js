@@ -202,9 +202,27 @@ export const getAggregateFunctionsByMetric = (metric) => {
       return [AGGREGATE_FUNCTIONS.sum];
     case ALARM_METRIC_PARAMETERS.ratioTickets:
       return [AGGREGATE_FUNCTIONS.avg];
+    case ALARM_METRIC_PARAMETERS.createdAlarms:
+    case ALARM_METRIC_PARAMETERS.nonDisplayedAlarms:
+    case ALARM_METRIC_PARAMETERS.instructionAlarms:
+    case ALARM_METRIC_PARAMETERS.pbehaviorAlarms:
+    case ALARM_METRIC_PARAMETERS.correlationAlarms:
+    case ALARM_METRIC_PARAMETERS.ackAlarms:
+    case ALARM_METRIC_PARAMETERS.cancelAckAlarms:
+    case ALARM_METRIC_PARAMETERS.minAck:
+    case ALARM_METRIC_PARAMETERS.maxAck:
+    case ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms:
+    case ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms:
+      return [
+        AGGREGATE_FUNCTIONS.sum,
+        AGGREGATE_FUNCTIONS.avg,
+        AGGREGATE_FUNCTIONS.min,
+        AGGREGATE_FUNCTIONS.max,
+      ];
     default:
       return [
         AGGREGATE_FUNCTIONS.sum,
+        AGGREGATE_FUNCTIONS.last,
         AGGREGATE_FUNCTIONS.avg,
         AGGREGATE_FUNCTIONS.min,
         AGGREGATE_FUNCTIONS.max,

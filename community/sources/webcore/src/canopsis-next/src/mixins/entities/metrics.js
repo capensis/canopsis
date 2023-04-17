@@ -1,8 +1,14 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('metrics');
+const { mapActions, mapGetters } = createNamespacedHelpers('metrics');
 
 export const entitiesMetricsMixin = {
+  computed: {
+    ...mapGetters({
+      externalMetrics: 'externalMetrics',
+      externalMetricsPending: 'pending',
+    }),
+  },
   methods: {
     ...mapActions({
       fetchSliMetricsWithoutStore: 'fetchSliMetricsWithoutStore',
@@ -15,6 +21,7 @@ export const entitiesMetricsMixin = {
       createKpiRatingExport: 'createKpiRatingExport',
       createKpiSliExport: 'createKpiSliExport',
       fetchMetricExport: 'fetchMetricExport',
+      fetchExternalMetricsList: 'fetchExternalMetricsList',
     }),
   },
 };
