@@ -28,8 +28,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -41,7 +41,7 @@ Feature: Perf data should be stored.
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 20
             }
           ]
@@ -73,8 +73,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -86,7 +86,7 @@ Feature: Perf data should be stored.
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 80
             }
           ]
@@ -105,8 +105,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -119,7 +119,7 @@ Feature: Perf data should be stored.
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 60
             }
           ]
@@ -138,8 +138,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -152,7 +152,7 @@ Feature: Perf data should be stored.
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 40
             }
           ]
@@ -171,8 +171,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -185,7 +185,7 @@ Feature: Perf data should be stored.
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 60
             }
           ]
@@ -204,8 +204,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -218,7 +218,7 @@ Feature: Perf data should be stored.
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 20
             }
           ]
@@ -237,8 +237,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -266,8 +266,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -295,8 +295,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -324,8 +324,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
@@ -353,8 +353,8 @@ Feature: Perf data should be stored.
       ],
       "entity": "test-resource-metrics-perf-data-1/test-component-metrics-perf-data-1",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     Then the response code should be 200
