@@ -32,8 +32,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -47,99 +47,99 @@ Feature: Get alarm metrics
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 01:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 01:00" }},
               "value": 60
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 02:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 02:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 03:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 03:00" }},
               "value": 80
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 04:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 05:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 06:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 07:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 08:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 09:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 10:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 11:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 11:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 12:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 13:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 14:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 15:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 15:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 16:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 16:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 17:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 17:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 18:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 18:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 19:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 19:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 20:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 20:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 21:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 21:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 22:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 22:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 23:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 23:00" }},
               "value": 0
             }
           ]
@@ -150,99 +150,99 @@ Feature: Get alarm metrics
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 01:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 01:00" }},
               "value": 40
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 02:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 02:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 03:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 03:00" }},
               "value": 80
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 04:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 05:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 06:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 07:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 08:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 09:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 10:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 11:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 11:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 12:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 13:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 14:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 15:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 15:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 16:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 16:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 17:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 17:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 18:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 18:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 19:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 19:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 20:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 20:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 21:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 21:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 22:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 22:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 23:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 23:00" }},
               "value": 0
             }
           ]
@@ -253,99 +253,99 @@ Feature: Get alarm metrics
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 01:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 01:00" }},
               "value": 30
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 02:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 02:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 03:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 03:00" }},
               "value": 80
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 04:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 05:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 06:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 07:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 08:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 09:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 10:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 11:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 11:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 12:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 13:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 14:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 15:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 15:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 16:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 16:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 17:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 17:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 18:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 18:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 19:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 19:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 20:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 20:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 21:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 21:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 22:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 22:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 23:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 23:00" }},
               "value": 0
             }
           ]
@@ -356,99 +356,99 @@ Feature: Get alarm metrics
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 01:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 01:00" }},
               "value": 40
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 02:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 02:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 03:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 03:00" }},
               "value": 80
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 04:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 05:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 06:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 07:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 08:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 09:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 10:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 11:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 11:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 12:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 13:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 14:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 15:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 15:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 16:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 16:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 17:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 17:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 18:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 18:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 19:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 19:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 20:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 20:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 21:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 21:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 22:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 22:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 23:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 23:00" }},
               "value": 0
             }
           ]
@@ -459,99 +459,99 @@ Feature: Get alarm metrics
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 01:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 01:00" }},
               "value": 20
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 02:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 02:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 03:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 03:00" }},
               "value": 80
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 04:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 04:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 05:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 05:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 06:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 06:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 07:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 07:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 08:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 08:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 09:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 09:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 10:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 10:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 11:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 11:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 12:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 12:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 13:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 13:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 14:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 14:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 15:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 15:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 16:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 16:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 17:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 17:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 18:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 18:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 19:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 19:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 20:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 20:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 21:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 21:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 22:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 22:00" }},
               "value": 0
             },
             {
-              "timestamp": {{ parseTime "01-07-2022 23:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 23:00" }},
               "value": 0
             }
           ]
@@ -574,8 +574,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -588,7 +588,7 @@ Feature: Get alarm metrics
           "aggregate_func": "max",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 70
             }
           ]
@@ -599,7 +599,7 @@ Feature: Get alarm metrics
           "unit": "%",
           "data": [
             {
-              "timestamp": {{ parseTime "01-07-2022 00:00" }},
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
               "value": 80
             }
           ]
@@ -622,8 +622,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 200
@@ -648,8 +648,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 400
@@ -675,8 +675,8 @@ Feature: Get alarm metrics
       ],
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
-      "from": {{ parseTime "01-07-2022 00:00" }},
-      "to": {{ parseTime "01-07-2022 00:00" }}
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
     }
     """
     Then the response code should be 400

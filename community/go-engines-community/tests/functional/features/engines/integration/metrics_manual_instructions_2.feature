@@ -133,8 +133,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -145,7 +145,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -153,12 +153,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-1-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-1-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 0,
           "executed": 0,
           "ratio": 0
@@ -307,8 +307,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -319,7 +319,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -335,8 +335,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -347,7 +347,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -355,12 +355,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-2-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-2-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -424,8 +424,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -436,7 +436,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -452,8 +452,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -464,7 +464,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -472,12 +472,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-2-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-2-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -548,8 +548,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -560,7 +560,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -621,8 +621,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -633,7 +633,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -641,12 +641,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-3-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-3-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -707,8 +707,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -719,7 +719,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 3
             }
           ]
@@ -727,12 +727,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-3-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-3-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -740,12 +740,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-3-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-3-2 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -852,8 +852,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -864,7 +864,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 3
             }
           ]
@@ -872,12 +872,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-4-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-4-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 0,
           "ratio": 0
@@ -952,8 +952,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -964,7 +964,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -972,12 +972,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-4-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-4-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 0,
           "ratio": 0
@@ -1100,8 +1100,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1112,7 +1112,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -1128,8 +1128,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1140,7 +1140,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ratio_remediated_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -1196,8 +1196,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1208,7 +1208,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1224,8 +1224,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1236,7 +1236,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ratio_remediated_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 100
             }
           ]
@@ -1244,12 +1244,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-5-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-5-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -1257,12 +1257,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-5-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-5-2 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 0,
           "ratio": 0
@@ -1316,8 +1316,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1328,7 +1328,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1344,8 +1344,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1356,7 +1356,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ratio_remediated_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 100
             }
           ]
@@ -1364,12 +1364,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-5-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-5-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -1377,12 +1377,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-5-2 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-5-2 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 1,
           "ratio": 100
@@ -1489,8 +1489,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1501,7 +1501,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -1517,8 +1517,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1529,7 +1529,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ratio_remediated_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -1537,12 +1537,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-6-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-6-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 0,
           "ratio": 0
@@ -1638,8 +1638,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1650,7 +1650,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -1666,8 +1666,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1678,7 +1678,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ratio_remediated_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 66.66
             }
           ]
@@ -1686,12 +1686,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-6-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-6-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 2,
           "ratio": 66.66
@@ -1766,8 +1766,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1778,7 +1778,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_executed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1794,8 +1794,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1806,7 +1806,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ratio_remediated_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 50
             }
           ]
@@ -1814,12 +1814,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-6-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-6-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 2,
           "ratio": 66.66
@@ -1962,8 +1962,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -1974,7 +1974,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -1982,12 +1982,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-7-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-7-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 1,
           "executed": 0,
           "ratio": 0
@@ -2047,8 +2047,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2059,7 +2059,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 3
             }
           ]
@@ -2067,12 +2067,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-7-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-7-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 0,
           "ratio": 0
@@ -2143,8 +2143,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2155,7 +2155,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -2220,8 +2220,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2232,7 +2232,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -2240,12 +2240,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-8-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-8-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 0,
           "executed": 0,
           "ratio": 0
@@ -2270,8 +2270,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2282,7 +2282,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -2290,12 +2290,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-8-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-8-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -2366,8 +2366,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2378,7 +2378,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -2439,8 +2439,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2451,7 +2451,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -2459,12 +2459,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-9-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-9-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 2,
           "executed": 0,
           "ratio": 0
@@ -2546,8 +2546,8 @@ Feature: Metrics should be added on alarm changes
       ],
       "filter": "{{ .filterID }}",
       "sampling": "day",
-      "from": {{ nowDate }},
-      "to": {{ nowDate }}
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
     }
     """
     When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
@@ -2558,7 +2558,7 @@ Feature: Metrics should be added on alarm changes
           "title": "manual_instruction_assigned_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 3
             }
           ]
@@ -2566,12 +2566,12 @@ Feature: Metrics should be added on alarm changes
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDate }}&to={{ nowDate }}&instruction=test-instruction-to-manual-metrics-second-9-1 until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/remediation?sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}&instruction=test-instruction-to-manual-metrics-second-9-1 until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "assigned": 3,
           "executed": 0,
           "ratio": 0
