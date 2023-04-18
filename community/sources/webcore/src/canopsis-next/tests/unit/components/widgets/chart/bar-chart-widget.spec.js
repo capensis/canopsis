@@ -137,7 +137,7 @@ describe('bar-chart-widget', () => {
       expect.any(Object),
       {
         widgetId: widget._id,
-        data: {
+        params: {
           widget_filters: [filter],
           sampling,
           parameters,

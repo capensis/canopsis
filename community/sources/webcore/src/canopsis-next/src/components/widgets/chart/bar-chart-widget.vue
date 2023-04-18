@@ -151,7 +151,7 @@ export default {
     async fetchList() {
       await this.fetchVectorMetricsList({
         widgetId: this.widget._id,
-        data: this.getQuery(),
+        params: this.getQuery(),
       });
 
       this.setWidgetMetricsMap();
