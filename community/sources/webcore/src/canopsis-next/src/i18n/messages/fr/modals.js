@@ -915,4 +915,30 @@ export default {
       title: 'Modifier le générateur de liens',
     },
   },
+  createAlarmChart: {
+    barChart: {
+      create: {
+        title: 'Créer un graphique à barres',
+      },
+      edit: {
+        title: 'Modifier le graphique à barres',
+      },
+    },
+    lineChart: {
+      create: {
+        title: 'Créer un graphique en courbes',
+      },
+      edit: {
+        title: 'Modifier le graphique en courbes',
+      },
+    },
+    numbers: {
+      create: {
+        title: 'Créer un tableau de nombres',
+      },
+      edit: {
+        title: 'Modifier le tableau des nombres',
+      },
+    },
+  },
 };
