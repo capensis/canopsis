@@ -58,12 +58,12 @@ export default {
       let previousMetrics = [];
 
       if (trend) {
-        const { data } = await request.post(API_ROUTES.metrics.aggregate, {
+        const { data: responseData } = await request.post(API_ROUTES.metrics.aggregate, {
           ...params,
           ...previousInterval,
         });
 
-        previousMetrics = data;
+        previousMetrics = responseData;
       }
 
       commit(types.FETCH_LIST_COMPLETED, {

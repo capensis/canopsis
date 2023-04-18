@@ -576,6 +576,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
     [MODALS.executeDeclareTickets]: { maxWidth: 920 },
     [MODALS.createLinkRule]: { maxWidth: 920 },
+    [MODALS.createAlarmChart]: { maxWidth: 500 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
