@@ -5,6 +5,7 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
   class="layout column"
 >
   <field-title-stub
+    name="title"
     value="Map widget"
   />
   <field-periodic-refresh-stub
@@ -62,6 +63,7 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
   class="layout column"
 >
   <field-title-stub
+    name="title"
     value=""
   />
   <!---->
