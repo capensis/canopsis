@@ -171,6 +171,8 @@
           :title="$t('settings.kiosk.hideToolbar')"
         )
     v-divider
+    charts-form(v-model="form.parameters.charts")
+    v-divider
 </template>
 
 <script>
@@ -187,6 +189,8 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
+import WidgetSettingsGroup from './partials/widget-settings-group.vue';
+import WidgetSettings from './partials/widget-settings.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
@@ -204,8 +208,7 @@ import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldDensity from './fields/common/density.vue';
 import FieldNumber from './fields/common/number.vue';
 import ExportCsvForm from './forms/export-csv.vue';
-import WidgetSettings from './partials/widget-settings.vue';
-import WidgetSettingsGroup from './partials/widget-settings-group.vue';
+import ChartsForm from './forms/charts-form.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -232,6 +235,7 @@ export default {
     FieldDensity,
     FieldNumber,
     ExportCsvForm,
+    ChartsForm,
   },
   mixins: [
     widgetSettingsMixin,

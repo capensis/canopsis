@@ -16,7 +16,6 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
-import uid from '@/helpers/uid';
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -241,7 +240,7 @@ export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC
  * Convert alarm list chart to form
  *
  * @param {AlarmChart} [chart = {}]
- * @returns {AlarmChartForm}
+ * @returns {AlarmChart}
  */
 export const alarmListChartToForm = (chart = {}) => {
   const convertersMap = {
@@ -255,7 +254,6 @@ export const alarmListChartToForm = (chart = {}) => {
 
   return {
     type,
-    key: uid(),
     title: chart.title ?? '',
     parameters: omit(converter ? converter(chart.parameters) : chart.parameters, ['periodic_refresh']),
   };
