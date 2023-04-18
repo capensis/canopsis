@@ -133,7 +133,7 @@ export default {
     async fetchList() {
       await this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
-        data: this.getQuery(),
+        params: this.getQuery(),
       });
 
       this.setWidgetMetricsMap();
