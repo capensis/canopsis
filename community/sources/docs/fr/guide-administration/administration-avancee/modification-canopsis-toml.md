@@ -103,7 +103,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 | Attribut       | Exemple de valeur                        | Description                          |
 | :------------- | :--------------------------------------- | :----------------------------------- |
-| Upload         | "/opt/canopsis/var/lib/upload-files"     | Emplacement des fichiers uploadés. Utilisé pour le module de [remédiation](../../remediation) et des paramètres de l'interface graphique  |
+| Upload         | "/opt/canopsis/var/lib/upload-files"     | Emplacement des fichiers uploadés. Utilisé pour le module de [remédiation](../../guide-utilisation/remediation/index.md) et des paramètres de l'interface graphique  |
 | UploadMaxSize  | 314572800 # 300Mb                        | Taille maximale d'un fichier à uploader (en octet) |
 | Junit          | "/opt/canopsis/var/lib/junit-files"      | Emplacement des fichiers traités par le module Junit |
 | JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
@@ -170,7 +170,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | :------------------ | :-------------------------------------------| :------------------------------------------------------ |
 | Enabled             | true                                        | Active ou désactive le mode [ConsoleWriter](https://github.com/rs/zerolog#pretty-logging). Si désactivé alors les messages sont loggués en JSON. |
 | NoColor             | true                                        | Active ou désactive les couleurs dans les logs |
-| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../../guide-utilisation/template-go/) |
+| TimeFormat          | "2006-01-02T15:04:05Z07:00"                 | Format des dates des messages de logs au format [GO](../../guide-utilisation/templates-go/index.md) |
 | PartsOrder          | ["time", "level", "caller", "message"]      | Ordre des parties des messages de logs parmi "time", "level", "message", "caller", "error" |
 
 ### Section [Canopsis.metrics]
@@ -184,7 +184,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 | Attribut            | Exemple de valeur  | Description                           |
 | :------------------ | :------------------| :------------------------------------ |
-| Enabled             | false|true         | Active ou non la collecte des [métriques techniques](../../../guide-de-depannage/metriques-techniques/) |
+| Enabled             | false|true         | Active ou non la collecte des [métriques techniques](../../guide-de-depannage/metriques-techniques/index.md) |
 | DumpKeepInterval    | "1h"               | Détermine le temps durant lequel les dumps seront disponibles avant leur suppression                    |
 
 
@@ -192,7 +192,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 | Attribut     | Exemple de valeur  | Description                           |
 | :----------- | :------------------| :------------------------------------ |
-| var1 | "valeur1" | Ces variables peuvent être utilisées dans des [templates Go](../../../guide-utilisation/templates-go) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../../guide-utilisation/cas-d-usage/template_handlebars) sous la forme `{{ env.var1 }}` |
+| var1 | "valeur1" | Ces variables peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.var1 }}` |
  
 
 ### Section [Remediation]
