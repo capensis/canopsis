@@ -21,24 +21,25 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { pick, keyBy } from 'lodash';
+import { pick } from 'lodash';
 
 import { WIDGET_TYPES } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertWidgetToQuery } from '@/helpers/query';
+import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 
 import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
 import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
-import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 const { mapActions: mapAggregatedMetricsActions } = createNamespacedHelpers('aggregatedMetrics');
@@ -56,6 +57,7 @@ export default {
     localQueryMixin,
     widgetIntervalFilterMixin,
     entitiesVectorMetricsMixin,
+    widgetChartMetricsMap,
     widgetChartExportMixinCreator({
       createExport: 'createKpiAlarmExport',
       fetchExport: 'fetchMetricExport',
@@ -73,7 +75,6 @@ export default {
   },
   data() {
     return {
-      widgetMetricsMap: {},
       metrics: [],
       minAvailableDate: null,
       pending: false,
@@ -177,10 +178,6 @@ export default {
         ...pick(this.query, ['parameters', 'sampling', 'with_history']),
         entity: this.alarm.entity._id,
       };
-    },
-
-    setWidgetMetricsMap() {
-      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
     },
 
     async fetchList() {
