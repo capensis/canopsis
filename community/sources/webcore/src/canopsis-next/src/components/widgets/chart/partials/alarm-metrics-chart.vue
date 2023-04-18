@@ -38,6 +38,7 @@ import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
+import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 const { mapActions: mapAggregatedMetricsActions } = createNamespacedHelpers('aggregatedMetrics');
@@ -88,7 +89,7 @@ export default {
     },
 
     preparedMetrics() {
-      return this.metrics.map((metric) => {
+      return convertMetricsToTimezone(this.metrics, this.$system.timezone).map((metric) => {
         const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
         return {
