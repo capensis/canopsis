@@ -49,7 +49,7 @@ describe('kpi-alarms', () => {
   mockDateNow(nowTimestamp);
 
   test('Metrics fetched after mount', async () => {
-    const expectedDefaultData = {
+    const expectedDefaultParams = {
       /* now - 7d  */
       from: 1385830800,
       parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
@@ -59,7 +59,7 @@ describe('kpi-alarms', () => {
     };
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
-      meta: { min_date: expectedDefaultData.from },
+      meta: { min_date: expectedDefaultParams.from },
     }));
 
     factory({
@@ -74,14 +74,14 @@ describe('kpi-alarms', () => {
     expect(fetchAlarmsMetrics).toBeCalledTimes(1);
     expect(fetchAlarmsMetrics).toBeCalledWith(
       expect.any(Object),
-      { data: expectedDefaultData },
+      { params: expectedDefaultParams },
       undefined,
     );
   });
 
   test('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
-    const expectedDataAfterUpdate = {
+    const expectedParamsAfterUpdate = {
       /* now - 2d  */
       from: 1385830800,
       parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
@@ -91,7 +91,7 @@ describe('kpi-alarms', () => {
     };
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
-      meta: { min_date: expectedDataAfterUpdate.from },
+      meta: { min_date: expectedParamsAfterUpdate.from },
     }));
 
     const wrapper = factory({
@@ -120,7 +120,7 @@ describe('kpi-alarms', () => {
     expect(fetchAlarmsMetrics).toBeCalledTimes(2);
     expect(fetchAlarmsMetrics).toBeCalledWith(
       expect.any(Object),
-      { data: expectedDataAfterUpdate },
+      { params: expectedParamsAfterUpdate },
       undefined,
     );
   });

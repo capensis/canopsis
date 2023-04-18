@@ -29,10 +29,10 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit }, { widgetId, data } = {}) {
+    async fetchList({ commit }, { widgetId, params } = {}) {
       commit(types.FETCH_LIST, { widgetId });
 
-      const { data: metrics, meta } = await request.post(API_ROUTES.metrics.alarm, data);
+      const { data: metrics, meta } = await request.post(API_ROUTES.metrics.alarm, params);
 
       commit(types.FETCH_LIST_COMPLETED, {
         widgetId,
