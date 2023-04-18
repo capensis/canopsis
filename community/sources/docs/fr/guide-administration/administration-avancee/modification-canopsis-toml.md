@@ -179,6 +179,15 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | :------------------ | :------------------| :------------------------------------ |
 | SliInterval         | "1h"               | Les longs intervalles de SLI sont découpés en plus petits intervalles définis par cet attribut. <br />Une valeur faible augmente la précision des métriques mais nécessite plus d'espace disque. <br />Une valeur élevée diminue la précision des métriques mais nécessaite moins d'espace disque. <br /> "1h" est la valeur recommandée dans la mesure où l'intervalle le plus petit gérée par l'interface graphique correspond à 1 heure |
 
+
+### Section [Canopsis.tech_metrics]
+
+| Attribut            | Exemple de valeur  | Description                           |
+| :------------------ | :------------------| :------------------------------------ |
+| Enabled             | false|true         | Active ou non la collecte des [métriques techniques](../../../guide-de-depannage/metriques-techniques/) |
+| DumpKeepInterval    | "1h"               | Détermine le temps durant lequel les dumps seront disponibles avant leur suppression                    |
+
+
 ### Section [Canopsis.template.vars]
 
 | Attribut     | Exemple de valeur  | Description                           |

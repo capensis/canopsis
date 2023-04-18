@@ -19,7 +19,7 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 
 *  [Documentation interconnexions](../../interconnexions/index.md)
 *  [Documentation moteurs](../moteurs/index.md)
-*  [Documentation base de données](../../guide-de-depannage/bdd-requetes-de-base.md)
+*  [Documentation base de données](../../guide-de-depannage/bdd-requetes-de-base/)
 *  [Documentation Web UI](../../guide-utilisation/interface/index.md)
 
 ## Documentation des mécaniques spécifiques internes à Canopsis
