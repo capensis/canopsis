@@ -846,12 +846,16 @@ export const createAggregatedMetricsModule = () => {
   const getAggregatedMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
   const getAggregatedMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
   const fetchAggregatedMetricsList = jest.fn();
+  const fetchAggregatedMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
 
   afterEach(() => {
     getAggregatedMetricsListByWidgetId.mockClear();
     getAggregatedMetricsPendingByWidgetId.mockClear();
     getAggregatedMetricsMetaByWidgetId.mockClear();
     fetchAggregatedMetricsList.mockClear();
+    fetchAggregatedMetricsWithoutStore.mockClear();
   });
 
   const aggregatedMetricsModule = {
@@ -863,6 +867,7 @@ export const createAggregatedMetricsModule = () => {
     },
     actions: {
       fetchList: fetchAggregatedMetricsList,
+      fetchListWithoutStore: fetchAggregatedMetricsWithoutStore,
     },
   };
 
@@ -872,16 +877,21 @@ export const createAggregatedMetricsModule = () => {
     getAggregatedMetricsPendingByWidgetId,
     getAggregatedMetricsMetaByWidgetId,
     fetchAggregatedMetricsList,
+    fetchAggregatedMetricsWithoutStore,
   };
 };
 
 export const createMetricsModule = () => {
   const fetchExternalMetricsList = jest.fn();
+  const fetchAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
   const externalMetrics = jest.fn().mockReturnValue([]);
   const pending = jest.fn().mockReturnValue(false);
 
   afterEach(() => {
     fetchExternalMetricsList.mockClear();
+    fetchAlarmsMetricsWithoutStore.mockClear();
     externalMetrics.mockClear();
     pending.mockClear();
   });
@@ -894,6 +904,7 @@ export const createMetricsModule = () => {
     },
     actions: {
       fetchExternalMetricsList,
+      fetchAlarmsMetricsWithoutStore,
     },
   };
 
@@ -901,5 +912,6 @@ export const createMetricsModule = () => {
     metricsModule,
     externalMetrics,
     fetchExternalMetricsList,
+    fetchAlarmsMetricsWithoutStore,
   };
 };
