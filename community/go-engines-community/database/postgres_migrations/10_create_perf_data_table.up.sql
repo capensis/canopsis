@@ -15,6 +15,6 @@ CREATE INDEX IF NOT EXISTS perf_data_name_entity_id_time_idx ON perf_data (name,
 CREATE MATERIALIZED VIEW IF NOT EXISTS perf_data_name AS
 SELECT name, unit FROM perf_data
 GROUP BY name, unit;
-CREATE UNIQUE INDEX perf_data_name_name_idx ON perf_data_name (name);
+CREATE UNIQUE INDEX IF NOT EXISTS perf_data_name_name_idx ON perf_data_name (name);
 
 END;
