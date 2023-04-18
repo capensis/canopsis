@@ -142,17 +142,17 @@ export default {
       try {
         this.pending = true;
 
-        const data = this.getQuery();
+        const params = this.getQuery();
         const {
           data: alarmsMetrics,
           meta: { min_date: minDate },
-        } = await this.fetchAlarmsMetricsWithoutStore({ data });
+        } = await this.fetchAlarmsMetricsWithoutStore({ params });
 
         this.alarmsMetrics = convertMetricsToTimezone(alarmsMetrics, this.$system.timezone);
         this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
         this.fetchError = false;
 
-        if (data.from < this.minDate) {
+        if (params.from < this.minDate) {
           this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
         }
       } catch (err) {

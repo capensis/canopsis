@@ -173,7 +173,7 @@ export default {
       await this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
         trend: this.widget.parameters.show_trend,
-        data: this.getQuery(),
+        params: this.getQuery(),
       });
 
       this.setWidgetMetricsMap();
