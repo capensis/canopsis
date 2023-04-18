@@ -5,6 +5,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
   class="layout column"
 >
   <field-title-stub
+    name="title"
     value="Map widget"
   />
   <field-periodic-refresh-stub
@@ -61,6 +62,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
   class="layout column"
 >
   <field-title-stub
+    name="title"
     value=""
   />
   <!---->

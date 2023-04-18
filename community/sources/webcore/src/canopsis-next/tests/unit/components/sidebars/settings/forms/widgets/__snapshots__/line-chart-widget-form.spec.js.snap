@@ -5,6 +5,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   class="layout column"
 >
   <field-title-stub
+    name="title"
     value="Map widget"
   />
   <field-periodic-refresh-stub
@@ -51,6 +52,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   class="layout column"
 >
   <field-title-stub
+    name="title"
     value=""
   />
   <!---->
