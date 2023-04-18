@@ -114,7 +114,7 @@ Pour le réaliser, rendez-vous dans le menu `Administration->Bilan de santé` da
    </tr>
    <tr>
       <td>
-         Fifo queue length
+         fifo_queue
       </td>
       <td>
          Cette métrique permet d’investiguer sur des problèmes de performance liés au flux.
