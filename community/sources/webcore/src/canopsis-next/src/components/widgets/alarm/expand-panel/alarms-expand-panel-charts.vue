@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    alarm-metrics-chart(
+    alarm-chart-widget(
       v-for="(chart, index) in charts",
       :key="index",
       :widget="chart",
@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import AlarmMetricsChart from '@/components/widgets/chart/partials/alarm-metrics-chart.vue';
+import AlarmChartWidget from '@/components/widgets/chart/alarm-chart-widget.vue';
 
 export default {
-  components: { AlarmMetricsChart },
+  components: { AlarmChartWidget },
   props: {
     charts: {
       type: Array,
