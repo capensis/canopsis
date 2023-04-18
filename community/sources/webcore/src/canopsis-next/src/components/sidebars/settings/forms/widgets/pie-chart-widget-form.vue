@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { ALARM_METRIC_PARAMETERS } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 import WidgetSettingsGroup from '../../partials/widget-settings-group.vue';
@@ -42,7 +44,6 @@ import FieldQuickDateIntervalType from '../../fields/common/quick-date-interval-
 import FieldSampling from '../../fields/common/sampling.vue';
 import FieldAlarmMetricAggregateFunction from '../../fields/chart/alarm-metric-aggregate-function.vue';
 import FieldFilters from '../../fields/common/filters.vue';
-import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
   components: {
