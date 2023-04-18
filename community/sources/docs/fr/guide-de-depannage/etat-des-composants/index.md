@@ -36,4 +36,4 @@ canoctl status
 
 ## Gestion avancée des composants
 
-[Arrêt et relance des composants](../guide-administration/gestion-composants/arret-relance-composants.md)
+[Arrêt et relance des composants](../../guide-administration/gestion-composants/arret-relance-composants.md)

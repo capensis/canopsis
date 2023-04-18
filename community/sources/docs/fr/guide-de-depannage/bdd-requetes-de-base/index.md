@@ -176,4 +176,4 @@ db.periodical_alarm.remove({"v.component" : "XXXX", "v.resource" : "Ping", "v.re
 
 ## État des composants de Canopsis
 
-[Rendez-vous ici](etat-des-composants.md).
+[Rendez-vous ici](../etat-des-composants/).
