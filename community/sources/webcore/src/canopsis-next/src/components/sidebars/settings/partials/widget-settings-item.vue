@@ -30,10 +30,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    title3: {
-      type: Boolean,
-      default: false,
-    },
   },
 };
 </script>
