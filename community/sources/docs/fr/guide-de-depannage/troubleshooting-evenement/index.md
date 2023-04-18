@@ -18,7 +18,7 @@ Sinon, c'est qu'il y a un problème au niveau de ce dernier que vous pourrez dia
 
 ## amqp2tty
 
-Dans un second temps, la vérification va passer par `amqp2tty`, une documentation complète à son sujet est [disponible ici](amqp2tty.md).  
+Dans un second temps, la vérification va passer par `amqp2tty`, une documentation complète à son sujet est [disponible ici](../amqp2tty/).  
 
 ## Vérification du JSON et de son contenu
 
@@ -32,4 +32,4 @@ Un évènement est un message arrivant dans Canopsis. Il est formatté en JSON e
 
 Ces évènements, formatés en JSON, doivent être composés de plusieurs champs, certains étant obligatoires, d'autres étant optionnels.
 
-Voir aussi la page de [Vocabulaire](../guide-utilisation/vocabulaire/index.md).
+Voir aussi la page de [Vocabulaire](../../guide-utilisation/vocabulaire/index.md).

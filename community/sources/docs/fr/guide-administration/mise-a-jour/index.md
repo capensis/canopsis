@@ -115,7 +115,7 @@ Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite
 
 Durant le temps de coupure des services Canopsis, RabbitMQ se sera chargé de mettre en attente vos [évènements](../../guide-utilisation/vocabulaire/index.md#evenement). Ils seront alors « dépilés » et traités normalement par les moteurs Canopsis, dès leur redémarrage.
 
-Cette accumulation d'évènements en attente peut, néanmoins, provoquer une latence des traitements, ou une augmentation de la consommation des ressources, en raison du rattrapage à effectuer. Cette incidence reste temporaire. Nous vous conseillons de [surveiller l'interface d'administration de RabbitMQ](../../guide-de-depannage/rabbitmq-webui.md) juste avant, durant et après la mise à jour, afin de mesurer l'état de « retour à la normale » de votre plateforme lors d'une période de maintenance de l'outil.
+Cette accumulation d'évènements en attente peut, néanmoins, provoquer une latence des traitements, ou une augmentation de la consommation des ressources, en raison du rattrapage à effectuer. Cette incidence reste temporaire. Nous vous conseillons de [surveiller l'interface d'administration de RabbitMQ](../../guide-de-depannage/rabbitmq-webui/) juste avant, durant et après la mise à jour, afin de mesurer l'état de « retour à la normale » de votre plateforme lors d'une période de maintenance de l'outil.
 
 En revanche, tout appel fait aux API Canopsis durant cette période de maintenance n'aura pas été temporisé et devra donc être renouvelé s'il a échoué.
 
