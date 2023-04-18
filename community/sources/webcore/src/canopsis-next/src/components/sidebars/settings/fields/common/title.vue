@@ -1,5 +1,5 @@
 <template lang="pug">
-  widget-settings-item(:title="$t('common.title')", :optional="!required", title3)
+  widget-settings-item(:title="$t('common.title')", :optional="!required")
     v-text-field(
       v-field="value",
       v-validate="rules",
