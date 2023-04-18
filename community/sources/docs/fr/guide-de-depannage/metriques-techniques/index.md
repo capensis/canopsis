@@ -13,7 +13,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
 
 !!! warning
 
-    Cette base de donnée DOIT être différente de celle utilisée pour les KPI Canopsis.
+    Cette base de donnée **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
 === "Docker Compose"
 
@@ -77,7 +77,7 @@ L'option `DumpKeepInterval` définit le délai au dela duquel un dump demandé d
     Ajouter le bloc de configuration dans votre fichier d'override `files-pro/reconfigure/reconfigure.override.toml` puis exécutez un `up -d`.
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+    CPS_EDITION=pro docker-compose up -d
     ```
 
 === "Paquets RedHat 8"
