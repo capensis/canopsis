@@ -368,6 +368,13 @@ func NewDurationWithEnabled(value int64, unit string, enabled *bool) DurationWit
 	}
 }
 
+func IsDurationEnabledAndValid(durationWithEnabled *DurationWithEnabled) bool {
+	return durationWithEnabled != nil &&
+		durationWithEnabled.Enabled != nil &&
+		*durationWithEnabled.Enabled &&
+		durationWithEnabled.Value > 0
+}
+
 func listOfInterfaceToString(v []interface{}) (string, error) {
 	values := make([]string, len(v))
 	for i, vv := range v {
