@@ -1,8 +1,11 @@
 <template lang="pug">
-  widget-settings-item(:title="$t('common.title')", optional)
+  widget-settings-item(:title="$t('common.title')", :optional="!required", title3)
     v-text-field(
       v-field="value",
-      :placeholder="$t('settings.widgetTitle')"
+      v-validate="rules",
+      :placeholder="$t('settings.widgetTitle')",
+      :name="name",
+      :error-messages="errors.collect(name)"
     )
 </template>
 
@@ -15,11 +18,27 @@ import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-s
  * @prop {String} [value] - Value of the title
  */
 export default {
+  inject: ['$validator'],
   components: { WidgetSettingsItem },
   props: {
     value: {
       type: String,
       required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    name: {
+      type: String,
+      default: 'title',
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };

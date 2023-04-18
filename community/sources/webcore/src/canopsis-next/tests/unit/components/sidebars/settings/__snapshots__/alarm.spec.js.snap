@@ -3,6 +3,7 @@
 exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value=""
   />
   <hr
@@ -238,12 +239,19 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
   <hr
     class="v-divider theme--light"
   />
+  <charts-form-stub
+    charts=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
 </widget-settings-stub>
 `;
 
 exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value="Alarms list"
   />
   <hr
@@ -466,12 +474,19 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
   <hr
     class="v-divider theme--light"
   />
+  <charts-form-stub
+    charts=""
+  />
+  <hr
+    class="v-divider theme--light"
+  />
 </widget-settings-stub>
 `;
 
 exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value=""
   />
   <hr
@@ -686,6 +701,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       />
     </widget-settings-group-stub>
   </widget-settings-group-stub>
+  <hr
+    class="v-divider theme--light"
+  />
+  <charts-form-stub
+    charts=""
+  />
   <hr
     class="v-divider theme--light"
   />
