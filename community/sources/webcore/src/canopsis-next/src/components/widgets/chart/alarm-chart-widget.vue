@@ -159,9 +159,6 @@ export default {
   created() {
     this.setWidgetMetricsMap();
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
     ...mapMetricsActions({
       createKpiAlarmExport: 'createKpiAlarmExport',
