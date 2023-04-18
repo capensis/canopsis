@@ -4,7 +4,6 @@ exports[`title Renders \`title\` with custom props 1`] = `
 <widget-settings-item-stub
   optional="true"
   title="Custom title"
-  title3="true"
 >
   <div
     class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
@@ -45,7 +44,6 @@ exports[`title Renders \`title\` with default props 1`] = `
 <widget-settings-item-stub
   optional="true"
   title="Title"
-  title3="true"
 >
   <div
     class="v-input v-text-field v-text-field--placeholder theme--light"
