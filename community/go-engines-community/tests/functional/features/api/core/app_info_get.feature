@@ -28,6 +28,10 @@ Feature: Get application information
           {
             "auth_type": "header-token",
             "name": "rundeck"
+          },
+          {
+            "auth_type": "header-token",
+            "name": "vtom"
           }
         ]
       },
