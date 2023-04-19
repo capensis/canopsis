@@ -297,6 +297,35 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
 		},
+		// VTOM
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"status\":\"Finished\"}",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/logs/last/stdout": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-output",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"status\":\"Error\"}",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/logs/last/stderr": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-failed-output",
+		},
 		// External data
 		"/api/external_data": {
 			Code:   http.StatusOK,
