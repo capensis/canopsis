@@ -466,6 +466,33 @@ statuses = { SUCCESS = "succeeded", FAIL = "failed", FAILURE = "failed", ERROR =
 url_tpl = "{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText"
 method = "GET"
 
+[Remediation.external_api.vtom]
+response_err_msg_key = "message"
+[Remediation.external_api.vtom.auth]
+type = "header-token"
+header = "X-API-KEY"
+[Remediation.external_api.vtom.reset_endpoint]
+url_tpl = "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/action"
+method = "POST"
+headers = { Content-Type = "application/json", Accept = "application/json" }
+body = "{\"type\":\"ChangeStatus\",\"status\":\"Waiting\"}"
+[Remediation.external_api.vtom.launch_endpoint]
+url_tpl = "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/action"
+method = "POST"
+headers = { Content-Type = "application/json", Accept = "application/json" }
+body = "{\"type\":\"Request\"}"
+[Remediation.external_api.vtom.status_endpoint]
+url_tpl = "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/status"
+method = "GET"
+response_status_key = "status"
+statuses = { Waiting = "running", Running = "running", Finished = "succeeded", Error = "failed" }
+[Remediation.external_api.vtom.output_endpoint]
+url_tpl = "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/logs/last/stdout"
+method = "GET"
+[Remediation.external_api.vtom.err_output_endpoint]
+url_tpl = "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/logs/last/stderr"
+method = "GET"
+
 # It's required to restart api after canopsis-reconfigure updates mongodb to catch up following parameter.
 [HealthCheck]
 update_interval = "10s"
