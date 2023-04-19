@@ -8,6 +8,7 @@
         :parameters="parameters",
         :disabled-parameters="disabledParameters",
         :with-external="withExternal",
+        :only-external="onlyExternal",
         :name="`${name}[${item.key}]`"
       )
     template(#append="")
@@ -68,6 +69,10 @@ export default {
     min: {
       type: Number,
       default: 1,
+    },
+    onlyExternal: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
