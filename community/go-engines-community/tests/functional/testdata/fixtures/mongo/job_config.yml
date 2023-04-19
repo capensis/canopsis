@@ -35,6 +35,15 @@ template:
     author: root,
     created: <NowUnix()>
   }
+  - &condig_dummy_vtom {
+    _id: <UUID()>,
+    type: vtom,
+    name: <UniqueName()>,
+    host: "http://localhost:3000",
+    auth_token: <UUID()>,
+    author: root,
+    created: <NowUnix()>
+  }
 
 job_config:
   job_config_to_get:
@@ -104,3 +113,7 @@ job_config:
   job_config_metrics_axe:
     <<: *condig_dummy_rundeck
     _id: test-job-config-metrics-axe
+
+  job_config_to_run_manual_vtom_job:
+    <<: *condig_dummy_vtom
+    _id: test-job-config-to-run-manual-vtom-job
