@@ -46,6 +46,16 @@ export default {
     logCredentialsHelpText: 'When enabled, all credentials and auth data is written in logs in open way (not recommended). \n'
       + 'When disabled, all passwords, tokens and auth data is hidden and written as *** in logs.',
   },
+  /** TODO: Messages should be added */
+  metrics: {
+    title: 'metrics',
+    deleteAfter: 'Clear perf data metrics after',
+  },
+  /** TODO: Messages should be added */
+  perfDataMetrics: {
+    title: 'perfDataMetrics',
+    deleteAfter: 'Clear metrics data after',
+  },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
     alarm: {
