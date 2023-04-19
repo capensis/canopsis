@@ -18,23 +18,24 @@
       :name="`${name}.label`",
       required
     )
-    v-layout(v-if="withColor", align-center, justify-space-between)
-      v-switch(
-        :label="$t('kpi.customColor')",
-        :input-value="!!preset.color",
-        color="primary",
-        @change="enableColor($event)"
+    template(v-if="preset.metric")
+      v-layout(v-if="withColor", align-center, justify-space-between)
+        v-switch(
+          :label="$t('kpi.customColor')",
+          :input-value="!!preset.color",
+          color="primary",
+          @change="enableColor($event)"
+        )
+        c-color-picker-field.c-alarm-metric-preset-field__color-picker(
+          v-show="preset.color",
+          v-field="preset.color"
+        )
+      c-alarm-metric-aggregate-function-field(
+        v-if="withAggregateFunction || isExternalMetric",
+        v-field="preset.aggregate_func",
+        :aggregate-functions="aggregateFunctions",
+        :label="$t('kpi.calculationMethod')"
       )
-      c-color-picker-field.c-alarm-metric-preset-field__color-picker(
-        v-show="preset.color",
-        v-field="preset.color"
-      )
-    c-alarm-metric-aggregate-function-field(
-      v-if="withAggregateFunction || isExternalMetric",
-      v-field="preset.aggregate_func",
-      :aggregate-functions="aggregateFunctions",
-      :label="$t('kpi.calculationMethod')"
-    )
 </template>
 
 <script>
