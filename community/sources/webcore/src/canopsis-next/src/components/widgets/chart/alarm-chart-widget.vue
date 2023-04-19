@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       metrics: [],
-      minAvailableDate: null,
+      minDate: null,
       pending: false,
     };
   },
@@ -87,6 +87,12 @@ export default {
 
     isVectorChart() {
       return [WIDGET_TYPES.barChart, WIDGET_TYPES.lineChart].includes(this.widget.type);
+    },
+
+    minAvailableDate() {
+      return this.minDate
+        ? convertDateToStartOfDayTimestampByTimezone(this.minDate, this.$system.timezone)
+        : null;
     },
 
     preparedMetrics() {
@@ -188,9 +194,7 @@ export default {
         const { data, meta: { min_date: minDate } = {} } = await fetchList({ params: this.getQuery() });
 
         this.metrics = data;
-        this.minAvailableDate = minDate
-          ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
-          : null;
+        this.minDate = minDate;
 
         this.setWidgetMetricsMap();
       } catch (error) {
