@@ -43,6 +43,11 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageMetricsConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -51,6 +56,8 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStoragePbehaviorConfig} pbehavior
  * @property {DataStorageHealthCheckConfig} health_check
  * @property {DataStorageWebhookConfig} webhook
+ * @property {DataStorageMetricsConfig} metrics
+ * @property {DataStorageMetricsConfig} perf_data_metrics
  */
 
 /**
@@ -174,6 +181,18 @@ export const dataStorageWebhookSettingsToForm = (webhook = {}) => ({
 });
 
 /**
+ * Convert data storage metrics config to metrics form object
+ *
+ * @param {DataStorageMetricsConfig} metrics
+ * @return {DataStorageMetricsConfig}
+ */
+export const dataStorageMetricsToForm = (metrics = {}) => ({
+  delete_after: metrics.delete_after
+    ? durationWithEnabledToForm(metrics.delete_after)
+    : { value: 6, unit: TIME_UNITS.month, enabled: false },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -187,4 +206,6 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
+  metrics: dataStorageMetricsToForm(dataStorage.metrics),
+  perf_data_metrics: dataStorageMetricsToForm(dataStorage.perf_data_metrics),
 });
