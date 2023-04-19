@@ -37,6 +37,7 @@ import {
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 
 const stubs = {
   'widget-settings': true,
@@ -59,6 +60,7 @@ const stubs = {
   'field-number': createInputStub('field-number'),
   'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
+  'charts-form': createInputStub('charts-form'),
   'v-btn': createButtonStub('v-btn'),
 };
 
@@ -83,6 +85,7 @@ const snapshotStubs = {
   'field-number': true,
   'field-density': true,
   'export-csv-form': true,
+  'charts-form': true,
 };
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
@@ -112,6 +115,7 @@ const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher
 const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
 const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(8);
 const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(9);
+const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
   const parentComponent = {
@@ -1186,6 +1190,33 @@ describe('alarm', () => {
           hideMassSelection,
           hideToolbar,
         }),
+      },
+    });
+  });
+
+  test('Charts fields changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const chartsForm = selectChartsForm(wrapper);
+    const newCharts = [formToAlarmListChart(alarmListChartToForm())];
+
+    chartsForm.vm.$emit('input', newCharts);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'charts', newCharts),
       },
     });
   });
