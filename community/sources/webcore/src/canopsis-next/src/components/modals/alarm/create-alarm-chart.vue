@@ -4,8 +4,12 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        v-list.widget-settings__list.py-0(expand)
-          component(:is="formComponent", v-model="form")
+        v-list.widget-settings.widget-settings--divider.widget-settings__list.py-0(expand)
+          component(
+            v-model="form",
+            :is="formComponent",
+            required-title
+          )
       template(#actions="")
         v-btn(
           depressed,
@@ -20,7 +24,7 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES } from '@/constants';
+import { MODALS, VALIDATION_DELAY, WIDGET_TYPES } from '@/constants';
 
 import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 
@@ -38,6 +42,7 @@ export default {
   name: MODALS.createAlarmChart,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     BarChartWidgetForm,
@@ -65,7 +70,7 @@ export default {
     },
 
     title() {
-      return this.config.title ?? this.$t('modals.createAlarmChart.barChart.title');
+      return this.config.title ?? this.$t(`modals.createAlarmChart.${WIDGET_TYPES.barChart}.create.title`);
     },
   },
   methods: {
