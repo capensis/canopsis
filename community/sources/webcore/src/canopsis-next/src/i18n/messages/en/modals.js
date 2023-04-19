@@ -916,7 +916,7 @@ export default {
     },
   },
   createAlarmChart: {
-    barChart: {
+    [WIDGET_TYPES.barChart]: {
       create: {
         title: 'Create bar chart',
       },
@@ -924,7 +924,7 @@ export default {
         title: 'Edit bar chart',
       },
     },
-    lineChart: {
+    [WIDGET_TYPES.lineChart]: {
       create: {
         title: 'Create line chart',
       },
@@ -932,7 +932,7 @@ export default {
         title: 'Edit line chart',
       },
     },
-    numbers: {
+    [WIDGET_TYPES.numbers]: {
       create: {
         title: 'Create numbers chart',
       },
