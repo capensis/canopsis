@@ -30,15 +30,28 @@ export const isResolvedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STAT
 export const isWarningAlarmState = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
 
 /**
+ * Add uniq key field in entity object.
+ *
+ * @param {Object} entity
+ * @return {Object}
+ */
+export const addKeyInEntity = (entity = {}) => ({ ...entity, key: uid() });
+
+/**
  * Add uniq key field in each entity.
  *
  * @param {Array} entities
  * @return {Array}
  */
-export const addKeyInEntities = (entities = []) => entities.map(entity => ({
-  ...entity,
-  key: uid(),
-}));
+export const addKeyInEntities = (entities = []) => entities.map(addKeyInEntity);
+
+/**
+ * Remove key field from each entity.
+ *
+ * @param {Object} entity
+ * @return {Object}
+ */
+export const removeKeyFromEntity = (entity = {}) => omit(entity, ['key']);
 
 /**
  * Remove key field from each entity.
@@ -46,7 +59,7 @@ export const addKeyInEntities = (entities = []) => entities.map(entity => ({
  * @param {Array} entities
  * @return {Array}
  */
-export const removeKeyFromEntities = (entities = []) => entities.map(entity => omit(entity, ['key']));
+export const removeKeyFromEntities = (entities = []) => entities.map(removeKeyFromEntity);
 
 /**
  * Get id from entity

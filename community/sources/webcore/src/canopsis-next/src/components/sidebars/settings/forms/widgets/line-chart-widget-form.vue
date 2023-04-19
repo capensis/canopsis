@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    field-title(v-field="form.title")
+    field-title(v-field="form.title", :required="requiredTitle")
     field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters.periodic_refresh")
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
       field-alarm-metric-presets(v-field="form.parameters.metrics", with-color, with-external)
@@ -62,6 +62,10 @@ export default {
       default: false,
     },
     withFilters: {
+      type: Boolean,
+      default: false,
+    },
+    requiredTitle: {
       type: Boolean,
       default: false,
     },
