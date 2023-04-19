@@ -104,11 +104,28 @@
       c-enabled-field(
         v-field="form.webhook.log_credentials",
         :label="$t('storageSetting.webhook.logCredentials')",
-        :name="webhookLogCredentialsFieldName",
-        hide-details
+        :name="webhookLogCredentialsFieldName"
       )
         template(#append="")
           c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", color="info", top)
+    c-information-block(
+      :title="$t('storageSetting.metrics.title')",
+      help-icon-color="info"
+    )
+      c-enabled-duration-field(
+        v-field="form.metrics.delete_after",
+        :label="$t('storageSetting.metrics.deleteAfter')",
+        :name="metricsDeleteAfterFieldName"
+      )
+    c-information-block(
+      :title="$t('storageSetting.perfDataMetrics.title')",
+      help-icon-color="info"
+    )
+      c-enabled-duration-field(
+        v-field="form.perf_data_metrics.delete_after",
+        :label="$t('storageSetting.perfDataMetrics.deleteAfter')",
+        :name="perfDataMetricsDeleteAfterFieldName"
+      )
 </template>
 
 <script>
@@ -163,6 +180,14 @@ export default {
 
     healthCheckDeleteAfterFieldName() {
       return 'health_check.delete_after';
+    },
+
+    metricsDeleteAfterFieldName() {
+      return 'metrics.delete_after';
+    },
+
+    perfDataMetricsDeleteAfterFieldName() {
+      return 'perf_data_metrics.delete_after';
     },
 
     webhookDeleteAfterFieldName() {
