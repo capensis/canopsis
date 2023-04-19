@@ -19,11 +19,21 @@ type RemediationConf struct {
 // ExternalApiConfig represents configuration of external service API.
 type ExternalApiConfig struct {
 	Auth              Auth           `toml:"auth" bson:"auth"`
+	ResetEndpoint     ResetEndpoint  `toml:"reset_endpoint" bson:"reset_endpoint"`
 	LaunchEndpoint    LaunchEndpoint `toml:"launch_endpoint" bson:"launch_endpoint"`
 	StatusEndpoint    StatusEndpoint `toml:"status_endpoint" bson:"status_endpoint"`
 	QueueEndpoint     QueueEndpoint  `toml:"queue_endpoint" bson:"queue_endpoint"`
 	OutputEndpoint    OutputEndpoint `toml:"output_endpoint" bson:"output_endpoint"`
+	ErrOutputEndpoint OutputEndpoint `toml:"err_output_endpoint" bson:"err_output_endpoint"`
 	ResponseErrMsgKey string         `toml:"response_err_msg_key" bson:"response_err_msg_key,omitempty"`
+}
+
+// ResetEndpoint represents API endpoint to reset external job.
+type ResetEndpoint struct {
+	UrlTpl  string            `toml:"url_tpl" bson:"url_tpl"`
+	Method  string            `toml:"method" bson:"method"`
+	Headers map[string]string `toml:"headers" bson:"headers,omitempty"`
+	Body    string            `toml:"body" bson:"body"`
 }
 
 // LaunchEndpoint represents API endpoint to launch external job.
@@ -35,6 +45,7 @@ type LaunchEndpoint struct {
 	ResponseStatusUrlKey       string            `toml:"response_status_url_key" bson:"response_status_url_key,omitempty"`
 	ResponseStatusHeaderUrlKey string            `toml:"response_status_header_url_key" bson:"response_status_header_url_key,omitempty"`
 	ResponseExternalUrlKey     string            `toml:"response_external_url_key" bson:"response_external_url_key,omitempty"`
+	Body                       string            `toml:"body" bson:"body"`
 }
 
 // QueueEndpoint represents API endpoint to fetch external job execution.
