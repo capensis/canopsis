@@ -7,6 +7,7 @@
       :with-aggregate-function="withAggregateFunction",
       :parameters="parameters",
       :only-group="onlyGroup",
+      :only-external="onlyExternal",
       :min="min"
     )
 </template>
@@ -44,6 +45,10 @@ export default {
     min: {
       type: Number,
       required: false,
+    },
+    onlyExternal: {
+      type: Boolean,
+      default: false,
     },
   },
 };
