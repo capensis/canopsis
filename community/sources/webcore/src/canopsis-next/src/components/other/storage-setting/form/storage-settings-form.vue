@@ -22,7 +22,13 @@
       help-icon-color="info"
     )
       template(v-if="history.entity", #subtitle="") {{ entitySubTitle }}
-      v-radio-group(v-field="form.entity.archive", hide-details, mandatory, row)
+      v-radio-group(
+        v-field="form.entity.archive",
+        name="entity.archive",
+        hide-details,
+        mandatory,
+        row
+      )
         v-radio(:value="true", :label="$t('storageSetting.entity.archiveEntity')", color="primary")
         v-radio(:value="false", :label="$t('storageSetting.entity.deleteEntity')", color="primary")
       v-checkbox(
@@ -110,20 +116,24 @@
           c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", color="info", top)
     c-information-block(
       :title="$t('storageSetting.metrics.title')",
+      :help-text="$t('storageSetting.metrics.titleHelp')",
       help-icon-color="info"
     )
       c-enabled-duration-field(
         v-field="form.metrics.delete_after",
         :label="$t('storageSetting.metrics.deleteAfter')",
+        :help-text="$t('storageSetting.metrics.deleteAfterHelpText')",
         :name="metricsDeleteAfterFieldName"
       )
     c-information-block(
       :title="$t('storageSetting.perfDataMetrics.title')",
+      :help-text="$t('storageSetting.perfDataMetrics.titleHelp')",
       help-icon-color="info"
     )
       c-enabled-duration-field(
         v-field="form.perf_data_metrics.delete_after",
         :label="$t('storageSetting.perfDataMetrics.deleteAfter')",
+        :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')",
         :name="perfDataMetricsDeleteAfterFieldName"
       )
 </template>

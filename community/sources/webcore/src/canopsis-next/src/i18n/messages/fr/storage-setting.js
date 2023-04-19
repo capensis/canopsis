@@ -46,15 +46,17 @@ export default {
     logCredentialsHelpText: 'Lorsqu\'il est activé, toutes les informations d\'identification et les données d\'authentification sont écrites dans les journaux de manière ouverte (non recommandé). \n'
       + 'Lorsqu\'il est désactivé, tous les mots de passe, jetons et données d\'authentification sont masqués et écrits sous la forme *** dans les journaux.',
   },
-  /** TODO: Messages should be added */
   metrics: {
-    title: 'metrics',
-    deleteAfter: 'Clear perf data metrics after',
+    title: 'Stockage interne des données de métriques',
+    titleHelp: 'Lorsque cette option est activée, les données de métriques internes seront supprimées après la période définie',
+    deleteAfter: 'Effacer le stockage des métriques après',
+    deleteAfterHelpText: 'Toutes les métriques internes antérieures à la période définie seront supprimées',
   },
-  /** TODO: Messages should be added */
   perfDataMetrics: {
-    title: 'perfDataMetrics',
-    deleteAfter: 'Clear metrics data after',
+    title: 'Stockage de données de métriques externes',
+    titleHelp: 'Lorsque cette option est activée, les données de métriques externes seront supprimées après la période définie',
+    deleteAfter: 'Effacer le stockage des métriques après',
+    deleteAfterHelpText: 'Toutes les métriques externes antérieures à la période définie seront supprimées',
   },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',

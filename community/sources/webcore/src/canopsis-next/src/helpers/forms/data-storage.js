@@ -189,7 +189,19 @@ export const dataStorageWebhookSettingsToForm = (webhook = {}) => ({
 export const dataStorageMetricsToForm = (metrics = {}) => ({
   delete_after: metrics.delete_after
     ? durationWithEnabledToForm(metrics.delete_after)
-    : { value: 6, unit: TIME_UNITS.month, enabled: false },
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
+});
+
+/**
+ * Convert data storage perf data metrics config to perf data metrics form object
+ *
+ * @param {DataStorageMetricsConfig} perfDataMetrics
+ * @return {DataStorageMetricsConfig}
+ */
+export const dataStoragePerfDataMetricsToForm = (perfDataMetrics = {}) => ({
+  delete_after: perfDataMetrics.delete_after
+    ? durationWithEnabledToForm(perfDataMetrics.delete_after)
+    : { value: 180, unit: TIME_UNITS.day, enabled: false },
 });
 
 /**
@@ -207,5 +219,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
   metrics: dataStorageMetricsToForm(dataStorage.metrics),
-  perf_data_metrics: dataStorageMetricsToForm(dataStorage.perf_data_metrics),
+  perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
 });
