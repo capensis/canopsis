@@ -3,7 +3,7 @@
     c-alarm-metric-parameters-field(
       :value="preset.metric",
       :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')",
-      :parameters="preset.auto ? [] : parameters",
+      :parameters="preset.auto || onlyExternal ? [] : parameters",
       :disabled-parameters="disabledParameters",
       :addable="preset.auto",
       :name="`${name}.metric`",
@@ -81,6 +81,10 @@ export default {
     disabledParameters: {
       type: Array,
       required: false,
+    },
+    onlyExternal: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -7,6 +7,7 @@
       field-alarm-metric-presets(
         v-field="form.parameters.metrics",
         :parameters="availableParameters",
+        :only-external="onlyExternal",
         with-external,
         with-aggregate-function
       )
@@ -79,6 +80,10 @@ export default {
       default: false,
     },
     requiredTitle: {
+      type: Boolean,
+      default: false,
+    },
+    onlyExternal: {
       type: Boolean,
       default: false,
     },
