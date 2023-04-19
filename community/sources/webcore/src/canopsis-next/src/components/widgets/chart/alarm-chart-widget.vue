@@ -112,7 +112,7 @@ export default {
       const props = {
         metrics: this.preparedMetrics,
         downloading: this.downloading,
-        title: this.widget.title,
+        title: this.widget.parameters.chart_title || this.widget.title,
       };
 
       if (this.widget.type === WIDGET_TYPES.barChart) {
