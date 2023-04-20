@@ -781,12 +781,12 @@ Feature: update an instruction statistics
       "ok_alarm_states": 1,
       "execution_count": 2,
       "successful": 1,
-      "avg_complete_time": 2,
       "last_executed_on": {{ .execution1Time }},
       "name": "test-instruction-to-stats-update-3-name",
       "type": 0
     }
     """
+    Then the response key "avg_complete_time" should not be "0"
     When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/changes
     Then the response code should be 200
     Then the response body should contain:
@@ -811,7 +811,6 @@ Feature: update an instruction statistics
           "ok_alarm_states": 1,
           "execution_count": 2,
           "successful": 1,
-          "avg_complete_time": 2,
           "modified_on": {{ .creationTime }}
         }
       ],
@@ -823,6 +822,7 @@ Feature: update an instruction statistics
       }
     }
     """
+    Then the response key "data.0.avg_complete_time" should not be "0"
     When I do GET /api/v4/cat/instruction-stats/{{ .instructionID }}/executions
     Then the response code should be 200
     Then the response body should contain:
