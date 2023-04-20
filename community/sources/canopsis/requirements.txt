@@ -38,7 +38,6 @@ pycodestyle==2.9.1
 # pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
 # TODO: test pybars3 with centos 7 according with mentioned above
 pybars3==0.9.7
-PyMeta3==0.5.1
 # MongoDB supported versions 2.6, 3.0, 3.2, 3.4, 3.6, 4.0, 4.2, and 4.4
 pymongo==4.3.2
 # math_parser.py
