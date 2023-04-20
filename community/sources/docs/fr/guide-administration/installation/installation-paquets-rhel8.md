@@ -42,7 +42,7 @@ Vous pouvez vérifier les limites de ressources systèmes avec la commande suiva
 ulimit -a
 ```
 
-Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v4.4/reference/ulimit/), créer le fichier `/etc/security/limits.d/mongo.conf` :
+Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v5.0/reference/ulimit/), créer le fichier `/etc/security/limits.d/mongo.conf` :
 
 ```
 #<domain>      <type>  <item>         <value>
@@ -86,13 +86,13 @@ dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/p
 Ajout du dépôt pour MongoDB :
 
 ```sh
-echo '[mongodb-org-4.4]
+echo '[mongodb-org-5.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.4/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/5.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
-' > /etc/yum.repos.d/mongodb-org-4.4.repo
+gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc
+' > /etc/yum.repos.d/mongodb-org-5.0.repo
 ```
 
 Ajout du dépôt pour RabbitMQ :
@@ -182,8 +182,8 @@ dnf module enable redis:6
 ### Installation
 
 ```sh
-dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.7.2 timescaledb-2-loader-postgresql-13-2.7.2
-dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.10.11
+dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.9.3 timescaledb-2-loader-postgresql-13-2.9.3
+dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.11.11
 ```
 
 Pour éviter un upgrade automatique des dépendances de Canopsis, vous pouvez épingler leurs paquets en ajoutant la directive suivante dans le fichier `/etc/yum.conf` :
@@ -236,6 +236,7 @@ systemctl restart mongod
 mongo -u root -p UNMOTDEPASSEFORT
 > use canopsis
 > db.createUser({user: "cpsmongo", pwd: "canopsis", roles: [ { role: "dbOwner", db: "canopsis" }, { role: "clusterMonitor", db: "admin"}]})
+> exit
 ```
 
 
