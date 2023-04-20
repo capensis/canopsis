@@ -277,6 +277,8 @@ export const USERS_PERMISSIONS = {
       api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
+
+      ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
