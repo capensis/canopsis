@@ -27,7 +27,7 @@ La restructuration apportée dans les bases de données pour cette version de Ca
 
     === "Docker Compose"
         ```sh
-        CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec mongodb bash
+        CPS_EDITION=pro docker-compose exec mongodb bash
         mongo -u root -p root
         > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
         > exit
@@ -51,7 +51,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml down
+    CPS_EDITION=pro docker-compose down
     ```
 
 === "Paquets RH8"
@@ -109,13 +109,13 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     Démarrez le conteneur `mongodb` :
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d mongodb
+    CPS_EDITION=pro docker-compose up -d mongodb
     ```
 
     Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 5.0 :
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec mongodb bash
+    CPS_EDITION=pro docker-compose exec mongodb bash
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "5.0" } )
     exit
@@ -162,13 +162,13 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     Relancez le conteneur `timescaledb` :
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d timescaledb
+    CPS_EDITION=pro docker-compose up -d timescaledb
     ```
 
     Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+    CPS_EDITION=pro docker-compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
     canopsis=# ALTER EXTENSION timescaledb UPDATE;
     ```
 
@@ -237,13 +237,13 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.
 
     ```sh
     sed -i "s/RABBITMQ_TAG=.*-management$/RABBITMQ_TAG=3.10.20-management/g" .env
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d rabbitmq
+    CPS_EDITION=pro docker-compose up -d rabbitmq
     ```
 
     Il faut à présent activer la fonctionnalité `FEATURE_FLAGS` de rabbitmq :
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec rabbitmq /bin/bash
+    CPS_EDITION=pro docker-compose exec rabbitmq /bin/bash
     rabbitmqctl enable_feature_flag all
     exit
     ```
@@ -252,7 +252,7 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.
 
     ```sh
     sed -i "s/RABBITMQ_TAG=.*-management$/RABBITMQ_TAG=3.11.11-management/g" .env
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d rabbitmq
+    CPS_EDITION=pro docker-compose up -d rabbitmq
     ```
 
 === "Paquets RH8"
@@ -278,8 +278,8 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d redis
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec redis /usr/local/bin/redis-cli flushall
+    CPS_EDITION=pro docker-compose up -d redis
+    CPS_EDITION=pro docker-compose exec redis /usr/local/bin/redis-cli flushall
     ```
 
 === "Paquets RH8"
