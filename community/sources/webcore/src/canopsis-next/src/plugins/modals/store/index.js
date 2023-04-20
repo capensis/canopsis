@@ -97,6 +97,10 @@ export default {
         throw new Error('Missed required parameter');
       }
 
+      if (!state.byId[id]) {
+        return;
+      }
+
       commit(types.HIDE, { id });
 
       /**
