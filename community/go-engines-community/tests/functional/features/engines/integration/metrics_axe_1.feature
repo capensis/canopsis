@@ -35,7 +35,7 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -43,7 +43,7 @@ Feature: Metrics should be added on alarm changes
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -270,7 +270,7 @@ Feature: Metrics should be added on alarm changes
       "test-instruction-metrics-axe-2-2-name"
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -278,7 +278,7 @@ Feature: Metrics should be added on alarm changes
           "title": "instruction_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -287,7 +287,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -377,7 +377,7 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -385,7 +385,7 @@ Feature: Metrics should be added on alarm changes
           "title": "pbehavior_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -394,7 +394,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -478,7 +478,7 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -486,7 +486,7 @@ Feature: Metrics should be added on alarm changes
           "title": "correlation_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -495,7 +495,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -585,7 +585,7 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -593,7 +593,7 @@ Feature: Metrics should be added on alarm changes
           "title": "correlation_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -602,7 +602,7 @@ Feature: Metrics should be added on alarm changes
           "title": "non_displayed_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -657,7 +657,7 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-6"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -665,7 +665,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -674,7 +674,7 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }}
+              "timestamp": {{ nowDateTz }}
             }
           ]
         }
@@ -705,7 +705,7 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-6"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -713,7 +713,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 2
             }
           ]
@@ -722,7 +722,7 @@ Feature: Metrics should be added on alarm changes
           "title": "average_ack",
           "data": [
             {
-              "timestamp": {{ nowDate }}
+              "timestamp": {{ nowDateTz }}
             }
           ]
         }
@@ -787,7 +787,7 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-7"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -795,7 +795,7 @@ Feature: Metrics should be added on alarm changes
           "title": "cancel_ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -804,7 +804,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -823,7 +823,7 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-7"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=cancel_ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -831,7 +831,7 @@ Feature: Metrics should be added on alarm changes
           "title": "cancel_ack_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -840,7 +840,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ack_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -921,7 +921,7 @@ Feature: Metrics should be added on alarm changes
       "ticket": "testticket"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&parameters[]=without_ticket_active_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -929,7 +929,7 @@ Feature: Metrics should be added on alarm changes
           "title": "ticket_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -938,7 +938,7 @@ Feature: Metrics should be added on alarm changes
           "title": "without_ticket_active_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -1004,7 +1004,7 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-9"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 1
+    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=average_resolve&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 1
     Then the response body should contain:
     """json
     {
@@ -1013,7 +1013,7 @@ Feature: Metrics should be added on alarm changes
           "title": "average_resolve",
           "data": [
             {
-              "timestamp": {{ nowDate }}
+              "timestamp": {{ nowDateTz }}
             }
           ]
         }

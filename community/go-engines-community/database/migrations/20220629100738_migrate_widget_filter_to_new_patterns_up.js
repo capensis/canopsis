@@ -940,8 +940,11 @@ function migrateOldMainFilter(widget, oldMainFilter) {
             if (i > 0) {
                 mergedTitle += " and ";
             }
-            mergedTitle += oldFilter.title;
-            and.push(JSON.parse(oldFilter.filter));
+
+            if (typeof oldFilter === 'object' && oldFilter.filter) {
+                mergedTitle += oldFilter.title;
+                and.push(JSON.parse(oldFilter.filter));
+            }
         });
         var mergedOldMainFilter = {
             title: mergedTitle,
@@ -979,6 +982,10 @@ db.widgets.find({
     var mainFilter = widget.parameters.mainFilter;
     var newMainFilter = null;
     var newFilters = [];
+
+    if (typeof mainFilter === 'string') {
+        return
+    }
 
     if (widget.parameters.viewFilters) {
         widget.parameters.viewFilters.forEach(function (filter, fi) {
@@ -1082,6 +1089,10 @@ db.userpreferences.aggregate([
     var viewFilters = userPref.content.viewFilters;
     if (!mainFilter && !viewFilters) {
         return;
+    }
+
+    if (typeof mainFilter === 'string') {
+        return
     }
 
     var newFilters = [];
