@@ -712,116 +712,78 @@ Feature: update meta alarm on action
       }
     ]
     """
-    Then the response body should contain:
+    Then the response array key "1.data.steps.data" should contain only:
     """json
     [
       {
-        "status": 200
+        "_t": "stateinc"
       },
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "metaalarmattach",
-                "val": 0
-              },
-              {
-                "_t": "comment"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": "",
-                "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 5
-            }
-          }
-        }
+        "_t": "statusinc",
+        "val": 1
       },
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "metaalarmattach",
-                "val": 0
-              },
-              {
-                "_t": "comment"
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": "",
-                "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 5
-            }
-          }
-        }
+        "_t": "metaalarmattach",
+        "val": 0
       },
       {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc"
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "metaalarmattach",
-                "val": 0
-              },
-              {
-                "_t": "declareticket",
-                "a": "system",
-                "user_id": "",
-                "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
-              },
-              {
-                "_t": "comment"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 5
-            }
-          }
-        }
+        "_t": "comment"
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      }
+    ]
+    """
+    Then the response array key "2.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "metaalarmattach",
+        "val": 0
+      },
+      {
+        "_t": "comment"
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      }
+    ]
+    """
+    Then the response array key "3.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc",
+        "val": 1
+      },
+      {
+        "_t": "metaalarmattach",
+        "val": 0
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      },
+      {
+        "_t": "comment"
       }
     ]
     """

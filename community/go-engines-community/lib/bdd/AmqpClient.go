@@ -93,9 +93,11 @@ func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (con
 	}
 
 	// Declare queue to detect the end of event processing.
+	// Make test queues durable because sometimes CI jobs fail : events are sent to FIFO_ack queue but not to test queues.
+	// Check if durable=true helps.
 	q, err := ch.QueueDeclare(
 		"",
-		false,
+		true,
 		true,
 		true,
 		false,
