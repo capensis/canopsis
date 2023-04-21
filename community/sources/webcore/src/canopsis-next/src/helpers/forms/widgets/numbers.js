@@ -15,6 +15,7 @@ import { metricPresetsToForm, formToMetricPresets } from '@/helpers/forms/metric
  * @property {string} default_time_range
  * @property {Sampling} default_sampling
  * @property {string} show_trend
+ * @property {number} [font_size]
  */
 
 /**
@@ -34,6 +35,7 @@ export const numbersWidgetParametersToForm = (parameters = {}) => ({
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
   default_sampling: parameters.default_sampling ?? SAMPLINGS.day,
   show_trend: parameters.show_trend ?? false,
+  font_size: parameters.font_size,
 });
 
 /**

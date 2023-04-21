@@ -6,7 +6,7 @@
       color="gray"
     )
     v-layout(v-if="!wholePending")
-      the-navigation#main-navigation(v-if="shownNavigation")
+      the-navigation#main-navigation(v-if="currentUser && shownHeader")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -72,10 +72,6 @@ export default {
 
       return this.$route.fullPath;
     },
-
-    shownNavigation() {
-      return this.currentUser && !this.$route.meta.hideNavigation;
-    },
   },
   beforeCreate() {
     reloadPageWithTrailingSlashes();
@@ -83,12 +79,13 @@ export default {
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  mounted() {
-    this.fetchAppInfoWithErrorHandling();
+  async mounted() {
     this.socketConnectWithErrorHandling();
     this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
-    this.fetchTemplateVars();
+
+    await this.fetchTemplateVars();
+    this.fetchAppInfoWithErrorHandling();
   },
   methods: {
     ...mapActions({

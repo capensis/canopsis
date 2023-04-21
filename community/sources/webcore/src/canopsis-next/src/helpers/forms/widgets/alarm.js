@@ -18,6 +18,7 @@ import {
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { kioskParametersToForm } from '../shared/kiosk';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 import { openedToForm } from './common';
 
@@ -101,6 +102,7 @@ import { openedToForm } from './common';
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
  * @property {boolean} clearFilterDisabled
+ * @property {WidgetKioskParameters} kiosk
  */
 
 /**
@@ -245,6 +247,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
     : [GRID_SIZES.min, GRID_SIZES.max],
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+  kiosk: kioskParametersToForm(parameters.kiosk),
 });
 
 /**
