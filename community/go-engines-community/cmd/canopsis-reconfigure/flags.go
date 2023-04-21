@@ -39,6 +39,9 @@ type flags struct {
 	techPostgresMigrationDirectory string
 	techPostgresMigrationMode      string
 	techPostgresMigrationSteps     int
+
+	mongoFixtureMigrations        bool
+	mongoFixtureMigrationsVersion string
 }
 
 func (f *flags) Parse() {
@@ -52,7 +55,10 @@ func (f *flags) Parse() {
 
 	flag.BoolVar(&f.modeMigrateMongo, "migrate-mongo", true, "If true, it will execute Mongo migration scripts")
 	flag.StringVar(&f.mongoMigrationDirectory, "mongo-migration-directory", DefaultMongoMigrationsPath, "The directory with Mongo migration scripts")
+
 	flag.StringVar(&f.mongoFixtureDirectory, "mongo-fixture-directory", DefaultMongoFixturesPath, "The directory with Mongo fixtures")
+	flag.BoolVar(&f.mongoFixtureMigrations, "mongo-fixture-migrations", false, "If true, it will fill migration collection with migration versions without executing them during mongo fixtures loading")
+	flag.StringVar(&f.mongoFixtureMigrationsVersion, "mongo-fixture-migrations-version", "", "The max migration version to be inserted to migration collection during mongo fixtures loading")
 
 	flag.BoolVar(&f.modeMigratePostgres, "migrate-postgres", false, "If true, it will execute Postgres migration scripts")
 	flag.StringVar(&f.postgresMigrationDirectory, "postgres-migration-directory", DefaultPostgresMigrationsPath, "The directory with Postgres migration scripts")

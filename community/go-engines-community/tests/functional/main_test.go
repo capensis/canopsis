@@ -12,6 +12,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
@@ -147,7 +148,7 @@ func TestMain(m *testing.M) {
 		time.Sleep(flags.periodicalWaitTime)
 	}
 
-	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, websocketClient, loader, redisClient, logger)
+	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, websocketClient, loader, dbClient, redisClient, logger)
 	status := godog.TestSuite{
 		Name:                "canopsis",
 		ScenarioInitializer: scenarioInitializer,
@@ -173,6 +174,7 @@ func InitializeScenario(
 	mongoClient *bdd.MongoClient,
 	websocketClient *bdd.WebsocketClient,
 	loader fixtures.Loader,
+	dbClient mongo.DbClient,
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) func(*godog.ScenarioContext) {
@@ -210,6 +212,19 @@ func InitializeScenario(
 				return ctx, nil
 			})
 		}
+
+		scenarioCtx.Before(func(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+			cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
+			if err != nil {
+				return nil, err
+			}
+			loc, err := time.LoadLocation(cfg.Timezone.Timezone)
+			if err != nil {
+				return ctx, err
+			}
+			ctx = bdd.SetTimezone(ctx, loc)
+			return ctx, nil
+		})
 
 		scenarioCtx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		scenarioCtx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)

@@ -1,12 +1,18 @@
 <template lang="pug">
   v-layout.kpi-sli-toolbar.ml-4.my-4(wrap)
-    c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
+    c-quick-date-interval-field.mr-4(
+      v-field="query.interval",
+      :min="minDate",
+      :quick-ranges="quickRanges"
+    )
     c-sampling-field.mr-4.kpi-sli-toolbar__sampling(v-field="query.sampling")
     kpi-sli-show-mode-field.mr-4.kpi-sli-toolbar__show-mode(v-field="query.type")
     c-filter-field.kpi-sli-toolbar__filters(v-field="query.filter")
 </template>
 
 <script>
+import { METRICS_QUICK_RANGES } from '@/constants';
+
 import KpiSliShowModeField from './kpi-sli-show-mode-field.vue';
 
 export default {
@@ -23,6 +29,11 @@ export default {
     minDate: {
       type: Number,
       required: false,
+    },
+  },
+  computed: {
+    quickRanges() {
+      return Object.values(METRICS_QUICK_RANGES);
     },
   },
 };
