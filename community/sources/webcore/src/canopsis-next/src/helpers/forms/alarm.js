@@ -123,6 +123,7 @@
  * @property {Correlation} causes
  * @property {AlarmPbehavior} pbehavior
  * @property {AlarmLinks} links
+ * @property {string[]} tags
  * @property {number} t
  * @property {AlarmValue} v
  */
