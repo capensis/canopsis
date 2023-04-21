@@ -9,6 +9,12 @@ L'ensemble de cette procédure doit être lu avant son exécution.
 
 Ce document ne prend en compte que Canopsis Community et Canopsis Pro : tout développement personnalisé dont vous pourriez bénéficier ne fait pas partie du cadre de ce Guide de migration.
 
+Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles à ces adresses
+
+| Edition           | Sources                                                          |
+| ----------------- | ---------------------------------------------------------------- |
+| Edition Community | https://git.canopsis.net/canopsis/canopsis-community/-/releases  |
+| Edition pro       | https://git.canopsis.net/sources/canopsis-pro-sources/-/releases |
 
 ## Procédure de mise à jour
 
