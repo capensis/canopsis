@@ -1,5 +1,8 @@
 <template lang="pug">
-  v-flex(v-resize="changeHeaderPositionOnResize")
+  v-flex(
+    v-on="wrapperListeners",
+    v-resize="changeHeaderPositionOnResize"
+  )
     c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
@@ -60,6 +63,7 @@
           alarms-list-row(
             v-model="props.selected",
             v-on="rowListeners",
+            :ref="`row${props.item._id}`",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
@@ -99,7 +103,7 @@
 </template>
 
 <script>
-import { differenceBy } from 'lodash';
+import { differenceBy, throttle } from 'lodash';
 
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
@@ -108,6 +112,7 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
@@ -129,6 +134,7 @@ export default {
     AlarmsListRow,
   },
   mixins: [
+    entitiesInfoMixin,
     widgetColumnsAlarmMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
@@ -166,10 +172,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideChildren: {
-      type: Boolean,
-      default: false,
-    },
     expandable: {
       type: Boolean,
       default: false,
@@ -194,6 +196,10 @@ export default {
       type: String,
       default: '',
     },
+    hideChildren: {
+      type: Boolean,
+      default: false,
+    },
     hideActions: {
       type: Boolean,
       default: false,
@@ -215,6 +221,16 @@ export default {
   },
 
   computed: {
+    wrapperListeners() {
+      return this.selectable
+        ? { mousemove: this.throttledMousemoveHandler }
+        : {};
+    },
+
+    topBarHeight() {
+      return this.shownHeader ? TOP_BAR_HEIGHT : 0;
+    },
+
     unresolvedSelected() {
       return this.selected.filter(item => !isResolvedAlarm(item));
     },
@@ -326,6 +342,7 @@ export default {
     this.actionsTranslateY = 0;
     this.translateY = 0;
     this.previousTranslateY = 0;
+    this.throttledMousemoveHandler = throttle(this.mousemoveHandler, 50);
   },
 
   async mounted() {
@@ -336,15 +353,101 @@ export default {
     if (this.selectable) {
       window.addEventListener('keydown', this.enableSelecting);
       window.addEventListener('keyup', this.disableSelecting);
+      window.addEventListener('mousedown', this.mousedownHandler);
+      window.addEventListener('mouseup', this.mouseupHandler);
+    }
+  },
+  updated() {
+    if (this.selecting) {
+      this.calculateRowsPositions();
     }
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.changeHeaderPosition);
     window.removeEventListener('keydown', this.enableSelecting);
     window.removeEventListener('keyup', this.disableSelecting);
+    window.removeEventListener('mousedown', this.mousedownHandler);
+    window.removeEventListener('mouseup', this.mouseupHandler);
   },
 
   methods: {
+    calculateRowsPositions() {
+      this.rowsPositions = Object.entries(this.$refs).reduce((acc, [key, value]) => {
+        if (!key.startsWith('row') || !value) {
+          return acc;
+        }
+
+        const position = value.$el.getBoundingClientRect();
+
+        acc.push({
+          position: {
+            x1: position.x,
+            x2: position.x + position.width,
+            y1: position.y,
+            y2: position.y + position.height,
+          },
+          row: value.$options.propsData.row,
+        });
+
+        return acc;
+      }, []);
+    },
+
+    getIntersectRowsByPosition(newX, newY, prevX, prevY) {
+      return this.rowsPositions?.reduce((acc, { position, row }) => {
+        if (
+          (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
+          || (newX < position.x1 && prevX < position.x1)
+          || (newX > position.x2 && prevX > position.x2)
+          || (newY < position.y1 && prevY < position.y1)
+          || (newY > position.y2 && prevY > position.y2)
+        ) {
+          return acc;
+        }
+
+        acc.push(row);
+
+        return acc;
+      }, []) ?? [];
+    },
+
+    mousedownHandler(event) {
+      this.prevEvent = event;
+    },
+
+    mouseupHandler() {
+      delete this.prevEvent;
+    },
+
+    mousemoveHandler(event) {
+      if (!event.ctrlKey || !event.buttons || !this.prevEvent) {
+        return;
+      }
+
+      const rows = this.getIntersectRowsByPosition(
+        event.clientX,
+        event.clientY,
+        this.prevEvent.clientX,
+        this.prevEvent.clientY,
+      );
+
+      this.prevEvent = event;
+
+      rows.forEach(row => this.toggleSelected(row.item));
+    },
+
+    toggleSelected(alarm) {
+      const index = this.selected.findIndex(({ _id: id }) => id === alarm._id);
+
+      if (index === -1) {
+        this.selected.push(alarm);
+
+        return;
+      }
+
+      this.selected.splice(index, 1);
+    },
+
     clearSelected() {
       this.selected = [];
     },
@@ -412,8 +515,8 @@ export default {
       const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
       const { top: actionsTop = 0, height: actionsHeight = 0 } = this.$refs.actions?.getBoundingClientRect() ?? {};
 
-      const offset = headerTop - this.translateY - TOP_BAR_HEIGHT - actionsHeight;
-      const actionsOffset = actionsTop - this.actionsTranslateY - TOP_BAR_HEIGHT;
+      const offset = headerTop - this.translateY - this.topBarHeight - actionsHeight;
+      const actionsOffset = actionsTop - this.actionsTranslateY - this.topBarHeight;
 
       this.previousTranslateY = this.actionsTranslateY;
       this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
@@ -462,6 +565,10 @@ export default {
     changeHeaderPositionOnResize() {
       if (this.stickyHeader) {
         this.changeHeaderPosition();
+      }
+
+      if (this.selecting) {
+        this.calculateRowsPositions();
       }
     },
 
@@ -529,9 +636,15 @@ export default {
     }
   }
 
-  &__selecting > .v-table__overflow > table > tbody > .alarm-list-row:after {
-    pointer-events: auto;
-    opacity: 1;
+  &__selecting {
+    & > .v-table__overflow > table > tbody > .alarm-list-row:after {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    * {
+      user-select: none;
+    }
   }
 
   tbody {
