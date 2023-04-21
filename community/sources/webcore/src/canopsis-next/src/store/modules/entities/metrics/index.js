@@ -44,7 +44,7 @@ export default {
     },
 
     createKpiAlarmExport(context, { data }) {
-      return request.post(API_ROUTES.metrics.exportAlarm, null, { params: data });
+      return request.post(API_ROUTES.metrics.exportAlarm, data);
     },
 
     createKpiAlarmAggregateExport(context, { data }) {

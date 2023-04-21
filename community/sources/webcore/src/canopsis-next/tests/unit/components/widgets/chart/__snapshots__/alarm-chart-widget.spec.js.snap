@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with bar type 1`] = `
+<div
+  class="layout py-2 column"
+>
+  <chart-widget-filters-stub
+    class="mx-3"
+    interval="[object Object]"
+    sampling="day"
+    showinterval="true"
+    showsampling="true"
+    widgetfilters=""
+  />
+  <div
+    class="layout pa-3 column"
+  >
+    <!---->
+    <bar-chart-metrics-stub
+      animation="true"
+      height="560"
+      metrics="[object Object],[object Object]"
+      responsive="true"
+      sampling="day"
+      title=""
+      width="600"
+    />
+  </div>
+</div>
+`;
+
+exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with line type 1`] = `
+<div
+  class="layout py-2 column"
+>
+  <chart-widget-filters-stub
+    class="mx-3"
+    interval="[object Object]"
+    sampling="day"
+    showinterval="true"
+    showsampling="true"
+    widgetfilters=""
+  />
+  <div
+    class="layout pa-3 column"
+  >
+    <!---->
+    <line-chart-metrics-stub
+      animation="true"
+      height="560"
+      metrics="[object Object],[object Object],[object Object]"
+      responsive="true"
+      sampling="day"
+      title=""
+      width="600"
+    />
+  </div>
+</div>
+`;
+
+exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with numbers type 1`] = `
+<div
+  class="layout py-2 column"
+>
+  <chart-widget-filters-stub
+    class="mx-3"
+    interval="[object Object]"
+    sampling="day"
+    showinterval="true"
+    showsampling="true"
+    widgetfilters=""
+  />
+  <div
+    class="layout pa-3 column"
+  >
+    <!---->
+    <numbers-metrics-stub
+      metrics="[object Object],[object Object],[object Object]"
+      title=""
+    />
+  </div>
+</div>
+`;
