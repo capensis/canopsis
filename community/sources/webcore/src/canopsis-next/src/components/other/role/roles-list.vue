@@ -28,6 +28,11 @@
           @click="$emit('edit', item)"
         )
         c-action-btn(
+          v-if="duplicable",
+          type="duplicate",
+          @click="$emit('duplicate', item)"
+        )
+        c-action-btn(
           v-if="removable",
           :disabled="!item.deletable",
           type="delete",
@@ -59,6 +64,10 @@ export default {
       default: false,
     },
     updatable: {
+      type: Boolean,
+      default: false,
+    },
+    duplicable: {
       type: Boolean,
       default: false,
     },

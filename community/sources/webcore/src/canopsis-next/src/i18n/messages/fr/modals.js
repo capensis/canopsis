@@ -318,6 +318,9 @@ export default {
     edit: {
       title: 'Éditer un rôle',
     },
+    duplicate: {
+      title: 'Dupliquer un rôle',
+    },
   },
   createEventFilter: {
     create: {

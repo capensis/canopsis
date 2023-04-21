@@ -80,13 +80,13 @@ Feature: SLI metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "downtime": 0
         }
       ]
@@ -172,13 +172,13 @@ Feature: SLI metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "maintenance": 0
         }
       ]
@@ -264,13 +264,13 @@ Feature: SLI metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 2
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "downtime": 0
         }
       ]
@@ -356,13 +356,13 @@ Feature: SLI metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 1
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 1
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "downtime": 0
         }
       ]
@@ -448,7 +448,7 @@ Feature: SLI metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": []
@@ -502,13 +502,13 @@ Feature: SLI metrics should be added on alarm changes
       "state": 0
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "maintenance": 0
         }
       ]
@@ -594,13 +594,13 @@ Feature: SLI metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.downtime" is greater or equal than 2
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "maintenance": 0
         }
       ]
@@ -620,12 +620,12 @@ Feature: SLI metrics should be added on alarm changes
       "state": 0
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": [
         {
-          "timestamp": {{ nowDate }},
+          "timestamp": {{ nowDateTz }},
           "downtime": {{ .downtime }},
           "maintenance": 0
         }
@@ -738,7 +738,7 @@ Feature: SLI metrics should be added on alarm changes
       "state": 0
     }
     """
-    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
     """json
     {
       "data": []
