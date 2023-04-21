@@ -39,10 +39,11 @@ import { pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
+import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -69,7 +70,7 @@ export default {
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,
@@ -106,7 +107,7 @@ export default {
     },
 
     preparedMetrics() {
-      return this.vectorMetrics.map((metric) => {
+      return convertMetricsToTimezone(this.vectorMetrics, this.$system.timezone).map((metric) => {
         const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
         return {

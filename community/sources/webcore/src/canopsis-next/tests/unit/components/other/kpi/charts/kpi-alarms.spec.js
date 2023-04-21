@@ -44,18 +44,17 @@ const snapshotFactory = (options = {}) => mount(KpiAlarms, {
 
 describe('kpi-alarms', () => {
   const nowTimestamp = 1386435600000;
-  const nowUnix = nowTimestamp / 1000;
 
   mockDateNow(nowTimestamp);
 
   test('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385852400,
       parameters: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
       sampling: SAMPLINGS.day,
       filter: null,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
@@ -83,11 +82,11 @@ describe('kpi-alarms', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 2d  */
-      from: 1385830800,
+      from: 1385852400,
       parameters: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
       sampling: SAMPLINGS.day,
       filter: null,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
