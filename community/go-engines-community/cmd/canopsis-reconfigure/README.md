@@ -28,6 +28,8 @@ Each command argument has default value. Change them to fit your needs.
 - `postgres-migration-directory` - The directory with Postgres migration scripts.
 - `postgres-migration-mode` - Should be up or down.
 - `postgres-migration-steps` - Number of migration steps, will execute all migrations if empty or 0.
+- `mongo-fixture-migrations` - If true, it will fill migration collection with migration versions without executing them during mongo fixtures loading.
+- `mongo-fixture-migrations-version` - The max migration version to be inserted to migration collection during mongo fixtures loading.
 
 #### Environment vars
 
@@ -56,6 +58,15 @@ Cmd *canopsis-reconfigure* automatically migrates new migrations from [database/
 
 Use [cmd/mongo-migrations](../mongo-migrations) to manage migrations. 
 
+It has the following commands:
+
+- `create` - Create a blank migration.
+- `up` - Execute migrations to a specified version or the latest available version.
+- `down` - Roll migrations up to a specified version or all tracked versions.
+- `status` - View the status of migrations.
+- `skip` - Manually add a specified version or all untracked versions to the version table.
+- `help` - Get help information about command and their flags.
+
 ## Fixtures
 
 Fixtures are used to create predefined data for new production environment and to create fake data for functional testing.
@@ -82,6 +93,14 @@ roles:
 ```
 
 Here `users` and `roles` are collection names.
+
+##### Migrations
+When all fixtures are applied, the `reconfigure` script starts to execute migrations, if `-migrate-mongo=up` is provided. Sometimes it's not needed because you may have up to date data in your fixtures.
+
+It's possible to skip all migrations with `-mongo-fixture-migrations=true` flag.
+It will add all migration versions to the migration collection without executing them.
+
+If you need to skip migration until specific version, then you may provide the version with `-mongo-fixture-migrations-version` flag, for example `-mongo-fixture-migrations-version 20220708145048_add_connector_to_entities`.
 
 ##### Functions
 

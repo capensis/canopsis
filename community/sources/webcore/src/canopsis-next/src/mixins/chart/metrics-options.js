@@ -3,6 +3,7 @@ import {
   Y_AXES_IDS,
   DATETIME_FORMATS,
   MAX_METRICS_DISPLAY_COUNT,
+  TIME_UNITS,
 } from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
@@ -13,8 +14,14 @@ import {
   isRatioMetric,
   isTimeMetric,
 } from '@/helpers/metrics';
+import {
+  convertDateToEndOfUnitTimestamp,
+  convertDateToStartOfDayTimestamp,
+  convertDateToTimestampByTimezone,
+} from '@/helpers/date/date';
 
 export const chartMetricsOptionsMixin = {
+  inject: ['$system'],
   computed: {
     hasHistoryData() {
       return hasHistoryData(this.metrics);
@@ -96,8 +103,14 @@ export const chartMetricsOptionsMixin = {
       return {
         [X_AXES_IDS.default]: {
           type: 'time',
-          min: this.interval.from * 1000,
-          max: this.interval.to * 1000,
+          min: convertDateToTimestampByTimezone(
+            convertDateToStartOfDayTimestamp(this.interval.from),
+            this.$system.timezone,
+          ) * 1000,
+          max: convertDateToTimestampByTimezone(
+            convertDateToEndOfUnitTimestamp(this.interval.to, TIME_UNITS.day),
+            this.$system.timezone,
+          ) * 1000,
           ticks: {
             min: this.minDate * 1000,
             max: Date.now(),
