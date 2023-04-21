@@ -147,7 +147,7 @@ Feature: update an instruction statistics
       "resource": "test-resource-to-stats-update-1-2"
     }
     """
-    When I wait 1s
+    When I wait 2s
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
     When I save response execution2Time={{ .lastResponse.completed_at }}
