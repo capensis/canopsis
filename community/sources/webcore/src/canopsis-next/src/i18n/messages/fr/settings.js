@@ -224,6 +224,9 @@ export default {
     preset: 'Préréglé',
     metricsDisplay: 'Affichage des métriques',
     showTrend: 'Afficher la tendance',
+    fontSize: 'Taille de la police',
+    auto: 'Auto',
+    manual: 'Manuel',
     presets: {
       [CHART_WIDGET_PRESET_TYPES.numberOfActiveAlarms]: 'Nombre d\'alarmes actives',
       [CHART_WIDGET_PRESET_TYPES.ackStatistics]: 'Statistiques des acquittements',
@@ -246,5 +249,11 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.manualInstruction]: 'Exécution manuelle des instructions',
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
     },
+  },
+  kioskMode: 'Mode kiosque',
+  kiosk: {
+    hideActions: 'Masquer les actions',
+    hideMassSelection: 'Masquer la sélection en masse',
+    hideToolbar: 'Masquer la barre de tâches',
   },
 };

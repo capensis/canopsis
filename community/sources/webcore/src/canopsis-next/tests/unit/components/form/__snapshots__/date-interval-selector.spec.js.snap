@@ -16,14 +16,14 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
           label="Start date"
           name="tstart"
           roundhours="true"
-          value="now-2d"
+          value="today-2d"
         />
         <date-time-picker-text-field-stub
           dateobjectpreparer="[Function]"
           label="End date"
           name="tstop"
           roundhours="true"
-          value="now"
+          value="today"
         />
       </div>
     </div>
