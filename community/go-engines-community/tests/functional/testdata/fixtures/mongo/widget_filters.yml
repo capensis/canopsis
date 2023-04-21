@@ -969,10 +969,12 @@ widget_filters:
     <<: *filter
     _id: test-widget-filter-to-alarm-metrics-get-1
     entity_pattern:
-      - - field: type
+      - - field: _id
           cond:
-            type: eq
-            value: component
+            type: is_one_of
+            value:
+              - test-entity-to-alarm-metrics-get-1
+              - test-entity-to-alarm-metrics-get-2
     alarm_pattern:
     pbehavior_pattern:
 
