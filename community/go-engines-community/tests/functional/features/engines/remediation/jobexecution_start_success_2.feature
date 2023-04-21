@@ -144,75 +144,6 @@ Feature: run a job
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/executions/{{ .executionID }}
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "steps": [
-        {
-          "operations": [
-            {
-              "name": "test-instruction-to-job-execution-start-second-1-step-1-operation-1",
-              "completed_at": null,
-              "time_to_complete": {
-                "value": 1,
-                "unit": "s"
-              },
-              "jobs": [
-                {
-                  "name": "test-job-to-job-execution-start-second-1-name",
-                  "status": 0,
-                  "fail_reason": "",
-                  "completed_at": null
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    """
-    When I do GET /api/v4/cat/executions/{{ .executionID }} until response code is 200 and body contains:
-    """json
-    {
-      "steps": [
-        {
-          "operations": [
-            {
-              "name": "test-instruction-to-job-execution-start-second-1-step-1-operation-1",
-              "completed_at": null,
-              "time_to_complete": {
-                "value": 1,
-                "unit": "s"
-              },
-              "jobs": [
-                {
-                  "name": "test-job-to-job-execution-start-second-1-name",
-                  "status": 1,
-                  "fail_reason": ""
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    """
-    When I save response job2StartedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).started_at }}
-    When I save response job2LaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).launched_at }}
-    When I save response job2CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).completed_at }}
-    Then "job2StartedAt" > "job1CompletedAt"
-    Then "job2LaunchedAt" >= "job2StartedAt"
-    Then "job2CompletedAt" >= "job2LaunchedAt"
-    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
-    Then the response code should be 200
-    Then the response raw body should be:
-    """
-    test-job-execution-long-succeeded-output
-    """
-    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
-    Then the response code should be 200
     When I save request:
     """json
     [
@@ -257,15 +188,51 @@ Feature: run a job
         "a": "root",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-1-name. Job test-job-to-job-execution-start-second-1-name."
-      },
-      {
-        "_t": "instructioncomplete",
-        "a": "root",
-        "user_id": "root",
-        "m": "Instruction test-instruction-to-job-execution-start-second-1-name."
       }
     ]
     """
+    When I do GET /api/v4/cat/executions/{{ .executionID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "steps": [
+        {
+          "operations": [
+            {
+              "name": "test-instruction-to-job-execution-start-second-1-step-1-operation-1",
+              "completed_at": null,
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "jobs": [
+                {
+                  "name": "test-job-to-job-execution-start-second-1-name",
+                  "status": 1,
+                  "fail_reason": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    """
+    When I save response job2StartedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).started_at }}
+    When I save response job2LaunchedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).launched_at }}
+    When I save response job2CompletedAt={{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0).completed_at }}
+    Then "job2StartedAt" > "job1CompletedAt"
+    Then "job2LaunchedAt" >= "job2StartedAt"
+    Then "job2CompletedAt" >= "job2LaunchedAt"
+    When I do GET /api/v4/cat/job-executions/{{ (index (index (index .lastResponse.steps 0).operations 0).jobs 0)._id }}/output
+    Then the response code should be 200
+    Then the response raw body should be:
+    """
+    test-job-execution-long-succeeded-output
+    """
+    When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
+    Then the response code should be 200
 
   @concurrent
   Scenario: given start previous operation should not return job
