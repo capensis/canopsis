@@ -30,7 +30,7 @@ import { convertWidgetToQuery } from '@/helpers/query';
 import { convertMetricsToTimezone } from '@/helpers/metrics';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
@@ -55,7 +55,7 @@ export default {
   },
   mixins: [
     localQueryMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     entitiesVectorMetricsMixin,
     widgetChartMetricsMap,
     widgetChartExportMixinCreator({
