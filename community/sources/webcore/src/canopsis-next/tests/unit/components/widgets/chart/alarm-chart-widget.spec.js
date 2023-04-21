@@ -92,8 +92,8 @@ describe('alarm-chart-widget', () => {
       {
         params: {
           entity: entityId,
-          from: 1383843500,
-          to: 1386435500,
+          from: 1383865200,
+          to: 1386370800,
           with_history: false,
           sampling: SAMPLINGS.day,
           parameters: [
@@ -142,8 +142,8 @@ describe('alarm-chart-widget', () => {
       {
         params: {
           entity: entityId,
-          from: 1383843500,
-          to: 1386435500,
+          from: 1383865200,
+          to: 1386370800,
           with_history: true,
           sampling: SAMPLINGS.day,
           parameters: [
