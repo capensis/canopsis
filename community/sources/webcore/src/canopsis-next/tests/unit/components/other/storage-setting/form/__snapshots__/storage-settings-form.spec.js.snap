@@ -1,0 +1,844 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-form Renders \`storage-settings-form\` with custom form and history 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Alarm data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
+        top="top"
+      />
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 21/01/2021 21:13:20. Alarms deleted: 1611270000. Alarms archived: 1611280000.
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      label="Archive resolved alarms data after"
+      name="alarm.archive_after"
+      value="[object Object]"
+    />
+    <c-enabled-duration-field-stub
+      label="Delete resolved alarms data after"
+      name="alarm.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Entities data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever."
+        top="top"
+      />
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 22/01/2021 5:33:20. Entities deleted: 1611300000. Entities archived: 1611310000.
+      </span>
+    </div>
+    <div
+      class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--row v-input--hide-details theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+          style="height: auto;"
+        >
+          <div
+            class="v-input--radio-group__input"
+            role="radiogroup"
+          >
+            <div
+              class="v-radio theme--light"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="Archive disabled entities"
+                  name="entity.archive"
+                  role="radio"
+                  type="radio"
+                  value="true"
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  radio_button_unchecked
+                </i>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                Archive disabled entities
+              </label>
+            </div>
+            <div
+              class="v-radio theme--light"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="Delete disabled entities forever from archive"
+                  name="entity.archive"
+                  role="radio"
+                  type="radio"
+                  value="false"
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  radio_button_unchecked
+                </i>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                Delete disabled entities forever from archive
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Remove the impacting and dependent entities as well"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Remove the impacting and dependent entities as well
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+      <div
+        class="v-input__append-outer"
+      >
+        <c-help-icon-stub
+          color="info"
+          max-width="300"
+          text="For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well."
+          top="top"
+        />
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="primary ma-0 mb-4 v-btn theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Clean storage
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Instructions data storage
+      </div>
+      <!---->
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 21/01/2021 10:06:40.
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
+      label="Delete instructions timeline data after"
+      name="remediation.delete_after"
+      value="[object Object]"
+    />
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the instruction statistics will be deleted after the defined time period."
+      label="Delete instruction statistics data after"
+      name="remediation.delete_stats_after"
+      value="[object Object]"
+    />
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the instructions summary data will be deleted after the defined time period."
+      label="Delete instructions summary data after"
+      name="remediation.delete_mod_stats_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        PBehavior data storage
+      </div>
+      <!---->
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 21/01/2021 12:53:20.
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      help-text="When switched on, inactive PBehaviors will be deleted after the defined time period from the last event."
+      label="Delete PBehavior data after"
+      name="pbehavior.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        JUnit data storage
+      </div>
+      <!---->
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 21/01/2021 7:20:00.
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period."
+      label="Delete test suites data after"
+      name="junit.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Healthcheck data storage
+      </div>
+      <!---->
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 21/01/2021 15:40:00.
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      label="Delete FIFO incoming flow data after"
+      name="health_check.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Webhooks data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="All webhook requests history is kept in logs"
+        top="top"
+      />
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="c-information-block__subtitle"
+      >
+        Script launched at 21/01/2021 18:26:40.
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      help-text="All webhook requests history older than the defined time period will be deleted"
+      label="Clear webhooks logs after"
+      name="webhook.delete_after"
+      value="[object Object]"
+    />
+    <c-enabled-field-stub
+      label="Open auth data in logs"
+      name="webhook.log_credentials"
+      value="true"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Internal metrics data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, internal metrics data will be deleted after the defined time period"
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All internal metrics older than the defined time period will be deleted"
+      label="Clear metrics storage after"
+      name="metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        External metrics data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, external metrics data will be deleted after the defined time period"
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All external metrics older than the defined time period will be deleted"
+      label="Clear metrics storage after"
+      name="perf_data_metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`storage-settings-form Renders \`storage-settings-form\` with default form 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Alarm data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      label="Archive resolved alarms data after"
+      name="alarm.archive_after"
+      value="[object Object]"
+    />
+    <c-enabled-duration-field-stub
+      label="Delete resolved alarms data after"
+      name="alarm.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Entities data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever."
+        top="top"
+      />
+    </div>
+    <!---->
+    <div
+      class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--row v-input--hide-details theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+          style="height: auto;"
+        >
+          <div
+            class="v-input--radio-group__input"
+            role="radiogroup"
+          >
+            <div
+              class="v-radio theme--light"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="Archive disabled entities"
+                  name="entity.archive"
+                  role="radio"
+                  type="radio"
+                  value="true"
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  radio_button_unchecked
+                </i>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                Archive disabled entities
+              </label>
+            </div>
+            <div
+              class="v-radio theme--light"
+            >
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <input
+                  aria-checked="false"
+                  aria-label="Delete disabled entities forever from archive"
+                  name="entity.archive"
+                  role="radio"
+                  type="radio"
+                  value="false"
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  radio_button_unchecked
+                </i>
+              </div>
+              <label
+                aria-hidden="true"
+                class="v-label theme--light"
+                style="left: 0px; position: relative;"
+              >
+                Delete disabled entities forever from archive
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Remove the impacting and dependent entities as well"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Remove the impacting and dependent entities as well
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+      <div
+        class="v-input__append-outer"
+      >
+        <c-help-icon-stub
+          color="info"
+          max-width="300"
+          text="For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well."
+          top="top"
+        />
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="primary ma-0 mb-4 v-btn theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Clean storage
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Instructions data storage
+      </div>
+      <!---->
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
+      label="Delete instructions timeline data after"
+      name="remediation.delete_after"
+      value="[object Object]"
+    />
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the instruction statistics will be deleted after the defined time period."
+      label="Delete instruction statistics data after"
+      name="remediation.delete_stats_after"
+      value="[object Object]"
+    />
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the instructions summary data will be deleted after the defined time period."
+      label="Delete instructions summary data after"
+      name="remediation.delete_mod_stats_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        PBehavior data storage
+      </div>
+      <!---->
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="When switched on, inactive PBehaviors will be deleted after the defined time period from the last event."
+      label="Delete PBehavior data after"
+      name="pbehavior.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        JUnit data storage
+      </div>
+      <!---->
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period."
+      label="Delete test suites data after"
+      name="junit.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Healthcheck data storage
+      </div>
+      <!---->
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      label="Delete FIFO incoming flow data after"
+      name="health_check.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Webhooks data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="All webhook requests history is kept in logs"
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All webhook requests history older than the defined time period will be deleted"
+      label="Clear webhooks logs after"
+      name="webhook.delete_after"
+      value="[object Object]"
+    />
+    <c-enabled-field-stub
+      label="Open auth data in logs"
+      name="webhook.log_credentials"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Internal metrics data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, internal metrics data will be deleted after the defined time period"
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All internal metrics older than the defined time period will be deleted"
+      label="Clear metrics storage after"
+      name="metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        External metrics data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, external metrics data will be deleted after the defined time period"
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All external metrics older than the defined time period will be deleted"
+      label="Clear metrics storage after"
+      name="perf_data_metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;
