@@ -72,6 +72,7 @@ export default {
         config: {
           chart: { type },
           title: this.$t(`modals.createAlarmChart.${type}.create.title`),
+          onlyExternal: true,
           action: newChart => this.addItemIntoArray(addKeyInEntity(newChart)),
         },
       });
@@ -83,6 +84,7 @@ export default {
         config: {
           chart,
           title: this.$t(`modals.createAlarmChart.${chart.type}.edit.title`),
+          onlyExternal: true,
           action: newChart => this.updateItemInArray(index, { ...newChart, key: chart.key }),
         },
       });
