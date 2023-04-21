@@ -52,7 +52,7 @@ describe('kpi-alarms', () => {
     const expectedDefaultParams = {
       /* now - 7d  */
       from: 1385830800,
-      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
+      parameters: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
       sampling: SAMPLINGS.day,
       filter: null,
       to: nowUnix,
@@ -84,7 +84,7 @@ describe('kpi-alarms', () => {
     const expectedParamsAfterUpdate = {
       /* now - 2d  */
       from: 1385830800,
-      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
+      parameters: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
       sampling: SAMPLINGS.day,
       filter: null,
       to: nowUnix,

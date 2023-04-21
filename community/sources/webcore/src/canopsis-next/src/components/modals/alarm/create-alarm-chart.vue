@@ -8,6 +8,7 @@
           component(
             v-model="form",
             :is="formComponent",
+            :only-external="onlyExternal",
             required-title
           )
       template(#actions="")
@@ -71,6 +72,10 @@ export default {
 
     title() {
       return this.config.title ?? this.$t(`modals.createAlarmChart.${WIDGET_TYPES.barChart}.create.title`);
+    },
+
+    onlyExternal() {
+      return this.config.onlyExternal;
     },
   },
   methods: {

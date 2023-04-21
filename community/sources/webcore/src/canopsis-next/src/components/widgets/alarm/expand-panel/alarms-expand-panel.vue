@@ -17,6 +17,10 @@
       :class="timeLineTabClass"
     ) {{ $t('alarm.tabs.timeLine') }}
     v-tab(
+      v-if="hasWidgetCharts",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.charts}`"
+    ) {{ $t('alarm.tabs.charts') }}
+    v-tab(
       v-if="hasTickets",
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared}`"
     ) {{ $t('alarm.tabs.ticketsDeclared') }}
@@ -69,6 +73,12 @@
             v-card.tab-item-card
               v-card-text
                 declared-tickets-list(:tickets="alarm.v.tickets", :parent-alarm-id="parentAlarmId")
+      v-tab-item(v-if="hasWidgetCharts", :value="$constants.ALARMS_EXPAND_PANEL_TABS.charts", lazy)
+        v-layout.pa-3(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                alarms-expand-panel-charts(:charts="widget.parameters.charts", :alarm="alarm")
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -151,6 +161,7 @@ import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
+import AlarmsExpandPanelCharts from './alarms-expand-panel-charts.vue';
 
 export default {
   components: {
@@ -161,6 +172,7 @@ export default {
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
+    AlarmsExpandPanelCharts,
   },
   mixins: [
     entitiesInfoMixin,
@@ -265,6 +277,10 @@ export default {
       return this.isProVersion
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
         && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
+    },
+
+    hasWidgetCharts() {
+      return this.widget.parameters.charts?.length;
     },
   },
   watch: {

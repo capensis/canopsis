@@ -164,7 +164,7 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-        ...pick(this.query, ['parameters', 'sampling']),
+        ...pick(this.query, ['parameters', 'sampling', 'with_history']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
@@ -172,7 +172,6 @@ export default {
     async fetchList() {
       await this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
-        trend: this.widget.parameters.show_trend,
         params: this.getQuery(),
       });
 

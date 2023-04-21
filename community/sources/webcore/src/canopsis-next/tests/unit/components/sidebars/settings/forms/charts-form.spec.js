@@ -60,6 +60,7 @@ describe('charts-form', () => {
         name: MODALS.createAlarmChart,
         config: {
           chart: { type },
+          onlyExternal: true,
           title: expect.any(String),
           action: expect.any(Function),
         },
