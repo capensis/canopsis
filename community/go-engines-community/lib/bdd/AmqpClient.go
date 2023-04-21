@@ -29,6 +29,15 @@ const (
 	consumePrefetchSize  = 0
 )
 
+var fifoAckEventFields = []string{
+	"event_type",
+	"source_type",
+	"connector",
+	"connector_name",
+	"component",
+	"resource",
+}
+
 // AmqpClient represents utility struct which implements AMQP steps to feature context.
 type AmqpClient struct {
 	amqpConnection libamqp.Connection
@@ -335,7 +344,7 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 			}
 		case <-timer.C:
 			return fmt.Errorf("reached timeout: caught %d events but none of them matches to expected events\n%s\n",
-				len(caughtEvents), pretty.Compare(caughtEvents, expectedEvents))
+				len(caughtEvents), pretty.Compare(c.filterEventFields(caughtEvents), expectedEvents))
 		}
 	}
 }
@@ -361,7 +370,7 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 		return nil
 	}
 
-	expectedFields := []string{"event_type", "source_type", "connector", "connector_name", "component", "resource"}
+	expectedFields := fifoAckEventFields
 	expectedEventsByIndex := make([][]map[string]interface{}, len(sentEvents))
 
 	for i, sentEvent := range sentEvents {
@@ -442,7 +451,7 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 			}
 		case <-timer.C:
 			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(sentEvents),
-				pretty.Compare(caughtEvents, sentEvents))
+				pretty.Compare(c.filterEventFields(caughtEvents), sentEvents))
 		}
 	}
 }
@@ -675,7 +684,7 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 			}
 		case <-timer.C:
 			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(expectedEvents),
-				pretty.Compare(caughtEvents, expectedEvents))
+				pretty.Compare(c.filterEventFields(caughtEvents), expectedEvents))
 		}
 	}
 }
@@ -717,4 +726,16 @@ func (c *AmqpClient) matchEvent(event map[string]interface{}, expectedEvents []m
 	}
 
 	return -1
+}
+
+func (c *AmqpClient) filterEventFields(events []map[string]any) []map[string]any {
+	result := make([]map[string]any, len(events))
+	for i, event := range events {
+		filteredEvent := make(map[string]any, len(fifoAckEventFields))
+		for _, field := range fifoAckEventFields {
+			filteredEvent[field] = event[field]
+		}
+		result[i] = filteredEvent
+	}
+	return result
 }
