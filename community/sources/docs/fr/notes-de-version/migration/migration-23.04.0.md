@@ -84,20 +84,18 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     ```sh
     export CPS_EDITION=community
-    mkdir 23.04
-    cd 23.04
-    git clone https://git.canopsis.net/canopsis/canopsis-community.git -b release-23.04
-    cd canopsis-community/community/deployment/canopsis/docker/
+    wget https://git.canopsis.net/api/v4/projects/522/packages/generic/canopsis-community-docker-compose/23.04.0/canopsis-community-docker-compose-23.04.0.tar.gz
+    tar xvfz canopsis-community-docker-compose-23.04.0.tar.gz
+    cd canopsis-community-docker-compose-23.04.0
     ```
 
     Si vous êtes utilisateur de l'édition `pro`, voici les étapes à suivre.
 
     ```sh
     export CPS_EDITION=pro
-    mkdir 23.04
-    cd 23.04
-    git clone https://git.canopsis.net/sources/canopsis-pro-sources.git -b release-23.04
-    cd canopsis-pro-sources/pro/deployment/canopsis/docker/
+    wget https://git.canopsis.net/api/v4/projects/549/packages/generic/canopsis-pro-docker-compose/23.04.0/canopsis-pro-docker-compose-23.04.0.tar.gz
+    tar xvfz canopsis-pro-docker-compose-23.04.0.tar.gz
+    cd canopsis-pro-docker-compose-23.04.0
     ```
 
     A ce stade, vous devez synchroniser les modifications réalisées sur vos anciens fichiers de configuration `docker-compose` avec les fichiers `docker-compose.yml` et/ou `docker-compose-override.yml`.
