@@ -25,6 +25,7 @@
 
 <script>
 import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { entitiesRoleMixin } from '@/mixins/entities/role';
