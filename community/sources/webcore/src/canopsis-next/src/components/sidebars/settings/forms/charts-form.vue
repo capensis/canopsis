@@ -18,9 +18,9 @@
             v-btn.ml-0.mt-3(v-on="on", color="primary") {{ $t('common.add') }}
         v-list
           v-list-tile(
-            v-for="{ action, text, icon } in chartTypes",
+            v-for="{ type, text, icon } in chartTypes",
             :key="text",
-            @click="action"
+            @click="showCreateChartModal(type)"
           )
             v-icon {{ icon }}
             span.ml-3 {{ text }}
@@ -61,7 +61,7 @@ export default {
       ].map(type => ({
         text: this.$t(`modals.createWidget.types.${type}.title`),
         icon: WIDGET_ICONS[type],
-        action: () => this.showCreateChartModal(type),
+        type,
       }));
     },
   },
