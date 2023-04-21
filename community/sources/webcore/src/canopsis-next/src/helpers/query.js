@@ -268,11 +268,12 @@ export function convertPieChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertNumbersWidgetToQuery(widget) {
-  const { parameters: { metrics = [] } } = widget;
+  const { parameters: { metrics = [], show_trend: showTrend = false } } = widget;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
+    with_history: showTrend,
     parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
       metric,
       aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
