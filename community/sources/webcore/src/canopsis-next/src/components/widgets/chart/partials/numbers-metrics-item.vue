@@ -18,8 +18,7 @@ import { isUndefined, lowerFirst } from 'lodash';
 
 import { AGGREGATE_FUNCTIONS, DATETIME_FORMATS, NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
 
-import { isTimeMetric } from '@/helpers/metrics';
-import { convertDurationToString } from '@/helpers/date/duration';
+import { convertMetricValueByUnit, convertMetricValueToString } from '@/helpers/metrics';
 import { convertDateToTimezoneDateString } from '@/helpers/date/date';
 
 export default {
@@ -46,11 +45,11 @@ export default {
     },
 
     value() {
-      if (isTimeMetric(this.metric.title)) {
-        return convertDurationToString(this.metric.value);
-      }
+      const { value, unit, title: metric } = this.metric;
 
-      return this.metric.value;
+      const preparedValue = convertMetricValueByUnit(value, unit);
+
+      return convertMetricValueToString(preparedValue, metric, unit);
     },
 
     title() {

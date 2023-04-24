@@ -34,7 +34,7 @@ import FieldTitle from '../../fields/common/title.vue';
 import FieldPeriodicRefresh from '../../fields/common/periodic-refresh.vue';
 import FieldAlarmMetricPresets from '../../fields/chart/alarm-metric-presets.vue';
 import FieldChartTitle from '../../fields/chart/chart-title.vue';
-import FieldQuickDateIntervalType from '../../fields/common/quick-date-interval-type.vue';
+import FieldQuickDateIntervalType from '../../fields/chart/quick-date-interval-type.vue';
 import FieldSampling from '../../fields/common/sampling.vue';
 import FieldFilters from '../../fields/common/filters.vue';
 import FieldSwitcher from '../../fields/common/switcher.vue';

@@ -8,7 +8,6 @@
         v-field="form.parameters.metrics",
         :parameters="availableParameters",
         :min="2",
-        with-external,
         with-color
       )
       field-pie-show-mode(v-field="form.parameters.show_mode")
@@ -40,7 +39,7 @@ import FieldPreset from '../../fields/chart/preset.vue';
 import FieldAlarmMetricPresets from '../../fields/chart/alarm-metric-presets.vue';
 import FieldPieShowMode from '../../fields/chart/pie-show-mode.vue';
 import FieldChartTitle from '../../fields/chart/chart-title.vue';
-import FieldQuickDateIntervalType from '../../fields/common/quick-date-interval-type.vue';
+import FieldQuickDateIntervalType from '../../fields/chart/quick-date-interval-type.vue';
 import FieldSampling from '../../fields/common/sampling.vue';
 import FieldAlarmMetricAggregateFunction from '../../fields/chart/alarm-metric-aggregate-function.vue';
 import FieldFilters from '../../fields/common/filters.vue';
