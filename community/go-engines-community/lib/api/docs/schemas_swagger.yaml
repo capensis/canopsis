@@ -527,6 +527,8 @@ definitions:
         type: boolean
       reversed:
         type: boolean
+      type:
+        type: string
     type: object
   alarmtag.Response:
     properties:
