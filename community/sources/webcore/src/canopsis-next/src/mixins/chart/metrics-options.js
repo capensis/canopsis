@@ -1,18 +1,22 @@
 import {
   X_AXES_IDS,
   Y_AXES_IDS,
-  DATETIME_FORMATS,
   MAX_METRICS_DISPLAY_COUNT,
   TIME_UNITS,
 } from '@/constants';
 
-import { convertDurationToString } from '@/helpers/date/duration';
+import { fromSeconds } from '@/helpers/date/duration';
 import {
+  convertDataSizeValueToTickString,
   getDateLabelBySampling,
   getMaxTimeDurationForMetrics,
   hasHistoryData,
   isRatioMetric,
   isTimeMetric,
+  isExternalDataSizeMetricUnit,
+  isExternalPercentMetricUnit,
+  isExternalTimeMetricUnit,
+  convertMetricValueToString,
 } from '@/helpers/metrics';
 import {
   convertDateToEndOfUnitTimestamp,
@@ -155,29 +159,41 @@ export const chartMetricsOptionsMixin = {
             font: this.labelsFont,
           },
         },
+        [Y_AXES_IDS.bytes]: {
+          stacked: this.stacked,
+          display: 'auto',
+          position: 'right',
+          beginAtZero: true,
+          ticks: {
+            callback: convertDataSizeValueToTickString,
+            font: this.labelsFont,
+          },
+        },
       };
     },
   },
   methods: {
     getChartTooltipLabel({ raw, dataset }) {
-      const value = isTimeMetric(dataset.metric)
-        ? convertDurationToString(
-          raw.y,
-          DATETIME_FORMATS.refreshFieldFormat,
-          this.maxTimeDuration.unit,
-        )
-        : raw.y;
+      const value = convertMetricValueToString(raw.y, dataset.metric, dataset.unit);
 
-      return this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value });
+      const messageKey = `kpi.metrics.tooltip.${dataset.metric}`;
+
+      return this.$te(messageKey)
+        ? this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value })
+        : `${dataset.metric}: ${value}`;
     },
 
-    getMetricYAxisId(metric) {
-      if (isRatioMetric(metric)) {
+    getMetricYAxisId(metric, unit) {
+      if (isRatioMetric(metric) || isExternalPercentMetricUnit(unit)) {
         return Y_AXES_IDS.percent;
       }
 
-      if (isTimeMetric(metric)) {
+      if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
         return Y_AXES_IDS.time;
+      }
+
+      if (isExternalDataSizeMetricUnit(unit)) {
+        return Y_AXES_IDS.bytes;
       }
 
       return Y_AXES_IDS.default;
@@ -195,7 +211,9 @@ export const chartMetricsOptionsMixin = {
     },
 
     getChartYTimeTick(value) {
-      return `${value}${this.maxTimeDuration.unit}`;
+      const count = fromSeconds(value, this.maxTimeDuration.unit).toFixed(1);
+
+      return `${count}${this.maxTimeDuration.unit}`;
     },
 
     getChartTimeTickLabel(_, index, data) {
