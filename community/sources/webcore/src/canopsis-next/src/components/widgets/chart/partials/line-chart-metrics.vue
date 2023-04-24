@@ -17,6 +17,7 @@
 import { X_AXES_IDS, SAMPLINGS } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
+import { convertMetricValueByUnit } from '@/helpers/metrics';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
@@ -113,6 +114,7 @@ export default {
             },
             callbacks: {
               title: this.getChartTooltipTitle,
+              label: this.getChartTooltipLabel,
             },
           },
         },
@@ -120,21 +122,22 @@ export default {
     },
 
     datasets() {
-      return this.preparedMetrics.reduce((acc, { title: metric, label, data, color }) => {
+      return this.preparedMetrics.reduce((acc, { title: metric, label, unit, data, color }) => {
         const metricColor = color ?? getMetricColor(metric);
-
         const datasetLabel = label ?? this.getMetricLabel(metric);
+        const yAxisID = this.getMetricYAxisId(metric, unit);
 
         const defaultDataset = {
           metric,
           backgroundColor: metricColor,
           borderColor: metricColor,
           xAxisID: X_AXES_IDS.default,
-          yAxisID: this.getMetricYAxisId(metric),
+          yAxisID,
           label: datasetLabel,
+          unit,
           data: data.map(({ timestamp, value }) => ({
             x: timestamp * 1000,
-            y: value,
+            y: convertMetricValueByUnit(value, unit),
           })),
         };
 
@@ -147,11 +150,12 @@ export default {
             backgroundColor: historyMetricColor,
             borderColor: historyMetricColor,
             xAxisID: X_AXES_IDS.history,
-            yAxisID: this.getMetricYAxisId(metric),
+            yAxisID,
             label: `${datasetLabel} (${this.$t('common.previous')})`,
+            unit,
             data: data.map(({ history_timestamp: historyTimestamp, history_value: historyValue }) => ({
               x: historyTimestamp * 1000,
-              y: historyValue,
+              y: convertMetricValueByUnit(historyValue, unit),
             })),
           };
 
