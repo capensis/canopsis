@@ -68,6 +68,20 @@ export const Y_AXES_IDS = {
   default: 'y',
   percent: 'yPercent',
   time: 'yTime',
+  bytes: 'yBytes',
+};
+
+export const EXTERNAL_METRIC_UNITS = {
+  millisecond: 'ms',
+  microsecond: 'us',
+  second: 's',
+  continuousCounter: 'c',
+  byte: 'B',
+  kilobyte: 'KB',
+  megabyte: 'MB',
+  gigabyte: 'GB',
+  terabyte: 'TB',
+  percent: '%',
 };
 
 export const X_AXES_IDS = {
