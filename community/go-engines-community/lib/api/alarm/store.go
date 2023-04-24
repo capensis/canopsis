@@ -364,11 +364,46 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 	}
 
 	if r.Steps != nil {
-		var stepsArray any
-		if r.Steps.Reversed {
+		stepMatch := bson.M{}
+		if r.Steps.Type != "" {
+			stepMatch["v.steps._t"] = r.Steps.Type
+		}
+
+		var stepsArray any = "$v.steps"
+		if len(stepMatch) > 0 {
+			pipeline = append(pipeline,
+				bson.M{"$unwind": bson.M{
+					"path":                       "$v.steps",
+					"preserveNullAndEmptyArrays": true,
+					"includeArrayIndex":          "step_index",
+				}},
+				bson.M{"$match": stepMatch},
+			)
+			if r.Steps.Reversed {
+				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": -1}})
+			} else {
+				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": 1}})
+			}
+			pipeline = append(pipeline,
+				bson.M{"$group": bson.M{
+					"_id":   "$_id",
+					"data":  bson.M{"$first": "$$ROOT"},
+					"steps": bson.M{"$push": "$v.steps"},
+				}},
+				bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{
+					"$mergeObjects": bson.A{
+						"$data",
+						bson.M{"v": bson.M{
+							"$mergeObjects": bson.A{
+								"$v",
+								bson.M{"steps": "$steps"},
+							},
+						}},
+					},
+				}}},
+			)
+		} else if r.Steps.Reversed {
 			stepsArray = bson.M{"$reverseArray": "$v.steps"}
-		} else {
-			stepsArray = "$v.steps"
 		}
 
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
