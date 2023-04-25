@@ -180,7 +180,7 @@ export const chartMetricsOptionsMixin = {
 
       return this.$te(messageKey)
         ? this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value })
-        : `${dataset.metric}: ${value}`;
+        : `${dataset.label || dataset.metric}: ${value}`;
     },
 
     getMetricYAxisId(metric, unit) {

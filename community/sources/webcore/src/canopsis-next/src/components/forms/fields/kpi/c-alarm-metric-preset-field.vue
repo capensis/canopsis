@@ -1,25 +1,33 @@
 <template lang="pug">
   v-layout.c-alarm-metric-preset-field(column)
-    c-alarm-metric-parameters-field(
+    c-alarm-external-metric-parameters-field(
+      v-if="preset.external || preset.auto",
       :value="preset.metric",
       :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')",
-      :parameters="preset.auto || onlyExternal ? [] : parameters",
-      :disabled-parameters="disabledParameters",
       :addable="preset.auto",
       :name="`${name}.metric`",
-      :with-external="withExternal",
+      required,
+      @input="updateMetric"
+    )
+    c-alarm-metric-parameters-field(
+      v-else,
+      :value="preset.metric",
+      :label="$t('kpi.selectMetric')",
+      :parameters="parameters",
+      :disabled-parameters="disabledParameters",
+      :name="`${name}.metric`",
       required,
       @input="updateMetric"
     )
     c-name-field(
-      v-if="!preset.auto && preset.metric && isExternalMetric",
+      v-if="!preset.auto && preset.metric && preset.external",
       v-field="preset.label",
       :label="$t('kpi.displayedLabel')",
       :name="`${name}.label`",
       required
     )
     template(v-if="preset.metric")
-      v-layout(v-if="withColor", align-center, justify-space-between)
+      v-layout(v-if="withColor && !preset.auto", align-center, justify-space-between)
         v-switch(
           :label="$t('kpi.customColor')",
           :input-value="!!preset.color",
@@ -70,10 +78,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    withExternal: {
-      type: Boolean,
-      default: false,
-    },
     parameters: {
       type: Array,
       required: false,
@@ -82,14 +86,10 @@ export default {
       type: Array,
       required: false,
     },
-    onlyExternal: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     isExternalMetric() {
-      return !this.isInternalMetric(this.preset.metric);
+      return this.preset.external || this.preset.auto;
     },
 
     aggregateFunctions() {
@@ -97,29 +97,20 @@ export default {
     },
   },
   methods: {
-    isInternalMetric(metric) {
-      return this.parameters.includes(metric);
-    },
-
     enableColor(value) {
       this.updateField('color', value ? getMetricColor(this.preset.metric) : '');
     },
 
-    getNewAggregatedFunction(metric) {
-      if (this.isInternalMetric(metric)) {
-        return this.withAggregateFunction ? getDefaultAggregateFunctionByMetric(metric) : undefined;
-      }
-
-      return getDefaultAggregateFunctionByMetric(metric);
-    },
-
     updateMetric(metric) {
-      this.updateModel({
-        ...this.preset,
-        metric,
-        aggregate_func: this.getNewAggregatedFunction(metric),
-        label: this.isInternalMetric(metric) ? '' : this.preset.label,
-      });
+      if (this.withAggregateFunction) {
+        this.updateModel({
+          ...this.preset,
+          metric,
+          aggregate_func: getDefaultAggregateFunctionByMetric(metric),
+        });
+      } else {
+        this.updateField('metric', metric);
+      }
     },
   },
 };
