@@ -5,17 +5,18 @@ import store from '@/store';
 
 import * as helpers from './helpers';
 
-const Handlebars = promisedHandlebars(HandlebarsLib);
+export const Handlebars = promisedHandlebars(HandlebarsLib);
 
 /**
  * Compile template
  *
  * @param {string} template
  * @param {Object} [context = {}]
+ * @param {Object} [instance = Handlebars]
  * @returns {Promise}
  */
-export async function compile(template, context = {}) {
-  const handleBarFunction = Handlebars.compile(template ?? '');
+export async function compile(template, context = {}, instance = Handlebars) {
+  const handleBarFunction = instance.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
 
