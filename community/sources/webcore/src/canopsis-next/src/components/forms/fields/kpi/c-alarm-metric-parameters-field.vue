@@ -1,27 +1,19 @@
 <template lang="pug">
-  component(
+  v-autocomplete(
     v-validate="rules",
-    :is="addable ? 'v-combobox' : 'v-autocomplete'",
-    :value="value",
-    :search-input.sync="searchInput",
+    v-field="value",
     :items="availableParameters",
     :label="label",
     :name="name",
-    :loading="externalMetricsPending",
     :multiple="isMultiple",
     :hide-details="hideDetails",
     :return-object="false",
-    :hide-no-data="addable",
-    :error-messages="errors.collect(name)",
-    no-filter,
-    @change="updateParameters"
+    :error-messages="errors.collect(name)"
   )
-    template(v-if="!addable", #selection="{ item, index }")
+    template(#selection="{ item, index }")
       template(v-if="isMultiple")
         span(v-if="!index") {{ getSelectionLabel(item) }}
-      template(v-else)
-        v-icon.mr-2(v-if="item.isExternal") language
-        span {{ item.text }}
+      template(v-else) {{ item.text }}
     template(#item="{ parent, item, tile }")
       v-list-tile(v-bind="tile.props", v-on="tile.on")
         v-list-tile-action(v-if="isMultiple")
@@ -30,7 +22,6 @@
             :color="parent.color",
             :disabled="tile.props.disabled"
           )
-        v-icon.mr-3(v-if="item.isExternal") language
         v-list-tile-content
           v-list-tile-title {{ item.text }}
 </template>
@@ -40,12 +31,8 @@ import { isArray, omit } from 'lodash';
 
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
-import { formBaseMixin } from '@/mixins/form';
-import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
-
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin, entitiesMetricsMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -83,19 +70,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    withExternal: {
-      type: Boolean,
-      default: false,
-    },
-    addable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      searchInput: null,
-    };
   },
   computed: {
     isMultiple() {
@@ -107,22 +81,12 @@ export default {
     },
 
     availableParameters() {
-      const parameters = this.parameters.map(value => ({
+      return this.parameters.map(value => ({
         value,
         disabled: (this.disabledParameters.includes(value) && !this.isActiveValue(value))
           || (this.isMinValueLength && this.isActiveValue(value)),
         text: this.$t(`alarm.metrics.${value}`),
       }));
-
-      if (this.withExternal) {
-        parameters.push(...this.externalMetrics.map(value => ({
-          text: value,
-          value,
-          isExternal: true,
-        })));
-      }
-
-      return this.addable && this.searchInput ? parameters.filter(this.filterMetricByRegexp) : parameters;
     },
 
     rules() {
@@ -131,29 +95,7 @@ export default {
       };
     },
   },
-  watch: {
-    withExternal: {
-      immediate: true,
-      handler(value) {
-        if (value && !this.externalMetricsPending && !this.externalMetrics.length) {
-          this.fetchList();
-        }
-      },
-    },
-  },
   methods: {
-    filterMetricByRegexp({ value }) {
-      try {
-        return new RegExp(this.searchInput).test(value);
-      } catch (err) {
-        return false;
-      }
-    },
-
-    updateParameters(value) {
-      this.updateModel(value ?? '');
-    },
-
     isActiveValue(value) {
       return this.isMultiple ? this.value.includes(value) : this.value === value;
     },
@@ -164,12 +106,6 @@ export default {
       }
 
       return this.$t('common.parametersToDisplay', { count: this.value.length });
-    },
-
-    fetchList() {
-      this.fetchExternalMetricsList({
-        params: { paginate: false },
-      });
     },
   },
 };

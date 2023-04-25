@@ -13,6 +13,8 @@ export default {
   periodTrend: '{count} pour la période\n{from} - {to}',
   largeCountOfMetrics: 'La liste des métriques à afficher est trop longue et tronquée.',
   onlyDisplayed: 'Seules {count} métriques sont affichées.',
+  autoAdd: 'Ajout automatique',
+  addExternal: 'Ajouter externe',
   tabs: {
     collectionSettings: 'Paramètres d\'évaluation',
     ratingSettings: 'Paramètres d\'évaluation',
