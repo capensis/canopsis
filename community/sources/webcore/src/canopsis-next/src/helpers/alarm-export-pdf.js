@@ -53,9 +53,9 @@ import { compile } from './handlebars';
  */
 export const prepareAlarmStateForExport = state => ({
   [ENTITIES_STATES.ok]: '0 - OK',
-  [ENTITIES_STATES.minor]: '0 - Minor',
-  [ENTITIES_STATES.major]: '0 - Major',
-  [ENTITIES_STATES.critical]: '0 - Critical',
+  [ENTITIES_STATES.minor]: '1 - Minor',
+  [ENTITIES_STATES.major]: '2 - Major',
+  [ENTITIES_STATES.critical]: '3 - Critical',
 }[state?.val] ?? `Invalid value (${state?.val})`);
 
 /**
