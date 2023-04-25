@@ -10,6 +10,7 @@ import uid from '@/helpers/uid';
  * @property {string} [color]
  * @property {string} [label]
  * @property {boolean} [auto]
+ * @property {boolean} [external]
  * @property {MetricAggregateFunctions} [aggregate_func]
  */
 
@@ -38,6 +39,7 @@ export const metricPresetToForm = (preset = {}) => ({
   aggregate_func: preset.aggregate_func ?? '',
   label: preset.label ?? '',
   auto: preset.auto ?? false,
+  external: preset.external ?? false,
   key: uid(),
 });
 
@@ -56,7 +58,7 @@ export const metricPresetsToForm = (presets = []) => presets.map(metricPresetToF
  * @returns {MetricPreset}
  */
 export const formToMetricPreset = (form) => {
-  const { key, color, aggregate_func: aggregateFunc, label, ...metricPreset } = form;
+  const { key, color, aggregate_func: aggregateFunc, label, auto, external, ...metricPreset } = form;
 
   if (color) {
     metricPreset.color = color;
@@ -68,6 +70,14 @@ export const formToMetricPreset = (form) => {
 
   if (label) {
     metricPreset.label = label;
+  }
+
+  if (auto) {
+    metricPreset.auto = auto;
+  }
+
+  if (external) {
+    metricPreset.external = external;
   }
 
   return metricPreset;

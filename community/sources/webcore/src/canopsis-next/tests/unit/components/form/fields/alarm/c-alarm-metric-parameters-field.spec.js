@@ -2,7 +2,6 @@ import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
-import { createMetricsModule, createMockedStoreModules } from '@unit/utils/store';
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
@@ -14,43 +13,23 @@ const stubs = {
 const selectAutocompleteNode = wrapper => wrapper.vm.$children[0];
 
 describe('c-alarm-metric-parameters-field', () => {
-  const { metricsModule, externalMetrics, fetchExternalMetricsList } = createMetricsModule();
-
-  const store = createMockedStoreModules([metricsModule]);
-
   const factory = generateShallowRenderer(CAlarmMetricParametersField, { stubs });
   const snapshotFactory = generateRenderer(CAlarmMetricParametersField);
 
   it('Value changed after trigger the input', () => {
     const wrapper = factory({
-      store,
       propsData: {
         value: [],
       },
     });
 
-    selectAutocompleteNode(wrapper).$emit('change', ALARM_METRIC_PARAMETERS.maxAck);
+    selectAutocompleteNode(wrapper).$emit('input', ALARM_METRIC_PARAMETERS.maxAck);
 
     expect(wrapper).toEmit('input', ALARM_METRIC_PARAMETERS.maxAck);
   });
 
-  it('External metrics fetched after mount', async () => {
-    factory({
-      propsData: {
-        value: [],
-        withExternal: true,
-      },
-      store,
-    });
-
-    await flushPromises();
-
-    expect(fetchExternalMetricsList).toHaveBeenCalled();
-  });
-
   it('Renders `c-alarm-metric-parameters-field` with default props', () => {
     snapshotFactory({
-      store,
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms],
       },
@@ -61,7 +40,6 @@ describe('c-alarm-metric-parameters-field', () => {
 
   it('Renders `c-alarm-metric-parameters-field` with custom props', () => {
     snapshotFactory({
-      store,
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
         min: 2,
@@ -82,14 +60,11 @@ describe('c-alarm-metric-parameters-field', () => {
   });
 
   it('Renders `c-alarm-metric-parameters-field` with external metrics', async () => {
-    externalMetrics.mockReturnValueOnce(['external/first', 'external/second']);
     snapshotFactory({
       propsData: {
         value: [ALARM_METRIC_PARAMETERS.createdAlarms, ALARM_METRIC_PARAMETERS.ratioInstructions],
         parameters: [],
-        withExternal: true,
       },
-      store: createMockedStoreModules([metricsModule]),
     });
 
     await flushPromises();

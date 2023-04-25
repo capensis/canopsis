@@ -269,7 +269,6 @@ export default {
   copyProperty: 'Copy property',
   copyPropertyPath: 'Copy property path',
   hidden: 'Hidden',
-  autoAdd: 'Auto add',
   chart: 'Chart | Charts',
   variableTypes: {
     string: 'String',
