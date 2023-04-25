@@ -101,6 +101,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
+  exportPdf: 'exportPdf',
   groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
@@ -311,6 +312,33 @@ export const ALARM_TEMPLATE_FIELDS = {
   pbehaviorInfo: `alarm.${ALARM_FIELDS.pbehaviorInfo}`,
   duration: `alarm.${ALARM_FIELDS.duration}`,
   eventsCount: `alarm.${ALARM_FIELDS.eventsCount}`,
+};
+
+export const ALARM_EXPORT_PDF_FIELDS = {
+  displayName: 'display_name',
+  state: 'state',
+  status: 'status',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  component: 'component',
+  resource: 'resource',
+  initialOutput: 'initial_output',
+  output: 'output',
+  eventsCount: 'events_count',
+  duration: 'duration',
+  currentDate: 'current_date',
+  creationDate: 'creation_date',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  acknowledgeDate: 'acknowledge_date',
+  resolved: 'resolved',
+  activationDate: 'activation_date',
+  infos: 'infos',
+  pbehaviorInfo: 'pbehavior_info',
+  ticket: 'ticket',
+  comments: 'comments',
+  tags: 'tags',
+  links: 'links',
 };
 
 export const ALARM_FIELDS_TO_LABELS_KEYS = {

@@ -1,6 +1,7 @@
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+import { fakeAlarm } from '@unit/data/alarm';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { saveJsonFile } from '@/helpers/file/files';
 import ClickOutside from '@/services/click-outside';
@@ -101,6 +102,7 @@ describe('variables-help', () => {
     parentComponent: {
       provide: {
         $clickOutside: new ClickOutside(),
+        $system: {},
       },
     },
   });
@@ -176,6 +178,26 @@ describe('variables-help', () => {
     });
 
     await openAllNodes(wrapper);
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `variables-help` with original flag', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        modal: {
+          config: {
+            variables: [
+              { ...convertObjectToTreeview(variablesObjectFirst, 'alarm'), original: fakeAlarm() },
+              convertObjectToTreeview(variablesObjectSecond, 'test2'),
+            ],
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });

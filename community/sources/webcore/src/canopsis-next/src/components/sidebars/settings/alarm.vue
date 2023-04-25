@@ -95,6 +95,16 @@
         @input="updateMoreInfo"
       )
       v-divider
+      field-text-editor(
+        v-model="form.parameters.exportPdfTemplate",
+        :title="$t('settings.exportPdfTemplate')",
+        :variables="exportPdfAlarmVariables",
+        :default-value="defaultExportPdfTemplateValue",
+        :dialog-props="{ maxWidth: 1070 }",
+        addable,
+        removable
+      )
+      v-divider
       field-grid-range-size(
         v-model="form.parameters.expandGridRangeSize",
         :title="$t('settings.expandGridRangeSize')"
@@ -176,7 +186,11 @@
 </template>
 
 <script>
-import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
+import {
+  SIDE_BARS,
+  ALARM_UNSORTABLE_FIELDS,
+  ALARM_FIELDS_TO_LABELS_KEYS,
+} from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
 import { getColumnLabel, getSortable } from '@/helpers/widgets';
@@ -189,6 +203,8 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import WidgetSettingsGroup from './partials/widget-settings-group.vue';
 import WidgetSettings from './partials/widget-settings.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -198,6 +214,7 @@ import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldFilters from './fields/common/filters.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldTextEditorWithTemplate from './fields/common/text-editor-with-template.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastActionOutput from './fields/alarm/fast-action-output.vue';
@@ -226,6 +243,7 @@ export default {
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,
     FieldFilters,
+    FieldTextEditor,
     FieldTextEditorWithTemplate,
     FieldSwitcher,
     FieldFastActionOutput,
@@ -256,6 +274,10 @@ export default {
 
     sortablePreparedWidgetColumns() {
       return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
+    },
+
+    defaultExportPdfTemplateValue() {
+      return ALARM_EXPORT_PDF_TEMPLATE;
     },
   },
   mounted() {
