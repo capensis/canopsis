@@ -46,6 +46,8 @@ type LaunchEndpoint struct {
 	ResponseStatusHeaderUrlKey string            `toml:"response_status_header_url_key" bson:"response_status_header_url_key,omitempty"`
 	ResponseExternalUrlKey     string            `toml:"response_external_url_key" bson:"response_external_url_key,omitempty"`
 	Body                       string            `toml:"body" bson:"body"`
+	WithBody                   bool              `toml:"with_body" bson:"with_body"`
+	WithUrlQuery               bool              `toml:"with_url_query" bson:"with_url_query"`
 }
 
 // QueueEndpoint represents API endpoint to fetch external job execution.

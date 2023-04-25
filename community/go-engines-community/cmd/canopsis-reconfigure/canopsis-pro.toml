@@ -374,6 +374,8 @@ url_tpl = "{{ .host }}/api/35/job/{{ .jobID }}/run"
 url_tpl_with_params = ""
 # Http method of endpoint.
 method = "POST"
+with_body = true
+with_url_query = false
 # Http headers.
 headers = { Content-Type = "application/json", Accept = "application/json" }
 # Field from API response body to resolve get status API endpoint.
@@ -430,6 +432,7 @@ url_tpl = "{{ .host }}/api/v2/job_templates/{{ .jobID }}/launch/"
 method = "POST"
 headers = { Content-Type = "application/json", Accept = "application/json" }
 response_status_url_key = "url"
+with_body = true
 [Remediation.external_api.awx.status_endpoint]
 url_tpl = "{{ .host }}{{ .responseUrl }}"
 method = "GET"
@@ -451,6 +454,7 @@ url_tpl = "{{ .host }}/job/{{ .jobID }}/build"
 url_tpl_with_params = "{{ .host }}/job/{{ .jobID }}/buildWithParameters"
 method = "POST"
 headers = { Accept = "application/json" }
+with_url_query = true
 response_status_header_url_key = "Location"
 [Remediation.external_api.jenkins.queue_endpoint]
 url_tpl = "{{ .responseUrl }}/api/json"
