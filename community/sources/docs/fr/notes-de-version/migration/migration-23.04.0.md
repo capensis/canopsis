@@ -1,7 +1,6 @@
-
 # Guide de migration vers Canopsis 23.04.0
 
-Ce guide donne des instructions vous permettant de mettre à jour Canopsis 22.10 vers [la version 23.04.0](../23.04.0.md).
+Ce guide donne des instructions vous permettant de mettre à jour Canopsis 22.10 (dernière version disponible) vers [la version 23.04.0](../23.04.0.md).
 
 ## Prérequis
 
