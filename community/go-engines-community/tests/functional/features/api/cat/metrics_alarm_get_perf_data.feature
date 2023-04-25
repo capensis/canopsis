@@ -607,6 +607,54 @@ Feature: Get alarm metrics
       ]
     }
     """
+    When I do POST /api/v4/cat/metrics/alarm:
+    """json
+    {
+      "parameters": [
+        {
+          "metric": "cpu_%",
+          "aggregate_func": "max"
+        },
+        {
+          "metric": "cpu*",
+          "aggregate_func": "max"
+        }
+      ],
+      "filter": "test-kpi-filter-to-alarm-metrics-get",
+      "sampling": "day",
+      "from": {{ parseTimeTz "01-07-2022 00:00" }},
+      "to": {{ parseTimeTz "01-07-2022 00:00" }}
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "title": "cpu_%",
+          "aggregate_func": "max",
+          "unit": "%",
+          "data": [
+            {
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
+              "value": 80
+            }
+          ]
+        },
+        {
+          "title": "cpu",
+          "aggregate_func": "max",
+          "data": [
+            {
+              "timestamp": {{ parseTimeTz "01-07-2022 00:00" }},
+              "value": 70
+            }
+          ]
+        }
+      ]
+    }
+    """
 
   @concurrent
   Scenario: given get not exist perf data request should return empty response

@@ -7,13 +7,19 @@ Feature: Get perf data metrics
     When I am admin
     When I do GET /api/v4/cat/perf-data-metrics?search=test-perf-data-to-get
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
         "test-perf-data-to-get-1",
         "test-perf-data-to-get-2"
-      ]
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
     }
     """
 
