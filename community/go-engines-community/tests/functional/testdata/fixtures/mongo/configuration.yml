@@ -77,6 +77,8 @@ configuration:
           method: POST
           response_status_url_key: url
           url_tpl: '{{ .host }}/api/v2/job_templates/{{ .jobID }}/launch/'
+          with_body: true
+          with_url_query: false
         output_endpoint:
           headers:
             Accept: text/plain
@@ -108,6 +110,8 @@ configuration:
           response_status_header_url_key: Location
           url_tpl: '{{ .host }}/job/{{ .jobID }}/build'
           url_tpl_with_params: '{{ .host }}/job/{{ .jobID }}/buildWithParameters'
+          with_body: false
+          with_url_query: true
         output_endpoint:
           method: GET
           url_tpl: '{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText'
@@ -141,6 +145,8 @@ configuration:
           response_external_url_key: permalink
           response_status_url_key: href
           url_tpl: '{{ .host }}/api/35/job/{{ .jobID }}/run'
+          with_body: true
+          with_url_query: false
         output_endpoint:
           headers:
             Accept: text/plain
@@ -178,6 +184,8 @@ configuration:
             "Content-Type": "application/json"
             "Accept": "application/json"
           body: "{\"type\":\"Request\"}"
+          with_body: false
+          with_url_query: false
         status_endpoint:
           url_tpl: "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/status"
           method: GET
