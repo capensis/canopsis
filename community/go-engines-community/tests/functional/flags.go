@@ -34,6 +34,7 @@ type Flags struct {
 	tags                string
 	clearOnScenario     bool
 	scenarioData        string
+	keepStoresOnFail    bool
 }
 
 type arrayFlag []string
@@ -64,6 +65,7 @@ func (f *Flags) ParseArgs() {
 	flag.StringVar(&f.tags, "godog.tags", "", "Filter scenarios.")
 	flag.BoolVar(&f.clearOnScenario, "clearOnScenario", false, "Clear stores on each scenario.")
 	flag.StringVar(&f.scenarioData, "scenarioData", dirScenarioData, "Scenario test data dir")
+	flag.BoolVar(&f.keepStoresOnFail, "keepStoresOnFail", false, "Keep stores on fail.")
 	flag.Parse()
 
 	if !f.onlyFixtures && len(f.paths) == 0 {
