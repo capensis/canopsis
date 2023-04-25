@@ -6,8 +6,6 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
 } from '@/constants';
 
-import { convertObjectToTreeview } from '@/helpers/treeview';
-
 import { generatePreparedDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
@@ -183,35 +181,6 @@ export const widgetActionsPanelAlarmMixin = {
 
           title: this.$t('modals.createAckRemove.title'),
           eventType: EVENT_ENTITY_TYPES.ackRemove,
-        },
-      });
-    },
-
-    showVariablesHelperModal() {
-      const {
-        entity,
-        pbehavior,
-        infos,
-        ...alarm
-      } = this.item;
-      const variables = [];
-
-      variables.push(convertObjectToTreeview(alarm, 'alarm'));
-
-      if (entity) {
-        variables.push(convertObjectToTreeview(entity, 'entity'));
-      }
-
-      if (pbehavior) {
-        variables.push(convertObjectToTreeview(pbehavior, 'pbehavior'));
-      }
-
-      this.$modals.show({
-        name: MODALS.variablesHelp,
-        config: {
-          ...this.modalConfig,
-
-          variables,
         },
       });
     },

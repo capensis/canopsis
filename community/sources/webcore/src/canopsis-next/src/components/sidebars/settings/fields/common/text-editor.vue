@@ -1,8 +1,8 @@
 <template lang="pug">
   settings-button-field(
     :is-empty="isValueEmpty",
-    addable,
-    removable,
+    :addable="addable",
+    :removable="removable",
     @create="showTextEditorModal",
     @edit="showTextEditorModal",
     @delete="showRemoveTextConfirmationModal"
@@ -34,16 +34,33 @@ export default {
       type: Array,
       required: false,
     },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    defaultValue: {
+      type: String,
+      default: '',
+    },
+    dialogProps: {
+      type: Object,
+      required: false,
+    },
   },
   computed: {
     isValueEmpty() {
-      return !this.value || !this.value.length;
+      return this.defaultValue === String(this.value);
     },
   },
   methods: {
     showTextEditorModal() {
       this.$modals.show({
         name: MODALS.textEditor,
+        dialogProps: this.dialogProps,
         config: {
           text: this.value,
           variables: this.variables,
@@ -56,7 +73,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.updateModel(''),
+          action: () => this.updateModel(this.defaultValue),
         },
       });
     },

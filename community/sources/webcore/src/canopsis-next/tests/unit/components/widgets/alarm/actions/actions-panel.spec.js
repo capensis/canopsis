@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
+  createAlarmDetailsModule,
   createAuthModule,
   createDeclareTicketModule,
   createEventModule,
@@ -78,6 +79,7 @@ describe('actions-panel', () => {
     },
   };
   const { alarmModule } = createAlarmModule();
+  const { alarmDetailsModule, fetchAlarmDetailsWithoutStore } = createAlarmDetailsModule();
   const { eventModule, createEvent } = createEventModule();
   const {
     declareTicketRuleModule,
@@ -88,6 +90,7 @@ describe('actions-panel', () => {
     eventModule,
     authModule,
     alarmModule,
+    alarmDetailsModule,
     declareTicketRuleModule,
   ]);
 
@@ -776,6 +779,7 @@ describe('actions-panel', () => {
             {
               name: 'alarm',
               children: [{ name: '_id', path: 'alarm._id', value: alarmData._id }],
+              original: alarmData,
             },
             {
               name: 'entity',
@@ -1039,12 +1043,9 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(3);
   });
 
-  it('Export PDF action', () => {
+  it('Export PDF action', async () => {
     const wrapper = factory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-        alarmModule,
-      ]),
+      store,
       propsData: {
         item: alarm,
         widget,
@@ -1059,6 +1060,9 @@ describe('actions-panel', () => {
 
     exportPdfAction.trigger('click');
 
+    await flushPromises();
+
+    expect(fetchAlarmDetailsWithoutStore).toBeCalled();
     expect(exportAlarmToPdf).toBeCalled();
   });
 

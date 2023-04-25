@@ -115,6 +115,7 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
+ * @property {string} exportPdfTemplate
  */
 
 /**
@@ -220,6 +221,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
 });
 
 /**

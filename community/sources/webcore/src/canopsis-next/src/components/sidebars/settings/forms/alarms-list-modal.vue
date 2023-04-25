@@ -34,6 +34,16 @@
       :templates="alarmMoreInfosWidgetTemplates",
       @input="updateMoreInfo"
     )
+    v-divider
+    field-text-editor(
+      v-model="form.exportPdfTemplate",
+      :title="$t('settings.exportPdfTemplate')",
+      :variables="exportPdfAlarmVariables",
+      :default-value="defaultExportPdfTemplateValue",
+      :dialog-props="{ maxWidth: 1070 }",
+      addable,
+      removable
+    )
 </template>
 
 <script>
@@ -47,12 +57,15 @@ import { getColumnLabel, getSortable } from '@/helpers/widgets';
 import { formBaseMixin } from '@/mixins/form';
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
+import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-settings-group.vue';
 import FieldDefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
 import FieldColumns from '@/components/sidebars/settings/fields/common/columns.vue';
 import FieldInfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
+import FieldTextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/settings/fields/common/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
-import WidgetSettingsGroup from '@/components/sidebars/settings/partials/widget-settings-group.vue';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 export default {
   components: {
@@ -60,6 +73,7 @@ export default {
     FieldDefaultSortColumn,
     FieldColumns,
     FieldInfoPopup,
+    FieldTextEditor,
     FieldTextEditorWithTemplate,
     FieldDefaultElementsPerPage,
   },
@@ -90,6 +104,10 @@ export default {
     },
   },
   computed: {
+    defaultExportPdfTemplateValue() {
+      return ALARM_EXPORT_PDF_TEMPLATE;
+    },
+
     alarmColumnsWidgetTemplates() {
       return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmColumns });
     },

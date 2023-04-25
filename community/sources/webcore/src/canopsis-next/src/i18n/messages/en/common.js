@@ -271,6 +271,7 @@ export default {
   hidden: 'Hidden',
   autoAdd: 'Auto add',
   chart: 'Chart | Charts',
+  currentDate: 'Current date',
   variableTypes: {
     string: 'String',
     number: 'Number',
