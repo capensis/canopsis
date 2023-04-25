@@ -271,6 +271,7 @@ export default {
   hidden: 'Caché',
   autoAdd: 'Ajout automatique',
   chart: 'Graphique | Graphiques',
+  currentDate: 'Date actuelle',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

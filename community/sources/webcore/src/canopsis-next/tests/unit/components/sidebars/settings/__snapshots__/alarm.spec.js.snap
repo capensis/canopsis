@@ -132,6 +132,38 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
+    <div
+      class="container pa-3 fluid"
+    >
+      <div
+        class="layout align-center justify-space-between"
+      >
+        <div
+          class="subheading"
+        >
+          Export PDF template
+        </div>
+        <div
+          class="layout justify-end"
+        >
+          <button
+            class="primary v-btn v-btn--small theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <span>
+                common.create
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
     <field-grid-range-size-stub
       max="12"
       min="0"
@@ -359,6 +391,38 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       value="More info template"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="container pa-3 fluid"
+    >
+      <div
+        class="layout align-center justify-space-between"
+      >
+        <div
+          class="subheading"
+        >
+          Export PDF template
+        </div>
+        <div
+          class="layout justify-end"
+        >
+          <button
+            class="primary v-btn v-btn--small theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <span>
+                common.create
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
     <hr
       class="v-divider theme--light"
     />
@@ -594,6 +658,38 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="container pa-3 fluid"
+    >
+      <div
+        class="layout align-center justify-space-between"
+      >
+        <div
+          class="subheading"
+        >
+          Export PDF template
+        </div>
+        <div
+          class="layout justify-end"
+        >
+          <button
+            class="primary v-btn v-btn--small theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <span>
+                common.create
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
     <hr
       class="v-divider theme--light"
     />
