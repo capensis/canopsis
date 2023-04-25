@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-movable-card-iterator-field(v-field="metrics", @add="add")
+  c-movable-card-iterator-field(v-field="metrics", :addable="!onlyExternal", @add="addMetric")
     template(#item="{ item, index }")
       c-alarm-metric-preset-field(
         v-field="metrics[index]",
@@ -14,10 +14,16 @@
     template(#append="")
       c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
     template(#actions="")
-      v-btn.ml-2.mx-0(
+      v-btn.mr-2.mx-0(
+        v-if="withExternal",
         color="primary",
-        @click.prevent="add(true)"
-      ) {{ $t('common.autoAdd') }}
+        @click.prevent="addExternal"
+      ) {{ $t('kpi.addExternal') }}
+      v-btn.mr-2.mx-0(
+        v-if="withExternal",
+        color="primary",
+        @click.prevent="addAuto"
+      ) {{ $t('kpi.autoAdd') }}
 </template>
 
 <script>
@@ -127,11 +133,19 @@ export default {
     this.detachRules();
   },
   methods: {
-    add(auto = false) {
+    addMetric(metric = {}) {
       this.addItemIntoArray(metricPresetToForm({
         aggregate_func: this.withAggregateFunction ? AGGREGATE_FUNCTIONS.avg : '',
-        auto,
+        ...metric,
       }));
+    },
+
+    addExternal() {
+      this.addMetric({ external: true, aggregate_func: AGGREGATE_FUNCTIONS.avg });
+    },
+
+    addAuto() {
+      this.addMetric({ auto: true, aggregate_func: AGGREGATE_FUNCTIONS.avg });
     },
 
     attachMinValueRule() {

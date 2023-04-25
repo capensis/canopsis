@@ -269,7 +269,6 @@ export default {
   copyProperty: 'Copier la propriété',
   copyPropertyPath: 'Copier le chemin de la propriété',
   hidden: 'Caché',
-  autoAdd: 'Ajout automatique',
   chart: 'Graphique | Graphiques',
   variableTypes: {
     string: 'Chaîne de caractères',

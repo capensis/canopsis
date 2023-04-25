@@ -13,6 +13,8 @@ export default {
   periodTrend: '{count} for the period\n{from} - {to}',
   largeCountOfMetrics: 'The list of metrics to display is too large and truncated.',
   onlyDisplayed: 'Only {count} metrics are displayed.',
+  autoAdd: 'Auto add',
+  addExternal: 'Add external',
   tabs: {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
