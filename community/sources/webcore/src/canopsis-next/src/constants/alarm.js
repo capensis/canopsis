@@ -314,6 +314,33 @@ export const ALARM_TEMPLATE_FIELDS = {
   eventsCount: `alarm.${ALARM_FIELDS.eventsCount}`,
 };
 
+export const ALARM_EXPORT_PDF_FIELDS = {
+  displayName: 'display_name',
+  state: 'state',
+  status: 'status',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  component: 'component',
+  resource: 'resource',
+  initialOutput: 'initial_output',
+  output: 'output',
+  eventsCount: 'events_count',
+  duration: 'duration',
+  currentDate: 'current_date',
+  creationDate: 'creation_date',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  acknowledgeDate: 'acknowledge_date',
+  resolved: 'resolved',
+  activationDate: 'activation_date',
+  infos: 'infos',
+  pbehaviorInfo: 'pbehavior_info',
+  ticket: 'ticket',
+  comments: 'comments',
+  tags: 'tags',
+  links: 'links',
+};
+
 export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.id]: 'common.id',
   [ALARM_FIELDS.displayName]: 'alarm.fields.displayName',

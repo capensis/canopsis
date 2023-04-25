@@ -18,15 +18,16 @@ import { getEntityEventIcon } from '@/helpers/icon';
 
 import featuresService from '@/services/features';
 
-import { exportAlarmToPdf } from '@/helpers/alarm-export-pdf';
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
+import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -45,6 +46,7 @@ export default {
     entitiesAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
+    widgetActionsPanelAlarmExportPdfMixin,
   ],
   props: {
     item: {
@@ -71,11 +73,6 @@ export default {
       type: Function,
       default: () => {},
     },
-  },
-  data() {
-    return {
-      exportPdfPending: false,
-    };
   },
   computed: {
     actionsMap() {
@@ -181,7 +178,7 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.exportPdf,
           icon: 'assignment_returned',
           title: this.$t('alarm.actions.titles.exportPdf'),
-          loading: this.exportPdfPending,
+          loading: this.exportAlarmToPdfPending,
           method: this.exportPdf,
         },
         ...featuresActionsMap,
@@ -361,16 +358,40 @@ export default {
       });
     },
 
-    async exportPdf() {
-      try {
-        this.exportPdfPending = true;
+    showVariablesHelperModal() {
+      const {
+        entity,
+        pbehavior,
+        infos,
+        ...alarm
+      } = this.item;
+      const variables = [{
+        ...convertObjectToTreeview(alarm, 'alarm'),
 
-        await exportAlarmToPdf(this.widget.parameters.exportPdfTemplate, this.item, this.$system.timezone);
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
-      } finally {
-        this.exportPdfPending = false;
+        original: this.item,
+      }];
+
+      if (entity) {
+        variables.push(convertObjectToTreeview(entity, 'entity'));
       }
+
+      if (pbehavior) {
+        variables.push(convertObjectToTreeview(pbehavior, 'pbehavior'));
+      }
+
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          ...this.modalConfig,
+
+          variables,
+          exportPdfTemplate: this.widget.parameters.exportPdfTemplate,
+        },
+      });
+    },
+
+    exportPdf() {
+      return this.exportAlarmToPdf(this.item, this.widget.parameters.exportPdfTemplate);
     },
 
     showAssociateTicketModal() {

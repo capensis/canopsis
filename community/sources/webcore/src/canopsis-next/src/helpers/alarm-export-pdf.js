@@ -1,6 +1,6 @@
 import JsPDF from 'jspdf';
 
-import { DATETIME_FORMATS, ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ALARM_EXPORT_PDF_FIELDS, DATETIME_FORMATS, ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
@@ -30,13 +30,19 @@ import { compile } from './handlebars';
  * @property {string} last_update_date
  * @property {string} last_update_date
  * @property {string} acknowledge_date
+ * @property {string} resolved
  * @property {string} activation_date
  * @property {Object} infos
  * @property {Object} pbehavior_info
  * @property {Object} ticket_info
- * @property {AlarmEvent} last_comment
+ * @property {AlarmEvent[]} comments
  * @property {string[]} tags
  * @property {AlarmLinks} links
+ */
+
+/**
+ * @typedef {Alarm} AlarmWithComments
+ * @property {AlarmEvent[]} comments
  */
 
 /**
@@ -70,7 +76,7 @@ export const prepareAlarmStatusForExport = status => ({
 /**
  * Prepare alarm for exporting
  *
- * @param {Alarm} [alarm = {}]
+ * @param {AlarmWithComments} [alarm = {}]
  * @param {string} [timezone]
  * @returns {AlarmExport}
  */
@@ -78,31 +84,36 @@ export const prepareAlarmForExport = (alarm = {}, timezone) => {
   const { v = {} } = alarm;
 
   return {
-    display_name: v.display_name,
-    state: prepareAlarmStateForExport(v.state),
-    status: prepareAlarmStatusForExport(v.status),
-    connector: v.connector,
-    connector_name: v.connector_name,
-    component: v.component,
-    resource: v.resource,
-    initial_output: v.initial_output,
-    output: v.output,
-    events_count: v.events_count,
-    duration: convertDurationToString(v.duration),
-    current_date:
+    [ALARM_EXPORT_PDF_FIELDS.displayName]: v.display_name,
+    [ALARM_EXPORT_PDF_FIELDS.state]: prepareAlarmStateForExport(v.state),
+    [ALARM_EXPORT_PDF_FIELDS.status]: prepareAlarmStatusForExport(v.status),
+    [ALARM_EXPORT_PDF_FIELDS.connector]: v.connector,
+    [ALARM_EXPORT_PDF_FIELDS.connectorName]: v.connector_name,
+    [ALARM_EXPORT_PDF_FIELDS.component]: v.component,
+    [ALARM_EXPORT_PDF_FIELDS.resource]: v.resource,
+    [ALARM_EXPORT_PDF_FIELDS.initialOutput]: v.initial_output,
+    [ALARM_EXPORT_PDF_FIELDS.output]: v.output,
+    [ALARM_EXPORT_PDF_FIELDS.eventsCount]: v.events_count,
+    [ALARM_EXPORT_PDF_FIELDS.duration]: convertDurationToString(v.duration),
+    [ALARM_EXPORT_PDF_FIELDS.currentDate]:
       convertDateToStringWithNewTimezone(new Date(), DATETIME_FORMATS.longWithTimezone, timezone),
-    creation_date:
+    [ALARM_EXPORT_PDF_FIELDS.creationDate]:
       convertDateToStringWithNewTimezone(alarm.t, DATETIME_FORMATS.longWithTimezone, timezone),
-    last_event_date:
+    [ALARM_EXPORT_PDF_FIELDS.lastEventDate]:
       convertDateToStringWithNewTimezone(v.last_event_date, DATETIME_FORMATS.longWithTimezone, timezone),
-    last_update_date:
+    [ALARM_EXPORT_PDF_FIELDS.lastUpdateDate]:
       convertDateToStringWithNewTimezone(v.last_update_date, DATETIME_FORMATS.longWithTimezone, timezone),
-    acknowledge_date:
+    [ALARM_EXPORT_PDF_FIELDS.acknowledgeDate]:
       convertDateToStringWithNewTimezone(v.ack?.t, DATETIME_FORMATS.longWithTimezone, timezone),
-    activation_date:
+    [ALARM_EXPORT_PDF_FIELDS.resolved]:
+      convertDateToStringWithNewTimezone(v.resolved, DATETIME_FORMATS.longWithTimezone, timezone),
+    [ALARM_EXPORT_PDF_FIELDS.activationDate]:
       convertDateToStringWithNewTimezone(v.activation_date, DATETIME_FORMATS.longWithTimezone, timezone),
-    infos: alarm.infos,
-    pbehavior_info: v.pbehavior_info
+    [ALARM_EXPORT_PDF_FIELDS.infos]: alarm.infos,
+    [ALARM_EXPORT_PDF_FIELDS.ticket]: v.ticket,
+    [ALARM_EXPORT_PDF_FIELDS.tags]: alarm.tags,
+    [ALARM_EXPORT_PDF_FIELDS.links]: alarm.links,
+    [ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo]: v.pbehavior_info
       ? {
         ...v.pbehavior_info,
 
@@ -110,29 +121,12 @@ export const prepareAlarmForExport = (alarm = {}, timezone) => {
           convertDateToStringWithNewTimezone(v.pbehavior_info.timestamp, DATETIME_FORMATS.longWithTimezone, timezone),
       }
       : null,
-    ticket_info: {
-      _t: 'declareticket',
-      a: 'root',
-      m: 'Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name. Ticket ID: test-ticket-declareticket-execution-1. Ticket URL: https://test/test-ticket-declareticket-execution-1. Ticket name: test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1.',
-      ticket: 'test-ticket-declareticket-execution-1',
-      ticket_url: 'https://test/test-ticket-declareticket-execution-1',
-      ticket_data: {
-        name: 'test-ticket-declareticket-execution-1 test-resource-declareticket-execution-1-1',
-      },
-      ticket_comment: 'test-comment-declareticket-execution-1-1',
-      ticket_rule_id: '{{ .ruleId }}',
-      ticket_rule_name: 'Ticket declaration rule: test-declareticketrule-declareticket-execution-1-name',
-      ticket_system_name: 'test-declareticketrule-declareticket-execution-1-system-name',
-    },
-    last_comment: v.last_comment
-      ? {
-        ...v.last_comment,
+    [ALARM_EXPORT_PDF_FIELDS.comments]: alarm.comments?.map(comment => ({
+      ...comment,
 
-        t: convertDateToStringWithNewTimezone(v.last_comment.t, DATETIME_FORMATS.longWithTimezone, timezone),
-      }
-      : null,
-    tags: alarm.tags,
-    links: alarm.links,
+      t: convertDateToStringWithNewTimezone(v.last_comment.t, DATETIME_FORMATS.longWithTimezone, timezone),
+    })),
+
   };
 };
 
@@ -146,30 +140,34 @@ export const prepareAlarmForExport = (alarm = {}, timezone) => {
  */
 export const exportAlarmToPdf = async (template = ALARM_EXPORT_PDF_TEMPLATE, alarm = {}, timezone) => (
   new Promise((resolve, reject) => {
-    const doc = new JsPDF();
-    const handlebars = createInstanceWithHelpers();
+    try {
+      const doc = new JsPDF();
+      const handlebars = createInstanceWithHelpers();
 
-    compile(
-      template ?? ALARM_EXPORT_PDF_TEMPLATE,
-      prepareAlarmForExport(alarm, timezone),
-      handlebars,
-    )
-      .then(html => doc.html(html, {
-        callback: () => {
-          doc.save(`alarm-${alarm?._id}.pdf`);
+      compile(
+        template ?? ALARM_EXPORT_PDF_TEMPLATE,
+        prepareAlarmForExport(alarm, timezone),
+        handlebars,
+      )
+        .then(html => doc.html(html, {
+          margin: [5, 5, 5, 5],
+          autoPaging: 'text',
+          x: 0,
+          y: 0,
+          width: 200,
+          windowWidth: 1000,
+          html2canvas: {
+            logging: false,
+          },
+          callback: () => {
+            doc.save(`alarm-${alarm?._id}.pdf`);
 
-          return resolve();
-        },
-        margin: [5, 5, 5, 5],
-        autoPaging: 'text',
-        x: 0,
-        y: 0,
-        width: 200,
-        windowWidth: 1000,
-      }))
-      .catch((err) => {
-        console.error(err);
-        reject();
-      });
+            return resolve();
+          },
+        }))
+        .catch(reject);
+    } catch (err) {
+      reject(err);
+    }
   })
 );

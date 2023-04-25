@@ -30,6 +30,14 @@
             left,
             @click="exportAsJson(item)"
           )
+          c-action-btn(
+            v-if="item.original",
+            :tooltip="$t('alarm.actions.titles.exportPdf')",
+            :loading="exportAlarmToPdfPending",
+            icon="assignment_returned",
+            left,
+            @click="exportAlarmToPdf(item.original, config.exportPdfTemplate)"
+          )
 </template>
 
 <script>
@@ -40,13 +48,17 @@ import { convertTreeviewToObject } from '@/helpers/treeview';
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.variablesHelp,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    widgetActionsPanelAlarmExportPdfMixin,
+  ],
   methods: {
     exportAsJson(item) {
       const object = convertTreeviewToObject(item);
