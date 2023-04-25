@@ -25,13 +25,10 @@
 import { uniq } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { formBaseMixin } from '@/mixins/form';
-
 const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',

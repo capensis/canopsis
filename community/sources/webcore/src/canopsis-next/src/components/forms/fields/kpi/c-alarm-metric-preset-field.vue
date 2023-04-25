@@ -23,8 +23,7 @@
       v-if="!preset.auto && preset.metric && preset.external",
       v-field="preset.label",
       :label="$t('kpi.displayedLabel')",
-      :name="`${name}.label`",
-      required
+      :name="`${name}.label`"
     )
     template(v-if="preset.metric")
       v-layout(v-if="withColor && !preset.auto", align-center, justify-space-between)
