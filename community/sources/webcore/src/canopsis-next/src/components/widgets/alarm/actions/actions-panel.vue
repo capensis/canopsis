@@ -22,10 +22,12 @@ import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule'
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
+import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -38,11 +40,13 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  * @prop {Object} widget - Full widget object
  */
 export default {
+  inject: ['$system'],
   components: { SharedActionsPanel },
   mixins: [
     entitiesAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
+    widgetActionsPanelAlarmExportPdfMixin,
   ],
   props: {
     item: {
@@ -170,6 +174,13 @@ export default {
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
           method: this.showExecuteInstructionModal,
         },
+        exportPdf: {
+          type: ALARM_LIST_ACTIONS_TYPES.exportPdf,
+          icon: 'assignment_returned',
+          title: this.$t('alarm.actions.titles.exportPdf'),
+          loading: this.exportAlarmToPdfPending,
+          method: this.exportPdf,
+        },
         ...featuresActionsMap,
       };
     },
@@ -232,7 +243,7 @@ export default {
         actions.push(filteredActionsMap.history);
       }
 
-      actions.push(filteredActionsMap.variablesHelp);
+      actions.push(filteredActionsMap.variablesHelp, filteredActionsMap.exportPdf);
 
       if (this.isParentAlarmManualMetaAlarm) {
         actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
@@ -345,6 +356,42 @@ export default {
           onExecute: refreshAlarm,
         },
       });
+    },
+
+    showVariablesHelperModal() {
+      const {
+        entity,
+        pbehavior,
+        infos,
+        ...alarm
+      } = this.item;
+      const variables = [{
+        ...convertObjectToTreeview(alarm, 'alarm'),
+
+        original: this.item,
+      }];
+
+      if (entity) {
+        variables.push(convertObjectToTreeview(entity, 'entity'));
+      }
+
+      if (pbehavior) {
+        variables.push(convertObjectToTreeview(pbehavior, 'pbehavior'));
+      }
+
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          ...this.modalConfig,
+
+          variables,
+          exportPdfTemplate: this.widget.parameters.exportPdfTemplate,
+        },
+      });
+    },
+
+    exportPdf() {
+      return this.exportAlarmToPdf(this.item, this.widget.parameters.exportPdfTemplate);
     },
 
     showAssociateTicketModal() {
