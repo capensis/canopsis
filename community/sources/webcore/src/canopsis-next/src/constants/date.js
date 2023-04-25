@@ -69,6 +69,7 @@ export const DEFAULT_PERIODIC_REFRESH = {
 
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
+  longWithTimezone: 'DD/MM/YYYY H:mm:ss z',
   longWithDayOfWeek: 'ddd DD/MM/YYYY H:mm:ss',
   medium: 'DD/MM H:mm',
   short: 'DD/MM/YYYY',

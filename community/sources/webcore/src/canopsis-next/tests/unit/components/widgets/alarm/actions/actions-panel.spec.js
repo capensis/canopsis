@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
+  createAlarmDetailsModule,
   createAuthModule,
   createDeclareTicketModule,
   createEventModule,
@@ -30,8 +31,18 @@ import featuresService from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
 import { prepareAlarmListWidget } from '@/helpers/widgets';
+import { exportAlarmToPdf } from '@/helpers/alarm-export-pdf';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
+
+jest.mock('@/helpers/alarm-export-pdf', () => {
+  const original = jest.requireActual('@/helpers/alarm-export-pdf');
+  return {
+    ...original,
+
+    exportAlarmToPdf: jest.fn(),
+  };
+});
 
 const stubs = {
   'shared-actions-panel': {
@@ -68,6 +79,7 @@ describe('actions-panel', () => {
     },
   };
   const { alarmModule } = createAlarmModule();
+  const { alarmDetailsModule, fetchAlarmDetailsWithoutStore } = createAlarmDetailsModule();
   const { eventModule, createEvent } = createEventModule();
   const {
     declareTicketRuleModule,
@@ -78,6 +90,7 @@ describe('actions-panel', () => {
     eventModule,
     authModule,
     alarmModule,
+    alarmDetailsModule,
     declareTicketRuleModule,
   ]);
 
@@ -168,8 +181,16 @@ describe('actions-panel', () => {
   const factory = generateShallowRenderer(ActionsPanel, {
     stubs,
     mocks: { $modals },
+    provide: {
+      $system: {},
+    },
   });
-  const snapshotFactory = generateRenderer(ActionsPanel, { stubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, {
+    stubs,
+    provide: {
+      $system: {},
+    },
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -758,6 +779,7 @@ describe('actions-panel', () => {
             {
               name: 'alarm',
               children: [{ name: '_id', path: 'alarm._id', value: alarmData._id }],
+              original: alarmData,
             },
             {
               name: 'entity',
@@ -1019,6 +1041,29 @@ describe('actions-panel', () => {
     config.onComplete();
 
     expect(refreshAlarmsList).toBeCalledTimes(3);
+  });
+
+  it('Export PDF action', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    const exportPdfAction = selectActionByType(
+      wrapper,
+      ALARM_LIST_ACTIONS_TYPES.exportPdf,
+    );
+
+    exportPdfAction.trigger('click');
+
+    await flushPromises();
+
+    expect(fetchAlarmDetailsWithoutStore).toBeCalled();
+    expect(exportAlarmToPdf).toBeCalled();
   });
 
   it('Custom action called after trigger button', () => {

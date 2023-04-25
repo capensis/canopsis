@@ -16,6 +16,8 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -113,6 +115,7 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
+ * @property {string} exportPdfTemplate
  */
 
 /**
@@ -128,6 +131,7 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  * @property {string} widgetGroupColumnsTemplate
  * @property {string} widgetExportColumnsTemplate
  * @property {string} serviceDependenciesColumnsTemplate
+ * @property {string} exportPdfTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
  * @property {WidgetColumn[]} widgetExportColumns
@@ -217,6 +221,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
 });
 
 /**
@@ -302,6 +307,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
+  exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
 });
 
 /**
