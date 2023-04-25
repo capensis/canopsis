@@ -18,6 +18,7 @@ import { getEntityEventIcon } from '@/helpers/icon';
 
 import featuresService from '@/services/features';
 
+import { exportAlarmToPdf } from '@/helpers/alarm-export-pdf';
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
@@ -38,6 +39,7 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  * @prop {Object} widget - Full widget object
  */
 export default {
+  inject: ['$system'],
   components: { SharedActionsPanel },
   mixins: [
     entitiesAlarmMixin,
@@ -69,6 +71,11 @@ export default {
       type: Function,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      exportPdfPending: false,
+    };
   },
   computed: {
     actionsMap() {
@@ -170,6 +177,13 @@ export default {
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
           method: this.showExecuteInstructionModal,
         },
+        exportPdf: {
+          type: ALARM_LIST_ACTIONS_TYPES.exportPdf,
+          icon: 'assignment_returned',
+          title: this.$t('alarm.actions.titles.exportPdf'),
+          loading: this.exportPdfPending,
+          method: this.exportPdf,
+        },
         ...featuresActionsMap,
       };
     },
@@ -232,7 +246,7 @@ export default {
         actions.push(filteredActionsMap.history);
       }
 
-      actions.push(filteredActionsMap.variablesHelp);
+      actions.push(filteredActionsMap.variablesHelp, filteredActionsMap.exportPdf);
 
       if (this.isParentAlarmManualMetaAlarm) {
         actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
@@ -345,6 +359,18 @@ export default {
           onExecute: refreshAlarm,
         },
       });
+    },
+
+    async exportPdf() {
+      try {
+        this.exportPdfPending = true;
+
+        await exportAlarmToPdf(this.widget.parameters.exportPdfTemplate, this.item, this.$system.timezone);
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      } finally {
+        this.exportPdfPending = false;
+      }
     },
 
     showAssociateTicketModal() {

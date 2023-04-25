@@ -1,201 +1,197 @@
-<div style="width: 1000px;">
+<div style="width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;">
+  <div style="font-size: 18px; color: rgb(255, 255, 255); background-color: rgb(47, 171, 99); border: 2px solid rgb(255, 255, 255);">
+    <p style="padding: 10px; margin: 0; text-align: center;"><strong>Alarm&nbsp;&nbsp;display</strong></p>
+  </div>
   <table
-    style="width: 100%; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; color: rgb(67, 67, 67); overflow-wrap: break-word; border-collapse: collapse;">
-    <thead>
-    <tr>
-      <th colspan="2"
-          style="font-size: 18px; color: rgb(255, 255, 255); background-color: rgb(47, 171, 99); border: 2px solid rgb(255, 255, 255);">
-        <p style="padding: 12px; margin: 0;">Alarm display</p></th>
-    </tr>
-    </thead>
+    style="width: 100%; color: rgb(67, 67, 67); border-collapse: collapse; table-layout: fixed;">
     <tbody>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Current date</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Current&nbsp;&nbsp;date</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ current_date }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Display name</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Display&nbsp;&nbsp;name</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ display_name }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">State</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ state }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Status</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ status }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Connector</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ connector }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Connector name</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Connector&nbsp;&nbsp;name</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ connector_name }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Component</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ component }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Resource</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ resource }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Creation date</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Creation&nbsp;&nbsp;date</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ creation_date }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Activated at</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Activated&nbsp;&nbsp;at</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ activation_date }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Resolved at</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Resolved&nbsp;&nbsp;at</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ resolved }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Duration</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ duration }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Infos</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         {{ infos }}</td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">PBehavior info</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">PBehavior&nbsp;&nbsp;info</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         {{ pbehavior_info }}</td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Initial output</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Initial&nbsp;&nbsp;output</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ initial_output }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Output</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ output }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Last event date</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;event&nbsp;&nbsp;date</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ last_event_date }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Last update date</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;update&nbsp;&nbsp;date</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ last_event_date }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Acked at</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Acked&nbsp;&nbsp;at</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ acknowledge_date }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Events count</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Events&nbsp;&nbsp;count</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         <p style="padding: 12px; margin: 0;">{{ events_count }}</p></td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Ticket</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         {{ ticket }}</td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
-        <p style="padding: 12px; margin: 0;">Last comment</p></td>
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
+        <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;comment</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         {{ last_comment }}</td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Tags</p></td>
       <td
-        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
+        style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
         {{ tags }}</td>
     </tr>
     <tr>
       <td
-        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102);">
+        style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
         <p style="padding: 12px; margin: 0;">Links</p></td>
       <td
         style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">

@@ -51,6 +51,7 @@ export default {
       createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
       comment: 'Commenter l\'alarme',
+      exportPdf: 'Exporter l\'alarme vers un fichier PDF',
     },
     iconsTitles: {
       ack: 'Acquitter',
