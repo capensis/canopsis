@@ -5,6 +5,8 @@ import { API_ROUTES } from '@/config';
 
 import { ENTITIES_TYPES } from '@/constants';
 
+import request from '@/services/request';
+
 import { alarmDetailsSchema } from '@/store/schemas';
 
 import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities';
@@ -142,6 +144,17 @@ export default {
       } finally {
         commit(types.FETCH_LIST_COMPLETED, { widgetId });
       }
+    },
+
+    /**
+     * Fetch alarms details list without store
+     *
+     * @param {Object} context
+     * @param {Object} params
+     * @returns {Promise<void>}
+     */
+    async fetchListWithoutStore(context, { params } = {}) {
+      return request.post(API_ROUTES.alarmDetails, params);
     },
 
     /**

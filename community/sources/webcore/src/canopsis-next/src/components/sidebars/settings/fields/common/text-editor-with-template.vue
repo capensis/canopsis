@@ -47,6 +47,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    dialogProps: {
+      type: Object,
+      required: false,
+    },
   },
   computed: {
     isValueEmpty() {
@@ -57,6 +61,7 @@ export default {
     showTextEditorWithTemplateModal() {
       this.$modals.show({
         name: MODALS.textEditorWithTemplate,
+        dialogProps: this.dialogProps,
         config: {
           text: this.value,
           template: this.template,

@@ -1,10 +1,9 @@
+import { isEmpty } from 'lodash';
 import Handlebars from 'handlebars';
 
-import { convertDateToString } from '../date/date';
+import { ALARM_EXPORT_PDF_FIELDS } from '@/constants';
 
 import { harmonizeLinks } from '../links';
-
-const CELL_BORDER = 'solid #f5f5f5 2px';
 
 /**
  * Create paragraph HTML element
@@ -17,7 +16,10 @@ export const createParagraph = (content = '') => {
 
   p.style.padding = '12px';
   p.style.margin = '0px';
-  p.innerHTML = content?.outerHTML ?? content;
+
+  if (content) {
+    p.innerHTML = content?.outerHTML ?? content;
+  }
 
   return p;
 };
@@ -25,12 +27,11 @@ export const createParagraph = (content = '') => {
 /**
  * Create table cell HTML element
  *
- * @param {string} [content = '']
- * @param {string} [lastRow]
- * @param {string} [lastCell]
+ * @param {boolean} [lastRow]
+ * @param {boolean} [lastCell]
  * @returns {HTMLTableCellElement}
  */
-export const createTableCell = (content = '', lastRow, lastCell) => {
+export const createTableCell = (lastRow, lastCell) => {
   const td = document.createElement('td');
 
   td.style.padding = '0px';
@@ -38,14 +39,12 @@ export const createTableCell = (content = '', lastRow, lastCell) => {
   td.style.backgroundColor = '#fff';
 
   if (!lastRow) {
-    td.style.borderBottom = CELL_BORDER;
+    td.style.borderBottom = 'solid #f5f5f5 2px';
   }
 
   if (!lastCell) {
-    td.style.borderRight = CELL_BORDER;
+    td.style.borderRight = 'solid #f5f5f5 2px';
   }
-
-  td.appendChild(createParagraph(content));
 
   return td;
 };
@@ -60,9 +59,14 @@ export const createTableCell = (content = '', lastRow, lastCell) => {
  */
 export const createTableRow = (field = '', value = '', last) => {
   const tr = document.createElement('tr');
+  const fieldTd = createTableCell(last);
+  const valueTd = createTableCell(last, true);
 
-  tr.appendChild(createTableCell(field, last));
-  tr.appendChild(createTableCell(value, last, true));
+  fieldTd.appendChild(createParagraph(field));
+  valueTd.appendChild(createParagraph(value));
+
+  tr.appendChild(fieldTd);
+  tr.appendChild(valueTd);
 
   return tr;
 };
@@ -89,11 +93,17 @@ export function createTable() {
  *
  * @returns {string}
  */
-export function infos() {
+export function infosHelper() {
+  const { [ALARM_EXPORT_PDF_FIELDS.infos]: infos } = this;
+
+  if (isEmpty(infos)) {
+    return '';
+  }
+
   const table = createTable();
   const tbody = document.createElement('tbody');
 
-  Object.values(this.infos ?? {}).forEach((info, rootIndex, rootArray) => {
+  Object.values(infos).forEach((info, rootIndex, rootArray) => {
     Object.entries(info).forEach(([key, value], index, array) => {
       const lastRow = index === array.length - 1 && rootIndex === rootArray.length - 1;
 
@@ -111,20 +121,20 @@ export function infos() {
  *
  * @returns {string}
  */
-export function pbehaviorInfo() {
-  const { pbehavior_info: info = {} } = this;
+export function pbehaviorInfoHelper() {
+  const { [ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo]: pbehaviorInfo } = this;
 
-  if (!info) {
+  if (isEmpty(pbehaviorInfo)) {
     return '';
   }
 
   const table = createTable();
   const tbody = document.createElement('tbody');
 
-  tbody.appendChild(createTableRow('Enter time', info.timestamp));
-  tbody.appendChild(createTableRow('Name', info.name));
-  tbody.appendChild(createTableRow('Type', info.type));
-  tbody.appendChild(createTableRow('Reason', info.reason, true));
+  tbody.appendChild(createTableRow('Enter time', pbehaviorInfo.timestamp));
+  tbody.appendChild(createTableRow('Name', pbehaviorInfo.name));
+  tbody.appendChild(createTableRow('Type', pbehaviorInfo.type));
+  tbody.appendChild(createTableRow('Reason', pbehaviorInfo.reason, true));
   table.appendChild(tbody);
 
   return new Handlebars.SafeString(table.outerHTML);
@@ -134,25 +144,69 @@ export function pbehaviorInfo() {
  *
  * @returns {string}
  */
-export function ticketInfo() {
-  return convertDateToString(this.current_date);
-}
-/**
- * Convert last_comment field to html string
- *
- * @returns {string}
- */
-export function lastComment() {
-  if (!this.last_comment) {
+export function ticketHelper() {
+  const { [ALARM_EXPORT_PDF_FIELDS.ticket]: ticket } = this;
+
+  if (isEmpty(ticket)) {
     return '';
   }
 
-  const div = document.createElement('div');
+  const table = createTable();
+  const tbody = document.createElement('tbody');
+  const ticketDataArray = Object.entries(ticket.ticket_data);
 
-  div.appendChild(createParagraph(this.last_comment.t));
-  div.appendChild(createParagraph(this.last_comment.m));
+  tbody.appendChild(createTableRow('Ticket ID', ticket.ticket));
+  tbody.appendChild(createTableRow('Ticket URL', ticket.ticket_url, !ticketDataArray.length));
 
-  return new Handlebars.SafeString(div.outerHTML);
+  ticketDataArray.forEach(([field, value], index) => {
+    tbody.appendChild(createTableRow(field, value, index === ticketDataArray.length - 1));
+  });
+
+  table.appendChild(tbody);
+
+  return new Handlebars.SafeString(table.outerHTML);
+}
+/**
+ * Convert comments field to html string
+ *
+ * @returns {string}
+ */
+export function commentsHelper() {
+  const { [ALARM_EXPORT_PDF_FIELDS.comments]: comments = [] } = this;
+
+  if (!comments?.length) {
+    return '';
+  }
+
+  const table = createTable();
+  const tbody = document.createElement('tbody');
+
+  comments.forEach((comment, index) => {
+    const tr = document.createElement('tr');
+    const header = createParagraph();
+    const author = document.createElement('strong');
+    const timestamp = document.createElement('span');
+
+    author.innerText = comment.a;
+    author.style.marginRight = '10px';
+
+    timestamp.innerText = comment.t;
+
+    header.appendChild(author);
+    header.appendChild(timestamp);
+
+    const message = createParagraph(comment.m);
+    const td = createTableCell(index === this.comments.length - 1, true);
+
+    td.appendChild(header);
+    td.appendChild(message);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+
+  return new Handlebars.SafeString(table.outerHTML);
 }
 
 /**
@@ -160,10 +214,16 @@ export function lastComment() {
  *
  * @returns {string}
  */
-export function tags() {
+export function tagsHelper() {
+  const { [ALARM_EXPORT_PDF_FIELDS.tags]: tags = [] } = this;
+
+  if (!tags?.length) {
+    return '';
+  }
+
   const div = document.createElement('div');
 
-  (this.tags ?? []).forEach(tag => div.appendChild(createParagraph(tag)));
+  tags.forEach(tag => div.appendChild(createParagraph(tag)));
 
   return new Handlebars.SafeString(div.outerHTML);
 }
@@ -173,10 +233,16 @@ export function tags() {
  *
  * @returns {string}
  */
-export function links() {
+export function linksHelper() {
+  const { [ALARM_EXPORT_PDF_FIELDS.links]: links = [] } = this;
+
+  if (isEmpty(links)) {
+    return '';
+  }
+
   const div = document.createElement('div');
 
-  harmonizeLinks(this.links).forEach(link => div.appendChild(createParagraph(link.url)));
+  harmonizeLinks(links).forEach(link => div.appendChild(createParagraph(link.url)));
 
   return new Handlebars.SafeString(div.outerHTML);
 }
@@ -184,12 +250,12 @@ export function links() {
 export const createInstanceWithHelpers = () => {
   const instance = Handlebars.create();
 
-  instance.registerHelper('infos', infos);
-  instance.registerHelper('tags', tags);
-  instance.registerHelper('links', links);
-  instance.registerHelper('ticket_info', ticketInfo);
-  instance.registerHelper('last_comment', lastComment);
-  instance.registerHelper('pbehavior_info', pbehaviorInfo);
+  instance.registerHelper(ALARM_EXPORT_PDF_FIELDS.infos, infosHelper);
+  instance.registerHelper(ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo, pbehaviorInfoHelper);
+  instance.registerHelper(ALARM_EXPORT_PDF_FIELDS.ticket, ticketHelper);
+  instance.registerHelper(ALARM_EXPORT_PDF_FIELDS.comments, commentsHelper);
+  instance.registerHelper(ALARM_EXPORT_PDF_FIELDS.tags, tagsHelper);
+  instance.registerHelper(ALARM_EXPORT_PDF_FIELDS.links, linksHelper);
 
   return instance;
 };
