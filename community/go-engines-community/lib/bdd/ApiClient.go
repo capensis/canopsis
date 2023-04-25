@@ -478,11 +478,17 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 				if err != nil {
 					return err
 				}
+				matched := make(map[int]bool, len(received))
 				for _, ev := range expected {
 					found := false
-					for _, v := range received {
+					for j, v := range received {
+						if matched[j] {
+							continue
+						}
+
 						if err := checkResponse(v, ev); err == nil {
 							found = true
+							matched[j] = true
 							break
 						}
 					}
@@ -499,15 +505,21 @@ func (a *ApiClient) TheResponseArrayKeyShouldContain(ctx context.Context, path s
 				return fmt.Errorf("%s is not empty", path)
 			}
 
+			matched := make(map[int]bool, len(received))
 			for _, ev := range expected {
 				if len(ev) == 0 {
 					return fmt.Errorf("%s contains empty element", doc)
 				}
 
 				found := false
-				for _, v := range received {
+				for j, v := range received {
+					if matched[j] {
+						continue
+					}
+
 					if err := checkResponse(getPartialResponse(v, ev), ev); err == nil {
 						found = true
+						matched[j] = true
 						break
 					}
 				}
@@ -570,11 +582,17 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(ctx context.Context, pa
 					return fmt.Errorf("expected %d items but receieved:\n%s", len(expected), receivedStr)
 				}
 
+				matched := make(map[int]bool, len(received))
 				for _, ev := range expected {
 					found := false
-					for _, v := range received {
+					for j, v := range received {
+						if matched[j] {
+							continue
+						}
+
 						if err := checkResponse(v, ev); err == nil {
 							found = true
+							matched[j] = true
 							break
 						}
 					}
@@ -595,15 +613,21 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainOnly(ctx context.Context, pa
 				return fmt.Errorf("expected %d items but receieved:\n%s", len(expected), receivedStr)
 			}
 
+			matched := make(map[int]bool, len(received))
 			for _, ev := range expected {
 				if len(ev) == 0 {
 					return fmt.Errorf("%s contains empty element", doc)
 				}
 
 				found := false
-				for _, v := range received {
+				for j, v := range received {
+					if matched[j] {
+						continue
+					}
+
 					if err := checkResponse(getPartialResponse(v, ev), ev); err == nil {
 						found = true
+						matched[j] = true
 						break
 					}
 				}
@@ -663,11 +687,17 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainInOrder(ctx context.Context,
 					return err
 				}
 				prevIndex := -1
+				matched := make(map[int]bool, len(received))
 				for _, ev := range expected {
 					foundIndex := -1
 					for j, v := range received {
+						if matched[j] {
+							continue
+						}
+
 						if err := checkResponse(v, ev); err == nil {
 							foundIndex = j
+							matched[j] = true
 							break
 						}
 					}
@@ -691,6 +721,7 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainInOrder(ctx context.Context,
 			}
 
 			prevIndex := -1
+			matched := make(map[int]bool, len(received))
 			for _, ev := range expected {
 				if len(ev) == 0 {
 					return fmt.Errorf("%s contains empty element", doc)
@@ -698,8 +729,13 @@ func (a *ApiClient) TheResponseArrayKeyShouldContainInOrder(ctx context.Context,
 
 				foundIndex := -1
 				for j, v := range received {
+					if matched[j] {
+						continue
+					}
+
 					if err := checkResponse(getPartialResponse(v, ev), ev); err == nil {
 						foundIndex = j
+						matched[j] = true
 						break
 					}
 				}
