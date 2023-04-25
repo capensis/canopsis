@@ -1,11 +1,11 @@
 package pbehaviorexception
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"io"
+	"mime"
 	"mime/multipart"
 	"time"
 
@@ -31,7 +31,7 @@ type Store interface {
 	Update(ctx context.Context, model *Exception) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	IsLinked(ctx context.Context, id string) (bool, error)
-	Import(ctx context.Context, name, pbhType string, file *multipart.FileHeader) (*Exception, error)
+	Import(ctx context.Context, name, pbhType string, f multipart.File, fh *multipart.FileHeader) (*Exception, error)
 }
 
 func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
@@ -217,7 +217,7 @@ func (s *store) IsLinked(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) Import(ctx context.Context, name, pbhType string, file *multipart.FileHeader) (*Exception, error) {
+func (s *store) Import(ctx context.Context, name, pbhType string, f multipart.File, fh *multipart.FileHeader) (*Exception, error) {
 	err := s.typeDbCollection.FindOne(ctx, bson.M{"_id": pbhType}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -233,27 +233,17 @@ func (s *store) Import(ctx context.Context, name, pbhType string, file *multipar
 		return nil, common.NewValidationError("name", "Name already exists.")
 	}
 
-	h, err := file.Open()
-	if err != nil {
-		return nil, err
-	}
-	defer h.Close()
-
-	content, err := io.ReadAll(h)
+	contentType := fh.Header.Get("Content-Type")
+	mediaType, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
 		return nil, err
 	}
 
-	contentType := ""
-	if v, ok := file.Header["Content-Type"]; ok && len(v) > 0 {
-		contentType = v[0]
-	}
-
-	switch contentType {
+	switch mediaType {
 	case "application/json":
-		return s.importJson(ctx, name, pbhType, content)
+		return s.importJson(ctx, name, pbhType, f)
 	case "text/calendar":
-		return s.importICS(ctx, name, pbhType, content)
+		return s.importICS(ctx, name, pbhType, f)
 	default:
 		return nil, common.NewValidationError("file", "File is not supported.")
 	}
@@ -262,10 +252,11 @@ func (s *store) Import(ctx context.Context, name, pbhType string, file *multipar
 func (s *store) importJson(
 	ctx context.Context,
 	name, pbhType string,
-	input []byte,
+	r io.Reader,
 ) (*Exception, error) {
 	dates := make(map[string]string)
-	err := json.Unmarshal(input, &dates)
+	d := json.NewDecoder(r)
+	err := d.Decode(&dates)
 	if err != nil {
 		return nil, common.NewValidationError("file", "File is not supported.")
 	}
@@ -274,7 +265,7 @@ func (s *store) importJson(
 	exdates := make([]pbehavior.Exdate, len(dates))
 	i := 0
 	for dateStr := range dates {
-		date, err := time.ParseInLocation("2006-01-02", dateStr, location)
+		date, err := time.ParseInLocation(time.DateOnly, dateStr, location)
 		if err != nil {
 			return nil, common.NewValidationError("file", "File is not supported.")
 		}
@@ -317,9 +308,9 @@ func (s *store) importJson(
 func (s *store) importICS(
 	ctx context.Context,
 	name, pbhType string,
-	input []byte,
+	r io.Reader,
 ) (*Exception, error) {
-	cal := ics.NewParser(bytes.NewReader(input))
+	cal := ics.NewParser(r)
 	intervalStart := time.Now()
 	intervalEnd := intervalStart.AddDate(maxImportDateInYears, 0, 0)
 	cal.Start = &intervalStart

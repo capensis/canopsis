@@ -3,7 +3,6 @@ package pbehaviorexception
 import (
 	"context"
 	"errors"
-	"mime/multipart"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -206,28 +205,22 @@ func (a *api) Delete(c *gin.Context) {
 // Import
 // @Success 200 {object} Exception
 func (a *api) Import(c *gin.Context) {
-	form, err := c.MultipartForm()
+	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
+		if errors.Is(err, http.ErrMissingFile) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{
+				"file": "File is missing.",
+			}})
+			return
+		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "request has invalid structure"})
 		return
 	}
+	defer f.Close()
 
-	var file *multipart.FileHeader
-	var name, pbhType string
-	if v, ok := form.File["file"]; ok && len(v) > 0 {
-		file = v[0]
-	}
-	if v, ok := form.Value["name"]; ok && len(v) > 0 {
-		name = v[0]
-	}
-	if v, ok := form.Value["type"]; ok && len(v) > 0 {
-		pbhType = v[0]
-	}
-
+	name := c.Request.FormValue("name")
+	pbhType := c.Request.FormValue("type")
 	valErrors := make(map[string]string)
-	if file == nil {
-		valErrors["file"] = "File is missing."
-	}
 	if name == "" {
 		valErrors["name"] = "Name is missing."
 	}
@@ -240,7 +233,7 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.store.Import(c, name, pbhType, file)
+	exception, err := a.store.Import(c, name, pbhType, f, fh)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
