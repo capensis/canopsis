@@ -1,41 +1,48 @@
-import { isObject } from 'lodash';
 import Handlebars from 'handlebars';
 
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToString } from '../date/date';
 
-import { registerHelper, unregisterHelper } from './index';
+import { harmonizeLinks } from '../links';
 
-const cellBorder = 'solid #f5f5f5 2px';
+const CELL_BORDER = 'solid #f5f5f5 2px';
 
+/**
+ * Create paragraph HTML element
+ *
+ * @param {string} [content = '']
+ * @returns {HTMLParagraphElement}
+ */
 export const createParagraph = (content = '') => {
   const p = document.createElement('p');
 
   p.style.padding = '12px';
   p.style.margin = '0px';
-  p.innerText = content;
+  p.innerHTML = content?.outerHTML ?? content;
 
   return p;
 };
 
-export const createLink = (url = '') => {
-  const a = document.createElement('a');
-
-  a.href = url;
-
-  return a;
-};
-
-export const createTableValueCell = (content = '', { lastRow = false, lastCell = false } = {}) => {
+/**
+ * Create table cell HTML element
+ *
+ * @param {string} [content = '']
+ * @param {string} [lastRow]
+ * @param {string} [lastCell]
+ * @returns {HTMLTableCellElement}
+ */
+export const createTableCell = (content = '', lastRow, lastCell) => {
   const td = document.createElement('td');
+
   td.style.padding = '0px';
+  td.style.width = '50%';
   td.style.backgroundColor = '#fff';
 
   if (!lastRow) {
-    td.style.borderBottom = cellBorder;
+    td.style.borderBottom = CELL_BORDER;
   }
 
   if (!lastCell) {
-    td.style.borderRight = cellBorder;
+    td.style.borderRight = CELL_BORDER;
   }
 
   td.appendChild(createParagraph(content));
@@ -43,119 +50,54 @@ export const createTableValueCell = (content = '', { lastRow = false, lastCell =
   return td;
 };
 
-export const createValueTableBody = (object) => {
-  const tbody = document.createElement('tbody');
+/**
+ * Create table row HTML element
+ *
+ * @param {string} [field = '']
+ * @param {string} [value = '']
+ * @param [last]
+ * @returns {HTMLTableRowElement}
+ */
+export const createTableRow = (field = '', value = '', last) => {
+  const tr = document.createElement('tr');
 
-  Object.entries(object).forEach(([key, value], index, array) => {
-    const tr = document.createElement('tr');
-    const lastRow = index === array.length - 1;
+  tr.appendChild(createTableCell(field, last));
+  tr.appendChild(createTableCell(value, last, true));
 
-    const keyTd = createTableValueCell({ lastRow });
-    const valueTd = createTableValueCell({ lastRow, lastColumn: true });
-
-    keyTd.appendChild(createParagraph(key));
-    valueTd.appendChild(isObject(value) ? createValueTableBody(value) : createParagraph(value));
-    tr.appendChild(keyTd);
-    tr.appendChild(valueTd);
-    tbody.appendChild(tr);
-  });
-
-  return tbody;
+  return tr;
 };
 
-export function createDeepTable() {
+/**
+ * Create table HTML element
+ *
+ * @returns {HTMLTableElement}
+ */
+export function createTable() {
   const table = document.createElement('table');
 
+  table.style.width = '100%';
   table.style.borderCollapse = 'collapse';
+  table.style.tableLayout = 'fixed';
+  table.style.marginBottom = '2px';
+  table.style.marginRight = '2px';
 
   return table;
 }
 
-export const createTableHead = (content) => {
-  const thead = document.createElement('thead');
-  const tr = document.createElement('tr');
-  const th = document.createElement('th');
-
-  th.colSpan = 2;
-  th.style.fontSize = '18px';
-  th.style.color = '#fff';
-  th.style.backgroundColor = '#2fab63';
-  th.style.border = 'solid #fff 2px';
-
-  th.appendChild(createParagraph(content));
-  tr.appendChild(th);
-  thead.appendChild(tr);
-
-  return thead;
-};
-
-export const createTableKeyCell = (content = '') => {
-  const td = document.createElement('td');
-  td.style.fontWeight = '700';
-  td.style.padding = '0px !important';
-  td.style.border = 'solid #fff 2px';
-  td.style.borderTop = 'none';
-  td.style.backgroundColor = '#f5f5f5';
-  td.style.color = '#666';
-
-  td.appendChild(createParagraph(content));
-
-  return td;
-};
-
-export const createTableBody = (alarm) => {
-  const tbody = document.createElement('tbody');
-
-  Object.entries(alarm).forEach(([key, value]) => {
-    const tr = document.createElement('tr');
-    tr.appendChild(createTableKeyCell(key));
-    tr.appendChild(createTableValueCell(value));
-
-    tbody.appendChild(tr);
-  });
-
-  return tbody;
-};
-
-export const createTable = (obj) => {
-  const div = document.createElement('div');
-  const table = document.createElement('table');
-
-  div.style.width = '1000px';
-
-  table.style.width = '100%';
-  table.style.fontFamily = 'Roboto, sans-serif';
-  table.style.fontSize = '15px';
-  table.style.lineHeight = '1.2';
-  table.style.color = '#434343';
-  table.style.overflowWrap = 'break-word';
-  table.style.borderCollapse = 'collapse';
-
-  table.appendChild(createTableHead('Alarm display'));
-  table.appendChild(createTableBody(obj));
-
-  div.appendChild(table);
-
-  return div;
-};
-
 /**
- * Convert infos to html
+ * Convert infos field to html string
  *
  * @returns {string}
  */
 export function infos() {
-  const table = createDeepTable();
+  const table = createTable();
   const tbody = document.createElement('tbody');
 
-  Object.values(this.infos).forEach((info, rootIndex, rootArray) => {
+  Object.values(this.infos ?? {}).forEach((info, rootIndex, rootArray) => {
     Object.entries(info).forEach(([key, value], index, array) => {
-      const tr = document.createElement('tr');
       const lastRow = index === array.length - 1 && rootIndex === rootArray.length - 1;
 
-      tr.appendChild(createTableValueCell(key, { lastRow }));
-      tr.appendChild(createTableValueCell(value, { lastRow, lastCell: true }));
-      tbody.appendChild(tr);
+      tbody.appendChild(createTableRow(key, value, lastRow));
     });
   });
 
@@ -165,80 +107,89 @@ export function infos() {
 }
 
 /**
- * Convert current_date to string
+ * Convert pbehavior_info field to html string
  *
  * @returns {string}
  */
-export function pbehaviorInfo() { // TODO
-  return convertDateToString(this.current_date);
+export function pbehaviorInfo() {
+  const { pbehavior_info: info = {} } = this;
+
+  if (!info) {
+    return '';
+  }
+
+  const table = createTable();
+  const tbody = document.createElement('tbody');
+
+  tbody.appendChild(createTableRow('Enter time', info.timestamp));
+  tbody.appendChild(createTableRow('Name', info.name));
+  tbody.appendChild(createTableRow('Type', info.type));
+  tbody.appendChild(createTableRow('Reason', info.reason, true));
+  table.appendChild(tbody);
+
+  return new Handlebars.SafeString(table.outerHTML);
 }
 /**
- * Convert current_date to string
+ * Convert ticket_info field to html string
  *
  * @returns {string}
  */
-export function ticketInfo() { // TODO
+export function ticketInfo() {
   return convertDateToString(this.current_date);
 }
 /**
- * Convert comments to html
+ * Convert last_comment field to html string
  *
  * @returns {string}
  */
 export function lastComment() {
-  const table = createDeepTable();
-  const tbody = document.createElement('tbody');
+  if (!this.last_comment) {
+    return '';
+  }
 
-  (this.comments ?? []).forEach((comment = {}) => {
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.appendChild(createParagraph(convertDateToString(comment.created)));
-    td.appendChild(createParagraph(comment.message));
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-  });
+  const div = document.createElement('div');
 
-  return new Handlebars.SafeString(table.outerHTML);
+  div.appendChild(createParagraph(this.last_comment.t));
+  div.appendChild(createParagraph(this.last_comment.m));
+
+  return new Handlebars.SafeString(div.outerHTML);
 }
 
 /**
- * Convert current_date to string
+ * Convert tags field to html string
  *
  * @returns {string}
  */
-export function tags() { // TODO
-  return convertDateToString(this.current_date);
+export function tags() {
+  const div = document.createElement('div');
+
+  (this.tags ?? []).forEach(tag => div.appendChild(createParagraph(tag)));
+
+  return new Handlebars.SafeString(div.outerHTML);
 }
+
 /**
- * Convert current_date to string
+ * Convert links field to html string
  *
  * @returns {string}
  */
-export function links() { // TODO
-  return convertDateToString(this.current_date);
+export function links() {
+  const div = document.createElement('div');
+
+  harmonizeLinks(this.links).forEach(link => div.appendChild(createParagraph(link.url)));
+
+  return new Handlebars.SafeString(div.outerHTML);
 }
 
-export const createRegistererAllAlarmHelpers = () => {
-  const existsHelpers = {};
-  const helpersForRegister = {
-    infos,
-    tags,
-    links,
-    last_comment: lastComment,
-    pbehavior_info: pbehaviorInfo,
-  };
+export const createInstanceWithHelpers = () => {
+  const instance = Handlebars.create();
 
-  Object.entries(helpersForRegister).forEach(([name, helper]) => {
-    if (Handlebars.helpers[name]) {
-      existsHelpers[name] = Handlebars.helpers[name];
-      unregisterHelper(name);
-    }
+  instance.registerHelper('infos', infos);
+  instance.registerHelper('tags', tags);
+  instance.registerHelper('links', links);
+  instance.registerHelper('ticket_info', ticketInfo);
+  instance.registerHelper('last_comment', lastComment);
+  instance.registerHelper('pbehavior_info', pbehaviorInfo);
 
-    registerHelper(name, helper);
-  });
-
-  return () => {
-    Object.keys(helpersForRegister).forEach(name => unregisterHelper(name));
-    Object.entries(existsHelpers).forEach(([name, helper]) => registerHelper(name, helper));
-  };
+  return instance;
 };

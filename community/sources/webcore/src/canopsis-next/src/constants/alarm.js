@@ -101,6 +101,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
+  exportPdf: 'exportPdf',
   groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',

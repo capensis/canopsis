@@ -79,13 +79,17 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            edit
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+              style="font-size: 16px;"
+            >
+              edit
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -103,13 +107,17 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            delete
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+              style="font-size: 16px;"
+            >
+              delete
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -205,13 +213,17 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            edit
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+              style="font-size: 16px;"
+            >
+              edit
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -229,13 +241,17 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            delete
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+              style="font-size: 16px;"
+            >
+              delete
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -303,13 +319,17 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            edit
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+              style="font-size: 16px;"
+            >
+              edit
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -327,13 +347,17 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            delete
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+              style="font-size: 16px;"
+            >
+              delete
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -401,13 +425,17 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light primary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            edit
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light primary--text"
+              style="font-size: 16px;"
+            >
+              edit
+            </i>
+          </span>
           <span
             class="body-1"
           >
@@ -425,13 +453,17 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
         <div
           class="v-list__tile__title"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon pr-3 v-icon--left material-icons theme--light secondary--text"
-            style="font-size: 16px;"
+          <span
+            class="mr-4"
           >
-            delete
-          </i>
+            <i
+              aria-hidden="true"
+              class="v-icon ma-0 pa-0 v-icon--left material-icons theme--light secondary--text"
+              style="font-size: 16px;"
+            >
+              delete
+            </i>
+          </span>
           <span
             class="body-1"
           >
