@@ -123,8 +123,10 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	i := 0
 	for name, apiConfig := range conf.ExternalAPI {
 		result.JobConfigTypes[i] = JobConfigType{
-			Name:     name,
-			AuthType: apiConfig.Auth.Type,
+			Name:      name,
+			AuthType:  apiConfig.Auth.Type,
+			WithBody:  apiConfig.LaunchEndpoint.WithBody,
+			WithQuery: apiConfig.LaunchEndpoint.WithUrlQuery,
 		}
 		i++
 	}
