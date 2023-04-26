@@ -11,16 +11,17 @@ func Parse(perfData []string) []utils.RegexExpression {
 	return perfDataRe
 }
 
-func Filter(entityPerfData, perfData []string, perfDataRe []utils.RegexExpression) []string {
+func Filter(perfData []string, perfDataRe []utils.RegexExpression, entityPerfData []string) []string {
 	filteredPerfData := make([]string, 0)
 
-	for _, entityMetric := range entityPerfData {
+	for i, metric := range perfData {
+		re := perfDataRe[i]
 		matched := false
-		for k, metric := range perfData {
-			if re := perfDataRe[k]; re != nil {
-				matched = re.Match([]byte(entityMetric))
-			} else {
+		for _, entityMetric := range entityPerfData {
+			if re == nil {
 				matched = entityMetric == metric
+			} else {
+				matched = re.Match([]byte(entityMetric))
 			}
 
 			if matched {
@@ -29,7 +30,7 @@ func Filter(entityPerfData, perfData []string, perfDataRe []utils.RegexExpressio
 		}
 
 		if matched {
-			filteredPerfData = append(filteredPerfData, entityMetric)
+			filteredPerfData = append(filteredPerfData, metric)
 		}
 	}
 
