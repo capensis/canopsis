@@ -7,8 +7,17 @@
         @input="updateOldMode"
       )
     v-flex(xs6)
-      v-text-field(v-if="oldMode", v-field.number="value", type="number")
-      c-entity-state-field(v-else, v-field="value")
+      c-number-field(
+        v-if="oldMode",
+        v-field="value",
+        :name="name",
+        required
+      )
+      c-entity-state-field(
+        v-else,
+        v-field="value",
+        :name="name"
+      )
 </template>
 
 <script>
@@ -26,6 +35,10 @@ export default {
     value: {
       type: Number,
       required: true,
+    },
+    name: {
+      type: String,
+      default: 'state',
     },
   },
   data() {
