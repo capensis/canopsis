@@ -318,7 +318,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
     L'outil est en effet pré paramétré pour fonctionner naturellement.
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d reconfigure
+    CPS_EDITION=pro docker-compose up -d reconfigure
     ```
 
     !!! information "Information"
@@ -328,7 +328,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
     Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml ps
+    CPS_EDITION=pro docker-compose ps
     canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)
     ```
 
@@ -348,8 +348,7 @@ Une migration des données est donc nécessaire.
     Exécution de la commande `migrate-instruction-metrics`
 
     ```sh
-    A CORRIGER avec un patch
-    docker run -e EXTERNAL_API_USERNAME='[testuser]' -e EXTERNAL_API_PASSWORD='[testpassword]' -e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb/canopsis' -e CPS_AMQP_URL='amqp://cpsrabbit:canopsis@rabbitmq/canopsis' -e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' --network=canopsis-pro_default -it --rm docker.canopsis.net/docker/pro/migrate-instruction-metrics:23.04-preview3
+    docker run -e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb/canopsis' -e CPS_AMQP_URL='amqp://cpsrabbit:canopsis@rabbitmq/canopsis' -e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' --network=canopsis-pro_default -it --rm docker.canopsis.net/docker/pro/migrate-instruction-metrics:23.04.0
     ```
 
 === "Paquets RH8"
@@ -368,13 +367,13 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+    CPS_EDITION=pro docker-compose up -d
     ```
 
     Vous pouvez ensuite vérifier que l'ensemble des conteneurs soient correctement exécutés.
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml ps
+    CPS_EDITION=pro docker-compose ps
     NAME                                  COMMAND                  SERVICE                STATUS              PORTS
     canopsis-pro-action-1                 "/engine-action -wit…"   action                 running             
     canopsis-pro-api-1                    "/canopsis-api -docs"    api                    running (healthy)   0.0.0.0:8082->8082/tcp, :::8082->8082/tcp
