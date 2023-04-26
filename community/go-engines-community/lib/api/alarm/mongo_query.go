@@ -157,10 +157,6 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		return nil, err
 	}
 
-	if len(r.PerfData) > 0 {
-		q.computedFields["filtered_perf_data"] = bson.M{"$setIntersection": bson.A{r.PerfData, "$entity.perf_data"}}
-	}
-
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 

@@ -387,7 +387,41 @@ Feature: Perf data should be stored.
       }
     }
     """
+    When I do GET /api/v4/alarms?search=test-resource-metrics-perf-data-1&perf_data[]={{ "cpu*" | query_escape }} until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "filtered_perf_data": ["cpu_%"]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
     When I do GET /api/v4/entities?search=test-resource-metrics-perf-data-1&perf_data[]={{ "cpu_%" | query_escape }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "filtered_perf_data": ["cpu_%"]
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-metrics-perf-data-1&perf_data[]={{ "cpu*" | query_escape }}
     Then the response code should be 200
     Then the response body should contain:
     """json
