@@ -24,7 +24,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 ### Dernières versions
 
 <!-- du plus récent au plus ancien -->
-*  [Canopsis 23.04.0](notes-de-version/23.04.0.md), publié le xx avril 2023. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.04.0.md)
+*  [Canopsis 23.04.0](notes-de-version/23.04.0.md), publié le 27 avril 2023. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.04.0.md)
 *  [Canopsis 22.10.8](notes-de-version/22.10.8.md), publié le 30 mars 2023.
 *  [Canopsis 22.10.7](notes-de-version/22.10.7.md), publié le 1 mars 2023.
 *  [Canopsis 22.10.6](notes-de-version/22.10.6.md), publié le 26 janvier 2023.
