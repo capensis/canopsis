@@ -32,6 +32,7 @@ type Flags struct {
 	concurrency         int
 	tags                string
 	clearOnScenario     bool
+	keepStoresOnFail    bool
 }
 
 type arrayFlag []string
@@ -61,6 +62,7 @@ func (f *Flags) ParseArgs() {
 	flag.IntVar(&f.concurrency, "godog.concurrency", 0, "Concurrency rate.")
 	flag.StringVar(&f.tags, "godog.tags", "", "Filter scenarios.")
 	flag.BoolVar(&f.clearOnScenario, "clearOnScenario", false, "Clear stores on each scenario.")
+	flag.BoolVar(&f.keepStoresOnFail, "keepStoresOnFail", false, "Keep stores on fail.")
 	flag.Parse()
 
 	if !f.onlyFixtures && len(f.paths) == 0 {
