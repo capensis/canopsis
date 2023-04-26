@@ -4,7 +4,7 @@
       c-enabled-field(
         v-model="oldMode",
         :label="$t('common.numberField')",
-        @change="changeOldMode"
+        @input="updateOldMode"
       )
     v-flex(xs6)
       v-text-field(v-if="oldMode", v-field.number="value", type="number")
@@ -34,7 +34,7 @@ export default {
     };
   },
   methods: {
-    changeOldMode(value) {
+    updateOldMode(value) {
       if (!value && this.value > ENTITIES_STATES.critical) {
         this.updateModel(ENTITIES_STATES.ok);
       }
