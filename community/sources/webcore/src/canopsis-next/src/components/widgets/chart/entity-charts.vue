@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     entity-chart-widget(
-      v-for="(chart, index) in charts",
+      v-for="(chart, index) in filteredCharts",
       :key="index",
       :widget="chart",
       :entity="entity",
@@ -26,6 +26,13 @@ export default {
     availableMetrics: {
       type: Array,
       default: () => [],
+    },
+  },
+  computed: {
+    filteredCharts() {
+      return this.charts.filter(
+        ({ parameters }) => parameters.metrics.some(({ metric }) => this.availableMetrics.includes(metric)),
+      );
     },
   },
 };

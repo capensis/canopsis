@@ -69,6 +69,9 @@ describe('entity-chart-widget', () => {
           {
             metric: ALARM_METRIC_PARAMETERS.ackAlarms,
           },
+          {
+            metric: '.*',
+          },
         ],
       },
     });
@@ -80,6 +83,7 @@ describe('entity-chart-widget', () => {
         entity: {
           _id: entityId,
         },
+        availableMetrics: [ALARM_METRIC_PARAMETERS.ackAlarms],
       },
     });
 
@@ -128,6 +132,7 @@ describe('entity-chart-widget', () => {
         entity: {
           _id: entityId,
         },
+        availableMetrics: [ALARM_METRIC_PARAMETERS.createdAlarms],
       },
     });
 
@@ -158,8 +163,6 @@ describe('entity-chart-widget', () => {
     fetchAlarmsMetricsWithoutStore.mockResolvedValue({
       data: [{
         title: ALARM_METRIC_PARAMETERS.ackAlarms,
-      }, {
-        title: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       }],
     });
     const barChartWidget = widgetToForm({
@@ -168,9 +171,6 @@ describe('entity-chart-widget', () => {
         metrics: [
           {
             metric: ALARM_METRIC_PARAMETERS.ackAlarms,
-          },
-          {
-            metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
           },
         ],
       },
@@ -225,8 +225,6 @@ describe('entity-chart-widget', () => {
     fetchAggregatedMetricsWithoutStore.mockResolvedValue({
       data: [{
         title: ALARM_METRIC_PARAMETERS.ackAlarms,
-      }, {
-        title: ALARM_METRIC_PARAMETERS.timeToAck,
       }, {
         title: ALARM_METRIC_PARAMETERS.averageAck,
       }],
