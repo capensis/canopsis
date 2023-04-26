@@ -32,7 +32,7 @@ Feature: Perf data should be stored.
       "to": {{ nowDateTz }}
     }
     """
-    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
+    When I do POST /api/v4/cat/entity-metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -77,7 +77,7 @@ Feature: Perf data should be stored.
       "to": {{ nowDateTz }}
     }
     """
-    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
+    When I do POST /api/v4/cat/entity-metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -94,7 +94,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/alarm:
+    When I do POST /api/v4/cat/entity-metrics/alarm:
     """json
     {
       "parameters": [
@@ -127,7 +127,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/alarm:
+    When I do POST /api/v4/cat/entity-metrics/alarm:
     """json
     {
       "parameters": [
@@ -160,7 +160,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/alarm:
+    When I do POST /api/v4/cat/entity-metrics/alarm:
     """json
     {
       "parameters": [
@@ -193,7 +193,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/alarm:
+    When I do POST /api/v4/cat/entity-metrics/alarm:
     """json
     {
       "parameters": [
@@ -226,7 +226,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/aggregate:
+    When I do POST /api/v4/cat/entity-metrics/aggregate:
     """json
     {
       "parameters": [
@@ -255,7 +255,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/aggregate:
+    When I do POST /api/v4/cat/entity-metrics/aggregate:
     """json
     {
       "parameters": [
@@ -284,7 +284,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/aggregate:
+    When I do POST /api/v4/cat/entity-metrics/aggregate:
     """json
     {
       "parameters": [
@@ -313,7 +313,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/aggregate:
+    When I do POST /api/v4/cat/entity-metrics/aggregate:
     """json
     {
       "parameters": [
@@ -342,7 +342,7 @@ Feature: Perf data should be stored.
       ]
     }
     """
-    When I do POST /api/v4/cat/metrics/aggregate:
+    When I do POST /api/v4/cat/entity-metrics/aggregate:
     """json
     {
       "parameters": [

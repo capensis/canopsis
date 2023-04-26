@@ -130,6 +130,7 @@ Feature: Get alarm metrics
     }
     """
 
+  @concurrent
   Scenario: given get created_alarms hour request should return metrics with history
     When I am admin
     When I do POST /api/v4/cat/metrics/alarm:
