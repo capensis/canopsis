@@ -470,8 +470,8 @@ Vous devez simplement définir la variable d'environnement `CPS_OLD_API` dans `/
 Téléchargez [l'archive suivante](https://git.canopsis.net/sources/canopsis-pro-sources/-/archive/release-23.04/canopsis-pro-sources-release-23.04.tar.gz?path=pro/mock/external-services/snmp/docker) pour récupérer les configurations de références.
 
 ```sh
-tar xvfz canopsis-pro-sources-release-23.04.tar.gz
-cd canopsis-pro-sources-release-23.04
+tar xvfz canopsis-pro-sources-release-23.04-pro-mock-external-services-snmp-docker.tar.gz
+cd canopsis-pro-sources-release-23.04-pro-mock-external-services-snmp-docker
 cd mock/external-services/snmp/docker
 ```
 
@@ -485,14 +485,16 @@ env2cfg
 schema2db
 ```
 
-Vous devez alors voir des lignes simialires à celles-ci :
+Vous devez alors voir des lignes similaires à celles-ci :
 
 ```
+...
 2023-02-17 08:30:13,122 INFO schema2db [schema2db 186] Saving: crecord.graphelt.vertice.toponode
 2023-02-17 08:30:13,124 INFO schema2db [schema2db 186] Saving: context.ctxevent.ctxack
 2023-02-17 08:30:13,126 INFO schema2db [schema2db 186] Saving: crecord.cservice
 2023-02-17 08:30:13,127 INFO schema2db [schema2db 186] Saving: alarm_fields
 2023-02-17 08:30:13,129 INFO schema2db [schema2db 186] Saving: cevent.comment
+...
 ```
 
 Enfin, on rétablit l'entrypoint d'origine et on démarre les services :
@@ -501,3 +503,7 @@ Enfin, on rétablit l'entrypoint d'origine et on démarre les services :
 sed -i 's/entrypoint/#entrypoint/' docker-compose.yml
 docker-compose up -d
 ```
+
+Vous pouvez vérifier que votre installation SNMP est fonctionnelle en vous rendant sur l'interface graphique dans le menu `Exploitation->Règles SNMP`.  
+Si vous aviez déjà des règles SNMP en place alors elles s'affichent dans la liste. 
+Si l'interface vous déconnecte, alors la focntionnalité SNMP n'est pas déployée correctement. Dans ce cas, contactez notre support.
