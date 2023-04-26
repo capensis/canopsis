@@ -221,6 +221,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           causes: {},
           consequences: {},
+          filtered_perf_data: ['cpu'],
           entity: {
             type: ENTITY_TYPES.service,
             impact: ['test'],
@@ -231,7 +232,9 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
         },
         widget: {
           parameters: {
-            charts: [{}],
+            charts: [{
+              metric: 'cpu',
+            }],
             moreInfoTemplate: 'template',
             isHtmlEnabledOnTimeLine: false,
             serviceDependenciesColumns: [{}],

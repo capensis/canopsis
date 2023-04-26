@@ -4,7 +4,8 @@
       v-for="(chart, index) in charts",
       :key="index",
       :widget="chart",
-      :entity="entity"
+      :entity="entity",
+      :available-metrics="availableMetrics"
     )
 </template>
 
@@ -21,6 +22,10 @@ export default {
     entity: {
       type: Object,
       required: true,
+    },
+    availableMetrics: {
+      type: Array,
+      default: () => [],
     },
   },
 };

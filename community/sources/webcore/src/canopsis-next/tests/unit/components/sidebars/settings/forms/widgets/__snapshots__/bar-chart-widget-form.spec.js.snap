@@ -67,11 +67,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
     value=""
   />
   <!---->
-  <field-preset-stub
-    name="preset"
-    parameters="[object Object]"
-    type="BarChart"
-  />
+  <!---->
   <widget-settings-group-stub
     title="Metrics display"
   >

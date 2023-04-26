@@ -32,7 +32,7 @@
           v-flex(xs12)
             v-card
               v-card-text
-                entity-charts(:charts="charts", :entity="item")
+                entity-charts(:charts="charts", :entity="item", :available-metrics="item.filtered_perf_data")
 
     template(v-if="item.type === $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.treeOfDependencies') }}
@@ -119,7 +119,7 @@ export default {
   },
   computed: {
     hasWidgetCharts() {
-      return this.charts?.length;
+      return this.charts?.length && this.item.filtered_perf_data?.length;
     },
   },
 };

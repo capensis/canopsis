@@ -106,6 +106,7 @@ describe('numbers-widget-form', () => {
     const wrapper = factory({
       propsData: {
         form,
+        withPreset: true,
       },
     });
 
@@ -248,6 +249,7 @@ describe('numbers-widget-form', () => {
         },
         withPeriodicRefresh: true,
         withFilters: true,
+        withPreset: true,
       },
     });
 

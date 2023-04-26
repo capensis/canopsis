@@ -156,7 +156,11 @@ describe('entity-chart-widget', () => {
 
   test('Renders `entity-chart-widget` with bar type', async () => {
     fetchAlarmsMetricsWithoutStore.mockResolvedValue({
-      data: [{}, {}],
+      data: [{
+        title: ALARM_METRIC_PARAMETERS.ackAlarms,
+      }, {
+        title: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
+      }],
     });
     const barChartWidget = widgetToForm({
       type: WIDGET_TYPES.barChart,
@@ -164,6 +168,9 @@ describe('entity-chart-widget', () => {
         metrics: [
           {
             metric: ALARM_METRIC_PARAMETERS.ackAlarms,
+          },
+          {
+            metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
           },
         ],
       },
@@ -174,6 +181,7 @@ describe('entity-chart-widget', () => {
       propsData: {
         widget: barChartWidget,
         entity: {},
+        availableMetrics: [ALARM_METRIC_PARAMETERS.ackAlarms],
       },
     });
 
@@ -184,7 +192,9 @@ describe('entity-chart-widget', () => {
 
   test('Renders `entity-chart-widget` with line type', async () => {
     fetchAlarmsMetricsWithoutStore.mockResolvedValue({
-      data: [{}, {}, {}],
+      data: [{
+        title: ALARM_METRIC_PARAMETERS.ackAlarms,
+      }],
     });
     const lineChartWidget = widgetToForm({
       type: WIDGET_TYPES.lineChart,
@@ -202,6 +212,7 @@ describe('entity-chart-widget', () => {
       propsData: {
         widget: lineChartWidget,
         entity: {},
+        availableMetrics: [ALARM_METRIC_PARAMETERS.ackAlarms],
       },
     });
 
@@ -212,7 +223,13 @@ describe('entity-chart-widget', () => {
 
   test('Renders `entity-chart-widget` with numbers type', async () => {
     fetchAggregatedMetricsWithoutStore.mockResolvedValue({
-      data: [{}, {}, {}],
+      data: [{
+        title: ALARM_METRIC_PARAMETERS.ackAlarms,
+      }, {
+        title: ALARM_METRIC_PARAMETERS.timeToAck,
+      }, {
+        title: ALARM_METRIC_PARAMETERS.averageAck,
+      }],
     });
     const numbersWidget = widgetToForm({
       type: WIDGET_TYPES.numbers,
@@ -230,6 +247,7 @@ describe('entity-chart-widget', () => {
       propsData: {
         widget: numbersWidget,
         entity: {},
+        availableMetrics: [ALARM_METRIC_PARAMETERS.ackAlarms, ALARM_METRIC_PARAMETERS.averageAck],
       },
     });
 
