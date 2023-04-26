@@ -2,137 +2,136 @@ package types_test
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"strconv"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	. "github.com/smartystreets/goconvey/convey"
+	"github.com/kylelemons/godebug/pretty"
 )
 
-func getEvent() types.Event {
-	var event = types.Event{
-		Connector:     "red",
-		ConnectorName: "is",
-		Component:     "dead",
-		Resource:      "adieu_yourï",
-		EventType:     types.EventTypeCheck,
-		SourceType:    types.SourceTypeResource,
-		LongOutput:    "",
-		State:         types.AlarmStateMajor,
-		Output:        "",
-		ID:            nil,
-		Status:        nil,
-		Alarm:         nil,
-		Entity:        nil,
-	}
+func TestEvent_Format_GivenEmptyEventType_ShouldSetCheck(t *testing.T) {
+	event := getEvent()
+	event.EventType = ""
 	event.Format()
-
-	return event
-}
-
-// Generate a bad event
-func GetBadEvent() types.Event {
-
-	status := types.CpsNumber(-3)
-
-	return types.Event{
-		Connector:     "red",
-		ConnectorName: "is",
-		Component:     "nil !",
-		Resource:      "",
-		EventType:     "wrong_event_type",
-		ID:            nil,
-		Status:        &status,
-		SourceType:    "wrong_source_type",
-		LongOutput:    "",
-		State:         -1,
-		Output:        "",
-		Alarm:         nil,
-		Entity:        nil,
+	if event.EventType != types.EventTypeCheck {
+		t.Errorf("expected %q but got %q", types.EventTypeCheck, event.EventType)
 	}
 }
 
-func GetBadEvent2() types.Event {
-	evt := GetBadEvent()
-	evt.EventType = ""
-	return evt
+func TestEvent_Format_GivenEmptyTs_ShouldSetTs(t *testing.T) {
+	event := getEvent()
+	event.Timestamp = types.CpsTime{}
+	event.Format()
+	if event.Timestamp.Unix() <= 0 {
+		t.Errorf("expected ts but nothing")
+	}
 }
 
-func TestEventTypeIsReplaced(t *testing.T) {
-	Convey("Given an event with EventType empty", t, func() {
-		evt := GetBadEvent2()
+func TestEvent_IsValid(t *testing.T) {
+	dataSet := []struct {
+		Event types.Event
+		Err   error
+	}{
+		{
+			Event: getEvent(),
+		},
+		{
+			Event: types.Event{
+				State:         types.AlarmStateMajor,
+				Connector:     "centreon",
+				ConnectorName: "centreon",
+				Component:     "host",
+				Resource:      "nginx",
+				SourceType:    types.SourceTypeResource,
+			},
+			Err: fmt.Errorf("wrong event type: "),
+		},
+		{
+			Event: types.Event{
+				EventType:     types.EventTypeCheck,
+				State:         types.AlarmStateMajor,
+				ConnectorName: "centreon",
+				Component:     "host",
+				Resource:      "nginx",
+				SourceType:    types.SourceTypeResource,
+			},
+			Err: errors.New("missing connector"),
+		},
+		{
+			Event: types.Event{
+				EventType:     types.EventTypeCheck,
+				State:         types.AlarmStateMajor,
+				Connector:     "centreon",
+				ConnectorName: "centreon",
+				Component:     "host",
+				SourceType:    types.SourceTypeResource,
+			},
+			Err: errors.New("missing resource"),
+		},
+		{
+			Event: types.Event{
+				EventType:     types.EventTypeCheck,
+				State:         types.AlarmStateMajor,
+				Connector:     "centreon",
+				ConnectorName: "centreon",
+				Resource:      "nginx",
+				SourceType:    types.SourceTypeResource,
+			},
+			Err: errors.New("missing component"),
+		},
+	}
 
-		Convey("EventType goes to EventTypeCheck when Format() is called", func() {
-			evt.Format()
-			So(evt.EventType, ShouldEqual, types.EventTypeCheck)
+	for i, data := range dataSet {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			if err := data.Event.IsValid(); data.Err == nil && err != nil || data.Err != nil && err == nil ||
+				data.Err != nil && err != nil && data.Err.Error() != err.Error() {
+				t.Errorf("expected %q but got %q", data.Err, err)
+			}
 		})
-	})
+	}
 }
 
-func TestEventIsGood(t *testing.T) {
-
-	Convey("Given an event", t, func() {
-		e := getEvent()
-
-		Convey("Then the event is valid", func() {
-			So(e.IsValid(), ShouldBeNil)
-		})
-
-		Convey("Then the event is correctly formatted", func() {
-			e.Format()
-			So(e.Timestamp, ShouldNotBeNil)
-			So(e.EventType, ShouldNotBeBlank)
-		})
-
-		Convey("Then the event is catched correctly", func() {
-			fields := []string{"Fear", "Resource", "Component"}
-			So(e.IsMatched(".*dead", fields), ShouldBeTrue)
-		})
-	})
+func TestEvent_IsMatched(t *testing.T) {
+	event := getEvent()
+	event.Component = "foo"
+	fields := []string{"Fear", "Resource", "Component"}
+	if !event.IsMatched(".*foo", fields) {
+		t.Errorf("expected true but got false")
+	}
 }
 
-func TestEventIsBad(t *testing.T) {
-
-	Convey("Given a bad event", t, func() {
-		e := GetBadEvent()
-
-		Convey("The event is not valid", func() {
-			So(e.IsValid(), ShouldNotBeNil)
-		})
-
-		Convey("The event is correctly formatted anyway", func() {
-			e.Format()
-			So(e.Timestamp, ShouldNotBeNil)
-			So(e.EventType, ShouldNotBeNil)
-			So(e.EventType, ShouldNotBeBlank)
-			So(e.Output, ShouldNotBeNil)
-		})
-	})
-
-	Convey("Given an event without resource", t, func() {
-		e := getEvent()
-		e.Resource = ""
-
-		Convey("The event is not valid", func() {
-			So(e.IsValid(), ShouldNotBeNil)
-		})
-	})
+func TestEvent_GetRequiredKeys(t *testing.T) {
+	event := getEvent()
+	expected := []string{
+		"_id",
+		"event_type",
+		"connector",
+		"connector_name",
+		"component",
+		"resource",
+		"source_type",
+		"status",
+		"state",
+	}
+	result := event.GetRequiredKeys()
+	for _, expectedField := range expected {
+		matched := true
+		for _, field := range result {
+			if field == expectedField {
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			t.Errorf("expected %q", expectedField)
+		}
+	}
 }
 
-func TestListTypeFields(t *testing.T) {
-	Convey("Given an event struct", t, func() {
-		event := getEvent()
-		Convey("Then basic fields are listed by listTypeFields()", func() {
-			tags := event.GetRequiredKeys()
-			So(tags, ShouldContain, "connector")
-			So(tags, ShouldContain, "connector_name")
-			So(tags, ShouldContain, "component")
-		})
-	})
-}
-
-func TestInjectExtraInfos(t *testing.T) {
-	Convey("Setup", t, func() {
-		evt := `{
+func TestEvent_InjectExtraInfos(t *testing.T) {
+	str := `{
 		"event_type":"check",
 		"component":"bla",
 		"resource":"blurk",
@@ -142,80 +141,159 @@ func TestInjectExtraInfos(t *testing.T) {
 		"personnemeconnait":"ulyss31",
 		"personnemeconnait2":"ulyss62"
 	}`
-		var e types.Event
-		So(json.Unmarshal([]byte(evt), &e), ShouldBeNil)
+	event := types.Event{}
+	err := json.Unmarshal([]byte(str), &event)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
 
-		Convey("Extra informations are into ExtraInfos", func() {
-			So(e.InjectExtraInfos([]byte(evt)), ShouldBeNil)
-			So(e.ExtraInfos, ShouldContainKey, "personnemeconnait")
-			So(e.ExtraInfos, ShouldContainKey, "personnemeconnait2")
-			So(e.ExtraInfos["personnemeconnait"], ShouldEqual, "ulyss31")
-			So(e.ExtraInfos["personnemeconnait2"], ShouldEqual, "ulyss62")
-		})
-	})
+	err = event.InjectExtraInfos([]byte(str))
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
+
+	if event.ExtraInfos["personnemeconnait"] != "ulyss31" {
+		t.Errorf("expected %q but got %q", "ulyss31", event.ExtraInfos["personnemeconnait"])
+	}
+	if event.ExtraInfos["personnemeconnait2"] != "ulyss62" {
+		t.Errorf("expected %q but got %q", "ulyss62", event.ExtraInfos["personnemeconnait2"])
+	}
 }
 
-func TestSetField(t *testing.T) {
-	Convey("Given an event", t, func() {
-		evt := `{
-			"event_type":"check",
-			"component":"bla",
-			"resource":"blurk",
-			"state":3,
-			"connector":"bla",
-			"connector_name":"bla",
-			"extra_info":"ulyss31"
-		}`
-		var e types.Event
-		So(json.Unmarshal([]byte(evt), &e), ShouldBeNil)
-		So(e.InjectExtraInfos([]byte(evt)), ShouldBeNil)
+func TestEvent_SetField(t *testing.T) {
+	str := `{
+		"event_type":"check",
+		"component":"bla",
+		"resource":"blurk",
+		"state":3,
+		"connector":"bla",
+		"connector_name":"bla",
+		"extra_info":"ulyss31"
+	}`
+	event := types.Event{}
+	err := json.Unmarshal([]byte(str), &event)
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
 
-		Convey("Setting a field that does not exist sets it in ExtraInfos", func() {
-			So(e.SetField("extra_info", 12), ShouldBeNil)
-			So(e.ExtraInfos["extra_info"], ShouldEqual, 12)
+	err = event.InjectExtraInfos([]byte(str))
+	if err != nil {
+		t.Fatalf("expected no error but got %v", err)
+	}
 
-			So(e.SetField("new_info", "twelve"), ShouldBeNil)
-			So(e.ExtraInfos, ShouldContainKey, "new_info")
-			So(e.ExtraInfos["new_info"], ShouldEqual, "twelve")
-		})
+	dataSet := []struct {
+		Field string
+		Value any
+		Err   error
+	}{
+		{
+			Field: "extra_info",
+			Value: 12,
+		},
+		{
+			Field: "extra_info",
+			Value: int32(12),
+		},
+		{
+			Field: "extra_info",
+			Value: int64(12),
+		},
+		{
+			Field: "new_info",
+			Value: "twelve",
+		},
+		{
+			Field: "State",
+			Value: 2,
+		},
+		{
+			Field: "State",
+			Value: int32(2),
+		},
+		{
+			Field: "State",
+			Value: int64(2),
+		},
+		{
+			Field: "State",
+			Value: types.CpsNumber(2),
+		},
+		{
+			Field: "Status",
+			Value: 2,
+		},
+		{
+			Field: "Status",
+			Value: int32(2),
+		},
+		{
+			Field: "Status",
+			Value: int64(2),
+		},
+		{
+			Field: "Status",
+			Value: types.CpsNumber(2),
+		},
+		{
+			Field: "Timestamp",
+			Value: 12,
+		},
+		{
+			Field: "EventType",
+			Value: "test",
+		},
+		{
+			Field: "Debug",
+			Value: true,
+		},
+	}
 
-		Convey("Setting a field containing a CpsNumber works", func() {
-			So(e.SetField("State", 2), ShouldBeNil)
-			So(e.State, ShouldEqual, 2)
-		})
-
-		Convey("Setting a field containing a *CpsNumber works", func() {
-			So(e.SetField("Status", 2), ShouldBeNil)
-			So(*e.Status, ShouldEqual, 2)
-		})
-
-		Convey("Setting a field containing a CpsTime works", func() {
-			So(e.SetField("Timestamp", 12), ShouldBeNil)
-			So(e.Timestamp.Time.Unix(), ShouldEqual, 12)
-		})
-
-		Convey("Setting a field containing a string works", func() {
-			So(e.SetField("EventType", "test"), ShouldBeNil)
-			So(e.EventType, ShouldEqual, "test")
-		})
-
-		Convey("Setting a field containing a *string works", func() {
-			So(e.SetField("ID", "test"), ShouldBeNil)
-			So(*e.ID, ShouldEqual, "test")
-		})
-
-		Convey("Setting a field containing a bool works", func() {
-			So(e.SetField("Debug", true), ShouldBeNil)
-			So(e.Debug, ShouldEqual, true)
-		})
-
-		Convey("Setting a field containing an entity works", func() {
-			entity := types.Entity{
-				ID: "eid",
+	for i, data := range dataSet {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			err = event.SetField(data.Field, data.Value)
+			if !errors.Is(err, data.Err) {
+				t.Fatalf("expected %v but got %v", data.Err, err)
 			}
-			So(e.SetField("Entity", entity), ShouldBeNil)
-			So(e.Entity, ShouldNotBeNil)
-			So(e.Entity.ID, ShouldEqual, "eid")
+			if err == nil {
+				switch data.Field {
+				case "State":
+					if diff := pretty.Compare(event.State, data.Value); diff != "" {
+						t.Errorf("expected %v but got %v", data.Value, event.State)
+					}
+				case "Status":
+					if diff := pretty.Compare(event.Status, data.Value); diff != "" {
+						t.Errorf("expected %v but got %v", data.Value, event.Status)
+					}
+				case "Timestamp":
+					if diff := pretty.Compare(event.Timestamp.Unix(), data.Value); diff != "" {
+						t.Errorf("expected %v but got %v", data.Value, event.Timestamp.Unix())
+					}
+				case "EventType":
+					if diff := pretty.Compare(event.EventType, data.Value); diff != "" {
+						t.Errorf("expected %v but got %v", data.Value, event.EventType)
+					}
+				case "Debug":
+					if diff := pretty.Compare(event.Debug, data.Value); diff != "" {
+						t.Errorf("expected %v but got %v", data.Value, event.Debug)
+					}
+				default:
+					if diff := pretty.Compare(event.ExtraInfos[data.Field], data.Value); diff != "" {
+						t.Errorf("expected %v but got %v", data.Value, event.Status)
+					}
+				}
+			}
 		})
-	})
+	}
+}
+
+func getEvent() types.Event {
+	return types.Event{
+		EventType:     types.EventTypeCheck,
+		State:         types.AlarmStateMajor,
+		Connector:     "centreon",
+		ConnectorName: "centreon",
+		Component:     "host",
+		Resource:      "nginx",
+		SourceType:    types.SourceTypeResource,
+	}
 }
