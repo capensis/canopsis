@@ -78,7 +78,11 @@
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
-                entity-charts(:charts="widget.parameters.charts", :entity="alarm.entity")
+                entity-charts(
+                  :charts="widget.parameters.charts",
+                  :entity="alarm.entity",
+                  :available-metrics="alarm.filtered_perf_data"
+                )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -280,7 +284,7 @@ export default {
     },
 
     hasWidgetCharts() {
-      return this.widget.parameters.charts?.length;
+      return this.widget.parameters.charts?.length && this.alarm.filtered_perf_data?.length;
     },
   },
   watch: {

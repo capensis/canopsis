@@ -72,6 +72,10 @@ export default {
       type: Object,
       required: true,
     },
+    availableMetrics: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -95,8 +99,12 @@ export default {
         : null;
     },
 
+    filteredMetrics() {
+      return this.metrics.filter(({ title }) => this.availableMetrics.includes(title));
+    },
+
     preparedMetrics() {
-      return convertMetricsToTimezone(this.metrics, this.$system.timezone).map((metric) => {
+      return convertMetricsToTimezone(this.filteredMetrics, this.$system.timezone).map((metric) => {
         const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
         return {

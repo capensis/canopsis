@@ -7,6 +7,7 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with custom props and p
   <pie-chart-widget-form-stub
     form="[object Object]"
     withperiodicrefresh="true"
+    withpreset="true"
   />
 </widget-settings-stub>
 `;
@@ -18,6 +19,7 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with default props 1`] 
   <pie-chart-widget-form-stub
     form="[object Object]"
     withperiodicrefresh="true"
+    withpreset="true"
   />
 </widget-settings-stub>
 `;

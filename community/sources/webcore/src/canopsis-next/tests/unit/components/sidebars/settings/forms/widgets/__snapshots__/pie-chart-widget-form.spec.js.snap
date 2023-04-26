@@ -66,11 +66,7 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
     value=""
   />
   <!---->
-  <field-preset-stub
-    name="preset"
-    parameters="[object Object]"
-    type="PieChart"
-  />
+  <!---->
   <widget-settings-group-stub
     title="Metrics display"
   >
