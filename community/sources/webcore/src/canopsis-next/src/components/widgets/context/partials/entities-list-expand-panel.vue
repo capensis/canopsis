@@ -25,6 +25,15 @@
             v-card-text
               infos-tab(:infos="item.infos", :columns-filters="columnsFilters")
 
+    template(v-if="hasWidgetCharts")
+      v-tab {{ $t('context.charts') }}
+      v-tab-item(lazy)
+        v-layout.pa-3(row)
+          v-flex(xs12)
+            v-card
+              v-card-text
+                entity-charts(:charts="charts", :entity="item")
+
     template(v-if="item.type === $constants.ENTITY_TYPES.service")
       v-tab {{ $t('context.treeOfDependencies') }}
       v-tab-item(lazy)
@@ -63,6 +72,7 @@
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
 import InfosTab from './expand-panel-tabs/infos-tab.vue';
@@ -72,6 +82,7 @@ import EntityAlarmsListTable from './expand-panel-tabs/entity-alarms-list-table.
 
 export default {
   components: {
+    EntityCharts,
     PbehaviorsSimpleList,
     ImpactChainDependenciesTab,
     ImpactDependsTab,
@@ -100,6 +111,15 @@ export default {
     serviceDependenciesColumns: {
       type: Array,
       default: () => [],
+    },
+    charts: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  computed: {
+    hasWidgetCharts() {
+      return this.charts?.length;
     },
   },
 };

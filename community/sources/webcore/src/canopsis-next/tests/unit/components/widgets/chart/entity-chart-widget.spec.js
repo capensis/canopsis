@@ -14,7 +14,7 @@ import { mockDateNow } from '@unit/utils/mock-hooks';
 import { widgetToForm } from '@/helpers/forms/widgets/common';
 import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
-import AlarmChartWidget from '@/components/widgets/chart/alarm-chart-widget.vue';
+import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vue';
 
 const stubs = {
   'chart-widget-filters': true,
@@ -24,7 +24,7 @@ const stubs = {
   'numbers-metrics': true,
 };
 
-describe('alarm-chart-widget', () => {
+describe('entity-chart-widget', () => {
   mockDateNow(1386435500000);
 
   const { authModule } = createAuthModule();
@@ -43,7 +43,7 @@ describe('alarm-chart-widget', () => {
     metricsModule,
   ]);
 
-  const factory = generateShallowRenderer(AlarmChartWidget, {
+  const factory = generateShallowRenderer(EntityChartWidget, {
     stubs,
     parentComponent: {
       provide: {
@@ -51,7 +51,7 @@ describe('alarm-chart-widget', () => {
       },
     },
   });
-  const snapshotFactory = generateRenderer(AlarmChartWidget, {
+  const snapshotFactory = generateRenderer(EntityChartWidget, {
     stubs,
     parentComponent: {
       provide: {
@@ -77,10 +77,8 @@ describe('alarm-chart-widget', () => {
       store,
       propsData: {
         widget: barChartWidget,
-        alarm: {
-          entity: {
-            _id: entityId,
-          },
+        entity: {
+          _id: entityId,
         },
       },
     });
@@ -127,10 +125,8 @@ describe('alarm-chart-widget', () => {
       store,
       propsData: {
         widget: numbersWidget,
-        alarm: {
-          entity: {
-            _id: entityId,
-          },
+        entity: {
+          _id: entityId,
         },
       },
     });
@@ -158,7 +154,7 @@ describe('alarm-chart-widget', () => {
     );
   });
 
-  test('Renders `alarm-chart-widget` with bar type', async () => {
+  test('Renders `entity-chart-widget` with bar type', async () => {
     fetchAlarmsMetricsWithoutStore.mockResolvedValue({
       data: [{}, {}],
     });
@@ -177,9 +173,7 @@ describe('alarm-chart-widget', () => {
       store,
       propsData: {
         widget: barChartWidget,
-        alarm: {
-          entity: {},
-        },
+        entity: {},
       },
     });
 
@@ -188,7 +182,7 @@ describe('alarm-chart-widget', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `alarm-chart-widget` with line type', async () => {
+  test('Renders `entity-chart-widget` with line type', async () => {
     fetchAlarmsMetricsWithoutStore.mockResolvedValue({
       data: [{}, {}, {}],
     });
@@ -207,9 +201,7 @@ describe('alarm-chart-widget', () => {
       store,
       propsData: {
         widget: lineChartWidget,
-        alarm: {
-          entity: {},
-        },
+        entity: {},
       },
     });
 
@@ -218,7 +210,7 @@ describe('alarm-chart-widget', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `alarm-chart-widget` with numbers type', async () => {
+  test('Renders `entity-chart-widget` with numbers type', async () => {
     fetchAggregatedMetricsWithoutStore.mockResolvedValue({
       data: [{}, {}, {}],
     });
@@ -237,9 +229,7 @@ describe('alarm-chart-widget', () => {
       store,
       propsData: {
         widget: numbersWidget,
-        alarm: {
-          entity: {},
-        },
+        entity: {},
       },
     });
 
