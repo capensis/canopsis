@@ -299,6 +299,12 @@ rabbitmqctl set_permissions --vhost canopsis cpsrabbit '.*' '.*' '.*'
 
 ### Démarrage de Redis
 
+Ajouter un mot de passe ( ici `canopsis`)
+
+```sh
+sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/redis.conf
+```
+
 Activer et démarrer le service :
 
 ```sh
