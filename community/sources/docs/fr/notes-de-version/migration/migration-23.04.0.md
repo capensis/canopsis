@@ -10,10 +10,10 @@ Ce document ne prend en compte que Canopsis Community et Canopsis Pro : tout dé
 
 Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles à ces adresses
 
-| Edition           | Sources                                                          |
-| ----------------- | ---------------------------------------------------------------- |
-| Edition Community | https://git.canopsis.net/canopsis/canopsis-community/-/releases  |
-| Edition pro       | https://git.canopsis.net/sources/canopsis-pro-sources/-/releases |
+| Edition           | Sources                                                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Edition Community | [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases)   |
+| Edition pro       | [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases) |
 
 ## Procédure de mise à jour
 
@@ -90,9 +90,10 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Si vous êtes utilisateur de l'édition `pro`, voici les étapes à suivre.
 
+    Télécharger le paquet de la version 23.04.0 (canopsis-pro-docker-compose-23.04.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases).
+
     ```sh
     export CPS_EDITION=pro
-    wget https://git.canopsis.net/api/v4/projects/549/packages/generic/canopsis-pro-docker-compose/23.04.0/canopsis-pro-docker-compose-23.04.0.tar.gz
     tar xvfz canopsis-pro-docker-compose-23.04.0.tar.gz
     cd canopsis-pro-docker-compose-23.04.0
     ```
@@ -248,6 +249,7 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.
     ```sh
     CPS_EDITION=pro docker-compose exec rabbitmq /bin/bash
     rabbitmqctl enable_feature_flag all
+    Enabling all feature flags ...
     exit
     ```
 
@@ -283,6 +285,7 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
     ```sh
     CPS_EDITION=pro docker-compose up -d redis
     CPS_EDITION=pro docker-compose exec redis /usr/local/bin/redis-cli flushall
+    OK
     ```
 
 === "Paquets RH8"
@@ -328,7 +331,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
     Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
 
     ```sh
-    CPS_EDITION=pro docker-compose ps
+    CPS_EDITION=pro docker-compose ps -a|grep reconfigure
     canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)
     ```
 
@@ -349,6 +352,7 @@ Une migration des données est donc nécessaire.
 
     ```sh
     docker run -e CPS_MONGO_URL='mongodb://cpsmongo:canopsis@mongodb/canopsis' -e CPS_AMQP_URL='amqp://cpsrabbit:canopsis@rabbitmq/canopsis' -e CPS_POSTGRES_URL='postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis' --network=canopsis-pro_default -it --rm docker.canopsis.net/docker/pro/migrate-instruction-metrics:23.04.0
+    INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/migrate-instruction-metrics/main.go:48 > instruction metrics migration finished 8.777198ms
     ```
 
 === "Paquets RH8"
@@ -358,6 +362,7 @@ Une migration des données est donc nécessaire.
     ```sh
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/migrate-instruction-metrics
+    INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/migrate-instruction-metrics/main.go:48 > instruction metrics migration finished 8.777198ms
     ```
 
 #### Mise à jour et démarrage final de Canopsis
