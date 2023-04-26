@@ -19,6 +19,11 @@
   name: "cpu"
   unit: ""
 - time: '2022-07-01 01:10:00'
+  entity_id: 2
+  value: 1
+  name: "memory_GB"
+  unit: "GB"
+- time: '2022-07-01 01:10:00'
   entity_id: 18
   value: 70
   name: "test-perf-data-to-get-1"
