@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -119,7 +120,8 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
+	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks,
+		r.OnlyParents, r.PerfData)
 }
 
 func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
@@ -161,7 +163,7 @@ func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
 		return nil, nil
 	}
 
-	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false, nil)
 }
 
 func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm, bool, error) {
@@ -202,7 +204,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm,
 		return nil, true, nil
 	}
 
-	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false, nil)
 }
 
 func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest) (*AggregationResult, error) {
@@ -254,7 +256,7 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false, nil)
 }
 
 func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (*AggregationResult, error) {
@@ -295,7 +297,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false, nil)
 }
 
 func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error) {
@@ -431,7 +433,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 				}
 			}
 
-			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false)
+			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false, nil)
 			if err != nil {
 				return nil, err
 			}
@@ -1389,7 +1391,12 @@ func (s *store) processPipeline(
 	return nil
 }
 
-func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
+func (s *store) postProcessResult(
+	ctx context.Context,
+	result *AggregationResult,
+	withDeclareTicket, withInstructions, withLinks, onlyParents bool,
+	perfData []string,
+) error {
 	if withDeclareTicket {
 		err := s.fillAssignedDeclareTickets(ctx, result)
 		if err != nil {
@@ -1421,5 +1428,18 @@ func (s *store) postProcessResult(ctx context.Context, result *AggregationResult
 		}
 	}
 
+	s.fillPerfData(result, perfData)
+
 	return nil
+}
+
+func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
+	if len(perfData) == 0 {
+		return
+	}
+
+	perfDataRe := perfdata.Parse(perfData)
+	for i, alarm := range result.Data {
+		result.Data[i].FilteredPerfData = perfdata.Filter(alarm.Entity.PerfData, perfData, perfDataRe)
+	}
 }
