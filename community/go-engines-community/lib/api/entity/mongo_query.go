@@ -101,10 +101,6 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
 	}
 
-	if len(r.PerfData) > 0 {
-		q.computedFields["filtered_perf_data"] = bson.M{"$setIntersection": bson.A{r.PerfData, "$perf_data"}}
-	}
-
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 
 	return pagination.CreateAggregationPipeline(

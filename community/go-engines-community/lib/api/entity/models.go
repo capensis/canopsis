@@ -120,6 +120,7 @@ type Entity struct {
 	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
 	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 
+	PerfData         []string `bson:"perf_data" json:"-"`
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 }
 
