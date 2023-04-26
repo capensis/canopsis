@@ -19,7 +19,7 @@ exports[`entity-chart-widget Renders \`entity-chart-widget\` with bar type 1`] =
     <bar-chart-metrics-stub
       animation="true"
       height="560"
-      metrics="[object Object],[object Object]"
+      metrics="[object Object]"
       responsive="true"
       sampling="day"
       title=""
@@ -48,7 +48,7 @@ exports[`entity-chart-widget Renders \`entity-chart-widget\` with line type 1`] 
     <line-chart-metrics-stub
       animation="true"
       height="560"
-      metrics="[object Object],[object Object],[object Object]"
+      metrics="[object Object]"
       responsive="true"
       sampling="day"
       title=""
@@ -75,7 +75,7 @@ exports[`entity-chart-widget Renders \`entity-chart-widget\` with numbers type 1
   >
     <!---->
     <numbers-metrics-stub
-      metrics="[object Object],[object Object],[object Object]"
+      metrics="[object Object],[object Object]"
       title=""
     />
   </div>

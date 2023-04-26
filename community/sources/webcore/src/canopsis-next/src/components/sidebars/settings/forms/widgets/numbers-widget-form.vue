@@ -2,7 +2,7 @@
   v-layout(column)
     field-title(v-field="form.title", :required="requiredTitle")
     field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters.periodic_refresh")
-    field-preset(v-field="form.parameters", :type="form.type")
+    field-preset(v-if="withPreset", v-field="form.parameters", :type="form.type")
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
       field-alarm-metric-presets(
         v-field="form.parameters.metrics",
@@ -72,6 +72,10 @@ export default {
       required: true,
     },
     withPeriodicRefresh: {
+      type: Boolean,
+      default: false,
+    },
+    withPreset: {
       type: Boolean,
       default: false,
     },

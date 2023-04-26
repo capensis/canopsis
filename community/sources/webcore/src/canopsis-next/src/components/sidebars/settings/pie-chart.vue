@@ -3,7 +3,8 @@
     pie-chart-widget-form(
       v-model="form",
       :with-filters="hasAccessToListFilters",
-      with-periodic-refresh
+      with-periodic-refresh,
+      with-preset
     )
 </template>
 

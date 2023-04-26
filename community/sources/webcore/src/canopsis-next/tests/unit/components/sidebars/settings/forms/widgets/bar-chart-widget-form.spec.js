@@ -106,6 +106,7 @@ describe('bar-chart-widget-form', () => {
     const wrapper = factory({
       propsData: {
         form,
+        withPreset: true,
       },
     });
 
@@ -248,6 +249,7 @@ describe('bar-chart-widget-form', () => {
         },
         withFilters: true,
         withPeriodicRefresh: true,
+        withPreset: true,
       },
     });
 

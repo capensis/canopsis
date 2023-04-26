@@ -7,6 +7,7 @@ exports[`numbers Renders \`numbers\` widget settings with custom props and permi
   <numbers-widget-form-stub
     form="[object Object]"
     withperiodicrefresh="true"
+    withpreset="true"
   />
 </widget-settings-stub>
 `;
@@ -18,6 +19,7 @@ exports[`numbers Renders \`numbers\` widget settings with default props 1`] = `
   <numbers-widget-form-stub
     form="[object Object]"
     withperiodicrefresh="true"
+    withpreset="true"
   />
 </widget-settings-stub>
 `;

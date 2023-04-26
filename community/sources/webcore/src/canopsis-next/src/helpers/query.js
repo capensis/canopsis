@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty, omit, isArray } from 'lodash';
+import { isUndefined, isEmpty, omit, isArray, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -60,6 +60,22 @@ export function convertWidgetFilterToQuery({ parameters }) {
 }
 
 /**
+ * Convert widget filter to query
+ *
+ * @param {AlarmChart[]} charts
+ * @returns {string[]}
+ */
+export function convertWidgetChartsToPerfDataQuery(charts) {
+  const allMetrics = charts.reduce((acc, chart) => {
+    acc.push(...chart.parameters.metrics.map(({ metric }) => metric));
+
+    return acc;
+  }, []);
+
+  return uniq(allMetrics);
+}
+
+/**
  *  This function converts widget.parameters.opened to query Object
  *
  * @param {Object} parameters
@@ -90,6 +106,7 @@ export function convertAlarmWidgetToQuery(widget) {
     sort,
     mainFilter,
     opened = ALARMS_OPENED_VALUES.opened,
+    charts = [],
   } = widget.parameters;
 
   const query = {
@@ -101,6 +118,7 @@ export function convertAlarmWidgetToQuery(widget) {
     with_links: true,
     multiSortBy: [],
     lockedFilter: mainFilter,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
   };
 
   if (!isEmpty(liveReporting)) {
@@ -137,12 +155,14 @@ export function convertContextWidgetToQuery(widget) {
     selectedTypes,
     widgetColumns,
     mainFilter,
+    charts = [],
   } = widget.parameters;
 
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     lockedFilter: mainFilter,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
   };
 
   if (widgetColumns) {
