@@ -20,6 +20,8 @@ import {
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import CEntityOldStateField from '@/components/forms/fields/entity/c-entity-old-state-field.vue';
+
 export default {
   model: {
     prop: 'patterns',
@@ -207,7 +209,7 @@ export default {
         ],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
-          is: 'c-entity-state-field',
+          is: CEntityOldStateField,
         },
       };
     },
