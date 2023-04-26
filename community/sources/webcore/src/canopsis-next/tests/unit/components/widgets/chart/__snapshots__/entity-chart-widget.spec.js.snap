@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with bar type 1`] = `
+exports[`entity-chart-widget Renders \`entity-chart-widget\` with bar type 1`] = `
 <div
   class="layout py-2 column"
 >
@@ -29,7 +29,7 @@ exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with bar type 1`] = `
 </div>
 `;
 
-exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with line type 1`] = `
+exports[`entity-chart-widget Renders \`entity-chart-widget\` with line type 1`] = `
 <div
   class="layout py-2 column"
 >
@@ -58,7 +58,7 @@ exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with line type 1`] = 
 </div>
 `;
 
-exports[`alarm-chart-widget Renders \`alarm-chart-widget\` with numbers type 1`] = `
+exports[`entity-chart-widget Renders \`entity-chart-widget\` with numbers type 1`] = `
 <div
   class="layout py-2 column"
 >

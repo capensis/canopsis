@@ -1,24 +1,24 @@
 <template lang="pug">
   v-layout(column)
-    alarm-chart-widget(
+    entity-chart-widget(
       v-for="(chart, index) in charts",
       :key="index",
       :widget="chart",
-      :alarm="alarm"
+      :entity="entity"
     )
 </template>
 
 <script>
-import AlarmChartWidget from '@/components/widgets/chart/alarm-chart-widget.vue';
+import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vue';
 
 export default {
-  components: { AlarmChartWidget },
+  components: { EntityChartWidget },
   props: {
     charts: {
       type: Array,
       required: true,
     },
-    alarm: {
+    entity: {
       type: Object,
       required: true,
     },

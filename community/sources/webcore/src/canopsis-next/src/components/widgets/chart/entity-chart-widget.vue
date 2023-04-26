@@ -68,7 +68,7 @@ export default {
       type: Object,
       required: true,
     },
-    alarm: {
+    entity: {
       type: Object,
       required: true,
     },
@@ -179,7 +179,7 @@ export default {
       return {
         ...this.getIntervalQuery(),
         ...pick(this.query, ['parameters', 'sampling', 'with_history']),
-        entity: this.alarm.entity._id,
+        entity: this.entity._id,
       };
     },
 
