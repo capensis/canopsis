@@ -23,7 +23,7 @@ Voici la structure de base d'un [évènement](../../guide-utilisation/vocabulair
 
     // /!\ The following is optional /!\
 
-    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type. Since 4.5 release, only values < 24H are kept and forwarded, values > 24H are dropped by FIFO engine
     "output":           // Message - value field is `string` type
     "long_output":      // Description - value field is `string` type
 }
