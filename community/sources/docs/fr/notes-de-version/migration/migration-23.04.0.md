@@ -80,10 +80,11 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 === "Docker Compose"
 
     Si vous êtes utilisateur de l'édition `community`, voici les étapes à suivre.
+    
+    Télécharger le paquet de la version 23.04.0 (canopsis-community-docker-compose-23.04.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases).
 
     ```sh
     export CPS_EDITION=community
-    wget https://git.canopsis.net/api/v4/projects/522/packages/generic/canopsis-community-docker-compose/23.04.0/canopsis-community-docker-compose-23.04.0.tar.gz
     tar xvfz canopsis-community-docker-compose-23.04.0.tar.gz
     cd canopsis-community-docker-compose-23.04.0
     ```
@@ -98,7 +99,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     cd canopsis-pro-docker-compose-23.04.0
     ```
 
-    A ce stade, vous devez synchroniser les modifications réalisées sur vos anciens fichiers de configuration `docker-compose` avec les fichiers `docker-compose.yml` et/ou `docker-compose-override.yml`.
+    A ce stade, vous devez synchroniser les modifications réalisées sur vos anciens fichiers de configuration `docker-compose` avec les fichiers `docker-compose.yml` et/ou `docker-compose.override.yml`.
 
 === "Paquets RH8"
 
@@ -466,7 +467,37 @@ Vous devez simplement définir la variable d'environnement `CPS_OLD_API` dans `/
     schema2db
     ```
 
+Téléchargez [l'archive suivante](https://git.canopsis.net/sources/canopsis-pro-sources/-/archive/release-23.04/canopsis-pro-sources-release-23.04.tar.gz?path=pro/mock/external-services/snmp/docker) pour récupérer les configurations de références.
+
 ```sh
-cd ../../../mock/external-services/snmp/docker
-docker-compose up -d 
+tar xvfz canopsis-pro-sources-release-23.04.tar.gz
+cd canopsis-pro-sources-release-23.04
+cd mock/external-services/snmp/docker
+```
+
+On remplace l'entrypoint pour être en mesure d'exécuter les commandes `env2cfg` et `schema2db` (Attention, vous avez 2 minutes pour exécuter ces commandes).
+
+```sh
+sed -i 's/#entrypoint/entrypoint/' docker-compose.yml
+docker-compose up -d oldapi
+docker-compose exec oldapi bash
+env2cfg
+schema2db
+```
+
+Vous devez alors voir des lignes simialires à celles-ci :
+
+```
+2023-02-17 08:30:13,122 INFO schema2db [schema2db 186] Saving: crecord.graphelt.vertice.toponode
+2023-02-17 08:30:13,124 INFO schema2db [schema2db 186] Saving: context.ctxevent.ctxack
+2023-02-17 08:30:13,126 INFO schema2db [schema2db 186] Saving: crecord.cservice
+2023-02-17 08:30:13,127 INFO schema2db [schema2db 186] Saving: alarm_fields
+2023-02-17 08:30:13,129 INFO schema2db [schema2db 186] Saving: cevent.comment
+```
+
+Enfin, on rétablit l'entrypoint d'origine et on démarre les services :
+
+```sh
+sed -i 's/entrypoint/#entrypoint/' docker-compose.yml
+docker-compose up -d
 ```
