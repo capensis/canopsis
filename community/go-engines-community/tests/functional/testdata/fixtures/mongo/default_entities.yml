@@ -1076,6 +1076,20 @@ default_entities:
     _id: test-resource-to-export-2/test-component-default
     name: test-resource-to-export-2
 
+  entity_to_alarm_metrics_get_1:
+    <<: *component
+    _id: test-entity-to-alarm-metrics-get-1
+    name: test-entity-to-alarm-metrics-get-1
+    component: test-entity-to-alarm-metrics-get-1
+    perf_data:
+      - cpu_%
+      - cpu
+  entity_to_alarm_metrics_get_2:
+    <<: *component
+    _id: test-entity-to-alarm-metrics-get-2
+    name: test-entity-to-alarm-metrics-get-2
+    component: test-entity-to-alarm-metrics-get-2
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
