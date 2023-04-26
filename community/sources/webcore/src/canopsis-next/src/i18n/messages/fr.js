@@ -294,6 +294,7 @@ export default merge({
     initialOutput: 'Sortie initiale',
     initialLongOutput: 'Sortie initiale longue',
     totalStateChanges: 'Changements d\'état totaux',
+    numberField: 'Champ numérique',
     actions: {
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
       acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
