@@ -160,9 +160,11 @@ func TestMain(m *testing.M) {
 		status = st
 	}
 
-	err = clearStores(ctx, flags, loader, redisClient, logger)
-	if err != nil {
-		logger.Fatal().Err(err).Send()
+	if !flags.keepStoresOnFail || status == 0 {
+		err = clearStores(ctx, flags, loader, redisClient, logger)
+		if err != nil {
+			logger.Fatal().Err(err).Send()
+		}
 	}
 
 	os.Exit(status)

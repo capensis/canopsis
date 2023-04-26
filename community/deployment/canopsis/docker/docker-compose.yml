@@ -97,11 +97,14 @@ services:
     image: redis:${REDIS_TAG}
     ports:
       - "6379:6379"
+    env_file:
+      - compose.env
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $$REDIS_PASSWORD ping | grep PONG"]
       interval: 1s
       timeout: 3s
       retries: 5
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
 
   timescaledb:
     <<: *service_base
