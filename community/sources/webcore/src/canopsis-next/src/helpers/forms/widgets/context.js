@@ -11,6 +11,8 @@ import {
   SORT_ORDERS,
 } from '@/constants';
 
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 
@@ -32,6 +34,7 @@ import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-
  * @property {WidgetSort} sort
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
+ * @property {AlarmChart[]} charts
  */
 
 /**
@@ -46,6 +49,7 @@ import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-
  * @property {WidgetColumnForm[]} widgetExportColumns
  * @property {WidgetColumnForm[]} resolvedAlarmsColumns
  * @property {WidgetColumnForm[]} activeAlarmsColumns
+ * @property {AlarmChartForm[]} charts
  */
 
 /**
@@ -78,6 +82,7 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+  charts: addKeyInEntities(parameters.charts),
 });
 
 /**
@@ -99,4 +104,5 @@ export const formToContextWidgetParameters = form => ({
   resolvedAlarmsColumns: formToWidgetColumns(form.resolvedAlarmsColumns),
   activeAlarmsColumns: formToWidgetColumns(form.activeAlarmsColumns),
   widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+  charts: removeKeyFromEntities(form.charts),
 });

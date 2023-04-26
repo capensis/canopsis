@@ -78,7 +78,7 @@
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
-                alarms-expand-panel-charts(:charts="widget.parameters.charts", :alarm="alarm")
+                entity-charts(:charts="widget.parameters.charts", :entity="alarm.entity")
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -156,15 +156,16 @@ import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permiss
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
+import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
-import AlarmsExpandPanelCharts from './alarms-expand-panel-charts.vue';
 
 export default {
   components: {
+    EntityCharts,
     DeclaredTicketsList,
     PbehaviorsSimpleList,
     ServiceDependencies,
@@ -172,7 +173,6 @@ export default {
     EntityGantt,
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
-    AlarmsExpandPanelCharts,
   },
   mixins: [
     entitiesInfoMixin,
