@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -66,6 +67,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	}
 
 	s.fillConnectorType(&res)
+	s.fillPerfData(&res, r.PerfData)
 
 	return &res, nil
 }
@@ -389,4 +391,15 @@ func (s *store) fillConnectorType(result *AggregationResult) {
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
 	return NewMongoQueryBuilder(s.db)
+}
+
+func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
+	if len(perfData) == 0 {
+		return
+	}
+
+	perfDataRe := perfdata.Parse(perfData)
+	for i, entity := range result.Data {
+		result.Data[i].FilteredPerfData = perfdata.Filter(entity.PerfData, perfData, perfDataRe)
+	}
 }
