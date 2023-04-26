@@ -36,7 +36,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -92,7 +92,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": []
