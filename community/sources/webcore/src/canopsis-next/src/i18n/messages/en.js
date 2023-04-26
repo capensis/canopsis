@@ -294,6 +294,7 @@ export default merge({
     initialOutput: 'Initial output',
     initialLongOutput: 'Long initial output',
     totalStateChanges: 'Total state changes',
+    numberField: 'Number field',
     actions: {
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
       acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
