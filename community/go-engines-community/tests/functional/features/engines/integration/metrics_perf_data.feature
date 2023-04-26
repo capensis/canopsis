@@ -392,7 +392,7 @@ Feature: Perf data should be stored.
     {
       "data": [
         {
-          "filtered_perf_data": ["cpu_%"]
+          "filtered_perf_data": ["cpu*"]
         }
       ],
       "meta": {
@@ -428,7 +428,7 @@ Feature: Perf data should be stored.
     {
       "data": [
         {
-          "filtered_perf_data": ["cpu_%"]
+          "filtered_perf_data": ["cpu*"]
         }
       ],
       "meta": {

@@ -400,6 +400,6 @@ func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
 
 	perfDataRe := perfdata.Parse(perfData)
 	for i, entity := range result.Data {
-		result.Data[i].FilteredPerfData = perfdata.Filter(entity.PerfData, perfData, perfDataRe)
+		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
 	}
 }
