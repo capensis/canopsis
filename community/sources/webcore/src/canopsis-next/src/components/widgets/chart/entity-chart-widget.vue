@@ -99,12 +99,8 @@ export default {
         : null;
     },
 
-    filteredMetrics() {
-      return this.metrics.filter(({ title }) => this.availableMetrics.includes(title));
-    },
-
     preparedMetrics() {
-      return convertMetricsToTimezone(this.filteredMetrics, this.$system.timezone).map((metric) => {
+      return convertMetricsToTimezone(this.metrics, this.$system.timezone).map((metric) => {
         const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
         return {
@@ -186,7 +182,8 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-        ...pick(this.query, ['parameters', 'sampling', 'with_history']),
+        ...pick(this.query, ['sampling', 'with_history']),
+        parameters: this.query.parameters.filter(({ metric }) => this.availableMetrics.includes(metric)),
         entity: this.entity._id,
       };
     },
