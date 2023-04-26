@@ -360,6 +360,9 @@ func (e Event) IsValid() error {
 			return errt.NewUnknownError(errors.New("missing component"))
 		}
 	case SourceTypeResource:
+		if e.Component == "" {
+			return errt.NewUnknownError(errors.New("missing component"))
+		}
 		if e.Resource == "" {
 			return errt.NewUnknownError(errors.New("missing resource"))
 		}
@@ -498,7 +501,6 @@ var cpsTimeType = reflect.TypeOf(CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
-var entityPtrType = reflect.PtrTo(reflect.TypeOf(Entity{}))
 
 // SetField sets the value of a field of an event given its name.
 func (e *Event) SetField(name string, value interface{}) (err error) {
@@ -569,13 +571,6 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 			return fmt.Errorf("value cannot be assigned to a bool: %+v", value)
 		}
 		field.Set(reflect.ValueOf(boolValue))
-
-	case entityPtrType:
-		entityValue, success := value.(Entity)
-		if !success {
-			return fmt.Errorf("value cannot be assigned to an entity: %+v", value)
-		}
-		field.Set(reflect.ValueOf(&entityValue))
 
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())

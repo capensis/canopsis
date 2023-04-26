@@ -439,21 +439,50 @@ func InterfaceToStringSlice(v interface{}) ([]string, error) {
 // a unix timestamp is returned).
 func AsInteger(value interface{}) (int64, bool) {
 	switch typedValue := value.(type) {
+	case float32:
+		return int64(math.Round(float64(typedValue))), true
 	case float64:
-		return int64(math.Round(value.(float64))), true
-	case int64:
-		return typedValue, true
-	case uint64:
-		return int64(typedValue), true
+		return int64(math.Round(typedValue)), true
 	case int:
 		return int64(typedValue), true
+	case int8:
+		return int64(typedValue), true
+	case int16:
+		return int64(typedValue), true
+	case int32:
+		return int64(typedValue), true
+	case int64:
+		return typedValue, true
 	case uint:
+		return int64(typedValue), true
+	case uint8:
+		return int64(typedValue), true
+	case uint16:
+		return int64(typedValue), true
+	case uint32:
+		return int64(typedValue), true
+	case uint64:
 		return int64(typedValue), true
 	case CpsNumber:
 		return int64(typedValue), true
+	case *CpsNumber:
+		if typedValue == nil {
+			return 0, false
+		}
+		return int64(*typedValue), true
 	case time.Time:
 		return typedValue.Unix(), true
+	case *time.Time:
+		if typedValue == nil {
+			return 0, false
+		}
+		return typedValue.Unix(), true
 	case CpsTime:
+		return typedValue.Unix(), true
+	case *CpsTime:
+		if typedValue == nil {
+			return 0, false
+		}
 		return typedValue.Unix(), true
 	default:
 		return 0, false
