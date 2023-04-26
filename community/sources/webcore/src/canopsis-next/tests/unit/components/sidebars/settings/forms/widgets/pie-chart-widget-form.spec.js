@@ -108,6 +108,7 @@ describe('pie-chart-widget-form', () => {
     const wrapper = factory({
       propsData: {
         form,
+        withPreset: true,
       },
     });
 
@@ -253,6 +254,7 @@ describe('pie-chart-widget-form', () => {
         },
         withPeriodicRefresh: true,
         withFilters: true,
+        withPreset: true,
       },
     });
 

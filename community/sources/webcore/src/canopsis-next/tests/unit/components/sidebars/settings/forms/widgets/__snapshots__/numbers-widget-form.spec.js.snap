@@ -66,11 +66,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
     value=""
   />
   <!---->
-  <field-preset-stub
-    name="preset"
-    parameters="[object Object]"
-    type="Numbers"
-  />
+  <!---->
   <widget-settings-group-stub
     title="Metrics display"
   >
