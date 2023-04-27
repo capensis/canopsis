@@ -269,6 +269,7 @@ export default {
   copyProperty: 'Copier la propriété',
   copyPropertyPath: 'Copier le chemin de la propriété',
   hidden: 'Caché',
+  numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
   variableTypes: {
     string: 'Chaîne de caractères',
