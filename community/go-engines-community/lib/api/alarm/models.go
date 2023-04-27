@@ -50,10 +50,9 @@ type ListRequestWithPagination struct {
 type ListRequest struct {
 	FilterRequest
 	SortRequest
-	WithInstructions   bool     `form:"with_instructions" json:"with_instructions"`
-	WithDeclareTickets bool     `form:"with_declare_tickets" json:"with_declare_tickets"`
-	WithLinks          bool     `form:"with_links" json:"with_links"`
-	PerfData           []string `form:"perf_data[]" json:"perf_data"`
+	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
+	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
+	WithLinks          bool `form:"with_links" json:"with_links"`
 }
 
 type FilterRequest struct {
@@ -134,6 +133,7 @@ type DetailsRequest struct {
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
 	Steps              *StepsRequest        `json:"steps"`
 	Children           *ChildDetailsRequest `json:"children"`
+	PerfData           []string             `json:"perf_data"`
 }
 
 type StepsRequest struct {
@@ -170,9 +170,11 @@ type Details struct {
 	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
 	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
 
-	IsMetaAlarm bool   `json:"-" bson:"is_meta_alarm"`
-	EntityID    string `json:"-" bson:"d"`
-	StepsCount  int64  `json:"-" bson:"steps_count"`
+	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
+
+	IsMetaAlarm bool         `json:"-" bson:"is_meta_alarm"`
+	StepsCount  int64        `json:"-" bson:"steps_count"`
+	Entity      types.Entity `json:"-" bson:"entity"`
 }
 
 type StepDetails struct {
@@ -238,8 +240,6 @@ type Alarm struct {
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
 
 	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
-
-	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 }
 
 type MetaAlarmRule struct {
