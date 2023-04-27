@@ -106,7 +106,6 @@ export function convertAlarmWidgetToQuery(widget) {
     sort,
     mainFilter,
     opened = ALARMS_OPENED_VALUES.opened,
-    charts = [],
   } = widget.parameters;
 
   const query = {
@@ -118,7 +117,6 @@ export function convertAlarmWidgetToQuery(widget) {
     with_links: true,
     multiSortBy: [],
     lockedFilter: mainFilter,
-    perf_data: convertWidgetChartsToPerfDataQuery(charts),
   };
 
   if (!isEmpty(liveReporting)) {
@@ -502,7 +500,7 @@ const convertFiltersToQuery = (filter, lockedFilter) => [
  * @returns {Object}
  */
 export const prepareAlarmDetailsQuery = (alarm, widget) => {
-  const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
+  const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
@@ -513,6 +511,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_declare_tickets: true,
     with_links: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {
       reversed: true,
       page: 1,
