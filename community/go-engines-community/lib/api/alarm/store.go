@@ -120,8 +120,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks,
-		r.OnlyParents, r.PerfData)
+	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
 }
 
 func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
@@ -163,7 +162,7 @@ func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
 		return nil, nil
 	}
 
-	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false, nil)
+	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
 func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm, bool, error) {
@@ -204,7 +203,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm,
 		return nil, true, nil
 	}
 
-	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false, nil)
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
 func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest) (*AggregationResult, error) {
@@ -256,7 +255,7 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, true, true, true, false, nil)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
 func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (*AggregationResult, error) {
@@ -297,7 +296,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, true, true, true, false, nil)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
 }
 
 func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error) {
@@ -363,6 +362,13 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 		{"$addFields": bson.M{
 			"is_meta_alarm": bson.M{"$cond": bson.A{bson.M{"$not": bson.A{"$v.meta"}}, false, true}},
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
 	}
 
 	if r.Steps != nil {
@@ -416,7 +422,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.EntityID, now)
+			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.Entity.ID, now)
 			if err != nil {
 				return nil, err
 			}
@@ -433,7 +439,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 				}
 			}
 
-			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false, nil)
+			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false)
 			if err != nil {
 				return nil, err
 			}
@@ -447,6 +453,11 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 			Data: children.Data,
 			Meta: meta,
 		}
+	}
+
+	if len(r.PerfData) > 0 {
+		perfDataRe := perfdata.Parse(r.PerfData)
+		details.FilteredPerfData = perfdata.Filter(r.PerfData, perfDataRe, details.Entity.PerfData)
 	}
 
 	return &details, nil
@@ -1391,12 +1402,7 @@ func (s *store) processPipeline(
 	return nil
 }
 
-func (s *store) postProcessResult(
-	ctx context.Context,
-	result *AggregationResult,
-	withDeclareTicket, withInstructions, withLinks, onlyParents bool,
-	perfData []string,
-) error {
+func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
 	if withDeclareTicket {
 		err := s.fillAssignedDeclareTickets(ctx, result)
 		if err != nil {
@@ -1428,18 +1434,5 @@ func (s *store) postProcessResult(
 		}
 	}
 
-	s.fillPerfData(result, perfData)
-
 	return nil
-}
-
-func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
-	if len(perfData) == 0 {
-		return
-	}
-
-	perfDataRe := perfdata.Parse(perfData)
-	for i, alarm := range result.Data {
-		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, alarm.Entity.PerfData)
-	}
 }
