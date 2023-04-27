@@ -133,8 +133,8 @@ export function pbehaviorInfoHelper() {
 
   tbody.appendChild(createTableRow('Enter time', pbehaviorInfo.timestamp));
   tbody.appendChild(createTableRow('Name', pbehaviorInfo.name));
-  tbody.appendChild(createTableRow('Type', pbehaviorInfo.type));
-  tbody.appendChild(createTableRow('Reason', pbehaviorInfo.reason, true));
+  tbody.appendChild(createTableRow('Type', pbehaviorInfo.type_name));
+  tbody.appendChild(createTableRow('Reason', pbehaviorInfo.reason_name, true));
   table.appendChild(tbody);
 
   return new Handlebars.SafeString(table.outerHTML);
