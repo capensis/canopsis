@@ -334,6 +334,8 @@ export const USERS_PERMISSIONS = {
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
       declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
+
+      ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
