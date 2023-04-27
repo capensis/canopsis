@@ -58,6 +58,7 @@
  * @property {string} id
  * @property {string} name
  * @property {string} reason
+ * @property {string} reason_name
  * @property {string} type
  * @property {string} type_name
  * @property {number} timestamp
