@@ -81,7 +81,7 @@
                 entity-charts(
                   :charts="widget.parameters.charts",
                   :entity="alarm.entity",
-                  :available-metrics="alarm.filtered_perf_data"
+                  :available-metrics="filteredPerfData"
                 )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
         v-layout.pa-3.secondary.lighten-2(row)
@@ -151,7 +151,7 @@ import {
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
-import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
+import { convertAlarmDetailsQueryToRequest, convertWidgetChartsToPerfDataQuery } from '@/helpers/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -284,7 +284,7 @@ export default {
     },
 
     hasWidgetCharts() {
-      return this.widget.parameters.charts?.length && this.alarm.filtered_perf_data?.length;
+      return this.widget.parameters.charts?.length && this.filteredPerfData.length;
     },
   },
   watch: {
@@ -300,6 +300,16 @@ export default {
           ...this.query,
 
           opened,
+        };
+      },
+    },
+
+    'widget.parameters.charts': {
+      handler(charts) {
+        this.query = {
+          ...this.query,
+
+          perf_data: convertWidgetChartsToPerfDataQuery(charts),
         };
       },
     },

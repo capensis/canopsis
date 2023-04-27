@@ -42,7 +42,6 @@ import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-met
 import NumbersMetrics from '@/components/widgets/chart/partials/numbers-metrics.vue';
 
 const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
-const { mapActions: mapAggregatedMetricsActions } = createNamespacedHelpers('aggregatedMetrics');
 
 export default {
   inject: ['$system'],
@@ -173,10 +172,8 @@ export default {
     ...mapMetricsActions({
       createKpiAlarmExport: 'createKpiAlarmExport',
       fetchMetricExport: 'fetchMetricExport',
-      fetchAlarmsMetricsWithoutStore: 'fetchAlarmsMetricsWithoutStore',
-    }),
-    ...mapAggregatedMetricsActions({
-      fetchAggregatedMetricsWithoutStore: 'fetchListWithoutStore',
+      fetchEntityAlarmsMetricsWithoutStore: 'fetchEntityAlarmsMetricsWithoutStore',
+      fetchEntityAggregateMetricsWithoutStore: 'fetchEntityAggregateMetricsWithoutStore',
     }),
 
     getQuery() {
@@ -193,8 +190,8 @@ export default {
 
       try {
         const fetchList = this.isVectorChart
-          ? this.fetchAlarmsMetricsWithoutStore
-          : this.fetchAggregatedMetricsWithoutStore;
+          ? this.fetchEntityAlarmsMetricsWithoutStore
+          : this.fetchEntityAggregateMetricsWithoutStore;
 
         const { data, meta: { min_date: minDate } = {} } = await fetchList({ params: this.getQuery() });
 

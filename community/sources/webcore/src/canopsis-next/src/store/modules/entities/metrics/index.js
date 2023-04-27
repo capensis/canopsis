@@ -44,5 +44,13 @@ export default {
     fetchExternalMetricsWithoutStore(context, { params }) {
       return request.get(API_ROUTES.metrics.perfDataMetrics, { params });
     },
+
+    fetchEntityAlarmsMetricsWithoutStore(context, { params }) {
+      return request.post(API_ROUTES.metrics.entityAlarmMetrics, params);
+    },
+
+    fetchEntityAggregateMetricsWithoutStore(context, { params }) {
+      return request.post(API_ROUTES.metrics.entityAggregateMetrics, params);
+    },
   },
 };

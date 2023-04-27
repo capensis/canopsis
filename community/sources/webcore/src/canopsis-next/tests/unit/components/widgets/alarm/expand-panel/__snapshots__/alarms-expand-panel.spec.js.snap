@@ -246,16 +246,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
             Timeline
           </a>
         </div>
-        <div
-          class="v-tabs__div"
-        >
-          <a
-            class="v-tabs__item"
-            href="#charts"
-          >
-            Charts
-          </a>
-        </div>
+        <!---->
         <div
           class="v-tabs__div"
         >
@@ -429,14 +420,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-      <transition-stub
-        name=""
-      >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
-      </transition-stub>
+      <!---->
       <transition-stub
         name=""
       >

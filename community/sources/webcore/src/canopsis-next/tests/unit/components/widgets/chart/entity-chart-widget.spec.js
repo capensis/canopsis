@@ -3,9 +3,9 @@ import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
-  createAggregatedMetricsModule,
   createAlarmModule,
-  createAuthModule, createMetricsModule,
+  createAuthModule,
+  createMetricsModule,
   createMockedStoreModules,
   createServiceModule,
   createUserPreferenceModule,
@@ -31,15 +31,15 @@ describe('entity-chart-widget', () => {
   const { alarmModule } = createAlarmModule();
   const { userPreferenceModule } = createUserPreferenceModule();
   const { serviceModule } = createServiceModule();
-  const { aggregatedMetricsModule, fetchAggregatedMetricsWithoutStore } = createAggregatedMetricsModule();
-  const { metricsModule, fetchAlarmsMetricsWithoutStore } = createMetricsModule();
+  const { metricsModule,
+    fetchEntityAlarmsMetricsWithoutStore,
+    fetchEntityAggregateMetricsWithoutStore } = createMetricsModule();
 
   const store = createMockedStoreModules([
     authModule,
     userPreferenceModule,
     alarmModule,
     serviceModule,
-    aggregatedMetricsModule,
     metricsModule,
   ]);
 
@@ -89,7 +89,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchAlarmsMetricsWithoutStore).toBeCalledWith(
+    expect(fetchEntityAlarmsMetricsWithoutStore).toBeCalledWith(
       expect.any(Object),
       {
         params: {
@@ -138,7 +138,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchAggregatedMetricsWithoutStore).toBeCalledWith(
+    expect(fetchEntityAggregateMetricsWithoutStore).toBeCalledWith(
       expect.any(Object),
       {
         params: {
@@ -160,7 +160,7 @@ describe('entity-chart-widget', () => {
   });
 
   test('Renders `entity-chart-widget` with bar type', async () => {
-    fetchAlarmsMetricsWithoutStore.mockResolvedValue({
+    fetchEntityAlarmsMetricsWithoutStore.mockResolvedValue({
       data: [{
         title: ALARM_METRIC_PARAMETERS.ackAlarms,
       }],
@@ -191,7 +191,7 @@ describe('entity-chart-widget', () => {
   });
 
   test('Renders `entity-chart-widget` with line type', async () => {
-    fetchAlarmsMetricsWithoutStore.mockResolvedValue({
+    fetchEntityAlarmsMetricsWithoutStore.mockResolvedValue({
       data: [{
         title: ALARM_METRIC_PARAMETERS.ackAlarms,
       }],
@@ -222,7 +222,7 @@ describe('entity-chart-widget', () => {
   });
 
   test('Renders `entity-chart-widget` with numbers type', async () => {
-    fetchAggregatedMetricsWithoutStore.mockResolvedValue({
+    fetchEntityAggregateMetricsWithoutStore.mockResolvedValue({
       data: [{
         title: ALARM_METRIC_PARAMETERS.ackAlarms,
       }, {

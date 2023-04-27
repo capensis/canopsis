@@ -886,6 +886,12 @@ export const createMetricsModule = () => {
   const fetchAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
     data: [],
   });
+  const fetchEntityAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchEntityAggregateMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
   const externalMetrics = jest.fn().mockReturnValue([]);
   const pending = jest.fn().mockReturnValue(false);
 
@@ -894,6 +900,8 @@ export const createMetricsModule = () => {
     fetchAlarmsMetricsWithoutStore.mockClear();
     externalMetrics.mockClear();
     pending.mockClear();
+    fetchEntityAlarmsMetricsWithoutStore.mockClear();
+    fetchEntityAggregateMetricsWithoutStore.mockClear();
   });
 
   const metricsModule = {
@@ -905,6 +913,8 @@ export const createMetricsModule = () => {
     actions: {
       fetchExternalMetricsList,
       fetchAlarmsMetricsWithoutStore,
+      fetchEntityAlarmsMetricsWithoutStore,
+      fetchEntityAggregateMetricsWithoutStore,
     },
   };
 
@@ -913,5 +923,7 @@ export const createMetricsModule = () => {
     externalMetrics,
     fetchExternalMetricsList,
     fetchAlarmsMetricsWithoutStore,
+    fetchEntityAlarmsMetricsWithoutStore,
+    fetchEntityAggregateMetricsWithoutStore,
   };
 };
