@@ -251,6 +251,8 @@ export const API_ROUTES = {
     remediation: '/api/v4/cat/metrics/remediation',
     aggregate: '/api/v4/cat/metrics/aggregate',
     perfDataMetrics: '/api/v4/cat/perf-data-metrics',
+    entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
+    entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
