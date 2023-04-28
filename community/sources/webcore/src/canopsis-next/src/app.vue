@@ -81,7 +81,7 @@ export default {
   },
   async mounted() {
     this.socketConnectWithErrorHandling();
-    this.fetchCurrentUserWithErrorHandling();
+    await this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
 
     await this.fetchTemplateVars();
