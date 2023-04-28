@@ -11,9 +11,9 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} _id
  * @property {string} job_id
  * @property {string} name
- * @property {string} payload
  * @property {boolean} multiple_executions
- * @property {Object} query
+ * @property {string} [payload]
+ * @property {Object} [query]
  * @property {number} [retry_amount]
  * @property {Duration} [retry_interval]
  */
@@ -108,18 +108,29 @@ export const remediationJobToForm = (remediationJob = {}) => ({
  * @param {RemediationJobForm} form
  * @return {RemediationJob}
  */
-export const formToRemediationJob = form => ({
-  ...form,
+export const formToRemediationJob = (form) => {
+  const { retry_amount: retryAmount, retry_interval: retryInterval, config, payload, query, ...remediationJob } = form;
 
-  retry_amount: isNumber(form.retry_amount)
-    ? form.retry_amount
-    : undefined,
-  retry_interval: isNumber(form.retry_interval?.value)
-    ? form.retry_interval
-    : undefined,
-  config: form.config._id,
-  query: textPairsToObject(form.query),
-});
+  if (config.with_body) {
+    remediationJob.payload = payload;
+  }
+
+  if (config.with_query) {
+    remediationJob.query = textPairsToObject(query);
+  }
+
+  return {
+    ...remediationJob,
+
+    retry_amount: isNumber(retryAmount)
+      ? retryAmount
+      : undefined,
+    retry_interval: isNumber(retryInterval?.value)
+      ? retryInterval
+      : undefined,
+    config: config._id,
+  };
+};
 
 /**
  * Get empty job execution
