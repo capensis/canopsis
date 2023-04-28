@@ -25,7 +25,7 @@
         outline,
         @click="addPayload"
       ) {{ $t('remediation.job.addPayload') }}
-      template(v-else)
+      template(v-else-if="withPayload")
         c-json-field(
           v-field="form.payload",
           :label="$t('common.payload')",
@@ -41,6 +41,7 @@
           @click="removePayload"
         )
     c-text-pairs-field(
+      v-if="withQuery",
       v-field="form.query",
       :title="$t('remediation.job.query')",
       :text-label="$t('common.field')",
@@ -51,9 +52,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { formMixin } from '@/mixins/form';
 
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
+
+const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   inject: ['$validator'],
@@ -69,6 +74,21 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  computed: {
+    ...mapInfoGetters(['remediationJobConfigTypes']),
+
+    remediationJobConfigType() {
+      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.config.type);
+    },
+
+    withPayload() {
+      return this.remediationJobConfigType?.with_body;
+    },
+
+    withQuery() {
+      return this.remediationJobConfigType?.with_query;
     },
   },
   methods: {
