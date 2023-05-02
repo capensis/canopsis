@@ -4,7 +4,11 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        remediation-job-form(v-model="form")
+        remediation-job-form(
+          v-model="form",
+          :with-payload="withPayload",
+          :with-query="withQuery"
+        )
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -57,6 +61,18 @@ export default {
     title() {
       return this.config.title ?? this.$t('modals.createRemediationJob.create.title');
     },
+
+    remediationJobConfigType() {
+      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.config.type);
+    },
+
+    withPayload() {
+      return this.remediationJobConfigType?.with_body;
+    },
+
+    withQuery() {
+      return this.remediationJobConfigType?.with_query;
+    },
   },
   methods: {
     async submit() {
@@ -64,7 +80,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToRemediationJob(this.form, this.remediationJobConfigTypes));
+          await this.config.action(formToRemediationJob(this.form, this.remediationJobConfigType));
         }
 
         this.$modals.hide();
