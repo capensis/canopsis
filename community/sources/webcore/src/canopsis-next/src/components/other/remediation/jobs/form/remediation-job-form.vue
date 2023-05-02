@@ -52,13 +52,9 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { formMixin } from '@/mixins/form';
 
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
-
-const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   inject: ['$validator'],
@@ -75,20 +71,13 @@ export default {
       type: Object,
       default: () => ({}),
     },
-  },
-  computed: {
-    ...mapInfoGetters(['remediationJobConfigTypes']),
-
-    remediationJobConfigType() {
-      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.config.type);
+    withPayload: {
+      type: Boolean,
+      default: false,
     },
-
-    withPayload() {
-      return this.remediationJobConfigType?.with_body;
-    },
-
-    withQuery() {
-      return this.remediationJobConfigType?.with_query;
+    withQuery: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
