@@ -262,31 +262,36 @@ func (s *store) importJson(
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	exdates := make([]pbehavior.Exdate, len(dates))
-	i := 0
+	exdates := make([]pbehavior.Exdate, 0, len(dates))
+	now := time.Now()
 	for dateStr := range dates {
-		date, err := time.ParseInLocation(time.DateOnly, dateStr, location)
+		start, err := time.ParseInLocation(time.DateOnly, dateStr, location)
 		if err != nil {
 			return nil, common.NewValidationError("file", "File is not supported.")
 		}
-
-		exdates[i] = pbehavior.Exdate{
-			Exdate: types.Exdate{
-				Begin: types.CpsTime{Time: date},
-				End:   types.CpsTime{Time: date.AddDate(0, 0, 1)},
-			},
-			Type: pbhType,
+		end := start.AddDate(0, 0, 1)
+		if end.Before(now) {
+			continue
 		}
 
-		i++
+		exdates = append(exdates, pbehavior.Exdate{
+			Exdate: types.Exdate{
+				Begin: types.CpsTime{Time: start},
+				End:   types.CpsTime{Time: end},
+			},
+			Type: pbhType,
+		})
 	}
 
-	now := types.NewCpsTime()
+	if len(exdates) == 0 {
+		return nil, common.NewValidationError("file", "File is empty.")
+	}
+
 	doc := pbehavior.Exception{
 		ID:      utils.NewID(),
 		Name:    name,
 		Exdates: exdates,
-		Created: &now,
+		Created: &types.CpsTime{Time: now},
 	}
 
 	var response *Exception
@@ -311,7 +316,8 @@ func (s *store) importICS(
 	r io.Reader,
 ) (*Exception, error) {
 	cal := ics.NewParser(r)
-	intervalStart := time.Now()
+	now := time.Now()
+	intervalStart := now
 	intervalEnd := intervalStart.AddDate(maxImportDateInYears, 0, 0)
 	cal.Start = &intervalStart
 	cal.End = &intervalEnd
@@ -320,31 +326,37 @@ func (s *store) importICS(
 		return nil, common.NewValidationError("file", "File is not supported.")
 	}
 
-	exdates := make([]pbehavior.Exdate, len(cal.Events))
+	exdates := make([]pbehavior.Exdate, 0, len(cal.Events))
 	location := s.timezoneConfigProvider.Get().Location
-	for i, event := range cal.Events {
+	for _, event := range cal.Events {
 		if event.Start == nil || event.End == nil {
 			return nil, common.NewValidationError("file", "File is not valid.")
 		}
 
 		start := adjustCalendarTime(*event.Start, location)
 		end := adjustCalendarTime(*event.End, location)
+		if end.Before(now) {
+			continue
+		}
 
-		exdates[i] = pbehavior.Exdate{
+		exdates = append(exdates, pbehavior.Exdate{
 			Exdate: types.Exdate{
 				Begin: types.CpsTime{Time: start},
 				End:   types.CpsTime{Time: end},
 			},
 			Type: pbhType,
-		}
+		})
 	}
 
-	now := types.NewCpsTime()
+	if len(exdates) == 0 {
+		return nil, common.NewValidationError("file", "File is empty.")
+	}
+
 	doc := pbehavior.Exception{
 		ID:      utils.NewID(),
 		Name:    name,
 		Exdates: exdates,
-		Created: &now,
+		Created: &types.CpsTime{Time: now},
 	}
 
 	var response *Exception
@@ -374,6 +386,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "exdates.type",
 		}},
 		{"$unwind": "$exdates.type"},
+		{"$sort": bson.M{"exdates.begin": 1}},
 		{"$group": bson.M{
 			"_id":         "$_id",
 			"name":        bson.M{"$first": "$name"},
