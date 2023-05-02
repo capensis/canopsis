@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
@@ -26,6 +28,8 @@ import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
+
+const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   name: MODALS.createRemediationJob,
@@ -48,6 +52,8 @@ export default {
     };
   },
   computed: {
+    ...mapInfoGetters(['remediationJobConfigTypes']),
+
     title() {
       return this.config.title ?? this.$t('modals.createRemediationJob.create.title');
     },
@@ -58,7 +64,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToRemediationJob(this.form));
+          await this.config.action(formToRemediationJob(this.form, this.remediationJobConfigTypes));
         }
 
         this.$modals.hide();
