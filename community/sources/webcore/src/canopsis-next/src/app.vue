@@ -73,6 +73,10 @@ export default {
       return this.$route.fullPath;
     },
   },
+  watch: {
+    templateVars: 'setTitle',
+    currentUser: 'setTitle',
+  },
   beforeCreate() {
     reloadPageWithTrailingSlashes();
   },
@@ -81,10 +85,13 @@ export default {
   },
   async mounted() {
     this.socketConnectWithErrorHandling();
-    await this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
 
-    await this.fetchTemplateVars();
+    await Promise.all([
+      this.fetchCurrentUserWithErrorHandling(),
+      this.fetchTemplateVars(),
+    ]);
+
     this.fetchAppInfoWithErrorHandling();
   },
   methods: {
