@@ -322,7 +322,7 @@ En effet, l'API Canopsis doit toujours être interrogée sur son port `8082`. Ca
 
 Une fois votre environnement à jour, vous pouvez à nouveau vous connecter à l'interface web de Canopsis en vous rendant sur <http://localhost> (par défaut) avec l'utilisateur `root` de Canopsis. Ce nouvel accès simplifié remplace les anciennes adresses de type `http://localhost/en/static/canopsis-next/dist/index.html#`.
 
-Il est aussi recommandé, en parallèle, de [vous rendre sur l'interface web RabbitMQ](../../guide-de-depannage/rabbitmq-webui.md) afin de vérifier que l'ensemble des moteurs dépilent bien l'ensemble de leurs évènements en attente.
+Il est aussi recommandé, en parallèle, de [vous rendre sur l'interface web RabbitMQ](../../guide-de-depannage/rabbitmq-webui/index.md) afin de vérifier que l'ensemble des moteurs dépilent bien l'ensemble de leurs évènements en attente.
 
 ## Migration des pbehaviors existants
 
