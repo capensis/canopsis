@@ -409,6 +409,16 @@ default_entities:
     name: test-entitybasic-to-delete-linked-to-alarm-resource
     component: test-entitybasic-to-delete-linked-to-alarm-component
     connector: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+  connector_to_entitybasic_delete:
+    <<: *connector
+    _id: test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
+    name: test-entitybasic-to-delete-connector-name
+  component_to_entitybasic_delete_connector:
+    <<: *component
+    _id: test-entitybasic-component-to-link-with-deleted-connector
+    name: test-entitybasic-component-to-link-with-deleted-connector
+    component: test-entitybasic-component-to-link-with-deleted-connector
+    connector: test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
 
   component_service_weather_entity_5:
     <<: *component
