@@ -27,7 +27,7 @@
           v-flex.pt-2(v-if="!readonly && !disabled", xs12)
             v-layout(justify-center)
               v-btn(color="primary", @click="discardPattern") {{ $t('pattern.discard') }}
-        c-pattern-groups-field.mt-2(
+        pattern-groups-field.mt-2(
           v-else,
           v-field="patterns.groups",
           :disabled="formDisabled",
@@ -97,12 +97,13 @@ import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/hel
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
+import PatternGroupsField from './pattern-groups-field.vue';
 
 const { mapActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
-  components: { PatternAdvancedEditorField },
+  components: { PatternGroupsField, PatternAdvancedEditorField },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'patterns',

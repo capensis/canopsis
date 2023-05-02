@@ -13,17 +13,17 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import CPatternRuleField from '@/components/forms/fields/pattern/c-pattern-rule-field.vue';
+import CPatternRuleField from '@/components/forms/fields/pattern/pattern-rule-field.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-pattern-attribute-field': true,
+  'pattern-attribute-field': true,
   'c-infos-attribute-field': true,
   'c-quick-date-interval-type-field': true,
   'c-date-time-interval-field': true,
   'c-input-type-field': true,
-  'c-pattern-operator-field': true,
+  'pattern-operator-field': true,
   'c-mixed-input-field': true,
   'c-duration-field': true,
   'custom-component': true,
@@ -43,8 +43,8 @@ const snapshotFactory = (options = {}) => mount(CPatternRuleField, {
   ...options,
 });
 
-const selectPatternAttributeField = wrapper => wrapper.find('c-pattern-attribute-field-stub');
-const selectPatternOperatorField = wrapper => wrapper.find('c-pattern-operator-field-stub');
+const selectPatternAttributeField = wrapper => wrapper.find('pattern-attribute-field-stub');
+const selectPatternOperatorField = wrapper => wrapper.find('pattern-operator-field-stub');
 const selectMixedInputField = wrapper => wrapper.find('c-mixed-input-field-stub');
 const selectInfosAttributeField = wrapper => wrapper.find('c-infos-attribute-field-stub');
 const selectQuickDateIntervalTypeField = wrapper => wrapper.find('c-quick-date-interval-type-field-stub');
@@ -52,7 +52,7 @@ const selectDateTimeIntervalField = wrapper => wrapper.find('c-date-time-interva
 const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 
-describe('c-pattern-rule-field', () => {
+describe('pattern-rule-field', () => {
   const emptyRule = {
     attribute: '',
     operator: '',
@@ -291,7 +291,7 @@ describe('c-pattern-rule-field', () => {
     });
   });
 
-  test('Renders `c-pattern-rule-field` with default props', () => {
+  test('Renders `pattern-rule-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rule: {
@@ -305,7 +305,7 @@ describe('c-pattern-rule-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-rule-field` with custom props', () => {
+  test('Renders `pattern-rule-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rule: {
@@ -339,7 +339,7 @@ describe('c-pattern-rule-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-rule-field` with infos type and field is name', () => {
+  test('Renders `pattern-rule-field` with infos type and field is name', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rule: {
@@ -355,7 +355,7 @@ describe('c-pattern-rule-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-rule-field` with extra infos type', () => {
+  test('Renders `pattern-rule-field` with extra infos type', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rule: {
@@ -371,7 +371,7 @@ describe('c-pattern-rule-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-rule-field` with duration type', () => {
+  test('Renders `pattern-rule-field` with duration type', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rule: {
@@ -389,7 +389,7 @@ describe('c-pattern-rule-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-rule-field` with date type', () => {
+  test('Renders `pattern-rule-field` with date type', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rule: {

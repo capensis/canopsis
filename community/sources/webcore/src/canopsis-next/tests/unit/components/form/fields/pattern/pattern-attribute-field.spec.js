@@ -1,11 +1,9 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_PATTERN_FIELDS } from '@/constants';
 
-import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
-
-const localVue = createVueInstance();
+import PatternAttributeField from '@/components/forms/fields/pattern/pattern-attribute-field.vue';
 
 const stubs = {
   'c-select-field': createSelectInputStub('c-select-field'),
@@ -15,23 +13,12 @@ const snapshotStubs = {
   'c-select-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternAttributeField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
-describe('c-pattern-attribute-field', () => {
+describe('pattern-attribute-field', () => {
+  const factory = generateShallowRenderer(PatternAttributeField, { stubs });
+  const snapshotFactory = generateRenderer(PatternAttributeField, { stubs: snapshotStubs });
+
   it('Value changed after trigger the input', () => {
     const value = {
       value: ALARM_PATTERN_FIELDS.ack,
@@ -54,7 +41,7 @@ describe('c-pattern-attribute-field', () => {
     expect(eventData).toBe(value);
   });
 
-  it('Renders `c-pattern-attribute-field` with default props', () => {
+  it('Renders `pattern-attribute-field` with default props', () => {
     const value = {
       value: ALARM_PATTERN_FIELDS.component,
       text: 'Component',
@@ -71,7 +58,7 @@ describe('c-pattern-attribute-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-pattern-attribute-field` with custom props', () => {
+  it('Renders `pattern-attribute-field` with custom props', () => {
     const value = {
       value: ALARM_PATTERN_FIELDS.component,
       text: 'Component',

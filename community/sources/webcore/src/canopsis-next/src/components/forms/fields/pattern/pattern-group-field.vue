@@ -1,10 +1,10 @@
 <template lang="pug">
   v-layout
     v-flex.pa-2.mr-2
-      c-pattern-operator-information {{ $t('common.and') }}
+      pattern-operator-information {{ $t('common.and') }}
     v-flex(xs11)
       v-layout(column)
-        c-pattern-rules-field(
+        pattern-rules-field(
           :rules="group.rules",
           :attributes="attributes",
           :disabled="disabled",
@@ -16,7 +16,11 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
+import PatternRulesField from './pattern-rules-field.vue';
+import PatternOperatorInformation from './pattern-operator-information.vue';
+
 export default {
+  components: { PatternOperatorInformation, PatternRulesField },
   mixins: [formMixin],
   model: {
     prop: 'group',
