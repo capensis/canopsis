@@ -123,6 +123,7 @@ export default {
           is: 'bar-chart-metrics',
           sampling: this.query.sampling,
           stacked: this.widget.parameters.stacked,
+          height: 400,
           ...props,
         };
       }
@@ -131,6 +132,7 @@ export default {
         return {
           is: 'line-chart-metrics',
           sampling: this.query.sampling,
+          height: 400,
           ...props,
         };
       }
