@@ -1,9 +1,11 @@
 import { kebabCase } from 'lodash';
 
-import CEnabled from '@/components/icons/c-enabled.vue';
-import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
-
+import * as buttonsComponents from './buttons';
+import * as chipsComponents from './chips';
 import * as commonComponents from './common';
+import * as iconsComponents from './icons';
+import * as overlayComponents from './overlay';
+import * as tableComponents from './table';
 import * as fieldsComponents from './fields';
 
 /**
@@ -11,9 +13,12 @@ import * as fieldsComponents from './fields';
  */
 export const registerApplicationComponents = (Vue) => {
   Object.entries({
-    CEnabled,
-    AlarmsListTable,
+    ...buttonsComponents,
+    ...chipsComponents,
     ...commonComponents,
+    ...iconsComponents,
+    ...overlayComponents,
+    ...tableComponents,
     ...fieldsComponents,
   }).forEach(([name, component]) => {
     Vue.component(kebabCase(name), component);
