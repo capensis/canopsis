@@ -106,16 +106,18 @@ export const remediationJobToForm = (remediationJob = {}) => ({
  * Convert remediation job form object to API compatible object
  *
  * @param {RemediationJobForm} form
+ * @param {RemediationConfigurationFormType[]} configTypes
  * @return {RemediationJob}
  */
-export const formToRemediationJob = (form) => {
+export const formToRemediationJob = (form, configTypes) => {
   const { retry_amount: retryAmount, retry_interval: retryInterval, config, payload, query, ...remediationJob } = form;
+  const configType = configTypes.find(({ name }) => name === config.type);
 
-  if (config.with_body) {
+  if (configType?.with_body) {
     remediationJob.payload = payload;
   }
 
-  if (config.with_query) {
+  if (configType?.with_query) {
     remediationJob.query = textPairsToObject(query);
   }
 

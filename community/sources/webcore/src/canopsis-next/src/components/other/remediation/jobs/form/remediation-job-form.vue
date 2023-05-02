@@ -18,14 +18,14 @@
           :label="$t('remediation.job.retryInterval')",
           clearable
         )
-    v-layout(row)
+    v-layout(v-if="withPayload", row)
       v-btn.ml-0(
         v-if="!form.payload",
         color="primary",
         outline,
         @click="addPayload"
       ) {{ $t('remediation.job.addPayload') }}
-      template(v-else-if="withPayload")
+      template(v-else)
         c-json-field(
           v-field="form.payload",
           :label="$t('common.payload')",
