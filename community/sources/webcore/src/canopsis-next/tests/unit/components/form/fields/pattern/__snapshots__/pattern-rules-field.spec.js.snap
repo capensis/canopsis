@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom props 1`] = `
+exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1`] = `
 <div
   class="layout column"
   required="required"
@@ -11,12 +11,16 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
     <div
       class="flex"
     >
-      <c-pattern-rule-field-stub
+      <pattern-rule-field-stub
         attributes="[object Object]"
         disabled="true"
+        infos=""
+        inputtypes="[object Object],[object Object],[object Object],[object Object]"
+        intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         name="key 1"
         operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
         rule="[object Object]"
+        type="string"
       />
     </div>
     <c-action-btn-stub
@@ -31,12 +35,16 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
     <div
       class="flex"
     >
-      <c-pattern-rule-field-stub
+      <pattern-rule-field-stub
         attributes="[object Object]"
         disabled="true"
+        infos=""
+        inputtypes="[object Object],[object Object],[object Object],[object Object]"
+        intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         name="key 2"
         operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
         rule="[object Object]"
+        type="string"
       />
     </div>
     <c-action-btn-stub
@@ -51,12 +59,16 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
     <div
       class="flex"
     >
-      <c-pattern-rule-field-stub
+      <pattern-rule-field-stub
         attributes="[object Object]"
         disabled="true"
+        infos=""
+        inputtypes="[object Object],[object Object],[object Object],[object Object]"
+        intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         name="key 3"
         operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
         rule="[object Object]"
+        type="string"
       />
     </div>
     <c-action-btn-stub
@@ -71,12 +83,17 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
     <div
       class="flex"
     >
-      <c-pattern-rule-field-stub
+      <pattern-rule-field-stub
         attributes="[object Object]"
         customprop="customPropValue"
         disabled="true"
+        infos=""
+        inputtypes="[object Object],[object Object],[object Object],[object Object]"
+        intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        name="rule"
         operators="not_equal"
         rule="[object Object]"
+        type="string"
       />
     </div>
     <c-action-btn-stub
@@ -109,7 +126,7 @@ exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom pro
 </div>
 `;
 
-exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with default props 1`] = `
+exports[`pattern-rules-field Renders \`pattern-rules-field\` with default props 1`] = `
 <div
   class="layout column"
 >

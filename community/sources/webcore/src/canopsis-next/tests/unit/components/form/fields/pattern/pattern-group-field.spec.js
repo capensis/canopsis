@@ -1,31 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
-
-const localVue = createVueInstance();
+import PatternGroupField from '@/components/forms/fields/pattern/pattern-group-field.vue';
 
 const stubs = {
-  'c-pattern-operator-information': true,
-  'c-pattern-rules-field': true,
+  'pattern-operator-information': true,
+  'pattern-rules-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternGroupField, {
-  localVue,
-  stubs,
+const selectPatternRulesField = wrapper => wrapper.find('pattern-rules-field-stub');
 
-  ...options,
-});
+describe('pattern-group-field', () => {
+  const factory = generateShallowRenderer(PatternGroupField, { stubs });
+  const snapshotFactory = generateRenderer(PatternGroupField, { stubs });
 
-const snapshotFactory = (options = {}) => mount(CPatternGroupField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const selectPatternRulesField = wrapper => wrapper.find('c-pattern-rules-field-stub');
-
-describe('c-pattern-group-field', () => {
   test('Rules updated after trigger input event on pattern rules field', async () => {
     const wrapper = factory({
       propsData: {
@@ -71,7 +58,7 @@ describe('c-pattern-group-field', () => {
     expect(removeEvents).toHaveLength(1);
   });
 
-  test('Renders `c-pattern-group-field` with default props', () => {
+  test('Renders `pattern-group-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         group: {
@@ -84,7 +71,7 @@ describe('c-pattern-group-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-group-field` with custom props', () => {
+  test('Renders `pattern-group-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         group: {

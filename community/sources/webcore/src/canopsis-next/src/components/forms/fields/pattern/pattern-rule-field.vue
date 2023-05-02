@@ -3,7 +3,7 @@
     v-flex(:xs5="isAnyInfosRule", xs4)
       v-layout(row)
         v-flex(:xs4="isAnyInfosRule")
-          c-pattern-attribute-field(
+          pattern-attribute-field(
             v-field="rule.attribute",
             :items="attributes",
             :name="name",
@@ -48,7 +48,7 @@
               @input="updateType"
             )
           v-flex.pl-3(v-if="shownOperatorField", :xs6="!isAnyInfosRule", xs4)
-            c-pattern-operator-field(
+            pattern-operator-field(
               v-field="rule.operator",
               :operators="operators",
               :disabled="disabled",
@@ -87,8 +87,11 @@ import { formMixin } from '@/mixins/form';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
+import PatternAttributeField from './pattern-attribute-field.vue';
+import PatternOperatorField from './pattern-operator-field.vue';
+
 export default {
-  components: { DateTimePickerTextField },
+  components: { DateTimePickerTextField, PatternAttributeField, PatternOperatorField },
   mixins: [formMixin],
   model: {
     prop: 'rule',
