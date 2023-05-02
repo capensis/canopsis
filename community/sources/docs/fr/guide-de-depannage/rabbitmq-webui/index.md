@@ -11,11 +11,11 @@ L'interface de RabbitMQ est accessible via l'URL ```http://localhost:15672/```
 
 Rendez-vous ici :
 
-![img1](img/section_queues.png)
+![img1](../img/section_queues.png)
 
 Vous y retrouverez un tableau comme celui-ci :
 
-![img2](img/tab1.png)
+![img2](../img/tab1.png)
 
 La première colonne *Overview* vous présente plusieurs informations telles que :
 
@@ -59,7 +59,7 @@ Afin d’éviter de remplir inutilement les files de RabbitMQ, il est possible d
 
 La procédure est la suivante :
 
-![img](img/rabbitmq_policy.png)
+![img](../img/rabbitmq_policy.png)
 
 Ensuite, vous devez voir apparaître votre policy sur les files dans l’onglet « Queues ».
 
