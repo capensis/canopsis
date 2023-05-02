@@ -226,7 +226,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(4);
+    expect(removeEventListener).toHaveBeenCalledTimes(6);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -244,6 +244,16 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
+      'mousedown',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      5,
+      'mouseup',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      6,
       'resize',
       expect.any(Function),
       { passive: true },
@@ -326,7 +336,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(4);
+    expect(removeEventListener).toHaveBeenCalledTimes(6);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -344,6 +354,16 @@ describe('alarms-list-table', () => {
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
+      'mousedown',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      5,
+      'mouseup',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      6,
       'resize',
       expect.any(Function),
       { passive: true },
