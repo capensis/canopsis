@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 1`] = `
+exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with custom props 1`] = `
 <c-select-field-stub
   disabled="true"
   ellipsis="ellipsis"
@@ -13,9 +13,9 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with cu
 />
 `;
 
-exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with custom props 2`] = `undefined`;
+exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with custom props 2`] = `undefined`;
 
-exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with default props 1`] = `
+exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with default props 1`] = `
 <c-select-field-stub
   ellipsis="ellipsis"
   error-messages=""
@@ -27,4 +27,4 @@ exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with de
 />
 `;
 
-exports[`c-pattern-attribute-field Renders \`c-pattern-attribute-field\` with default props 2`] = `undefined`;
+exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with default props 2`] = `undefined`;

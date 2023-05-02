@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`] = `
 <div
   class="layout row"
 >
@@ -13,11 +13,12 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props
       <div
         class="flex xs4"
       >
-        <c-pattern-attribute-field-stub
+        <pattern-attribute-field-stub
           disabled="true"
           items="[object Object]"
+          label=""
           name="customName"
-          required="required"
+          required="true"
           value="v.display_name"
         />
       </div>
@@ -55,11 +56,12 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props
       <div
         class="flex pl-3 xs4"
       >
-        <c-pattern-operator-field-stub
+        <pattern-operator-field-stub
           disabled="true"
+          label=""
           name="customName.operator"
           operators="not_equal,equal"
-          required="required"
+          required="true"
           value="equal"
         />
       </div>
@@ -79,7 +81,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with custom props
 </div>
 `;
 
-exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with date type 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = `
 <div
   class="layout row"
 >
@@ -92,10 +94,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with date type 1`
       <div
         class="flex"
       >
-        <c-pattern-attribute-field-stub
+        <pattern-attribute-field-stub
           items=""
+          label=""
           name="rule"
-          required="required"
+          required="true"
           value="v.creation_date"
         />
       </div>
@@ -130,7 +133,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with date type 1`
 </div>
 `;
 
-exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with default props 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`] = `
 <div
   class="layout row"
 >
@@ -143,10 +146,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with default prop
       <div
         class="flex"
       >
-        <c-pattern-attribute-field-stub
+        <pattern-attribute-field-stub
           items=""
+          label=""
           name="rule"
-          required="required"
+          required="true"
           value="v.display_name"
         />
       </div>
@@ -163,10 +167,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with default prop
       <div
         class="flex pl-3 xs6 xs4"
       >
-        <c-pattern-operator-field-stub
+        <pattern-operator-field-stub
+          label=""
           name="rule.operator"
           operators=""
-          required="required"
+          required="true"
           value="equal"
         />
       </div>
@@ -187,7 +192,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with default prop
 </div>
 `;
 
-exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with duration type 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`] = `
 <div
   class="layout row"
 >
@@ -200,10 +205,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with duration typ
       <div
         class="flex"
       >
-        <c-pattern-attribute-field-stub
+        <pattern-attribute-field-stub
           items=""
+          label=""
           name="rule"
-          required="required"
+          required="true"
           value="v.duration"
         />
       </div>
@@ -220,10 +226,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with duration typ
       <div
         class="flex pl-3 xs6 xs4"
       >
-        <c-pattern-operator-field-stub
+        <pattern-operator-field-stub
+          label=""
           name="rule.operator"
           operators=""
-          required="required"
+          required="true"
           value="not_equal"
         />
       </div>
@@ -240,7 +247,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with duration typ
 </div>
 `;
 
-exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos type 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type 1`] = `
 <div
   class="layout row"
 >
@@ -253,10 +260,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
       <div
         class="flex xs4"
       >
-        <c-pattern-attribute-field-stub
+        <pattern-attribute-field-stub
           items=""
+          label=""
           name="rule"
-          required="required"
+          required="true"
           value="extra"
         />
       </div>
@@ -282,10 +290,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
       <div
         class="flex pl-3 xs4"
       >
-        <c-pattern-operator-field-stub
+        <pattern-operator-field-stub
+          label=""
           name="rule.operator"
           operators=""
-          required="required"
+          required="true"
           value="equal"
         />
       </div>
@@ -295,7 +304,7 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with extra infos 
 </div>
 `;
 
-exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with infos type and field is name 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and field is name 1`] = `
 <div
   class="layout row"
 >
@@ -308,10 +317,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with infos type a
       <div
         class="flex xs4"
       >
-        <c-pattern-attribute-field-stub
+        <pattern-attribute-field-stub
           items=""
+          label=""
           name="rule"
-          required="required"
+          required="true"
           value="v.infos"
         />
       </div>
@@ -338,10 +348,11 @@ exports[`c-pattern-rule-field Renders \`c-pattern-rule-field\` with infos type a
       <div
         class="flex pl-3 xs4"
       >
-        <c-pattern-operator-field-stub
+        <pattern-operator-field-stub
+          label=""
           name="rule.operator"
           operators=""
-          required="required"
+          required="true"
           value="equal"
         />
       </div>

@@ -8,7 +8,7 @@
       ) {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
     v-layout(v-for="(group, index) in groups", :key="group.key", wrap, row)
       v-flex(xs12)
-        c-pattern-group-field(
+        pattern-group-field(
           v-field="groups[index]",
           :attributes="attributes",
           :disabled="disabled",
@@ -31,8 +31,11 @@ import { patternRulesToGroup } from '@/helpers/forms/pattern';
 
 import { formArrayMixin } from '@/mixins/form';
 
+import PatternGroupField from './pattern-group-field.vue';
+
 export default {
   inject: ['$validator'],
+  components: { PatternGroupField },
   mixins: [formArrayMixin],
   model: {
     prop: 'groups',

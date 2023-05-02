@@ -2,7 +2,7 @@
   v-layout(column)
     v-layout(v-for="(rule, index) in rules", :key="rule.key", row, justify-space-between, align-center)
       v-flex
-        c-pattern-rule-field(
+        pattern-rule-field(
           v-bind="getRuleProps(rule)",
           :rule="rule",
           :name="rule.key",
@@ -32,8 +32,11 @@ import { convertValueByOperator, getOperatorsByRule } from '@/helpers/pattern';
 
 import { formArrayMixin } from '@/mixins/form';
 
+import PatternRuleField from './pattern-rule-field.vue';
+
 export default {
   inject: ['$validator'],
+  components: { PatternRuleField },
   mixins: [formArrayMixin],
   model: {
     prop: 'rules',
