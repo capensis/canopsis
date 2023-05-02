@@ -19,7 +19,7 @@ import (
 
 type Store interface {
 	Find(context.Context, ListRequest) (*AggregationResult, error)
-	FindEntities(ctx context.Context, id string, query EntitiesListRequest) (*EntityAggregationResult, error)
+	FindEntities(ctx context.Context, id string, query EntitiesListRequest, userId string) (*EntityAggregationResult, error)
 }
 
 func NewStore(
@@ -30,8 +30,9 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
+		dbClient:         dbClient,
+		dbCollection:     dbClient.Collection(mongo.EntityMongoCollection),
+		userDbCollection: dbClient.Collection(mongo.RightsMongoCollection),
 
 		alarmStore:    alarmStore,
 		linkGenerator: linkGenerator,
@@ -43,8 +44,9 @@ func NewStore(
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbClient         mongo.DbClient
+	dbCollection     mongo.DbCollection
+	userDbCollection mongo.DbCollection
 
 	linkGenerator link.Generator
 	alarmStore    alarmapi.Store
@@ -78,7 +80,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest) (*EntityAggregationResult, error) {
+func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest, userId string) (*EntityAggregationResult, error) {
 	var service libtypes.Entity
 	err := s.dbCollection.FindOne(ctx, bson.M{
 		"_id":     id,
@@ -170,7 +172,7 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 		}
 	}
 
-	err = s.fillLinks(ctx, &res)
+	err = s.fillLinks(ctx, &res, userId)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fill links")
 	}
@@ -178,13 +180,24 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 	return &res, nil
 }
 
-func (s *store) fillLinks(ctx context.Context, result *EntityAggregationResult) error {
+func (s *store) fillLinks(ctx context.Context, result *EntityAggregationResult, userId string) error {
+	user := link.User{}
+	err := s.userDbCollection.FindOne(ctx, bson.M{"_id": userId}, options.FindOne().SetProjection(bson.M{
+		"username": "$crecord_name",
+	})).Decode(&user)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return errors.New("user not found")
+		}
+		return err
+	}
+
 	ids := make([]string, len(result.Data))
 	for i, v := range result.Data {
 		ids[i] = v.ID
 	}
 
-	linksByEntityId, err := s.linkGenerator.GenerateForEntities(ctx, ids)
+	linksByEntityId, err := s.linkGenerator.GenerateForEntities(ctx, ids, user)
 	if err != nil || len(linksByEntityId) == 0 {
 		return err
 	}
